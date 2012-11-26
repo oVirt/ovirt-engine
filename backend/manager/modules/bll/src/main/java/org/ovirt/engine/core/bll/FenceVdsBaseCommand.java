@@ -221,7 +221,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void DestroyVmOnDestination(VM vm) {
-        if (vm.getstatus() == VMStatus.MigratingFrom) {
+        if (vm.getStatus() == VMStatus.MigratingFrom) {
             try {
                 if (vm.getmigrating_to_vds() != null) {
                     Backend.getInstance()
@@ -230,10 +230,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                                     VDSCommandType.DestroyVm,
                                     new DestroyVmVDSCommandParameters(new Guid(vm.getmigrating_to_vds().toString()), vm
                                             .getId(), true, false, 0));
-                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getvm_name(), vm.getmigrating_to_vds());
+                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getVmName(), vm.getmigrating_to_vds());
                 }
             } catch (RuntimeException ex) {
-                log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getvm_name(),
+                log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getVmName(),
                         vm.getmigrating_to_vds(), ex.getMessage());
                 // intentionally ingnored
             }
@@ -256,13 +256,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 LogSettingVmToDown(getVds().getId(), vm.getId());
             }
             setVmId(vm.getId());
-            setVmName(vm.getvm_name());
+            setVmName(vm.getVmName());
             setVm(vm);
             VmPoolHandler.ProcessVmPoolOnStopVm(vm.getId(),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
             // Handle highly available VMs
-            if (vm.getauto_startup()) {
+            if (vm.isAutoStartup()) {
                 runVmParamsList.add(new RunVmParams(vm.getId(), true));
             }
         }

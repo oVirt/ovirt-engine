@@ -129,7 +129,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         // check that the number of interfaces does not exceed limit. Necessary
         // only for versions 2.1, 2.2.
         boolean limitNumOfNics = Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces, getVm()
-                .getvds_group_compatibility_version().toString());
+                .getVdsGroupCompatibilityVersion().toString());
         if (limitNumOfNics) {
             interfaces.remove(oldIface);
             boolean numOfNicsLegal = validateNumberOfNics(interfaces, getParameters().getInterface());
@@ -206,7 +206,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
         if (getParameters().getInterface() != null && getVm() != null && getParameters().getInterface().isPortMirroring()) {
-            permissionList.add(new PermissionSubject(getVm().getstorage_pool_id(),
+            permissionList.add(new PermissionSubject(getVm().getStoragePoolId(),
                     VdcObjectType.StoragePool,
                     ActionGroup.PORT_MIRRORING));
         }

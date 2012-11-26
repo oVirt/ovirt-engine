@@ -34,7 +34,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_name();
+                return object.getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());
@@ -44,7 +44,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusVm());

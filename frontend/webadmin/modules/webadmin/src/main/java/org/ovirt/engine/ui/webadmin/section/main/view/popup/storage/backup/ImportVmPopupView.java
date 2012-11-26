@@ -254,7 +254,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return ((VM) object).getvm_name();
+                return ((VM) object).getVmName();
             }
         };
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
@@ -262,7 +262,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> originColumn = new EnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
-                return ((VM) object).getorigin();
+                return ((VM) object).getOrigin();
             }
         };
         table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
@@ -277,7 +277,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> memoryColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VM) object).getvm_mem_size_mb()) + " MB"; //$NON-NLS-1$
+                return String.valueOf(((VM) object).getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
@@ -285,7 +285,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> cpuColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VM) object).getnum_of_cpus());
+                return String.valueOf(((VM) object).getNumOfCpus());
             }
         };
         table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$

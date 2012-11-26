@@ -344,7 +344,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVmName(null);
         final VM v = new VM();
-        v.setvm_name(NAME);
+        v.setVmName(NAME);
         b.setVm(v);
         final String n = b.getVmName();
         assertEquals(NAME, n);
@@ -668,7 +668,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
-        vm.setrun_on_vds(GUID3);
+        vm.setRunOnVds(GUID3);
         final Guid vdsId = null;
         b.setVds(vds);
         b.setVdsId(vdsId);
@@ -682,7 +682,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
-        vm.setrun_on_vds(null);
+        vm.setRunOnVds(null);
         final Guid vdsId = null;
         b.setVds(vds);
         b.setVdsId(vdsId);
@@ -709,7 +709,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
-        vm.setrun_on_vds(GUID2);
+        vm.setRunOnVds(GUID2);
         final Guid vdsId = GUID;
         b.setVds(vds);
         b.setVdsId(vdsId);
@@ -723,7 +723,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
-        vm.setrun_on_vds(GUID2);
+        vm.setRunOnVds(GUID2);
         final Guid vdsId = null;
         b.setVds(vds);
         b.setVdsId(vdsId);
@@ -737,7 +737,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS vds = null;
         final VM vm = new VM();
-        vm.setrun_on_vds(GUID2);
+        vm.setRunOnVds(GUID2);
         final Guid vdsId = GUID3;
         b.setVds(vds);
         b.setVdsId(vdsId);
@@ -832,7 +832,7 @@ public class AuditLogableBaseTest {
         b.setVmTemplate(null);
         b.setVmTemplateId(null);
         final VM vm = new VM();
-        vm.setvmt_guid(GUID);
+        vm.setVmtGuid(GUID);
         b.setVm(vm);
         final VmTemplate t = b.getVmTemplate();
         assertNotNull(t);
@@ -901,7 +901,7 @@ public class AuditLogableBaseTest {
     public void getVdsGroupWithVm() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
-        v.setvds_group_id(GUID);
+        v.setVdsGroupId(GUID);
         b.setVm(v);
         final VDSGroup g = b.getVdsGroup();
         assertEquals(GUID, g.getId());

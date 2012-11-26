@@ -68,7 +68,7 @@ public class ConsoleUtils {
 
         VM vm = ((VM) item.getEntity());
 
-        if (vm.getdisplay_type().equals(DisplayType.qxl) &&
+        if (vm.getDisplayType().equals(DisplayType.qxl) &&
                 item.getDefaultConsole().getConnectCommand().getIsAvailable() &&
                 item.getDefaultConsole().getConnectCommand().getIsExecutionAllowed()) {
             return true;

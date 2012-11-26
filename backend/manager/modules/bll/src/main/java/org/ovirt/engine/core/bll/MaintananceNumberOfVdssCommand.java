@@ -153,7 +153,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                     for (VM vm : vms) {
                         if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-                            nonMigratableVmDescriptionsToFrontEnd.add(vm.getvm_name());
+                            nonMigratableVmDescriptionsToFrontEnd.add(vm.getVmName());
                         }
                     }
 
@@ -270,7 +270,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         if (sharedLockMap == null) {
             sharedLockMap = new HashMap<String, String>();
         }
-        sharedLockMap.put(vds.getstorage_pool_id().toString(), LockingGroup.POOL.name());
+        sharedLockMap.put(vds.getStoragePoolId().toString(), LockingGroup.POOL.name());
     }
 
     /**

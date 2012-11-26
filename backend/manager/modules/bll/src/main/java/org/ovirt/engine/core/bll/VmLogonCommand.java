@@ -55,8 +55,8 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         // If the command was sent to the virtual machine successfully update the
         // database to reflect that the user is logged on:
         if (sentToVM && currentUser != null) {
-            vm.setguest_cur_user_name(currentUser.getUserName());
-            vm.setguest_cur_user_id(currentUser.getUserId());
+            vm.setGuestCurUserName(currentUser.getUserName());
+            vm.setGuestCurUserId(currentUser.getUserId());
             DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
         }
 

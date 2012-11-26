@@ -784,17 +784,17 @@ public class BackendVmsResourceTest
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getvds_group_id()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getvm_name()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getvm_description()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getnum_of_cpus()).andReturn(8).anyTimes();
-        expect(entity.getnum_of_sockets()).andReturn(2).anyTimes();
-        expect(entity.getusage_mem_percent()).andReturn(Integer.valueOf(20)).anyTimes();
-        expect(entity.getdisplay_type()).andReturn(DisplayType.vnc).anyTimes();
-        expect(entity.getdisplay_secure_port()).andReturn(5900).anyTimes();
-        expect(entity.getnum_of_monitors()).andReturn(2).anyTimes();
-        expect(entity.getvm_type()).andReturn(VmType.Server).anyTimes();
-        expect(entity.getrun_on_vds_name()).andReturn(NAMES[NAMES.length -1]).anyTimes();
+        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVmName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getVmDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
+        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
+        expect(entity.getUsageMemPercent()).andReturn(Integer.valueOf(20)).anyTimes();
+        expect(entity.getDisplayType()).andReturn(DisplayType.vnc).anyTimes();
+        expect(entity.getDisplaySecurePort()).andReturn(5900).anyTimes();
+        expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
+        expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
+        expect(entity.getRunOnVdsName()).andReturn(NAMES[NAMES.length -1]).anyTimes();
         setUpStatisticalEntityExpectations(entity, statistics);
         return entity;
     }
@@ -815,7 +815,7 @@ public class BackendVmsResourceTest
 
     static org.ovirt.engine.core.common.businessentities.VM setUpStatisticalEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics) {
-        expect(entity.getmem_size_mb()).andReturn(10).anyTimes();
+        expect(entity.getMemSizeMb()).andReturn(10).anyTimes();
         expect(entity.getStatisticsData()).andReturn(statistics).anyTimes();
         expect(statistics.getusage_mem_percent()).andReturn(20).anyTimes();
         expect(statistics.getcpu_user()).andReturn(Double.valueOf(30L)).anyTimes();

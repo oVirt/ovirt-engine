@@ -24,7 +24,7 @@ public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<GetAl
 
         // Prepare the result
         VDS vds = new VDS();
-        vds.setstorage_pool_id(spId);
+        vds.setStoragePoolId(spId);
         List<VDS> result = Collections.singletonList(vds);
 
         // Mock the DAO

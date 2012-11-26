@@ -196,7 +196,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_DUPLICATE_NAME);
             return false;
         }
-        setStoragePoolId(grp.getstorage_pool_id().getValue());
+        setStoragePoolId(grp.getStoragePoolId().getValue());
 
         if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);

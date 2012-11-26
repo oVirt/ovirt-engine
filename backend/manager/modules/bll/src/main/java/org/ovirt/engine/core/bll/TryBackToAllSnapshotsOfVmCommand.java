@@ -106,7 +106,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getSnapshotDao().get(getParameters().getDstSnapshotId()),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getCompensationContext());
-        updateVmInSpm(getVm().getstorage_pool_id(),
+        updateVmInSpm(getVm().getStoragePoolId(),
                 Arrays.asList(getVm()));
     }
 
@@ -216,7 +216,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                     result
                             && ImagesHandler.PerformImagesChecks(getVm(),
                                     getReturnValue().getCanDoActionMessages(),
-                                    getVm().getstorage_pool_id(),
+                                    getVm().getStoragePoolId(),
                                     Guid.Empty,
                                     true,
                                     true,

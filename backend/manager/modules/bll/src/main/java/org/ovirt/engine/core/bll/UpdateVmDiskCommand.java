@@ -70,7 +70,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             // Check if all VMs are in status down.
             if (listVms != null && !listVms.isEmpty()) {
                 for (VM vm : listVms) {
-                    if (vm.getstatus() != VMStatus.Down) {
+                    if (vm.getStatus() != VMStatus.Down) {
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;
                     }
@@ -120,7 +120,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
             }));
             allVmDisks.add(getParameters().getDiskInfo());
-            if (!checkPciAndIdeLimit(getVm().getnum_of_monitors(),
+            if (!checkPciAndIdeLimit(getVm().getNumOfMonitors(),
                     allVmInterfaces,
                     allVmDisks,
                     getReturnValue().getCanDoActionMessages())) {
@@ -176,7 +176,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
                 return false;
             }
-            if (!isVersionSupportedForShareable(_oldDisk, getStoragePoolDAO().get(getVm().getstorage_pool_id())
+            if (!isVersionSupportedForShareable(_oldDisk, getStoragePoolDAO().get(getVm().getStoragePoolId())
                     .getcompatibility_version()
                     .getValue())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
@@ -243,7 +243,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 // update vm device boot order
                 VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
 
-                setSucceeded(updateVmInSpm(getVm().getstorage_pool_id(),
+                setSucceeded(updateVmInSpm(getVm().getStoragePoolId(),
                         Arrays.asList(getVm())));
                 return null;
             }

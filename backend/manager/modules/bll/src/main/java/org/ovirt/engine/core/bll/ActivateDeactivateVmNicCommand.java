@@ -38,10 +38,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected boolean canDoAction() {
         boolean returnValue = true;
 
-        if (activateDeactivateVmNicAllowed(getVm().getstatus())) {
+        if (activateDeactivateVmNicAllowed(getVm().getStatus())) {
             // HotPlug in the host needs to be called only if the Vm is UP
-            if (hotPlugVmNicRequired(getVm().getstatus())) {
-                setVdsId(getVm().getrun_on_vds().getValue());
+            if (hotPlugVmNicRequired(getVm().getStatus())) {
+                setVdsId(getVm().getRunOnVds().getValue());
                 returnValue = canPerformHotPlug();
                 if (returnValue && !networkAttachedToVds(getNetworkName(), getVdsId())) {
                     addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
@@ -76,7 +76,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         AddCustomValue("InterfaceType", VmInterfaceType.forValue(vmNetworkInterface.getType())
                 .getDescription());
         // HotPlug in the host is called only if the Vm is UP
-        if (hotPlugVmNicRequired(getVm().getstatus())) {
+        if (hotPlugVmNicRequired(getVm().getStatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new HotPlugUnplgNicVDSParameters(getVdsId(),
                             getVm(),

@@ -44,7 +44,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> nameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                return object.getSecond().getvm_name();
+                return object.getSecond().getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
@@ -52,7 +52,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                return object.getSecond().getvds_group_name();
+                return object.getSecond().getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
@@ -60,7 +60,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> ipColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                return object.getSecond().getvm_ip();
+                return object.getSecond().getVmIp();
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm());
@@ -112,7 +112,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> descriptionColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                return object.getSecond().getdescription();
+                return object.getSecond().getDescription();
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionVm());

@@ -85,7 +85,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         super(parameters);
         // if we came from EndAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
-        setVmName(parameters.getVm().getvm_name());
+        setVmName(parameters.getVm().getVmName());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
@@ -107,7 +107,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void initStoragePoolId() {
         if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getstorage_pool_id() != null ? getVdsGroup().getstorage_pool_id().getValue()
+            setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId().getValue()
                     : Guid.Empty);
         }
     }
@@ -295,7 +295,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = canDoAddVmCommand();
         }
 
-        String vmName = getParameters().getVm().getvm_name();
+        String vmName = getParameters().getVm().getVmName();
         if (vmName == null || vmName.isEmpty()) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
@@ -329,8 +329,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(),
-                getParameters().getVm().getos(),
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
+                getParameters().getVm().getOs(),
                 getVdsGroup(),
                 getReturnValue().getCanDoActionMessages())) {
             returnValue = false;
@@ -594,7 +594,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (vmStatic.getCustomProperties() != null) {
             VMCustomProperties properties =
                     VmPropertiesUtils.getInstance().parseProperties(getVdsGroupDAO()
-                            .get(getParameters().getVm().getvds_group_id())
+                            .get(getParameters().getVm().getVdsGroupId())
                             .getcompatibility_version(),
                             vmStatic.getCustomProperties());
             String predefinedProperties = properties.getPredefinedProperties();
@@ -627,7 +627,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean addVmImages() {
         if (getVmTemplate().getDiskMap().size() > 0) {
-            if (getVm().getstatus() != VMStatus.Down) {
+            if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
@@ -688,7 +688,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void endWithFailure() {
         super.endActionOnDisks();
         if (getVm() != null) {
-            removeVmInSpm(getVm().getstorage_pool_id(), getVmId());
+            removeVmInSpm(getVm().getStoragePoolId(), getVmId());
         }
         removeVmRelatedEntitiesFromDb();
         setSucceeded(true);
@@ -756,8 +756,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getvm_name())) {
-            return Collections.singletonMap(getParameters().getVm().getvm_name(), LockingGroup.VM_NAME.name());
+        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
+            return Collections.singletonMap(getParameters().getVm().getVmName(), LockingGroup.VM_NAME.name());
         }
         return null;
     }

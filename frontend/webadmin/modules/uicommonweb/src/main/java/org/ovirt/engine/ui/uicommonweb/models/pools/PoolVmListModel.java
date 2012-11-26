@@ -101,7 +101,7 @@ public class PoolVmListModel extends VmListModel
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            list.add(a.getvm_name());
+            list.add(a.getVmName());
         }
         Collections.sort(list);
         model.setItems(list);
@@ -193,7 +193,7 @@ public class PoolVmListModel extends VmListModel
         boolean value = true;
         for (VM a : items)
         {
-            if (a.getstatus() != VMStatus.Down)
+            if (a.getStatus() != VMStatus.Down)
             {
                 value = false;
                 break;

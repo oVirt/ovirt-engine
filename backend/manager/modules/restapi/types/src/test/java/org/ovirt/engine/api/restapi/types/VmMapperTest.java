@@ -42,7 +42,7 @@ public class VmMapperTest extends
                 new org.ovirt.engine.core.common.businessentities.VM(to,
                         dynamic,
                         statistics);
-        ret.setusage_mem_percent(Integer.valueOf(50));
+        ret.setUsageMemPercent(Integer.valueOf(50));
         return ret;
     }
 
@@ -137,13 +137,13 @@ public class VmMapperTest extends
     public void testDisplayPort() {
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
-        entity.setdisplay(5900);
-        entity.setdisplay_secure_port(9999);
+        entity.setDisplay(5900);
+        entity.setDisplaySecurePort(9999);
         VM model = VmMapper.map(entity, null);
         assertTrue(model.getDisplay().getPort() == 5900);
         assertTrue(model.getDisplay().getSecurePort() == 9999);
-        entity.setdisplay(-1);
-        entity.setdisplay_secure_port(-1);
+        entity.setDisplay(-1);
+        entity.setDisplaySecurePort(-1);
         model = VmMapper.map(entity, null);
         assertNull(model.getDisplay().getPort());
         assertNull(model.getDisplay().getSecurePort());
@@ -170,7 +170,7 @@ public class VmMapperTest extends
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
         Guid guid = NGuid.NewGuid();
-        entity.setrun_on_vds(guid);
+        entity.setRunOnVds(guid);
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());
     }

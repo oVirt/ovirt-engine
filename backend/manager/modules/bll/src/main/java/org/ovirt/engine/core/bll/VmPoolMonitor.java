@@ -136,7 +136,7 @@ public class VmPoolMonitor {
         log.infoFormat("Running Vm {0} as stateless", vmToRunAsStateless);
         boolean prestartingVmSucceeded = false;
         RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
-        runVmParams.setUseVnc(vmToRunAsStateless.getvm_type() == VmType.Server);
+        runVmParams.setUseVnc(vmToRunAsStateless.getVmType() == VmType.Server);
         runVmParams.setEntityId(vmToRunAsStateless);
         runVmParams.setRunAsStateless(true);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,

@@ -302,7 +302,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
         } else {
             result = performImagesChecks();
-            if (result && (getVm().getstatus() != VMStatus.Down)) {
+            if (result && (getVm().getStatus() != VMStatus.Down)) {
                 result = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
@@ -328,7 +328,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return ImagesHandler.PerformImagesChecks
                 (getVm(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVm().getstorage_pool_id(),
+                        getVm().getStoragePoolId(),
                         Guid.Empty,
                         true,
                         true,

@@ -113,7 +113,7 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedGuestOsIsNotSupported() {
         VM vm = mockVmStatusUp();
-        vm.setvm_os(VmOsType.RHEL3x64);
+        vm.setVmOs(VmOsType.RHEL3x64);
         cretaeVirtIODisk();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -159,10 +159,10 @@ public class HotPlugDiskToVmCommandTest {
      */
     protected VM mockVmStatusUp() {
         VM vm = new VM();
-        vm.setstatus(VMStatus.Up);
-        vm.setvm_os(VmOsType.RHEL6);
+        vm.setStatus(VMStatus.Up);
+        vm.setVmOs(VmOsType.RHEL6);
         vm.setId(vmId);
-        vm.setrun_on_vds(Guid.NewGuid());
+        vm.setRunOnVds(Guid.NewGuid());
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         mockVMDAO(vm);
         return vm;

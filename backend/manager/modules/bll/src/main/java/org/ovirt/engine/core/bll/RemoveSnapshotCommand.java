@@ -74,7 +74,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     protected void executeCommand() {
-        if (getVm().getstatus() != VMStatus.Down) {
+        if (getVm().getStatus() != VMStatus.Down) {
             log.error("Cannot remove VM snapshot. Vm is not Down");
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
@@ -213,7 +213,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     // Until then, this method is called and passes hasImages() onwards so the VM validations are done even for diskless VMs
     protected boolean validateImagesAndVMStates() {
         return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
-                getVm().getstorage_pool_id(), Guid.Empty,
+                getVm().getStoragePoolId(), Guid.Empty,
                 hasImages(), hasImages(), hasImages(), hasImages(), true, true, true, true, null);
     }
 

@@ -235,7 +235,7 @@ public class VdsSelector {
 
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if ((!vds.getvds_group_id().equals(getVm().getvds_group_id())) || (vds.getstatus() != VDSStatus.Up)) {
+                    if ((!vds.getvds_group_id().equals(getVm().getVdsGroupId())) || (vds.getstatus() != VDSStatus.Up)) {
                         sb.append("is not in up status or belongs to the VM's cluster");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
                     }
@@ -247,7 +247,7 @@ public class VdsSelector {
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // If Vm in Paused mode - no additional memory allocation needed
-                    if (getVm().getstatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
+                    if (getVm().getStatus() != VMStatus.Paused && !memoryChecker.evaluate(vds, getVm())) {
                         // not enough memory
                         sb.append("has insufficient memory to run the VM");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_MEMORY;
@@ -261,7 +261,7 @@ public class VdsSelector {
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // In case we are using this function in migration we make sure we
                     // don't allocate the same VDS
-                    if (isMigrate && (getVm().getrun_on_vds() != null && getVm().getrun_on_vds().equals(vds.getId()))) {
+                    if (isMigrate && (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(vds.getId()))) {
                         sb.append("is the same host the VM is currently running on");
                         return VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST;
                     }
@@ -283,8 +283,8 @@ public class VdsSelector {
             add(new HostValidator() {
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if (vds.getcpu_cores() != null && getVm().getnum_of_cpus() > vds.getcpu_cores()) {
-                        sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getnum_of_cpus());
+                    if (vds.getcpu_cores() != null && getVm().getNumOfCpus() > vds.getcpu_cores()) {
+                        sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getNumOfCpus());
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
                     }
                     return null;

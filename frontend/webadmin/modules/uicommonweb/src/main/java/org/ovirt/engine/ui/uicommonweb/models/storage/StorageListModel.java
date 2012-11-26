@@ -1485,7 +1485,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     }
 
                 }
-            }), host.getstorage_pool_id(), path);
+            }), host.getStoragePoolId(), path);
         }
         else
         {

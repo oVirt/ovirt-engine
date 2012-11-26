@@ -40,7 +40,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
                     }
                 },
                 getModel().getHash()),
-                vm.getvmt_guid());
+                vm.getVmtGuid());
     }
 
     @Override

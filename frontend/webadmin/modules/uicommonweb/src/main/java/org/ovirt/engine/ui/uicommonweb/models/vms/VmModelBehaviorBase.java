@@ -724,7 +724,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     }
                 },
                 getModel().getHash()),
-                vm.getvmt_guid());
+                vm.getVmtGuid());
     }
 
     protected void updateCpuPinningVisibility() {

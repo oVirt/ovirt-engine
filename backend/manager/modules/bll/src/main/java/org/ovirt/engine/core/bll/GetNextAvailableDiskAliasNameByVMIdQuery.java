@@ -19,7 +19,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends GetAllDisksByVmI
             if (vm != null) {
                 updateDisksFromDb(vm);
                 suggestedDiskName =
-                        ImagesHandler.getDefaultDiskAlias(vm.getvm_name(), Integer.toString(vm.getDiskMapCount() + 1));
+                        ImagesHandler.getDefaultDiskAlias(vm.getVmName(), Integer.toString(vm.getDiskMapCount() + 1));
             }
             getQueryReturnValue().setReturnValue(suggestedDiskName);
         }

@@ -50,8 +50,8 @@ public class MoveDiskCommand<T extends MoveDiskParameters> extends BaseImagesCom
 
     protected boolean shouldLiveMigrationBeUsed() {
         VM vmWithDisk = getVMByParameterDisk();
-        return vmWithDisk != null && vmWithDisk.getstatus() == VMStatus.Up && vmWithDisk.getrun_on_vds() != null
-                && !vmWithDisk.getrun_on_vds().equals(Guid.Empty);
+        return vmWithDisk != null && vmWithDisk.getStatus() == VMStatus.Up && vmWithDisk.getRunOnVds() != null
+                && !vmWithDisk.getRunOnVds().equals(Guid.Empty);
     }
 
     private void handleChildReturnValue() {

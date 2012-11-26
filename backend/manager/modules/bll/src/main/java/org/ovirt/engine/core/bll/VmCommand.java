@@ -67,7 +67,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         if (super.getStoragePoolId() == null) {
             VM vm = getVm();
             if (vm != null) {
-                setStoragePoolId(vm.getstorage_pool_id());
+                setStoragePoolId(vm.getStoragePoolId());
             }
         }
         return super.getStoragePoolId();
@@ -187,9 +187,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                             diskImage.getit_guid()));
                 }
             }
-            if (StringUtils.isEmpty(vm.getvmt_name())) {
-                VmTemplate t = DbFacade.getInstance().getVmTemplateDao().get(vm.getvmt_guid());
-                vm.setvmt_name(t.getname());
+            if (StringUtils.isEmpty(vm.getVmtName())) {
+                VmTemplate t = DbFacade.getInstance().getVmTemplateDao().get(vm.getVmtGuid());
+                vm.setVmtName(t.getname());
             }
             String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
 
@@ -265,10 +265,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected void endActionOnVmConfiguration() {
         if (getVm() != null) {
-            if (getVm().getstatus() == VMStatus.ImageLocked) {
+            if (getVm().getStatus() == VMStatus.ImageLocked) {
                 VmHandler.unlockVm(getVm(), getCompensationContext());
             }
-            updateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(getVm()));
+            updateVmInSpm(getVm().getStoragePoolId(), Arrays.asList(getVm()));
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
@@ -298,7 +298,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean handleHibernatedVm(VdcActionType parentCommand, boolean startPollingTasks) {
         // this is temp code until it will be implemented in SPM
-        String[] strings = getVm().gethibernation_vol_handle().split(",");
+        String[] strings = getVm().getHibernationVolHandle().split(",");
         List<Guid> guids = new LinkedList<Guid>();
         for (String string : strings) {
             guids.add(new Guid(string));
@@ -322,7 +322,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             VDSReturnValue vdsRetValue1 = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
                     new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[2],
-                            postZero, false, getVm().getvds_group_compatibility_version().toString()));
+                            postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
             if (!vdsRetValue1.getSucceeded()) {
                 return false;
@@ -338,7 +338,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             VDSReturnValue vdsRetValue2 = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
                     new DeleteImageGroupVDSCommandParameters(imagesList[1], imagesList[0], imagesList[4],
-                            postZero, false, getVm().getvds_group_compatibility_version().toString()));
+                            postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
             if (!vdsRetValue2.getSucceeded()) {
                 if (startPollingTasks) {
@@ -402,7 +402,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean isVmNameValidLength(VM vm) {
 
         // get VM name
-        String vmName = vm.getvm_name();
+        String vmName = vm.getVmName();
 
         // get the max VM name (configuration parameter)
         int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);
@@ -410,7 +410,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         // names are allowed different lengths in Windows and non-Windows OSs,
         // consider this when setting the max length.
-        int maxLength = vm.getvm_os().isWindows() ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
+        int maxLength = vm.getVmOs().isWindows() ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
 
         // check if name is longer than allowed name
         boolean nameLengthValid = (vmName.length() <= maxLength);
@@ -478,7 +478,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isOsSupportingHotPlug() {
-        String vmOs = getVm().getos().name();
+        String vmOs = getVm().getOs().name();
         String[] unsupportedOSs = Config.<String> GetValue(ConfigValues.HotPlugUnsupportedOsList).split(",");
         for (String os : unsupportedOSs) {
             if (os.equalsIgnoreCase(vmOs)) {

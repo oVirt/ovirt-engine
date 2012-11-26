@@ -139,7 +139,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         List<String> problematicVmNames = new ArrayList<String>();
         for (VM vm : vms) {
             if (getParameters().isRemoveTemplateFromDb()) {
-                problematicVmNames.add(vm.getvm_name());
+                problematicVmNames.add(vm.getVmName());
             } else {
                 List<DiskImage> vmDIsks =
                         ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()),
@@ -148,7 +148,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                 Set<Guid> domainsIds = getStorageDoaminsByDisks(vmDIsks, false);
                 for (Guid domainId : domainsIds) {
                     if (!getParameters().getStorageDomainsList().contains(domainId)) {
-                        problematicVmNames.add(vm.getvm_name());
+                        problematicVmNames.add(vm.getVmName());
                     }
                 }
             }

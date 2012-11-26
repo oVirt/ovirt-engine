@@ -52,7 +52,7 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
             map.add(VdsProperties.portMirroring, Collections.singletonList(nic.getNetworkName()));
         }
 
-        VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getvds_group_compatibility_version());
+        VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getVdsGroupCompatibilityVersion());
         return map;
     }
 

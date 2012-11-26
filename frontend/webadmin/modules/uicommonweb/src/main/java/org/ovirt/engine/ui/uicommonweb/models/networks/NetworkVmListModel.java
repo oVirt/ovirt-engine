@@ -64,13 +64,13 @@ public class NetworkVmListModel extends SearchableListModel
                 public int compare(PairQueryable<VmNetworkInterface, VM> paramT1,
                         PairQueryable<VmNetworkInterface, VM> paramT2) {
                     int compareValue =
-                            paramT1.getSecond().getvds_group_name().compareTo(paramT2.getSecond().getvds_group_name());
+                            paramT1.getSecond().getVdsGroupName().compareTo(paramT2.getSecond().getVdsGroupName());
 
                     if (compareValue != 0) {
                         return compareValue;
                     }
 
-                    return paramT1.getSecond().getvm_name().compareTo(paramT2.getSecond().getvm_name());
+                    return paramT1.getSecond().getVmName().compareTo(paramT2.getSecond().getVmName());
                 }
             });
         }
@@ -134,13 +134,13 @@ public class NetworkVmListModel extends SearchableListModel
         {
             Boolean isActivateSupported =
                     (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
-                            pair.getSecond().getvds_group_compatibility_version().toString());
+                            pair.getSecond().getVdsGroupCompatibilityVersion().toString());
             isActivateSupported = isActivateSupported != null ? isActivateSupported : false;
 
             // If the vm is up and the vnic is active- remove enabled just if hotplug is enabled on the cluster's
             // version
             if (!isActivateSupported && pair.getFirst().isActive()
-                    && !VMStatus.Down.equals(pair.getSecond().getstatus()))
+                    && !VMStatus.Down.equals(pair.getSecond().getStatus()))
             {
                 return false;
             }

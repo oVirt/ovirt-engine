@@ -89,19 +89,19 @@ public final class Cloner
 
         VM vm = new VM();
 
-        vm.setacpi_enable(instance.getacpi_enable());
+        vm.setAcpiEnable(instance.getAcpiEnable());
         // TODO: this field is read only in serialization - not sure why it is cloned
         // vm.ActualDiskWithSnapshotsSize = instance.ActualDiskWithSnapshotsSize;
-        vm.setapp_list(instance.getapp_list());
-        vm.setauto_startup(instance.getauto_startup());
-        vm.setboot_sequence(instance.getboot_sequence());
-        vm.setclient_ip(instance.getclient_ip());
-        vm.setcpu_per_socket(instance.getcpu_per_socket());
-        vm.setcpu_sys(instance.getcpu_sys());
-        vm.setcpu_user(instance.getcpu_user());
-        vm.setdedicated_vm_for_vds(instance.getdedicated_vm_for_vds());
-        vm.setdefault_boot_sequence(instance.getdefault_boot_sequence());
-        vm.setdefault_display_type(instance.getdefault_display_type());
+        vm.setAppList(instance.getAppList());
+        vm.setAutoStartup(instance.isAutoStartup());
+        vm.setBootSequence(instance.getBootSequence());
+        vm.setClientIp(instance.getClientIp());
+        vm.setCpuPerSocket(instance.getCpuPerSocket());
+        vm.setCpuSys(instance.getCpuSys());
+        vm.setCpuUser(instance.getCpuUser());
+        vm.setDedicatedVmForVds(instance.getDedicatedVmForVds());
+        vm.setDefaultBootSequence(instance.getDefaultBootSequence());
+        vm.setDefaultDisplayType(instance.getDefaultDisplayType());
         // TODO: 1. DiskList is an array - CopyTo should be considered (if it can be converted to java, otherwise a
         // simple loop is needed)
         // TODO: 2. it is also read only in serialization, so not sure why it is cloned. it is manipulated via
@@ -111,84 +111,84 @@ public final class Cloner
         // TODO: this is also an object, so needs to be cloned as well. while it is only accessed via VM.DiskMap, which
         // creates a dictionary
         // from it - actually the DiskImage's themselves are probably sharing the same reference...
-        vm.setdisplay(instance.getdisplay());
-        vm.setdisplay_ip(instance.getdisplay_ip());
-        vm.setdisplay_secure_port(instance.getdisplay_secure_port());
-        vm.setdisplay_type(instance.getdisplay_type());
-        vm.setelapsed_time(instance.getelapsed_time());
+        vm.setDisplay(instance.getDisplay());
+        vm.setDisplayIp(instance.getDisplayIp());
+        vm.setDisplaySecurePort(instance.getDisplaySecurePort());
+        vm.setDisplayType(instance.getDisplayType());
+        vm.setElapsedTime(instance.getElapsedTime());
         vm.setRoundedElapsedTime(instance.getRoundedElapsedTime());
         vm.setExitMessage(instance.getExitMessage());
         vm.setExitStatus(instance.getExitStatus());
-        vm.setfail_back(instance.getfail_back());
-        vm.setguest_cur_user_id(instance.getguest_cur_user_id());
-        vm.setguest_cur_user_name(instance.getguest_cur_user_name());
+        vm.setFailBack(instance.isFailBack());
+        vm.setGuestCurUserId(instance.getGuestCurUserId());
+        vm.setGuestCurUserName(instance.getGuestCurUserName());
         vm.setConsoleUserId(instance.getConsoleUserId());
-        vm.setguest_last_login_time(instance.getguest_last_login_time());
-        vm.setguest_last_logout_time(instance.getguest_last_logout_time());
-        vm.setguest_os(instance.getguest_os());
-        vm.setguest_requested_memory(instance.getguest_requested_memory());
+        vm.setGuestLastLoginTime(instance.getGuestLastLoginTime());
+        vm.setGuestLastLogoutTime(instance.getGuestLastLogoutTime());
+        vm.setGuestOs(instance.getGuestOs());
+        vm.setGuestRequestedMemory(instance.getGuestRequestedMemory());
         // TODO: Object, should be "cloned" (probably easiest via new Version(instance.GuestAgentVersion.ToString())
         // pay attention NOT to use lower case version in UICommon code.
         vm.setGuestAgentVersion(instance.getGuestAgentVersion());
-        vm.setinitrd_url(instance.getinitrd_url());
+        vm.setInitrdUrl(instance.getInitrdUrl());
         // TODO: array - need to consider cloning of array, and of actual interfaces
         vm.setInterfaces(instance.getInterfaces());
-        vm.setis_auto_suspend(instance.getis_auto_suspend());
-        vm.setis_initialized(instance.getis_initialized());
-        vm.setis_stateless(instance.getis_stateless());
-        vm.setiso_path(instance.getiso_path());
-        vm.setkernel_params(instance.getkernel_params());
-        vm.setkernel_url(instance.getkernel_url());
-        vm.setkvm_enable(instance.getkvm_enable());
+        vm.setAutoSuspend(instance.isAutoSuspend());
+        vm.setInitialized(instance.isInitialized());
+        vm.setStateless(instance.isStateless());
+        vm.setIsoPath(instance.getIsoPath());
+        vm.setKernelParams(instance.getKernelParams());
+        vm.setKernelUrl(instance.getKernelUrl());
+        vm.setKvmEnable(instance.getKvmEnable());
         // TODO: Guid/NGuid is an object, but code should treat it as immutable, and not change it's uuid directly.
         // (quick skim of code shows this should be safe with current code)
-        vm.setlast_vds_run_on(instance.getlast_vds_run_on());
-        vm.setmigrating_to_vds(instance.getmigrating_to_vds());
+        vm.setLastVdsRunOn(instance.getLastVdsRunOn());
+        vm.setMigratingToVds(instance.getmigrating_to_vds());
         vm.setMigrationSupport(instance.getMigrationSupport());
-        vm.setnice_level(instance.getnice_level());
+        vm.setNiceLevel(instance.getNiceLevel());
         // TODO: this is readonly in java, since it is computed.
         // options: use calculation here in cloner, or still wrap this in VM instead of serializing it
         // vm.num_of_cpus = instance.num_of_cpus;
-        vm.setnum_of_monitors(instance.getnum_of_monitors());
+        vm.setNumOfMonitors(instance.getNumOfMonitors());
         vm.setAllowConsoleReconnect(instance.getAllowConsoleReconnect());
-        vm.setnum_of_sockets(instance.getnum_of_sockets());
-        vm.setorigin(instance.getorigin());
+        vm.setNumOfSockets(instance.getNumOfSockets());
+        vm.setOrigin(instance.getOrigin());
         vm.setVmPauseStatus(instance.getVmPauseStatus());
-        vm.setpriority(instance.getpriority());
-        vm.setrun_on_vds(instance.getrun_on_vds());
-        vm.setrun_on_vds_name(instance.getrun_on_vds_name());
-        vm.setsession(instance.getsession());
+        vm.setPriority(instance.getPriority());
+        vm.setRunOnVds(instance.getRunOnVds());
+        vm.setRunOnVdsName(instance.getRunOnVdsName());
+        vm.setSession(instance.getSession());
         // TODO: see version comment above
         vm.setSpiceDriverVersion(instance.getSpiceDriverVersion());
-        vm.setstatus(instance.getstatus());
-        vm.setstorage_pool_id(instance.getstorage_pool_id());
-        vm.setstorage_pool_name(instance.getstorage_pool_name());
-        vm.settime_zone(instance.gettime_zone());
-        vm.setTransparentHugePages(instance.getTransparentHugePages());
-        vm.setusage_cpu_percent(instance.getusage_cpu_percent());
-        vm.setusage_mem_percent(instance.getusage_mem_percent());
-        vm.setusage_network_percent(instance.getusage_network_percent());
-        vm.setusb_policy(instance.getusb_policy());
-        vm.setutc_diff(instance.getutc_diff());
-        vm.setvds_group_compatibility_version(instance.getvds_group_compatibility_version());
-        vm.setvds_group_id(instance.getvds_group_id());
-        vm.setvds_group_name(instance.getvds_group_name());
-        vm.setvm_creation_date(instance.getvm_creation_date());
-        vm.setvm_description(instance.getvm_description());
-        vm.setvm_domain(instance.getvm_domain());
+        vm.setStatus(instance.getStatus());
+        vm.setStoragePoolId(instance.getStoragePoolId());
+        vm.setStoragePoolName(instance.getStoragePoolName());
+        vm.setTimeZone(instance.getTimeZone());
+        vm.setTransparentHugePages(instance.isTransparentHugePages());
+        vm.setUsageCpuPercent(instance.getUsageCpuPercent());
+        vm.setUsageMemPercent(instance.getUsageMemPercent());
+        vm.setUsageNetworkPercent(instance.getUsageNetworkPercent());
+        vm.setUsbPolicy(instance.getUsbPolicy());
+        vm.setUtcDiff(instance.getUtcDiff());
+        vm.setVdsGroupCompatibilityVersion(instance.getVdsGroupCompatibilityVersion());
+        vm.setVdsGroupId(instance.getVdsGroupId());
+        vm.setVdsGroupName(instance.getVdsGroupName());
+        vm.setVmCreationDate(instance.getVmCreationDate());
+        vm.setVmDescription(instance.getVmDescription());
+        vm.setVmDomain(instance.getVmDomain());
         vm.setId(instance.getId());
-        vm.setvm_host(instance.getvm_host());
-        vm.setvm_ip(instance.getvm_ip());
+        vm.setVmHost(instance.getVmHost());
+        vm.setVmIp(instance.getVmIp());
         vm.setLastStartTime(instance.getLastStartTime());
-        vm.setvm_mem_size_mb(instance.getvm_mem_size_mb());
-        vm.setvm_name(instance.getvm_name());
-        vm.setvm_os(instance.getvm_os());
-        vm.setvm_pid(instance.getvm_pid());
-        vm.setvm_type(instance.getvm_type());
+        vm.setVmMemSizeMb(instance.getVmMemSizeMb());
+        vm.setVmName(instance.getVmName());
+        vm.setVmOs(instance.getVmOs());
+        vm.setVmPid(instance.getVmPid());
+        vm.setVmType(instance.getVmType());
         vm.setVmPoolId(instance.getVmPoolId());
         vm.setVmPoolName(instance.getVmPoolName());
-        vm.setvmt_guid(instance.getvmt_guid());
-        vm.setvmt_name(instance.getvmt_name());
+        vm.setVmtGuid(instance.getVmtGuid());
+        vm.setVmtName(instance.getVmtName());
 
         return vm;
     }
@@ -258,7 +258,7 @@ public final class Cloner
         obj.setMigrateOnError(instance.getMigrateOnError());
         obj.setTransparentHugepages(instance.getTransparentHugepages());
 
-        obj.setstorage_pool_id(instance.getstorage_pool_id());
+        obj.setStoragePoolId(instance.getStoragePoolId());
         obj.setmax_vds_memory_over_commit(instance.getmax_vds_memory_over_commit());
 
         return obj;

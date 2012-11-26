@@ -49,7 +49,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     public VmInfoBuilder(VM vm, XmlRpcStruct createInfo) {
         this.vm = vm;
         this.createInfo = createInfo;
-        hasNonDefaultBootOrder = (vm.getboot_sequence() != vm.getdefault_boot_sequence());
+        hasNonDefaultBootOrder = (vm.getBootSequence() != vm.getDefaultBootSequence());
         if (hasNonDefaultBootOrder) {
             managedDevices = new ArrayList<VmDevice>();
         }
@@ -57,10 +57,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVideoCards() {
-        createInfo.add(VdsProperties.display, vm.getdisplay_type().toString());
+        createInfo.add(VdsProperties.display, vm.getDisplayType().toString());
         // check if display type was changed in given parameters
-        if (vm.getdisplay_type() != vm.getdefault_display_type()) {
-            if (vm.getdisplay_type() == DisplayType.vnc) { // check spice to vnc change
+        if (vm.getDisplayType() != vm.getDefaultDisplayType()) {
+            if (vm.getDisplayType() == DisplayType.vnc) { // check spice to vnc change
                 XmlRpcStruct struct = new XmlRpcStruct();
                 // create a monitor as an unmanaged device
                 struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
@@ -292,7 +292,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmNetworkInterfaces() {
         Boolean useRtl8139_pv = Config.<Boolean> GetValue(
                 ConfigValues.UseRtl8139_pv, vm
-                        .getvds_group_compatibility_version()
+                        .getVdsGroupCompatibilityVersion()
                         .toString());
 
         Map<VmDeviceId, VmDevice> devicesByDeviceId =
@@ -322,26 +322,26 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                     vmInterface,
                                     vmDevice,
                                     VmInterfaceType.pv.name(),
-                                    vm.getvds_group_compatibility_version());
+                                    vm.getVdsGroupCompatibilityVersion());
                         } else {
                             addNetworkInterfaceProperties(struct,
                                     vmInterface,
                                     vmDevice,
                                     VmInterfaceType.rtl8139.name(),
-                                    vm.getvds_group_compatibility_version());
+                                    vm.getVdsGroupCompatibilityVersion());
                         }
                     } else {
                         addNetworkInterfaceProperties(struct,
                                 vmInterface,
                                 vmDevice,
                                 VmInterfaceType.pv.name(),
-                                vm.getvds_group_compatibility_version());
+                                vm.getVdsGroupCompatibilityVersion());
                         // Doual Mode: in this case we have to insert 2 interfaces with the same entries except nicModel
                         XmlRpcStruct rtl8139Struct = new XmlRpcStruct();
                         addNetworkInterfaceProperties(rtl8139Struct,
                                 vmInterface,
                                 vmDevice,
-                                VmInterfaceType.rtl8139.name(), vm.getvds_group_compatibility_version());
+                                VmInterfaceType.rtl8139.name(), vm.getVdsGroupCompatibilityVersion());
                         devices.add(rtl8139Struct);
                     }
                 } else {
@@ -349,7 +349,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             vmInterface,
                             vmDevice,
                             ifaceType.toString(),
-                            vm.getvds_group_compatibility_version());
+                            vm.getVdsGroupCompatibilityVersion());
                 }
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
@@ -359,7 +359,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmSoundDevices() {
-        if (vm.getvm_type() == VmType.Desktop) {
+        if (vm.getVmType() == VmType.Desktop) {
             // get vm device for Sound device from DB
             List<VmDevice> vmDevices =
                     DbFacade.getInstance()
@@ -418,7 +418,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             // recalculate boot order from source devices and set it to target devices
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm,
                     managedDevices,
-                    VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version()));
+                    VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion()));
             for (VmDevice vmDevice : managedDevices) {
                 for (XmlRpcStruct struct : devices) {
                     String deviceId = (String) struct.getItem(VdsProperties.DeviceId);

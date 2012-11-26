@@ -25,7 +25,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
     @Override
     protected boolean canDoAction() {
         boolean retValue = isVmExist();
-        if (retValue && getVm().getstatus() != VMStatus.Up && getVm().getstatus() != VMStatus.Down) {
+        if (retValue && getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }
@@ -42,13 +42,13 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
             }
         }
         if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
-                && getVm().getstatus() != VMStatus.Down) {
+                && getVm().getStatus() != VMStatus.Down) {
             retValue = isHotPlugSupported() && isOsSupportingHotPlug()
                             && isInterfaceSupportedForPlugUnPlug(disk);
         }
 
         if (retValue && Boolean.FALSE.equals(getParameters().isPlugUnPlug())
-                && getVm().getstatus() != VMStatus.Down) {
+                && getVm().getStatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             retValue = false;
         }
@@ -83,7 +83,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
 
     private boolean diskShouldBeUnPlugged() {
         return Boolean.TRUE.equals(getParameters().isPlugUnPlug() && vmDevice.getIsPlugged()
-                && getVm().getstatus() != VMStatus.Down);
+                && getVm().getStatus() != VMStatus.Down);
     }
 
     @Override

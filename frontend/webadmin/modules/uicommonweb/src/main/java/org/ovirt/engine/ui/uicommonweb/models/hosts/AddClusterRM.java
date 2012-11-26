@@ -91,7 +91,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster = new VDSGroup();
                 cluster.setname(clusterName);
                 cluster.setdescription((String) clusterModel.getDescription().getEntity());
-                cluster.setstorage_pool_id(enlistmentContext.getDataCenterId());
+                cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
                 cluster.setcpu_name(((ServerCpu) clusterModel.getCPU().getSelectedItem()).getCpuName());
                 cluster.setmax_vds_memory_over_commit(clusterModel.getMemoryOverCommit());
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$

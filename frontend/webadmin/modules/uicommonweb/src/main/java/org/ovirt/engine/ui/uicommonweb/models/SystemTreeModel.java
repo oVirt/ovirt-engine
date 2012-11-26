@@ -212,9 +212,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         systemTreeModel1.setClusterMap(new HashMap<Guid, ArrayList<VDSGroup>>());
                         for (VDSGroup cluster : clusters)
                         {
-                            if (cluster.getstorage_pool_id() != null)
+                            if (cluster.getStoragePoolId() != null)
                             {
-                                Guid key = cluster.getstorage_pool_id().getValue();
+                                Guid key = cluster.getStoragePoolId().getValue();
                                 if (!systemTreeModel1.getClusterMap().containsKey(key))
                                 {
                                     systemTreeModel1.getClusterMap().put(key, new ArrayList<VDSGroup>());

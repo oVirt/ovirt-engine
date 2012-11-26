@@ -20,12 +20,12 @@ public class SetDedicatedVmCommand<T extends SetDedicatedVmParameters> extends V
     protected void executeVmCommand() {
         List<VM> vms = getVmDAO().getAllForDedicatedPowerClientByVds(getVdsId());
         if (vms != null && vms.size() != 0) {
-            vms.get(0).setdedicated_vm_for_vds(null);
+            vms.get(0).setDedicatedVmForVds(null);
             getVmStaticDAO().update(vms.get(0).getStaticData());
         }
         VM vm = getVmDAO().get(getVmId());
 
-        vm.setdedicated_vm_for_vds(!(getVdsId().equals(Guid.Empty)) ? getVdsId() : null);
+        vm.setDedicatedVmForVds(!(getVdsId().equals(Guid.Empty)) ? getVdsId() : null);
 
         getVmStaticDAO().update(vm.getStaticData());
 

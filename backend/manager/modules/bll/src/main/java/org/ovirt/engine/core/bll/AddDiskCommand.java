@@ -171,7 +171,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean isStoragePoolMatching(VM vm) {
         if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-            getStorageDomainId().getValue(), vm.getstorage_pool_id())) == null) {
+            getStorageDomainId().getValue(), vm.getStoragePoolId())) == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
         return true;
@@ -199,7 +199,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected boolean performImagesChecks(VM vm) {
         return ImagesHandler.PerformImagesChecks(vm,
                 getReturnValue().getCanDoActionMessages(),
-                vm.getstorage_pool_id(),
+                vm.getStoragePoolId(),
                 getStorageDomainId().getValue(),
                 false,
                 true,
@@ -343,7 +343,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             VmDeviceType.DISK,
                             VmDeviceType.DISK,
                             null,
-                            getVm().getstatus() == VMStatus.Down,
+                            getVm().getStatus() == VMStatus.Down,
                             false);
                 }
                 return null;
@@ -379,7 +379,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     VmDeviceType.DISK,
                     VmDeviceType.DISK,
                     null,
-                    getVm().getstatus() == VMStatus.Down,
+                    getVm().getStatus() == VMStatus.Down,
                     false));
             getCompensationContext().stateChanged();
         }

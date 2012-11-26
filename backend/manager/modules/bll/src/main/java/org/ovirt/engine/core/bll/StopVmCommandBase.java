@@ -55,9 +55,9 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm() == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else if (!VM.isStatusUp(getVm().getstatus()) && getVm().getstatus() != VMStatus.Paused
-                && getVm().getstatus() != VMStatus.NotResponding && getVm().getstatus() != VMStatus.Suspended) {
-            if (getVm().getstatus() == VMStatus.SavingState || getVm().getstatus() == VMStatus.RestoringState) {
+        } else if (!VM.isStatusUp(getVm().getStatus()) && getVm().getStatus() != VMStatus.Paused
+                && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
+            if (getVm().getStatus() == VMStatus.SavingState || getVm().getStatus() == VMStatus.RestoringState) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
             } else {
@@ -70,7 +70,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     protected void Destroy() {
-        if (getVm().getstatus() == VMStatus.MigratingFrom && getVm().getmigrating_to_vds() != null) {
+        if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getmigrating_to_vds() != null) {
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
@@ -89,8 +89,8 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     @Override
     protected void executeVmCommand() {
         getParameters().setEntityId(getVm().getId());
-        if (getVm().getstatus() == VMStatus.Suspended
-                || !StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())) {
+        if (getVm().getStatus() == VMStatus.Suspended
+                || !StringHelper.isNullOrEmpty(getVm().getHibernationVolHandle())) {
             setSuspendedVm(true);
             setSucceeded(stopSuspendedVm());
         } else {
@@ -100,7 +100,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     }
 
     private void removeStatelessVmUnmanagedDevices() {
-        if (getSucceeded() && (getVm().getis_stateless() ||  isRunOnce())) {
+        if (getSucceeded() && (getVm().isStateless() ||  isRunOnce())) {
             // remove all unmanaged devices of a stateless VM
 
             final List<VmDevice> vmDevices =
@@ -154,13 +154,13 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
         // Set the Vm to null, for getting the recent VM from the DB, instead from the cache.
         setVm(null);
-        VMStatus vmStatus = getVm().getstatus();
+        VMStatus vmStatus = getVm().getStatus();
 
         // Check whether stop VM procedure didn't started yet (Status is not imageLocked), by another transaction.
-        if (getVm().getstatus() != VMStatus.ImageLocked) {
+        if (getVm().getStatus() != VMStatus.ImageLocked) {
             // Set the VM to image locked to decrease race condition.
             updateVmStatus(VMStatus.ImageLocked);
-             if (!StringHelper.isNullOrEmpty(getVm().gethibernation_vol_handle())
+             if (!StringHelper.isNullOrEmpty(getVm().getHibernationVolHandle())
                     && handleHibernatedVm(getActionType(), false)) {
                 returnVal = true;
             } else {
@@ -174,7 +174,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(),getVm().getstatus());
+                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(),getVm().getStatus());
                 updateVmData(getVm().getDynamicData());
                 getCompensationContext().stateChanged();
                 return null;
@@ -188,11 +188,11 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
      * over write in the DB, otherwise , update directly to the DB.
      */
     private void updateVmData(VmDynamic vmDynamicData) {
-        if (getVm().getrun_on_vds() != null) {
+        if (getVm().getRunOnVds() != null) {
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getrun_on_vds().getValue(),
+                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getRunOnVds().getValue(),
                                     vmDynamicData));
         } else {
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamicData);
@@ -204,8 +204,8 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         setCommandShouldBeLogged(false);
 
         if (getVm() != null) {
-            getVm().setstatus(VMStatus.Down);
-            getVm().sethibernation_vol_handle(null);
+            getVm().setStatus(VMStatus.Down);
+            getVm().setHibernationVolHandle(null);
 
             DbFacade.getInstance().getVmDynamicDao().update(getVm().getDynamicData());
         }
@@ -223,23 +223,23 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
-                && (getVm().getstatus() == VMStatus.Up
-                || getVm().getstatus() == VMStatus.Paused
-                || getVm().getstatus() == VMStatus.PoweringUp
-                ||getVm().getstatus() == VMStatus.RebootInProgress)) {
+                && (getVm().getStatus() == VMStatus.Up
+                || getVm().getStatus() == VMStatus.Paused
+                || getVm().getStatus() == VMStatus.PoweringUp
+                ||getVm().getStatus() == VMStatus.RebootInProgress)) {
             list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
-                    getVm().getvds_group_id(),
-                    getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
-                    getVm().getmem_size_mb()));
+                    getVm().getVdsGroupId(),
+                    getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
+                    getVm().getMemSizeMb()));
         }
         return list;
     }
 
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        if (!getVm().getis_stateless()) {
+        if (!getVm().isStateless()) {
             return list;
         }
         //if runAsStateless

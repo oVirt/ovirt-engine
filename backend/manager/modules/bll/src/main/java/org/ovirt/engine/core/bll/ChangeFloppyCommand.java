@@ -16,7 +16,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
 
     public ChangeFloppyCommand(T parameters) {
         super(parameters);
-        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getstorage_pool_id());
+        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId());
     }
 
     public String getDiskName() {
@@ -25,7 +25,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
 
     @Override
     protected void Perform() {
-        if (VM.isStatusUpOrPaused(getVm().getstatus())) {
+        if (VM.isStatusUpOrPaused(getVm().getStatus())) {
             setActionReturnValue(Backend
                     .getInstance()
                     .getResourceManager()

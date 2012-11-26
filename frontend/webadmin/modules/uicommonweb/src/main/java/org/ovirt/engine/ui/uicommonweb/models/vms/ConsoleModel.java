@@ -145,7 +145,7 @@ public abstract class ConsoleModel extends EntityModel
     {
         if (getForceVmStatusUp())
         {
-            return getEntity().getstatus() == VMStatus.Up;
+            return getEntity().getStatus() == VMStatus.Up;
         }
 
         return IsVmUp();
@@ -153,7 +153,7 @@ public abstract class ConsoleModel extends EntityModel
 
     public boolean IsVmUp()
     {
-        switch (getEntity().getstatus())
+        switch (getEntity().getStatus())
         {
         case PoweringUp:
         case Up:

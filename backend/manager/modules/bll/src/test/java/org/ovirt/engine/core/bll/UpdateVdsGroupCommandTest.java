@@ -322,7 +322,7 @@ public class UpdateVdsGroupCommandTest {
         group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcpu_name("Intel Conroe");
         group.setcompatibility_version(VERSION_1_1);
-        group.setstorage_pool_id(STORAGE_POOL_ID);
+        group.setStoragePoolId(STORAGE_POOL_ID);
         return group;
     }
 
@@ -331,13 +331,13 @@ public class UpdateVdsGroupCommandTest {
         group.setname("Default");
         group.setId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         group.setcompatibility_version(VERSION_1_1);
-        group.setstorage_pool_id(STORAGE_POOL_ID);
+        group.setStoragePoolId(STORAGE_POOL_ID);
         return group;
     }
 
     private static VDSGroup createDetachedDefaultVdsGroup() {
         VDSGroup group = createDefaultVdsGroup();
-        group.setstorage_pool_id(null);
+        group.setStoragePoolId(null);
         return group;
     }
 
@@ -355,7 +355,7 @@ public class UpdateVdsGroupCommandTest {
 
     private static VDSGroup createVdsGroupWithDifferentPool() {
         VDSGroup group = createNewVdsGroup();
-        group.setstorage_pool_id(Guid.NewGuid());
+        group.setStoragePoolId(Guid.NewGuid());
         return group;
     }
 
@@ -432,7 +432,7 @@ public class UpdateVdsGroupCommandTest {
 
     private void clusterHasVMs() {
         VM vm = new VM();
-        vm.setvds_group_id(VDSGroup.DEFAULT_VDS_GROUP_ID);
+        vm.setVdsGroupId(VDSGroup.DEFAULT_VDS_GROUP_ID);
         List<VM> vmList = new ArrayList<VM>();
         vmList.add(vm);
 

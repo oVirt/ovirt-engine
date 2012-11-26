@@ -86,7 +86,7 @@ public class BackendVmPoolsResource
         if (pool.isSetSize() && pool.getSize() > 0) {
             VM vm = getEntity(VM.class, SearchType.VM, "Vms: pool=" + pool.getName());
             pool.setTemplate(new Template());
-            pool.getTemplate().setId(vm.getvmt_guid().toString());
+            pool.getTemplate().setId(vm.getVmtGuid().toString());
         }
         return pool;
     }

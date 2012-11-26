@@ -46,14 +46,14 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             return;
         }
 
-        getVm().setinitrd_url(runVmParameters.getinitrd_url());
-        getVm().setkernel_url(runVmParameters.getkernel_url());
-        getVm().setkernel_params(runVmParameters.getkernel_params());
+        getVm().setInitrdUrl(runVmParameters.getinitrd_url());
+        getVm().setKernelUrl(runVmParameters.getkernel_url());
+        getVm().setKernelParams(runVmParameters.getkernel_params());
         getVm().setCustomProperties(runVmParameters.getCustomProperties());
 
-        getVm().setboot_sequence(((runVmParameters.getBootSequence()) != null) ?
+        getVm().setBootSequence(((runVmParameters.getBootSequence()) != null) ?
                 runVmParameters.getBootSequence() :
-                getVm().getdefault_boot_sequence());
+                getVm().getDefaultBootSequence());
     }
 
     @Override

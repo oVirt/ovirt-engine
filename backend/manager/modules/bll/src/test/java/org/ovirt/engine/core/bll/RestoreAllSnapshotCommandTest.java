@@ -189,7 +189,7 @@ public class RestoreAllSnapshotCommandTest {
     private VM mockVm() {
         VM vm = new VM();
         vm.setId(vmId);
-        vm.setstatus(VMStatus.Down);
+        vm.setStatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(spyCommand, vmDAO);
         when(vmDAO.get(vmId)).thenReturn(vm);
         return vm;

@@ -32,8 +32,8 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmVideoCards() {
-        createInfo.add(VdsProperties.display, vm.getdisplay_type().toString()); // vnc,qxl
-        createInfo.add(VdsProperties.num_of_monitors, String.valueOf(vm.getnum_of_monitors()));
+        createInfo.add(VdsProperties.display, vm.getDisplayType().toString()); // vnc,qxl
+        createInfo.add(VdsProperties.num_of_monitors, String.valueOf(vm.getNumOfMonitors()));
     }
 
     @Override
@@ -157,7 +157,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             if (ifaceType == VmInterfaceType.rtl8139_pv) {
                 Boolean useRtl8139_pv = Config.<Boolean> GetValue(
                         ConfigValues.UseRtl8139_pv, vm
-                                .getvds_group_compatibility_version()
+                                .getVdsGroupCompatibilityVersion()
                                 .toString());
 
                 if (!useRtl8139_pv) {
@@ -194,8 +194,8 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmSoundDevices() {
-        if (vm.getvm_type() == VmType.Desktop) {
-            createInfo.add(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getvds_group_compatibility_version()));
+        if (vm.getVmType() == VmType.Desktop) {
+            createInfo.add(VdsProperties.soundDevice, getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion()));
         }
     }
 
@@ -206,7 +206,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 .getVmDeviceByVmId(vm.getId());
         String bootSeqInDB = VmDeviceCommonUtils.getBootSequence(devices)
                 .toString().toLowerCase();
-        String bootSeqInBE = vm.getboot_sequence().toString().toLowerCase();
+        String bootSeqInBE = vm.getBootSequence().toString().toLowerCase();
         // TODO : find another way to distinguish run vs. run-once
         if (bootSeqInBE.equals(bootSeqInDB))
             createInfo.add(VdsProperties.Boot, bootSeqInDB);

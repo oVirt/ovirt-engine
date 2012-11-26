@@ -17,7 +17,7 @@ public class VmValidator {
 
     /** @return Validation result that indicates if the VM is during migration or not. */
     public ValidationResult vmNotDuringMigration() {
-        if (vm.getstatus() == VMStatus.MigratingFrom || vm.getstatus() == VMStatus.MigratingTo) {
+        if (vm.getStatus() == VMStatus.MigratingFrom || vm.getStatus() == VMStatus.MigratingTo) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS);
         }
 

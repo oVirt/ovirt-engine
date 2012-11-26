@@ -200,7 +200,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 returnValue =
                         ImagesHandler.PerformImagesChecks(vm,
                                 messages,
-                                vm.getstorage_pool_id(),
+                                vm.getStoragePoolId(),
                                 storageDomainId,
                                 false,
                                 true,
@@ -241,11 +241,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
         RunVmParams tempVar = new RunVmParams(vmId);
-        tempVar.setUseVnc(vm.getvm_os().isLinux() || vm.getvm_type() == VmType.Server);
+        tempVar.setUseVnc(vm.getVmOs().isLinux() || vm.getVmType() == VmType.Server);
         RunVmParams runVmParams = tempVar;
         VdsSelector vdsSelector = new VdsSelector(vm,
                 ((runVmParams.getDestinationVdsId()) != null) ? runVmParams.getDestinationVdsId()
-                        : vm.getdedicated_vm_for_vds(), true, new VdsFreeMemoryChecker(new NonWaitingDelayer()));
+                        : vm.getDedicatedVmForVds(), true, new VdsFreeMemoryChecker(new NonWaitingDelayer()));
         return VmRunHandler.getInstance().canRunVm(vm,
                 messages,
                 runVmParams,

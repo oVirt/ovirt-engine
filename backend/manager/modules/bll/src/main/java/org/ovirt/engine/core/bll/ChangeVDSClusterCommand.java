@@ -129,7 +129,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
 
         if (targetStoragePool != null
-                && (getSourceCluster().getstorage_pool_id()== null || !targetStoragePool.getId().equals(getSourceCluster().getstorage_pool_id().getValue()))) {
+                && (getSourceCluster().getStoragePoolId()== null || !targetStoragePool.getId().equals(getSourceCluster().getStoragePoolId().getValue()))) {
             VdcReturnValueBase addVdsSpmIdReturn =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
                             getParameters(),
@@ -155,9 +155,9 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (getSourceCluster().getstorage_pool_id() != null
-                && (targetStoragePool== null || !getSourceCluster().getstorage_pool_id().getValue().equals(targetStoragePool.getId()))) {
-            getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getstorage_pool_id().getValue());
+        if (getSourceCluster().getStoragePoolId() != null
+                && (targetStoragePool== null || !getSourceCluster().getStoragePoolId().getValue().equals(targetStoragePool.getId()))) {
+            getVdsSpmIdMapDAO().removeByVdsAndStoragePool(getVds().getId(), getSourceCluster().getStoragePoolId().getValue());
         }
 
         setSucceeded(true);

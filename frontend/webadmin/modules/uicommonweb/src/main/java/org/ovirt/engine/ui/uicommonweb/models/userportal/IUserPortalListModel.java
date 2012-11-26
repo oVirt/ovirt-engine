@@ -101,7 +101,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
                 {
                     continue;
                 }
-                if ((onlyVmStatusUp && vm.getstatus() == VMStatus.Up)
+                if ((onlyVmStatusUp && vm.getStatus() == VMStatus.Up)
                         || (!onlyVmStatusUp && userPortalItemModel.getDefaultConsole().IsVmUp()))
                 {
                     upVms.add(userPortalItemModel);
@@ -194,7 +194,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             item.setDefaultConsole(determineConsoleModelFromVm(vm, cachedModels));
 
             // Update additional console
-            if (DataProvider.IsWindowsOsType(vm.getvm_os()))
+            if (DataProvider.IsWindowsOsType(vm.getVmOs()))
             {
                 item.setAdditionalConsole(cachedModels.get(RDP_INDEX));
                 item.setHasAdditionalConsole(true);
@@ -208,7 +208,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
     }
 
     protected ConsoleModel determineConsoleModelFromVm(VM vm, ArrayList<ConsoleModel> cachedModels) {
-        return vm.getdisplay_type() == DisplayType.vnc ? cachedModels.get(VNC_INDEX) : cachedModels.get(SPICE_INDEX);
+        return vm.getDisplayType() == DisplayType.vnc ? cachedModels.get(VNC_INDEX) : cachedModels.get(SPICE_INDEX);
     }
 
     protected void updateDefaultSelectedConsoleProtocol(VM vm) {
@@ -226,7 +226,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
 
         boolean isWindowsExplorer = getConfigurator().isClientWindownsExplorer();
 
-        if (vmOsTypeWithoutSpiceDriverSupport.contains(vm.getos()) && isWindowsExplorer) {
+        if (vmOsTypeWithoutSpiceDriverSupport.contains(vm.getOs()) && isWindowsExplorer) {
             cachedModels.get(RDP_INDEX).setUserSelected(true);
         } else {
             determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);

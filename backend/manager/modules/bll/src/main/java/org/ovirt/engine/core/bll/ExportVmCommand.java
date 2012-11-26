@@ -82,7 +82,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             return false;
         }
         setDescription(getVmName());
-        setStoragePoolId(getVm().getstorage_pool_id());
+        setStoragePoolId(getVm().getStoragePoolId());
 
         // check that target domain exists
         StorageDomainValidator targetstorageDomainValidator = new StorageDomainValidator(getStorageDomain());
@@ -101,18 +101,18 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (DbFacade.getInstance()
                 .getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                        getVm().getstorage_pool_id())) == null) {
+                        getVm().getStoragePoolId())) == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             return false;
         }
 
         // check if template exists only if asked for
         if (getParameters().getTemplateMustExists()) {
-            if (!CheckTemplateInStorageDomain(getVm().getstorage_pool_id(), getParameters().getStorageDomainId(),
-                    getVm().getvmt_guid())) {
+            if (!CheckTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
+                    getVm().getVmtGuid())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN);
                 getReturnValue().getCanDoActionMessages().add(
-                        String.format("$TemplateName %1$s", getVm().getvmt_name()));
+                        String.format("$TemplateName %1$s", getVm().getVmtName()));
                 return false;
             }
         }
@@ -154,7 +154,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (!(checkVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                 && ImagesHandler.PerformImagesChecks(getVm(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVm().getstorage_pool_id(),
+                        getVm().getStoragePoolId(),
                         Guid.Empty,
                         false,
                         true,
@@ -242,12 +242,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 AllVmImages.add(diskImage);
             }
         }
-        if (StringUtils.isEmpty(vm.getvmt_name())) {
+        if (StringUtils.isEmpty(vm.getVmtName())) {
             VmTemplate t = DbFacade.getInstance().getVmTemplateDao()
-                        .get(vm.getvmt_guid());
-            vm.setvmt_name(t.getname());
+                        .get(vm.getVmtGuid());
+            vm.setVmtName(t.getname());
         }
-        getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
         List<Guid> imageGroupIds = new ArrayList<Guid>();
         for(Disk disk : vm.getDiskMap().values()) {
@@ -334,7 +334,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected boolean checkVmInStorageDomain() {
         boolean retVal = true;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getVm()
-                .getstorage_pool_id(), getParameters().getStorageDomainId());
+                .getStoragePoolId(), getParameters().getStorageDomainId());
         tempVar.setGetAll(true);
         VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
                 tempVar);
@@ -348,7 +348,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         retVal = false;
                         break;
                     }
-                } else if (vm.getvm_name().equals(getVm().getvm_name())) {
+                } else if (vm.getVmName().equals(getVm().getVmName())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
                     retVal = false;
                     break;
@@ -401,7 +401,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     protected boolean updateVmImSpm() {
-        return VmCommand.updateVmInSpm(getVm().getstorage_pool_id(),
+        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
                 Arrays.asList(getVm()),
                 getParameters().getStorageDomainId());
     }
@@ -426,12 +426,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     private void endCopyCollapseOperations(VM vm) {
-        vm.setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
-        vm.setvmt_name(null);
+        vm.setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
+        vm.setVmtName(null);
         Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
                 DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Arrays.asList(activeSnapshot));
-        updateCopyVmInSpm(getVm().getstorage_pool_id(),
+        updateCopyVmInSpm(getVm().getStoragePoolId(),
                 vm, getParameters()
                         .getStorageDomainId());
     }

@@ -51,7 +51,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_name();
+                return object.getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());
@@ -61,7 +61,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvds_group_name();
+                return object.getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterVm());
@@ -69,7 +69,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_ip();
+                return object.getVmIp();
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm());
@@ -77,7 +77,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_mem_percent();
+                return object.getUsageMemPercent();
             }
         };
         getTable().addColumn(memColumn, constants.memoryVm());
@@ -85,7 +85,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_cpu_percent();
+                return object.getUsageCpuPercent();
             }
         };
         getTable().addColumn(cpuColumn, constants.cpuVm());
@@ -93,7 +93,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         PercentColumn<VM> netColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_network_percent();
+                return object.getUsageNetworkPercent();
             }
         };
         getTable().addColumn(netColumn, constants.networkVm());
@@ -101,7 +101,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusVm());

@@ -51,13 +51,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         super(parameters);
         parameters.setEntityId(getVmId());
         if (getVm() != null) {
-            setStoragePoolId(getVm().getstorage_pool_id());
+            setStoragePoolId(getVm().getStoragePoolId());
         }
     }
 
     @Override
     protected void executeVmCommand() {
-        if (getVm().getstatus() != VMStatus.ImageLocked) {
+        if (getVm().getStatus() != VMStatus.ImageLocked) {
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
         }
         freeLock();
@@ -69,7 +69,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         Guid vmId = getVmId();
         hasImages = vm.getDiskList().size() > 0;
 
-        removeVmInSpm(vm.getstorage_pool_id(), vmId);
+        removeVmInSpm(vm.getStoragePoolId(), vmId);
         if (hasImages && !removeVmImages(null)) {
             return false;
         }
@@ -112,7 +112,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public static boolean IsVmRunning(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
-            return VM.isStatusUpOrPaused(vm.getstatus()) || vm.getstatus() == VMStatus.Unknown;
+            return VM.isStatusUpOrPaused(vm.getStatus()) || vm.getStatus() == VMStatus.Unknown;
         }
         return false;
     }
@@ -127,10 +127,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (getVm() == null) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST.toString());
             returnValue = false;
-        } else if (IsVmRunning(getVmId()) || (getVm().getstatus() == VMStatus.NotResponding)) {
+        } else if (IsVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
             returnValue = false;
-        } else if (getVm().getstatus() == VMStatus.Suspended) {
+        } else if (getVm().getStatus() == VMStatus.Suspended) {
             messages.add(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN.toString());
             returnValue = false;
         } else if (isVmInPool(getVmId())) {
@@ -146,7 +146,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 returnValue = false;
             } else {
                 VmHandler.updateDisksFromDb(getVm());
-                if (!ImagesHandler.PerformImagesChecks(getVm(), messages, getVm().getstorage_pool_id(), Guid.Empty,
+                if (!ImagesHandler.PerformImagesChecks(getVm(), messages, getVm().getStoragePoolId(), Guid.Empty,
                                 false, !getParameters().getForce(), false, false,
                                 getParameters().getForce(), false, !getVm().getDiskMap().values().isEmpty(),
                                 true, getVm().getDiskMap().values())) {
@@ -155,8 +155,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
         // we cannot force remove if there is running task
-        if (returnValue && getParameters().getForce() && getVm().getstatus() == VMStatus.ImageLocked
-                && AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getstorage_pool_id())) {
+        if (returnValue && getParameters().getForce() && getVm().getStatus() == VMStatus.ImageLocked
+                && AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
             messages.add(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS.toString());
             returnValue = false;
         }

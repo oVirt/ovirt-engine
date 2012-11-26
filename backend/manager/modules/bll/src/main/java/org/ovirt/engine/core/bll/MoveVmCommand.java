@@ -41,7 +41,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         super(parameters);
         setVmId(parameters.getContainerId());
         parameters.setEntityId(getVmId());
-        setStoragePoolId(getVm().getstorage_pool_id());
+        setStoragePoolId(getVm().getStoragePoolId());
     }
 
     @Override
@@ -74,7 +74,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
         retValue = retValue && ImagesHandler.PerformImagesChecks(getVm(),
                                 getReturnValue().getCanDoActionMessages(),
-                                getVm().getstorage_pool_id(),
+                                getVm().getStoragePoolId(),
                                 Guid.Empty,
                                 false,
                                 true,
@@ -85,7 +85,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 false,
                                 true,
                                 diskImages);
-        setStoragePoolId(getVm().getstorage_pool_id());
+        setStoragePoolId(getVm().getStoragePoolId());
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {
@@ -98,7 +98,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 && DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                getVm().getstorage_pool_id())) == null) {
+                                getVm().getStoragePoolId())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
@@ -125,9 +125,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
         boolean retValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active)
                 && checkIfDisksExist(diskImages);
-        if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())) {
+        if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())) {
             List<DiskImage> imageList =
-                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getvmt_guid()),
+                    ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getVmtGuid()),
                             false,
                             false);
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
@@ -152,7 +152,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     @Override
     protected void executeCommand() {
         VM vm = getVm();
-        if (vm.getstatus() != VMStatus.Down) {
+        if (vm.getStatus() != VMStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
         }
         // Check if vm is initializing to run or already running - if it is in
@@ -165,8 +165,8 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId())).getReturnValue()).booleanValue();
 
         if (isVmDuringInit) {
-            log.errorFormat("VM {0} must be down for Move VM to be successfuly executed", vm.getvm_name());
-            setActionReturnValue(vm.getstatus());
+            log.errorFormat("VM {0} must be down for Move VM to be successfuly executed", vm.getVmName());
+            setActionReturnValue(vm.getStatus());
             setSucceeded(false);
             return;
         }
@@ -179,7 +179,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     protected boolean updateVmImSpm() {
-        return VmCommand.updateVmInSpm(getVm().getstorage_pool_id(),
+        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
                 Arrays.asList(getVm()));
     }
 

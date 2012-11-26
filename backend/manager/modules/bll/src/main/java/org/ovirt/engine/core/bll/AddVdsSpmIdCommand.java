@@ -37,11 +37,11 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     @Override
     protected boolean canDoAction() {
         // check if vds already has vds spm id and storage pool exists
-        if (Guid.Empty.equals(getVds().getstorage_pool_id())) {
+        if (Guid.Empty.equals(getVds().getStoragePoolId())) {
             return false;
         }
         vds_spm_id_mapList = DbFacade.getInstance().getVdsSpmIdMapDao().getAll(
-                getVds().getstorage_pool_id());
+                getVds().getStoragePoolId());
         if (vds_spm_id_mapList.size() >= Config.<Integer> GetValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
             VdcFault fault = new VdcFault();
             fault.setError(VdcBllErrors.ReachedMaxNumberOfHostsInDC);
@@ -72,7 +72,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
                 break;
             }
         }
-        vds_spm_id_map newMap = new vds_spm_id_map(getVds().getstorage_pool_id(), getVdsId(), selectedId);
+        vds_spm_id_map newMap = new vds_spm_id_map(getVds().getStoragePoolId(), getVdsId(), selectedId);
         DbFacade.getInstance().getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);
@@ -84,6 +84,6 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVds().getstorage_pool_id().toString(), LockingGroup.REGISTER_VDS.name());
+        return Collections.singletonMap(getVds().getStoragePoolId().toString(), LockingGroup.REGISTER_VDS.name());
     }
 }

@@ -12,7 +12,7 @@ public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
     @Override
     public ImageResource getValue(VM vm) {
         if (vm.getVmPoolId() == null) {
-            switch (vm.getvm_type()) {
+            switch (vm.getVmType()) {
             case Desktop:
                 return getApplicationResources().desktopImage();
             case Server:

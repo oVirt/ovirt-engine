@@ -117,13 +117,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // Don't connect if there VM is not running on any host.
-            if (getEntity().getrun_on_vds() == null)
+            if (getEntity().getRunOnVds() == null)
             {
                 return;
             }
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
-            if (!getEntity().getvm_os().isWindows() || getEntity().getSpiceDriverVersion() == null) {
+            if (!getEntity().getVmOs().isWindows() || getEntity().getSpiceDriverVersion() == null) {
                 getspice().setIsWanOptionsEnabled(false);
             }
 
@@ -172,9 +172,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 {
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     boolean reinitialize =
-                            !getEntity().getis_initialized() && DataProvider.IsWindowsOsType(getEntity().getvm_os());
+                            !getEntity().isInitialized() && DataProvider.IsWindowsOsType(getEntity().getVmOs());
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
-                    tempVar.setRunAsStateless(getEntity().getis_stateless());
+                    tempVar.setRunAsStateless(getEntity().isStateless());
                     tempVar.setReinitialize(reinitialize);
                     Frontend.RunMultipleAction(VdcActionType.RunVm,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { tempVar })));
@@ -245,7 +245,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         super.UpdateActionAvailability();
 
         getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.qxl)
-                && !getIsConnected() && getEntity() != null && getEntity().getdisplay_type() != DisplayType.vnc
+                && !getIsConnected() && getEntity() != null && getEntity().getDisplayType() != DisplayType.vnc
                 && IsVmConnectReady());
     }
 
@@ -282,7 +282,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
-                        thisVm.getvds_group_compatibility_version().toString()));
+                        thisVm.getVdsGroupCompatibilityVersion().toString()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, Config.DefaultConfigurationVersion));
                 parametersList.add(new GetVmByVmIdParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
@@ -294,7 +294,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     queryTypeList.add(VdcQueryType.GetAllIsoImagesListByStoragePoolId);
 
                     GetAllImagesListByStoragePoolIdParameters getIsoPamams =
-                            new GetAllImagesListByStoragePoolIdParameters(vm.getstorage_pool_id());
+                            new GetAllImagesListByStoragePoolIdParameters(vm.getStoragePoolId());
                     parametersList.add(getIsoPamams);
                 }
 
@@ -302,7 +302,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
         };
 
-        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getstorage_pool_id());
+        AsyncDataProvider.GetIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
     }
 
     private String ticket;
@@ -361,15 +361,15 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             caCertificate = (String) returnValues.get(5).getReturnValue();
         }
 
-        getspice().setHost(getEntity().getdisplay_ip());
+        getspice().setHost(getEntity().getDisplayIp());
         getspice().setSmartcardEnabled(getEntity().isSmartcardEnabled());
-        getspice().setPort((getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()));
+        getspice().setPort((getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()));
         getspice().setPassword(ticket);
-        getspice().setNumberOfMonitors(getEntity().getnum_of_monitors());
-        getspice().setGuestHostName(getEntity().getvm_host().split("[ ]", -1)[0]); //$NON-NLS-1$
-        if (getEntity().getdisplay_secure_port() != null)
+        getspice().setNumberOfMonitors(getEntity().getNumOfMonitors());
+        getspice().setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
+        if (getEntity().getDisplaySecurePort() != null)
         {
-            getspice().setSecurePort(getEntity().getdisplay_secure_port());
+            getspice().setSecurePort(getEntity().getDisplaySecurePort());
         }
         if (!StringHelper.isNullOrEmpty(spiceSecureChannels))
         {
@@ -397,7 +397,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String ctrlAltDelTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
         String ctrlAltEndTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
-        getspice().setTitle(getEntity().getvm_name()
+        getspice().setTitle(getEntity().getVmName()
                 + ":%d" //$NON-NLS-1$
                 + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - " + //$NON-NLS-1$ //$NON-NLS-2$
                         ConstantsManager.getInstance()
@@ -411,7 +411,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         // Update 'UsbListenPort' value
         getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled()
-                && getEntity().getusb_policy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
+                && getEntity().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
                 : getConfigurator().getSpiceDisableUsbListenPort());
 
         // At lease one of the hot-keys is not empty -> send it to SPICE:
@@ -519,8 +519,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         getspice().getDisconnectedEvent().addListener(this);
         getspice().getMenuItemSelectedEvent().addListener(this);
 
-        if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
-                || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
+        if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
+                || StringHelper.stringsEqual(getEntity().getDisplayIp(), "0")) //$NON-NLS-1$
         {
             determineIpAndConnect(getEntity().getId());
         }
@@ -582,10 +582,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
         if (!getConfigurator().getIsAdmin() && getEntity().getGuestAgentVersion() != null
-                && getEntity().getstatus() == VMStatus.Up)
+                && getEntity().getStatus() == VMStatus.Up)
         {
             getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
-                    + getEntity().getvm_name());
+                    + getEntity().getVmName());
 
             Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     new IFrontendActionAsyncCallback() {

@@ -39,7 +39,7 @@ public class RdpConsoleModel extends ConsoleModel
         {
             getLogger().Debug("Connecting to RDP console..."); //$NON-NLS-1$
 
-            getrdp().setAddress(getEntity().getvm_host().split("[ ]", -1)[0]); //$NON-NLS-1$
+            getrdp().setAddress(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
             getrdp().setGuestID(getEntity().getId().toString());
 
             // Subscribe to disconnect event
@@ -66,8 +66,8 @@ public class RdpConsoleModel extends ConsoleModel
         super.UpdateActionAvailability();
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
-                && (getEntity().getstatus() == VMStatus.Up || getEntity().getstatus() == VMStatus.PoweringDown)
-                && DataProvider.IsWindowsOsType(getEntity().getvm_os()) && getConfigurator().isClientWindownsExplorer());
+                && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
+                && DataProvider.IsWindowsOsType(getEntity().getVmOs()) && getConfigurator().isClientWindownsExplorer());
     }
 
     @Override

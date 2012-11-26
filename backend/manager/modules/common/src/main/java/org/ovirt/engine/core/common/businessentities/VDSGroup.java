@@ -192,12 +192,12 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     }
 
     @Override
-    public NGuid getstorage_pool_id() {
+    public NGuid getStoragePoolId() {
         return storagePool;
     }
 
     @Override
-    public void setstorage_pool_id(NGuid storagePool) {
+    public void setStoragePoolId(NGuid storagePool) {
         this.storagePool = storagePool;
     }
 

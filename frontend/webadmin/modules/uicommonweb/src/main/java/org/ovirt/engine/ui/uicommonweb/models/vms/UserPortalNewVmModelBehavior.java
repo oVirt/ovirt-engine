@@ -109,7 +109,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         for (VDSGroup cluster : clusters)
         {
-            if (cluster.getstorage_pool_id() != null && selectedDataCenter.getId().equals(cluster.getstorage_pool_id()))
+            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()))
             {
                 filteredList.add(cluster);
             }

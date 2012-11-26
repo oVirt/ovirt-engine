@@ -587,51 +587,51 @@ public class VmGeneralModel extends EntityModel
     {
         VM vm = (VM) getEntity();
 
-        setName(vm.getvm_name());
-        setDescription(vm.getvm_description());
+        setName(vm.getVmName());
+        setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null
                 && !vm.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
-        setTemplate(vm.getvmt_name());
-        setDefinedMemory(vm.getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
+        setTemplate(vm.getVmtName());
+        setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
         Translator translator = EnumTranslator.Create(VmOsType.class);
-        setOS(translator.get(vm.getvm_os()));
+        setOS(translator.get(vm.getVmOs()));
 
         translator = EnumTranslator.Create(DisplayType.class);
-        setDefaultDisplayType(translator.get(vm.getdefault_display_type()));
+        setDefaultDisplayType(translator.get(vm.getDefaultDisplayType()));
 
         translator = EnumTranslator.Create(OriginType.class);
-        setOrigin(translator.get(vm.getorigin()));
+        setOrigin(translator.get(vm.getOrigin()));
 
-        setHasHighlyAvailable(vm.getvm_type() == VmType.Server);
-        setIsHighlyAvailable(vm.getauto_startup());
+        setHasHighlyAvailable(vm.getVmType() == VmType.Server);
+        setIsHighlyAvailable(vm.isAutoStartup());
 
-        setHasPriority(vm.getvm_type() == VmType.Server);
-        setPriority(PriorityToString(vm.getpriority()));
+        setHasPriority(vm.getVmType() == VmType.Server);
+        setPriority(PriorityToString(vm.getPriority()));
 
-        setHasMonitorCount(vm.getvm_type() == VmType.Desktop);
-        setMonitorCount(vm.getnum_of_monitors());
+        setHasMonitorCount(vm.getVmType() == VmType.Desktop);
+        setMonitorCount(vm.getNumOfMonitors());
 
         setHasUsbPolicy(true);
         translator = EnumTranslator.Create(UsbPolicy.class);
-        setUsbPolicy(translator.get(vm.getusb_policy()));
+        setUsbPolicy(translator.get(vm.getUsbPolicy()));
 
-        setCpuInfo(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets() + " Socket(s), " + vm.getcpu_per_socket() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        setCpuInfo(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() + " Socket(s), " + vm.getCpuPerSocket() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + " Core(s) per Socket)"); //$NON-NLS-1$
 
-        setHasDomain(DataProvider.IsWindowsOsType(vm.getvm_os()));
-        setDomain(vm.getvm_domain());
+        setHasDomain(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        setDomain(vm.getVmDomain());
 
-        setHasTimeZone(DataProvider.IsWindowsOsType(vm.getvm_os()));
-        setTimeZone(vm.gettime_zone());
+        setHasTimeZone(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$
         setCustomProperties(getHasCustomProperties() ? "Configured" : "Not-Configured"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        setCompatibilityVersion(vm.getvds_group_compatibility_version() != null ?
-                vm.getvds_group_compatibility_version().toString() : ""); //$NON-NLS-1$
+        setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
+                vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())
@@ -644,10 +644,10 @@ public class VmGeneralModel extends EntityModel
             setAlert(null);
         }
 
-        setHasDefaultHost(vm.getdedicated_vm_for_vds() != null);
+        setHasDefaultHost(vm.getDedicatedVmForVds() != null);
         if (getHasDefaultHost())
         {
-            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getvds_group_name() //$NON-NLS-1$
+            Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getVdsGroupName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                     new INewAsyncCallback() {
                         @Override
@@ -663,8 +663,8 @@ public class VmGeneralModel extends EntityModel
                                     (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                             for (VDS host : hosts)
                             {
-                                if (localVm.getdedicated_vm_for_vds() != null
-                                        && host.getId().equals(localVm.getdedicated_vm_for_vds()))
+                                if (localVm.getDedicatedVmForVds() != null
+                                        && host.getId().equals(localVm.getDedicatedVmForVds()))
                                 {
                                     model.setDefaultHost(host.getvds_name());
                                     break;

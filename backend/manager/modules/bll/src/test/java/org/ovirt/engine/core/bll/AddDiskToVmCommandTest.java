@@ -400,8 +400,8 @@ public class AddDiskToVmCommandTest {
      */
     private VM mockVm() {
         VM vm = new VM();
-        vm.setstatus(VMStatus.Down);
-        vm.setstorage_pool_id(Guid.NewGuid());
+        vm.setStatus(VMStatus.Down);
+        vm.setStoragePoolId(Guid.NewGuid());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;

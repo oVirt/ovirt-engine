@@ -73,13 +73,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void failedToRunVm() {
-        if (getVm().getstatus() != VMStatus.Up) {
+        if (getVm().getStatus() != VMStatus.Up) {
             super.failedToRunVm();
         }
     }
 
     protected void initVdss() {
-        setVdsIdRef(new Guid(getVm().getrun_on_vds().toString()));
+        setVdsIdRef(new Guid(getVm().getRunOnVds().toString()));
         setVdsDestinationId(getVdsSelector().getVdsToRunOn(true));
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
@@ -105,13 +105,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void processVm() {
-        if (getVm().getstatus() != VMStatus.Up) {
+        if (getVm().getStatus() != VMStatus.Up) {
             decreasePendingVms(getVds().getId());
         }
     }
 
     private void perform() {
-        getVm().setmigrating_to_vds(_vdsDestinationId);
+        getVm().setMigratingToVds(_vdsDestinationId);
 
         String srcVdsHost = getVds().gethost_name();
         String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().gethost_name(), getDestinationVds()
@@ -130,7 +130,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (!connectToLunDiskSuccess || (VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
             getVm().setMigreatingToPort(0);
             getVm().setMigreatingFromPort(0);
-            getVm().setmigrating_to_vds(null);
+            getVm().setMigratingToVds(null);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
@@ -183,16 +183,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE
                         .toString());
-            } else if (vm.getstatus() == VMStatus.MigratingFrom) {
+            } else if (vm.getStatus() == VMStatus.MigratingFrom) {
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_IN_PROGRESS.name());
-            } else if (vm.getstatus() == VMStatus.NotResponding) {
+            } else if (vm.getStatus() == VMStatus.NotResponding) {
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.name());
-            } else if (vm.getstatus() == VMStatus.Paused) {
+            } else if (vm.getStatus() == VMStatus.Paused) {
                 retValue = false;
                 reasons.add(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED.name());
-            } else if (!VM.isStatusQualifyToMigrate(vm.getstatus())) {
+            } else if (!VM.isStatusQualifyToMigrate(vm.getStatus())) {
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.name());
             } else if (getDestinationVds() != null && getDestinationVds().getstatus() != VDSStatus.Up) {
@@ -223,7 +223,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
          * if vm is up and rerun is called then it got up on the source, try to
          * rerun
          */
-        if (getVm() != null && getVm().getstatus() == VMStatus.Up) {
+        if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             setVdsDestinationId(null);
             super.rerun();
         } else {
@@ -241,7 +241,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
      * Log that the migration had failed with the error code that is in the VDS and needs to be retrieved.
      */
     protected void determineMigrationFailueForAuditLog() {
-        if (getVm() != null && getVm().getstatus() == VMStatus.Up) {
+        if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             try {
                 Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.MigrateStatus,
                         new MigrateStatusVDSCommandParameters(getVdsId(), getVmId()));

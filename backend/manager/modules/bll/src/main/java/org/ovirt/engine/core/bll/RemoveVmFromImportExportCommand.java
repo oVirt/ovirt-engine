@@ -66,7 +66,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
         // not using getVm() since its overridden to get vm from export domain
         VM vm = getVmDAO().get(getVmId());
-        if (vm != null && vm.getstatus() == VMStatus.ImageLocked) {
+        if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
             if (AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
                 return false;

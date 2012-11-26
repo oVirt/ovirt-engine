@@ -37,7 +37,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(_vm.getStaticData().getvmt_guid().toString());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateName");
-        _writer.WriteRaw(_vm.getvmt_name());
+        _writer.WriteRaw(_vm.getVmtName());
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsInitilized");
         _writer.WriteRaw(String.valueOf(_vm.getStaticData().getis_initialized()));
@@ -46,11 +46,11 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(String.valueOf(vmBase.getis_stateless()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
-        _writer.WriteRaw(String.valueOf(_vm.getorigin().getValue()));
+        _writer.WriteRaw(String.valueOf(_vm.getOrigin().getValue()));
         _writer.WriteEndElement();
-        if (!StringHelper.isNullOrEmpty(_vm.getapp_list())) {
+        if (!StringHelper.isNullOrEmpty(_vm.getAppList())) {
             _writer.WriteStartElement("app_list");
-            _writer.WriteRaw(_vm.getapp_list());
+            _writer.WriteRaw(_vm.getAppList());
             _writer.WriteEndElement();
         }
         if (_vm.getQuotaId() != null) {
@@ -59,7 +59,7 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteEndElement();
         }
         _writer.WriteStartElement("DefaultDisplayType");
-        _writer.WriteRaw(String.valueOf(_vm.getdefault_display_type().getValue()));
+        _writer.WriteRaw(String.valueOf(_vm.getDefaultDisplayType().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("MinAllocatedMem");
         _writer.WriteRaw(String.valueOf(_vm.getMinAllocatedMem()));

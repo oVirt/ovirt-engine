@@ -132,7 +132,7 @@ public class ClusterGuideModel extends GuideModel
             addHostAction.setTitle(ClusterAddAnotherHostAction);
             getOptionalActions().add(addHostAction);
         }
-        if (getEntity().getstorage_pool_id() == null)
+        if (getEntity().getStoragePoolId() == null)
         {
             addHostAction.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
@@ -202,7 +202,7 @@ public class ClusterGuideModel extends GuideModel
         getCompulsoryActions().clear();
         getOptionalActions().clear();
 
-        if (getEntity() != null && getEntity().getstorage_pool_id() != null)
+        if (getEntity() != null && getEntity().getStoragePoolId() != null)
         {
             StartProgress(null);
 
@@ -223,7 +223,7 @@ public class ClusterGuideModel extends GuideModel
                                 model.UpdateOptionsLocalFSData();
                             }
                         }
-                    }), getEntity().getstorage_pool_id().getValue());
+                    }), getEntity().getStoragePoolId().getValue());
         }
     }
 
@@ -269,7 +269,7 @@ public class ClusterGuideModel extends GuideModel
                         model.getCommands().add(tempVar2);
 
                     }
-                }), getEntity().getstorage_pool_id().getValue());
+                }), getEntity().getStoragePoolId().getValue());
     }
 
     public void OnSelectHost()
@@ -364,11 +364,11 @@ public class ClusterGuideModel extends GuideModel
                         ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) returnValue;
                         ;
                         model.getDataCenter().setItems(dataCenters);
-                        if (getEntity().getstorage_pool_id() != null)
+                        if (getEntity().getStoragePoolId() != null)
                         {
                             model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
                                     new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
-                                            .getstorage_pool_id()
+                                            .getStoragePoolId()
                                             .getValue())));
                         }
                         model.getDataCenter().setIsChangable(false);

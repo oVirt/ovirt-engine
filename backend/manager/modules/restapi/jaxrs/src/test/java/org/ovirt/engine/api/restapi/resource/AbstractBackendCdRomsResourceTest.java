@@ -95,7 +95,7 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
         expect(entity.getStaticData()).andReturn(staticVm).anyTimes();
         expect(staticVm.getiso_path()).andReturn(ISO_PATH).anyTimes();
         if (status != null) {
-            expect(entity.getstatus()).andReturn(status).anyTimes();
+            expect(entity.getStatus()).andReturn(status).anyTimes();
         }
         return entity;
     }

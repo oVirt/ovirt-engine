@@ -1714,7 +1714,7 @@ public class UnitVmModel extends Model {
                 VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 for (storage_pool dc : list)
                 {
-                    if (dc.getId().equals(cluster.getstorage_pool_id()))
+                    if (dc.getId().equals(cluster.getStoragePoolId()))
                     {
                         model.getDataCenter()
                                 .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
@@ -1729,7 +1729,7 @@ public class UnitVmModel extends Model {
                 VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 for (storage_pool dc : list)
                 {
-                    if (dc.getId().equals(host.getstorage_pool_id()))
+                    if (dc.getId().equals(host.getStoragePoolId()))
                     {
                         model.getDataCenter()
                                 .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));

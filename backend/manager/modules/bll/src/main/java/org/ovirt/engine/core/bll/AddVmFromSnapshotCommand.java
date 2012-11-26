@@ -59,7 +59,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     public NGuid getStoragePoolId() {
-        return (getSourceVmFromDb() != null) ? getSourceVmFromDb().getstorage_pool_id() : null;
+        return (getSourceVmFromDb() != null) ? getSourceVmFromDb().getStoragePoolId() : null;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected Guid getStoragePoolIdFromSourceImageContainer() {
-        return sourceVmFromDb.getstorage_pool_id().getValue();
+        return sourceVmFromDb.getStoragePoolId().getValue();
     }
 
     @Override

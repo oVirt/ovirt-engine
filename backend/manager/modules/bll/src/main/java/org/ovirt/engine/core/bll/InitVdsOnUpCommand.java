@@ -98,7 +98,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private void processStoragePoolStatus() {
         if (getVds().getspm_status() != VdsSpmStatus.None) {
-            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getstorage_pool_id());
+            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
             if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                 pool.setstatus(StoragePoolStatus.Problematic);
                 DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getstatus());
@@ -116,7 +116,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private boolean InitializeStorage() {
         boolean returnValue = false;
-        setStoragePoolId(getVds().getstorage_pool_id());
+        setStoragePoolId(getVds().getStoragePoolId());
 
         // if no pool or pool is uninitialized or in maintenance mode no need to
         // connect any storage
@@ -127,7 +127,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             _connectPoolSucceeded = true;
         } else {
             StoragePoolParametersBase tempStorageBaseParams =
-                    new StoragePoolParametersBase(getVds().getstorage_pool_id());
+                    new StoragePoolParametersBase(getVds().getStoragePoolId());
             tempStorageBaseParams.setVdsId(getVds().getId());
             if (Backend.getInstance()
                     .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, tempStorageBaseParams)
@@ -138,7 +138,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                     returnValue = _connectPoolSucceeded = runVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(getVds().getId(), getVds()
-                                            .getstorage_pool_id(), getVds().getvds_spm_id(), getMasterDomainIdFromDb(),
+                                            .getStoragePoolId(), getVds().getvds_spm_id(), getMasterDomainIdFromDb(),
                                             getStoragePool().getmaster_domain_version())).getSucceeded();
                 } catch (RuntimeException exp) {
                     log.errorFormat("Could not connect host {0} to pool {1}", getVds().getvds_name(), getStoragePool()
@@ -161,7 +161,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         boolean returnValue = true;
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
-            if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getstorage_pool_id(), getVds().getDomains())) {
+            if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains())) {
                 log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
                         getVds().getvds_name(),
                         getStoragePool()

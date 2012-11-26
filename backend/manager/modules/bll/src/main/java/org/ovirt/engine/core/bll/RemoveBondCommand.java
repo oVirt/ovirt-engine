@@ -151,7 +151,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             Iterable<IVdcQueryable> vmList = (Iterable<IVdcQueryable>) ret.getReturnValue();
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
-                if (vm.getstatus() != VMStatus.Down) {
+                if (vm.getStatus() != VMStatus.Down) {
                     List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                             .getAllForVm(vm.getId());
                     VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {

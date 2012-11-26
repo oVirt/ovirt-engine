@@ -94,7 +94,7 @@ public class VmBackupModel extends ManageBackupModel {
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
-            items.add(vm.getvm_name());
+            items.add(vm.getVmName());
         }
         model.setItems(items);
 
@@ -277,16 +277,16 @@ public class VmBackupModel extends ManageBackupModel {
     protected void setObjectName(Object object, String name, boolean isSuffix) {
         VM vm = (VM) object;
         if (isSuffix) {
-            vm.setvm_name(vm.getvm_name() + name);
+            vm.setVmName(vm.getVmName() + name);
         } else {
-            vm.setvm_name(name);
+            vm.setVmName(name);
         }
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsInSetupMap.values()) {
             VM vm = (VM) object;
-            if (!validateName(vm.getvm_name() + suffix, vm, entityModel)) {
+            if (!validateName(vm.getVmName() + suffix, vm, entityModel)) {
                 return false;
             }
         }
@@ -297,7 +297,7 @@ public class VmBackupModel extends ManageBackupModel {
         String nameExpr;
         String nameMsg;
         VM vm = (VM) object;
-        VmOsType osType = vm.getos();
+        VmOsType osType = vm.getOs();
         if (DataProvider.IsWindowsOsType(osType))
         {
             nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -382,7 +382,7 @@ public class VmBackupModel extends ManageBackupModel {
                 }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setvm_name(((VM) cloneObjectMap.get(vm.getId())).getvm_name());
+                prm.getVm().setVmName(((VM) cloneObjectMap.get(vm.getId())).getVmName());
             }
 
             prms.add(prm);
@@ -414,7 +414,7 @@ public class VmBackupModel extends ManageBackupModel {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
-                                    importedVms += vm.getvm_name() + ", "; //$NON-NLS-1$
+                                    importedVms += vm.getVmName() + ", "; //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;

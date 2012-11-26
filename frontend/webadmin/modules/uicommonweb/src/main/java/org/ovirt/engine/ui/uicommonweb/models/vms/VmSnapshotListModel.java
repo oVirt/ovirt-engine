@@ -569,7 +569,7 @@ public class VmSnapshotListModel extends SearchableListModel
         VM selectedVm = (VM) getEntity();
 
         UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
-        model.setVmType(selectedVm.getvm_type());
+        model.setVmType(selectedVm.getVmType());
         setWindow(model);
 
         model.StartProgress(null);
@@ -627,49 +627,49 @@ public class VmSnapshotListModel extends SearchableListModel
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
 
-        getcurrentVm().setvm_type(model.getVmType());
-        getcurrentVm().setvmt_guid(template.getId());
-        getcurrentVm().setvm_name(name);
-        getcurrentVm().setvm_os((VmOsType) model.getOSType().getSelectedItem());
-        getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
-        getcurrentVm().setvm_description((String) model.getDescription().getEntity());
-        getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ?
+        getcurrentVm().setVmType(model.getVmType());
+        getcurrentVm().setVmtGuid(template.getId());
+        getcurrentVm().setVmName(name);
+        getcurrentVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
+        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ?
                 (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
-        getcurrentVm().setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
+        getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
-        getcurrentVm().setvds_group_id(newClusterID);
-        getcurrentVm().settime_zone(
+        getcurrentVm().setVdsGroupId(newClusterID);
+        getcurrentVm().setTimeZone(
                 (model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ?
                         ((Map.Entry<String, String>) model.getTimeZone().getSelectedItem()).getKey() : ""); //$NON-NLS-1$
-        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString()) /
+        getcurrentVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString()) /
                 (Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setis_auto_suspend(false);
-        getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
+        getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+        getcurrentVm().setAutoSuspend(false);
+        getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-        getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
-        getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ?
+        getcurrentVm().setDefaultBootSequence(model.getBootSequence());
+        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ?
                 (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        getcurrentVm().setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
-        getcurrentVm().setinitrd_url((String) model.getInitrd_path().getEntity());
-        getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
-        getcurrentVm().setkernel_params((String) model.getKernel_parameters().getEntity());
+        getcurrentVm().setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
+        getcurrentVm().setInitrdUrl((String) model.getInitrd_path().getEntity());
+        getcurrentVm().setKernelUrl((String) model.getKernel_path().getEntity());
+        getcurrentVm().setKernelParams((String) model.getKernel_parameters().getEntity());
         getcurrentVm().setCustomProperties((String) model.getCustomProperties().getEntity());
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+        getcurrentVm().setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
 
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        getcurrentVm().setpriority((Integer) prioritySelectedItem.getEntity());
+        getcurrentVm().setPriority((Integer) prioritySelectedItem.getEntity());
 
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
-        getcurrentVm().setdedicated_vm_for_vds(
+        getcurrentVm().setDedicatedVmForVds(
                 (Boolean) model.getIsAutoAssign().getEntity() ? null : defaultHost.getId());
 
         getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
@@ -754,8 +754,8 @@ public class VmSnapshotListModel extends SearchableListModel
         VM vm = (VM) getEntity();
         Snapshot snapshot = (Snapshot) getSelectedItem();
 
-        boolean isVmDown = vm != null && vm.getstatus() == VMStatus.Down;
-        boolean isVmImageLocked = vm != null && vm.getstatus() == VMStatus.ImageLocked;
+        boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
+        boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
         boolean isPreviewing = getIsPreviewing();
         boolean isLocked = getIsLocked();
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
@@ -851,7 +851,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 storage_pool dataCenter = (storage_pool) returnValue;
                 VM vm = (VM) model.getEntity();
 
-                Version minClusterVersion = vm.getvds_group_compatibility_version();
+                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getcompatibility_version();
 
                 AsyncDataProvider.IsCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
@@ -862,7 +862,7 @@ public class VmSnapshotListModel extends SearchableListModel
                     }
                 }), VdcActionType.AddVmFromSnapshot, minClusterVersion, minDcVersion);
             }
-        }), vm.getstorage_pool_id().getValue());
+        }), vm.getStoragePoolId().getValue());
     }
 
     @Override

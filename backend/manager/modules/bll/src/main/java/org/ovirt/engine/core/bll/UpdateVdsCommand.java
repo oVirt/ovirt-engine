@@ -123,10 +123,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             InitializeVds();
         }
         // if host_name changed and host is spm we need to update irsBroker cache with the new host_name
-        if (!Guid.Empty.equals(_oldVds.getstorage_pool_id()) && _oldVds.getspm_status() != VdsSpmStatus.None &&
+        if (!Guid.Empty.equals(_oldVds.getStoragePoolId()) && _oldVds.getspm_status() != VdsSpmStatus.None &&
                 !StringUtils.equals(_oldVds.gethost_name(), getParameters().getVdsStaticData().gethost_name())) {
             runVdsCommand(VDSCommandType.UpdateSpmHostName,
-                    new UpdateSpmHostNameVDSCommandParameters(_oldVds.getstorage_pool_id(),
+                    new UpdateSpmHostNameVDSCommandParameters(_oldVds.getStoragePoolId(),
                             _oldVds.gethost_name(),
                             getParameters().getVdsStaticData().gethost_name()));
         }

@@ -77,8 +77,8 @@ public class VmGuideModel extends GuideModel
             return;
         }
         VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
-                ? vm.getvds_group_compatibility_version() : new Version();
+        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion() != null
+                ? vm.getVdsGroupCompatibilityVersion() : new Version();
 
         isHotPlugSupported =
                 (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
@@ -163,7 +163,7 @@ public class VmGuideModel extends GuideModel
                 }
 
             }
-            if (!(getEntity().getvm_os() == VmOsType.WindowsXP && ideDiskCount > 2))
+            if (!(getEntity().getVmOs() == VmOsType.WindowsXP && ideDiskCount > 2))
             {
                 addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
                 getOptionalActions().add(addDiskAction);
@@ -218,7 +218,7 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.networks = networks;
                         vmGuideModel.AddNetworkPostData();
                     }
-                }), getEntity().getvds_group_id());
+                }), getEntity().getVdsGroupId());
     }
 
     private void AddNetworkPostData() {
@@ -245,8 +245,8 @@ public class VmGuideModel extends GuideModel
         model.setIsNew(true);
         model.getNetwork().setItems(operationalNetworks);
         model.getNetwork().setSelectedItem(operationalNetworks.size() > 0 ? operationalNetworks.get(0) : null);
-        model.getNicType().setItems(DataProvider.GetNicTypeList(getEntity().getvm_os(), false));
-        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntity().getvm_os()));
+        model.getNicType().setItems(DataProvider.GetNicTypeList(getEntity().getVmOs(), false));
+        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntity().getVmOs()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
@@ -254,7 +254,7 @@ public class VmGuideModel extends GuideModel
         model.getPlugged().setEntity(true);
 
         Version v31 = new Version(3, 1);
-        boolean isLessThan31 = getEntity().getvds_group_compatibility_version().compareTo(v31) < 0;
+        boolean isLessThan31 = getEntity().getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
 
         model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(false);
@@ -371,7 +371,7 @@ public class VmGuideModel extends GuideModel
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setDatacenterId(getEntity().getstorage_pool_id());
+        model.setDatacenterId(getEntity().getStoragePoolId());
         model.getIsInVm().setEntity(true);
         model.getIsInternal().setEntity(true);
         model.setVmId(getEntity().getId());

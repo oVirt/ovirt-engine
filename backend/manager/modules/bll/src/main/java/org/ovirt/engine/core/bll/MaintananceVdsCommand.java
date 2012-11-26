@@ -87,7 +87,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         for (VM vm : vms) {
             // if HAOnly is true check that vm is HA (auto_startup should be
             // true)
-            if (vm.getstatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.getauto_startup()))) {
+            if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
                 MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getId());
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 ExecutionContext ctx = createMigrateVmContext(parentContext, vm);
@@ -97,8 +97,8 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                                 new CommandContext(ctx));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
-                    AppendCustomValue("failedVms", vm.getvm_name(), ",");
-                    log.errorFormat("ResourceManager::vdsMaintenance - Failed migrating desktop '{0}'", vm.getvm_name());
+                    AppendCustomValue("failedVms", vm.getVmName(), ",");
+                    log.errorFormat("ResourceManager::vdsMaintenance - Failed migrating desktop '{0}'", vm.getVmName());
                 }
             }
         }
@@ -109,8 +109,8 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         ExecutionContext ctx = new ExecutionContext();
         try {
             Map<String, String> values = new HashMap<String, String>();
-            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getvm_name());
-            values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getrun_on_vds_name());
+            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getVmName());
+            values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getRunOnVdsName());
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),
                     parentContext.getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.MIGRATE_VM,
@@ -173,12 +173,12 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
 
         // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
         // anymore.
-        IrsBrokerCommand.clearVdsFromCache(vds.getstorage_pool_id(), vds.getId(), vds.getvds_name());
+        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getvds_name());
 
-        if (!vds.getstorage_pool_id().equals(Guid.Empty)
+        if (!vds.getStoragePoolId().equals(Guid.Empty)
                 && StoragePoolStatus.Uninitialized != DbFacade.getInstance()
                         .getStoragePoolDao()
-                        .get(vds.getstorage_pool_id())
+                        .get(vds.getStoragePoolId())
                         .getstatus()
                 && Backend
                         .getInstance()
@@ -186,8 +186,8 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
                                 new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getstorage_pool_id(), vds.getvds_spm_id())).getSucceeded()) {
-            StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getstorage_pool_id());
+                                        vds.getStoragePoolId(), vds.getvds_spm_id())).getSucceeded()) {
+            StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getStoragePoolId());
             tempVar.setVdsId(vds.getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);

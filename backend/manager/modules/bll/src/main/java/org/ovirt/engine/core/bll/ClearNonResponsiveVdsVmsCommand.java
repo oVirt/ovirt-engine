@@ -48,7 +48,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         java.util.ArrayList<VdcActionParametersBase> runVmParamsList =
                 new java.util.ArrayList<VdcActionParametersBase>();
         for (VM vm : vms) {
-            if (vm.getauto_startup()) {
+            if (vm.isAutoStartup()) {
                 runVmParamsList.add(new RunVmParams(vm.getId()));
             }
             VDSReturnValue returnValue = Backend

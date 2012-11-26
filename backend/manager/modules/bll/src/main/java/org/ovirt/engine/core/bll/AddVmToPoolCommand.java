@@ -49,7 +49,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
             if (vm != null) {
                 vm_pools pool = DbFacade.getInstance().getVmPoolDao().get(poolId);
                 if (pool != null) {
-                    if (messages != null && !pool.getvds_group_id().equals(vm.getvds_group_id())) {
+                    if (messages != null && !pool.getvds_group_id().equals(vm.getVdsGroupId())) {
                         messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER.toString());
                     }
                 }

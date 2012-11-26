@@ -207,7 +207,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         VDSGroup vdsGroup = (VDSGroup) query.uniqueResult();
 
         if (vdsGroup != null) {
-            ids.add(vdsGroup.getstorage_pool_id());
+            ids.add(vdsGroup.getStoragePoolId());
         }
     }
 

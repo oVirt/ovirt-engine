@@ -92,7 +92,7 @@ public class VmDeviceUtils {
      */
     private static void updateAudioDevice(VM oldVm, VmBase newVmBase) {
         // for desktop, if the os type has changed, recreate Audio devices
-        if (newVmBase.getvm_type() == VmType.Desktop && oldVm.getos() != newVmBase.getos()) {
+        if (newVmBase.getvm_type() == VmType.Desktop && oldVm.getOs() != newVmBase.getos()) {
             Guid vmId = oldVm.getId();
             // remove any old sound device
             List<VmDevice> list =
@@ -103,7 +103,7 @@ public class VmDeviceUtils {
 
             // create new device
             String soundDevice =
-                    VmInfoBuilderBase.getSoundDevice(newVmBase, oldVm.getvds_group_compatibility_version());
+                    VmInfoBuilderBase.getSoundDevice(newVmBase, oldVm.getVdsGroupCompatibilityVersion());
             addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
                     VmDeviceType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
@@ -227,7 +227,7 @@ public class VmDeviceUtils {
             if (vmBase.getvm_type() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
                 if (list.size() == 0) {
-                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm.getStaticData(), vm.getvds_group_compatibility_version());
+                    String soundDevice = VmInfoBuilderBase.getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
                             VmDeviceType.SOUND,
                             VmDeviceType.getSoundDeviceType(soundDevice),
@@ -236,7 +236,7 @@ public class VmDeviceUtils {
                             true);
                 }
             }
-            int numOfMonitors = (vm.getdisplay_type() == DisplayType.vnc) ? Math.max(1, vm.getnum_of_monitors()) : vm.getnum_of_monitors();
+            int numOfMonitors = (vm.getDisplayType() == DisplayType.vnc) ? Math.max(1, vm.getNumOfMonitors()) : vm.getNumOfMonitors();
             // create Video device. Multiple if display type is spice
             for (int i = 0; i < numOfMonitors; i++) {
                 addVideoDevice(vm);
@@ -249,8 +249,8 @@ public class VmDeviceUtils {
         VmDevice entity = addManagedDevice(
                 new VmDeviceId(Guid.NewGuid(),vm.getId()),
                 VmDeviceType.VIDEO,
-                vm.getdefault_display_type().getVmDeviceType(),
-                getMemExpr(vm.getnum_of_monitors()),
+                vm.getDefaultDisplayType().getVmDeviceType(),
+                getMemExpr(vm.getNumOfMonitors()),
                 true,
                 true);
     }
@@ -395,7 +395,7 @@ public class VmDeviceUtils {
             }
             VM vm = DbFacade.getInstance().getVmDao().get(vmBase.getId());
             VmHandler.updateDisksForVm(vm, DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
-            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getvds_group_compatibility_version());
+            boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
             return devices;
         }

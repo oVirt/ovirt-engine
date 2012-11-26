@@ -625,7 +625,7 @@ public class HostModel extends Model
                     if (clusters.isEmpty()
                             || clusters.size() > 0
                             && clusters.get(0)
-                                    .getstorage_pool_id()
+                                    .getStoragePoolId()
                                     .getValue()
                                     .equals(selectedDataCenter.getId().getValue()))
                     {
@@ -767,7 +767,7 @@ public class HostModel extends Model
         param.setPmType((String) getPmType().getSelectedItem());
         param.setUser((String) getPmUserName().getEntity());
         param.setPassword((String) getPmPassword().getEntity());
-        param.setStoragePoolId(cluster.getstorage_pool_id().getValue() != null ? cluster.getstorage_pool_id()
+        param.setStoragePoolId(cluster.getStoragePoolId().getValue() != null ? cluster.getStoragePoolId()
                 .getValue()
                 .getValue() : NGuid.Empty);
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));

@@ -161,14 +161,14 @@ public class UpdateVmDiskCommandTest {
      */
     protected VM mockVmStatusDown() {
         VM vm = new VM();
-        vm.setstatus(VMStatus.Down);
-        vm.setguest_os("rhel6");
+        vm.setStatus(VMStatus.Down);
+        vm.setGuestOs("rhel6");
         vm.setId(vmId);
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         mockGetForDisk(vm);
         mockGetVmsListForDisk(vm);
         storage_pool storagePool = mockStoragePool(Version.v3_1);
-        vm.setstorage_pool_id(storagePool.getId());
+        vm.setStoragePoolId(storagePool.getId());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         return vm;
     }

@@ -25,7 +25,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
 
     public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.VM entity) {
         VmStatistics s = entity.getStatisticsData();
-        long mem = entity.getmem_size_mb() * Mb;
+        long mem = entity.getMemSizeMb() * Mb;
         long memUsedByCent = s.getusage_mem_percent()==null ? 0 : mem * s.getusage_mem_percent();
         Double cpuUser = s.getcpu_user()==null ? 0 : s.getcpu_user();
         Double cpuSys = s.getcpu_sys()==null ? 0 : s.getcpu_sys();

@@ -114,7 +114,7 @@ public final class ImagesHandler {
             String vmName = "";
             int count = 1;
             if (vm != null) {
-                vmName = vm.getvm_name();
+                vmName = vm.getVmName();
                 count = vm.getDiskMapCount() + 1;
             }
             disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, count));
@@ -465,7 +465,7 @@ public final class ImagesHandler {
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(vm, messages, images);
         }
-        if (returnValue && checkVmIsDown && vm.getstatus() != VMStatus.Down) {
+        if (returnValue && checkVmIsDown && vm.getStatus() != VMStatus.Down) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
         }
@@ -513,7 +513,7 @@ public final class ImagesHandler {
                     String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
         }
 
-        if (returnValue && vm.getstatus() == VMStatus.ImageLocked) {
+        if (returnValue && vm.getStatus() == VMStatus.ImageLocked) {
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
             returnValue = false;
         }
@@ -584,7 +584,7 @@ public final class ImagesHandler {
     private static boolean CheckImagesLegality(List<String> messages,
             List<DiskImage> images, VM vm, List<DiskImage> irsImages) {
         boolean returnValue = true;
-        if (vm.getstatus() == VMStatus.ImageIllegal) {
+        if (vm.getStatus() == VMStatus.ImageIllegal) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
         } else {

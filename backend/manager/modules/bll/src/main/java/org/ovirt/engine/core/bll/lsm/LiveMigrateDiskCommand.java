@@ -34,14 +34,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);
 
-        setStoragePoolId(getVm().getstorage_pool_id());
+        setStoragePoolId(getVm().getStoragePoolId());
         getParameters().setStoragePoolId(getStoragePoolId().getValue());
 
         getParameters().setVdsId(getVdsId());
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
-        getParameters().setTaskGroupSuccess(VMStatus.Up == getVm().getstatus() && getParameters().getTaskGroupSuccess());
+        getParameters().setTaskGroupSuccess(VMStatus.Up == getVm().getStatus() && getParameters().getTaskGroupSuccess());
     }
 
     /* Overridden CommandBase Methods */
@@ -79,7 +79,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         setVmId(vm.getId());
         setVm(vm);
 
-        if (VMStatus.Up != vm.getstatus()) {
+        if (VMStatus.Up != vm.getStatus()) {
             failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
         return true;
@@ -114,7 +114,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     public Guid getVdsId() {
-        return getVm().getrun_on_vds() != null ? getVm().getrun_on_vds().getValue() : Guid.Empty;
+        return getVm().getRunOnVds() != null ? getVm().getRunOnVds().getValue() : Guid.Empty;
     }
 
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */

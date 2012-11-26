@@ -155,7 +155,7 @@ public class OvfVmReader extends OvfReader {
         node = content.SelectSingleNode("TemplateName");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setvmt_name(node.InnerText);
+                _vm.setVmtName(node.InnerText);
             }
         }
         node = content.SelectSingleNode("IsInitilized");
@@ -191,7 +191,7 @@ public class OvfVmReader extends OvfReader {
         node = content.SelectSingleNode("app_list");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setapp_list(node.InnerText);
+                _vm.setAppList(node.InnerText);
             }
         }
         // if no app list in VM, get it from one of the leafs
@@ -201,18 +201,18 @@ public class OvfVmReader extends OvfReader {
                 for(int i=0; i<_images.size(); i++) {
                     int x = GetNextImage(_images, _images.get(i));
                     if (x == -1) {
-                        _vm.setapp_list(_images.get(i).getappList());
+                        _vm.setAppList(_images.get(i).getappList());
                     }
                 }
             } else {
-                _vm.setapp_list(_images.get(0).getappList());
+                _vm.setAppList(_images.get(0).getappList());
             }
         }
 
         node = content.SelectSingleNode("DefaultDisplayType");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setdefault_display_type(DisplayType.forValue(Integer.parseInt(node.InnerText)));
+                _vm.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 

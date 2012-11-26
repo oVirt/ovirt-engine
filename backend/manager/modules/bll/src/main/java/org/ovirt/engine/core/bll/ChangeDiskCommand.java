@@ -17,7 +17,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     public ChangeDiskCommand(T parameters) {
         super(parameters);
-        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getstorage_pool_id());
+        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId());
     }
 
     public String getDiskName() {
@@ -27,7 +27,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     @Override
     protected boolean canDoAction() {
         boolean retValue = true;
-        if (!VM.isStatusUpOrPaused(getVm().getstatus())) {
+        if (!VM.isStatusUpOrPaused(getVm().getStatus())) {
             setSucceeded(false);
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
@@ -39,7 +39,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
             }
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-        } else if ((VmRunHandler.getInstance().findActiveISODomain(getVm().getstorage_pool_id()) == null)
+        } else if ((VmRunHandler.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(mCdImagePath)) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);

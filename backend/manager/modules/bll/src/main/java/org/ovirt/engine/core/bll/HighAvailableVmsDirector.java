@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public final class HighAvailableVmsDirector {
     public static void TryRunHighAvailableVmsOnVmDown(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-        TryRunHighAvailableVm(vm.getvds_group_name());
+        TryRunHighAvailableVm(vm.getVdsGroupName());
     }
 
     public static void TryRunHighAvailableVdsUp(Guid vdsId) {
@@ -36,13 +36,13 @@ public final class HighAvailableVmsDirector {
             ArrayList<VM> highlyAvailableVms = new ArrayList<VM>();
             for (IVdcQueryable vm : vmsFromDb) {
                 VM currVm = (VM) ((vm instanceof VM) ? vm : null);
-                if (currVm != null && currVm.getauto_startup() && currVm.getExitStatus().getValue() != 0) {
+                if (currVm != null && currVm.isAutoStartup() && currVm.getExitStatus().getValue() != 0) {
                     highlyAvailableVms.add(currVm);
                 }
             }
             Collections.sort(highlyAvailableVms, Collections.reverseOrder(new VmsComparer()));
             for (VM vm : highlyAvailableVms) {
-                if (!Backend.getInstance().runInternalAction(VdcActionType.RunVm, new RunVmParams(vm.getvmt_guid()))
+                if (!Backend.getInstance().runInternalAction(VdcActionType.RunVm, new RunVmParams(vm.getVmtGuid()))
                         .getSucceeded()) {
                     break;
                 }

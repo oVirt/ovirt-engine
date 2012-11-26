@@ -83,7 +83,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     private VM mockVm() {
         vm = new VM();
         vm.setId(vmId);
-        vm.setvm_name(VM_NAME);
+        vm.setVmName(VM_NAME);
         vm.setDiskMap(new HashMap<Guid, Disk>());
         return vm;
     }

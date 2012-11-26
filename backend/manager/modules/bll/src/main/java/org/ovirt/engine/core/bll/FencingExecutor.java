@@ -53,7 +53,7 @@ public class FencingExecutor {
                 @Override
                 public boolean eval(VDS vds) {
                     return vds.getstatus() == VDSStatus.Up
-                            && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
+                            && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                 }
             });
             // trying other Hosts that are not in UP since they can be a proxy for fencing operations
@@ -62,7 +62,7 @@ public class FencingExecutor {
                     @Override
                     public boolean eval(VDS vds) {
                         return !isHostNetworkUnreacable(vds) &&
-                                vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
+                                vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                     }
                 });
             }
@@ -79,7 +79,7 @@ public class FencingExecutor {
                     @Override
                     public boolean eval(VDS vds) {
                         return !vds.getId().equals(_vds.getId())
-                                && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id())
+                                && vds.getStoragePoolId().equals(_vds.getStoragePoolId())
                                 && vds.getstatus() == VDSStatus.Up;
                     }
                 });
@@ -88,7 +88,7 @@ public class FencingExecutor {
                         @Override
                         public boolean eval(VDS vds) {
                             return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId()) && vds.getstorage_pool_id().equals(_vds.getstorage_pool_id());
+                                    !vds.getId().equals(_vds.getId()) && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                     });
                 }
@@ -129,7 +129,7 @@ public class FencingExecutor {
                     Backend.getInstance()
                             .getResourceManager()
                             .RunVdsCommand(VDSCommandType.SpmStop,
-                                    new SpmStopVDSCommandParameters(_vds.getId(), _vds.getstorage_pool_id()));
+                                    new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
                 }
             }
             retValue = runFencingAction(_action);

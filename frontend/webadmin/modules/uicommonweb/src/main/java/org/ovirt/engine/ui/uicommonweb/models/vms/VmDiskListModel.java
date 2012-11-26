@@ -159,8 +159,8 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         VM vm = getEntity();
         boolean isVmStatusApplicableForHotPlug =
-                vm != null && (vm.getstatus() == VMStatus.Up || vm.getstatus() == VMStatus.Down |
-                        vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
+                vm != null && (vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down |
+                        vm.getStatus() == VMStatus.Paused || vm.getStatus() == VMStatus.Suspended);
 
         return privateIsDiskHotPlugSupported && isVmStatusApplicableForHotPlug;
     }
@@ -287,7 +287,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setDatacenterId(vm.getstorage_pool_id());
+        model.setDatacenterId(vm.getStoragePoolId());
         model.getIsInVm().setEntity(true);
         model.getIsInternal().setEntity(true);
         model.setVmId(getEntity().getId());
@@ -466,7 +466,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 }
 
                 ArrayList<DiskInterface> interfaces =
-                        DataProvider.GetDiskInterfaceList(vm.getvm_os(), vm.getvds_group_compatibility_version());
+                        DataProvider.GetDiskInterfaceList(vm.getVmOs(), vm.getVdsGroupCompatibilityVersion());
                 if (!interfaces.contains(disk.getDiskInterface()))
                 {
                     interfaces.add(disk.getDiskInterface());
@@ -545,7 +545,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                         dModel.quota_storageSelectedItemChanged(((DiskImage) disk).getQuotaId());
                     }
                 }
-            }), getEntity().getstorage_pool_id());
+            }), getEntity().getStoragePoolId());
         }
         else {
             ((DiskModel) getWindow()).getQuota().setIsAvailable(false);
@@ -843,9 +843,9 @@ public class VmDiskListModel extends VmDiskListModelBase
         MoveDiskModel model = new MoveDiskModel();
         model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
-        model.setVmId(vm.getstatus() == VMStatus.Up ? vm.getId() : null);
-        model.setWarningAvailable(vm.getstatus() == VMStatus.Up);
-        model.setMessage(vm.getstatus() == VMStatus.Up ?
+        model.setVmId(vm.getStatus() == VMStatus.Up ? vm.getId() : null);
+        model.setWarningAvailable(vm.getStatus() == VMStatus.Up);
+        model.setMessage(vm.getStatus() == VMStatus.Up ?
                 ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning() :
                 null);
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
@@ -946,13 +946,13 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     public boolean isVmDown() {
         VM vm = getEntity();
-        return vm != null && vm.getstatus() == VMStatus.Down;
+        return vm != null && vm.getStatus() == VMStatus.Down;
     }
 
     public boolean isHotPlugAvailable() {
         VM vm = getEntity();
-        return vm != null && (vm.getstatus() == VMStatus.Up ||
-                vm.getstatus() == VMStatus.Paused || vm.getstatus() == VMStatus.Suspended);
+        return vm != null && (vm.getStatus() == VMStatus.Up ||
+                vm.getStatus() == VMStatus.Paused || vm.getStatus() == VMStatus.Suspended);
     }
 
     private boolean isPlugCommandAvailable(boolean plug) {
@@ -1004,7 +1004,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         VM vm = getEntity();
-        if (vm == null || vm.getstatus() != VMStatus.Up) {
+        if (vm == null || vm.getStatus() != VMStatus.Up) {
             return false;
         }
 
@@ -1094,7 +1094,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     protected void UpdateIsDiskHotPlugAvailable()
     {
         VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version();
+        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion();
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
@@ -1132,7 +1132,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                             }
                         }), dcCompatibilityVersion.toString());
             }
-        }), vm.getstorage_pool_id().getValue());
+        }), vm.getStoragePoolId().getValue());
 
     }
 

@@ -712,7 +712,7 @@ public class BackendVmResourceTest
     protected void setUpWindowsGetEntityExpectations(int times, boolean notFound) throws Exception {
         setUpGetEntityExpectations(times,
                                    notFound,
-                                   new org.ovirt.engine.core.common.businessentities.VM(){{setId(GUIDS[0]);setvm_os(VmOsType.WindowsXP);}});
+                                   new org.ovirt.engine.core.common.businessentities.VM(){{setId(GUIDS[0]);setVmOs(VmOsType.WindowsXP);}});
     }
 
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VM entity) throws Exception {

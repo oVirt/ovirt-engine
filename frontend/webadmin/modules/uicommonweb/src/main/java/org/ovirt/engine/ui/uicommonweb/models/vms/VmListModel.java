@@ -753,9 +753,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 a.setEntity(vm);
             }
 
-            setDefaultConsoleModel(vm.getdisplay_type() == DisplayType.vnc ? cachedModels.get(1) : cachedModels.get(0));
+            setDefaultConsoleModel(vm.getDisplayType() == DisplayType.vnc ? cachedModels.get(1) : cachedModels.get(0));
 
-            if (DataProvider.IsWindowsOsType(vm.getvm_os()))
+            if (DataProvider.IsWindowsOsType(vm.getVmOs()))
             {
                 for (ConsoleModel a : cachedModels)
                 {
@@ -844,15 +844,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
-        model.setVmType(vm.getvm_type());
+        model.setVmType(vm.getVmType());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
                 .getMessages()
-                .editVmTitle(vm.getvm_type() == VmType.Server ? ConstantsManager.getInstance()
+                .editVmTitle(vm.getVmType() == VmType.Server ? ConstantsManager.getInstance()
                         .getConstants()
                         .serverVmType()
                         : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName("edit_" + (vm.getvm_type() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        model.setHashName("edit_" + (vm.getVmType() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
         model.Initialize(this.getSystemTreeSelectedItem());
@@ -885,7 +885,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object selectedItem : getSelectedItems())
         {
             VM a = (VM) selectedItem;
-            list.add(a.getvm_name());
+            list.add(a.getVmName());
         }
         model.setItems(list);
 
@@ -966,12 +966,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         Map<NGuid, ArrayList<VM>> t = new HashMap<NGuid, ArrayList<VM>>();
         for (VM a : vms)
         {
-            if (!t.containsKey(a.getstorage_pool_id()))
+            if (!t.containsKey(a.getStoragePoolId()))
             {
-                t.put(a.getstorage_pool_id(), new ArrayList<VM>());
+                t.put(a.getStoragePoolId(), new ArrayList<VM>());
             }
 
-            ArrayList<VM> list = t.get(a.getstorage_pool_id());
+            ArrayList<VM> list = t.get(a.getStoragePoolId());
             list.add(a);
         }
 
@@ -980,7 +980,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     protected String extractNameFromEntity(VM entity) {
-        return entity.getvm_name();
+        return entity.getVmName();
     }
 
     @Override
@@ -1043,20 +1043,20 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 boolean hasMatch = false;
                                 for (VmTemplate a : templatesDiskSet.keySet())
                                 {
-                                    if (vm.getvmt_guid().equals(a.getId()))
+                                    if (vm.getVmtGuid().equals(a.getId()))
                                     {
                                         hasMatch = true;
                                         break;
                                     }
                                 }
 
-                                if (!vm.getvmt_guid().equals(NGuid.Empty) && !hasMatch)
+                                if (!vm.getVmtGuid().equals(NGuid.Empty) && !hasMatch)
                                 {
-                                    if (!templateDic.containsKey(vm.getvmt_name()))
+                                    if (!templateDic.containsKey(vm.getVmtName()))
                                     {
-                                        templateDic.put(vm.getvmt_name(), new ArrayList<String>());
+                                        templateDic.put(vm.getVmtName(), new ArrayList<String>());
                                     }
-                                    templateDic.get(vm.getvmt_name()).add(vm.getvm_name());
+                                    templateDic.get(vm.getVmtName()).add(vm.getVmName());
                                 }
                             }
 
@@ -1238,29 +1238,29 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("run_virtual_machine"); //$NON-NLS-1$
         model.getAttachIso().setEntity(false);
         model.getAttachFloppy().setEntity(false);
-        model.getRunAsStateless().setEntity(vm.getis_stateless());
+        model.getRunAsStateless().setEntity(vm.isStateless());
         model.getRunAndPause().setEntity(false);
         model.setHwAcceleration(true);
 
         // passing Kernel parameters
-        model.getKernel_parameters().setEntity(vm.getkernel_params());
-        model.getKernel_path().setEntity(vm.getkernel_url());
-        model.getInitrd_path().setEntity(vm.getinitrd_url());
+        model.getKernel_parameters().setEntity(vm.getKernelParams());
+        model.getKernel_path().setEntity(vm.getKernelUrl());
+        model.getInitrd_path().setEntity(vm.getInitrdUrl());
 
         // Custom Properties
         model.getCustomPropertySheet()
                 .setKeyValueString(this.getCustomPropertiesKeysList()
-                        .get(vm.getvds_group_compatibility_version()));
+                        .get(vm.getVdsGroupCompatibilityVersion()));
         model.getCustomPropertySheet().setEntity(vm.getCustomProperties());
         model.setCustomPropertiesKeysList(this.getCustomPropertiesKeysList()
-                .get(vm.getvds_group_compatibility_version()));
+                .get(vm.getVdsGroupCompatibilityVersion()));
 
-        model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getvm_os())
-                || vm.getvm_os() == VmOsType.Unassigned || vm.getvm_os() == VmOsType.Other);
+        model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getVmOs())
+                || vm.getVmOs() == VmOsType.Unassigned || vm.getVmOs() == VmOsType.Other);
         model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
-        model.setIsWindowsOS(DataProvider.IsWindowsOsType(vm.getvm_os()));
-        model.getIsVmFirstRun().setEntity(!vm.getis_initialized());
-        model.getSysPrepDomainName().setSelectedItem(vm.getvm_domain());
+        model.setIsWindowsOS(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        model.getIsVmFirstRun().setEntity(!vm.isInitialized());
+        model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
         RunOnceUpdateDisplayProtocols(vm);
         RunOnceUpdateFloppy(vm, new ArrayList<String>());
@@ -1292,7 +1292,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
-        boolean isVncSelected = vm.getdefault_display_type() == DisplayType.vnc;
+        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vnc;
         model.getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
         model.getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
 
@@ -1363,10 +1363,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         RunOnceModel model = (RunOnceModel) getWindow();
 
-        if (DataProvider.IsWindowsOsType(vm.getvm_os()))
+        if (DataProvider.IsWindowsOsType(vm.getVmOs()))
         {
             // Add a pseudo floppy disk image used for Windows' sysprep.
-            if (!vm.getis_initialized())
+            if (!vm.isInitialized())
             {
                 images.add(0, "[sysprep]"); //$NON-NLS-1$
                 model.getAttachFloppy().setEntity(true);
@@ -1401,7 +1401,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 vmListModel2.RunOnceUpdateFloppy(selectedVM, images);
             }
         };
-        AsyncDataProvider.GetFloppyImageList(_asyncQuery2, vm.getstorage_pool_id());
+        AsyncDataProvider.GetFloppyImageList(_asyncQuery2, vm.getStoragePoolId());
 
         AsyncQuery getImageListQuery = new AsyncQuery();
         getImageListQuery.setModel(this);
@@ -1422,7 +1422,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             }
         };
-        AsyncDataProvider.GetIrsImageList(getImageListQuery, vm.getstorage_pool_id());
+        AsyncDataProvider.GetIrsImageList(getImageListQuery, vm.getStoragePoolId());
 
     }
 
@@ -1525,7 +1525,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         model.setHashName("new_template"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setVmType(vm.getvm_type());
+        model.setVmType(vm.getVmType());
 
         model.Initialize(getSystemTreeSelectedItem());
 
@@ -1602,44 +1602,44 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
-        tempVar.setvm_type(model.getVmType());
+        tempVar.setVmType(model.getVmType());
         if (model.getQuota().getSelectedItem() != null) {
             tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
-        tempVar.setvm_os((VmOsType) model.getOSType().getSelectedItem());
-        tempVar.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        tempVar.setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        tempVar.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
-        tempVar.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
+        tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         tempVar.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-        tempVar.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        tempVar.settime_zone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
+        tempVar.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        tempVar.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        tempVar.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+        tempVar.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+        tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setis_auto_suspend(false);
-        tempVar.setis_stateless((Boolean) model.getIsStateless().getEntity());
+        tempVar.setAutoSuspend(false);
+        tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         tempVar.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-        tempVar.setdefault_boot_sequence(model.getBootSequence());
-        tempVar.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
-        tempVar.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        tempVar.setusb_policy(vm.getusb_policy());
-        tempVar.setinitrd_url(vm.getinitrd_url());
-        tempVar.setkernel_url(vm.getkernel_url());
-        tempVar.setkernel_params(vm.getkernel_params());
-        tempVar.setdedicated_vm_for_vds(vm.getdedicated_vm_for_vds());
+        tempVar.setDefaultBootSequence(model.getBootSequence());
+        tempVar.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
+        tempVar.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setUsbPolicy(vm.getUsbPolicy());
+        tempVar.setInitrdUrl(vm.getInitrdUrl());
+        tempVar.setKernelUrl(vm.getKernelUrl());
+        tempVar.setKernelParams(vm.getKernelParams());
+        tempVar.setDedicatedVmForVds(vm.getDedicatedVmForVds());
         tempVar.setMigrationSupport(vm.getMigrationSupport());
 
         VM newvm = tempVar;
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        newvm.setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+        newvm.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
 
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        newvm.setpriority((Integer) prioritySelectedItem.getEntity());
+        newvm.setPriority((Integer) prioritySelectedItem.getEntity());
 
         AddVmTemplateParameters addVmTemplateParameters =
                 new AddVmTemplateParameters(newvm,
@@ -1700,7 +1700,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         VmListModel vmListModel = (VmListModel) target;
                         vmListModel.PostMigrateGetUpHosts((ArrayList<VDS>) returnValue);
                     }
-                }), vm.getvds_group_name());
+                }), vm.getVdsGroupName());
     }
 
     private void CancelMigration()
@@ -1729,15 +1729,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            if (!a.getvds_group_id().equals(((VM) getSelectedItems().get(0)).getvds_group_id()))
+            if (!a.getVdsGroupId().equals(((VM) getSelectedItems().get(0)).getVdsGroupId()))
             {
                 model.setVmsOnSameCluster(false);
             }
             if (run_on_vds == null)
             {
-                run_on_vds = a.getrun_on_vds().getValue();
+                run_on_vds = a.getRunOnVds().getValue();
             }
-            else if (allRunOnSameVds && !run_on_vds.equals(a.getrun_on_vds().getValue()))
+            else if (allRunOnSameVds && !run_on_vds.equals(a.getRunOnVds().getValue()))
             {
                 allRunOnSameVds = false;
             }
@@ -1827,7 +1827,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             {
                 VM a = (VM) item;
 
-                if (a.getrun_on_vds().getValue().equals(((VDS) model.getHosts().getSelectedItem()).getId()))
+                if (a.getRunOnVds().getValue().equals(((VDS) model.getHosts().getSelectedItem()).getId()))
                 {
                     continue;
                 }
@@ -1864,7 +1864,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            items.add(a.getvm_name());
+            items.add(a.getVmName());
         }
         model.setItems(items);
 
@@ -1923,7 +1923,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            items.add(a.getvm_name());
+            items.add(a.getVmName());
         }
         model.setItems(items);
 
@@ -1993,7 +1993,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             // use sysprep iff the vm is not initialized and vm has Win OS
-            boolean reinitialize = !a.getis_initialized() && DataProvider.IsWindowsOsType(a.getvm_os());
+            boolean reinitialize = !a.isInitialized() && DataProvider.IsWindowsOsType(a.getVmOs());
             RunVmParams tempVar = new RunVmParams(a.getId());
             tempVar.setReinitialize(reinitialize);
             list.add(tempVar);
@@ -2079,7 +2079,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             }
         };
-        AsyncDataProvider.GetIrsImageList(getIrsImageListCallback, vm.getstorage_pool_id());
+        AsyncDataProvider.GetIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -2145,7 +2145,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         String name = (String) model.getName().getEntity();
 
         // Check name unicitate.
-        if (!DataProvider.IsVmNameUnique(name) && name.compareToIgnoreCase(getcurrentVm().getvm_name()) != 0)
+        if (!DataProvider.IsVmNameUnique(name) && name.compareToIgnoreCase(getcurrentVm().getVmName()) != 0)
         {
             model.getName().setIsValid(false);
             model.getName()
@@ -2158,49 +2158,49 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
 
-        getcurrentVm().setvm_type(model.getVmType());
-        getcurrentVm().setvmt_guid(template.getId());
-        getcurrentVm().setvm_name(name);
+        getcurrentVm().setVmType(model.getVmType());
+        getcurrentVm().setVmtGuid(template.getId());
+        getcurrentVm().setVmName(name);
         if (model.getQuota().getSelectedItem() != null) {
             getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
-        getcurrentVm().setvm_os((VmOsType) model.getOSType().getSelectedItem());
-        getcurrentVm().setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
+        getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        getcurrentVm().setvm_description((String) model.getDescription().getEntity());
-        getcurrentVm().setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
+        getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
+        getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
+        getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());
         getcurrentVm().setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
         Guid newClusterID = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
-        getcurrentVm().setvds_group_id(newClusterID);
-        getcurrentVm().settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
+        getcurrentVm().setVdsGroupId(newClusterID);
+        getcurrentVm().setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+        getcurrentVm().setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+        getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
-        getcurrentVm().setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setis_auto_suspend(false);
-        getcurrentVm().setis_stateless((Boolean) model.getIsStateless().getEntity());
+        getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+        getcurrentVm().setAutoSuspend(false);
+        getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-        getcurrentVm().setdefault_boot_sequence(model.getBootSequence());
-        getcurrentVm().setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem()
+        getcurrentVm().setDefaultBootSequence(model.getBootSequence());
+        getcurrentVm().setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem()
                 : ""); //$NON-NLS-1$
-        getcurrentVm().setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
+        getcurrentVm().setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
 
-        getcurrentVm().setinitrd_url((String) model.getInitrd_path().getEntity());
-        getcurrentVm().setkernel_url((String) model.getKernel_path().getEntity());
-        getcurrentVm().setkernel_params((String) model.getKernel_parameters().getEntity());
+        getcurrentVm().setInitrdUrl((String) model.getInitrd_path().getEntity());
+        getcurrentVm().setKernelUrl((String) model.getKernel_path().getEntity());
+        getcurrentVm().setKernelParams((String) model.getKernel_parameters().getEntity());
 
         getcurrentVm().setCustomProperties(model.getCustomPropertySheet().getEntity());
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+        getcurrentVm().setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
 
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        getcurrentVm().setpriority((Integer) prioritySelectedItem.getEntity());
+        getcurrentVm().setPriority((Integer) prioritySelectedItem.getEntity());
 
         getcurrentVm().setCpuPinning((String) model.getCpuPinning()
                 .getEntity());
@@ -2208,11 +2208,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
         if ((Boolean) model.getIsAutoAssign().getEntity())
         {
-            getcurrentVm().setdedicated_vm_for_vds(null);
+            getcurrentVm().setDedicatedVmForVds(null);
         }
         else
         {
-            getcurrentVm().setdedicated_vm_for_vds(defaultHost.getId());
+            getcurrentVm().setDedicatedVmForVds(defaultHost.getId());
         }
 
         getcurrentVm().setMigrationSupport(MigrationSupport.MIGRATABLE);
@@ -2227,7 +2227,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (model.getIsNew())
         {
-            if (getcurrentVm().getvmt_guid().equals(NGuid.Empty))
+            if (getcurrentVm().getVmtGuid().equals(NGuid.Empty))
             {
                 if (model.getProgress() != null)
                 {
@@ -2388,7 +2388,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             // runEditVM: should be true if Cluster hasn't changed or if
             // Cluster has changed and Editing it in the Backend has succeeded:
-            Guid oldClusterID = selectedItem.getvds_group_id();
+            Guid oldClusterID = selectedItem.getVdsGroupId();
             if (oldClusterID.equals(newClusterID) == false)
             {
                 ChangeVMClusterParameters parameters =
@@ -2469,7 +2469,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        Guid storagePoolId = vm.getstorage_pool_id();
+        Guid storagePoolId = vm.getStoragePoolId();
 
         getIsoImages().clear();
 
@@ -2825,6 +2825,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
-        return entity.getstorage_pool_id();
+        return entity.getStoragePoolId();
     }
 }

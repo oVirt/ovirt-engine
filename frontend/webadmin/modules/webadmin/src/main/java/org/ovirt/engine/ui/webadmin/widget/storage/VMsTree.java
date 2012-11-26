@@ -48,12 +48,12 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvm_name(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getVmName(), ""); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getvmt_name(), "160px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getVmtName(), "160px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getActualDiskWithSnapshotsSize(), "110px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getvm_creation_date(), "140px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), vm.getVmCreationDate(), "140px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(vm.getId());

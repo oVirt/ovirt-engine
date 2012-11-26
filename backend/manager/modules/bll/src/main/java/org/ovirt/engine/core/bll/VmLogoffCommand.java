@@ -52,8 +52,8 @@ public class VmLogoffCommand<T extends LogoffVmParameters> extends VmOperationCo
         // If the command was sent to the virtual machine successfully update the
         // database to reflect that the user is logged off:
         if (sentToVM) {
-            vm.setguest_cur_user_name(null);
-            vm.setguest_cur_user_id(null);
+            vm.setGuestCurUserName(null);
+            vm.setGuestCurUserId(null);
             DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
         }
 

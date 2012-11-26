@@ -23,8 +23,8 @@ public class ResourcesModel extends SearchableListModel
 
         @Override
         public int compare(VM o1, VM o2) {
-            String name1 = o1.getvm_name() == null ? "" : o1.getvm_name(); //$NON-NLS-1$
-            String name2 = o2.getvm_name() == null ? "" : o2.getvm_name(); //$NON-NLS-1$
+            String name1 = o1.getVmName() == null ? "" : o1.getVmName(); //$NON-NLS-1$
+            String name2 = o2.getVmName() == null ? "" : o2.getVmName(); //$NON-NLS-1$
             return name1.compareTo(name2);
         }
     }
@@ -251,14 +251,14 @@ public class ResourcesModel extends SearchableListModel
 
                 for (VM vm : list)
                 {
-                    definedCPUs += vm.getnum_of_cpus();
-                    definedMemory += vm.getvm_mem_size_mb();
+                    definedCPUs += vm.getNumOfCpus();
+                    definedMemory += vm.getVmMemSizeMb();
 
                     if (vm.isStatusUp())
                     {
                         runningVMs++;
-                        usedCPUs += vm.getnum_of_cpus();
-                        usedMemory += vm.getvm_mem_size_mb();
+                        usedCPUs += vm.getNumOfCpus();
+                        usedMemory += vm.getVmMemSizeMb();
                     }
 
                     if (vm.getDiskList() != null)

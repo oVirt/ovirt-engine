@@ -489,7 +489,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             VDS vds = (VDS) item;
             FenceVdsManualyParameters parameters = new FenceVdsManualyParameters(true);
-            parameters.setStoragePoolId(vds.getstorage_pool_id());
+            parameters.setStoragePoolId(vds.getStoragePoolId());
             parameters.setVdsId(vds.getId());
             list.add(parameters);
         }
@@ -585,7 +585,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                         VDSGroup cluster = (VDSGroup) hostListModel.getSystemTreeSelectedItem().getEntity();
                         for (storage_pool dc : dataCenters)
                         {
-                            if (dc.getId().equals(cluster.getstorage_pool_id()))
+                            if (dc.getId().equals(cluster.getStoragePoolId()))
                             {
                                 innerHostModel.getDataCenter()
                                         .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));
@@ -1105,7 +1105,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             model.getDataCenter().setItems(dataCenters);
             model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters,
-                    new Linq.DataCenterPredicate(vds.getstorage_pool_id())));
+                    new Linq.DataCenterPredicate(vds.getStoragePoolId())));
             if (model.getDataCenter().getSelectedItem() == null) {
                 model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(dataCenters));
             }

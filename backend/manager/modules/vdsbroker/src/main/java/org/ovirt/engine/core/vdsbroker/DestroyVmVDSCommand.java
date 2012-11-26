@@ -34,7 +34,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
             vdsBrokerCommand.Execute();
             if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
-                if (curVm.getstatus() == VMStatus.Down) {
+                if (curVm.getStatus() == VMStatus.Down) {
                     getVDSReturnValue().setReturnValue(VMStatus.Down);
                 }
 
@@ -57,9 +57,9 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                                 DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                             }
                         }
-                        getVds().setmem_commited(getVds().getmem_commited() - curVm.getvm_mem_size_mb());
+                        getVds().setmem_commited(getVds().getmem_commited() - curVm.getVmMemSizeMb());
                         getVds().setmem_commited(getVds().getmem_commited() - getVds().getguest_overhead());
-                        getVds().setvms_cores_count(getVds().getvms_cores_count() - curVm.getnum_of_cpus());
+                        getVds().setvms_cores_count(getVds().getvms_cores_count() - curVm.getNumOfCpus());
                         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
                         return null;
                     }
@@ -71,7 +71,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     onVmStop(curVm);
                 }
 
-                getVDSReturnValue().setReturnValue(curVm.getstatus());
+                getVDSReturnValue().setReturnValue(curVm.getStatus());
             } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
                 log.errorFormat("VDS::destroy Failed destroying vm '{0}' in vds = {1} : {2}, error = {3}",
                         parameters.getVmId(),

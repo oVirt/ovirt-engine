@@ -323,7 +323,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllForStoragePoolAndStatus() {
-        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getstorage_pool_id(), existingVds.getstatus());
+        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), existingVds.getstatus());
         assertCorrectGetAllResult(result);
     }
 
@@ -342,7 +342,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePool() {
-        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id());
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getStoragePoolId());
         assertGetAllForStoragePoolCorrectResult(result);
     }
 
@@ -361,7 +361,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithPermissions() {
-        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), PRIVILEGED_USER_ID, true);
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getStoragePoolId(), PRIVILEGED_USER_ID, true);
         assertGetAllForStoragePoolCorrectResult(result);
     }
 
@@ -371,7 +371,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithNoPermissionsFilteringDisabled() {
-        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), UNPRIVILEGED_USER_ID, false);
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getStoragePoolId(), UNPRIVILEGED_USER_ID, false);
         assertGetAllForStoragePoolCorrectResult(result);
     }
 
@@ -381,7 +381,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithNoPermissions() {
-        List<VDS> result = dao.getAllForStoragePool(existingVds.getstorage_pool_id(), UNPRIVILEGED_USER_ID, true);
+        List<VDS> result = dao.getAllForStoragePool(existingVds.getStoragePoolId(), UNPRIVILEGED_USER_ID, true);
         assertIncorrectGetResult(result);
     }
 
@@ -432,7 +432,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertFalse(result.isEmpty());
 
         for (VDS vds : result) {
-            assertEquals("Wrong storage pool for VDS", existingVds.getstorage_pool_id(), vds.getstorage_pool_id());
+            assertEquals("Wrong storage pool for VDS", existingVds.getStoragePoolId(), vds.getStoragePoolId());
         }
     }
 

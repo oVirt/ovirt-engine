@@ -20,64 +20,64 @@ import org.ovirt.engine.core.compat.Version;
 public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
-    private VmStatic mVmStatic;
+    private VmStatic vmStatic;
 
-    private VmDynamic mVmDynamic;
-    private VmStatistics mVmStatistics;
+    private VmDynamic vmDynamic;
+    private VmStatistics vmStatistics;
     private VmPayload vmPayload;
     private boolean balloonEnabled = true;
 
     @Valid
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
-    private boolean isRunOnce = false;
+    private boolean runOnce = false;
 
     public String getUserDefinedProperties() {
-        return mVmStatic.getUserDefinedProperties();
+        return vmStatic.getUserDefinedProperties();
     }
 
     public void setUserDefinedProperties(String userDefinedProperties) {
-        mVmStatic.setUserDefinedProperties(userDefinedProperties);
+        vmStatic.setUserDefinedProperties(userDefinedProperties);
     }
 
     public String getPredefinedProperties() {
-        return mVmStatic.getPredefinedProperties();
+        return vmStatic.getPredefinedProperties();
     }
 
     public String getCustomProperties() {
-        return mVmStatic.getCustomProperties();
+        return vmStatic.getCustomProperties();
     }
 
     public void setCustomProperties(String customProperties) {
-        mVmStatic.setCustomProperties(customProperties);
+        vmStatic.setCustomProperties(customProperties);
     }
 
     public void setPredefinedProperties(String predefinedProperties) {
-        mVmStatic.setPredefinedProperties(predefinedProperties);
+        vmStatic.setPredefinedProperties(predefinedProperties);
     }
 
     public VM() {
-        mVmStatic = new VmStatic();
-        mVmDynamic = new VmDynamic();
-        mVmStatistics = new VmStatistics();
+        vmStatic = new VmStatic();
+        vmDynamic = new VmDynamic();
+        vmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<Guid, Disk>();
-        mCdPath = "";
-        mFloppyPath = "";
-        mRunAndPause = false;
-        _diskSize = 0;
+        diskMap = new HashMap<Guid, Disk>();
+        cdPath = "";
+        floppyPath = "";
+        runAndPause = false;
+        diskSize = 0;
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        mDiskMap = new HashMap<Guid, Disk>();
-        mCdPath = "";
-        mFloppyPath = "";
-        mRunAndPause = false;
-        _diskSize = 0;
+        diskMap = new HashMap<Guid, Disk>();
+        cdPath = "";
+        floppyPath = "";
+        runAndPause = false;
+        diskSize = 0;
 
-        mVmStatic = (vmStatic == null) ? new VmStatic() : vmStatic;
-        mVmDynamic = vmDynamic;
-        mVmStatistics = vmStatistics;
+        this.vmStatic = (vmStatic == null) ? new VmStatic() : vmStatic;
+        this.vmDynamic = vmDynamic;
+        this.vmStatistics = vmStatistics;
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
     }
@@ -101,221 +101,221 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
             Integer display_secure_port, Integer utc_diff, boolean is_stateless, String vds_cpu_name,
             boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
             int minAllocatedMem) {
-        mVmStatic = new VmStatic();
-        mVmDynamic = new VmDynamic();
-        mVmStatistics = new VmStatistics();
+        vmStatic = new VmStatic();
+        vmDynamic = new VmDynamic();
+        vmStatistics = new VmStatistics();
         setImages(new ArrayList<DiskImage>());
         setInterfaces(new ArrayList<VmNetworkInterface>());
-        mDiskMap = new HashMap<Guid, Disk>();
-        mCdPath = "";
-        mFloppyPath = "";
-        mRunAndPause = false;
-        _diskSize = 0;
+        diskMap = new HashMap<Guid, Disk>();
+        cdPath = "";
+        floppyPath = "";
+        runAndPause = false;
+        diskSize = 0;
 
         this.setId(vm_guid);
-        this.setvm_name(vm_name);
-        this.setvm_mem_size_mb(vm_mem_size_mb);
-        this.setvmt_guid(vmt_guid);
-        this.setvm_domain(vm_domain);
-        this.setvm_os(vm_os);
-        this.setvm_creation_date(vm_creation_date);
-        this.setvm_description(vm_description);
-        this.setvds_group_id(vds_group_id);
-        this.vds_group_nameField = vds_group_name;
-        this.vds_group_descriptionField = vds_group_description;
-        this.vmt_nameField = vmt_name;
-        this.vmt_mem_size_mbField = vmt_mem_size_mb;
-        this.vmt_osField = vmt_os;
-        this.vmt_creation_dateField = vmt_creation_date;
-        this.vmt_child_countField = vmt_child_count;
-        this.vmt_num_of_cpusField = vmt_num_of_cpus;
-        this.vmt_descriptionField = vmt_description;
-        this.vmt_time_zoneField = vmt_time_zone;
-        this.setstatus(VMStatus.forValue(status));
-        this.setvm_ip(vm_ip);
-        this.setvm_host(vm_host);
-        this.setvm_pid(vm_pid);
+        this.setVmName(vm_name);
+        this.setVmMemSizeMb(vm_mem_size_mb);
+        this.setVmtGuid(vmt_guid);
+        this.setVmDomain(vm_domain);
+        this.setVmOs(vm_os);
+        this.setVmCreationDate(vm_creation_date);
+        this.setVmDescription(vm_description);
+        this.setVdsGroupId(vds_group_id);
+        this.vdsGroupName = vds_group_name;
+        this.vdsGroupDescription = vds_group_description;
+        this.vmtName = vmt_name;
+        this.vmtMemSizeMb = vmt_mem_size_mb;
+        this.vmtOs = vmt_os;
+        this.vmtCreationDate = vmt_creation_date;
+        this.vmtchildCount = vmt_child_count;
+        this.vmtNumOfCpus = vmt_num_of_cpus;
+        this.vmtDescription = vmt_description;
+        this.vmtTimeZone = vmt_time_zone;
+        this.setStatus(VMStatus.forValue(status));
+        this.setVmIp(vm_ip);
+        this.setVmHost(vm_host);
+        this.setVmPid(vm_pid);
         this.setLastStartTime(vm_last_boot_time);
-        this.setguest_cur_user_name(guest_cur_user_name);
-        this.setguest_last_login_time(guest_last_login_time);
-        this.setguest_cur_user_id(guest_cur_user_id);
-        this.setguest_last_logout_time(guest_last_logout_time);
-        this.setguest_os(guest_os);
-        this.setcpu_user(cpu_user);
-        this.setcpu_sys(cpu_sys);
-        this.setelapsed_time(elapsed_time);
-        this.setusage_network_percent(usage_network_percent);
-        this.setusage_mem_percent(usage_mem_percent);
-        this.setusage_cpu_percent(usage_cpu_percent);
-        this.setrun_on_vds(run_on_vds);
-        this.setmigrating_to_vds(migrating_to_vds);
-        this.setapp_list(app_list);
-        this.setdisplay(display);
-        this.run_on_vds_nameField = run_on_vds_name;
-        this.settime_zone(time_zone);
-        this.setacpi_enable(acpi_enable);
-        this.setsession(SessionState.forValue(session));
-        this.setdisplay_ip(display_ip);
-        this.setdisplay_type(DisplayType.forValue(display_type));
-        this.setkvm_enable(kvm_enable);
-        this.setboot_sequence(BootSequence.forValue(boot_sequence));
-        this.setvmt_time_zone(vmt_time_zone);
-        this.setdisplay_secure_port(display_secure_port);
-        this.setutc_diff(utc_diff);
-        this.setis_stateless(is_stateless);
-        this.setvds_group_cpu_name(vds_cpu_name);
-        this.setfail_back(fail_back);
-        this.setdefault_boot_sequence(default_boot_sequence);
-        this.setvm_type(vm_type);
+        this.setGuestCurUserName(guest_cur_user_name);
+        this.setGuestLastLoginTime(guest_last_login_time);
+        this.setGuestCurUserId(guest_cur_user_id);
+        this.setGuestLastLogoutTime(guest_last_logout_time);
+        this.setGuestOs(guest_os);
+        this.setCpuUser(cpu_user);
+        this.setCpuSys(cpu_sys);
+        this.setElapsedTime(elapsed_time);
+        this.setUsageNetworkPercent(usage_network_percent);
+        this.setUsageMemPercent(usage_mem_percent);
+        this.setUsageCpuPercent(usage_cpu_percent);
+        this.setRunOnVds(run_on_vds);
+        this.setMigratingToVds(migrating_to_vds);
+        this.setAppList(app_list);
+        this.setDisplay(display);
+        this.runOnVdsName = run_on_vds_name;
+        this.setTimeZone(time_zone);
+        this.setAcpiEnable(acpi_enable);
+        this.setSession(SessionState.forValue(session));
+        this.setDisplayIp(display_ip);
+        this.setDisplayType(DisplayType.forValue(display_type));
+        this.setKvmEnable(kvm_enable);
+        this.setBootSequence(BootSequence.forValue(boot_sequence));
+        this.setVmtTimeZone(vmt_time_zone);
+        this.setDisplaySecurePort(display_secure_port);
+        this.setUtcDiff(utc_diff);
+        this.setStateless(is_stateless);
+        this.setVdsGroupCpuName(vds_cpu_name);
+        this.setFailBack(fail_back);
+        this.setDefaultBootSequence(default_boot_sequence);
+        this.setVmType(vm_type);
         this.setMinAllocatedMem(minAllocatedMem);
     }
 
     public VmPauseStatus getVmPauseStatus() {
-        return this.mVmDynamic.getPauseStatus();
+        return this.vmDynamic.getPauseStatus();
     }
 
     public void setVmPauseStatus(VmPauseStatus aPauseStatus) {
-        this.mVmDynamic.setPauseStatus(aPauseStatus);
+        this.vmDynamic.setPauseStatus(aPauseStatus);
     }
 
     @Override
     public Guid getId() {
-        return this.mVmStatic.getId();
+        return this.vmStatic.getId();
     }
 
     @Override
     public void setId(Guid value) {
-        this.mVmStatic.setId(value);
-        this.mVmDynamic.setId(value);
-        this.mVmStatistics.setId(value);
+        this.vmStatic.setId(value);
+        this.vmDynamic.setId(value);
+        this.vmStatistics.setId(value);
     }
 
-    public String getvm_name() {
-        return this.mVmStatic.getvm_name();
+    public String getVmName() {
+        return this.vmStatic.getvm_name();
     }
 
-    public void setvm_name(String value) {
-        this.mVmStatic.setvm_name(value);
+    public void setVmName(String value) {
+        this.vmStatic.setvm_name(value);
     }
 
-    public int getmem_size_mb() {
-        return this.getvm_mem_size_mb();
+    public int getMemSizeMb() {
+        return this.getVmMemSizeMb();
     }
 
-    public int getvm_mem_size_mb() {
-        return this.mVmStatic.getmem_size_mb();
+    public int getVmMemSizeMb() {
+        return this.vmStatic.getmem_size_mb();
     }
 
-    public void setvm_mem_size_mb(int value) {
-        this.mVmStatic.setmem_size_mb(value);
+    public void setVmMemSizeMb(int value) {
+        this.vmStatic.setmem_size_mb(value);
     }
 
-    public String getvm_domain() {
-        return this.mVmStatic.getdomain();
+    public String getVmDomain() {
+        return this.vmStatic.getdomain();
     }
 
-    public void setvm_domain(String value) {
-        this.mVmStatic.setdomain(value);
+    public void setVmDomain(String value) {
+        this.vmStatic.setdomain(value);
     }
 
-    public VmOsType getos() {
-        return this.getvm_os();
+    public VmOsType getOs() {
+        return this.getVmOs();
     }
 
-    public VmOsType getvm_os() {
-        return this.mVmStatic.getos();
+    public VmOsType getVmOs() {
+        return this.vmStatic.getos();
     }
 
-    public void setvm_os(VmOsType value) {
-        this.mVmStatic.setos(value);
+    public void setVmOs(VmOsType value) {
+        this.vmStatic.setos(value);
     }
 
-    public Date getvm_creation_date() {
-        return this.mVmStatic.getcreation_date();
+    public Date getVmCreationDate() {
+        return this.vmStatic.getcreation_date();
     }
 
-    public void setvm_creation_date(Date value) {
-        this.mVmStatic.setcreation_date(value);
+    public void setVmCreationDate(Date value) {
+        this.vmStatic.setcreation_date(value);
     }
 
     public Guid getQuotaId() {
-        return this.mVmStatic.getQuotaId();
+        return this.vmStatic.getQuotaId();
     }
 
     public void setQuotaId(Guid value) {
-        this.mVmStatic.setQuotaId(value);
+        this.vmStatic.setQuotaId(value);
     }
 
     public String getQuotaName() {
-        return this.mVmStatic.getQuotaName();
+        return this.vmStatic.getQuotaName();
     }
 
     public void setQuotaName(String value) {
-        this.mVmStatic.setQuotaName(value);
+        this.vmStatic.setQuotaName(value);
     }
 
     public boolean isQuotaDefault() {
-        return this.mVmStatic.isQuotaDefault();
+        return this.vmStatic.isQuotaDefault();
     }
 
     public void setIsQuotaDefault(boolean isQuotaDefault) {
-        this.mVmStatic.setIsQuotaDefault(isQuotaDefault);
+        this.vmStatic.setIsQuotaDefault(isQuotaDefault);
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
-        return this.mVmStatic.getQuotaEnforcementType();
+        return this.vmStatic.getQuotaEnforcementType();
     }
 
     public void setQuotaEnforcementType(QuotaEnforcementTypeEnum quotaEnforcementType) {
-        this.mVmStatic.setQuotaEnforcementType(quotaEnforcementType);
+        this.vmStatic.setQuotaEnforcementType(quotaEnforcementType);
     }
 
-    public String getdescription() {
-        return this.getvm_description();
+    public String getDescription() {
+        return this.getVmDescription();
     }
 
-    public String getvm_description() {
-        return this.mVmStatic.getdescription();
+    public String getVmDescription() {
+        return this.vmStatic.getdescription();
     }
 
-    public void setvm_description(String value) {
-        this.mVmStatic.setdescription(value);
+    public void setVmDescription(String value) {
+        this.vmStatic.setdescription(value);
     }
 
-    public int getnum_of_monitors() {
-        return this.mVmStatic.getnum_of_monitors();
+    public int getNumOfMonitors() {
+        return this.vmStatic.getnum_of_monitors();
     }
 
-    public void setnum_of_monitors(int value) {
-        this.mVmStatic.setnum_of_monitors(value);
+    public void setNumOfMonitors(int value) {
+        this.vmStatic.setnum_of_monitors(value);
     }
 
     public boolean getAllowConsoleReconnect() {
-        return this.mVmStatic.getAllowConsoleReconnect();
+        return this.vmStatic.getAllowConsoleReconnect();
     }
 
     public void setAllowConsoleReconnect(boolean value) {
-        this.mVmStatic.setAllowConsoleReconnect(value);
+        this.vmStatic.setAllowConsoleReconnect(value);
     }
 
-    public boolean getis_initialized() {
-        return this.mVmStatic.getis_initialized();
+    public boolean isInitialized() {
+        return this.vmStatic.getis_initialized();
     }
 
-    public void setis_initialized(boolean value) {
-        this.mVmStatic.setis_initialized(value);
+    public void setInitialized(boolean value) {
+        this.vmStatic.setis_initialized(value);
     }
 
-    public boolean getis_auto_suspend() {
-        return this.mVmStatic.getis_auto_suspend();
+    public boolean isAutoSuspend() {
+        return this.vmStatic.getis_auto_suspend();
     }
 
-    public void setis_auto_suspend(boolean value) {
-        this.mVmStatic.setis_auto_suspend(value);
+    public void setAutoSuspend(boolean value) {
+        this.vmStatic.setis_auto_suspend(value);
     }
 
-    public int getnum_of_cpus() {
-        return this.mVmStatic.getnum_of_cpus();
+    public int getNumOfCpus() {
+        return this.vmStatic.getnum_of_cpus();
     }
 
     /**
@@ -325,729 +325,729 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      * @param value
      */
     @Deprecated
-    public void setnum_of_cpus(int value) {
+    public void setNumOfCpus(int value) {
         // Purposely empty
     }
 
-    public int getnum_of_sockets() {
-        return this.mVmStatic.getnum_of_sockets();
+    public int getNumOfSockets() {
+        return this.vmStatic.getnum_of_sockets();
     }
 
-    public void setnum_of_sockets(int value) {
-        this.mVmStatic.setnum_of_sockets(value);
+    public void setNumOfSockets(int value) {
+        this.vmStatic.setnum_of_sockets(value);
     }
 
-    public int getcpu_per_socket() {
-        return this.mVmStatic.getcpu_per_socket();
+    public int getCpuPerSocket() {
+        return this.vmStatic.getcpu_per_socket();
     }
 
-    public void setcpu_per_socket(int value) {
-        this.mVmStatic.setcpu_per_socket(value);
+    public void setCpuPerSocket(int value) {
+        this.vmStatic.setcpu_per_socket(value);
     }
 
-    public UsbPolicy getusb_policy() {
-        return mVmStatic.getusb_policy();
+    public UsbPolicy getUsbPolicy() {
+        return vmStatic.getusb_policy();
     }
 
-    public void setusb_policy(UsbPolicy value) {
-        mVmStatic.setusb_policy(value);
+    public void setUsbPolicy(UsbPolicy value) {
+        vmStatic.setusb_policy(value);
     }
 
-    public boolean getauto_startup() {
-        return mVmStatic.getauto_startup();
+    public boolean isAutoStartup() {
+        return vmStatic.getauto_startup();
     }
 
-    public void setauto_startup(boolean value) {
-        mVmStatic.setauto_startup(value);
+    public void setAutoStartup(boolean value) {
+        vmStatic.setauto_startup(value);
     }
 
-    public NGuid getdedicated_vm_for_vds() {
-        return mVmStatic.getdedicated_vm_for_vds();
+    public NGuid getDedicatedVmForVds() {
+        return vmStatic.getdedicated_vm_for_vds();
     }
 
-    public void setdedicated_vm_for_vds(NGuid value) {
-        mVmStatic.setdedicated_vm_for_vds(value);
+    public void setDedicatedVmForVds(NGuid value) {
+        vmStatic.setdedicated_vm_for_vds(value);
     }
 
-    public Guid getvds_group_id() {
-        return this.mVmStatic.getvds_group_id();
+    public Guid getVdsGroupId() {
+        return this.vmStatic.getvds_group_id();
     }
 
-    public void setvds_group_id(Guid value) {
-        this.mVmStatic.setvds_group_id(value);
+    public void setVdsGroupId(Guid value) {
+        this.vmStatic.setvds_group_id(value);
     }
 
-    public String gettime_zone() {
-        return mVmStatic.gettime_zone();
+    public String getTimeZone() {
+        return vmStatic.gettime_zone();
     }
 
-    public void settime_zone(String value) {
-        mVmStatic.settime_zone(value);
+    public void setTimeZone(String value) {
+        vmStatic.settime_zone(value);
     }
 
-    public boolean getis_stateless() {
-        return mVmStatic.getis_stateless();
+    public boolean isStateless() {
+        return vmStatic.getis_stateless();
     }
 
     public boolean isSmartcardEnabled() {
-        return mVmStatic.isSmartcardEnabled();
+        return vmStatic.isSmartcardEnabled();
     }
 
     public void setSmartcardEnabled(boolean isSmartcardEnabled) {
-        mVmStatic.setSmartcardEnabled(isSmartcardEnabled);
+        vmStatic.setSmartcardEnabled(isSmartcardEnabled);
     }
 
-    public void setis_stateless(boolean value) {
-        mVmStatic.setis_stateless(value);
+    public void setStateless(boolean value) {
+        vmStatic.setis_stateless(value);
     }
 
     public void setDeleteProtected(boolean deleteProtected) {
-        mVmStatic.setDeleteProtected(deleteProtected);
+        vmStatic.setDeleteProtected(deleteProtected);
     }
 
     public boolean isDeleteProtected() {
-        return mVmStatic.isDeleteProtected();
+        return vmStatic.isDeleteProtected();
     }
 
-    public DisplayType getdefault_display_type() {
-        return mVmStatic.getdefault_display_type();
+    public DisplayType getDefaultDisplayType() {
+        return vmStatic.getdefault_display_type();
     }
 
-    public void setdefault_display_type(DisplayType value) {
-        mVmStatic.setdefault_display_type(value);
+    public void setDefaultDisplayType(DisplayType value) {
+        vmStatic.setdefault_display_type(value);
     }
 
-    public int getpriority() {
-        return mVmStatic.getpriority();
+    public int getPriority() {
+        return vmStatic.getpriority();
     }
 
-    public void setpriority(int value) {
-        mVmStatic.setpriority(value);
+    public void setPriority(int value) {
+        vmStatic.setpriority(value);
     }
 
-    public String getiso_path() {
-        return mVmStatic.getiso_path();
+    public String getIsoPath() {
+        return vmStatic.getiso_path();
     }
 
-    public void setiso_path(String value) {
-        mVmStatic.setiso_path(value);
+    public void setIsoPath(String value) {
+        vmStatic.setiso_path(value);
     }
 
-    public OriginType getorigin() {
-        return mVmStatic.getorigin();
+    public OriginType getOrigin() {
+        return vmStatic.getorigin();
     }
 
-    public void setorigin(OriginType value) {
-        mVmStatic.setorigin(value);
+    public void setOrigin(OriginType value) {
+        vmStatic.setorigin(value);
     }
 
-    public String getinitrd_url() {
-        return mVmStatic.getinitrd_url();
+    public String getInitrdUrl() {
+        return vmStatic.getinitrd_url();
     }
 
-    public void setinitrd_url(String value) {
-        mVmStatic.setinitrd_url(value);
+    public void setInitrdUrl(String value) {
+        vmStatic.setinitrd_url(value);
     }
 
-    public String getkernel_url() {
-        return mVmStatic.getkernel_url();
+    public String getKernelUrl() {
+        return vmStatic.getkernel_url();
     }
 
-    public void setkernel_url(String value) {
-        mVmStatic.setkernel_url(value);
+    public void setKernelUrl(String value) {
+        vmStatic.setkernel_url(value);
     }
 
-    public String getkernel_params() {
-        return mVmStatic.getkernel_params();
+    public String getKernelParams() {
+        return vmStatic.getkernel_params();
     }
 
-    public void setkernel_params(String value) {
-        mVmStatic.setkernel_params(value);
+    public void setKernelParams(String value) {
+        vmStatic.setkernel_params(value);
     }
 
-    private NGuid mVmPoolId;
-    private String mVmPoolName;
+    private NGuid vmPoolId;
+    private String vmPoolName;
 
-    public VMStatus getstatus() {
-        return this.mVmDynamic.getstatus();
+    public VMStatus getStatus() {
+        return this.vmDynamic.getstatus();
     }
 
-    public void setstatus(VMStatus value) {
-        this.mVmDynamic.setstatus(value);
+    public void setStatus(VMStatus value) {
+        this.vmDynamic.setstatus(value);
     }
 
-    public String getvm_ip() {
-        return this.mVmDynamic.getvm_ip();
+    public String getVmIp() {
+        return this.vmDynamic.getvm_ip();
     }
 
-    public void setvm_ip(String value) {
-        this.mVmDynamic.setvm_ip(value);
+    public void setVmIp(String value) {
+        this.vmDynamic.setvm_ip(value);
     }
 
-    public String getvm_host() {
-        String vmHost = this.mVmDynamic.getvm_host();
-        if (!StringHelper.isNullOrEmpty(this.getvm_ip())) {
-            this.mVmDynamic.setvm_host(getvm_ip());
+    public String getVmHost() {
+        String vmHost = this.vmDynamic.getvm_host();
+        if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
+            this.vmDynamic.setvm_host(getVmIp());
         } else {
-            String vmDomain = getvm_domain();
+            String vmDomain = getVmDomain();
 
             // If VM's host name isn't available - set as VM's name
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
             // vmHost and vmDomain.
             if (StringHelper.isNullOrEmpty(vmHost)) {
-                vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getvm_name() : getvm_name() + "." + vmDomain;
-                this.mVmDynamic.setvm_host(vmHost);
+                vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getVmName() : getVmName() + "." + vmDomain;
+                this.vmDynamic.setvm_host(vmHost);
             } else if (!StringHelper.isNullOrEmpty(vmDomain) && !vmHost.endsWith(vmDomain)) {
-                this.mVmDynamic.setvm_host(vmHost + "." + vmDomain);
+                this.vmDynamic.setvm_host(vmHost + "." + vmDomain);
             }
         }
 
-        return this.mVmDynamic.getvm_host();
+        return this.vmDynamic.getvm_host();
     }
 
-    public void setvm_host(String value) {
-        this.mVmDynamic.setvm_host(value);
+    public void setVmHost(String value) {
+        this.vmDynamic.setvm_host(value);
     }
 
-    public Integer getvm_pid() {
-        return this.mVmDynamic.getvm_pid();
+    public Integer getVmPid() {
+        return this.vmDynamic.getvm_pid();
     }
 
-    public void setvm_pid(Integer value) {
-        this.mVmDynamic.setvm_pid(value);
+    public void setVmPid(Integer value) {
+        this.vmDynamic.setvm_pid(value);
     }
 
     public Date getLastStartTime() {
-        return this.mVmDynamic.getLastStartTime();
+        return this.vmDynamic.getLastStartTime();
     }
 
     public void setLastStartTime(Date value) {
-        this.mVmDynamic.setLastStartTime(value);
+        this.vmDynamic.setLastStartTime(value);
     }
 
-    public String getguest_cur_user_name() {
-        return this.mVmDynamic.getguest_cur_user_name();
+    public String getGuestCurUserName() {
+        return this.vmDynamic.getguest_cur_user_name();
     }
 
-    public void setguest_cur_user_name(String value) {
-        this.mVmDynamic.setguest_cur_user_name(value);
+    public void setGuestCurUserName(String value) {
+        this.vmDynamic.setguest_cur_user_name(value);
     }
 
-    public Date getguest_last_login_time() {
-        return this.mVmDynamic.getguest_last_login_time();
+    public Date getGuestLastLoginTime() {
+        return this.vmDynamic.getguest_last_login_time();
     }
 
-    public void setguest_last_login_time(Date value) {
-        this.mVmDynamic.setguest_last_login_time(value);
+    public void setGuestLastLoginTime(Date value) {
+        this.vmDynamic.setguest_last_login_time(value);
     }
 
-    public NGuid getguest_cur_user_id() {
-        return this.mVmDynamic.getguest_cur_user_id();
+    public NGuid getGuestCurUserId() {
+        return this.vmDynamic.getguest_cur_user_id();
     }
 
-    public void setguest_cur_user_id(NGuid value) {
-        this.mVmDynamic.setguest_cur_user_id(value);
+    public void setGuestCurUserId(NGuid value) {
+        this.vmDynamic.setguest_cur_user_id(value);
     }
 
     public NGuid getConsoleUserId() {
-        return this.mVmDynamic.getConsoleUserId();
+        return this.vmDynamic.getConsoleUserId();
     }
 
     public void setConsoleUserId(NGuid value) {
-        this.mVmDynamic.setConsoleUserId(value);
+        this.vmDynamic.setConsoleUserId(value);
     }
 
-    public Date getguest_last_logout_time() {
-        return this.mVmDynamic.getguest_last_logout_time();
+    public Date getGuestLastLogoutTime() {
+        return this.vmDynamic.getguest_last_logout_time();
     }
 
-    public void setguest_last_logout_time(Date value) {
-        this.mVmDynamic.setguest_last_logout_time(value);
+    public void setGuestLastLogoutTime(Date value) {
+        this.vmDynamic.setguest_last_logout_time(value);
     }
 
-    public String getguest_os() {
-        return this.mVmDynamic.getguest_os();
+    public String getGuestOs() {
+        return this.vmDynamic.getguest_os();
     }
 
-    public void setguest_os(String value) {
-        this.mVmDynamic.setguest_os(value);
+    public void setGuestOs(String value) {
+        this.vmDynamic.setguest_os(value);
     }
 
-    public NGuid getrun_on_vds() {
-        return this.mVmDynamic.getrun_on_vds();
+    public NGuid getRunOnVds() {
+        return this.vmDynamic.getrun_on_vds();
     }
 
-    public void setrun_on_vds(NGuid value) {
-        this.mVmDynamic.setrun_on_vds(value);
+    public void setRunOnVds(NGuid value) {
+        this.vmDynamic.setrun_on_vds(value);
     }
 
     public NGuid getmigrating_to_vds() {
-        return this.mVmDynamic.getmigrating_to_vds();
+        return this.vmDynamic.getmigrating_to_vds();
     }
 
-    public void setmigrating_to_vds(NGuid value) {
-        this.mVmDynamic.setmigrating_to_vds(value);
+    public void setMigratingToVds(NGuid value) {
+        this.vmDynamic.setmigrating_to_vds(value);
     }
 
-    public String getapp_list() {
-        return this.mVmDynamic.getapp_list();
+    public String getAppList() {
+        return this.vmDynamic.getapp_list();
     }
 
-    public void setapp_list(String value) {
-        this.mVmDynamic.setapp_list(value);
+    public void setAppList(String value) {
+        this.vmDynamic.setapp_list(value);
     }
 
-    public Integer getdisplay() {
-        return this.mVmDynamic.getdisplay();
+    public Integer getDisplay() {
+        return this.vmDynamic.getdisplay();
     }
 
-    public void setdisplay(Integer value) {
-        this.mVmDynamic.setdisplay(value);
+    public void setDisplay(Integer value) {
+        this.vmDynamic.setdisplay(value);
     }
 
-    public Boolean getacpi_enable() {
-        return this.mVmDynamic.getacpi_enable();
+    public Boolean getAcpiEnable() {
+        return this.vmDynamic.getacpi_enable();
     }
 
-    public void setacpi_enable(Boolean value) {
-        this.mVmDynamic.setacpi_enable(value);
+    public void setAcpiEnable(Boolean value) {
+        this.vmDynamic.setacpi_enable(value);
     }
 
-    public String getdisplay_ip() {
-        return this.mVmDynamic.getdisplay_ip();
+    public String getDisplayIp() {
+        return this.vmDynamic.getdisplay_ip();
     }
 
-    public void setdisplay_ip(String value) {
-        this.mVmDynamic.setdisplay_ip(value);
+    public void setDisplayIp(String value) {
+        this.vmDynamic.setdisplay_ip(value);
     }
 
-    public DisplayType getdisplay_type() {
-        return this.mVmDynamic.getdisplay_type();
+    public DisplayType getDisplayType() {
+        return this.vmDynamic.getdisplay_type();
     }
 
-    public void setdisplay_type(DisplayType value) {
-        this.mVmDynamic.setdisplay_type(value);
+    public void setDisplayType(DisplayType value) {
+        this.vmDynamic.setdisplay_type(value);
     }
 
-    public Boolean getkvm_enable() {
-        return this.mVmDynamic.getkvm_enable();
+    public Boolean getKvmEnable() {
+        return this.vmDynamic.getkvm_enable();
     }
 
-    public void setkvm_enable(Boolean value) {
-        this.mVmDynamic.setkvm_enable(value);
+    public void setKvmEnable(Boolean value) {
+        this.vmDynamic.setkvm_enable(value);
     }
 
-    public SessionState getsession() {
-        return this.mVmDynamic.getsession();
+    public SessionState getSession() {
+        return this.vmDynamic.getsession();
     }
 
-    public void setsession(SessionState value) {
-        this.mVmDynamic.setsession(value);
+    public void setSession(SessionState value) {
+        this.vmDynamic.setsession(value);
     }
 
-    public BootSequence getboot_sequence() {
-        return this.mVmDynamic.getboot_sequence();
+    public BootSequence getBootSequence() {
+        return this.vmDynamic.getboot_sequence();
     }
 
-    public void setboot_sequence(BootSequence value) {
-        this.mVmDynamic.setboot_sequence(value);
+    public void setBootSequence(BootSequence value) {
+        this.vmDynamic.setboot_sequence(value);
     }
 
-    public Integer getdisplay_secure_port() {
-        return this.mVmDynamic.getdisplay_secure_port();
+    public Integer getDisplaySecurePort() {
+        return this.vmDynamic.getdisplay_secure_port();
     }
 
-    public void setdisplay_secure_port(Integer value) {
-        this.mVmDynamic.setdisplay_secure_port(value);
+    public void setDisplaySecurePort(Integer value) {
+        this.vmDynamic.setdisplay_secure_port(value);
     }
 
     public VmExitStatus getExitStatus() {
-        return this.mVmDynamic.getExitStatus();
+        return this.vmDynamic.getExitStatus();
     }
 
     public void setExitStatus(VmExitStatus value) {
-        this.mVmDynamic.setExitStatus(value);
+        this.vmDynamic.setExitStatus(value);
     }
 
     public String getExitMessage() {
-        return this.mVmDynamic.getExitMessage();
+        return this.vmDynamic.getExitMessage();
     }
 
     public void setExitMessage(String value) {
-        this.mVmDynamic.setExitMessage(value);
+        this.vmDynamic.setExitMessage(value);
     }
 
-    public Integer getutc_diff() {
-        return this.mVmDynamic.getutc_diff();
+    public Integer getUtcDiff() {
+        return this.vmDynamic.getutc_diff();
     }
 
-    public void setutc_diff(Integer value) {
-        this.mVmDynamic.setutc_diff(value);
+    public void setUtcDiff(Integer value) {
+        this.vmDynamic.setutc_diff(value);
     }
 
-    public NGuid getlast_vds_run_on() {
-        return this.mVmDynamic.getlast_vds_run_on();
+    public NGuid getLastVdsRunOn() {
+        return this.vmDynamic.getlast_vds_run_on();
     }
 
-    public void setlast_vds_run_on(NGuid value) {
-        this.mVmDynamic.setlast_vds_run_on(value);
+    public void setLastVdsRunOn(NGuid value) {
+        this.vmDynamic.setlast_vds_run_on(value);
     }
 
-    public String getclient_ip() {
-        return this.mVmDynamic.getclient_ip();
+    public String getClientIp() {
+        return this.vmDynamic.getclient_ip();
     }
 
-    public void setclient_ip(String value) {
-        this.mVmDynamic.setclient_ip(value);
+    public void setClientIp(String value) {
+        this.vmDynamic.setclient_ip(value);
     }
 
-    public Integer getguest_requested_memory() {
-        return this.mVmDynamic.getguest_requested_memory();
+    public Integer getGuestRequestedMemory() {
+        return this.vmDynamic.getguest_requested_memory();
     }
 
-    public void setguest_requested_memory(Integer value) {
-        this.mVmDynamic.setguest_requested_memory(value);
+    public void setGuestRequestedMemory(Integer value) {
+        this.vmDynamic.setguest_requested_memory(value);
     }
 
     public String getHash() {
-        return mVmDynamic.getHash();
+        return vmDynamic.getHash();
     }
 
     public void setHash(String hash) {
-        mVmDynamic.setHash(hash);
+        vmDynamic.setHash(hash);
     }
 
-    public Double getcpu_user() {
-        return this.mVmStatistics.getcpu_user();
+    public Double getCpuUser() {
+        return this.vmStatistics.getcpu_user();
     }
 
-    public void setcpu_user(Double value) {
-        this.mVmStatistics.setcpu_user(value);
+    public void setCpuUser(Double value) {
+        this.vmStatistics.setcpu_user(value);
     }
 
-    public Double getcpu_sys() {
-        return this.mVmStatistics.getcpu_sys();
+    public Double getCpuSys() {
+        return this.vmStatistics.getcpu_sys();
     }
 
-    public void setcpu_sys(Double value) {
-        this.mVmStatistics.setcpu_sys(value);
+    public void setCpuSys(Double value) {
+        this.vmStatistics.setcpu_sys(value);
     }
 
-    public Double getelapsed_time() {
-        return this.mVmStatistics.getelapsed_time();
+    public Double getElapsedTime() {
+        return this.vmStatistics.getelapsed_time();
     }
 
-    public void setelapsed_time(Double value) {
-        this.mVmStatistics.setelapsed_time(value);
+    public void setElapsedTime(Double value) {
+        this.vmStatistics.setelapsed_time(value);
     }
 
     public Double getRoundedElapsedTime() {
-        return this.mVmStatistics.getRoundedElapsedTime();
+        return this.vmStatistics.getRoundedElapsedTime();
     }
 
     public void setRoundedElapsedTime(Double value) {
-        this.mVmStatistics.setRoundedElapsedTime(value);
+        this.vmStatistics.setRoundedElapsedTime(value);
     }
 
-    public Integer getusage_network_percent() {
-        return this.mVmStatistics.getusage_network_percent();
+    public Integer getUsageNetworkPercent() {
+        return this.vmStatistics.getusage_network_percent();
     }
 
-    public void setusage_network_percent(Integer value) {
-        this.mVmStatistics.setusage_network_percent(value);
+    public void setUsageNetworkPercent(Integer value) {
+        this.vmStatistics.setusage_network_percent(value);
     }
 
-    public Integer getusage_mem_percent() {
-        return this.mVmStatistics.getusage_mem_percent();
+    public Integer getUsageMemPercent() {
+        return this.vmStatistics.getusage_mem_percent();
     }
 
-    public void setusage_mem_percent(Integer value) {
-        this.mVmStatistics.setusage_mem_percent(value);
+    public void setUsageMemPercent(Integer value) {
+        this.vmStatistics.setusage_mem_percent(value);
     }
 
-    public Integer getusage_cpu_percent() {
-        return this.mVmStatistics.getusage_cpu_percent();
+    public Integer getUsageCpuPercent() {
+        return this.vmStatistics.getusage_cpu_percent();
     }
 
-    public void setusage_cpu_percent(Integer value) {
-        this.mVmStatistics.setusage_cpu_percent(value);
+    public void setUsageCpuPercent(Integer value) {
+        this.vmStatistics.setusage_cpu_percent(value);
     }
 
-    public Guid getvmt_guid() {
-        return this.mVmStatic.getvmt_guid();
+    public Guid getVmtGuid() {
+        return this.vmStatic.getvmt_guid();
     }
 
-    public void setvmt_guid(Guid value) {
-        this.mVmStatic.setvmt_guid(value);
+    public void setVmtGuid(Guid value) {
+        this.vmStatic.setvmt_guid(value);
     }
 
-    private String vmt_nameField;
+    private String vmtName;
 
-    public String getvmt_name() {
-        return this.vmt_nameField;
+    public String getVmtName() {
+        return this.vmtName;
     }
 
-    public void setvmt_name(String value) {
-        this.vmt_nameField = value;
+    public void setVmtName(String value) {
+        this.vmtName = value;
     }
 
-    private int vmt_mem_size_mbField;
+    private int vmtMemSizeMb;
 
-    public int getvmt_mem_size_mb() {
-        return this.vmt_mem_size_mbField;
+    public int getVmtMemSizeMb() {
+        return this.vmtMemSizeMb;
     }
 
-    public void setvmt_mem_size_mb(int value) {
-        this.vmt_mem_size_mbField = value;
+    public void setVmtMemSizeMb(int value) {
+        this.vmtMemSizeMb = value;
     }
 
-    private VmOsType vmt_osField = VmOsType.forValue(0);
+    private VmOsType vmtOs = VmOsType.forValue(0);
 
-    public VmOsType getvmt_os() {
-        return this.vmt_osField;
+    public VmOsType getVmtOs() {
+        return this.vmtOs;
     }
 
-    public void setvmt_os(VmOsType value) {
-        this.vmt_osField = value;
+    public void setVmtOs(VmOsType value) {
+        this.vmtOs = value;
     }
 
-    private Date vmt_creation_dateField = new Date(0);
+    private Date vmtCreationDate = new Date(0);
 
-    public Date getvmt_creation_date() {
-        return this.vmt_creation_dateField;
+    public Date getVmtCreationDate() {
+        return this.vmtCreationDate;
     }
 
-    public void setvmt_creation_date(Date value) {
-        this.vmt_creation_dateField = value;
+    public void setVmtCreationDate(Date value) {
+        this.vmtCreationDate = value;
     }
 
-    private int vmt_child_countField;
+    private int vmtchildCount;
 
-    public int getvmt_child_count() {
-        return this.vmt_child_countField;
+    public int getVmtChildCount() {
+        return this.vmtchildCount;
     }
 
-    public void setvmt_child_count(int value) {
-        this.vmt_child_countField = value;
+    public void setVmtChildCount(int value) {
+        this.vmtchildCount = value;
     }
 
-    private int vmt_num_of_cpusField;
+    private int vmtNumOfCpus;
 
-    public int getvmt_num_of_cpus() {
-        return this.vmt_num_of_cpusField;
+    public int getVmtNumOfCpus() {
+        return this.vmtNumOfCpus;
     }
 
-    public void setvmt_num_of_cpus(int value) {
-        this.vmt_num_of_cpusField = value;
+    public void setVmtNumOfCpus(int value) {
+        this.vmtNumOfCpus = value;
     }
 
-    private int vmt_num_of_socketsField;
+    private int vmtNumOfSockets;
 
-    public int getvmt_num_of_sockets() {
-        return this.vmt_num_of_socketsField;
+    public int getVmtNumOfSockets() {
+        return this.vmtNumOfSockets;
     }
 
-    public void setvmt_num_of_sockets(int value) {
-        this.vmt_num_of_socketsField = value;
+    public void setVmtNumOfSockets(int value) {
+        this.vmtNumOfSockets = value;
     }
 
-    private int vmt_cpu_per_socketField;
+    private int vmtCpuPerSocket;
 
-    public int getvmt_cpu_per_socket() {
-        return this.vmt_cpu_per_socketField;
+    public int getVmtCpuPerSocket() {
+        return this.vmtCpuPerSocket;
     }
 
-    public void setvmt_cpu_per_socket(int value) {
-        this.vmt_cpu_per_socketField = value;
+    public void setVmtCpuPerSocket(int value) {
+        this.vmtCpuPerSocket = value;
     }
 
-    private String vmt_descriptionField;
+    private String vmtDescription;
 
-    public String getvmt_description() {
-        return this.vmt_descriptionField;
+    public String getVmtDescription() {
+        return this.vmtDescription;
     }
 
-    public void setvmt_description(String value) {
-        this.vmt_descriptionField = value;
+    public void setVmtDescription(String value) {
+        this.vmtDescription = value;
     }
 
-    private String vmt_time_zoneField;
+    private String vmtTimeZone;
 
-    public String getvmt_time_zone() {
-        return vmt_time_zoneField;
+    public String getVmtTimeZone() {
+        return vmtTimeZone;
     }
 
-    public void setvmt_time_zone(String value) {
-        vmt_time_zoneField = value;
+    public void setVmtTimeZone(String value) {
+        vmtTimeZone = value;
     }
 
-    private Version vds_group_compatibility_versionField;
+    private Version vdsGroupCompatibilityVersion;
 
-    public Version getvds_group_compatibility_version() {
-        return this.vds_group_compatibility_versionField;
+    public Version getVdsGroupCompatibilityVersion() {
+        return this.vdsGroupCompatibilityVersion;
     }
 
-    public void setvds_group_compatibility_version(Version value) {
-        if (Version.OpInequality(getvds_group_compatibility_version(), value)) {
-            this.vds_group_compatibility_versionField = value;
+    public void setVdsGroupCompatibilityVersion(Version value) {
+        if (Version.OpInequality(getVdsGroupCompatibilityVersion(), value)) {
+            this.vdsGroupCompatibilityVersion = value;
         }
     }
 
-    private String vds_group_nameField;
+    private String vdsGroupName;
 
-    public String getvds_group_name() {
-        return this.vds_group_nameField;
+    public String getVdsGroupName() {
+        return this.vdsGroupName;
     }
 
-    public void setvds_group_name(String value) {
-        this.vds_group_nameField = value;
+    public void setVdsGroupName(String value) {
+        this.vdsGroupName = value;
     }
 
-    private String vds_group_descriptionField;
+    private String vdsGroupDescription;
 
-    public String getvds_group_description() {
-        return this.vds_group_descriptionField;
+    public String getVdsGroupDescription() {
+        return this.vdsGroupDescription;
     }
 
-    public void setvds_group_description(String value) {
-        this.vds_group_descriptionField = value;
+    public void setVdsGroupDescription(String value) {
+        this.vdsGroupDescription = value;
     }
 
-    private String vds_group_cpu_nameField;
+    private String vdsGroupCpuName;
 
-    public String getvds_group_cpu_name() {
-        return this.vds_group_cpu_nameField;
+    public String getVdsGroupCpuName() {
+        return this.vdsGroupCpuName;
     }
 
-    public void setvds_group_cpu_name(String value) {
-        this.vds_group_cpu_nameField = value;
+    public void setVdsGroupCpuName(String value) {
+        this.vdsGroupCpuName = value;
     }
 
-    public boolean getfail_back() {
-        return this.mVmStatic.getfail_back();
+    public boolean isFailBack() {
+        return this.vmStatic.getfail_back();
     }
 
-    public void setfail_back(boolean value) {
-        this.mVmStatic.setfail_back(value);
+    public void setFailBack(boolean value) {
+        this.vmStatic.setfail_back(value);
     }
 
-    public BootSequence getdefault_boot_sequence() {
-        return this.mVmStatic.getdefault_boot_sequence();
+    public BootSequence getDefaultBootSequence() {
+        return this.vmStatic.getdefault_boot_sequence();
     }
 
-    public void setdefault_boot_sequence(BootSequence value) {
-        this.mVmStatic.setdefault_boot_sequence(value);
+    public void setDefaultBootSequence(BootSequence value) {
+        this.vmStatic.setdefault_boot_sequence(value);
     }
 
-    public int getnice_level() {
-        return this.mVmStatic.getnice_level();
+    public int getNiceLevel() {
+        return this.vmStatic.getnice_level();
     }
 
-    public void setnice_level(int value) {
-        this.mVmStatic.setnice_level(value);
+    public void setNiceLevel(int value) {
+        this.vmStatic.setnice_level(value);
     }
 
     public MigrationSupport getMigrationSupport() {
-        return this.mVmStatic.getMigrationSupport();
+        return this.vmStatic.getMigrationSupport();
     }
 
     public void setMigrationSupport(MigrationSupport migrationSupport) {
-        this.mVmStatic.setMigrationSupport(migrationSupport);
+        this.vmStatic.setMigrationSupport(migrationSupport);
     }
 
-    public VmType getvm_type() {
-        return this.mVmStatic.getvm_type();
+    public VmType getVmType() {
+        return this.vmStatic.getvm_type();
     }
 
-    public void setvm_type(VmType value) {
-        this.mVmStatic.setvm_type(value);
+    public void setVmType(VmType value) {
+        this.vmStatic.setvm_type(value);
     }
 
-    public String gethibernation_vol_handle() {
-        return this.mVmDynamic.gethibernation_vol_handle();
+    public String getHibernationVolHandle() {
+        return this.vmDynamic.gethibernation_vol_handle();
     }
 
-    public void sethibernation_vol_handle(String value) {
-        this.mVmDynamic.sethibernation_vol_handle(value);
+    public void setHibernationVolHandle(String value) {
+        this.vmDynamic.sethibernation_vol_handle(value);
     }
 
     public void setExportDate(Date value) {
-        this.mVmStatic.setExportDate(value);
+        this.vmStatic.setExportDate(value);
     }
 
     public Date getExportDate() {
-        return this.mVmStatic.getExportDate();
+        return this.vmStatic.getExportDate();
     }
 
-    private Guid storage_pool_idField = new Guid();
+    private Guid storagePoolId = new Guid();
 
     @Override
-    public Guid getstorage_pool_id() {
-        return storage_pool_idField;
+    public Guid getStoragePoolId() {
+        return storagePoolId;
     }
 
     @Override
-    public void setstorage_pool_id(Guid value) {
-        storage_pool_idField = value;
+    public void setStoragePoolId(Guid value) {
+        storagePoolId = value;
     }
 
-    private String storage_pool_nameField;
+    private String storagePoolName;
 
-    public String getstorage_pool_name() {
-        return storage_pool_nameField;
+    public String getStoragePoolName() {
+        return storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
-        storage_pool_nameField = value;
+    public void setStoragePoolName(String value) {
+        storagePoolName = value;
     }
 
-    private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
+    private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.forValue(0);
 
-    public VdsSelectionAlgorithm getselection_algorithm() {
-        return selection_algorithmField;
+    public VdsSelectionAlgorithm getSelectionAlgorithm() {
+        return selectionAlgorithm;
     }
 
-    public void setselection_algorithm(VdsSelectionAlgorithm value) {
-        selection_algorithmField = value;
+    public void setSelectionAlgorithm(VdsSelectionAlgorithm value) {
+        selectionAlgorithm = value;
     }
 
     public List<VmNetworkInterface> getInterfaces() {
-        return mVmStatic.getInterfaces();
+        return vmStatic.getInterfaces();
     }
 
     public void setInterfaces(List<VmNetworkInterface> value) {
-        mVmStatic.setInterfaces(value);
+        vmStatic.setInterfaces(value);
     }
 
     public ArrayList<DiskImage> getImages() {
-        return mVmStatic.getImages();
+        return vmStatic.getImages();
     }
 
     public void setImages(ArrayList<DiskImage> value) {
-        mVmStatic.setImages(value);
+        vmStatic.setImages(value);
     }
 
-    private Map<Guid, Disk> mDiskMap = new HashMap<Guid, Disk>();
+    private Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
     // ignores the final fields
-    private String mCdPath = "";
-    private String mFloppyPath = "";
-    private boolean mRunAndPause = false;
+    private String cdPath = "";
+    private String floppyPath = "";
+    private boolean runAndPause = false;
 
     /**
      * Vitaly change. guest last logout time treatment. If vm stoped without logging out - set last logout time now
      */
     public void guestLogoutTimeTreatmentAfterDestroy() {
-        if (getguest_last_login_time() != null
-                && (getguest_last_logout_time() == null || getguest_last_login_time().compareTo(
-                        getguest_last_logout_time()) > 0)) {
-            setguest_last_logout_time(new Date());
+        if (getGuestLastLoginTime() != null
+                && (getGuestLastLogoutTime() == null || getGuestLastLoginTime().compareTo(
+                        getGuestLastLogoutTime()) > 0)) {
+            setGuestLastLogoutTime(new Date());
         }
     }
 
     public boolean isStatusUp() {
-        return isStatusUp(getstatus());
+        return isStatusUp(getStatus());
     }
 
     private boolean useSysPrep;
@@ -1061,7 +1061,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public boolean getIsFirstRun() {
-        return mVmStatic.getIsFirstRun();
+        return vmStatic.getIsFirstRun();
     }
 
     public static boolean isStatusUp(VMStatus st) {
@@ -1115,125 +1115,125 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         // Purposely empty
     }
 
-    private double _diskSize;
+    private double diskSize;
 
     public double getDiskSize() {
-        if (_diskSize == 0) {
+        if (diskSize == 0) {
             for (Disk disk : getDiskMap().values()) {
                 if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                    _diskSize += ((DiskImage) disk).getsize() / Double.valueOf(1024 * 1024 * 1024);
+                    diskSize += ((DiskImage) disk).getsize() / Double.valueOf(1024 * 1024 * 1024);
                 }
             }
         }
-        return _diskSize;
+        return diskSize;
     }
 
     public void setDiskSize(double value) {
-        _diskSize = value;
+        diskSize = value;
     }
 
     public VmDynamic getDynamicData() {
-        return mVmDynamic;
+        return vmDynamic;
     }
 
     public void setDynamicData(VmDynamic value) {
-        mVmDynamic = value;
+        vmDynamic = value;
     }
 
     public VmStatic getStaticData() {
-        return mVmStatic;
+        return vmStatic;
     }
 
     public void setStaticData(VmStatic value) {
-        if (mVmStatic == null) {
-            mVmStatic = new VmStatic();
+        if (vmStatic == null) {
+            vmStatic = new VmStatic();
         }
-        mVmStatic = value;
+        vmStatic = value;
     }
 
     public VmStatistics getStatisticsData() {
-        return mVmStatistics;
+        return vmStatistics;
     }
 
     public void setStatisticsData(VmStatistics value) {
-        mVmStatistics = value;
+        vmStatistics = value;
     }
 
-    private int mMigreatingToPort;
+    private int migreatingToPort;
 
     public int getMigreatingToPort() {
-        return mMigreatingToPort;
+        return migreatingToPort;
     }
 
     public void setMigreatingToPort(int value) {
-        mMigreatingToPort = value;
+        migreatingToPort = value;
     }
 
-    private int mMigreatingFromPort;
+    private int migreatingFromPort;
 
     public int getMigreatingFromPort() {
-        return mMigreatingFromPort;
+        return migreatingFromPort;
     }
 
     public void setMigreatingFromPort(int value) {
-        mMigreatingFromPort = value;
+        migreatingFromPort = value;
     }
 
-    private String run_on_vds_nameField;
+    private String runOnVdsName;
 
-    public String getrun_on_vds_name() {
-        return run_on_vds_nameField;
+    public String getRunOnVdsName() {
+        return runOnVdsName;
     }
 
-    public void setrun_on_vds_name(String value) {
-        run_on_vds_nameField = value;
+    public void setRunOnVdsName(String value) {
+        runOnVdsName = value;
     }
 
     public Map<Guid, Disk> getDiskMap() {
-        return mDiskMap;
+        return diskMap;
     }
 
     public void setDiskMap(Map<Guid, Disk> diskMap) {
-        mDiskMap = diskMap;
+        this.diskMap = diskMap;
     }
 
     public int getDiskMapCount() {
-        return mDiskMap.size();
+        return diskMap.size();
     }
 
     public int getMinAllocatedMem() {
-        return mVmStatic.getMinAllocatedMem();
+        return vmStatic.getMinAllocatedMem();
     }
 
     public void setMinAllocatedMem(int value) {
-        mVmStatic.setMinAllocatedMem(value);
+        vmStatic.setMinAllocatedMem(value);
     }
 
     public String getCdPath() {
-        return mCdPath;
+        return cdPath;
     }
 
     public void setCdPath(String value) {
-        mCdPath = value;
+        cdPath = value;
     }
 
     public String getFloppyPath() {
-        return mFloppyPath;
+        return floppyPath;
     }
 
     public void setFloppyPath(String value) {
-        mFloppyPath = value;
+        floppyPath = value;
     }
 
-    public boolean getRunAndPause() {
-        return mRunAndPause;
+    public boolean isRunAndPause() {
+        return runAndPause;
     }
 
     public void setRunAndPause(boolean value) {
-        mRunAndPause = value;
+        runAndPause = value;
     }
 
-    public boolean getWin2kHackEnable() {
+    public boolean isWin2kHackEnable() {
         return getDynamicData().getWin2kHackEnable();
     }
 
@@ -1249,28 +1249,28 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      * @param vdsName
      */
     public void updateRunTimeDynamicData(VmDynamic vm, Guid vdsId, String vdsName) {
-        setstatus(vm.getstatus());
-        setrun_on_vds(vdsId);
-        setrun_on_vds_name(vdsName);
-        setdisplay(vm.getdisplay());
-        setdisplay_secure_port(vm.getdisplay_secure_port());
-        setvm_host(vm.getvm_host());
-        setvm_ip(vm.getvm_ip());
+        setStatus(vm.getstatus());
+        setRunOnVds(vdsId);
+        setRunOnVdsName(vdsName);
+        setDisplay(vm.getdisplay());
+        setDisplaySecurePort(vm.getdisplay_secure_port());
+        setVmHost(vm.getvm_host());
+        setVmIp(vm.getvm_ip());
 
         // if (!string.IsNullOrEmpty(vm.app_list))
         // {
-        setapp_list(vm.getapp_list());
+        setAppList(vm.getapp_list());
         // }
-        setguest_os(vm.getguest_os());
-        setdisplay_type(vm.getdisplay_type());
-        setdisplay_ip(vm.getdisplay_ip());
-        setkvm_enable(vm.getkvm_enable());
-        setacpi_enable(vm.getacpi_enable());
+        setGuestOs(vm.getguest_os());
+        setDisplayType(vm.getdisplay_type());
+        setDisplayIp(vm.getdisplay_ip());
+        setKvmEnable(vm.getkvm_enable());
+        setAcpiEnable(vm.getacpi_enable());
         setWin2kHackEnable(vm.getWin2kHackEnable());
-        setutc_diff(vm.getutc_diff());
+        setUtcDiff(vm.getutc_diff());
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());
-        setclient_ip(vm.getclient_ip());
+        setClientIp(vm.getclient_ip());
         setVmPauseStatus(vm.getPauseStatus());
 
         // TODO: check what to do with update disk data
@@ -1285,21 +1285,21 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
      * @param vm
      */
     public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {
-        setelapsed_time(vmStatistics.getelapsed_time());
-        setusage_network_percent(vmStatistics.getusage_network_percent());
+        setElapsedTime(vmStatistics.getelapsed_time());
+        setUsageNetworkPercent(vmStatistics.getusage_network_percent());
         vm.getStatisticsData().setDisksUsage(vmStatistics.getDisksUsage());
         // -------- cpu --------------
-        setcpu_sys(vmStatistics.getcpu_sys());
-        setcpu_user(vmStatistics.getcpu_user());
-        if ((getcpu_sys() != null) && (getcpu_user() != null)) {
-            Double percent = (getcpu_sys() + getcpu_user()) / new Double(vm.getnum_of_cpus());
-            setusage_cpu_percent(percent.intValue());
-            if (getusage_cpu_percent() != null && getusage_cpu_percent() > 100) {
-                setusage_cpu_percent(100);
+        setCpuSys(vmStatistics.getcpu_sys());
+        setCpuUser(vmStatistics.getcpu_user());
+        if ((getCpuSys() != null) && (getCpuUser() != null)) {
+            Double percent = (getCpuSys() + getCpuUser()) / new Double(vm.getNumOfCpus());
+            setUsageCpuPercent(percent.intValue());
+            if (getUsageCpuPercent() != null && getUsageCpuPercent() > 100) {
+                setUsageCpuPercent(100);
             }
         }
         // -------- memory --------------
-        setusage_mem_percent(vmStatistics.getusage_mem_percent());
+        setUsageMemPercent(vmStatistics.getusage_mem_percent());
     }
 
     /**
@@ -1332,19 +1332,19 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public String getVmPoolName() {
-        return mVmPoolName;
+        return vmPoolName;
     }
 
     public void setVmPoolName(String value) {
-        mVmPoolName = value;
+        vmPoolName = value;
     }
 
     public NGuid getVmPoolId() {
-        return mVmPoolId;
+        return vmPoolId;
     }
 
     public void setVmPoolId(NGuid value) {
-        mVmPoolId = value;
+        vmPoolId = value;
     }
 
     /**
@@ -1371,33 +1371,33 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return getGuestAgentVersion() != null;
     }
 
-    private Version privateSpiceDriverVersion;
+    private Version spiceDriverVersion;
 
     public Version getSpiceDriverVersion() {
-        return privateSpiceDriverVersion;
+        return spiceDriverVersion;
     }
 
     public void setSpiceDriverVersion(Version value) {
-        privateSpiceDriverVersion = value;
+        spiceDriverVersion = value;
     }
 
     public boolean getHasSpiceDriver() {
         return getSpiceDriverVersion() != null;
     }
 
-    private String privatevds_group_cpu_flags_data;
+    private String vdsGroupCpuFlagsData;
 
-    public String getvds_group_cpu_flags_data() {
-        return privatevds_group_cpu_flags_data;
+    public String getVdsGroupCpuFlagsData() {
+        return vdsGroupCpuFlagsData;
     }
 
-    public void setvds_group_cpu_flags_data(String value) {
-        privatevds_group_cpu_flags_data = value;
+    public void setVdsGroupCpuFlagsData(String value) {
+        vdsGroupCpuFlagsData = value;
     }
 
     private boolean transparentHugePages;
 
-    public boolean getTransparentHugePages() {
+    public boolean isTransparentHugePages() {
         return this.transparentHugePages;
     }
 
@@ -1410,7 +1410,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return getId();
     }
 
-    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
+    private static final ArrayList<String> vmProperties = new ArrayList<String>(
             Arrays.asList(new String[] { "vm_name", "status", "usage_cpu_percent",
                     "usage_mem_percent", "usage_network_percent", "run_on_vds", "run_on_vds_name",
                     "vm_description", "vds_group_id", "vds_group_name", "vm_ip",
@@ -1427,45 +1427,45 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     @Override
     public ArrayList<String> getChangeablePropertiesList() {
-        return _vmProperties;
+        return vmProperties;
     }
 
     /**
      * Return true if vm has at least one Disk and one Interface
      */
-    private Boolean _IsConfigured;
+    private Boolean configured;
 
-    public boolean getIsConfigured() {
-        if (_IsConfigured == null) {
-            _IsConfigured =
+    public boolean isConfigured() {
+        if (configured == null) {
+            configured =
                     (getInterfaces() != null && getDiskMap() != null && getInterfaces().size() > 0 && getDiskMap()
                             .size() > 0);
         }
-        return _IsConfigured;
+        return configured;
     }
 
-    public void setIsConfigured(boolean value) {
-        _IsConfigured = value;
+    public void setConfigured(boolean value) {
+        configured = value;
     }
 
     public ArrayList<DiskImage> getDiskList() {
-        return mVmStatic.getDiskList();
+        return vmStatic.getDiskList();
     }
 
     public Map<Guid, VmDevice> getManagedVmDeviceMap() {
-        return mVmStatic.getManagedVmDeviceMap();
+        return vmStatic.getManagedVmDeviceMap();
     }
 
     public void setManagedDeviceMap(Map<Guid, VmDevice> map) {
-        mVmStatic.setManagedDeviceMap(map);
+        vmStatic.setManagedDeviceMap(map);
     }
 
     public List<VmDevice> getVmUnamagedDeviceList() {
-        return mVmStatic.getUnmanagedDeviceList();
+        return vmStatic.getUnmanagedDeviceList();
     }
 
     public void setUnmanagedDeviceList(List<VmDevice> list) {
-        mVmStatic.setUnmanagedDeviceList(list);
+        vmStatic.setUnmanagedDeviceList(list);
     }
 
     public List<Snapshot> getSnapshots() {
@@ -1477,11 +1477,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public void setRunOnce(boolean value) {
-        isRunOnce = value;
+        runOnce = value;
     }
 
     public boolean isRunOnce() {
-        return isRunOnce;
+        return runOnce;
     }
 
     public void setVmPayload(VmPayload vmPayload) {
@@ -1493,11 +1493,11 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     }
 
     public String getCpuPinning() {
-        return mVmStatic.getCpuPinning();
+        return vmStatic.getCpuPinning();
     }
 
     public void setCpuPinning(String cpuPinning) {
-        mVmStatic.setCpuPinning(cpuPinning);
+        vmStatic.setCpuPinning(cpuPinning);
     }
 
     public boolean isBalloonEnabled() {

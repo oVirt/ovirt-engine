@@ -67,10 +67,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         // if fencing failed on spm, move storage pool to non operational
         if (getVds().getspm_status() != VdsSpmStatus.None) {
             log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
-                    getVds().getvds_name(), getVds().getstorage_pool_id());
+                    getVds().getvds_name(), getVds().getStoragePoolId());
             Backend.getInstance().runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
-                    new SetStoragePoolStatusParameters(getVds().getstorage_pool_id(), StoragePoolStatus.NotOperational,
+                    new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));
         }
         _vmsMovedToUnknown = true;

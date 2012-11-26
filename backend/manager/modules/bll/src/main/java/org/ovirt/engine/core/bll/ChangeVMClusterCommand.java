@@ -43,7 +43,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         } else {
-            if (ObjectIdentityChecker.CanUpdateField(vm, "vds_group_id", vm.getstatus())) {
+            if (ObjectIdentityChecker.CanUpdateField(vm, "vds_group_id", vm.getStatus())) {
                 targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
                 if (targetCluster == null) {
                     addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
@@ -51,7 +51,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 }
 
                 // Check that the target cluster is in the same data center.
-                if (!targetCluster.getstorage_pool_id().equals(vm.getstorage_pool_id())) {
+                if (!targetCluster.getStoragePoolId().equals(vm.getStoragePoolId())) {
                     addCanDoActionMessage(VdcBllMessages.VM_CANNOT_MOVE_TO_CLUSTER_IN_OTHER_STORAGE_POOL);
                     return false;
                 }
@@ -117,7 +117,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 }
 
                 // Check that the USB policy is legal
-                if (!VmHandler.isUsbPolicyLegal(vm.getusb_policy(), vm.getos(), targetCluster, getReturnValue().getCanDoActionMessages())) {
+                if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster, getReturnValue().getCanDoActionMessages())) {
                     return false;
                 }
             } else {
@@ -132,7 +132,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     protected void executeCommand() {
         // check that the cluster are not the same
         VM vm = getVm();
-        if (vm.getvds_group_id().equals(getParameters().getClusterId())) {
+        if (vm.getVdsGroupId().equals(getParameters().getClusterId())) {
             setSucceeded(true);
             return;
         }
@@ -158,12 +158,12 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             }
         }
 
-        if (vm.getdedicated_vm_for_vds() != null) {
-            vm.setdedicated_vm_for_vds(null);
+        if (vm.getDedicatedVmForVds() != null) {
+            vm.setDedicatedVmForVds(null);
             dedicatedHostWasCleared = true;
         }
 
-        vm.setvds_group_id(getParameters().getClusterId());
+        vm.setVdsGroupId(getParameters().getClusterId());
         DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
         setSucceeded(true);
     }

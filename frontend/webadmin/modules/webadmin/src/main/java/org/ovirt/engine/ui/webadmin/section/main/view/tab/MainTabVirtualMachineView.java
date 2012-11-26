@@ -56,7 +56,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_name();
+                return object.getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getrun_on_vds_name();
+                return object.getRunOnVdsName();
             }
         };
         getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
@@ -72,7 +72,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_ip();
+                return object.getVmIp();
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvds_group_name();
+                return object.getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getstorage_pool_name();
+                return object.getStoragePoolName();
             }
         };
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_mem_percent();
+                return object.getUsageMemPercent();
             }
         };
         getTable().addColumn(memoryColumn, constants.memoryVm(), "60px"); //$NON-NLS-1$
@@ -104,7 +104,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_cpu_percent();
+                return object.getUsageCpuPercent();
             }
         };
         getTable().addColumn(cpuColumn, constants.cpuVm(), "60px"); //$NON-NLS-1$
@@ -112,7 +112,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         PercentColumn<VM> networkColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
-                return object.getusage_network_percent();
+                return object.getUsageNetworkPercent();
             }
         };
         getTable().addColumn(networkColumn, constants.networkVm(), "60px"); //$NON-NLS-1$
@@ -120,12 +120,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
             @Override
             protected DisplayType getRawValue(VM object) {
-                return object.getdisplay_type();
+                return object.getDisplayType();
             }
 
             @Override
             public String getValue(VM object) {
-                if ((object.getstatus() == VMStatus.Down) || (object.getstatus() == VMStatus.ImageLocked))
+                if ((object.getStatus() == VMStatus.Down) || (object.getStatus() == VMStatus.ImageLocked))
                     return ""; //$NON-NLS-1$
                 else
                     return renderer.render(getRawValue(object));
@@ -136,7 +136,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
@@ -152,10 +152,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                if (object.getguest_cur_user_name() == null) {
+                if (object.getGuestCurUserName() == null) {
                     return ""; //$NON-NLS-1$
                 }
-                return String.valueOf(object.getguest_cur_user_name());
+                return String.valueOf(object.getGuestCurUserName());
             }
         };
         getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "100px"); //$NON-NLS-1$

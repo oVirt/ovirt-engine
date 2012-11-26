@@ -95,7 +95,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveLunDisk() {
         if (disk.getVmEntityType() == VmEntityType.VM) {
             for (VM vm : getVmsForDiskId()) {
-                if (vm.getstatus() != VMStatus.Down) {
+                if (vm.getStatus() != VMStatus.Down) {
                     VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
@@ -205,7 +205,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                         if (vmDiskImage.getit_guid().equals(diskImage.getImageId())) {
                             if (vmDiskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
                                 retValue = false;
-                                problematicVmNames.add(vm.getvm_name());
+                                problematicVmNames.add(vm.getVmName());
                             }
                             break;
                         }
@@ -228,7 +228,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) || !ImagesHandler.PerformImagesChecks(vm,
                     getReturnValue().getCanDoActionMessages(),
-                    vm.getstorage_pool_id(),
+                    vm.getStoragePoolId(),
                     getParameters().getStorageDomainId(),
                     false,
                     firstTime,

@@ -41,7 +41,7 @@ public class ClusterMapper {
             entity.setcpu_name(model.getCpu().getId());
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
-            entity.setstorage_pool_id(new Guid(model.getDataCenter().getId()));
+            entity.setStoragePoolId(new Guid(model.getDataCenter().getId()));
         }
         if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
             entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
@@ -78,9 +78,9 @@ public class ClusterMapper {
             cpu.setId(entity.getcpu_name());
             model.setCpu(cpu);
         }
-        if (entity.getstorage_pool_id() != null) {
+        if (entity.getStoragePoolId() != null) {
             DataCenter dataCenter = new DataCenter();
-            dataCenter.setId(entity.getstorage_pool_id().toString());
+            dataCenter.setId(entity.getStoragePoolId().toString());
             model.setDataCenter(dataCenter);
         }
         if (entity.getcompatibility_version() != null) {

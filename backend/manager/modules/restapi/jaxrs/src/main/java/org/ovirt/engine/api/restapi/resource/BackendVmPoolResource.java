@@ -105,17 +105,17 @@ public class BackendVmPoolResource
                        : 0;
 
             if (incoming.isSetTemplate()) {
-                vm.setvmt_guid(new Guid(incoming.getTemplate().getId()));
+                vm.setVmtGuid(new Guid(incoming.getTemplate().getId()));
             } else {
                 VM existing = currentVmCount > 0
                               ? getEntity(VM.class, SearchType.VM, "Vms: pool=" + incoming.getName())
                               : null;
                 if (existing != null) {
-                    vm.setvmt_guid(existing.getvmt_guid());
+                    vm.setVmtGuid(existing.getVmtGuid());
                 }
             }
 
-            if (vm.getvmt_guid() != null) {
+            if (vm.getVmtGuid() != null) {
                 VmTemplate template = getEntity(VmTemplate.class,
                                                 VdcQueryType.GetVmTemplate,
                                                 new GetVmTemplateParameters(vm.getId()),
@@ -124,7 +124,7 @@ public class BackendVmPoolResource
             }
 
             AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
-            parameters.setStorageDomainId(getStorageDomainId(vm.getvmt_guid()));
+            parameters.setStorageDomainId(getStorageDomainId(vm.getVmtGuid()));
             return parameters;
         }
     }

@@ -73,7 +73,7 @@ public class BackwardCompatibilityTaskCreationTest {
                     public VM getVm() {
                         VM vm = new VM();
                         vm.setId(Guid.NewGuid());
-                        vm.setstorage_pool_id(Guid.NewGuid());
+                        vm.setStoragePoolId(Guid.NewGuid());
                         return vm;
                     }
                 },

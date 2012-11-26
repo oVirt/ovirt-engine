@@ -23,10 +23,10 @@ public class OvfVmWriterTest {
     @Test
     public void test() {
         final VM vm = new VM();
-        vm.setvm_name("test-vm");
-        vm.setorigin(OriginType.OVIRT);
+        vm.setVmName("test-vm");
+        vm.setOrigin(OriginType.OVIRT);
         vm.setId(new Guid());
-        vm.setvm_description("test-description");
+        vm.setVmDescription("test-description");
         final XmlDocument document = new XmlDocument();
         OvfVmWriter vmWriter = new OvfVmWriter(document, vm, new ArrayList<DiskImage>());
         vmWriter.BuildReference();

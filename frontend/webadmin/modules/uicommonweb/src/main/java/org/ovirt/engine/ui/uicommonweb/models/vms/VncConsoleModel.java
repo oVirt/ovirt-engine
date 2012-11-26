@@ -42,7 +42,7 @@ public class VncConsoleModel extends ConsoleModel
             getLogger().Debug("VNC console info..."); //$NON-NLS-1$
 
             // Don't connect if there VM is not running on any host.
-            if (getEntity().getrun_on_vds() == null)
+            if (getEntity().getRunOnVds() == null)
             {
                 return;
             }
@@ -58,8 +58,8 @@ public class VncConsoleModel extends ConsoleModel
                     {
                         otp64 = (String) ticketReturnValue.getActionReturnValue();
                         // Determine the display IP.
-                        if (StringHelper.isNullOrEmpty(getEntity().getdisplay_ip())
-                                || StringHelper.stringsEqual(getEntity().getdisplay_ip(), "0")) //$NON-NLS-1$
+                        if (StringHelper.isNullOrEmpty(getEntity().getDisplayIp())
+                                || StringHelper.stringsEqual(getEntity().getDisplayIp(), "0")) //$NON-NLS-1$
                         {
                             AsyncQuery _asyncQuery = new AsyncQuery();
                             _asyncQuery.setModel(this);
@@ -76,7 +76,7 @@ public class VncConsoleModel extends ConsoleModel
                                     new GetVmByVmIdParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {
-                            postGetHost(getEntity().getdisplay_ip());
+                            postGetHost(getEntity().getDisplayIp());
                         }
                     }
                 }
@@ -87,11 +87,11 @@ public class VncConsoleModel extends ConsoleModel
     protected void postGetHost(String hostName) {
         VncInfoModel infoModel = new VncInfoModel();
 
-        infoModel.setTitle("VNC - " + getEntity().getvm_name()); //$NON-NLS-1$
+        infoModel.setTitle("VNC - " + getEntity().getVmName()); //$NON-NLS-1$
         infoModel.getVncMessage().setEntity(ConstantsManager.getInstance()
                 .getMessages()
                 .vncInfoMessage(hostName,
-                        (getEntity().getdisplay() == null ? 0 : getEntity().getdisplay()),
+                        (getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()),
                         otp64,
                         seconds));
         infoModel.setCloseCommand(new UICommand("closeVncInfo", model)); //$NON-NLS-1$
@@ -107,10 +107,10 @@ public class VncConsoleModel extends ConsoleModel
 
         getConnectCommand().setIsExecutionAllowed(getConfigurator().IsDisplayTypeSupported(DisplayType.vnc)
                 && getEntity() != null
-                && getEntity().getdisplay_type() == DisplayType.vnc
-                && (getEntity().getstatus() == VMStatus.PoweringUp || getEntity().getstatus() == VMStatus.Up
-                        || getEntity().getstatus() == VMStatus.RebootInProgress
-                        || getEntity().getstatus() == VMStatus.PoweringDown || getEntity().getstatus() == VMStatus.Paused));
+                && getEntity().getDisplayType() == DisplayType.vnc
+                && (getEntity().getStatus() == VMStatus.PoweringUp || getEntity().getStatus() == VMStatus.Up
+                        || getEntity().getStatus() == VMStatus.RebootInProgress
+                        || getEntity().getStatus() == VMStatus.PoweringDown || getEntity().getStatus() == VMStatus.Paused));
     }
 
     public void setModel(Model model) {

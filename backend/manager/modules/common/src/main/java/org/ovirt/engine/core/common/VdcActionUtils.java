@@ -303,7 +303,7 @@ public final class VdcActionUtils {
                     null);
         } else if (entity.getClass().getName().endsWith("VM")) {
             return (entity instanceof VM ?
-                    ((VM) entity).getstatus() :
+                    ((VM) entity).getStatus() :
                     null);
         } else if (entity.getClass().getName().endsWith("VmTemplate")) {
             return (entity instanceof VmTemplate ?

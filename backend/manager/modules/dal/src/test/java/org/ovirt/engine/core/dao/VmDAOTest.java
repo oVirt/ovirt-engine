@@ -37,7 +37,7 @@ public class VmDAOTest extends BaseDAOTestCase {
 
         dao = dbFacade.getVmDao();
         existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
-        existingVm.setstatus(VMStatus.Up);
+        existingVm.setStatus(VMStatus.Up);
         vmtemplate = dbFacade.getVmTemplateDao().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         existingTemplate = dbFacade.getVmTemplateDao().get(
@@ -45,8 +45,8 @@ public class VmDAOTest extends BaseDAOTestCase {
 
         newVm = new VM();
         newVm.setId(Guid.NewGuid());
-        newVm.setvds_group_id(VDS_GROUP_ID);
-        newVm.setvmt_guid(vmtemplate.getId());
+        newVm.setVdsGroupId(VDS_GROUP_ID);
+        newVm.setVmtGuid(vmtemplate.getId());
 
         newVmStatic = new VmStatic();
         newVmStatic.setvm_name("New Virtual Machine");
@@ -120,7 +120,7 @@ public class VmDAOTest extends BaseDAOTestCase {
         VM result = dao.getForHibernationImage(FixturesTool.IMAGE_ID);
 
         assertNotNull(result);
-        assertEquals(FixturesTool.IMAGE_ID.toString(), result.gethibernation_vol_handle());
+        assertEquals(FixturesTool.IMAGE_ID.toString(), result.getHibernationVolHandle());
     }
 
     /**
@@ -245,7 +245,7 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VM vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getvds_group_id());
+            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
         }
     }
 
@@ -304,7 +304,7 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VM vm : result) {
-            assertEquals(existingTemplate.getId(), vm.getvmt_guid());
+            assertEquals(existingTemplate.getId(), vm.getVmtGuid());
         }
     }
 

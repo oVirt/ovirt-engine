@@ -24,10 +24,10 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         if (vds == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             return false;
-        } else if (vm.getrun_on_vds() != null && vm.getrun_on_vds().equals(destinationId)) {
+        } else if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
             return false;
-        } else if (!vm.getvds_group_id().equals(getDestinationVds().getvds_group_id())) {
+        } else if (!vm.getVdsGroupId().equals(getDestinationVds().getvds_group_id())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
             return false;
         } else {

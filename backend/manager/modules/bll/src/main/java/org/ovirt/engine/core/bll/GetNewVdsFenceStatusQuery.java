@@ -21,7 +21,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         Guid id = getParameters().getVdsId();
         VDS tempVar = new VDS();
         tempVar.setId((Guid) ((id != null) ? id : Guid.Empty));
-        tempVar.setstorage_pool_id(getParameters().getStoragePoolId());
+        tempVar.setStoragePoolId(getParameters().getStoragePoolId());
         tempVar.setManagmentIp(getParameters().getManagementIp());
         tempVar.setPmOptionsMap(getParameters().getFencingOptions());
         tempVar.setpm_type(getParameters().getPmType());

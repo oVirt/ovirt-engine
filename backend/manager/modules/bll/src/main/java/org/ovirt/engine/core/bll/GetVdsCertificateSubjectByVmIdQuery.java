@@ -21,7 +21,7 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends GetVmByVmIdParameter
         if (vmId != null) {
             VM vm = getDbFacade().getVmDao().get(vmId);
             if (vm != null) {
-                NGuid vdsId = vm.getrun_on_vds();
+                NGuid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
                     returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new GetVdsByVdsIdParameters(vdsId.getValue()));
                 }

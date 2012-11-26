@@ -75,7 +75,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     }
                 },
                 getModel().getHash()),
-                vm.getstorage_pool_id());
+                vm.getStoragePoolId());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) array[0];
                         UnitVmModel model = (UnitVmModel) array[1];
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.SetClusters(model, clusters, vm.getvds_group_id().getValue());
+                        model.SetClusters(model, clusters, vm.getVdsGroupId().getValue());
                         behavior.InitTemplate();
 
                     }
@@ -192,22 +192,22 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     private void InitTemplate()
     {
         // Update model state according to VM properties.
-        getModel().getMemSize().setEntity(this.vm.getvm_mem_size_mb());
-        getModel().getOSType().setSelectedItem(this.vm.getvm_os());
-        getModel().getDomain().setSelectedItem(this.vm.getvm_domain());
-        getModel().getUsbPolicy().setSelectedItem(this.vm.getusb_policy());
-        getModel().getNumOfMonitors().setSelectedItem(this.vm.getnum_of_monitors());
+        getModel().getMemSize().setEntity(this.vm.getVmMemSizeMb());
+        getModel().getOSType().setSelectedItem(this.vm.getVmOs());
+        getModel().getDomain().setSelectedItem(this.vm.getVmDomain());
+        getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
+        getModel().getNumOfMonitors().setSelectedItem(this.vm.getNumOfMonitors());
         getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
-        getModel().setBootSequence(this.vm.getdefault_boot_sequence());
-        getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getnum_of_cpus()));
-        getModel().getNumOfSockets().setSelectedItem(this.vm.getnum_of_sockets());
-        getModel().getIsStateless().setEntity(this.vm.getis_stateless());
+        getModel().setBootSequence(this.vm.getDefaultBootSequence());
+        getModel().getTotalCPUCores().setEntity(Integer.toString(this.vm.getNumOfCpus()));
+        getModel().getNumOfSockets().setSelectedItem(this.vm.getNumOfSockets());
+        getModel().getIsStateless().setEntity(this.vm.isStateless());
         getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
 
-        if (!StringHelper.isNullOrEmpty(this.vm.gettime_zone()))
+        if (!StringHelper.isNullOrEmpty(this.vm.getTimeZone()))
         {
-            updateTimeZone(this.vm.gettime_zone());
+            updateTimeZone(this.vm.getTimeZone());
         }
         else
         {
@@ -226,14 +226,14 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             EntityModel model = (EntityModel) item;
             DisplayType displayType = (DisplayType) model.getEntity();
 
-            if (displayType == this.vm.getdefault_display_type())
+            if (displayType == this.vm.getDefaultDisplayType())
             {
                 getModel().getDisplayProtocol().setSelectedItem(item);
                 break;
             }
         }
 
-        InitPriority(this.vm.getpriority());
+        InitPriority(this.vm.getPriority());
     }
 
     @Override
@@ -316,7 +316,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     }
                 },
                 getModel().getHash()),
-                vm.getstorage_pool_id(),
+                vm.getStoragePoolId(),
                 ActionGroup.CREATE_TEMPLATE);
     }
 

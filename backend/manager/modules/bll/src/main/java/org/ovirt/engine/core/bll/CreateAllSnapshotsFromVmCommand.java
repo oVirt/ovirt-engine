@@ -58,7 +58,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         super(parameters);
         parameters.setEntityId(getVmId());
         setSnapshotName(parameters.getDescription());
-        setStoragePoolId(getVm().getstorage_pool_id());
+        setStoragePoolId(getVm().getStoragePoolId());
     }
 
     @Override
@@ -152,7 +152,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
 
             if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isStatusUp()
-                    && getVm().getrun_on_vds() != null) {
+                    && getVm().getRunOnVds() != null) {
                 performLiveSnapshot(createdSnapshotId);
             }
         } else {
@@ -161,7 +161,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         endActionOnDisks();
 
-        updateVmInSpm(getVm().getstorage_pool_id(), Arrays.asList(new VM[] { getVm() }));
+        updateVmInSpm(getVm().getStoragePoolId(), Arrays.asList(new VM[] { getVm() }));
 
         setSucceeded(getParameters().getTaskGroupSuccess());
         getReturnValue().setEndActionTryAgain(false);
@@ -183,7 +183,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 public Void runInTransaction() {
                     List<Disk> pluggedDisks = VmRunHandler.getInstance().getPluggedDisks(getVm());
                     runVdsCommand(VDSCommandType.Snapshot,
-                            new SnapshotVDSCommandParameters(getVm().getrun_on_vds().getValue(),
+                            new SnapshotVDSCommandParameters(getVm().getRunOnVds().getValue(),
                                     getVm().getId(),
                                     ImagesHandler.filterImageDisks(pluggedDisks, false, true)));
                     return null;
@@ -248,7 +248,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     && validate(vmValidator.vmNotRunningStateless())
                     && ImagesHandler.PerformImagesChecks(getVm(),
                             getReturnValue().getCanDoActionMessages(),
-                            getVm().getstorage_pool_id(),
+                            getVm().getStoragePoolId(),
                             Guid.Empty,
                             true,
                             true,

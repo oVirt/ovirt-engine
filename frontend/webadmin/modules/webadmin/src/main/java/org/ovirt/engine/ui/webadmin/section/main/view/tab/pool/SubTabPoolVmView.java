@@ -35,7 +35,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_name();
+                return object.getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());
@@ -45,7 +45,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getrun_on_vds_name();
+                return object.getRunOnVdsName();
             }
         };
         getTable().addColumn(hostColumn, constants.hostVm());
@@ -53,7 +53,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_ip();
+                return object.getVmIp();
             }
         };
         getTable().addColumn(ipColumn, constants.ipVm());
@@ -61,7 +61,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusVm());
@@ -77,7 +77,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getguest_cur_user_name();
+                return object.getGuestCurUserName();
             }
         };
         getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm());

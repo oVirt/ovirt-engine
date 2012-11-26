@@ -163,7 +163,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getVmName() {
         if (mVmName == null && getVm() != null) {
-            mVmName = getVm().getvm_name();
+            mVmName = getVm().getVmName();
         }
         return mVmName;
     }
@@ -289,9 +289,9 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     protected VDS getVds() {
-        if (mVds == null && (mVdsId != null || (getVm() != null && getVm().getrun_on_vds() != null))) {
+        if (mVds == null && (mVdsId != null || (getVm() != null && getVm().getRunOnVds() != null))) {
             if (mVdsId == null) {
-                mVdsId = new Guid(getVm().getrun_on_vds().toString());
+                mVdsId = new Guid(getVm().getRunOnVds().toString());
             }
             try {
                 mVds = getVdsDAO().get(getVdsId());
@@ -336,7 +336,7 @@ public class AuditLogableBase extends TimeoutBase {
 
             mVmTemplate = getVmTemplateDAO()
                     .get(mVmTemplateId != null ? getVmTemplateId() : getVm()
-                            .getvmt_guid());
+                            .getVmtGuid());
         }
         return mVmTemplate;
     }
@@ -368,7 +368,7 @@ public class AuditLogableBase extends TimeoutBase {
                 mVdsGroupId = getVds().getvds_group_id();
                 mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
             } else if (getVm() != null) {
-                mVdsGroupId = getVm().getvds_group_id();
+                mVdsGroupId = getVm().getVdsGroupId();
                 mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
             }
         }

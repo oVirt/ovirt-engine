@@ -279,7 +279,7 @@ public class PoolListModel extends ListWithDetailsModel
                                     model.getDataCenter().setSelectedItem(null);
                                     model.getDataCenter().setSelectedItem(Linq.FirstOrDefault(model.getDataCenter()
                                             .getItems(),
-                                            new Linq.DataCenterPredicate(vm.getstorage_pool_id())));
+                                            new Linq.DataCenterPredicate(vm.getStoragePoolId())));
                                     model.getDataCenter().setIsChangable(false);
                                     model.getTemplate().setIsChangable(false);
 
@@ -298,7 +298,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                         ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
                                                         // TODO: need to be async
                                                         VmTemplate basedOnTemplate =
-                                                                DataProvider.GetTemplateByID(vm.getvmt_guid());
+                                                                DataProvider.GetTemplateByID(vm.getVmtGuid());
                                                         if (basedOnTemplate != null)
                                                         {
                                                             templates.add(basedOnTemplate);
@@ -314,7 +314,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                             {
                                                                 VDS a = (VDS) item;
                                                                 if (a.getId()
-                                                                        .equals(((vm.getdedicated_vm_for_vds()) != null) ? vm.getdedicated_vm_for_vds()
+                                                                        .equals(((vm.getDedicatedVmForVds()) != null) ? vm.getDedicatedVmForVds()
                                                                                 : Guid.Empty))
                                                                 {
                                                                     host = a;
@@ -345,18 +345,18 @@ public class PoolListModel extends ListWithDetailsModel
                                                             }
                                                         }
 
-                                                        model.getMemSize().setEntity(vm.getvm_mem_size_mb());
+                                                        model.getMemSize().setEntity(vm.getVmMemSizeMb());
                                                         model.getMinAllocatedMemory()
                                                                 .setEntity(vm.getMinAllocatedMem());
-                                                        model.getOSType().setSelectedItem(vm.getvm_os());
-                                                        model.getDomain().setSelectedItem(vm.getvm_domain());
+                                                        model.getOSType().setSelectedItem(vm.getVmOs());
+                                                        model.getDomain().setSelectedItem(vm.getVmDomain());
 
-                                                        if (!StringHelper.isNullOrEmpty(vm.gettime_zone()))
+                                                        if (!StringHelper.isNullOrEmpty(vm.getTimeZone()))
                                                         {
                                                             model.getTimeZone()
                                                                     .setSelectedItem(Linq.FirstOrDefault(model.getTimeZone()
                                                                             .getItems(),
-                                                                            new Linq.TimeZonePredicate(vm.gettime_zone())));
+                                                                            new Linq.TimeZonePredicate(vm.getTimeZone())));
                                                         }
 
                                                         EntityModel displayType = null;
@@ -364,7 +364,7 @@ public class PoolListModel extends ListWithDetailsModel
                                                         {
                                                             EntityModel a = (EntityModel) item;
                                                             DisplayType dt = (DisplayType) a.getEntity();
-                                                            if (dt == vm.getdefault_display_type())
+                                                            if (dt == vm.getDefaultDisplayType())
                                                             {
                                                                 displayType = a;
                                                                 break;
@@ -372,16 +372,16 @@ public class PoolListModel extends ListWithDetailsModel
                                                         }
                                                         model.getDisplayProtocol().setSelectedItem(displayType);
 
-                                                        model.getUsbPolicy().setSelectedItem(vm.getusb_policy());
+                                                        model.getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
                                                         model.getNumOfMonitors()
-                                                                .setSelectedItem(vm.getnum_of_monitors());
-                                                        model.getNumOfSockets().setSelectedItem(vm.getnum_of_sockets());
-                                                        model.getTotalCPUCores().setEntity(Integer.toString(vm.getnum_of_cpus()));
-                                                        model.setBootSequence(vm.getdefault_boot_sequence());
+                                                                .setSelectedItem(vm.getNumOfMonitors());
+                                                        model.getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
+                                                        model.getTotalCPUCores().setEntity(Integer.toString(vm.getNumOfCpus()));
+                                                        model.setBootSequence(vm.getDefaultBootSequence());
 
-                                                        model.getKernel_path().setEntity(vm.getkernel_url());
-                                                        model.getKernel_parameters().setEntity(vm.getkernel_params());
-                                                        model.getInitrd_path().setEntity(vm.getinitrd_url());
+                                                        model.getKernel_path().setEntity(vm.getKernelUrl());
+                                                        model.getKernel_parameters().setEntity(vm.getKernelParams());
+                                                        model.getInitrd_path().setEntity(vm.getInitrdUrl());
 
                                                         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
                                                                 new INewAsyncCallback() {
@@ -428,10 +428,10 @@ public class PoolListModel extends ListWithDetailsModel
                                                     }
 
                                                 }),
-                                                vm.getstorage_pool_id());
+                                                vm.getStoragePoolId());
                                     }
 
-                                    cdImage = vm.getiso_path();
+                                    cdImage = vm.getIsoPath();
                                 }
                                 else
                                 {
@@ -641,39 +641,39 @@ public class PoolListModel extends ListWithDetailsModel
                         }
 
                         VM desktop = new VM();
-                        desktop.setvmt_guid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
-                        desktop.setvm_name(name);
-                        desktop.setvm_os((VmOsType) model.getOSType().getSelectedItem());
+                        desktop.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
+                        desktop.setVmName(name);
+                        desktop.setVmOs((VmOsType) model.getOSType().getSelectedItem());
                         desktop.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
                         desktop.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-                        desktop.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
-                        desktop.setvm_domain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
+                        desktop.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+                        desktop.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
-                        desktop.setvm_mem_size_mb((Integer) model.getMemSize().getEntity());
+                        desktop.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
                         desktop.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-                        desktop.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-                        desktop.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
+                        desktop.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+                        desktop.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                                 .getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                                 .getSelectedItem()).getKey()
                                 : ""); //$NON-NLS-1$
-                        desktop.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
-                        desktop.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                        desktop.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+                        desktop.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                                 / (Integer) model.getNumOfSockets().getSelectedItem());
-                        desktop.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-                        desktop.setis_auto_suspend(false);
-                        desktop.setis_stateless(false);
-                        desktop.setdefault_boot_sequence(model.getBootSequence());
-                        desktop.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
+                        desktop.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+                        desktop.setAutoSuspend(false);
+                        desktop.setStateless(false);
+                        desktop.setDefaultBootSequence(model.getBootSequence());
+                        desktop.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
-                        desktop.setdedicated_vm_for_vds(default_host);
-                        desktop.setkernel_url((String) model.getKernel_path().getEntity());
-                        desktop.setkernel_params((String) model.getKernel_parameters().getEntity());
-                        desktop.setinitrd_url((String) model.getInitrd_path().getEntity());
+                        desktop.setDedicatedVmForVds(default_host);
+                        desktop.setKernelUrl((String) model.getKernel_path().getEntity());
+                        desktop.setKernelParams((String) model.getKernel_parameters().getEntity());
+                        desktop.setInitrdUrl((String) model.getInitrd_path().getEntity());
                         desktop.setMigrationSupport(migrationSupport);
 
                         EntityModel displayProtocolSelectedItem =
                                 (EntityModel) model.getDisplayProtocol().getSelectedItem();
-                        desktop.setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+                        desktop.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
                         desktop.setCustomProperties(model.getCustomPropertySheet().getEntity());
 
                         AddVmPoolWithVmsParameters param =

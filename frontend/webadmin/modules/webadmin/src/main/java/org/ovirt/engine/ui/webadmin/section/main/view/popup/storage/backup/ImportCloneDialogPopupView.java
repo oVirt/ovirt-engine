@@ -91,7 +91,7 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
     public void edit(ImportCloneModel object) {
         if (object.getEntity() instanceof VM) {
             dialogLabelEditor.setText(constants.sameVmNameExists()
-                    + " (" + ((VM) object.getEntity()).getvm_name() + ")");//$NON-NLS-1$ //$NON-NLS-2$
+                    + " (" + ((VM) object.getEntity()).getVmName() + ")");//$NON-NLS-1$ //$NON-NLS-2$
         } else {
             dialogLabelEditor.setText(constants.sameTemplateNameExists()
                     + " (" + ((VmTemplate) object.getEntity()).getname() + ")");//$NON-NLS-1$ //$NON-NLS-2$

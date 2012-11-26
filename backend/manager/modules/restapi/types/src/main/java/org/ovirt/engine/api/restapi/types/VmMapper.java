@@ -264,49 +264,49 @@ public class VmMapper {
     public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
         VM model = template != null ? template : new VM();
         model.setId(entity.getId().toString());
-        model.setName(entity.getvm_name());
-        model.setDescription(entity.getvm_description());
-        model.setMemory((long) entity.getmem_size_mb() * BYTES_PER_MB);
-        if (entity.getvmt_guid() != null) {
+        model.setName(entity.getVmName());
+        model.setDescription(entity.getVmDescription());
+        model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
+        if (entity.getVmtGuid() != null) {
             model.setTemplate(new Template());
-            model.getTemplate().setId(entity.getvmt_guid().toString());
+            model.getTemplate().setId(entity.getVmtGuid().toString());
         }
-        if (entity.getstatus() != null) {
-            model.setStatus(StatusUtils.create(map(entity.getstatus(), null)));
-            if (entity.getstatus()==VMStatus.Paused) {
+        if (entity.getStatus() != null) {
+            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
+            if (entity.getStatus()==VMStatus.Paused) {
                 model.getStatus().setDetail(entity.getVmPauseStatus().name().toLowerCase());
             }
         }
-        if (entity.getvm_os() != null ||
-            entity.getboot_sequence() != null ||
-            entity.getkernel_url() != null ||
-            entity.getinitrd_url() != null ||
-            entity.getkernel_params() != null) {
+        if (entity.getVmOs() != null ||
+            entity.getBootSequence() != null ||
+            entity.getKernelUrl() != null ||
+            entity.getInitrdUrl() != null ||
+            entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
-            if (entity.getvm_os() != null) {
-                OsType osType = VmMapper.map(entity.getos(), null);
+            if (entity.getVmOs() != null) {
+                OsType osType = VmMapper.map(entity.getOs(), null);
                 if (osType != null) {
                     os.setType(osType.value());
                 }
             }
-            if (entity.getboot_sequence() != null) {
-                for (Boot boot : map(entity.getdefault_boot_sequence(), null)) {
+            if (entity.getBootSequence() != null) {
+                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
                     os.getBoot().add(boot);
                 }
             }
-            os.setKernel(entity.getkernel_url());
-            os.setInitrd(entity.getinitrd_url());
-            os.setCmdline(entity.getkernel_params());
+            os.setKernel(entity.getKernelUrl());
+            os.setInitrd(entity.getInitrdUrl());
+            os.setCmdline(entity.getKernelParams());
             model.setOs(os);
         }
-        if (entity.getvds_group_id() != null) {
+        if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getvds_group_id().toString());
+            cluster.setId(entity.getVdsGroupId().toString());
             model.setCluster(cluster);
         }
         CpuTopology topology = new CpuTopology();
-        topology.setSockets(entity.getnum_of_sockets());
-        topology.setCores(entity.getnum_of_cpus() / entity.getnum_of_sockets());
+        topology.setSockets(entity.getNumOfSockets());
+        topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
         final CPU cpu = new CPU();
         model.setCpu(cpu);
         cpu.setCpuTune(stringToCpuTune(entity.getCpuPinning()));
@@ -316,59 +316,59 @@ public class VmMapper {
             pool.setId(entity.getVmPoolId().toString());
             model.setVmPool(pool);
         }
-        if (entity.getrun_on_vds() != null) {
+        if (entity.getRunOnVds() != null) {
             model.setHost(new Host());
-            model.getHost().setId(entity.getrun_on_vds().toString());
+            model.getHost().setId(entity.getRunOnVds().toString());
         }
-        if (entity.getdefault_display_type() != null) {
+        if (entity.getDefaultDisplayType() != null) {
             model.setDisplay(new Display());
             if (getIsVmRunning(entity) && entity.getDynamicData() != null) {
                 model.getDisplay().setType(map(entity.getDynamicData().getdisplay_type(), null));
             } else {
-                model.getDisplay().setType(map(entity.getdefault_display_type(), null));
+                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
             }
-            model.getDisplay().setAddress(entity.getdisplay_ip());
-            Integer displayPort = entity.getdisplay();
+            model.getDisplay().setAddress(entity.getDisplayIp());
+            Integer displayPort = entity.getDisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
-            Integer displaySecurePort = entity.getdisplay_secure_port();
+            Integer displaySecurePort = entity.getDisplaySecurePort();
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
-            model.getDisplay().setMonitors(entity.getnum_of_monitors());
+            model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
         }
-        model.setType(map(entity.getvm_type(), null));
-        model.setStateless(entity.getis_stateless());
+        model.setType(map(entity.getVmType(), null));
+        model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
         model.setHighAvailability(new HighAvailability());
-        model.getHighAvailability().setEnabled(entity.getauto_startup());
-        model.getHighAvailability().setPriority(entity.getpriority());
-        if (entity.getorigin() != null) {
-            model.setOrigin(map(entity.getorigin(), null));
+        model.getHighAvailability().setEnabled(entity.isAutoStartup());
+        model.getHighAvailability().setPriority(entity.getPriority());
+        if (entity.getOrigin() != null) {
+            model.setOrigin(map(entity.getOrigin(), null));
         }
-        if (entity.getvm_creation_date() != null) {
-            model.setCreationTime(DateMapper.map(entity.getvm_creation_date(), null));
+        if (entity.getVmCreationDate() != null) {
+            model.setCreationTime(DateMapper.map(entity.getVmCreationDate(), null));
         }
         if (entity.getDynamicData() != null && entity.getDynamicData().getLastStartTime()!=null) {
             model.setStartTime(DateMapper.map(entity.getDynamicData().getLastStartTime(), null));
         }
         model.setPlacementPolicy(new VmPlacementPolicy());
-        if(entity.getdedicated_vm_for_vds() !=null){
+        if(entity.getDedicatedVmForVds() !=null){
             model.getPlacementPolicy().setHost(new Host());
-            model.getPlacementPolicy().getHost().setId(entity.getdedicated_vm_for_vds().toString());
+            model.getPlacementPolicy().getHost().setId(entity.getDedicatedVmForVds().toString());
         }
         VmAffinity vmAffinity = map(entity.getMigrationSupport(),null);
         if(vmAffinity !=null){
             model.getPlacementPolicy().setAffinity(vmAffinity.value());
         }
-        if (entity.getvm_domain()!=null && !entity.getvm_domain().isEmpty()) {
+        if (entity.getVmDomain()!=null && !entity.getVmDomain().isEmpty()) {
             Domain domain = new Domain();
-            domain.setName(entity.getvm_domain());
+            domain.setName(entity.getVmDomain());
             model.setDomain(domain);
         }
-        if (entity.getvm_ip()!=null && !entity.getvm_ip().isEmpty()) {
+        if (entity.getVmIp()!=null && !entity.getVmIp().isEmpty()) {
             model.setGuestInfo(new GuestInfo());
             model.getGuestInfo().setIps(new IPs());
-            for (String item : entity.getvm_ip().split(" ")) {
+            for (String item : entity.getVmIp().split(" ")) {
                 if (!item.equals("")) {
                     IP ip = new IP();
                     ip.setAddress(item.trim());
@@ -379,16 +379,16 @@ public class VmMapper {
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed(new Long(entity.getMinAllocatedMem()) * BYTES_PER_MB);
         model.setMemoryPolicy(policy);
-        model.setTimezone(TimeZoneMapping.getJava(entity.gettime_zone()));
+        model.setTimezone(TimeZoneMapping.getJava(entity.getTimeZone()));
         if (!StringHelper.isNullOrEmpty(entity.getCustomProperties())) {
             CustomProperties hooks = new CustomProperties();
             hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
             model.setCustomProperties(hooks);
         }
-        if (entity.getusb_policy()!=null) {
+        if (entity.getUsbPolicy()!=null) {
             Usb usb = new Usb();
-            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getusb_policy()));
-            UsbType usbType = UsbMapperUtils.getUsbType(entity.getusb_policy());
+            usb.setEnabled(UsbMapperUtils.getIsUsbEnabled(entity.getUsbPolicy()));
+            UsbType usbType = UsbMapperUtils.getUsbType(entity.getUsbPolicy());
             if (usbType != null) {
                 usb.setType(usbType.value());
             }
@@ -950,12 +950,12 @@ public class VmMapper {
     }
 
     private static boolean getIsVmRunning(org.ovirt.engine.core.common.businessentities.VM entity) {
-        return entity.getstatus() == VMStatus.Up ||
-                entity.getstatus() == VMStatus.PoweringUp ||
-                entity.getstatus() == VMStatus.WaitForLaunch ||
-                entity.getstatus() == VMStatus.PoweredDown ||
-                entity.getstatus() == VMStatus.RebootInProgress ||
-                entity.getstatus() == VMStatus.RestoringState;
+        return entity.getStatus() == VMStatus.Up ||
+                entity.getStatus() == VMStatus.PoweringUp ||
+                entity.getStatus() == VMStatus.WaitForLaunch ||
+                entity.getStatus() == VMStatus.PoweredDown ||
+                entity.getStatus() == VMStatus.RebootInProgress ||
+                entity.getStatus() == VMStatus.RestoringState;
     }
 
 }

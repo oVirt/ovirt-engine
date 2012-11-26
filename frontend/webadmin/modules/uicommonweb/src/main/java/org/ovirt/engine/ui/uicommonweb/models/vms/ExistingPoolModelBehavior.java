@@ -36,7 +36,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     protected void ChangeDefualtHost() {
         super.ChangeDefualtHost();
 
-        doChangeDefautlHost(pool.getdedicated_vm_for_vds());
+        doChangeDefautlHost(pool.getDedicatedVmForVds());
     }
 
     @Override

@@ -128,7 +128,7 @@ public class SnapshotsManager {
                 snapshotType,
                 description,
                 new Date(),
-                vm.getapp_list());
+                vm.getAppList());
 
         getSnapshotDao().save(snapshot);
         compensationContext.snapshotNewEntity(snapshot);
@@ -147,9 +147,9 @@ public class SnapshotsManager {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
 
-        if (StringUtils.isEmpty(vm.getvmt_name())) {
-            VmTemplate t = getVmTemplateDao().get(vm.getvmt_guid());
-            vm.setvmt_name(t.getname());
+        if (StringUtils.isEmpty(vm.getVmtName())) {
+            VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
+            vm.setVmtName(t.getname());
         }
 
         VmDeviceUtils.setVmDevices(vm.getStaticData());
@@ -214,9 +214,9 @@ public class SnapshotsManager {
             vm.setImages(new ArrayList<DiskImage>(getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshot.getId())));
         }
 
-        vm.setapp_list(snapshot.getAppList());
+        vm.setAppList(snapshot.getAppList());
         getVmDynamicDao().update(vm.getDynamicData());
-        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getvm_name());
+        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getVmName());
 
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());
@@ -275,19 +275,19 @@ public class SnapshotsManager {
             vm.setInterfaces(interfaces);
 
             // These fields are not saved in the OVF, so get them from the current VM.
-            vm.setdedicated_vm_for_vds(oldVmStatic.getdedicated_vm_for_vds());
-            vm.setiso_path(oldVmStatic.getiso_path());
-            vm.setvds_group_id(oldVmStatic.getvds_group_id());
+            vm.setDedicatedVmForVds(oldVmStatic.getdedicated_vm_for_vds());
+            vm.setIsoPath(oldVmStatic.getiso_path());
+            vm.setVdsGroupId(oldVmStatic.getvds_group_id());
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
             VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
             if (vmStaticFromDb != null) {
                 VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getvds_group_id());
                 if (vdsGroup != null) {
-                    vm.setstorage_pool_id(vdsGroup.getstorage_pool_id().getValue());
-                    vm.setvds_group_compatibility_version(vdsGroup.getcompatibility_version());
-                    vm.setvds_group_name(vdsGroup.getname());
-                    vm.setvds_group_cpu_name(vdsGroup.getcpu_name());
+                    vm.setStoragePoolId(vdsGroup.getStoragePoolId().getValue());
+                    vm.setVdsGroupCompatibilityVersion(vdsGroup.getcompatibility_version());
+                    vm.setVdsGroupName(vdsGroup.getname());
+                    vm.setVdsGroupCpuName(vdsGroup.getcpu_name());
                 }
             }
             return true;

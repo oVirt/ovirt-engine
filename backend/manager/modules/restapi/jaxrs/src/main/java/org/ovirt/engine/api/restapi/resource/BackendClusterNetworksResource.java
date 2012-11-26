@@ -82,7 +82,7 @@ public class BackendClusterNetworksResource
     }
 
     private String getNetworkId(String networkName, String clusterId) {
-            NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getstorage_pool_id();
+            NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getStoragePoolId();
             GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
             List<org.ovirt.engine.core.common.businessentities.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
             for (org.ovirt.engine.core.common.businessentities.Network nw: networks) {

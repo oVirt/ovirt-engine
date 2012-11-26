@@ -43,14 +43,14 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                                     new CreateVmFromSysPrepVDSCommandParameters(
                                             getVdsId(),
                                             vm,
-                                            vm.getvm_name(),
-                                            vm.getvm_domain());
+                                            vm.getVmName(),
+                                            vm.getVmDomain());
                             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
                             command =
                                     new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
                             command.Execute();
                             if (command.getVDSReturnValue().getSucceeded()) {
-                                vm.setis_initialized(true);
+                                vm.setInitialized(true);
                                 saveSetInitializedToDb(vm.getId());
                             } else {
                                 HandleCommandResult(command);
@@ -60,7 +60,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             command = new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
                             command.Execute();
                             HandleCommandResult(command);
-                            vm.setis_initialized(true);
+                            vm.setInitialized(true);
                             saveSetInitializedToDb(vm.getId());
                         }
 
@@ -70,7 +70,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                                         @Override
                                         public Object runInTransaction() {
                                             HandleVdsInformation();
-                                            vm.setrun_on_vds(getVdsId());
+                                            vm.setRunOnVds(getVdsId());
                                             DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                                             return null;
                                         }
@@ -80,7 +80,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                         }
                     }
                 }
-                getVDSReturnValue().setReturnValue(vm.getstatus());
+                getVDSReturnValue().setReturnValue(vm.getStatus());
             } else {
                 getVDSReturnValue().setSucceeded(false);
             }
@@ -98,28 +98,28 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
      * @return
      */
     private boolean isSysprepUsed(final VM vm) {
-        return vm.useSysPrep() && vm.getvm_os().isWindows()
+        return vm.useSysPrep() && vm.getVmOs().isWindows()
                 && StringUtils.isEmpty(vm.getFloppyPath());
     }
 
     private void HandleVdsInformation() {
-        getVds().setmem_commited(getVds().getmem_commited() + getParameters().getVm().getvm_mem_size_mb());
+        getVds().setmem_commited(getVds().getmem_commited() + getParameters().getVm().getVmMemSizeMb());
         getVds().setmem_commited(getVds().getmem_commited() + getVds().getguest_overhead());
         getVds().setvm_count(getVds().getvm_count() + 1);
-        getVds().setvms_cores_count(getVds().getvms_cores_count() + getParameters().getVm().getnum_of_cpus());
+        getVds().setvms_cores_count(getVds().getvms_cores_count() + getParameters().getVm().getNumOfCpus());
         getVds().setpending_vcpus_count(
-                getVds().getpending_vcpus_count() + getParameters().getVm().getnum_of_cpus());
+                getVds().getpending_vcpus_count() + getParameters().getVm().getNumOfCpus());
         getVds().setpending_vmem_size(
                 getVds().getpending_vmem_size() + getParameters().getVm().getMinAllocatedMem());
         log.infoFormat("IncreasePendingVms::CreateVmIncreasing vds {0} pending vcpu count, now {1}. Vm: {2}", getVds()
-                .getvds_name(), getVds().getpending_vcpus_count(), getParameters().getVm().getvm_name());
+                .getvds_name(), getVds().getpending_vcpus_count(), getParameters().getVm().getVmName());
         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
     }
 
     private boolean CanExecute() {
 
         Guid guid = getParameters().getVm().getId();
-        String vmName = getParameters().getVm().getvm_name();
+        String vmName = getParameters().getVm().getVmName();
         VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
         if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
             log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
@@ -152,7 +152,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
                 log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getvm_name(), getVds().getId(), getVds().getvds_name(),
+                        getParameters().getVm().getVmName(), getVds().getId(), getVds().getvds_name(),
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);

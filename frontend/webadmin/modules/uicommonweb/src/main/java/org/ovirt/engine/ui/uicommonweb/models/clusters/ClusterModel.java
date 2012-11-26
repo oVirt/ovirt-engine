@@ -768,8 +768,8 @@ public class ClusterModel extends Model
                 clusterModel.getDataCenter().setSelectedItem(null);
                 for (storage_pool a : dataCenters)
                 {
-                    if (clusterModel.getEntity().getstorage_pool_id() != null
-                            && a.getId().equals(clusterModel.getEntity().getstorage_pool_id()))
+                    if (clusterModel.getEntity().getStoragePoolId() != null
+                            && a.getId().equals(clusterModel.getEntity().getStoragePoolId()))
                     {
                         clusterModel.getDataCenter().setSelectedItem(a);
                         break;

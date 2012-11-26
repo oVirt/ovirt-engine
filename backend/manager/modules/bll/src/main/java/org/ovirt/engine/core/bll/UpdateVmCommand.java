@@ -54,7 +54,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     public UpdateVmCommand(T parameters) {
         super(parameters);
         if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getstorage_pool_id());
+            setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
 
         if (isVmExist()) {
@@ -85,7 +85,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // We want to get the VM current data that was updated to the DB.
         setVm(null);
         try {
-            updateVmInSpm(getVm().getstorage_pool_id(),
+            updateVmInSpm(getVm().getStoragePoolId(),
                     Arrays.asList(getVm()));
         } catch (Exception e) {
             // DO nothing
@@ -124,7 +124,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void UpdateVmNetworks() {
         // check if the cluster has changed
-        if (!getVm().getvds_group_id().equals(getParameters().getVmStaticData().getvds_group_id())) {
+        if (!getVm().getVdsGroupId().equals(getParameters().getVmStaticData().getvds_group_id())) {
             List<Network> networks = DbFacade
                     .getInstance()
                     .getNetworkDao()
@@ -173,7 +173,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (StringUtils.isEmpty(vmFromParams.getvm_name())) {
+        if (StringUtils.isEmpty(vmFromParams.getVmName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
             return false;
         }
@@ -186,10 +186,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Checking if a desktop with same name already exists
-        if (!StringUtils.equals(vmFromDB.getvm_name(), vmFromParams.getvm_name())) {
+        if (!StringUtils.equals(vmFromDB.getVmName(), vmFromParams.getVmName())) {
             boolean exists = (Boolean) getBackend()
                     .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                            new IsVmWithSameNameExistParameters(vmFromParams.getvm_name()))
+                            new IsVmWithSameNameExistParameters(vmFromParams.getVmName()))
                     .getReturnValue();
             if (exists) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
@@ -203,14 +203,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (vmFromParams.getauto_startup()
+        if (vmFromParams.isAutoStartup()
                 && vmFromParams.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST);
             return false;
         }
 
-        if (!VmHandler.isMemorySizeLegal(vmFromParams.getos(),
-                vmFromParams.getmem_size_mb(), getReturnValue().getCanDoActionMessages(),
+        if (!VmHandler.isMemorySizeLegal(vmFromParams.getOs(),
+                vmFromParams.getMemSizeMb(), getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version().toString())) {
             return false;
         }
@@ -220,7 +220,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!vmFromDB.getvds_group_id().equals(vmFromParams.getvds_group_id())) {
+        if (!vmFromDB.getVdsGroupId().equals(vmFromParams.getVdsGroupId())) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
             return false;
         }
@@ -230,17 +230,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if number of monitors passed is legal
-        if (!VmHandler.isNumOfMonitorsLegal(vmFromParams.getdefault_display_type(),
-                vmFromParams.getnum_of_monitors(),
+        if (!VmHandler.isNumOfMonitorsLegal(vmFromParams.getDefaultDisplayType(),
+                vmFromParams.getNumOfMonitors(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
         // if number of monitors has increased, check PCI and IDE limits are ok
-        if (vmFromDB.getnum_of_monitors() < vmFromParams.getnum_of_monitors()) {
+        if (vmFromDB.getNumOfMonitors() < vmFromParams.getNumOfMonitors()) {
             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
             List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
-            if (!checkPciAndIdeLimit(vmFromParams.getnum_of_monitors(),
+            if (!checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
                     interfaces,
                     allDisks,
                     getReturnValue().getCanDoActionMessages())) {
@@ -248,25 +248,25 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (!VmTemplateCommand.IsVmPriorityValueLegal(vmFromParams.getpriority(),
+        if (!VmTemplateCommand.IsVmPriorityValueLegal(vmFromParams.getPriority(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
-        if (vmFromDB.getVmPoolId() != null && vmFromParams.getis_stateless()) {
+        if (vmFromDB.getVmPoolId() != null && vmFromParams.isStateless()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
             return false;
         }
 
-        if (!AddVmCommand.CheckCpuSockets(vmFromParams.getnum_of_sockets(),
-                vmFromParams.getcpu_per_socket(), getVdsGroup().getcompatibility_version()
+        if (!AddVmCommand.CheckCpuSockets(vmFromParams.getNumOfSockets(),
+                vmFromParams.getCpuPerSocket(), getVdsGroup().getcompatibility_version()
                         .toString(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
         // check for Vm Payload
         if (getParameters().getVmPayload() != null) {
-            if (!checkPayload(getParameters().getVmPayload(), vmFromParams.getiso_path())) {
+            if (!checkPayload(getParameters().getVmPayload(), vmFromParams.getIsoPath())) {
                 return false;
             }
             // we save the content in base64 string
@@ -275,8 +275,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(vmFromParams.getusb_policy(),
-                vmFromParams.getos(),
+        if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(),
+                vmFromParams.getOs(),
                 getVdsGroup(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -304,7 +304,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     protected boolean areUpdatedFieldsLegal() {
         return VmHandler.mUpdateVmsStatic.IsUpdateValid(getVm().getStaticData(),
                 getParameters().getVmStaticData(),
-                getVm().getstatus());
+                getVm().getStatus());
     }
 
     @Override
@@ -344,8 +344,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getvm_name())) {
-            return Collections.singletonMap(getParameters().getVm().getvm_name(), LockingGroup.VM_NAME.name());
+        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
+            return Collections.singletonMap(getParameters().getVm().getVmName(), LockingGroup.VM_NAME.name());
         }
         return null;
     }
@@ -355,11 +355,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         // The cases must be persistent with the create_functions_sp
-        if (getVm().getstatus() == VMStatus.Down
-                || getVm().getstatus() == VMStatus.Suspended
-                || getVm().getstatus() == VMStatus.ImageIllegal
-                || getVm().getstatus() == VMStatus.ImageLocked
-                || getVm().getstatus() == VMStatus.PoweringDown) {
+        if (getVm().getStatus() == VMStatus.Down
+                || getVm().getStatus() == VMStatus.Suspended
+                || getVm().getStatus() == VMStatus.ImageIllegal
+                || getVm().getStatus() == VMStatus.ImageLocked
+                || getVm().getStatus() == VMStatus.PoweringDown) {
             list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
         } else {
             if (getParameters().getVmStaticData().getQuotaId() == null
@@ -369,8 +369,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
                         getVdsGroupId(),
-                        getVm().getvmt_cpu_per_socket() * getVm().getnum_of_sockets(),
-                        getVm().getmem_size_mb()));
+                        getVm().getVmtCpuPerSocket() * getVm().getNumOfSockets(),
+                        getVm().getMemSizeMb()));
                 list.add(new QuotaVdsGroupConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,

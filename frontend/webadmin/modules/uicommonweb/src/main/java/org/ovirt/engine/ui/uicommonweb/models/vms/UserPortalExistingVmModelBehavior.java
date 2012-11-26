@@ -62,7 +62,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
     @Override
     protected void UpdateCdImage() {
-        updateUserCdImage(getVm().getstorage_pool_id());
+        updateUserCdImage(getVm().getStoragePoolId());
     }
 
     private void InitClusters(ArrayList<VDSGroup> clusters, UnitVmModel model)
@@ -74,11 +74,11 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
         for (VDSGroup cluster : clusters)
         {
-            if (cluster.getstorage_pool_id() != null && selectedDataCenter.getId().equals(cluster.getstorage_pool_id()))
+            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()))
             {
                 filteredList.add(cluster);
 
-                if (Guid.OpEquality(cluster.getId(), vm.getvds_group_id().getValue()))
+                if (Guid.OpEquality(cluster.getId(), vm.getVdsGroupId().getValue()))
                 {
                     listContainsVmCluster = true;
                 }
@@ -93,7 +93,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
         else
         {
             Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
-            model.SetClusters(model, filteredList, vm.getvds_group_id().getValue());
+            model.SetClusters(model, filteredList, vm.getVdsGroupId().getValue());
         }
     }
 
@@ -113,10 +113,10 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                             clusterList.add(cluster);
                         }
                         Collections.sort(clusterList, new Linq.VdsGroupByNameComparer());
-                        model.SetClusters(model, clusterList, vm.getvds_group_id().getValue());
+                        model.SetClusters(model, clusterList, vm.getVdsGroupId().getValue());
 
                     }
-                }, getModel().getHash()), vm.getvds_group_id());
+                }, getModel().getHash()), vm.getVdsGroupId());
     }
 
     /**

@@ -236,7 +236,7 @@ public class BackendVmResource extends
                                                                         VdcQueryType.GetVmByVmId,
                                                                         new GetVmByVmIdParameters(guid),
                                                                         "VM");
-        if(vm.getvm_os().isWindows() && vm.getIsFirstRun()) {
+        if(vm.getVmOs().isWindows() && vm.getIsFirstRun()) {
             params.setReinitialize(true);
         }
         return params;

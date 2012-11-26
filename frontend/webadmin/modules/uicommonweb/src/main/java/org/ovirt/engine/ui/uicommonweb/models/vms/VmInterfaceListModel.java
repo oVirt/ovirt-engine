@@ -169,8 +169,8 @@ public class VmInterfaceListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         model.setHashName("new_network_interface_vms"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.getNicType().setItems(DataProvider.GetNicTypeList(vm.getvm_os(), false));
-        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getvm_os()));
+        model.getNicType().setItems(DataProvider.GetNicTypeList(vm.getVmOs(), false));
+        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getVmOs()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
@@ -178,7 +178,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getPlugged().setEntity(true);
 
         Version v31 = new Version(3, 1);
-        boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
+        boolean isLessThan31 = vm.getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
 
         model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(false);
@@ -236,7 +236,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 okCommand.setIsExecutionAllowed(true);
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, vm.getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, vm.getVdsGroupId());
     }
 
     private void Edit()
@@ -256,13 +256,13 @@ public class VmInterfaceListModel extends SearchableListModel
 
         Integer selectedNicType = nic.getType();
         ArrayList<VmInterfaceType> nicTypes =
-                DataProvider.GetNicTypeList(vm.getvm_os(),
+                DataProvider.GetNicTypeList(vm.getVmOs(),
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         model.getNicType().setItems(nicTypes);
 
         if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
         {
-            selectedNicType = DataProvider.GetDefaultNicType(vm.getvm_os()).getValue();
+            selectedNicType = DataProvider.GetDefaultNicType(vm.getVmOs()).getValue();
         }
 
         model.getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
@@ -273,7 +273,7 @@ public class VmInterfaceListModel extends SearchableListModel
         model.getPlugged().setIsAvailable(false);
 
         Version v31 = new Version(3, 1);
-        boolean isLessThan31 = vm.getvds_group_compatibility_version().compareTo(v31) < 0;
+        boolean isLessThan31 = vm.getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
 
         model.getPortMirroring().setIsChangable(!isLessThan31);
         model.getPortMirroring().setEntity(nic.isPortMirroring());
@@ -318,7 +318,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, vm.getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, vm.getVdsGroupId());
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -479,7 +479,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
     private boolean canRemoveNics() {
         VM vm = (VM) getEntity();
-        if (VMStatus.Down.equals(vm.getstatus())) {
+        if (VMStatus.Down.equals(vm.getStatus())) {
             return true;
         }
 
@@ -576,8 +576,8 @@ public class VmInterfaceListModel extends SearchableListModel
             return;
         }
         VM vm = (VM) getEntity();
-        Version clusterCompatibilityVersion = vm.getvds_group_compatibility_version() != null
-                ? vm.getvds_group_compatibility_version() : new Version();
+        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion() != null
+                ? vm.getVdsGroupCompatibilityVersion() : new Version();
 
         isHotPlugSupported =
                 (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,

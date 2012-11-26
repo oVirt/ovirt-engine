@@ -162,7 +162,7 @@ public class MoveOrCopyDiskCommandTest {
 
     protected void initVm() {
         VM vm = new VM();
-        vm.setstatus(VMStatus.PoweredDown);
+        vm.setStatus(VMStatus.PoweredDown);
         AuditLogableBaseMockUtils.mockVmDao(command, vmDao);
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
         mockGetVmsListForDisk();
@@ -171,9 +171,9 @@ public class MoveOrCopyDiskCommandTest {
     private void mockGetVmsListForDisk() {
         List<VM> vmList = new ArrayList<VM>();
         VM vm1 = new VM();
-        vm1.setstatus(VMStatus.PoweredDown);
+        vm1.setStatus(VMStatus.PoweredDown);
         VM vm2 = new VM();
-        vm2.setstatus(VMStatus.Down);
+        vm2.setStatus(VMStatus.Down);
         vmList.add(vm1);
         vmList.add(vm2);
         when(vmDao.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);

@@ -28,7 +28,7 @@ public class VmStatusCell extends AbstractCell<VM> {
         }
 
         // Find the image corresponding to the status of the vm:
-        VMStatus status = vm.getstatus();
+        VMStatus status = vm.getStatus();
         ImageResource statusImage = null;
         switch (status) {
         case Up:

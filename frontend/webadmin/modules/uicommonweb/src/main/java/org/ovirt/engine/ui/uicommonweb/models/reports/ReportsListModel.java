@@ -136,19 +136,19 @@ public class ReportsListModel extends SearchableListModel {
             }
             case Cluster: {
                 VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
-                setDataCenterID(cluster.getstorage_pool_id().toString());
+                setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Hosts: {
                 VDSGroup cluster = (VDSGroup) treeItemModel.getEntity();
-                setDataCenterID(cluster.getstorage_pool_id().toString());
+                setDataCenterID(cluster.getStoragePoolId().toString());
                 setResourceId("P_Cluster_ID", cluster.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
             case Host: {
                 VDS host = (VDS) treeItemModel.getEntity();
-                setDataCenterID(host.getstorage_pool_id().toString());
+                setDataCenterID(host.getStoragePoolId().toString());
                 setResourceId("P_Host_ID", host.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }
@@ -170,7 +170,7 @@ public class ReportsListModel extends SearchableListModel {
             }
             case VMs: {
                 VM vm = (VM) treeItemModel.getEntity();
-                setDataCenterID(vm.getstorage_pool_id().toString());
+                setDataCenterID(vm.getStoragePoolId().toString());
                 setResourceId("P_VM_ID", vm.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }

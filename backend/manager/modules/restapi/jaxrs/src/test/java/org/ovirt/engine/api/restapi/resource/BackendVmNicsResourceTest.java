@@ -188,7 +188,7 @@ public class BackendVmNicsResourceTest
     protected void setGetVmQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             VM vm = new VM();
-            vm.setvds_group_id(GUIDS[0]);
+            vm.setVdsGroupId(GUIDS[0]);
             setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                     GetVmByVmIdParameters.class,
                     new String[] { "Id" },

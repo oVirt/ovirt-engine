@@ -229,7 +229,7 @@ public class ConfigureLocalStorageModel extends Model {
         // Check if current settings suitable for local setup (in case just SD creation failed - re-using the same
         // setup)
         boolean useCurrentSettings = false;
-        if (host.getstorage_pool_id() != null) {
+        if (host.getStoragePoolId() != null) {
 
             storage_pool tempCandidate = context.hostDataCenter;
             if (IsLocalDataCenterEmpty(tempCandidate)) {
@@ -548,7 +548,7 @@ public class ConfigureLocalStorageModel extends Model {
         VDS host = context.host;
 
         // Get data center of the host.
-        if (host.getstorage_pool_id() != null) {
+        if (host.getStoragePoolId() != null) {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -559,7 +559,7 @@ public class ConfigureLocalStorageModel extends Model {
                         }
                     },
                     frontendHash),
-                    host.getstorage_pool_id());
+                    host.getStoragePoolId());
         } else {
             SetDefaultNames2();
         }

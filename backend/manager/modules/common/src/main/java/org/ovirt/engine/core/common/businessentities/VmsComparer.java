@@ -11,7 +11,7 @@ public class VmsComparer implements java.util.Comparator<VM>, Serializable {
     }
 
     public int Compare(VM x, VM y) {
-        return x.getpriority() - y.getpriority();
+        return x.getPriority() - y.getPriority();
     }
 
     public VmsComparer() {

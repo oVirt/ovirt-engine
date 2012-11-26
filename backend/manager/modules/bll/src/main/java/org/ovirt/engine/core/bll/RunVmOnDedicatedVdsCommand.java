@@ -137,10 +137,10 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 log.infoFormat(
                         "VdcBll.RunVmCommand.AutoMemoryAdjust - Reducing Spice per monitor reserve of {0}MB per monitor. {1} monitors",
                         Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve),
-                        vm.getnum_of_monitors());
+                        vm.getNumOfMonitors());
             }
             memory = memory
-                    - (vm.getnum_of_monitors() * Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve));
+                    - (vm.getNumOfMonitors() * Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemorySpicePerMonitorReserve));
         }
         int maxMemory = Config.<Integer> GetValue(ConfigValues.PowerClientAutoAdjustMemoryMaxMemory);
         if (memory > maxMemory) {

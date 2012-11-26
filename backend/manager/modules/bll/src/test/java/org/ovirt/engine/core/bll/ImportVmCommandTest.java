@@ -57,7 +57,7 @@ public class ImportVmCommandTest {
 
     protected ImportVmParameters createParameters() {
         final VM v = createVM();
-        v.setvm_name("testVm");
+        v.setVmName("testVm");
         final ImportVmParameters p =
                 new ImportVmParameters(v, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
         return p;
@@ -105,7 +105,7 @@ public class ImportVmCommandTest {
 
     private void checkVmName(boolean isImportAsNewEntity, String name) {
         ImportVmParameters parameters = createParameters();
-        parameters.getVm().setvm_name(name);
+        parameters.getVm().setVmName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmCommand command =
                 spy(new ImportVmCommand(parameters));

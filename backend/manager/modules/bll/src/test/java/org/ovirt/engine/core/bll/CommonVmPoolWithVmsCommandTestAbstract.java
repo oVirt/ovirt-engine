@@ -204,8 +204,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
      */
     private VM mockVm() {
         VM vm = new VM();
-        vm.setstatus(VMStatus.Down);
-        vm.setvmt_guid(vmTemplateId);
+        vm.setStatus(VMStatus.Down);
+        vm.setVmtGuid(vmTemplateId);
         vm.setStaticData(getVmStatic());
         return vm;
     }
@@ -251,7 +251,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         VDSGroup group = new VDSGroup();
         group.setvds_group_id(vdsGroupId);
         group.setcompatibility_version(new Version());
-        group.setstorage_pool_id(storagePoolId);
+        group.setStoragePoolId(storagePoolId);
         return group;
     }
 

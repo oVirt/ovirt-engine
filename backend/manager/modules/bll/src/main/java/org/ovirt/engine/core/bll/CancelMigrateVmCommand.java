@@ -22,7 +22,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CancelMigrate,
-                        new VdsAndVmIDVDSParametersBase(getVm().getrun_on_vds().getValue(),
+                        new VdsAndVmIDVDSParametersBase(getVm().getRunOnVds().getValue(),
                                 getParameters().getVmId()));
 
         setSucceeded(retVal.getSucceeded());
@@ -40,7 +40,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         }
-        if (getVm().getstatus() != VMStatus.MigratingFrom) {
+        if (getVm().getStatus() != VMStatus.MigratingFrom) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
             return false;
         }

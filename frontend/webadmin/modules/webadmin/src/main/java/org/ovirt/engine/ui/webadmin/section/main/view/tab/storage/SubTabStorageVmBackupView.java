@@ -75,7 +75,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvm_name();
+                return object.getVmName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());
@@ -83,7 +83,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getvmt_name();
+                return object.getVmtName();
             }
         };
         getTable().addColumn(templateColumn, constants.templateVm());
@@ -91,7 +91,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> originColumn = new EnumColumn<VM, OriginType>() {
             @Override
             protected OriginType getRawValue(VM object) {
-                return object.getorigin();
+                return object.getOrigin();
             }
         };
         getTable().addColumn(originColumn, constants.originVm());
@@ -99,7 +99,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> memoryColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getvm_mem_size_mb()) + " MB"; //$NON-NLS-1$
+                return String.valueOf(object.getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
         getTable().addColumn(memoryColumn, constants.memoryVm());
@@ -107,7 +107,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> cpuColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return String.valueOf(object.getnum_of_cpus());
+                return String.valueOf(object.getNumOfCpus());
             }
         };
         getTable().addColumn(cpuColumn, constants.cpusVm());
@@ -123,7 +123,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_d
         TextColumnWithTooltip<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
-                return object.getvm_creation_date();
+                return object.getVmCreationDate();
             }
         };
         getTable().addColumn(creationDateColumn, constants.creationDateVm());

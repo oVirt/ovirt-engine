@@ -57,14 +57,14 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
                 if (!StorageHelperDirector.getInstance()
                         .getItem(lun.getLunConnections().get(0).getstorage_type())
                         .ConnectStorageToLunByVdsId(null,
-                                getVm().getrun_on_vds().getValue(),
+                                getVm().getRunOnVds().getValue(),
                                 lun,
-                                getVm().getstorage_pool_id())) {
+                                getVm().getStoragePoolId())) {
                     throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
                 }
             }
         }
-        runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getrun_on_vds().getValue(),
+        runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds().getValue(),
                 getVm().getId(), disk, vmDevice));
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         List<Disk> allVmDisks = new ArrayList<Disk>(getVm().getDiskMap().values());
         allVmDisks.add(diskInfo);
 
-        return checkPciAndIdeLimit(getVm().getnum_of_monitors(),
+        return checkPciAndIdeLimit(getVm().getNumOfMonitors(),
                 vmInterfaces,
                 allVmDisks,
                 getReturnValue().getCanDoActionMessages());
@@ -113,7 +113,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
     }
 
     protected boolean isVmUpOrDown() {
-        if (getVm().getstatus() != VMStatus.Up && getVm().getstatus() != VMStatus.Down) {
+        if (getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
             return false;
         }

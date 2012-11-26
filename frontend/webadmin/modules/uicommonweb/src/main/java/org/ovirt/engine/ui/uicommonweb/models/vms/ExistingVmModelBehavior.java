@@ -58,10 +58,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
                             VM currentVm = behavior.vm;
                             VDSGroup tempVar = new VDSGroup();
-                            tempVar.setId(currentVm.getvds_group_id());
-                            tempVar.setname(currentVm.getvds_group_name());
-                            tempVar.setcompatibility_version(currentVm.getvds_group_compatibility_version());
-                            tempVar.setstorage_pool_id(currentVm.getstorage_pool_id());
+                            tempVar.setId(currentVm.getVdsGroupId());
+                            tempVar.setname(currentVm.getVdsGroupName());
+                            tempVar.setcompatibility_version(currentVm.getVdsGroupCompatibilityVersion());
+                            tempVar.setStoragePoolId(currentVm.getStoragePoolId());
                             VDSGroup cluster = tempVar;
                             model.getCluster()
                                     .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { cluster })));
@@ -73,7 +73,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     }
                 },
                 getModel().getHash()),
-                vm.getstorage_pool_id());
+                vm.getStoragePoolId());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         UnitVmModel model = (UnitVmModel) array[1];
                         VM vm = ((ExistingVmModelBehavior) array[0]).vm;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.SetClusters(model, clusters, vm.getvds_group_id().getValue());
+                        model.SetClusters(model, clusters, vm.getVdsGroupId().getValue());
                         behavior.InitTemplate();
                         behavior.InitCdImage();
 
@@ -112,39 +112,39 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // This method will be called even if a VM created from Blank template.
 
         // Update model state according to VM properties.
-        getModel().getName().setEntity(vm.getvm_name());
-        getModel().getDescription().setEntity(vm.getvm_description());
-        getModel().getMemSize().setEntity(vm.getvm_mem_size_mb());
+        getModel().getName().setEntity(vm.getVmName());
+        getModel().getDescription().setEntity(vm.getVmDescription());
+        getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
-        getModel().getOSType().setSelectedItem(vm.getvm_os());
-        getModel().getDomain().setSelectedItem(vm.getvm_domain());
-        getModel().getUsbPolicy().setSelectedItem(vm.getusb_policy());
-        getModel().getNumOfMonitors().setSelectedItem(vm.getnum_of_monitors());
+        getModel().getOSType().setSelectedItem(vm.getVmOs());
+        getModel().getDomain().setSelectedItem(vm.getVmDomain());
+        getModel().getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
+        getModel().getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());
         getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
-        getModel().setBootSequence(vm.getdefault_boot_sequence());
-        getModel().getIsHighlyAvailable().setEntity(vm.getauto_startup());
+        getModel().setBootSequence(vm.getDefaultBootSequence());
+        getModel().getIsHighlyAvailable().setEntity(vm.isAutoStartup());
 
-        getModel().getTotalCPUCores().setEntity(Integer.toString(vm.getnum_of_cpus()));
+        getModel().getTotalCPUCores().setEntity(Integer.toString(vm.getNumOfCpus()));
         getModel().getTotalCPUCores().setIsChangable(!vm.isStatusUp());
 
-        getModel().getIsStateless().setEntity(vm.getis_stateless());
+        getModel().getIsStateless().setEntity(vm.isStateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
 
         getModel().getIsSmartcardEnabled().setEntity(vm.isSmartcardEnabled());
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
 
-        getModel().getNumOfSockets().setSelectedItem(vm.getnum_of_sockets());
+        getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
         getModel().getNumOfSockets().setIsChangable(!vm.isStatusUp());
 
-        getModel().getKernel_parameters().setEntity(vm.getkernel_params());
-        getModel().getKernel_path().setEntity(vm.getkernel_url());
-        getModel().getInitrd_path().setEntity(vm.getinitrd_url());
+        getModel().getKernel_parameters().setEntity(vm.getKernelParams());
+        getModel().getKernel_path().setEntity(vm.getKernelUrl());
+        getModel().getInitrd_path().setEntity(vm.getInitrdUrl());
 
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
-        if (vm.getis_initialized())
+        if (vm.isInitialized())
         {
             getModel().getTimeZone().setIsChangable(false);
             getModel().getTimeZone()
@@ -152,7 +152,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     .add("Time Zone cannot be change since the Virtual Machine was booted at the first time."); //$NON-NLS-1$
         }
 
-        updateTimeZone(vm.gettime_zone());
+        updateTimeZone(vm.getTimeZone());
 
         // Update domain list
         UpdateDomain();
@@ -162,7 +162,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getProvisioning().setIsAvailable(false);
-        getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getvmt_guid()));
+        getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
 
         // Select display protocol.
         for (Object item : getModel().getDisplayProtocol().getItems())
@@ -170,14 +170,14 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             EntityModel model = (EntityModel) item;
             DisplayType displayType = (DisplayType) model.getEntity();
 
-            if (displayType == vm.getdefault_display_type())
+            if (displayType == vm.getDefaultDisplayType())
             {
                 getModel().getDisplayProtocol().setSelectedItem(item);
                 break;
             }
         }
 
-        InitPriority(vm.getpriority());
+        InitPriority(vm.getPriority());
     }
 
     @Override
@@ -201,7 +201,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     protected void ChangeDefualtHost()
     {
         super.ChangeDefualtHost();
-        doChangeDefautlHost(vm.getdedicated_vm_for_vds());
+        doChangeDefautlHost(vm.getDedicatedVmForVds());
     }
 
     @Override
@@ -225,7 +225,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             return;
         }
 
-        if ((Integer) getModel().getMemSize().getEntity() < vm.getvm_mem_size_mb())
+        if ((Integer) getModel().getMemSize().getEntity() < vm.getVmMemSizeMb())
         {
             double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
             getModel().getMinAllocatedMemory()
@@ -244,9 +244,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     public void InitCdImage()
     {
-        getModel().getCdImage().setSelectedItem(vm.getiso_path());
+        getModel().getCdImage().setSelectedItem(vm.getIsoPath());
 
-        boolean hasCd = !StringHelper.isNullOrEmpty(vm.getiso_path());
+        boolean hasCd = !StringHelper.isNullOrEmpty(vm.getIsoPath());
         getModel().getCdImage().setIsChangable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
 

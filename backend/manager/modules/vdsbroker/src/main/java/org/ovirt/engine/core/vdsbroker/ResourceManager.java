@@ -71,20 +71,20 @@ public class ResourceManager {
         // Cleanup all vms dynamic data. This is defencive code on power crash
         List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
         for (VM vm : vms) {
-            if (!VM.isStatusDown(vm.getstatus())) {
+            if (!VM.isStatusDown(vm.getStatus())) {
                 // check if vm should be suspended
-                if (vm.getstatus() == VMStatus.SavingState) {
+                if (vm.getStatus() == VMStatus.SavingState) {
                     InternalSetVmStatus(vm, VMStatus.Suspended);
                     DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
                     DbFacade.getInstance().getVmStatisticsDao().update(vm.getStatisticsData());
                 } else {
-                    if (vm.getrun_on_vds() != null) {
-                        MultiValueMapUtils.addToMap(vm.getrun_on_vds().getValue(),
+                    if (vm.getRunOnVds() != null) {
+                        MultiValueMapUtils.addToMap(vm.getRunOnVds().getValue(),
                                 vm.getId(),
                                 _vdsAndVmsList,
                                 new MultiValueMapUtils.HashSetCreator<Guid>());
                     }
-                    if (vm.getrun_on_vds() != null && nonResponsiveVdss.contains(vm.getrun_on_vds())) {
+                    if (vm.getRunOnVds() != null && nonResponsiveVdss.contains(vm.getRunOnVds())) {
                         SetVmUnknown(vm);
                     }
                 }
@@ -239,15 +239,15 @@ public class ResourceManager {
      * @param status
      */
     public void InternalSetVmStatus(VM vm, VMStatus status) {
-        vm.setstatus(status);
-        VMStatus vmStatus = vm.getstatus();
+        vm.setStatus(status);
+        VMStatus vmStatus = vm.getStatus();
         boolean isVmStatusDown = VM.isStatusDown(vmStatus);
 
         if (isVmStatusDown || vmStatus == VMStatus.Unknown) {
             resetVmAttributes(vm);
 
             if (isVmStatusDown) {
-                vm.setrun_on_vds(null);
+                vm.setRunOnVds(null);
                 vm.setVmPauseStatus(VmPauseStatus.NONE);
             }
         }
@@ -259,19 +259,19 @@ public class ResourceManager {
      *            the VM to reset
      */
     private void resetVmAttributes(VM vm) {
-        vm.setusage_network_percent(0);
-        vm.setelapsed_time(0D);
-        vm.setcpu_sys(0D);
-        vm.setcpu_user(0D);
-        vm.setusage_cpu_percent(0);
-        vm.setusage_mem_percent(0);
-        vm.setmigrating_to_vds(null);
-        vm.setrun_on_vds_name("");
-        vm.setguest_cur_user_name(null);
-        vm.setguest_cur_user_id(null);
+        vm.setUsageNetworkPercent(0);
+        vm.setElapsedTime(0D);
+        vm.setCpuSys(0D);
+        vm.setCpuUser(0D);
+        vm.setUsageCpuPercent(0);
+        vm.setUsageMemPercent(0);
+        vm.setMigratingToVds(null);
+        vm.setRunOnVdsName("");
+        vm.setGuestCurUserName(null);
+        vm.setGuestCurUserId(null);
         vm.setConsoleUserId(null);
-        vm.setguest_os(null);
-        vm.setvm_ip(null);
+        vm.setGuestOs(null);
+        vm.setVmIp(null);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {
             NetworkStatistics statistics = ifc.getStatistics();

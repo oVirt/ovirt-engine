@@ -99,20 +99,20 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * @return Does this host has enough CPU (without exceeding the threshold) to run the VM.
      */
     public static boolean hasCpuToRunVM(VDS vds, VM vm) {
-        if (vds.getusage_cpu_percent() == null || vm.getusage_cpu_percent() == null) {
+        if (vds.getusage_cpu_percent() == null || vm.getUsageCpuPercent() == null) {
             return false;
         }
 
         // The predicted CPU is actually the CPU that the VM will take considering how many cores it has and now many
         // cores the host has. This is why we take both parameters into consideration.
-        int predictedVmCpu = (vm.getusage_cpu_percent() * vm.getnum_of_cpus()) / vds.getcpu_cores();
+        int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / vds.getcpu_cores();
         boolean result = vds.getusage_cpu_percent() + predictedVmCpu <= vds.gethigh_utilization();
         if (log.isDebugEnabled()) {
             log.debugFormat("Host {0} has {1}% CPU load; VM {2} is predicted to have {3}% CPU load; " +
                     "High threshold is {4}%. Host is {5}suitable in terms of CPU.",
                     vds.getvds_name(),
                     vds.getusage_cpu_percent(),
-                    vm.getvm_name(),
+                    vm.getVmName(),
                     predictedVmCpu,
                     vds.gethigh_utilization(),
                     (result ? "" : "not "));
@@ -225,7 +225,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
          * hosts to run it DO NOT TRY TO RERUN IF RESUME FAILED.
          */
         if (getRunVdssList().size() < Config.<Integer> GetValue(ConfigValues.MaxRerunVmOnVdsCount)
-                && getVm().getstatus() != VMStatus.Paused) {
+                && getVm().getStatus() != VMStatus.Paused) {
             // restore CanDoAction value to false so CanDoAction checks will run again
             getReturnValue().setCanDoAction(false);
             if (getExecutionContext() != null) {
@@ -291,18 +291,18 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             }
         }
 
-        if (getVm().getlast_vds_run_on() == null || !getVm().getlast_vds_run_on().equals(getCurrentVdsId())) {
-            getVm().setlast_vds_run_on(getCurrentVdsId());
+        if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
+            getVm().setLastVdsRunOn(getCurrentVdsId());
         }
-        if (StringUtils.isNotEmpty(getVm().gethibernation_vol_handle())) {
+        if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
             handleHibernatedVm(getActionType(), true);
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
             // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
             // In addition, as the boolean return value of HandleHIbernateVm is ignored here, it is safe to set the
             // status to up.
-            getVm().setstatus(VMStatus.Up);
-            getVm().sethibernation_vol_handle(null);
+            getVm().setStatus(VMStatus.Up);
+            getVm().setHibernationVolHandle(null);
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
@@ -336,7 +336,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public boolean getAutoStart() {
-        return getVm().getauto_startup();
+        return getVm().isAutoStartup();
     }
 
     @Override
@@ -357,7 +357,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
-                            .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getstorage_pool_id())) {
+                            .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
                 log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
                 return false;
             }
@@ -375,12 +375,12 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 return;
             // VCPU
             if (vds.getpending_vcpus_count() != null && !vds.getpending_vcpus_count().equals(0)) {
-                vds.setpending_vcpus_count(vds.getpending_vcpus_count() - getVm().getnum_of_cpus());
+                vds.setpending_vcpus_count(vds.getpending_vcpus_count() - getVm().getNumOfCpus());
                 updateDynamic = true;
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vcpu count failed, its already 0 or null",
-                        vds.getvds_name(), getVm().getvm_name());
+                        vds.getvds_name(), getVm().getVmName());
             }
             // VMEM
             if (vds.getpending_vmem_size() > 0) {
@@ -400,7 +400,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vmem size failed, its already 0 or null",
-                        vds.getvds_name(), getVm().getvm_name());
+                        vds.getvds_name(), getVm().getVmName());
             }
             if (updateDynamic) {
                 Backend.getInstance()
@@ -409,9 +409,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                                 new UpdateVdsDynamicDataVDSCommandParameters(vds.getDynamicData()));
                 if (log.isDebugEnabled()) {
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, now {1}. Vm: {2}",
-                            vds.getvds_name(), vds.getpending_vcpus_count(), getVm().getvm_name());
+                            vds.getvds_name(), vds.getpending_vcpus_count(), getVm().getVmName());
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, now {1}. Vm: {2}",
-                            vds.getvds_name(), vds.getpending_vmem_size(), getVm().getvm_name());
+                            vds.getvds_name(), vds.getpending_vmem_size(), getVm().getVmName());
                 }
             }
             getDecreseCondition(vdsId).signal();

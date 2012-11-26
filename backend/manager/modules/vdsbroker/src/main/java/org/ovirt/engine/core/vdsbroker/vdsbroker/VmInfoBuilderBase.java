@@ -40,16 +40,16 @@ public abstract class VmInfoBuilderBase {
 
     protected void buildVmProperties() {
         createInfo.add(VdsProperties.vm_guid, vm.getId().toString());
-        createInfo.add(VdsProperties.vm_name, vm.getvm_name());
-        createInfo.add(VdsProperties.mem_size_mb, vm.getvm_mem_size_mb());
+        createInfo.add(VdsProperties.vm_name, vm.getVmName());
+        createInfo.add(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
         createInfo.add(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.add(VdsProperties.num_of_cpus,
-                (new Integer(vm.getnum_of_cpus())).toString());
+                (new Integer(vm.getNumOfCpus())).toString());
         if (Config.<Boolean> GetValue(ConfigValues.SendSMPOnRunVm)) {
             createInfo.add(VdsProperties.cores_per_socket,
-                    (Integer.toString(vm.getcpu_per_socket())));
+                    (Integer.toString(vm.getCpuPerSocket())));
         }
-        final String compatibilityVersion = vm.getvds_group_compatibility_version().toString();
+        final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
         createInfo.add(VdsProperties.emulatedMachine, Config.<String> GetValue(
                 ConfigValues.EmulatedMachine, compatibilityVersion));
@@ -61,40 +61,40 @@ public abstract class VmInfoBuilderBase {
             createInfo.add(VdsProperties.SpiceSecureChannels, Config.<String> GetValue(
                     ConfigValues.SpiceSecureChannels, compatibilityVersion));
         }
-        createInfo.add(VdsProperties.kvmEnable, vm.getkvm_enable().toString()
+        createInfo.add(VdsProperties.kvmEnable, vm.getKvmEnable().toString()
                 .toLowerCase());
-        createInfo.add(VdsProperties.acpiEnable, vm.getacpi_enable().toString()
+        createInfo.add(VdsProperties.acpiEnable, vm.getAcpiEnable().toString()
                 .toLowerCase());
 
         createInfo.add(VdsProperties.Custom,
-                VmPropertiesUtils.getInstance().getVMProperties(vm.getvds_group_compatibility_version(),
+                VmPropertiesUtils.getInstance().getVMProperties(vm.getVdsGroupCompatibilityVersion(),
                         vm.getStaticData()));
         createInfo.add(VdsProperties.vm_type, "kvm"); // "qemu", "kvm"
-        if (vm.getRunAndPause()) {
+        if (vm.isRunAndPause()) {
             createInfo.add(VdsProperties.launch_paused_param, "true");
         }
-        if (vm.getvds_group_cpu_flags_data() != null) {
+        if (vm.getVdsGroupCpuFlagsData() != null) {
             createInfo.add(VdsProperties.cpuType,
-                    vm.getvds_group_cpu_flags_data());
+                    vm.getVdsGroupCpuFlagsData());
         }
         createInfo.add(VdsProperties.niceLevel,
-                (new Integer(vm.getnice_level())).toString());
-        if (vm.getstatus() == VMStatus.Suspended
-                && !StringUtils.isEmpty(vm.gethibernation_vol_handle())) {
+                (new Integer(vm.getNiceLevel())).toString());
+        if (vm.getStatus() == VMStatus.Suspended
+                && !StringUtils.isEmpty(vm.getHibernationVolHandle())) {
             createInfo.add(VdsProperties.hiberVolHandle,
-                    vm.gethibernation_vol_handle());
+                    vm.getHibernationVolHandle());
         }
         createInfo.add(VdsProperties.KeyboardLayout,
                 Config.<String> GetValue(ConfigValues.VncKeyboardLayout));
-        if (vm.getvm_os().isLinux()) {
+        if (vm.getVmOs().isLinux()) {
             createInfo.add(VdsProperties.PitReinjection, "false");
         }
 
-        if (vm.getdisplay_type() == DisplayType.vnc) {
+        if (vm.getDisplayType() == DisplayType.vnc) {
             createInfo.add(VdsProperties.TabletEnable, "true");
         }
         createInfo.add(VdsProperties.transparent_huge_pages,
-                vm.getTransparentHugePages() ? "true" : "false");
+                vm.isTransparentHugePages() ? "true" : "false");
     }
 
     private void addCpuPinning(final String compatibilityVersion) {
@@ -114,7 +114,7 @@ public abstract class VmInfoBuilderBase {
     protected void buildVmNetworkCluster() {
         // set Display network
         List<network_cluster> all = DbFacade.getInstance()
-                .getNetworkClusterDao().getAllForCluster(vm.getvds_group_id());
+                .getNetworkClusterDao().getAllForCluster(vm.getVdsGroupId());
         network_cluster networkCluster = null;
         for (network_cluster tempNetworkCluster : all) {
             if (tempNetworkCluster.getis_display()) {
@@ -140,34 +140,34 @@ public abstract class VmInfoBuilderBase {
 
     protected void buildVmBootOptions() {
         // Boot Options
-        if (!StringUtils.isEmpty(vm.getinitrd_url())) {
-            createInfo.add(VdsProperties.InitrdUrl, vm.getinitrd_url());
+        if (!StringUtils.isEmpty(vm.getInitrdUrl())) {
+            createInfo.add(VdsProperties.InitrdUrl, vm.getInitrdUrl());
         }
-        if (!StringUtils.isEmpty(vm.getkernel_url())) {
-            createInfo.add(VdsProperties.KernelUrl, vm.getkernel_url());
+        if (!StringUtils.isEmpty(vm.getKernelUrl())) {
+            createInfo.add(VdsProperties.KernelUrl, vm.getKernelUrl());
 
-            if (!StringUtils.isEmpty(vm.getkernel_params())) {
+            if (!StringUtils.isEmpty(vm.getKernelParams())) {
                 createInfo.add(VdsProperties.KernelParams,
-                        vm.getkernel_params());
+                        vm.getKernelParams());
             }
         }
     }
 
     protected void buildVmTimeZone() {
         // send vm_dynamic.utc_diff if exist, if not send vm_static.time_zone
-        if (vm.getutc_diff() != null) {
-            createInfo.add(VdsProperties.utc_diff, vm.getutc_diff().toString());
+        if (vm.getUtcDiff() != null) {
+            createInfo.add(VdsProperties.utc_diff, vm.getUtcDiff().toString());
         } else {
             // get vm timezone
             String timeZone = TimeZoneInfo.Local.getId();
-            if (!StringUtils.isEmpty(vm.gettime_zone())) {
-                timeZone = vm.gettime_zone();
+            if (!StringUtils.isEmpty(vm.getTimeZone())) {
+                timeZone = vm.getTimeZone();
             }
 
             int offset = 0;
             String javaZoneId = null;
 
-            if (vm.getos().isWindows()) {
+            if (vm.getOs().isWindows()) {
                 // convert to java & calculate offset
                 javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
             } else {

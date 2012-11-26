@@ -34,10 +34,10 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             if (vdsReturnValue.getSucceeded()) {
                 retval = VMStatus.MigratingFrom;
                 ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.MigratingFrom);
-                    vm.setmigrating_to_vds(parameters.getDstVdsId());
+                    vm.setMigratingToVds(parameters.getDstVdsId());
                     ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else {
-                retval = vm.getstatus();
+                retval = vm.getStatus();
                 log.error("VDS::migrate:: Failed Vm migration");
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
@@ -81,7 +81,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsManager.getVdsId());
             try {
                 vds.setvm_count(vds.getvm_count() + 1);
-                vds.setpending_vcpus_count(vds.getpending_vcpus_count() + vm.getnum_of_cpus());
+                vds.setpending_vcpus_count(vds.getpending_vcpus_count() + vm.getNumOfCpus());
                 vds.setpending_vmem_size(vds.getpending_vmem_size() + vm.getMinAllocatedMem());
                 if (log.isDebugEnabled()) {
                     log.debugFormat(
@@ -89,7 +89,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                             vds.getvds_name(),
                             vds.getpending_vcpus_count(),
                             vds.getpending_vmem_size(),
-                            vm.getvm_name());
+                            vm.getVmName());
                 }
                 vdsManager.UpdateDynamicData(vds.getDynamicData());
             } catch (RuntimeException ex) {

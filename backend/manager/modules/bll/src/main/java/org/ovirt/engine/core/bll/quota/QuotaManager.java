@@ -433,7 +433,7 @@ public class QuotaManager {
     public void rollbackQuotaByVmId(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
-            removeQuotaFromCache(vm.getstorage_pool_id(), vm.getQuotaId());
+            removeQuotaFromCache(vm.getStoragePoolId(), vm.getQuotaId());
         }
     }
 

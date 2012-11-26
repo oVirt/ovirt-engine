@@ -343,11 +343,11 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     protected void initDisksStorageDomainsList() {
         for (Object item : getItems()) {
             VM vm = (VM) item;
-            if (!NGuid.Empty.equals(vm.getvmt_guid())) {
-                if (!templateDiskMap.containsKey(vm.getvmt_guid())) {
-                    templateDiskMap.put(vm.getvmt_guid(), new ArrayList<Disk>());
+            if (!NGuid.Empty.equals(vm.getVmtGuid())) {
+                if (!templateDiskMap.containsKey(vm.getVmtGuid())) {
+                    templateDiskMap.put(vm.getVmtGuid(), new ArrayList<Disk>());
                 }
-                templateDiskMap.get(vm.getvmt_guid()).addAll(vm.getDiskMap().values());
+                templateDiskMap.get(vm.getVmtGuid()).addAll(vm.getDiskMap().values());
             } else {
                 for (Disk disk : vm.getDiskMap().values()) {
                     DiskImage diskImage = (DiskImage) disk;

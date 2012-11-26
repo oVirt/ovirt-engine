@@ -212,7 +212,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     protected void setUpGetClusterExpectations() {
             VDSGroup cluster = new VDSGroup();
-            cluster.setstorage_pool_id(GUIDS[2]);
+            cluster.setStoragePoolId(GUIDS[2]);
             setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupById,
                     GetVdsGroupByIdParameters.class,
                     new String[] { "VdsId" },

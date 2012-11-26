@@ -129,7 +129,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("low_utilization", group.getlow_utilization())
                 .addValue("cpu_over_commit_duration_minutes",
                         group.getcpu_over_commit_duration_minutes())
-                .addValue("storage_pool_id", group.getstorage_pool_id())
+                .addValue("storage_pool_id", group.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
                         group.getmax_vds_memory_over_commit())
                 .addValue("transparent_hugepages",
@@ -160,7 +160,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs
                     .getInt("cpu_over_commit_duration_minutes"));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+            entity.setStoragePoolId(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setmax_vds_memory_over_commit(rs
                     .getInt("max_vds_memory_over_commit"));

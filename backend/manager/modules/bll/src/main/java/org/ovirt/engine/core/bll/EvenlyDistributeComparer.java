@@ -13,7 +13,7 @@ public class EvenlyDistributeComparer extends VdsComparer {
         double hostCpu = vds.getusage_cpu_percent();
         double pendingVcpus = vds.getpending_vcpus_count();
 
-        return (hostCpu / vcpu) + (pendingVcpus + vm.getnum_of_cpus() + spmCpu) / hostCores;
+        return (hostCpu / vcpu) + (pendingVcpus + vm.getNumOfCpus() + spmCpu) / hostCores;
     }
 
     @Override

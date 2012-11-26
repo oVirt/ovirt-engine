@@ -46,10 +46,10 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     protected void RunForAllConnectionsInPool(VdcActionType type, VDS vds) {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(vds.getstorage_pool_id());
+        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(vds.getStoragePoolId());
         if (pool.getstatus() != StoragePoolStatus.Uninitialized) {
             List<storage_server_connections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDao().getAllForStoragePool(vds.getstorage_pool_id());
+                    .getStorageServerConnectionDao().getAllForStoragePool(vds.getStoragePoolId());
             for (storage_server_connections connection : connections) {
                 Backend.getInstance().runInternalAction(type,
                         new StorageServerConnectionParametersBase(connection, vds.getId()));

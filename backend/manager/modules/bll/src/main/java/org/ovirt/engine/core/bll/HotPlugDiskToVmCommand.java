@@ -46,8 +46,8 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     private boolean checkCanPerformPlugUnPlugDisk() {
         boolean returnValue = true;
-        if (getVm().getstatus() == VMStatus.Up) {
-            setVdsId(getVm().getrun_on_vds().getValue());
+        if (getVm().getStatus() == VMStatus.Up) {
+            setVdsId(getVm().getRunOnVds().getValue());
             returnValue =
                     isHotPlugSupported() && isOsSupportingHotPlug()
                             && isInterfaceSupportedForPlugUnPlug(disk);
@@ -73,7 +73,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void executeVmCommand() {
-        if (getVm().getstatus() == VMStatus.Up) {
+        if (getVm().getStatus() == VMStatus.Up) {
             performPlugCommnad(getPlugAction(), disk, oldVmDevice);
         }
 

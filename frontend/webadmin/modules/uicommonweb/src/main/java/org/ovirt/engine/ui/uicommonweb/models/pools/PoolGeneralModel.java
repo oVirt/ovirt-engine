@@ -451,35 +451,35 @@ public class PoolGeneralModel extends EntityModel
                 PoolGeneralModel poolGeneralModel = (PoolGeneralModel) model;
                 if (getvm() != null)
                 {
-                    poolGeneralModel.setTemplate(getvm().getvmt_name());
-                    poolGeneralModel.setCpuInfo(getvm().getnum_of_cpus() + " " + "(" + getvm().getnum_of_sockets() //$NON-NLS-1$ //$NON-NLS-2$
-                            + " Socket(s), " + getvm().getcpu_per_socket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
-                    poolGeneralModel.setMonitorCount(getvm().getnum_of_monitors());
+                    poolGeneralModel.setTemplate(getvm().getVmtName());
+                    poolGeneralModel.setCpuInfo(getvm().getNumOfCpus() + " " + "(" + getvm().getNumOfSockets() //$NON-NLS-1$ //$NON-NLS-2$
+                            + " Socket(s), " + getvm().getCpuPerSocket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
+                    poolGeneralModel.setMonitorCount(getvm().getNumOfMonitors());
 
                     Translator translator = EnumTranslator.Create(VmOsType.class);
-                    poolGeneralModel.setOS(translator.get(getvm().getvm_os()));
+                    poolGeneralModel.setOS(translator.get(getvm().getVmOs()));
 
-                    poolGeneralModel.setDefinedMemory(getvm().getvm_mem_size_mb() + " MB"); //$NON-NLS-1$
+                    poolGeneralModel.setDefinedMemory(getvm().getVmMemSizeMb() + " MB"); //$NON-NLS-1$
                     poolGeneralModel.setMinAllocatedMemory(getvm().getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
                     translator = EnumTranslator.Create(DisplayType.class);
-                    poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getdefault_display_type()));
+                    poolGeneralModel.setDefaultDisplayType(translator.get(getvm().getDefaultDisplayType()));
 
                     translator = EnumTranslator.Create(OriginType.class);
-                    poolGeneralModel.setOrigin(translator.get(getvm().getorigin()));
+                    poolGeneralModel.setOrigin(translator.get(getvm().getOrigin()));
 
                     translator = EnumTranslator.Create(UsbPolicy.class);
-                    poolGeneralModel.setUsbPolicy(translator.get(getvm().getusb_policy()));
+                    poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
-                    setHasDomain(DataProvider.IsWindowsOsType(getvm().getvm_os()));
-                    poolGeneralModel.setDomain(getvm().getvm_domain());
+                    setHasDomain(DataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    poolGeneralModel.setDomain(getvm().getVmDomain());
 
-                    setHasTimeZone(DataProvider.IsWindowsOsType(getvm().getvm_os()));
-                    poolGeneralModel.setTimeZone(getvm().gettime_zone());
+                    setHasTimeZone(DataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
-                    poolGeneralModel.setIsStateless(getvm().getis_stateless());
+                    poolGeneralModel.setIsStateless(getvm().isStateless());
 
-                    poolGeneralModel.setHasDefaultHost(getvm().getdedicated_vm_for_vds() != null);
+                    poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVds() != null);
                     if (poolGeneralModel.getHasDefaultHost())
                     {
                         AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -493,7 +493,7 @@ public class PoolGeneralModel extends EntityModel
                                         (ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 for (VDS host : hosts)
                                 {
-                                    if (host.getId().equals(poolGeneralModel1.getvm().getdedicated_vm_for_vds()))
+                                    if (host.getId().equals(poolGeneralModel1.getvm().getDedicatedVmForVds()))
                                     {
                                         poolGeneralModel1.setDefaultHost(host.getvds_name());
                                         break;
@@ -505,7 +505,7 @@ public class PoolGeneralModel extends EntityModel
                         };
 
                         Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
-                                + getvm().getvds_group_name() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
+                                + getvm().getVdsGroupName() + " sortby name", SearchType.VDS), _asyncQuery1); //$NON-NLS-1$
                     }
                     else
                     {

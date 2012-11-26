@@ -63,14 +63,14 @@ public class VmRunHandler {
             retValue = false;
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
         } else if (!(validationErrors =
-                vmPropsUtils.validateVMProperties(vm.getvds_group_compatibility_version(),
+                vmPropsUtils.validateVMProperties(vm.getVdsGroupCompatibilityVersion(),
                         vm.getStaticData())).isEmpty()) {
             VmHandler.handleCustomPropertiesError(validationErrors, message);
             retValue = false;
         } else {
             BootSequence boot_sequence = ((runParams.getBootSequence()) != null) ? runParams.getBootSequence() : vm
-                    .getdefault_boot_sequence();
-            Guid storagePoolId = vm.getstorage_pool_id();
+                    .getDefaultBootSequence();
+            Guid storagePoolId = vm.getStoragePoolId();
             // Block from running a VM with no HDD when its first boot device is
             // HD
             // and no other boot devices are configured
@@ -95,7 +95,7 @@ public class VmRunHandler {
                 // custom properties allowed only from cluster 2.3
                 else if (!StringUtils.isEmpty(vm.getStaticData().getCustomProperties()) &&
                         !Config.<Boolean> GetValue(ConfigValues.SupportCustomProperties,
-                                vm.getvds_group_compatibility_version().getValue())) {
+                                vm.getVdsGroupCompatibilityVersion().getValue())) {
 
                     message.add(VdcBllMessages.CUSTOM_VM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER.toString());
                     retValue = false;
@@ -120,8 +120,8 @@ public class VmRunHandler {
                             retValue = false;
                         }
                         // Check if iso and floppy path exists
-                        if (retValue && !vm.getauto_startup()
-                                && !validateIsoPath(findActiveISODomain(vm.getstorage_pool_id()),
+                        if (retValue && !vm.isAutoStartup()
+                                && !validateIsoPath(findActiveISODomain(vm.getStoragePoolId()),
                                         runParams,
                                         message)) {
                             retValue = false;
@@ -131,12 +131,12 @@ public class VmRunHandler {
                                     .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
                                             new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                                     .getReturnValue()).booleanValue();
-                            if (vm.isStatusUp() || (vm.getstatus() == VMStatus.NotResponding) || isVmDuringInit) {
+                            if (vm.isStatusUp() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
                                 retValue = false;
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
-                            } else if (vm.getstatus() == VMStatus.Paused && vm.getrun_on_vds() != null) {
+                            } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
                                 VDS vds = DbFacade.getInstance().getVdsDao().get(
-                                        new Guid(vm.getrun_on_vds().toString()));
+                                        new Guid(vm.getRunOnVds().toString()));
                                 if (vds.getstatus() != VDSStatus.Up) {
                                     retValue = false;
                                     message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
@@ -152,7 +152,7 @@ public class VmRunHandler {
                             }
 
                             // if the VM itself is stateless or run once as stateless
-                            if (retValue && isStatelessVm && vm.getauto_startup()) {
+                            if (retValue && isStatelessVm && vm.isAutoStartup()) {
                                 retValue = false;
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
                             }
@@ -224,10 +224,10 @@ public class VmRunHandler {
     protected boolean performImageChecksForRunningVm
             (VM vm, List<String> message, RunVmParams runParams, List<Disk> vmDisks) {
         return ImagesHandler.PerformImagesChecks(vm, message,
-                vm.getstorage_pool_id(), Guid.Empty, !vm.getauto_startup(),
+                vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
                 true, false, false, false, false,
-                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
-                !vm.getauto_startup() || !runParams.getIsInternal() && vm.getauto_startup(),
+                !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
+                !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
                 vmDisks);
     }
 
@@ -344,7 +344,7 @@ public class VmRunHandler {
         if (param.getRunAsStateless() != null) {
             return param.getRunAsStateless();
         }
-        return vm.getis_stateless();
+        return vm.isStateless();
     }
 
     protected BackendInternal getBackend() {

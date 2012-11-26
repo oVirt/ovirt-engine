@@ -89,7 +89,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public RunVmCommand(T runVmParams) {
         super(runVmParams);
         getParameters().setEntityId(runVmParams.getVmId());
-        setStoragePoolId(getVm() != null ? getVm().getstorage_pool_id() : null);
+        setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
         initRunVmCommand();
     }
 
@@ -98,7 +98,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (_destinationVds == null) {
             Guid vdsId =
                     getParameters().getDestinationVdsId() != null ? getParameters().getDestinationVdsId()
-                            : getVm().getdedicated_vm_for_vds() != null ? new Guid(getVm().getdedicated_vm_for_vds()
+                            : getVm().getDedicatedVmForVds() != null ? new Guid(getVm().getDedicatedVmForVds()
                                     .toString())
                                     : null;
             if (vdsId != null) {
@@ -112,11 +112,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         RunVmParams runVmParameters = getParameters();
         if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
             _cdImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getDiskPath(), getVm()
-                    .getstorage_pool_id());
+                    .getStoragePoolId());
         }
         if (!StringUtils.isEmpty(runVmParameters.getFloppyPath())) {
             _floppyImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getFloppyPath(), getVm()
-                    .getstorage_pool_id());
+                    .getStoragePoolId());
         }
 
         if (getVm() != null) {
@@ -140,7 +140,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
 
-        getVm().setboot_sequence(getVm().getdefault_boot_sequence());
+        getVm().setBootSequence(getVm().getDefaultBootSequence());
     }
 
     /**
@@ -167,12 +167,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected String cdPathWindowsToLinux(String url) {
-        return ImagesHandler.cdPathWindowsToLinux(url, getVm().getstorage_pool_id());
+        return ImagesHandler.cdPathWindowsToLinux(url, getVm().getStoragePoolId());
     }
 
     private void resumeVm() {
         mResume = true;
-        setVdsId(new Guid(getVm().getrun_on_vds().toString()));
+        setVdsId(new Guid(getVm().getRunOnVds().toString()));
         if (getVds() != null) {
             try {
                 incrementVdsPendingVmsCount();
@@ -188,7 +188,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 decrementVdsPendingVmsCount();
             }
         } else {
-            setActionReturnValue(getVm().getstatus());
+            setActionReturnValue(getVm().getStatus());
         }
     }
 
@@ -228,7 +228,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 // Try to rerun Vm on different vds
                 // no need to log the command because it is being logged inside
                 // the rerun
-                log.infoFormat("Failed to run desktop {0}, rerun", getVm().getvm_name());
+                log.infoFormat("Failed to run desktop {0}, rerun", getVm().getVmName());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
                 rerun();
@@ -250,11 +250,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         VmDeviceUtils.updateVmDevices(getVm().getStaticData());
         setActionReturnValue(VMStatus.Down);
         if (initVm()) {
-            if (getVm().getstatus() == VMStatus.Paused) { // resume
+            if (getVm().getStatus() == VMStatus.Paused) { // resume
                 resumeVm();
             } else { // run vm
                 if (!_isRerun && Boolean.TRUE.equals(getParameters().getRunAsStateless())
-                        && getVm().getstatus() != VMStatus.Suspended) {
+                        && getVm().getStatus() != VMStatus.Suspended) {
                     if (getVm().getDiskList().isEmpty()) { // If there are no snappable disks, there is no meaning for
                                                            // running as stateless, log a warning and run normally
                         warnIfNotAllDisksPermitSnapshots();
@@ -264,7 +264,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         statelessVmTreatment();
                     }
                 } else if (!getParameters().getIsInternal() && !_isRerun
-                        && getVm().getstatus() != VMStatus.Suspended
+                        && getVm().getStatus() != VMStatus.Suspended
                         && statelessSnapshotExistsForVm()) {
                     removeVmStatlessImages();
                 } else {
@@ -272,7 +272,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 }
             }
         } else {
-            setActionReturnValue(getVm().getstatus());
+            setActionReturnValue(getVm().getStatus());
         }
     }
 
@@ -287,19 +287,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * assume that this CD is bootable. So , priorities are (from low to high) : 1)Default 2)Tools 3)Boot Sequence
      */
     private void attachCd() {
-        Guid storagePoolId = getVm().getstorage_pool_id();
+        Guid storagePoolId = getVm().getStoragePoolId();
 
         boolean isIsoFound = (getVmRunHandler().findActiveISODomain(storagePoolId) != null);
         if (isIsoFound) {
             if (StringUtils.isEmpty(getVm().getCdPath())) {
-                getVm().setCdPath(getVm().getiso_path());
+                getVm().setCdPath(getVm().getIsoPath());
                 guestToolsVersionTreatment();
-                if (getVm().getboot_sequence() != null && getVm().getboot_sequence().containsSubsequence(BootSequence.D)) {
-                    getVm().setCdPath(getVm().getiso_path());
+                if (getVm().getBootSequence() != null && getVm().getBootSequence().containsSubsequence(BootSequence.D)) {
+                    getVm().setCdPath(getVm().getIsoPath());
                 }
-                getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getstorage_pool_id()));
+                getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getStoragePoolId()));
             }
-        } else if (!StringUtils.isEmpty(getVm().getiso_path())) {
+        } else if (!StringUtils.isEmpty(getVm().getIsoPath())) {
             getVm().setCdPath("");
             setSucceeded(false);
             throw new VdcBLLException(VdcBllErrors.NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER);
@@ -313,11 +313,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (statelessSnapshotExistsForVm()) {
             log.errorFormat(
                     "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
-                    getVm().getvm_name());
+                    getVm().getVmName());
             removeVmStatlessImages();
         } else {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
-                    getVm().getvm_name(), getVm().getId());
+                    getVm().getVmName(), getVm().getId());
             CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getId(),
                     "stateless snapshot");
             tempVar.setShouldBeLogged(false);
@@ -358,7 +358,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
-                log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getvm_name());
+                log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getVmName());
             }
         }
     }
@@ -417,12 +417,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         getVm().setLastStartTime(new Date());
 
         // Set path for initrd and kernel image.
-        if (!StringUtils.isEmpty(getVm().getinitrd_url())) {
-            getVm().setinitrd_url(getIsoPrefixFilePath(getVm().getinitrd_url()));
+        if (!StringUtils.isEmpty(getVm().getInitrdUrl())) {
+            getVm().setInitrdUrl(getIsoPrefixFilePath(getVm().getInitrdUrl()));
         }
 
-        if (!StringUtils.isEmpty(getVm().getkernel_url())) {
-            getVm().setkernel_url(getIsoPrefixFilePath(getVm().getkernel_url()));
+        if (!StringUtils.isEmpty(getVm().getKernelUrl())) {
+            getVm().setKernelUrl(getIsoPrefixFilePath(getVm().getKernelUrl()));
         }
 
         VMStatus vmStatus = (VMStatus) getBackend()
@@ -456,8 +456,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 return getSucceeded() ?
                         (VMStatus) getActionReturnValue() == VMStatus.Up ?
                                 getParameters() != null && getParameters().getDestinationVdsId() == null
-                                        && getVm().getdedicated_vm_for_vds() != null
-                                        && !getVm().getrun_on_vds().equals(getVm().getdedicated_vm_for_vds()) ?
+                                        && getVm().getDedicatedVmForVds() != null
+                                        && !getVm().getRunOnVds().equals(getVm().getDedicatedVmForVds()) ?
                                         AuditLogType.USER_RUN_VM_ON_NON_DEFAULT_VDS
                                         : AuditLogType.USER_RUN_VM
                                 : _isRerun ?
@@ -494,10 +494,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVmId().toString());
             throw new VdcBLLException(VdcBllErrors.DB_NO_SUCH_VM);
         }
-        if ((getVm().getstatus() == VMStatus.ImageIllegal) || (getVm().getstatus() == VMStatus.ImageLocked)) {
+        if ((getVm().getStatus() == VMStatus.ImageIllegal) || (getVm().getStatus() == VMStatus.ImageLocked)) {
             log.warnFormat("ResourceManager::{0}::vm '{1}' has {2}", getClass().getName(), getVmId().toString(),
-                    (getVm().getstatus() == VMStatus.ImageLocked ? "a locked image" : "an illegal image"));
-            setActionReturnValue(getVm().getstatus());
+                    (getVm().getStatus() == VMStatus.ImageLocked ? "a locked image" : "an illegal image"));
+            setActionReturnValue(getVm().getStatus());
             return false;
         } else if (!getSnapshotsValidator().vmNotDuringSnapshot(getVmId()).isValid()) {
             log.warnFormat("ResourceManager::{0}::VM {1} is during snapshot",
@@ -509,9 +509,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VmHandler.updateDisksFromDb(getVm());
             getVm().setCdPath(_cdImagePath);
             getVm().setFloppyPath(_floppyImagePath);
-            getVm().setkvm_enable(getParameters().getKvmEnable());
+            getVm().setKvmEnable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause());
-            getVm().setacpi_enable(getParameters().getAcpiEnable());
+            getVm().setAcpiEnable(getParameters().getAcpiEnable());
 
             // Clear the first user:
             getVm().setConsoleUserId(null);
@@ -520,9 +520,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if Use Vnc is null it means runVM was launch not from the run
             // once command
             if (getParameters().getUseVnc() != null) {
-                getVm().setdisplay_type(getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl);
+                getVm().setDisplayType(getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl);
             } else {
-                getVm().setdisplay_type(getVm().getdefault_display_type());
+                getVm().setDisplayType(getVm().getDefaultDisplayType());
             }
             if (getParameters().getReinitialize()) {
                 getVm().setUseSysPrep(true);
@@ -533,9 +533,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
             // get what cpu flags should be passed to vdsm according to cluster
             // cpu name
-            getVm().setvds_group_cpu_flags_data(
-                    CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getvds_group_cpu_name(), getVm()
-                            .getvds_group_compatibility_version()));
+            getVm().setVdsGroupCpuFlagsData(
+                    CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
+                            .getVdsGroupCompatibilityVersion()));
             return true;
         }
     }
@@ -572,9 +572,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         String selectedToolsClusterVersion = "";
         VmHandler.UpdateVmGuestAgentVersion(getVm());
         storage_domains isoDomain = null;
-        if (getVm().getvm_os().isWindows()
+        if (getVm().getVmOs().isWindows()
                 && (null != (isoDomain =
-                        LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getstorage_pool_id()),
+                        LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId()),
                                 new Predicate<storage_domains>() {
                                     @Override
                                     public boolean eval(storage_domains domain) {
@@ -610,7 +610,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     Version clusterVer = new Version(matchToolPattern.group(1));
                     int toolVersion = Integer.parseInt(matchToolPattern.group(3));
 
-                    if (clusterVer.compareTo(getVm().getvds_group_compatibility_version()) <= 0) {
+                    if (clusterVer.compareTo(getVm().getVdsGroupCompatibilityVersion()) <= 0) {
                         if ((bestClusterVer == null)
                                 || (clusterVer.compareTo(bestClusterVer) > 0)) {
                             bestToolVer = toolVersion;
@@ -642,10 +642,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                             selectedToolsClusterVersion, selectedToolsVersion);
 
             String isoDir = (String) runVdsCommand(VDSCommandType.IsoDirectory,
-                    new IrsBaseVDSCommandParameters(getVm().getstorage_pool_id())).getReturnValue();
+                    new IrsBaseVDSCommandParameters(getVm().getStoragePoolId())).getReturnValue();
             rhevToolsPath = Path.Combine(isoDir, rhevToolsPath);
 
-            getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(rhevToolsPath, getVm().getstorage_pool_id()));
+            getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(rhevToolsPath, getVm().getStoragePoolId()));
         }
     }
 
@@ -736,7 +736,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (!getSucceeded()) {
                 // could not run the vm don't try to run the end action
                 // again
-                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getvm_name());
+                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getVmName());
                 getReturnValue().setEndActionTryAgain(false);
             }
         }
@@ -774,7 +774,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean validateNetworkInterfaces() {
         Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
-        List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getvds_group_id());
+        List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getVdsGroupId());
         Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
 
         // Checking that the interface are all configured
@@ -877,9 +877,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getVm().getvds_group_id(),
-                getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
-                getVm().getmem_size_mb()));
+                getVm().getVdsGroupId(),
+                getVm().getCpuPerSocket() * getVm().getNumOfSockets(),
+                getVm().getMemSizeMb()));
         return list;
     }
 }

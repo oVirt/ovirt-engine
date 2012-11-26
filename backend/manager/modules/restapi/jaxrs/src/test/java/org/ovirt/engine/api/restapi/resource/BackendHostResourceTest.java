@@ -603,7 +603,7 @@ public class BackendHostResourceTest
         VdsStatic vdsStatic = control.createMock(VdsStatic.class);
         expect(vdsStatic.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getStaticData()).andReturn(vdsStatic).anyTimes();
-        expect(entity.getstorage_pool_id()).andReturn(GUIDS[1]).anyTimes();
+        expect(entity.getStoragePoolId()).andReturn(GUIDS[1]).anyTimes();
         return entity;
     }
 

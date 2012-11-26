@@ -457,7 +457,7 @@ public class VolumeModel extends Model {
                     if (clusters.isEmpty()
                             || clusters.size() > 0
                             && clusters.get(0)
-                                    .getstorage_pool_id()
+                                    .getStoragePoolId()
                                     .getValue()
                                     .equals(selectedDataCenter.getId().getValue()))
                     {

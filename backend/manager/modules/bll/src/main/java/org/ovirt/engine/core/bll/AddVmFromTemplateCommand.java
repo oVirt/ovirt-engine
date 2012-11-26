@@ -50,8 +50,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     protected void executeVmCommand() {
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
         super.executeVmCommand();
-        getParameters().OriginalTemplate = getVm().getvmt_guid();
-        getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+        getParameters().OriginalTemplate = getVm().getVmtGuid();
+        getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
         // if there are no tasks, we can end the command right away.
@@ -63,7 +63,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected boolean addVmImages() {
         if (getVmTemplate().getDiskMap().size() > 0) {
-            if (getVm().getstatus() != VMStatus.Down) {
+            if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }

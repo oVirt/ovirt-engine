@@ -34,7 +34,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
             Perform();
             return;
         }
-        setActionReturnValue((getVm() != null) ? getVm().getstatus() : VMStatus.Down);
+        setActionReturnValue((getVm() != null) ? getVm().getStatus() : VMStatus.Down);
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
     protected boolean GetRunningOnVds() {
         // We will need the virtual machine and the status, so it is worth saving references:
         final VM vm = getVm();
-        final VMStatus status = vm.getstatus();
+        final VMStatus status = vm.getStatus();
 
         // If the status of the machine implies that it is not running in a host then
         // there is no need to find the id of the host:
@@ -56,7 +56,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         }
 
         // Find the id of the host where the machine is running:
-        NGuid hostId = vm.getrun_on_vds();
+        NGuid hostId = vm.getRunOnVds();
         if (hostId == null) {
             log.warnFormat("Strange, according to the status \"{0}\" virtual machine \"{1}\" should be running in a host but it isn't.", status, vm.getId());
             return false;

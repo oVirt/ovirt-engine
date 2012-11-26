@@ -132,9 +132,9 @@ public class PoolItemBehavior extends ItemBehavior
                                         return;
                                     }
                                     UserPortalItemModel model = behavior.getItem();
-                                    model.setOsType(vm.getvm_os());
+                                    model.setOsType(vm.getVmOs());
                                     model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
-                                    poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getvm_os());
+                                    poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getVmOs());
                                 }
 
                             }

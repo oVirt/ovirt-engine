@@ -208,7 +208,7 @@ public class VmHandler {
 
             @Override
             public Void runInTransaction() {
-                compensationContext.snapshotEntityStatus(vm.getDynamicData(), vm.getstatus());
+                compensationContext.snapshotEntityStatus(vm.getDynamicData(), vm.getStatus());
                 UnLockVm(vm);
                 compensationContext.stateChanged();
                 return null;
@@ -221,7 +221,7 @@ public class VmHandler {
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.SetVmStatus,
                         new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
-        vm.setstatus(VMStatus.Down);
+        vm.setStatus(VMStatus.Down);
     }
 
     public static void MarkVmAsIllegal(Guid vmId) {
@@ -279,20 +279,20 @@ public class VmHandler {
 
     /**
      * Updates the {@link VM}'s {@link VM#getGuestAgentVersion()} and {@link VM#getSpiceDriverVersion()} based on the
-     * VM's {@link VM#getapp_list()} property.
+     * VM's {@link VM#getAppList()} property.
      *
      * @param vm
      *            the VM
      */
     public static void UpdateVmGuestAgentVersion(final VM vm) {
-        if (vm.getapp_list() != null) {
-            final String[] parts = vm.getapp_list().split("[,]", -1);
+        if (vm.getAppList() != null) {
+            final String[] parts = vm.getAppList().split("[,]", -1);
             if (parts != null && parts.length != 0) {
                 final String agentAppName = Config.<String> GetValue(ConfigValues.AgentAppName);
                 final Map<String, String> spiceDriversInGuest =
                         Config.<Map<String, String>> GetValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
-                        spiceDriversInGuest.get(ObjectUtils.toString(vm.getos().getOsType()).toLowerCase());
+                        spiceDriversInGuest.get(ObjectUtils.toString(vm.getOs().getOsType()).toLowerCase());
 
                 for (final String part : parts) {
                     if (StringUtils.containsIgnoreCase(part, agentAppName)) {

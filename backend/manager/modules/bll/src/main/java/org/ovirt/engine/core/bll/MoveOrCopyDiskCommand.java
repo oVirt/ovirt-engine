@@ -219,7 +219,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         boolean canMoveDisk = true;
         while (vmsForDisk.size() > vmCount && canMoveDisk) {
             VM currVm = vmsForDisk.get(vmCount++);
-            if (VMStatus.Down != currVm.getstatus()) {
+            if (VMStatus.Down != currVm.getStatus()) {
                 VmDevice vmDevice =
                         getVmDeviceDAO().get(new VmDeviceId(getImage().getId(), currVm.getId()));
                 if (vmDevice.getIsPlugged()) {

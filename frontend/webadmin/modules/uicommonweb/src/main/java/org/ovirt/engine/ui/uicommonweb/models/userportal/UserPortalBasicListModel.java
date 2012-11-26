@@ -267,9 +267,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
     public void UpdateDetails(VM vm)
     {
-        getSelectedItemDefinedMemory().setEntity(SizeParser(vm.getvm_mem_size_mb()));
-        getSelectedItemNumOfCpuCores().setEntity(vm.getnum_of_cpus() + " " + "(" + vm.getnum_of_sockets() //$NON-NLS-1$ //$NON-NLS-2$
-                + " Socket(s), " + vm.getcpu_per_socket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
+        getSelectedItemDefinedMemory().setEntity(SizeParser(vm.getVmMemSizeMb()));
+        getSelectedItemNumOfCpuCores().setEntity(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() //$NON-NLS-1$ //$NON-NLS-2$
+                + " Socket(s), " + vm.getCpuPerSocket() + " Core(s) per Socket)"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     // Temporarily converter

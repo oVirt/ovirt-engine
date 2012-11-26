@@ -49,7 +49,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     public HibernateVmCommand(T parameters) {
         super(parameters);
-        super.setStoragePoolId(getVm().getstorage_pool_id());
+        super.setStoragePoolId(getVm().getStoragePoolId());
         parameters.setEntityId(getVm().getId());
     }
 
@@ -60,7 +60,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
             List<storage_domain_static> domainsInPool = DbFacade.getInstance()
-                        .getStorageDomainStaticDao().getAllForStoragePool(getVm().getstorage_pool_id());
+                        .getStorageDomainStaticDao().getAllForStoragePool(getVm().getStoragePoolId());
             if (domainsInPool.size() > 0) {
                 for (storage_domain_static currDomain : domainsInPool) {
                     if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
@@ -79,16 +79,16 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         // Set the VM to null, to fetch it again from the DB ,instead from the cache.
         // We want to get the VM state from the DB, to avoid multi requests for VM hibernation.
         setVm(null);
-        if (VM.isStatusUp(getVm().getstatus())) {
+        if (VM.isStatusUp(getVm().getStatus())) {
 
             TransactionSupport.executeInNewTransaction(
                     new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(), getVm().getstatus());
+                            getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(), getVm().getStatus());
 
                             // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
-                            getVm().setstatus(VMStatus.SavingState);
+                            getVm().setStatus(VMStatus.SavingState);
 
                             Backend.getInstance()
                                     .getResourceManager()
@@ -112,7 +112,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             .RunVdsCommand(
                                     VDSCommandType.CreateImage,
                                     new CreateImageVDSCommandParameters(
-                                            getVm().getstorage_pool_id(),
+                                            getVm().getStoragePoolId(),
                                             getStorageDomainId().getValue(),
                                             image1GroupId,
                                             getImageSizeInBytes(),
@@ -142,7 +142,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.CreateImage,
-                                    new CreateImageVDSCommandParameters(getVm().getstorage_pool_id(),
+                                    new CreateImageVDSCommandParameters(getVm().getStoragePoolId(),
                                             getStorageDomainId()
                                                     .getValue(),
                                             image2GroupId,
@@ -162,9 +162,9 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
             // this is the new param that should be passed to the hibernate
             // command
-            getVm().sethibernation_vol_handle(
+            getVm().setHibernationVolHandle(
                     String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s", getStorageDomainId().toString(), getVm()
-                            .getstorage_pool_id().toString(), image1GroupId.toString(), hiberVol1.toString(),
+                            .getStoragePoolId().toString(), image1GroupId.toString(), hiberVol1.toString(),
                             image2GroupId.toString(), hiberVol2.toString()));
             // end of temp code
 
@@ -229,10 +229,10 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             retValue = false;
         } else {
-            if (getVm().getstatus() == VMStatus.WaitForLaunch || getVm().getstatus() == VMStatus.NotResponding) {
+            if (getVm().getStatus() == VMStatus.WaitForLaunch || getVm().getStatus() == VMStatus.NotResponding) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
-            } else if (getVm().getstatus() != VMStatus.Up) {
+            } else if (getVm().getStatus() != VMStatus.Up) {
                 retValue = false;
                 getReturnValue().getCanDoActionMessages()
                         .add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP.toString());
@@ -244,7 +244,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 if (retValue) {
                     // check if vm has stateless images in db in case vm was run once as stateless
                     // (then is_stateless is false)
-                    if (getVm().getis_stateless() ||
+                    if (getVm().isStateless() ||
                             DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
@@ -285,7 +285,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     @Override
     protected void endSuccessfully() {
         if (getVm() != null) {
-            if (getVm().getstatus() != VMStatus.SavingState && getVm().getstatus() != VMStatus.Up) {
+            if (getVm().getStatus() != VMStatus.SavingState && getVm().getStatus() != VMStatus.Up) {
                 // If the Vm is not in SavingState/Up status, we shouldn't
                 // perform Hibernate on it,
                 // since if the Vm is in another status, something might have
@@ -298,35 +298,35 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
                 log.warnFormat(
                         "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'SavingState'/'Up' status, but in '{1}' status - not performing Hibernate.",
-                        getVm().getvm_name(),
-                        getVm().getstatus());
+                        getVm().getVmName(),
+                        getVm().getStatus());
                 getReturnValue().setEndActionTryAgain(false);
             }
 
-            else if (getVm().getrun_on_vds() == null) {
+            else if (getVm().getRunOnVds() == null) {
                 log.warnFormat(
                         "HibernateVmCommand::EndSuccessfully: Vm '{0}' doesn't have 'run_on_vds' value - cannot Hibernate.",
-                        getVm().getvm_name());
+                        getVm().getVmName());
                 getReturnValue().setEndActionTryAgain(false);
             }
 
             else {
-                String hiberVol = getVm().gethibernation_vol_handle();
+                String hiberVol = getVm().getHibernationVolHandle();
                 if (hiberVol != null) {
                     try {
                         Backend.getInstance()
                                 .getResourceManager()
                                 .RunVdsCommand(
                                         VDSCommandType.Hibernate,
-                                        new HibernateVDSCommandParameters(new Guid(getVm().getrun_on_vds().toString()),
-                                                getVmId(), getVm().gethibernation_vol_handle()));
+                                        new HibernateVDSCommandParameters(new Guid(getVm().getRunOnVds().toString()),
+                                                getVmId(), getVm().getHibernationVolHandle()));
                     } catch (VdcBLLException e) {
                         isHibernateVdsProblematic = true;
                         throw e;
                     }
                     setSucceeded(true);
                 } else {
-                    log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getvm_name());
+                    log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getVmName());
                     endWithFailure();
                 }
             }
@@ -343,16 +343,16 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     protected void endWithFailure() {
         if (getVm() != null) {
             revertTasks();
-            if (getVm().getrun_on_vds() != null) {
-                getVm().sethibernation_vol_handle(null);
-                getVm().setstatus(VMStatus.Up);
+            if (getVm().getRunOnVds() != null) {
+                getVm().setHibernationVolHandle(null);
+                getVm().setStatus(VMStatus.Up);
 
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.UpdateVmDynamicData,
                                 new UpdateVmDynamicDataVDSCommandParameters(
-                                        new Guid(getVm().getrun_on_vds().toString()), getVm().getDynamicData()));
+                                        new Guid(getVm().getRunOnVds().toString()), getVm().getDynamicData()));
 
                 setSucceeded(true);
             }
@@ -360,7 +360,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             else {
                 log.warnFormat(
                         "HibernateVmCommand::endWithFailure: Vm '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
-                        getVm().getvm_name());
+                        getVm().getVmName());
 
                 getReturnValue().setEndActionTryAgain(false);
             }
@@ -390,7 +390,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
      * @return - Memory size for allocation in bytes.
      */
     private long getImageSizeInBytes() {
-        return (long) (getVm().getvm_mem_size_mb() + 200 + (64 * getVm().getnum_of_monitors())) * 1024 * 1024;
+        return (long) (getVm().getVmMemSizeMb() + 200 + (64 * getVm().getNumOfMonitors())) * 1024 * 1024;
     }
 
     /**

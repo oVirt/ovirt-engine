@@ -22,7 +22,7 @@ public class GetVdsGroupsByStoragePoolIdQueryTest extends AbstractUserQueryTest<
         // Set up the result
         Guid storagePoolId = Guid.NewGuid();
         VDSGroup group = new VDSGroup();
-        group.setstorage_pool_id(storagePoolId);
+        group.setStoragePoolId(storagePoolId);
         List<VDSGroup> result = Collections.singletonList(group);
 
         // Set up the query parameters

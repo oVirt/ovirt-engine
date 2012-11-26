@@ -67,7 +67,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
 
     private void executeFenceVdsManulalyAction(final Guid vdsId, String sessionId) {
         FenceVdsManualyParameters fenceVdsManuallyParams = new FenceVdsManualyParameters(false);
-        fenceVdsManuallyParams.setStoragePoolId(getVds().getstorage_pool_id());
+        fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
         fenceVdsManuallyParams.setVdsId(vdsId);
         fenceVdsManuallyParams.setSessionId(sessionId);
 

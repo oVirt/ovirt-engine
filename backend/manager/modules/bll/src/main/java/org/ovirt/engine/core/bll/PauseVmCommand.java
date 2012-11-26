@@ -17,14 +17,14 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
 
     @Override
     protected void Perform() {
-        if (VM.isStatusUp(getVm().getstatus())) {
+        if (VM.isStatusUp(getVm().getStatus())) {
             setActionReturnValue(Backend.getInstance().getResourceManager()
                     .RunVdsCommand(VDSCommandType.Pause, new PauseVDSCommandParameters(getVdsId(), getVmId()))
                     .getReturnValue());
             // Vds.pause(VmId);
             setSucceeded(true);
         } else {
-            setActionReturnValue(getVm().getstatus());
+            setActionReturnValue(getVm().getStatus());
         }
     }
 
@@ -40,11 +40,11 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
             retValue = false;
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
         } else {
-            if (vm.getstatus() == VMStatus.WaitForLaunch || vm.getstatus() == VMStatus.MigratingFrom
-                    || vm.getstatus() == VMStatus.NotResponding) {
+            if (vm.getStatus() == VMStatus.WaitForLaunch || vm.getStatus() == VMStatus.MigratingFrom
+                    || vm.getStatus() == VMStatus.NotResponding) {
                 retValue = false;
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
-            } else if (!VM.isStatusUp(vm.getstatus())) {
+            } else if (!VM.isStatusUp(vm.getStatus())) {
                 retValue = false;
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.toString());
             }

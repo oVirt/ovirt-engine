@@ -86,7 +86,7 @@ public class UpdateVmCommandTest {
         group.setId(Guid.NewGuid());
         group.setcompatibility_version(Version.v3_0);
 
-        vm.setvds_group_id(group.getId());
+        vm.setVdsGroupId(group.getId());
         vmStatic.setvds_group_id(group.getId());
 
         VmManagementParametersBase params = new VmManagementParametersBase();
@@ -129,7 +129,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testNameNotChanged() {
         prepareVmToPassCanDoAction();
-        vm.setvm_name("vm1");
+        vm.setVmName("vm1");
         mockSameNameQuery(true);
 
         assertTrue("canDoAction should have passed.", command.canDoAction());

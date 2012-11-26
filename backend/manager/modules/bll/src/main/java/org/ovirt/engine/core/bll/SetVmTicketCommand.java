@@ -99,7 +99,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
         // Check that the virtual machine is in state that allows connections
         // to the console:
-        final VMStatus status = vm.getstatus();
+        final VMStatus status = vm.getStatus();
         if (status != VMStatus.Up && status != VMStatus.Paused && status != VMStatus.PoweringUp && status != VMStatus.PoweringDown && status != VMStatus.RebootInProgress) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
             return false;
@@ -123,7 +123,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final VM vm = getVm();
         final IVdcUser user = getCurrentUser();
         vm.setConsoleUserId(user.getUserId());
-        vm.setguest_cur_user_name(user.getFQN());
+        vm.setGuestCurUserName(user.getFQN());
 
         // If the virtual machine has the allow reconnect flag or the user
         // needed additional permissions to connect to the console then we just

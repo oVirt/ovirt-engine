@@ -20,7 +20,7 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
         Guid vmID = Guid.NewGuid();
         VM vm = new VM();
         NGuid vdsID = NGuid.NewGuid();
-        vm.setrun_on_vds(vdsID.getValue());
+        vm.setRunOnVds(vdsID.getValue());
 
         VDS vds = new VDS();
         vds.setId(vdsID.getValue());

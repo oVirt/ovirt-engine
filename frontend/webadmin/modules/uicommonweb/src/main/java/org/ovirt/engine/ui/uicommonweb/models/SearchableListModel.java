@@ -473,9 +473,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         for (Object item : getSelectedItems()) {
             if (item instanceof HasStoragePool) {
                 if (firstItem) {
-                    dcId = ((HasStoragePool<?>) item).getstorage_pool_id().toString();
+                    dcId = ((HasStoragePool<?>) item).getStoragePoolId().toString();
                     firstItem = false;
-                } else if (!(((HasStoragePool<?>) item).getstorage_pool_id().toString().equals(dcId))) {
+                } else if (!(((HasStoragePool<?>) item).getStoragePoolId().toString().equals(dcId))) {
                     isFromSameDc = false;
                     reportModel.setDifferntDcError(true);
                     continue;

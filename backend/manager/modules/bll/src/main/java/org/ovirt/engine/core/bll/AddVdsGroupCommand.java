@@ -67,13 +67,13 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
 
         // add default network
-        if (getParameters().getVdsGroup().getstorage_pool_id() != null) {
+        if (getParameters().getVdsGroup().getStoragePoolId() != null) {
             final String networkName = Config.<String> GetValue(ConfigValues.ManagementNetwork);
             List<Network> networks = DbFacade
                     .getInstance()
                     .getNetworkDao()
                     .getAllForDataCenter(
-                            getParameters().getVdsGroup().getstorage_pool_id()
+                            getParameters().getVdsGroup().getStoragePoolId()
                                     .getValue());
 
             Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
@@ -116,8 +116,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         )) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
-        } else if (getVdsGroup().getstorage_pool_id() != null) {
-            setStoragePoolId(getVdsGroup().getstorage_pool_id());
+        } else if (getVdsGroup().getStoragePoolId() != null) {
+            setStoragePoolId(getVdsGroup().getStoragePoolId());
             if (getStoragePool() != null
                     && getStoragePool().getcompatibility_version().compareTo(
                             getVdsGroup().getcompatibility_version()) > 0) {
@@ -129,9 +129,9 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             }
         }
 
-        if (result && getVdsGroup().getstorage_pool_id() != null) {
+        if (result && getVdsGroup().getStoragePoolId() != null) {
             storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                    getVdsGroup().getstorage_pool_id().getValue());
+                    getVdsGroup().getStoragePoolId().getValue());
             // Making sure the given SP ID is valid to prevent
             // breaking Fk_vds_groups_storage_pool_id
             if (storagePool == null) {
@@ -142,7 +142,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             } else if (storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!DbFacade.getInstance()
-                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getstorage_pool_id().getValue())
+                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId().getValue())
                         .isEmpty()) {
                     getReturnValue().getCanDoActionMessages().add(
                             VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
@@ -180,8 +180,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroup().getstorage_pool_id() == null ? null
-                : getVdsGroup().getstorage_pool_id().getValue(),
+        return Collections.singletonList(new PermissionSubject(getVdsGroup().getStoragePoolId() == null ? null
+                : getVdsGroup().getStoragePoolId().getValue(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
     }

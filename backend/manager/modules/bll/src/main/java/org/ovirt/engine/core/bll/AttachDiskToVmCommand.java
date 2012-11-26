@@ -79,7 +79,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         }
         if (retValue
                 && disk.isShareable()
-                && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getstorage_pool_id())
+                && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getStoragePoolId())
                         .getcompatibility_version()
                         .getValue())) {
             retValue = false;
@@ -90,7 +90,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
         if (retValue && isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                ((DiskImage) disk).getstorage_ids().get(0), getVm().getstorage_pool_id())) == null) {
+                ((DiskImage) disk).getstorage_ids().get(0), getVm().getStoragePoolId())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
@@ -98,7 +98,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             retValue = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId()));
         }
         if (retValue && getParameters().isPlugUnPlug()
-                && getVm().getstatus() != VMStatus.Down) {
+                && getVm().getStatus() != VMStatus.Down) {
             retValue = isOsSupportingHotPlug() && isHotPlugSupported()
                     && isInterfaceSupportedForPlugUnPlug(disk);
         }
@@ -118,7 +118,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         }
         // update vm device boot order
         updateBootOrderInVmDevice();
-        if (getParameters().isPlugUnPlug() && getVm().getstatus() != VMStatus.Down) {
+        if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down) {
             performPlugCommnad(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
         setSucceeded(true);

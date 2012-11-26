@@ -213,7 +213,7 @@ public class AddVmCommandTest {
         final Guid sourceSnapshotId = Guid.NewGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired, sourceSnapshotId);
-        cmd.getVm().setvm_name("vm1");
+        cmd.getVm().setVmName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
         reasons = cmd.getReturnValue().getCanDoActionMessages();
@@ -230,7 +230,7 @@ public class AddVmCommandTest {
         final Guid sourceSnapshotId = Guid.NewGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, pctRequired, sourceSnapshotId);
-        cmd.getVm().setvm_name("vm1");
+        cmd.getVm().setVmName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
         assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());

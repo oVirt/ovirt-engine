@@ -338,7 +338,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         final TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asVm(entity).getvm_name();
+                return asVm(entity).getVmName();
             }
         };
 

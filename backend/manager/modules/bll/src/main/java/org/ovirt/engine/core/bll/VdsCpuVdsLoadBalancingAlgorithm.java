@@ -141,7 +141,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         List<VM> vms1 = LinqUtils.filter(vms, new Predicate<VM>() {
             @Override
             public boolean eval(VM v) {
-                return !vdsId.equals(v.getdedicated_vm_for_vds());
+                return !vdsId.equals(v.getDedicatedVmForVds());
             }
         });
         VM result = null;
@@ -154,8 +154,8 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             log.info("VdsLoadBalancer: vm selection - no vm without pending found.");
             result = Collections.min(vms, new VmCpuUsageComparator());
         }
-        log.infoFormat("VdsLoadBalancer: vm selection - selected vm: {0}, cpu: {1}.", result.getvm_name(),
-                result.getusage_cpu_percent());
+        log.infoFormat("VdsLoadBalancer: vm selection - selected vm: {0}, cpu: {1}.", result.getVmName(),
+                result.getUsageCpuPercent());
         return result;
     }
 
@@ -186,7 +186,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         }
 
         private int calculateCpuUsage(VM o1) {
-            return o1.getusage_cpu_percent() * o1.getnum_of_cpus();
+            return o1.getUsageCpuPercent() * o1.getNumOfCpus();
         }
     }
 }

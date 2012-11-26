@@ -166,7 +166,7 @@ public class BackendVmNicsResource
     protected Guid getClusterId() {
         Guid clusterId = getEntity(VM.class,
             VdcQueryType.GetVmByVmId,
-            new GetVmByVmIdParameters(parentId), "id").getvds_group_id();
+            new GetVmByVmIdParameters(parentId), "id").getVdsGroupId();
         return clusterId;
     }
 }

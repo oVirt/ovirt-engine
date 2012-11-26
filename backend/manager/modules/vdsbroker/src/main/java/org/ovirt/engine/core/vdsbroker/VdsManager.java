@@ -244,7 +244,7 @@ public class VdsManager {
                         if (_vds != null && _vds.getstatus() != VDSStatus.Maintenance) {
                             vdsId = _vds.getId();
                             vdsName = _vds.getvds_name();
-                            storagePoolId = _vds.getstorage_pool_id();
+                            storagePoolId = _vds.getStoragePoolId();
                             domainsList = _vds.getDomains();
                         }
                     }

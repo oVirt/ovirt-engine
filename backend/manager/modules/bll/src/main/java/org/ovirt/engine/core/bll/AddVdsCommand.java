@@ -99,7 +99,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         });
 
         // set vds spm id
-        if (getVdsGroup().getstorage_pool_id() != null) {
+        if (getVdsGroup().getStoragePoolId() != null) {
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef().getValue());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);

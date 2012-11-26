@@ -186,7 +186,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         }
 
         Guid storagePoolId =
-                (getEntity().getstorage_pool_id() != null) ? getEntity().getstorage_pool_id().getValue() : NGuid.Empty;
+                (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId().getValue() : NGuid.Empty;
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -320,7 +320,7 @@ public class ClusterNetworkListModel extends SearchableListModel
     protected void EntityChanging(Object newValue, Object oldValue)
     {
         VDSGroup vdsGroup = (VDSGroup) newValue;
-        getNewNetworkCommand().setIsExecutionAllowed(vdsGroup != null && vdsGroup.getstorage_pool_id() != null);
+        getNewNetworkCommand().setIsExecutionAllowed(vdsGroup != null && vdsGroup.getStoragePoolId() != null);
     }
 
     @Override
@@ -358,7 +358,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         setWindow(networkModel);
 
         // Set selected dc
-        if (getEntity().getstorage_pool_id() != null)
+        if (getEntity().getStoragePoolId() != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(networkModel);
@@ -372,7 +372,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
                 }
             };
-            AsyncDataProvider.GetDataCenterById(_asyncQuery, getEntity().getstorage_pool_id().getValue());
+            AsyncDataProvider.GetDataCenterById(_asyncQuery, getEntity().getStoragePoolId().getValue());
         }
     }
 

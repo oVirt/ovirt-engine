@@ -19,7 +19,7 @@ public class GetManagementInterfaceAddressByVmIdQuery<P extends GetVmByVmIdParam
         if (vmId != null) {
             VM vm = getDbFacade().getVmDao().get(vmId);
             if (vm != null) {
-                NGuid vdsId = vm.getrun_on_vds();
+                NGuid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
                     nic =
                         getDbFacade().getInterfaceDao().getManagedInterfaceForVds(vdsId.getValue(),

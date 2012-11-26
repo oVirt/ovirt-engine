@@ -182,7 +182,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         VDSGroup cluster = (VDSGroup) volumeListModel.getSystemTreeSelectedItem().getEntity();
                         for (storage_pool dc : dataCenters)
                         {
-                            if (dc.getId().equals(cluster.getstorage_pool_id()))
+                            if (dc.getId().equals(cluster.getStoragePoolId()))
                             {
                                 innerVolumeModel.getDataCenter()
                                         .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] {dc})));

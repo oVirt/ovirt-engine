@@ -254,7 +254,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setvds_type(VDSType.forValue(rs.getInt("vds_type")));
             entity.setcpu_flags(rs.getString("cpu_flags"));
             entity.setvds_group_cpu_name(rs.getString("vds_group_cpu_name"));
-            entity.setstorage_pool_id(Guid.createGuidFromString(rs
+            entity.setStoragePoolId(Guid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs

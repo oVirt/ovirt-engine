@@ -215,7 +215,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDSGroup group : result) {
-            assertEquals(storagePool.getId(), group.getstorage_pool_id());
+            assertEquals(storagePool.getId(), group.getStoragePoolId());
         }
     }
 

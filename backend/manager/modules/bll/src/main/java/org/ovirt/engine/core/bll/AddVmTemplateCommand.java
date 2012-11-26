@@ -79,7 +79,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
-            setStoragePoolId(getVm().getstorage_pool_id());
+            setStoragePoolId(getVm().getStoragePoolId());
         }
         diskInfoDestinationMap = parameters.getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
@@ -148,7 +148,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     protected boolean canDoAction() {
-        if (getVdsGroup() == null || !getVm().getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id())) {
+        if (getVdsGroup() == null || !getVm().getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
@@ -169,7 +169,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (getVm().getstatus() != VMStatus.Down) {
+        if (getVm().getStatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM.toString());
             return false;
         }
@@ -180,7 +180,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getusb_policy(), getParameters().getVm().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(), getParameters().getVm().getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -202,7 +202,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             boolean checkIsValid = true;
             if (!ImagesHandler.PerformImagesChecks(getVm(),
                     getReturnValue().getCanDoActionMessages(),
-                    getVm().getstorage_pool_id(),
+                    getVm().getStoragePoolId(),
                     srcStorageDomainId,
                     false,
                     true,
@@ -221,7 +221,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
         for (Guid destImageDomain : destImageDomains) {
             storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
-                    destImageDomain, getVm().getstorage_pool_id());
+                    destImageDomain, getVm().getStoragePoolId());
             if (storage == null) {
                 // if storage is null then we need to check if it doesn't exist or
                 // domain is not in the same storage pool as the vm
@@ -439,8 +439,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionCheckSubject == null) {
             permissionCheckSubject = new ArrayList<PermissionSubject>();
-            Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getstorage_pool_id() == null ? null
-                    : getVdsGroup().getstorage_pool_id().getValue();
+            Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getStoragePoolId() == null ? null
+                    : getVdsGroup().getStoragePoolId().getValue();
             permissionCheckSubject.add(new PermissionSubject(storagePoolId,
                     VdcObjectType.StoragePool,
                     getActionType().getActionGroup()));

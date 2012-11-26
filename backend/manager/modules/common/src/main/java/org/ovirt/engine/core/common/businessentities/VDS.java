@@ -811,12 +811,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     private Guid storage_pool_idField = new Guid();
 
     @Override
-    public Guid getstorage_pool_id() {
+    public Guid getStoragePoolId() {
         return this.storage_pool_idField;
     }
 
     @Override
-    public void setstorage_pool_id(Guid value) {
+    public void setStoragePoolId(Guid value) {
         this.storage_pool_idField = value;
     }
 

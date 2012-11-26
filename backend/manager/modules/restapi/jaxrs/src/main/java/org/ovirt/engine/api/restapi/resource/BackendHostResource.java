@@ -269,7 +269,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private Response fenceManually(Action action) {
         FenceVdsManualyParameters params = new FenceVdsManualyParameters(true);
         params.setVdsId(guid);
-        params.setStoragePoolId(getEntity().getstorage_pool_id());
+        params.setStoragePoolId(getEntity().getStoragePoolId());
         return doAction(VdcActionType.FenceVdsManualy, params, action);
     }
 

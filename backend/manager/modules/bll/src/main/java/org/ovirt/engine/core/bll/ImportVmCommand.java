@@ -149,8 +149,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         Guid guid = Guid.NewGuid();
         getVm().setId(guid);
         setVmId(guid);
-        getVm().setvm_name(getParameters().getVm().getvm_name());
-        getVm().setstorage_pool_id(getParameters().getStoragePoolId());
+        getVm().setVmName(getParameters().getVm().getVmName());
+        getVm().setStoragePoolId(getParameters().getStoragePoolId());
         getParameters().setVm(getVm());
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             iface.setId(Guid.NewGuid());
@@ -293,13 +293,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
 
-        setVmTemplateId(getVm().getvmt_guid());
+        setVmTemplateId(getVm().getVmtGuid());
         if (retVal) {
             if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
                 retVal = false;
             }
         }
-        if (retVal && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid()) && getVmTemplate() != null
+        if (retVal && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid()) && getVmTemplate() != null
                 && getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
             retVal = false;
@@ -372,7 +372,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // Check that the USB policy is legal
         if (retVal) {
             VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
-            retVal = VmHandler.isUsbPolicyLegal(vm.getusb_policy(), vm.getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+            retVal = VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
         if (retVal) {
@@ -393,7 +393,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private boolean templateExistsOnExportDomain() {
         boolean retVal = false;
-        if (!VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getvmt_guid())) {
+        if (!VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getVmtGuid())) {
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
             tempVar.setGetAll(true);
@@ -404,7 +404,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 Map templates = (Map) qretVal.getReturnValue();
 
                 for (Object template : templates.keySet()) {
-                    if (getParameters().getVm().getvmt_guid().equals(((VmTemplate) template).getId())) {
+                    if (getParameters().getVm().getVmtGuid().equals(((VmTemplate) template).getId())) {
                         retVal = true;
                         break;
                     }
@@ -419,12 +419,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     protected boolean checkTemplateInStorageDomain() {
         boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
-        if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getvmt_guid())
+        if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
             List<storage_domains> domains = (List<storage_domains>) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                            new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getvmt_guid())).getReturnValue();
+                            new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
                 @Override
                 public Guid eval(storage_domains storageDomainStatic) {
@@ -476,7 +476,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // Checking if a desktop with same name already exists
         boolean exists = (Boolean) getBackend()
                 .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                        new IsVmWithSameNameExistParameters(getVm().getvm_name())).getReturnValue();
+                        new IsVmWithSameNameExistParameters(getVm().getVmName())).getReturnValue();
 
         if (exists) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
@@ -777,20 +777,20 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
         if (getParameters().getCopyCollapse()) {
-            getVm().setvmt_guid(VmTemplateHandler.BlankVmTemplateId);
+            getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         }
         DbFacade.getInstance().getVmStaticDao().save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
     }
 
     private int computeMinAllocatedMem() {
-        int vmMem = getVm().getmem_size_mb();
+        int vmMem = getVm().getMemSizeMb();
         int minAllocatedMem = vmMem;
         if (getVm().getMinAllocatedMem() > 0) {
             minAllocatedMem = getVm().getMinAllocatedMem();
         } else {
             // first get cluster memory over commit value
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(getVm().getvds_group_id());
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(getVm().getVdsGroupId());
             if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
                 minAllocatedMem = (vmMem * 100) / vdsGroup.getmax_vds_memory_over_commit();
             }
@@ -832,7 +832,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         List<String> invalidNetworkNames = new ArrayList<String>();
         List<String> invalidIfaceNames = new ArrayList<String>();
         Map<String, Network> networksInVdsByName =
-                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getvds_group_id()));
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getVdsGroupId()));
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
@@ -856,7 +856,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
-        iface.setVmName(getVm().getvm_name());
+        iface.setVmName(getVm().getVmName());
     }
 
     private void addVmDynamic() {
@@ -939,7 +939,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected boolean updateVmInSpm() {
-        return VmCommand.updateVmInSpm(getVm().getstorage_pool_id(),
+        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
                 new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
     }
 
@@ -974,7 +974,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         // special permission is needed to use custom properties
         if (getVm() != null && !StringUtils.isEmpty(getVm().getCustomProperties())) {
-            permissionList.add(new PermissionSubject(getVm().getvds_group_id(),
+            permissionList.add(new PermissionSubject(getVm().getVdsGroupId(),
                     VdcObjectType.VdsGroups,
                     ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES));
         }

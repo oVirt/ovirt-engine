@@ -56,14 +56,14 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         CheckMaxMemoryOverCommitValue();
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
-        if ((oldGroup.getstorage_pool_id() != null
-                && !oldGroup.getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id()))
-                || (oldGroup.getstorage_pool_id() == null
-                && getVdsGroup().getstorage_pool_id() != null)) {
+        if ((oldGroup.getStoragePoolId() != null
+                && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId()))
+                || (oldGroup.getStoragePoolId() == null
+                && getVdsGroup().getStoragePoolId() != null)) {
             VdsActionParameters parameters = new VdsActionParameters();
             for (VDS vds : allForVdsGroup) {
                 parameters.setVdsId(vds.getId());
-                if (getVdsGroup().getstorage_pool_id() != null) {
+                if (getVdsGroup().getStoragePoolId() != null) {
                     VdcReturnValueBase addVdsSpmIdReturn =
                             getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
                     if (!addVdsSpmIdReturn.getSucceeded()) {
@@ -74,9 +74,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
 
-            if (oldGroup.getstorage_pool_id() != null) {
+            if (oldGroup.getStoragePoolId() != null) {
                 for (VDS vds : allForVdsGroup) {
-                    getVdsSpmIdMapDAO().removeByVdsAndStoragePool(vds.getId(), oldGroup.getstorage_pool_id().getValue());
+                    getVdsSpmIdMapDAO().removeByVdsAndStoragePool(vds.getId(), oldGroup.getStoragePoolId().getValue());
                 }
             }
         }
@@ -93,11 +93,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
         }
         if (!exists) {
-            if (getVdsGroup().getstorage_pool_id() != null) {
+            if (getVdsGroup().getStoragePoolId() != null) {
                 List<Network> storagePoolNets =
                         getNetworkDAO()
                                 .getAllForDataCenter(
-                                        getVdsGroup().getstorage_pool_id()
+                                        getVdsGroup().getStoragePoolId()
                                                 .getValue());
                 for (Network net : storagePoolNets) {
                     if (StringUtils.equals(net.getname(), managementNetwork)) {
@@ -152,8 +152,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     .add(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION
                             .toString());
         }
-        if (result && oldGroup.getstorage_pool_id() != null
-                && !oldGroup.getstorage_pool_id().equals(getVdsGroup().getstorage_pool_id())) {
+        if (result && oldGroup.getStoragePoolId() != null
+                && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
             result = false;
         }
@@ -179,8 +179,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
         if (result) {
             List<VDS> vdss = new ArrayList<VDS>();
-            boolean isAddedToStoragePool = oldGroup.getstorage_pool_id() == null
-                    && getVdsGroup().getstorage_pool_id() != null;
+            boolean isAddedToStoragePool = oldGroup.getStoragePoolId() == null
+                    && getVdsGroup().getStoragePoolId() != null;
             for (VDS vds : allForVdsGroup) {
                 if (vds.getstatus() == VDSStatus.Up) {
                     if (isAddedToStoragePool) {
@@ -218,14 +218,14 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     // the search can return vm from cluster with similar name
                     // so it's critical to check that
                     // the vm cluster id is the same as the cluster.id
-                    if (!vm.getvds_group_id().equals(oldGroup.getId())) {
+                    if (!vm.getVdsGroupId().equals(oldGroup.getId())) {
                         continue;
                     } else {
                         hasVms = true;
                     }
-                    if (vm.getstatus() == VMStatus.Suspended) {
+                    if (vm.getStatus() == VMStatus.Suspended) {
                         suspendedVms = true;
-                    } else if (vm.getstatus() != VMStatus.Down) {
+                    } else if (vm.getStatus() != VMStatus.Down) {
                         notDownVms = true;
                     }
                 }
@@ -252,11 +252,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
         }
-        if (result && getVdsGroup().getstorage_pool_id() != null) {
-            storage_pool storagePool = getStoragePoolDAO().get(getVdsGroup().getstorage_pool_id().getValue());
-            if (oldGroup.getstorage_pool_id() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+        if (result && getVdsGroup().getStoragePoolId() != null) {
+            storage_pool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId().getValue());
+            if (oldGroup.getStoragePoolId() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
-                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getstorage_pool_id().getValue()).isEmpty()) {
+                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId().getValue()).isEmpty()) {
                     getReturnValue()
                             .getCanDoActionMessages()
                             .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE

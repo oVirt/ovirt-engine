@@ -188,7 +188,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                      */
                     currentList.remove(destinationVdsId);
                     log.infoFormat("VdsLoadBalancer: Desktop {0} migrated from overutilized server {1} to server {2}",
-                            vm.getvm_name(), vds.getvds_name(), destinationVds.getvds_name());
+                            vm.getVmName(), vds.getvds_name(), destinationVds.getvds_name());
 
                 }
             } else {
@@ -259,7 +259,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",
-                                vm.getvm_name(), vds.getvds_name(), destinationVds.getvds_name());
+                                vm.getVmName(), vds.getvds_name(), destinationVds.getvds_name());
                         processed.add(destinationVdsId);
                     }
                 } else {
@@ -292,7 +292,7 @@ public abstract class VdsLoadBalancingAlgorithm {
         return LinqUtils.filter(list.values(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return (p.getvds_group_id().equals(vm.getvds_group_id())
+                return (p.getvds_group_id().equals(vm.getVdsGroupId())
                         && RunVmCommandBase.hasMemoryToRunVM(p, vm)
                         && RunVmCommandBase.hasCpuToRunVM(p, vm));
             }

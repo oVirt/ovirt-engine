@@ -84,9 +84,9 @@ public class RemoveImageCommandTest {
         Guid vmId = Guid.NewGuid();
         VM vm = new VM();
         vm.setId(vmId);
-        vm.setstorage_pool_id(Guid.NewGuid());
-        vm.setvmt_name(RandomUtils.instance().nextString(10));
-        vm.setorigin(OriginType.OVIRT);
+        vm.setStoragePoolId(Guid.NewGuid());
+        vm.setVmtName(RandomUtils.instance().nextString(10));
+        vm.setOrigin(OriginType.OVIRT);
         Guid vmSnapshotId = Guid.NewGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);
@@ -120,7 +120,7 @@ public class RemoveImageCommandTest {
         disk.setvolume_type(VolumeType.Sparse);
         disk.setvolume_format(VolumeFormat.COW);
         disk.setDiskInterface(DiskInterface.VirtIO);
-        disk.setstorage_pool_id(vm.getstorage_pool_id());
+        disk.setstorage_pool_id(vm.getStoragePoolId());
         disk.setactive(Boolean.TRUE);
         disk.setvm_snapshot_id(snapshotId);
         disk.setimageStatus(ImageStatus.OK);

@@ -39,15 +39,15 @@ public class VmPoolMapper {
     @Mapping(from = VmPool.class, to = VM.class)
     public static VM map(VmPool model, VM template) {
         VM entity = template != null ? template : new VM();
-        entity.setvm_name(model.getName());
-        entity.setvm_description(model.getDescription());
+        entity.setVmName(model.getName());
+        entity.setVmDescription(model.getDescription());
         if (model.isSetTemplate() &&
             model.getTemplate().isSetId()) {
-            entity.setvmt_guid(new Guid(model.getTemplate().getId()));
+            entity.setVmtGuid(new Guid(model.getTemplate().getId()));
         }
         if (model.isSetCluster() &&
             model.getCluster().isSetId()) {
-            entity.setvds_group_id(new Guid(model.getCluster().getId()));
+            entity.setVdsGroupId(new Guid(model.getCluster().getId()));
         }
         return entity;
     }
