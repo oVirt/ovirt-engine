@@ -1179,11 +1179,6 @@ public enum ConfigValues {
     DefaultMaxThreadPoolSize(324),
 
     @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    IsNeedSupportForOldVgAPI(325),
-
-    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     InitStorageSparseSizeInGB(326),

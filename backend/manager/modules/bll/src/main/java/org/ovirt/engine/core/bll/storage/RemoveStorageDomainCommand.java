@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
 import java.util.Map;
-
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,12 +13,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -50,7 +46,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 return;
             }
 
-            boolean failed = !formatStorage(dom, vds) || !removeStorage(dom, vds);
+            boolean failed = !formatStorage(dom, vds);
 
             DisconnectStorage();
 
@@ -192,17 +188,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return getVdsBroker()
                 .RunVdsCommand(VDSCommandType.FormatStorageDomain,
                         new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();
-    }
-
-    @SuppressWarnings("deprecation")
-    protected boolean removeStorage(storage_domains dom, VDS vds) {
-        if (Config.<Boolean> GetValue(ConfigValues.IsNeedSupportForOldVgAPI,
-                vds.getvds_group_compatibility_version().getValue()) && (isFCP(dom) || isISCSI(dom))) {
-            return getVdsBroker()
-                    .RunVdsCommand(VDSCommandType.RemoveVG,
-                            new RemoveVGVDSCommandParameters(vds.getId(), dom.getstorage())).getSucceeded();
-        }
-        return true;
     }
 
     @Override

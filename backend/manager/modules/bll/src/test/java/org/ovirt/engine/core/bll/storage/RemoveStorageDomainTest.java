@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
@@ -48,20 +47,11 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainTest {
     private static final Version VDS_COMPATIBILITY_VERSION = new Version(2, 2);
-
-    @ClassRule
-    public static MockConfigRule mcr =
-            new MockConfigRule(
-                    MockConfigRule.mockConfig(ConfigValues.IsNeedSupportForOldVgAPI,
-                            VDS_COMPATIBILITY_VERSION.getValue(),
-                            true)
-            );
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();

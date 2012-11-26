@@ -228,8 +228,6 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 
 
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
-select fn_db_add_config_value('IsNeedSupportForOldVgAPI','true','2.2');
-select fn_db_add_config_value('IsNeedSupportForOldVgAPI','false','3.0');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
 select fn_db_add_config_value('keystorePass','NoSoup4U','general');
@@ -668,6 +666,8 @@ select fn_db_delete_config_value('VdcBootStrapUrl','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
+select fn_db_delete_config_value('IsNeedSupportForOldVgAPI','2.2');
+select fn_db_delete_config_value('IsNeedSupportForOldVgAPI','3.0');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
