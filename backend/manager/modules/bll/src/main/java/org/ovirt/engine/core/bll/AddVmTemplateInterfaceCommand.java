@@ -3,14 +3,18 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -85,7 +89,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {
-                return network.getname().equals(getParameters().getInterface().getNetworkName());
+                return network.getname().equals(getNetworkName());
             }
         })) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
@@ -115,5 +119,31 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_ADD_TEMPLATE_INTERFACE
                 : AuditLogType.NETWORK_ADD_TEMPLATE_INTERFACE_FAILED;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> subjects = super.getPermissionCheckSubjects();
+
+        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName())
+                && getVmTemplate() != null) {
+
+            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getvds_group_id());
+            if (getParameters().getInterface().isPortMirroring()) {
+                subjects.add(new PermissionSubject(network == null ? null : network.getId(),
+                        VdcObjectType.Network,
+                        ActionGroup.PORT_MIRRORING));
+            } else {
+                subjects.add(new PermissionSubject(network == null ? null : network.getId(),
+                        VdcObjectType.Network,
+                        getActionType().getActionGroup()));
+            }
+        }
+
+        return subjects;
+    }
+
+    private String getNetworkName() {
+        return getParameters().getInterface().getNetworkName();
     }
 }

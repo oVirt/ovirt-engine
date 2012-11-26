@@ -2,8 +2,13 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -89,5 +94,44 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_UPDATE_TEMPLATE_INTERFACE
                 : AuditLogType.NETWORK_UPDATE_TEMPLATE_INTERFACE_FAILED;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+
+        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName())
+                && getVmTemplate() != null) {
+
+            VmNetworkInterface iface =
+                    getDbFacade().getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
+            if (iface != null) {
+                Network network =
+                        getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getvds_group_id());
+
+                if (getParameters().getInterface().isPortMirroring()
+                        && (isNetworkChanged(iface) || !iface.isPortMirroring())) {
+                    permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                            VdcObjectType.Network,
+                            ActionGroup.PORT_MIRRORING));
+                } else {
+                    // If the vNic's network is changed, the user should have permission for using the new network
+                    if (isNetworkChanged(iface)) {
+                        permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                                VdcObjectType.Network,
+                                getActionType().getActionGroup()));
+                    }
+                }
+            }
+        }
+        return permissionList;
+    }
+
+    private boolean isNetworkChanged(VmNetworkInterface iface) {
+        return !getNetworkName().equals(iface.getNetworkName());
+    }
+
+    private String getNetworkName() {
+        return getParameters().getInterface().getNetworkName();
     }
 }

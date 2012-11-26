@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -191,11 +191,33 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        if (getParameters().getInterface() != null && getVm() != null && getParameters().getInterface().isPortMirroring()) {
-            permissionList.add(new PermissionSubject(getVm().getStoragePoolId(),
-                    VdcObjectType.StoragePool,
-                    ActionGroup.PORT_MIRRORING));
+
+        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
+
+            VmNetworkInterface iface =
+                    getDbFacade().getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
+            if (iface != null) {
+                Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
+
+                if (getParameters().getInterface().isPortMirroring()
+                        && (isNetworkChanged(iface) || !iface.isPortMirroring())) {
+                    permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                            VdcObjectType.Network,
+                            ActionGroup.PORT_MIRRORING));
+                } else {
+                    // If the vNic's network is changed, the user should have permission for using the new network
+                    if (isNetworkChanged(iface)) {
+                        permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                                VdcObjectType.Network,
+                                getActionType().getActionGroup()));
+                    }
+                }
+            }
         }
         return permissionList;
+    }
+
+    private boolean isNetworkChanged(VmNetworkInterface iface) {
+        return !getNetworkName().equals(iface.getNetworkName());
     }
 }

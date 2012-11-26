@@ -167,7 +167,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {
-                return network.getname().equals(getParameters().getInterface().getNetworkName());
+                return network.getname().equals(getNetworkName());
             }
         });
 
@@ -243,15 +243,34 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         }
     }
 
+    /**
+     * If the network is set for the interface, it requires permissions on it.<br>
+     * If port-mirroring was set for the network, a permissions for the network with port-mirroring is required, else a
+     * permission for using the network. The assumption is that port-mirroring already includes the network usage.
+     */
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
-        if (getParameters().getInterface() != null && getVm() != null && getParameters().getInterface().isPortMirroring()) {
-            permissionList.add(new PermissionSubject(getVm().getStoragePoolId(),
-                    VdcObjectType.StoragePool,
-                    ActionGroup.PORT_MIRRORING));
+
+        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
+
+            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
+
+            if (getParameters().getInterface().isPortMirroring()) {
+                permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                        VdcObjectType.Network,
+                        ActionGroup.PORT_MIRRORING));
+            } else {
+                permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
+                        VdcObjectType.Network,
+                        getActionType().getActionGroup()));
+            }
         }
         return permissionList;
+    }
+
+    private String getNetworkName() {
+        return getParameters().getInterface().getNetworkName();
     }
 
     private void propagateFailure(VdcReturnValueBase internalReturnValue) {
