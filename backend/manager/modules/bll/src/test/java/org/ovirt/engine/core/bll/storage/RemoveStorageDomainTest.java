@@ -33,11 +33,9 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.RemoveVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -51,8 +49,6 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveStorageDomainTest {
-    private static final Version VDS_COMPATIBILITY_VERSION = new Version(2, 2);
-
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
@@ -136,11 +132,6 @@ public class RemoveStorageDomainTest {
         if (format || (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport)) {
             setUpStorageHelper(cmd, dom, true, failure);
             VDSBrokerFrontend vdsBroker = expectFormat(setUpVdsBroker(), failure);
-
-            if (storageType == StorageType.ISCSI) {
-                expectRemove(vdsBroker);
-            }
-
         } else {
             setUpStorageHelper(cmd, dom, false, false);
         }
@@ -160,14 +151,6 @@ public class RemoveStorageDomainTest {
     protected VDSBrokerFrontend setUpVdsBroker() {
         VDSBrokerFrontend vdsBroker = mock(VDSBrokerFrontend.class);
         when(backend.getResourceManager()).thenReturn(vdsBroker);
-        return vdsBroker;
-    }
-
-    protected VDSBrokerFrontend expectRemove(VDSBrokerFrontend vdsBroker) {
-        VDSReturnValue ret = new VDSReturnValue();
-        ret.setSucceeded(true);
-        when(vdsBroker.RunVdsCommand(eq(VDSCommandType.RemoveVG),
-                any(RemoveVGVDSCommandParameters.class))).thenReturn(ret);
         return vdsBroker;
     }
 
@@ -300,7 +283,6 @@ public class RemoveStorageDomainTest {
     protected VDS getVds(Guid id) {
         VDS vds = new VDS();
         vds.setId(id);
-        vds.setvds_group_compatibility_version(VDS_COMPATIBILITY_VERSION);
         return vds;
     }
 }

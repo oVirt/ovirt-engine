@@ -104,9 +104,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc validateStorageDomain(String sdUUID);
 
     StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
-            int storageType);
-
-    StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);
 
     StatusOnlyReturnForXmlRpc formatStorageDomain(String sdUUID);
@@ -136,9 +133,6 @@ public interface IVdsServer {
 
     OneUuidReturnForXmlRpc createVG(String sdUUID, String[] deviceList, boolean force);
 
-    @Deprecated
-    StatusOnlyReturnForXmlRpc removeVG(String vgUUID);
-
     VGListReturnForXmlRpc getVGList();
 
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
@@ -152,13 +146,6 @@ public interface IVdsServer {
     IQNListReturnForXmlRpc discoverSendTargets(Map<String, String> args);
 
     SessionsListReturnForXmlRpc getSessionList();
-
-    OneUuidReturnForXmlRpc spmStart(String spUUID,
-            int prevID,
-            String prevLVER,
-            int recoveryMode,
-            String SCSIFencing,
-            int maxHostId);
 
     OneUuidReturnForXmlRpc spmStart(String spUUID,
             int prevID,

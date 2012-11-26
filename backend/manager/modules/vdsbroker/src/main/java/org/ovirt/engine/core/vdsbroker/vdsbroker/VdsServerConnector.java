@@ -91,9 +91,6 @@ public interface VdsServerConnector {
     public Map<String, Object> validateStorageDomain(String sdUUID);
 
     public Map<String, Object> createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
-            int storageType);
-
-    public Map<String, Object> createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);
 
     public Map<String, Object> formatStorageDomain(String sdUUID);
@@ -123,8 +120,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> createVG(String sdUUID, String[] deviceList, boolean force);
 
-    public Map<String, Object> removeVG(String vgUUID);
-
     public Map<String, Object> getVGList();
 
     public Map<String, Object> getVGInfo(String vgUUID);
@@ -138,13 +133,6 @@ public interface VdsServerConnector {
     public Map<String, Object> discoverSendTargets(Map<String, String> args);
 
     public Map<String, Object> getSessionList();
-
-    public Map<String, Object> spmStart(String spUUID,
-            int prevID,
-            String prevLVER,
-            int recoveryMode,
-            String SCSIFencing,
-            int maxHostId);
 
     public Map<String, Object> spmStart(String spUUID,
             int prevID,

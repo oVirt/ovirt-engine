@@ -511,20 +511,6 @@ public class VdsServerWrapper implements IVdsServer {
 
     @Override
     public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
-            int storageType) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.createStorageDomain(domainType, sdUUID, domainName, arg,
-                    storageType);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.createStorageDomain(domainType, sdUUID, domainName, arg,
@@ -681,18 +667,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc removeVG(String vgUUID) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.removeVG(vgUUID);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public VGListReturnForXmlRpc getVGList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVGList();
@@ -768,20 +742,6 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getSessionList();
             SessionsListReturnForXmlRpc wrapper = new SessionsListReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
-    public OneUuidReturnForXmlRpc spmStart(String spUUID, int prevID, String prevLVER, int recoveryMode,
-            String SCSIFencing, int maxHostId) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.spmStart(spUUID, prevID, prevLVER, recoveryMode,
-                    SCSIFencing, maxHostId);
-            OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
