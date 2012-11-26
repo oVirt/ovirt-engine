@@ -2,10 +2,8 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,8 +12,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -143,19 +139,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                 }
             }
             // Refresh all connected luns to host
-            if (!Config.<Boolean> GetValue(ConfigValues.SupportGetDevicesVisibility,
-                    vds.getvds_group_compatibility_version().getValue())) {
-                Set<String> hostsLunsIds = new HashSet<String>();
-                List<LUNs> hostLuns = getHostLuns(vds);
-                for (LUNs lun : hostLuns) {
-                    hostsLunsIds.add(lun.getLUN_id());
-                }
-                for (LUNs lun : luns) {
-                    if (!hostsLunsIds.contains(lun.getLUN_id())) {
-                        return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
-                    }
-                }
-            } else if (!validateConnectedLuns(vds, getParameters().getLunIds())) {
+            if (!validateConnectedLuns(vds, getParameters().getLunIds())) {
                 return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
             }
         }

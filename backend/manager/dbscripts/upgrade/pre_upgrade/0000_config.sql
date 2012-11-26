@@ -450,10 +450,6 @@ select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');
 select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.1');
 select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.2');
 select fn_db_add_config_value('SupportedVDSMVersions','4.5,4.9','general');
-select fn_db_add_config_value('SupportGetDevicesVisibility','false','2.2');
-select fn_db_add_config_value('SupportGetDevicesVisibility','true','3.0');
-select fn_db_add_config_value('SupportGetDevicesVisibility','true','3.1');
-select fn_db_add_config_value('SupportGetDevicesVisibility','true','3.2');
 select fn_db_add_config_value('SupportStorageFormat','false','2.2');
 select fn_db_add_config_value('SupportStorageFormat','true','3.0');
 select fn_db_add_config_value('SupportStorageFormat','true','3.1');
@@ -668,6 +664,10 @@ select fn_db_delete_config_value('SupportCustomProperties','2.2');
 select fn_db_delete_config_value('SupportCustomProperties','3.0');
 select fn_db_delete_config_value('SupportCustomProperties','3.1');
 select fn_db_delete_config_value('SupportCustomProperties','3.2');
+select fn_db_delete_config_value('SupportGetDevicesVisibility','2.2');
+select fn_db_delete_config_value('SupportGetDevicesVisibility','3.0');
+select fn_db_delete_config_value('SupportGetDevicesVisibility','3.1');
+select fn_db_delete_config_value('SupportGetDevicesVisibility','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

@@ -1000,11 +1000,6 @@ public enum ConfigValues {
     LDAPQueryTimeout(292),
 
     @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    SupportGetDevicesVisibility(293),
-
-    @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default,ich6")
     DesktopAudioDeviceType(294),
