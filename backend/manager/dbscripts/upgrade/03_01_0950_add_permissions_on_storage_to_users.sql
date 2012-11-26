@@ -87,7 +87,11 @@ BEGIN
                     storage_pool_iso_map.storage_id,
                     v_STORAGE_OBJECT_TYPE
              FROM storage_pool_iso_map
-             WHERE storage_pool_iso_map.storage_pool_id = v_permissions.object_id);
+             WHERE storage_pool_iso_map.storage_pool_id = v_permissions.object_id and
+             cast(v_DISK_CREATOR_ROLE_ID as VARCHAR) || cast(v_permissions.ad_element_id as VARCHAR) ||
+                  cast(storage_pool_iso_map.storage_id as VARCHAR) not in
+             ( select cast(role_id as VARCHAR) || cast(ad_element_id as VARCHAR) ||
+                      cast(object_id as VARCHAR) from permissions));
 
         -- CREATE_VM on System will allow creating Disks on all Storage Domains in the System.
         ELSEIF (v_permissions.object_type_id = v_SYSTEM_OBJECT_TYPE) THEN
@@ -101,7 +105,11 @@ BEGIN
                     v_permissions.ad_element_id,
                     storage_domain_static.id,
                     v_STORAGE_OBJECT_TYPE
-             FROM storage_domain_static);
+             FROM storage_domain_static
+             WHERE cast(v_DISK_CREATOR_ROLE_ID as VARCHAR) || cast(v_permissions.ad_element_id as VARCHAR) ||
+                  cast(storage_domain_static.id as VARCHAR) not in
+             ( select cast(role_id as VARCHAR) || cast(ad_element_id as VARCHAR) ||
+                      cast(object_id as VARCHAR) from permissions));
 
         END IF;
     END LOOP;
