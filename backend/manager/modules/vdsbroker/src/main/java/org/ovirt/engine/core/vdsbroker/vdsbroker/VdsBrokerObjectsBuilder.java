@@ -15,9 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -786,48 +783,36 @@ public class VdsBrokerObjectsBuilder {
     private static void initDisks(XmlRpcStruct vmStruct, VmDynamic vm) {
         Map disks = (Map) vmStruct.getItem(VdsProperties.vm_disks);
         ArrayList<DiskImageDynamic> disksData = new ArrayList<DiskImageDynamic>();
-        List<Disk> vmDisksFromDb = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
         for (Object diskAsObj : disks.values()) {
             XmlRpcStruct disk = new XmlRpcStruct((Map) diskAsObj);
             DiskImageDynamic diskData = new DiskImageDynamic();
             String imageGroupIdString = AssignStringValue(disk, VdsProperties.image_group_id);
             if (!StringUtils.isEmpty(imageGroupIdString)) {
                 Guid imageGroupIdGuid = new Guid(imageGroupIdString);
-                DiskImage vmCurrentDisk = null;
-                for (Disk vmDisk : vmDisksFromDb) {
-                    if (vmDisk.getId() != null
-                            && imageGroupIdGuid.equals(vmDisk.getId().getValue())
-                            && vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                        vmCurrentDisk = (DiskImage) vmDisk;
-                        break;
-                    }
-                }
-                if (vmCurrentDisk != null) {
-                    diskData.setId(vmCurrentDisk.getImageId());
-                    diskData.setread_rate(AssignIntValue(disk, VdsProperties.vm_disk_read_rate));
-                    diskData.setwrite_rate(AssignIntValue(disk, VdsProperties.vm_disk_write_rate));
+                diskData.setId(imageGroupIdGuid);
+                diskData.setread_rate(AssignIntValue(disk, VdsProperties.vm_disk_read_rate));
+                diskData.setwrite_rate(AssignIntValue(disk, VdsProperties.vm_disk_write_rate));
 
-                    if (disk.contains(VdsProperties.disk_actual_size)) {
-                        Long size = AssignLongValue(disk, VdsProperties.disk_actual_size);
-                        diskData.setactual_size(size != null ? size * 512 : 0);
-                    } else if (disk.contains(VdsProperties.disk_true_size)) {
-                        Long size = AssignLongValue(disk, VdsProperties.disk_true_size);
-                        diskData.setactual_size(size != null ? size : 0);
-                    }
-                    if (disk.contains(VdsProperties.vm_disk_read_latency)) {
-                        diskData.setReadLatency(assignDoubleValueWithNullProtection(disk,
-                                VdsProperties.vm_disk_read_latency) / NANO_SECONDS);
-                    }
-                    if (disk.contains(VdsProperties.vm_disk_write_latency)) {
-                        diskData.setWriteLatency(assignDoubleValueWithNullProtection(disk,
-                                VdsProperties.vm_disk_write_latency) / NANO_SECONDS);
-                    }
-                    if (disk.contains(VdsProperties.vm_disk_flush_latency)) {
-                        diskData.setFlushLatency(assignDoubleValueWithNullProtection(disk,
-                                VdsProperties.vm_disk_flush_latency) / NANO_SECONDS);
-                    }
-                    disksData.add(diskData);
+                if (disk.contains(VdsProperties.disk_actual_size)) {
+                    Long size = AssignLongValue(disk, VdsProperties.disk_actual_size);
+                    diskData.setactual_size(size != null ? size * 512 : 0);
+                } else if (disk.contains(VdsProperties.disk_true_size)) {
+                    Long size = AssignLongValue(disk, VdsProperties.disk_true_size);
+                    diskData.setactual_size(size != null ? size : 0);
                 }
+                if (disk.contains(VdsProperties.vm_disk_read_latency)) {
+                    diskData.setReadLatency(assignDoubleValueWithNullProtection(disk,
+                            VdsProperties.vm_disk_read_latency) / NANO_SECONDS);
+                }
+                if (disk.contains(VdsProperties.vm_disk_write_latency)) {
+                    diskData.setWriteLatency(assignDoubleValueWithNullProtection(disk,
+                            VdsProperties.vm_disk_write_latency) / NANO_SECONDS);
+                }
+                if (disk.contains(VdsProperties.vm_disk_flush_latency)) {
+                    diskData.setFlushLatency(assignDoubleValueWithNullProtection(disk,
+                            VdsProperties.vm_disk_flush_latency) / NANO_SECONDS);
+                }
+                disksData.add(diskData);
             }
         }
         vm.setDisks(disksData);
