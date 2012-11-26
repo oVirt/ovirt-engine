@@ -442,25 +442,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         AsyncDataProvider.GetHostListByCluster(query, cluster.getname());
     }
 
-    protected void UpdateCustomProperties()
-    {
-        VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
-
-        if (cluster != null)
-        {
-            AsyncDataProvider.IsCustomPropertiesAvailable(new AsyncQuery(getModel(),
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-
-                            UnitVmModel model = (UnitVmModel) target;
-                            model.setIsCustomPropertiesAvailable((Boolean) returnValue);
-
-                        }
-                    }, getModel().getHash()), cluster.getcompatibility_version().toString());
-        }
-    }
-
     protected void updateCustomPropertySheet() {
         if (getModel().getCluster().getSelectedItem() == null) {
             return;

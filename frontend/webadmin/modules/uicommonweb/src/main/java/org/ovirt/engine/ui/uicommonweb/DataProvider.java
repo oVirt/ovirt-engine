@@ -772,21 +772,6 @@ public final class DataProvider
         return cachedNumOfMonitors;
     }
 
-    public static boolean IsSupportCustomProperties(String version)
-    {
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.SupportCustomProperties);
-        tempVar.setVersion(version);
-        VdcQueryReturnValue returnValue = GetConfigFromCache(tempVar);
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (Boolean) returnValue.getReturnValue();
-        }
-
-        return true;
-    }
-
     public static int GetMaxNumOfVmCpus(String version)
     {
         GetConfigurationValueParameters tempVar =

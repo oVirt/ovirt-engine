@@ -184,17 +184,10 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     public void Cluster_SelectedItemChanged()
     {
         UpdateDefaultHost();
-        UpdateCustomProperties();
+        updateCustomPropertySheet();
         UpdateNumOfSockets();
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
-    }
-
-    @Override
-    protected void UpdateCustomProperties() {
-        super.UpdateCustomProperties();
-
-        updateCustomPropertySheet();
     }
 
     @Override

@@ -444,10 +444,6 @@ select fn_db_add_config_value('StoragePoolNameSizeLimit','40','general');
 select fn_db_add_config_value('StoragePoolNonOperationalResetTimeoutInMin','3','general');
 select fn_db_add_config_value('StoragePoolRefreshTimeInSeconds','10','general');
 select fn_db_add_config_value('SucceededJobCleanupTimeInMinutes','10','general');
-select fn_db_add_config_value('SupportCustomProperties','false','2.2');
-select fn_db_add_config_value('SupportCustomProperties','true','3.0');
-select fn_db_add_config_value('SupportCustomProperties','true','3.1');
-select fn_db_add_config_value('SupportCustomProperties','true','3.2');
 select fn_db_add_config_value('SupportedClusterLevels','2.2,3.0','general');
 select fn_db_add_config_value('SupportedStorageFormats','0','2.2');
 select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');
@@ -668,6 +664,10 @@ select fn_db_delete_config_value('LocalStorageEnabled','2.2');
 select fn_db_delete_config_value('LocalStorageEnabled','3.0');
 select fn_db_delete_config_value('LocalStorageEnabled','3.1');
 select fn_db_delete_config_value('LocalStorageEnabled','3.2');
+select fn_db_delete_config_value('SupportCustomProperties','2.2');
+select fn_db_delete_config_value('SupportCustomProperties','3.0');
+select fn_db_delete_config_value('SupportCustomProperties','3.1');
+select fn_db_delete_config_value('SupportCustomProperties','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

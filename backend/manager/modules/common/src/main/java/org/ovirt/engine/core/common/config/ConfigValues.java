@@ -901,11 +901,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("/data/images/rhev")
     RhevhLocalFSPath(290),
 
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    SupportCustomProperties(289),
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("default:GSSAPI")
     LDAPSecurityAuthentication(271),

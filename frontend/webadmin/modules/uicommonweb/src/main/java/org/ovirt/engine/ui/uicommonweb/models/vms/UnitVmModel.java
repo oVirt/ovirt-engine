@@ -837,27 +837,6 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private boolean isCustomPropertiesAvailable;
-
-    public boolean getIsCustomPropertiesAvailable()
-    {
-        return isCustomPropertiesAvailable;
-    }
-
-    public void setIsCustomPropertiesAvailable(boolean value)
-    {
-        if (isCustomPropertiesAvailable != value)
-        {
-            isCustomPropertiesAvailable = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("IsCustomPropertiesAvailable")); //$NON-NLS-1$
-
-            if (value == false)
-            {
-                getCustomProperties().setEntity(""); //$NON-NLS-1$
-            }
-        }
-    }
-
     private boolean isHostAvailable;
 
     public boolean getIsHostAvailable()

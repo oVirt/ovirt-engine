@@ -210,19 +210,13 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     public void Cluster_SelectedItemChanged()
     {
         UpdateDefaultHost();
-        UpdateCustomProperties();
+        updateCustomPropertySheet();
         UpdateMinAllocatedMemory();
         UpdateNumOfSockets();
         if ((VmTemplate) getModel().getTemplate().getSelectedItem() != null) {
             VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
-    }
-
-    @Override
-    protected void UpdateCustomProperties() {
-        super.UpdateCustomProperties();
-        updateCustomPropertySheet();
     }
 
     @Override

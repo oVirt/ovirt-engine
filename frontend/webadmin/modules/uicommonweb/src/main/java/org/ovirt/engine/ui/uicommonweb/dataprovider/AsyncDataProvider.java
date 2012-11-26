@@ -152,20 +152,6 @@ public final class AsyncDataProvider {
         Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
-    public static void IsCustomPropertiesAvailable(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.SupportCustomProperties);
-        tempVar.setVersion(version);
-        GetConfigFromCache(tempVar, aQuery);
-    }
-
     public static void GetIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

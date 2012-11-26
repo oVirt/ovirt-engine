@@ -32,7 +32,7 @@ public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
         resourceAllocationTab.setVisible(false);
         templateEditor.setVisible(false);
         highAvailabilityTab.setVisible(true);
-        customPropertiesTab.setVisible(false);
+        customPropertiesTab.setVisible(true);
     }
 
 }

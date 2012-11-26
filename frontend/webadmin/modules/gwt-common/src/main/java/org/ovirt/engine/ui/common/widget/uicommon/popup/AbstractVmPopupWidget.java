@@ -880,8 +880,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     } else {
                         bootOptionsTab.markAsInvalid(null);
                     }
-                } else if ("IsCustomPropertiesAvailable".equals(propName)) { //$NON-NLS-1$
-                    customPropertiesTab.setVisible(vm.getIsCustomPropertiesAvailable());
                 } else if ("IsCustomPropertiesTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsCustomPropertiesTabValid()) {
                         customPropertiesTab.markAsValid();

@@ -90,16 +90,6 @@ public class VmRunHandler {
                 if (boot_sequence == BootSequence.CD && findActiveISODomain(storagePoolId) == null) {
                     message.add(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO.toString());
                     retValue = false;
-                }
-
-                // custom properties allowed only from cluster 2.3
-                else if (!StringUtils.isEmpty(vm.getStaticData().getCustomProperties()) &&
-                        !Config.<Boolean> GetValue(ConfigValues.SupportCustomProperties,
-                                vm.getVdsGroupCompatibilityVersion().getValue())) {
-
-                    message.add(VdcBllMessages.CUSTOM_VM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER.toString());
-                    retValue = false;
-
                 } else {
                     // if there is network in the boot sequence, check that the
                     // vm has network,

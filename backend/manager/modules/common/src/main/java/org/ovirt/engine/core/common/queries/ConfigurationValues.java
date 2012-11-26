@@ -58,7 +58,6 @@ public enum ConfigurationValues {
     AuthenticationMethod(ConfigAuthType.User),
     UserDefinedVMProperties(ConfigAuthType.User),
     PredefinedVMProperties(ConfigAuthType.User),
-    SupportCustomProperties(ConfigAuthType.User),
     VdsFenceOptionTypes,
     ServerCPUList,
     SupportedClusterLevels(ConfigAuthType.User),
