@@ -715,19 +715,14 @@ public class VmDiskListModel extends VmDiskListModelBase
             parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
         }
 
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        paramerterList.add(parameters);
-
-        Frontend.RunMultipleAction(actionType, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-                        VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.getWindow().StopProgress();
-                        Cancel();
-                    }
-                },
-                this);
+        Frontend.RunAction(actionType, parameters, new IFrontendActionAsyncCallback() {
+            @Override
+            public void Executed(FrontendActionAsyncResult result) {
+                VmDiskListModel localModel = (VmDiskListModel) result.getState();
+                localModel.getWindow().StopProgress();
+                Cancel();
+            }
+        }, this);
     }
 
     private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
