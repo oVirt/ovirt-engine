@@ -6,8 +6,11 @@ import java.util.List;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -26,7 +29,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> implements QuotaVdsDependent {
+public abstract class StopVmCommandBase<T extends VmOperationParameterBase> extends VmOperationCommandBase<T>
+        implements QuotaVdsDependent, QuotaStorageDependent {
     private boolean privateSuspendedVm;
 
     public StopVmCommandBase(T parameters) {
@@ -229,6 +233,22 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                     getVm().getvds_group_id(),
                     getVm().getcpu_per_socket() * getVm().getnum_of_sockets(),
                     getVm().getmem_size_mb()));
+        }
+        return list;
+    }
+
+    public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        if (!getVm().getis_stateless()) {
+            return list;
+        }
+        //if runAsStateless
+        for (DiskImage image : getVm().getDiskList()) {
+            if (image.getQuotaId() != null) {
+                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                        QuotaConsumptionParameter.QuotaAction.RELEASE,
+                        image.getstorage_ids().get(0), image.getActualSize()));
+            }
         }
         return list;
     }
