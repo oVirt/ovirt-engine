@@ -4,6 +4,7 @@ import java.net.ConnectException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
     private final IVdsServer mVdsBroker;
     private VDS mVds;
+    private static final String msgFormat = "XML RPC error in command {0} ( {1} ), the error was: {2}, {3} ";
 
     /**
      * Construct the command using the parameters and the {@link VDS} which is loaded from the DB.
@@ -98,37 +100,27 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             PrintReturnValue();
             throw new VDSProtocolException(ex);
         } catch (XmlRpcRunTimeException ex) {
-            final String msgFormat = "XML RPC error in command {0} ( {1} ), the error was: {2}, {3} ";
-            if ((ExceptionUtils.getRootCause(ex) instanceof ConnectException)) {
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            if ((ex.isNetworkError() || rootCause instanceof ConnectException)) {
                 log.debugFormat(msgFormat,
                         getCommandName(),
                         getAdditionalInformation(),
                         ex.getMessage(),
-                        ExceptionUtils.getRootCauseMessage(ex));
+                        rootCause.getMessage());
+                PrintReturnValue();
+                throw new VDSNetworkException(ex);
             } else {
                 log.errorFormat(msgFormat,
                         getCommandName(),
                         getAdditionalInformation(),
                         ex.getMessage(),
-                        ExceptionUtils.getRootCauseMessage(ex));
+                        rootCause.getMessage());
+                PrintReturnValue();
+                VDSProtocolException vdsProtocolException = new VDSProtocolException(rootCause.getMessage());
+                vdsProtocolException.setVdsError(new VDSError(VdcBllErrors.PROTOCOL_ERROR, rootCause.getMessage()));
+                throw vdsProtocolException;
             }
-            PrintReturnValue();
-            throw new VDSNetworkException(ex);
         }
-        // catch (WebException ex)
-        // {
-        // // log this exception in debug becaue it is being logged again later.
-        // log.infoFormat("Failed in {0} method", getCommandName());
-        // log.info("Exception", ex);
-        // throw new VDSNetworkException(ex);
-        // }
-
-        // catch (NullReferenceException ex)
-        // {
-        // PrintReturnValue();
-        // //This is a workaround a bug in the xml-rpc package
-        // throw new VDSNetworkException(ex);
-        // }
 
         // TODO: look for invalid certificates error handling
         catch (RuntimeException e) {
