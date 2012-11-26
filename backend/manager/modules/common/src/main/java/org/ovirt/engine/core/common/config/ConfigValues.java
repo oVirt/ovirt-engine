@@ -928,11 +928,6 @@ public enum ConfigValues {
     MaxNumberOfHostsInStoragePool(274),
 
     @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    LimitNumberOfNetworkInterfaces(275),
-
-    @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
     MaxVmNameLengthWindows(276),

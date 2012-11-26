@@ -126,20 +126,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        // check that the number of interfaces does not exceed limit. Necessary
-        // only for versions 2.1, 2.2.
-        boolean limitNumOfNics = Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces, getVm()
-                .getVdsGroupCompatibilityVersion().toString());
-        if (limitNumOfNics) {
-            interfaces.remove(oldIface);
-            boolean numOfNicsLegal = validateNumberOfNics(interfaces, getParameters().getInterface());
-            interfaces.add(oldIface);
-            if (!numOfNicsLegal) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
-                return false;
-            }
-        }
-
         if (getParameters().getInterface().getVmTemplateId() != null) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET);
             return false;

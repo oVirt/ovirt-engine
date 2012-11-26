@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.spy;
 
 import java.util.Set;
@@ -51,7 +49,6 @@ public class ImportVmCommandTest {
     private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
         mcr.mockConfigValue(ConfigValues.FreeSpaceLow, diskSpacePct);
-        mcr.mockConfigValue(eq(ConfigValues.LimitNumberOfNetworkInterfaces), anyString(), Boolean.TRUE);
         return new TestHelperImportVmCommand(createParameters());
     }
 

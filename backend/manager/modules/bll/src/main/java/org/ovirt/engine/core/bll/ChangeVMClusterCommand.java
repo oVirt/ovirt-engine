@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -58,25 +56,6 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
-
-                // Get if the cluster chosen got limit of nics.
-                boolean limitNumOfNics = Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
-                                                                   targetCluster.getcompatibility_version()
-                                                                                .getValue()
-                                                                                .toString());
-
-                // If so , check if nic count has exceeded and print appropriate
-                // message.
-                if (limitNumOfNics) {
-                    // Check that the number of interfaces does not exceed
-                    // limit.
-                    // Necessary only for version 2.2.
-                    boolean numOfNicsLegal = validateNumberOfNics(interfaces, null);
-                    if (!numOfNicsLegal) {
-                        addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
-                        return false;
-                    }
-                }
 
                 // Check the destination cluster have all the networks that the VM use
                 List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getParameters().getClusterId());

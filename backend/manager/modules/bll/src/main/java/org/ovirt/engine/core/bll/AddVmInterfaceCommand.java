@@ -161,18 +161,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        // check that the number of interfaces does not exceed limit. Necessary
-        // only for version 2.2.
-        boolean limitNumOfNics = Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces, getVm()
-                .getVdsGroupCompatibilityVersion().toString());
-        if (limitNumOfNics) {
-            boolean numOfNicsLegal = validateNumberOfNics(interfaces, getParameters().getInterface());
-            if (!numOfNicsLegal) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
-                return false;
-            }
-        }
-
         // check that the exists in current cluster
         List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vm.getvds_group_id());
 

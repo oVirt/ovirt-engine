@@ -50,8 +50,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
@@ -353,16 +351,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
                     break;
                 }
-            }
-        }
-
-        if (retVal && Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
-                getVdsGroup().getcompatibility_version().toString())) {
-            // check that we have no more then 8 interfaces (kvm limitation in
-            // version 2.x)
-            if (!VmCommand.validateNumberOfNics(vm.getInterfaces(), null)) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
-                retVal = false;
             }
         }
 

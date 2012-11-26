@@ -245,10 +245,6 @@ select fn_db_add_config_value('LDAPProviderTypes','','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
 select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
-select fn_db_add_config_value('LimitNumberOfNetworkInterfaces','true','2.2');
-select fn_db_add_config_value('LimitNumberOfNetworkInterfaces','false','3.0');
-select fn_db_add_config_value('LimitNumberOfNetworkInterfaces','false','3.1');
-select fn_db_add_config_value('LimitNumberOfNetworkInterfaces','false','3.2');
 select fn_db_add_config_value('LiveSnapshotEnabled','false','2.2');
 select fn_db_add_config_value('LiveSnapshotEnabled','false','3.0');
 select fn_db_add_config_value('LiveSnapshotEnabled','true','3.1');
@@ -668,6 +664,10 @@ select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 select fn_db_delete_config_value('LogVdsRegistration','general');
 select fn_db_delete_config_value('IsNeedSupportForOldVgAPI','2.2');
 select fn_db_delete_config_value('IsNeedSupportForOldVgAPI','3.0');
+select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','2.2');
+select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.0');
+select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.1');
+select fn_db_delete_config_value('LimitNumberOfNetworkInterfaces','3.2');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

@@ -436,26 +436,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    /**
-     * check that we number of Network-Interfaces does not exceed maximum (kvm limitation). This limitation is different
-     * for RHEL-5.5 and RHEL-6.0. This is expresses in configuraiton parameters.
-     *
-     * @param interfaces
-     * @return false if validation failed; i.e thera are more nics than allowed. true if validation succeeded.
-     */
-    public static boolean validateNumberOfNics(List<VmNetworkInterface> interfaces, VmNetworkInterface networkInterface) {
-        int ifCount = 0;
-        if (networkInterface != null && networkInterface.getType() != null) {
-            ifCount += (VmInterfaceType.forValue(networkInterface.getType()) == VmInterfaceType.rtl8139_pv ? 2 : 1);
-        }
-        for (VmNetworkInterface i : interfaces) {
-            if (i.getType() != null) {
-                ifCount += (i.getType() == VmInterfaceType.rtl8139_pv.getValue()) ? 2 : 1;
-            }
-        }
-        return (ifCount <= MAX_NETWORK_INTERFACES_SUPPORTED);
-    }
-
     protected boolean canPerformHotPlug() {
         return isHotPlugSupported() && isOsSupportingHotPlug();
     }

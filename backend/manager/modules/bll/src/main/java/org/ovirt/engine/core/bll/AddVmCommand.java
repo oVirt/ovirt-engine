@@ -308,15 +308,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
-        if (returnValue && Config.<Boolean> GetValue(ConfigValues.LimitNumberOfNetworkInterfaces,
-                getVdsGroup().getcompatibility_version().toString())) {
-            // check that we have no more then 8 interfaces (kvm limitation in version 2.x)
-            if (!validateNumberOfNics(getVmInterfaces(), null)) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_EXITED_MAX_INTERFACES);
-                returnValue = false;
-            }
-        }
-
         // check for Vm Payload
         if (returnValue && getParameters().getVmPayload() != null) {
             returnValue = checkPayload(getParameters().getVmPayload(),
