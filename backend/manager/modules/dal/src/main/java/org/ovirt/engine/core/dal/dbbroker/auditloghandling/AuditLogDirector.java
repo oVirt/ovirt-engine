@@ -553,6 +553,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.HA_VM_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.HA_VM_RESTART_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM, AuditLogSeverity.ERROR);
+
     }
 
     private static void initClusterSeverities() {
