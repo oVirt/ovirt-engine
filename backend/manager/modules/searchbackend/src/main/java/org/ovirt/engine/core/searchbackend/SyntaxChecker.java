@@ -12,13 +12,12 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
-import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.compat.EnumCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+
 
 
 public class SyntaxChecker implements ISyntaxChecker {
@@ -894,31 +893,42 @@ public class SyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
-    private String getPagePhrase(SyntaxContainer syntax, String pageNumber) {
+    protected String getPagePhrase(SyntaxContainer syntax, String pageNumber) {
         String result = "";
         Integer page = IntegerCompat.tryParse(pageNumber);
         if (page == null) {
             page = 1;
         }
-        String pagingTypeStr = Config.<String> GetValue(ConfigValues.DBPagingType);
-        if (EnumCompat.IsDefined(PagingType.class, pagingTypeStr)) {
-            PagingType pagingType = EnumUtils.valueOf(PagingType.class, pagingTypeStr, true);
+        PagingType pagingType = getPagingType();
+        if (pagingType != null) {
             String pagingSyntax = Config.<String> GetValue(ConfigValues.DBPagingSyntax);
             switch (pagingType) {
             case Range:
-                result = StringFormat
-                        .format(pagingSyntax, (page - 1) * syntax.getMaxCount() + 1, page * syntax.getMaxCount());
+                result =
+                        StringFormat.format(pagingSyntax,
+                                (page - 1) * syntax.getMaxCount() + 1,
+                                page * syntax.getMaxCount());
                 break;
             case Offset:
                 result = StringFormat.format(pagingSyntax, (page - 1) * syntax.getMaxCount() + 1, syntax.getMaxCount());
                 break;
             }
-        } else {
-            log.error(StringFormat.format("Unknown paging type %1$s", pagingTypeStr));
         }
 
         return result;
 
+    }
+
+    private PagingType getPagingType() {
+        String val = Config.<String> GetValue(ConfigValues.DBPagingType);
+        PagingType type = null;
+        try {
+            type = PagingType.valueOf(val);
+        } catch (Exception e) {
+            log.error(StringFormat.format("Unknown paging type %1$s", val));
+        }
+
+        return type;
     }
 
     private enum ConditionType {

@@ -66,11 +66,4 @@ public class EnumCompat {
         }
         return returnValue;
     }
-
-    /**
-     * Checks whether the enum name is defined
-     */
-    public static <T extends Enum> boolean IsDefined(Class<T> clazz, String name) {
-        return Arrays.asList(EnumCompat.GetNames(clazz)).contains(name);
-    }
 }

@@ -1,10 +1,18 @@
 package org.ovirt.engine.core.searchbackend;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class SyntaxCheckerTest extends TestCase {
+public class SyntaxCheckerTest {
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule();
 
     public void dumpCompletionArray(SyntaxContainer res) {
         System.out.print("[");
@@ -25,6 +33,7 @@ public class SyntaxCheckerTest extends TestCase {
     /**
      * Test the following where each word should be the completion for the earlier portion Vms : Events =
      */
+    @Test
     public void testVMCompletion() {
         SyntaxChecker chkr = new SyntaxChecker(20, true);
         SyntaxContainer res = null;
@@ -62,4 +71,21 @@ public class SyntaxCheckerTest extends TestCase {
         assertTrue("asc", contains(res, "asc"));
     }
 
+    @Test
+    public void testGetPagPhrase() {
+        mcr.mockConfigValue(ConfigValues.DBPagingType, "wrongPageType");
+        mcr.mockConfigValue(ConfigValues.DBPagingSyntax, "wrongPageSyntax");
+        SyntaxChecker chkr = new SyntaxChecker(20, true);
+        SyntaxContainer res = new SyntaxContainer("");
+        res.setMaxCount(0);
+
+        // check wrong config values
+        assertTrue(chkr.getPagePhrase(res, "1") == "");
+
+        mcr.mockConfigValue(ConfigValues.DBPagingType, "Range");
+        mcr.mockConfigValue(ConfigValues.DBPagingSyntax, " WHERE RowNum BETWEEN %1$s AND %2$s");
+
+        // check valid config values
+        assertTrue(chkr.getPagePhrase(res, "1") != "");
+    }
 }
