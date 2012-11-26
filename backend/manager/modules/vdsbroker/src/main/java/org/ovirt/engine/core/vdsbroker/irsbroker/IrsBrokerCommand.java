@@ -199,7 +199,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 && (storagePool.getstatus() == StoragePoolStatus.Up
                                         || storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool
                                         .getstatus() == StoragePoolStatus.Contend)) {
-                            ProceedStoragePoolStats();
+                            ProceedStoragePoolStats(storagePool);
                         }
 
                     }
@@ -211,7 +211,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private int _errorAttempts;
 
         @SuppressWarnings("unchecked")
-        private void ProceedStoragePoolStats() {
+        private void ProceedStoragePoolStats(storage_pool storagePool) {
             // ugly patch because vdsm doesnt check if host is spm on spm
             // operations
             VDSReturnValue result = null;
@@ -220,103 +220,99 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         new SpmStatusVDSCommandParameters(mCurrentVdsId, _storagePoolId));
             }
 
-            storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
-            if (storagePool != null) {
-                if (result == null
-                        || !result.getSucceeded()
-                        || (result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM)) {
-                    // update pool status to problematic until fence will happen
-                    if (storagePool.getstatus() != StoragePoolStatus.Problematic
-                            && storagePool.getstatus() != StoragePoolStatus.NotOperational) {
-                        if (result != null && result.getVdsError() != null) {
-                            ResourceManager
-                                    .getInstance()
-                                    .getEventListener()
-                                    .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
-                                            AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_WITH_ERROR,
-                                            result.getVdsError().getCode());
-                        } else {
-                            ResourceManager
-                                    .getInstance()
-                                    .getEventListener()
-                                    .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
-                                            AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
-                                            VdcBllErrors.ENGINE);
-                        }
+            if (result == null
+                    || !result.getSucceeded()
+                    || (result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM)) {
+                // update pool status to problematic until fence will happen
+                if (storagePool.getstatus() != StoragePoolStatus.Problematic
+                        && storagePool.getstatus() != StoragePoolStatus.NotOperational) {
+                    if (result != null && result.getVdsError() != null) {
+                        ResourceManager
+                                .getInstance()
+                                .getEventListener()
+                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
+                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_WITH_ERROR,
+                                        result.getVdsError().getCode());
+                    } else {
+                        ResourceManager
+                                .getInstance()
+                                .getEventListener()
+                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
+                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
+                                        VdcBllErrors.ENGINE);
                     }
+                }
 
-                    // if spm status didnt work or not spm and NOT NETWORK
-                    // PROBLEM
-                    // then cause failover with attempts
-                    if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
-                        HashMap<Guid, AsyncTaskStatus> tasksList =
-                                (HashMap<Guid, AsyncTaskStatus>) ResourceManager
-                                        .getInstance()
-                                        .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
-                                                new VdsIdVDSCommandParametersBase(mCurrentVdsId)).getReturnValue();
-                        boolean allTasksFinished = true;
-                        if (tasksList != null) {
-                            for (AsyncTaskStatus taskStatus : tasksList.values()) {
-                                if (AsyncTaskStatusEnum.finished != taskStatus.getStatus()) {
-                                    allTasksFinished = false;
-                                    break;
-                                }
+                // if spm status didnt work or not spm and NOT NETWORK
+                // PROBLEM
+                // then cause failover with attempts
+                if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
+                    HashMap<Guid, AsyncTaskStatus> tasksList =
+                            (HashMap<Guid, AsyncTaskStatus>) ResourceManager
+                                    .getInstance()
+                                    .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
+                                            new VdsIdVDSCommandParametersBase(mCurrentVdsId)).getReturnValue();
+                    boolean allTasksFinished = true;
+                    if (tasksList != null) {
+                        for (AsyncTaskStatus taskStatus : tasksList.values()) {
+                            if (AsyncTaskStatusEnum.finished != taskStatus.getStatus()) {
+                                allTasksFinished = false;
+                                break;
                             }
                         }
-                        if ((tasksList == null) || allTasksFinished) {
+                    }
+                    if ((tasksList == null) || allTasksFinished) {
+                        nullifyInternalProxies();
+                    } else {
+                        if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
+                            _errorAttempts++;
+                            log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
+                                    _storagePoolId, storagePool.getname(), _errorAttempts);
+                        } else {
                             nullifyInternalProxies();
-                        } else {
-                            if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
-                                _errorAttempts++;
-                                log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
-                                        _storagePoolId, storagePool.getname(), _errorAttempts);
-                            } else {
-                               nullifyInternalProxies();
-                                _errorAttempts = 0;
-                            }
-                        }
-                    }
-                } else if (result != null
-                        && result.getSucceeded()
-                        && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() == SpmStatus.SPM
-                        && (storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool.getstatus() == StoragePoolStatus.Contend)) {
-                    // if recovered from network exception set back to up
-                    DbFacade.getInstance().getStoragePoolDao().updateStatus(storagePool.getId(),StoragePoolStatus.Up);
-                    storagePool.setstatus(StoragePoolStatus.Up);
-                    ResourceManager.getInstance().getEventListener()
-                            .storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
-                }
-                GetStoragePoolInfoVDSCommandParameters tempVar = new GetStoragePoolInfoVDSCommandParameters(
-                        _storagePoolId);
-                tempVar.setIgnoreFailoverLimit(true);
-                VDSReturnValue storagePoolInfoResult = ResourceManager.getInstance().runVdsCommand(
-                        VDSCommandType.GetStoragePoolInfo, tempVar);
-                if (storagePoolInfoResult.getSucceeded()) {
-                    KeyValuePairCompat<storage_pool, java.util.List<storage_domains>> data =
-                            (KeyValuePairCompat<storage_pool, java.util.List<storage_domains>>) storagePoolInfoResult
-                                    .getReturnValue();
-                    int masterVersion = data.getKey().getmaster_domain_version();
-                    java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
-                    for (storage_domains domainData : data.getValue()) {
-                        domainsInVds.add(domainData.getId());
-                        ProceedStorageDomain(domainData, masterVersion, storagePool);
-                    }
-                    List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
-                            .getAllForStoragePool(_storagePoolId);
-
-                    for (final storage_domains domainInDb : domainsInDb) {
-                        if (domainInDb.getstorage_domain_type() != StorageDomainType.Master
-                                && domainInDb.getstatus() != StorageDomainStatus.Locked
-                                && !domainsInVds.contains(domainInDb.getId())) {
-                            // domain not attached to pool anymore
-                            DbFacade.getInstance()
-                                    .getStoragePoolIsoMapDao()
-                                    .remove(new StoragePoolIsoMapId(domainInDb.getId(),
-                                            _storagePoolId));
+                            _errorAttempts = 0;
                         }
                     }
                 }
+            } else if (result != null
+                    && result.getSucceeded()
+                    && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() == SpmStatus.SPM
+                    && (storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool.getstatus() == StoragePoolStatus.Contend)) {
+                // if recovered from network exception set back to up
+                DbFacade.getInstance().getStoragePoolDao().updateStatus(storagePool.getId(), StoragePoolStatus.Up);
+                storagePool.setstatus(StoragePoolStatus.Up);
+                ResourceManager.getInstance().getEventListener()
+                        .storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
+            }
+            GetStoragePoolInfoVDSCommandParameters tempVar = new GetStoragePoolInfoVDSCommandParameters(
+                    _storagePoolId);
+            tempVar.setIgnoreFailoverLimit(true);
+            VDSReturnValue storagePoolInfoResult = ResourceManager.getInstance().runVdsCommand(
+                    VDSCommandType.GetStoragePoolInfo, tempVar);
+            if (storagePoolInfoResult.getSucceeded()) {
+                KeyValuePairCompat<storage_pool, java.util.List<storage_domains>> data =
+                        (KeyValuePairCompat<storage_pool, java.util.List<storage_domains>>) storagePoolInfoResult
+                                .getReturnValue();
+                int masterVersion = data.getKey().getmaster_domain_version();
+                java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
+                for (storage_domains domainData : data.getValue()) {
+                    domainsInVds.add(domainData.getId());
+                    ProceedStorageDomain(domainData, masterVersion, storagePool);
+                }
+                List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
+                        .getAllForStoragePool(_storagePoolId);
 
+                for (final storage_domains domainInDb : domainsInDb) {
+                    if (domainInDb.getstorage_domain_type() != StorageDomainType.Master
+                            && domainInDb.getstatus() != StorageDomainStatus.Locked
+                            && !domainsInVds.contains(domainInDb.getId())) {
+                        // domain not attached to pool anymore
+                        DbFacade.getInstance()
+                                .getStoragePoolIsoMapDao()
+                                .remove(new StoragePoolIsoMapId(domainInDb.getId(),
+                                        _storagePoolId));
+                    }
+                }
             }
         }
 
