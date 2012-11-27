@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.utils;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.regex.Pattern;
+
 import org.junit.Test;
 
 public class ValidationUtilsTest {
@@ -31,6 +33,22 @@ public class ValidationUtilsTest {
 
         for (String s : straInvalidHosts) {
             assertTrue("Invalid host name: " + s, !ValidationUtils.validHostname(s));
+        }
+    }
+
+    @Test
+    public void testTrimmingWhitespaces() {
+        String[] validStrings = {"", "aoeu", "a o e u ř", "%2123 o ^ ooe#"};
+        String[] inValidStrings = {" ", " aoeu", "a o e u ř ", " %2123 o ^ ooe##", " aoeu "};
+
+        for (String s : validStrings) {
+            assertTrue("Valid strings (no trimming whitespaces)",
+                    Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
+        }
+
+        for (String s : inValidStrings) {
+            assertTrue("Invalid strings (trimming whitespaces)",
+                    !Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
         }
     }
 }

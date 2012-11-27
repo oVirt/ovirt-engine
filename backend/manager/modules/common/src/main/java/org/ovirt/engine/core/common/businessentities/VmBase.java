@@ -28,7 +28,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
     private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
@@ -126,14 +126,23 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "kernel_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
+            message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
+                    UpdateEntity.class })
     private String kernelUrl;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "kernel_params", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
+            message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
+                    UpdateEntity.class })
     private String kernelParams;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
+            message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
+                    UpdateEntity.class })
     private String initrdUrl;
 
     @Column(name = "allow_console_reconnect")

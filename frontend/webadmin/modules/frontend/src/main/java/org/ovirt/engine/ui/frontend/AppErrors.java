@@ -1689,6 +1689,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The given description contains special characters.\nOnly alpha-numeric and some special characters that conform to the standard ASCII character set are allowed.")
     String ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Linux boot parameters contain trimming whitespace characters.")
+    String ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES();
+
     @DefaultStringValue("Cannot ${action} ${type}. The given name is too long.")
     String ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG();
 

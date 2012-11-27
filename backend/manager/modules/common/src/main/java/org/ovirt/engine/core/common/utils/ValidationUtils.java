@@ -25,6 +25,7 @@ public class ValidationUtils {
     public static final String DOMAIN_NAME_PATTERN =
             "^([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}$";
     public static final String NO_WHITES_SPACE_PATTERN = "\\S+";
+    public static final String NO_TRIMMING_WHITE_SPACES_PATTERN = "^$|\\S.*\\S";
     public static final String IP_PATTERN =
             "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
     // NULLABLE_MAC_ADDRESS can be valid mac address: xx:xx:xx:xx:xx:xx or empty string,

@@ -941,6 +941,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field can't be empty.")
     String thisFieldCantBeEmptyInvalidReason();
 
+    @DefaultStringValue("This field can't contain trimming whitespace characters.")
+    String trimmingSpacesInField();
+
     @DefaultStringValue("Quota enforcement activated. Quota must be defined for the selected storage domain")
     String quotaMustBeSelectedInvalidReason();
 
