@@ -354,8 +354,8 @@ LANGUAGE 'plpgsql';
 
 
 CREATE OR REPLACE FUNCTION fn_get_storage_domain_shared_status_by_domain_id(v_storage_domain_id UUID,
-	v_storage VARCHAR(250),
-	v_storage_type INTEGER)
+	v_storage_status INTEGER,
+	v_storage_domain_type INTEGER)
 RETURNS INTEGER
    AS $function$
    DECLARE
@@ -363,51 +363,60 @@ RETURNS INTEGER
    v_rowsCount  INTEGER;
    v_status  INTEGER;
 BEGIN
-   BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMP22
-      (
-         status INTEGER,
-         count INTEGER
-      ) WITH OIDS;
-      exception when others then
-         truncate table tt_TEMP22;
-   END;
-   delete from tt_TEMP22;
-   Insert INTO tt_TEMP22
-   select status, count(storage_id) from storage_pool_iso_map
-   where storage_id = v_storage_domain_id
-   group by status;
-
-   select   count(*) INTO v_rowsCount from tt_TEMP22;
-
-	-- if return 0 rows then the domain is unattached (0) or locked (4) if storage is null or empty for @storage_type iscsi (2) and fcp (3)
-   if (v_rowsCount = 0) then
-      if (v_storage_type in(2,3) and (v_storage is null or v_storage = '')) then
-         v_result := 4;
-      else
+    if (v_storage_domain_type != 2) then
+      if (v_storage_status is null) then
          v_result := 0;
-      end if;
-   else
-      if (v_rowsCount = 1) then
-         select   status INTO v_status from tt_TEMP22    LIMIT 1;
-			-- if 1 row and status active (3) then domain is active (1)
-         if v_status = 3 then
-            v_result := 1;
-			-- if 1 row and status not active then domain is inactive (2)
-         else
-            v_result := 2;
-         end if;
-	-- else (if return more then 1 row)
       else
-         select   count(*) INTO v_rowsCount from tt_TEMP22 where status = 3;
-         if (v_rowsCount > 0) then
-            v_result := 3;
-			-- non of the statuses is active
+         -- if 1 row and status active (3) then domain is active (1)
+         if v_storage_status = 3 then
+            v_result := 1;
+		 -- if 1 row and status not active then domain is inactive (2)
          else
             v_result := 2;
          end if;
       end if;
-   end if;
+    else
+      BEGIN
+         CREATE GLOBAL TEMPORARY TABLE tt_TEMP22
+         (
+            status INTEGER,
+            count INTEGER
+         ) WITH OIDS;
+         exception when others then
+         truncate table tt_TEMP22;
+      END;
+      delete from tt_TEMP22;
+      Insert INTO tt_TEMP22
+      select status, count(storage_id) from storage_pool_iso_map
+      where storage_id = v_storage_domain_id
+      group by status;
+
+      select count(*) INTO v_rowsCount from tt_TEMP22;
+
+      -- if return 0 rows then the domain is unattached
+      if (v_rowsCount = 0) then
+         v_result := 0;
+      else
+         if (v_rowsCount = 1) then
+	        -- if 1 row and status active (3) then domain is active (1)
+            if v_storage_status = 3 then
+               v_result := 1;
+		    -- if 1 row and status not active then domain is inactive (2)
+            else
+               v_result := 2;
+            end if;
+	      -- else (if return more then 1 row)
+          else
+            select   count(*) INTO v_rowsCount from tt_TEMP22 where status = 3;
+            if (v_rowsCount > 0) then
+               v_result := 3;
+			   -- non of the statuses is active
+            else
+               v_result := 2;
+          end if;
+         end if;
+      end if;
+    end if;
    return v_result;
 END; $function$
 LANGUAGE plpgsql;

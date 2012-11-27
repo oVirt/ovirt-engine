@@ -256,7 +256,7 @@ storage_domain_static.id as id,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
         storage_pool_iso_map.owner as owner,
-        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
 	storage_domain_static.recoverable as recoverable
 FROM    storage_domain_static
 INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
@@ -268,20 +268,22 @@ LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_p
 
 CREATE OR REPLACE VIEW storage_domains_without_storage_pools
 AS
-SELECT
+SELECT DISTINCT
 storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name,
 		storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
-		null as status, null as owner, null as storage_pool_id, null as storage_pool_name,
+		null as owner, null as storage_pool_id, null as storage_pool_name,
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
 		fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
-        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+	        null as status,
+        fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
 		storage_domain_static.recoverable as recoverable
 FROM
 storage_domain_static
-INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id;
+INNER JOIN storage_domain_dynamic ON storage_domain_static.id = storage_domain_dynamic.id
+LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_iso_map.storage_id;
 
 
 CREATE OR REPLACE VIEW storage_domains_for_search
@@ -299,7 +301,7 @@ SELECT
                 storage_domain_dynamic.available_disk_size as available_disk_size,
                 storage_domain_dynamic.used_disk_size as used_disk_size,
                 fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,
-                fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) as storage_domain_shared_status,
+                fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,status_table.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
                 storage_domain_static.recoverable as recoverable
 FROM
                 storage_domain_static
@@ -901,7 +903,7 @@ storage_domain_static.id,
 		storage_domain_static.storage_domain_type,
                 storage_domain_static.storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
-		fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_domain_static.storage,storage_domain_static.storage_type) AS
+		fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) AS
 		storage_domain_shared_status,
 		vds_groups.vds_group_id,
 		vds_static.vds_id,
