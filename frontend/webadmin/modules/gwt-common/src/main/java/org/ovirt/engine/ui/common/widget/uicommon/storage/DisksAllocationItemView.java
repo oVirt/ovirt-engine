@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabelEditor;
@@ -25,7 +26,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId {
+public class DisksAllocationItemView extends Composite implements HasEditorDriver<DiskModel>, HasElementId, FocusableComponentsContainer {
 
     interface Driver extends SimpleBeanEditorDriver<DiskModel, DisksAllocationItemView> {
         Driver driver = GWT.create(Driver.class);
@@ -81,6 +82,12 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     ListModelListBoxEditor<Object> quotaListEditor;
 
     CommonApplicationConstants constants;
+
+    public int setTabIndexes(int nextTabIndex) {
+        diskAliasEditor.setTabIndex(nextTabIndex++);
+        storageListEditor.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 
     public DisksAllocationItemView(CommonApplicationConstants constants) {
         this.constants = constants;

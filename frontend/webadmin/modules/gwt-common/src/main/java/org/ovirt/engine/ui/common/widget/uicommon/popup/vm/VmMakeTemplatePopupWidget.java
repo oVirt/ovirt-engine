@@ -164,4 +164,14 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         nameEditor.setFocus(true);
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nameEditor.setTabIndex(nextTabIndex++);
+        descriptionEditor.setTabIndex(nextTabIndex++);
+        clusterEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
+        quotaEditor.setTabIndex(nextTabIndex++);
+        isTemplatePublicEditor.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 }

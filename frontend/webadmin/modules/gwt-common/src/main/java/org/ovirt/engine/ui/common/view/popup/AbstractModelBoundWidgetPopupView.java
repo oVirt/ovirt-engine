@@ -49,4 +49,15 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
         popupWidget.focusInput();
     }
 
+    @Override
+    public void stopProgress() {
+        // we set the focus traversal order right before showing the popup in its final state
+        // because then we are absolutely sure that the popup contains all items it should include
+        setFocusTraversalOrder();
+        super.stopProgress();
+    }
+
+    private void setFocusTraversalOrder() {
+        dialogPanel.setTabIndexes(popupWidget.setTabIndexes(1));
+    }
 }

@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -40,7 +41,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId {
+public class DisksAllocationView extends Composite implements HasEditorDriver<DisksAllocationModel>, HasElementId, FocusableComponentsContainer {
 
     interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationView> {
         Driver driver = GWT.create(Driver.class);
@@ -100,6 +101,16 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     @UiConstructor
     public DisksAllocationView() {
+    }
+
+    public int setTabIndexes(int nextTabIndex) {
+        int nbWidgetsInDiskListPanel = diskListPanel.getWidgetCount();
+        for (int i=0; i<nbWidgetsInDiskListPanel; ++i) {
+            Widget widget = diskListPanel.getWidget(i);
+            if (widget instanceof FocusableComponentsContainer)
+                nextTabIndex = ((FocusableComponentsContainer) widget).setTabIndexes(nextTabIndex);
+        }
+        return nextTabIndex;
     }
 
     public DisksAllocationView(CommonApplicationConstants constants) {
