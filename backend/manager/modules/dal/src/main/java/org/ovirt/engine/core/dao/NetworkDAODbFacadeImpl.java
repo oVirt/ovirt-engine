@@ -38,23 +38,47 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                 .get("RETURN_VALUE")));
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public Network getByNameAndDataCenter(String name, Guid storagePoolId) {
+        return getCallsHandler().executeRead("GetNetworkByNameAndDataCenter",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("name", name)
+                        .addValue("storage_pool_id", storagePoolId));
+    }
+
+    @Override
+    public Network getByNameAndCluster(String name, Guid clusterId) {
+        return getCallsHandler().executeRead("GetNetworkByNameAndCluster",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("name", name)
+                        .addValue("cluster_id", clusterId));
+    }
+
     @Override
     public List<Network> getAll() {
-        Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
-                .withProcedureName("GetAllFromnetwork")
-                .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
-                .execute(getCustomMapSqlParameterSource());
+        return getAll(null, false);
+    }
 
-        return (List<Network>) dbResults.get("RETURN_VALUE");
+    @Override
+    public List<Network> getAll(Guid userID, boolean isFiltered) {
+        return getCallsHandler().executeReadList("GetAllFromnetwork",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
     public List<Network> getAllForDataCenter(Guid id) {
+        return getAllForDataCenter(id, null, false);
+    }
+
+    @Override
+    public List<Network> getAllForDataCenter(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllNetworkByStoragePoolId",
                 NetworkRowMapper.instance,
                 getCustomMapSqlParameterSource()
-                        .addValue("id", id));
+                        .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
@@ -137,5 +161,4 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             return entity;
         }
     }
-
 }

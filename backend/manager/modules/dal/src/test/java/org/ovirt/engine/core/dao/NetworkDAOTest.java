@@ -19,7 +19,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     private Guid cluster;
     private Guid datacenter;
     private Network new_net;
-    private String existing_net_name;
+    final static private String EXISTING_NETWORK_NAME = "engine";
 
     @Override
     public void setUp() throws Exception {
@@ -30,7 +30,6 @@ public class NetworkDAOTest extends BaseDAOTestCase {
         cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         datacenter = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
-        existing_net_name = "engine";
         new_net = new Network();
         new_net.setname("newnet1");
         new_net.setdescription("New network");
@@ -52,10 +51,32 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        Network result = dao.getByName("engine");
+        Network result = dao.getByName(EXISTING_NETWORK_NAME);
 
         assertNotNull(result);
-        assertEquals("engine", result.getname());
+        assertEquals(EXISTING_NETWORK_NAME, result.getname());
+    }
+
+    /**
+     * Ensures that retrieving a network by name and data center works as expected.
+     */
+    @Test
+    public void testGetByNameAndDataCenter() {
+        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME, datacenter);
+
+        assertNotNull(result);
+        assertEquals(EXISTING_NETWORK_NAME, result.getname());
+    }
+
+    /**
+     * Ensures that retrieving a network by name and cluster works as expected.
+     */
+    @Test
+    public void testGetByNameAndCluster() {
+        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME, cluster);
+
+        assertNotNull(result);
+        assertEquals(EXISTING_NETWORK_NAME, result.getname());
     }
 
     /**
@@ -67,6 +88,38 @@ public class NetworkDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(3, result.size());
+    }
+
+    /**
+     * Ensures that all networks are returned for a specific user when filter is on.
+     */
+    @Test
+    public void testFilteredGetAll() {
+        List<Network> result = dao.getAll(PRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    /**
+     * Ensures that no networks is returned for a specific user when filter is on.
+     */
+    @Test
+    public void testFilteredGetAllWithNoPermissions() {
+        List<Network> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures that all networks are returned for a unprivileged user when filter is off.
+     */
+    @Test
+    public void testUnfilteredGetAllWithNoPermissions() {
+        List<Network> result = dao.getAll(UNPRIVILEGED_USER_ID, false);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
     }
 
     /**
@@ -166,7 +219,40 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForDataCenter() {
         List<Network> result = dao.getAllForDataCenter(datacenter);
+        verifyDataCenterNetworks(result);
+    }
 
+    /**
+     * Ensures that the right set of networks are returned for the given data center for a specific user according to
+     * the filter.
+     */
+    @Test
+    public void testFilteredGetAllForDataCenter() {
+        List<Network> result = dao.getAllForDataCenter(datacenter, PRIVILEGED_USER_ID, true);
+        verifyDataCenterNetworks(result);
+    }
+
+    /**
+     * Ensures that the no network is returned for the given data center for a user with no permissions on network
+     * entities
+     */
+    @Test
+    public void testFilteredGetAllForDataCenterWithNoPermissions() {
+        List<Network> result = dao.getAllForDataCenter(datacenter, UNPRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
+     * Ensures that the all networks are returned for the given data center for a specific user when the filter is off.
+     */
+    @Test
+    public void testUnFilteredGetAllForDataCenterWithNoPermissions() {
+        List<Network> result = dao.getAllForDataCenter(datacenter, PRIVILEGED_USER_ID, false);
+        verifyDataCenterNetworks(result);
+    }
+
+    private void verifyDataCenterNetworks(List<Network> result) {
         assertGetAllForClusterResult(result);
         for (Network net : result) {
             assertEquals(datacenter, net.getstorage_pool_id());
@@ -196,13 +282,13 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        Network before = dao.getByName(existing_net_name);
+        Network before = dao.getByName(EXISTING_NETWORK_NAME);
 
         before.setdescription("This is a completely changed description");
 
         dao.update(before);
 
-        Network after = dao.getByName(existing_net_name);
+        Network after = dao.getByName(EXISTING_NETWORK_NAME);
 
         assertNotNull(after);
         assertEquals(before, after);
@@ -213,13 +299,13 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        Network result = dao.getByName(existing_net_name);
+        Network result = dao.getByName(EXISTING_NETWORK_NAME);
 
         assertNotNull(result);
 
         dao.remove(result.getId());
 
-        result = dao.getByName(existing_net_name);
+        result = dao.getByName(EXISTING_NETWORK_NAME);
 
         assertNull(result);
     }

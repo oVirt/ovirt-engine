@@ -84,11 +84,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromnetwork() RETURNS SETOF network
+Create or replace FUNCTION GetAllFromnetwork(v_user_id uuid, v_is_filtered boolean) RETURNS SETOF network
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM network;
+   FROM network
+   WHERE NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_network_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = network.id);
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -125,15 +128,47 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetNetworkByNameAndDataCenter(v_name VARCHAR(50), v_storage_pool_id UUID)
+RETURNS SETOF network
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT network.*
+   FROM network
+   WHERE network.name = v_name
+   AND   network.storage_pool_id = v_storage_pool_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID)
+
+Create or replace FUNCTION GetNetworkByNameAndCluster(v_name VARCHAR(50), v_cluster_id UUID)
+RETURNS SETOF network
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT network.*
+   FROM network
+   WHERE network.name = v_name
+   AND EXISTS (SELECT 1
+               FROM network_cluster
+               WHERE network.id = network_cluster.network_id
+               AND   network_cluster.cluster_id = v_cluster_id);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF network
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
    FROM network
-   where storage_pool_id = v_id;
+   WHERE storage_pool_id = v_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                     FROM   user_network_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = network.id));
 
 END; $procedure$
 LANGUAGE plpgsql;

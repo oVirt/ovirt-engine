@@ -41,7 +41,7 @@ public enum VdcQueryType implements Serializable {
     // Vds Networks
     GetVdsInterfacesByVdsId(VdcQueryAuthType.User),
     GetVdsFreeBondsByVdsId,
-    GetAllNetworks,
+    GetAllNetworks(VdcQueryAuthType.User),
     GetAllNetworksByClusterId(VdcQueryAuthType.User),
     GetNetworkDisplayByClusterId,
     GetNonOperationalVds,
