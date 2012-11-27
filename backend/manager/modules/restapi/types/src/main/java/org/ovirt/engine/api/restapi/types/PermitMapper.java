@@ -126,6 +126,12 @@ public class PermitMapper {
             return PermitType.EDIT_STORAGE_POOL_CONFIGURATION;
         case CONFIGURE_STORAGE_POOL_NETWORK:
             return PermitType.CONFIGURE_STORAGE_POOL_NETWORK;
+        case CREATE_STORAGE_POOL_NETWORK:
+            return PermitType.CREATE_STORAGE_POOL_NETWORK;
+        case DELETE_STORAGE_POOL_NETWORK:
+            return PermitType.DELETE_STORAGE_POOL_NETWORK;
+        case ASSIGN_CLUSTER_NETWORK:
+            return PermitType.ASSIGN_CLUSTER_NETWORK;
         case CONFIGURE_ENGINE:
             return PermitType.CONFIGURE_RHEVM;
         case CONFIGURE_QUOTA:

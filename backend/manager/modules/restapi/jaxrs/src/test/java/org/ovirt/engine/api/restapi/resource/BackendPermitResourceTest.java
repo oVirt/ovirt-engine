@@ -4,15 +4,13 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
-
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.PermitMapper;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermitResourceTest extends Assert {
 
