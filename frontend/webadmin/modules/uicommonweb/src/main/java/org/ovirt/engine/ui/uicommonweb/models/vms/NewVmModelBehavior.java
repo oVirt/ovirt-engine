@@ -124,13 +124,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             // Update domain list
             UpdateDomain();
 
-            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
-            VDSGroup selectCluster =
-                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(template.getvds_group_id()));
-
-            getModel().getCluster().setSelectedItem((selectCluster != null) ? selectCluster
-                    : Linq.FirstOrDefault(clusters));
-
             // Update display protocol selected item
             EntityModel displayProtocol = null;
             boolean isFirst = true;
