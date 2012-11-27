@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -161,6 +162,36 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
                 )
             );
 
+            /*
+             * Create the directory where
+             * file is stored, in the past
+             * it was done by vdsm, then vdsm-reg
+             * well, as we use hard coded path
+             * we can as well do this, until we
+             * have proper node upgrade script
+             * that can take the image from stdin.
+             */
+            _dialog.executeCommand(
+                new SSHDialog.Sink() {
+                    @Override
+                    public void setControl(SSHDialog.Control control) {}
+                    @Override
+                    public void setStreams(InputStream incoming, OutputStream outgoing) {}
+                    @Override
+                    public void start() {}
+                    @Override
+                    public void stop() {}
+                },
+                String.format(
+                    "mkdir -p '%1$s'",
+                    new File(dest).getParent()
+                ),
+                null
+            );
+
+            if (_failException != null) {
+                throw _failException;
+            }
             _dialog.sendFile(
                 _iso,
                 dest
