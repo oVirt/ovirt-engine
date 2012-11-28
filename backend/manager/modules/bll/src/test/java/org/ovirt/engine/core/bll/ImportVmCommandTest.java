@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
 
 import java.util.Set;
 
@@ -102,8 +101,7 @@ public class ImportVmCommandTest {
         ImportVmParameters parameters = createParameters();
         parameters.getVm().setVmName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand command =
-                spy(new ImportVmCommand(parameters));
+        ImportVmCommand command = new ImportVmCommand(parameters);
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -129,15 +127,14 @@ public class ImportVmCommandTest {
         assertFalse(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE > string5000.length());
         parameters.getVm().setUserDefinedProperties(string5000);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand command =
-                spy(new ImportVmCommand(parameters));
+        ImportVmCommand command = new ImportVmCommand(parameters);
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(builder.toString());
         parameters.setImportAsNewEntity(false);
-        command = spy(new ImportVmCommand(parameters));
+        command = new ImportVmCommand(parameters);
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
