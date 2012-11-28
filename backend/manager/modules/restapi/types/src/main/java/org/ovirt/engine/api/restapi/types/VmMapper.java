@@ -813,6 +813,12 @@ public class VmMapper {
             return OsType.RHEL_6;
         case RHEL6x64:
             return OsType.RHEL_6X64;
+        case Windows8:
+            return OsType.WINDOWS_8;
+        case Windows8x64:
+            return OsType.WINDOWS_8X64;
+        case Windows2012x64:
+            return OsType.WINDOWS_2012X64;
 
         default:
             return null;
@@ -860,6 +866,12 @@ public class VmMapper {
             return VmOsType.RHEL6;
         case RHEL_6X64:
             return VmOsType.RHEL6x64;
+        case WINDOWS_8:
+            return VmOsType.Windows8;
+        case WINDOWS_8X64:
+            return VmOsType.Windows8x64;
+        case WINDOWS_2012X64:
+            return VmOsType.Windows2012x64;
 
         default:
             return null;

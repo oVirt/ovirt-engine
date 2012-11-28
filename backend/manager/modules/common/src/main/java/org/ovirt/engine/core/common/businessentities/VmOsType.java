@@ -21,7 +21,10 @@ public enum VmOsType implements Identifiable {
     Windows2008x64(16, OsType.Windows, true),
     Windows2008R2x64(17, OsType.Windows, true),
     RHEL6(18, OsType.Linux, false),
-    RHEL6x64(19, OsType.Linux, true);
+    RHEL6x64(19, OsType.Linux, true),
+    Windows8(20, OsType.Windows, false),
+    Windows8x64(21, OsType.Windows, true),
+    Windows2012x64(23, OsType.Windows, true);
 
     private final int intValue;
     private final OsType osType;

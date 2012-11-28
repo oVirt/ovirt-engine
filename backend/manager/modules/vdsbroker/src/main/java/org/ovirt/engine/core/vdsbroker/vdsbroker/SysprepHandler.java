@@ -105,6 +105,28 @@ public final class SysprepHandler {
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindow7x64));
             break;
 
+        case Windows8:
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows8Path));
+            sysPrepContent =
+                    replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKeyWindows8));
+            break;
+
+        case Windows8x64:
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows8x64Path));
+            sysPrepContent =
+                    replace(sysPrepContent,
+                            "$ProductKey$",
+                            Config.<String> GetValue(ConfigValues.ProductKeyWindows8x64));
+            break;
+
+        case Windows2012x64:
+            sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepWindows2012x64Path));
+            sysPrepContent =
+                    replace(sysPrepContent,
+                            "$ProductKey$",
+                            Config.<String> GetValue(ConfigValues.ProductKeyWindows2012x64));
+            break;
+
         default:
             break;
         }

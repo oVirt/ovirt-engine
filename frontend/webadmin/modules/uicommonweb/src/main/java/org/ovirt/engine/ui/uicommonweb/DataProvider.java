@@ -2488,17 +2488,13 @@ public final class DataProvider
         // return new List<VmOsType>();
 
         /***** TODO: remove once the gwt is using generic api instead of backend! *****/
-        windowsOsTypes =
-            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
-                VmOsType.Windows2003,
-                VmOsType.Windows2003x64,
-                VmOsType.Windows2008,
-                VmOsType.Windows2008R2x64,
-                VmOsType.Windows2008x64,
-                VmOsType.Windows7,
-                VmOsType.Windows7x64,
-                VmOsType.WindowsXP
-            }));
+        windowsOsTypes = new ArrayList<VmOsType>();
+
+        for (VmOsType type : VmOsType.values()) {
+            if (type.isWindows()) {
+                windowsOsTypes.add(type);
+            }
+        }
 
         return windowsOsTypes;
         /*******************************************************************************/

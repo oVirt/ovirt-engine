@@ -1276,6 +1276,30 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     MinimalETLVersion(400),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    SysPrepWindows8Path(401),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    ProductKeyWindows8(402),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    SysPrepWindows8x64Path(403),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    ProductKeyWindows8x64(404),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    SysPrepWindows2012x64Path(405),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    ProductKeyWindows2012x64(406),
+
     Invalid(65535);
 
     private int intValue;

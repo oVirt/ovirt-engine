@@ -115,6 +115,12 @@ public interface Enums extends LocalizedEnums {
 
     String VmOsType___Windows7x64();
 
+    String VmOsType___Windows8();
+
+    String VmOsType___Windows8x64();
+
+    String VmOsType___Windows2012x64();
+
     String VmOsType___OtherLinux();
 
     String VmOsType___Other();

@@ -35,7 +35,10 @@ public enum OsType {
     WINDOWS_2008X64,
     WINDOWS_2008R2,
     RHEL_6,
-    RHEL_6X64;
+    RHEL_6X64,
+    WINDOWS_8,
+    WINDOWS_8X64,
+    WINDOWS_2012X64;
 
     public String value() {
         return name().toLowerCase();
