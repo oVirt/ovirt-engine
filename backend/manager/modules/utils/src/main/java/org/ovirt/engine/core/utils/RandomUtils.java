@@ -6,6 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.apache.commons.lang.CharSet;
+import org.apache.commons.lang.RandomStringUtils;
+
 /**
  * <code>RandomUtils</code> is a singleton class with more powerful random generating methods.
  * <P>
@@ -38,6 +41,10 @@ public final class RandomUtils extends Random {
 
     /** The last XML printable character. */
     private static final char LAST_XML_PRINTABLE_CHAR = 'Z';
+
+    /** The legal characters for an entity name. */
+    private static final char[] LEGAL_PROPERTY_CHARS =
+            (CharSet.ASCII_ALPHA.toString() + CharSet.ASCII_NUMERIC.toString() + "_.").toCharArray();
 
     /* --- Class Fields --- */
 
@@ -357,6 +364,16 @@ public final class RandomUtils extends Random {
     }
 
     /**
+     * Randomize a valid entity name.
+     *
+     * @param length
+     *            The requested length of the string.
+     */
+    public String nextPropertyString(int length) {
+        return nextString(length, LEGAL_PROPERTY_CHARS);
+    }
+
+    /**
      * Randomize a printable <code>String</code>.
      *
      * @param length
@@ -364,6 +381,16 @@ public final class RandomUtils extends Random {
      */
     public String nextString(int length) {
         return nextString(length, true);
+    }
+
+    /**
+     * Randomize a <code>String</code> made up of the given characters
+     *
+     * @param length
+     *            The requested length of the string.
+     */
+    public String nextString(int length, char[] chars) {
+        return RandomStringUtils.random(length, 0, chars.length, false, false, chars, this);
     }
 
     /**
