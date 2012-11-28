@@ -249,9 +249,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     }
                     if (retVal) {
                         Map<Guid, List<DiskImage>> images = getImagesLeaf(getVm().getImages());
-                        for (Guid id : images.keySet()) {
-                            List<DiskImage> list = images.get(id);
-                            getVm().getDiskMap().put(id, list.get(list.size() - 1));
+                        for (List<DiskImage> currImageList : images.values()) {
+                            DiskImage activeImage = currImageList.get(currImageList.size() - 1);
+                            getVm().getDiskMap().put(activeImage.getId(), activeImage);
                         }
                     }
                 } else {
@@ -571,9 +571,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         if (getParameters().getCopyCollapse()) {
             Guid snapshotId = Guid.NewGuid();
-            for (Guid id : images.keySet()) {
-                List<DiskImage> list = images.get(id);
-                DiskImage disk = list.get(list.size() - 1);
+            for (List<DiskImage> diskList : images.values()) {
+                DiskImage disk = diskList.get(diskList.size() - 1);
 
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setit_guid(VmTemplateHandler.BlankVmTemplateId);
@@ -592,8 +591,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 if (getParameters().isImportAsNewEntity()) {
                     disk.setId(Guid.NewGuid());
                     disk.setImageId(Guid.NewGuid());
-                    for (int i = 0; i < list.size() - 1; i++) {
-                        list.get(i).setId(disk.getId());
+                    for (int i = 0; i < diskList.size() - 1; i++) {
+                         diskList.get(i).setId(disk.getId());
                     }
                 }
                 disk.setcreation_date(new Date());
@@ -629,9 +628,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 saveDiskImageDynamic(disk);
             }
 
-            for (Guid id : images.keySet()) {
-                List<DiskImage> list = images.get(id);
-                DiskImage disk = list.get(list.size() - 1);
+            for (List<DiskImage> diskList : images.values()) {
+                DiskImage disk = diskList.get(diskList.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
                 getImageDao().update(disk.getImage());
