@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -55,7 +54,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
-        this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
         if (StringUtils.isEmpty(getMacAddress())) {
             getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
@@ -92,12 +91,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
     }
 
     private void addInterfaceToDb(VmNetworkInterface vmNetworkInterface) {
-        DbFacade dbFacade = DbFacade.getInstance();
-
-        dbFacade.getVmNetworkInterfaceDao().save(vmNetworkInterface);
+        getVmNetworkInterfaceDao().save(vmNetworkInterface);
         getCompensationContext().snapshotNewEntity(vmNetworkInterface);
 
-        dbFacade.getVmNetworkStatisticsDao().save(vmNetworkInterface.getStatistics());
+        getDbFacade().getVmNetworkStatisticsDao().save(vmNetworkInterface.getStatistics());
         getCompensationContext().snapshotNewEntity(vmNetworkInterface.getStatistics());
     }
 
@@ -128,7 +125,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        switch (DbFacade.getInstance().getVmDynamicDao().get(getParameters().getVmId()).getstatus()) {
+        switch (getVmDynamicDao().get(getParameters().getVmId()).getstatus()) {
         case Up:
         case Down:
         case ImageLocked:
@@ -138,8 +135,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForVm(getParameters().getVmId());
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getParameters().getVmId());
 
         if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getParameters().getInterface().getName(),
@@ -156,13 +152,13 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
         List<VmNetworkInterface> allInterfaces = new ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.add(getParameters().getInterface());
 
-        List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
+        List<Disk> allDisks = getDiskDao().getAllForVm(getParameters().getVmId());
         if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
         // check that the exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(vm.getvds_group_id());
+        List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
 
         Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -49,15 +48,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
-        this.setVmName(DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
 
         getParameters().getInterface().setSpeed(
                 VmInterfaceType.forValue(
                         getParameters().getInterface().getType()).getSpeed());
 
-        DbFacade.getInstance()
-                .getVmNetworkInterfaceDao()
-                .update(getParameters().getInterface());
+        getVmNetworkInterfaceDao().update(getParameters().getInterface());
 
         if (macAddressChanged) {
             MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
@@ -85,14 +82,13 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Override
     protected boolean canDoAction() {
 
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(getParameters().getVmId());
+        VmDynamic vmDynamic = getVmDynamicDao().get(getParameters().getVmId());
         if (vmDynamic.getstatus() != VMStatus.Down) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN);
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForVm(getParameters().getVmId());
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getParameters().getVmId());
         oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
             @Override
             public boolean eval(VmNetworkInterface i) {
@@ -117,9 +113,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.remove(oldIface);
         allInterfaces.add(getParameters().getInterface());
-        VmStatic vm = DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId());
+        VmStatic vm = getVmStaticDAO().get(getParameters().getVmId());
 
-        List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getParameters().getVmId());
+        List<Disk> allDisks = getDiskDao().getAllForVm(getParameters().getVmId());
         if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
@@ -132,8 +128,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         // check that the exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                .getAllForCluster(vm.getvds_group_id());
+        List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network n) {
@@ -194,8 +189,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
 
-            VmNetworkInterface iface =
-                    getDbFacade().getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
+            VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
             if (iface != null) {
                 Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
 

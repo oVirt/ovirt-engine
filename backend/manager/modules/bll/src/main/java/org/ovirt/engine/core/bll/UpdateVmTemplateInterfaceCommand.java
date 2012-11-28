@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -33,9 +32,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     @Override
     protected void executeCommand() {
         AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
-        DbFacade.getInstance()
-                .getVmNetworkInterfaceDao()
-                .update(getParameters().getInterface());
+        getVmNetworkInterfaceDao().update(getParameters().getInterface());
         setSucceeded(true);
     }
 
@@ -46,8 +43,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                    .getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNetworkInterface> interfaces =
+                getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
 
         if (getVmTemplate() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
@@ -103,8 +100,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName())
                 && getVmTemplate() != null) {
 
-            VmNetworkInterface iface =
-                    getDbFacade().getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
+            VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
             if (iface != null) {
                 Network network =
                         getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getvds_group_id());

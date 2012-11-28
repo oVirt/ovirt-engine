@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -43,10 +42,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 VmInterfaceType.forValue(
                         getParameters().getInterface().getType()).getSpeed());
 
-        DbFacade.getInstance()
-                .getVmNetworkInterfaceDao()
-                .save(getParameters().getInterface());
-        // \\DbFacade.Instance.addInterfaceStatistics(AddVmTemplateInterfaceParameters.Interface.InterfaceStatistics);
+        getVmNetworkInterfaceDao().save(getParameters().getInterface());
 
         VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
@@ -57,8 +53,8 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
     @Override
     protected boolean canDoAction() {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNetworkInterface> interfaces =
+                getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
         if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getParameters().getInterface().getName(),
                 getReturnValue().getCanDoActionMessages())) {
@@ -85,7 +81,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getVmTemplate().getvds_group_id());
+        List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {
