@@ -205,8 +205,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 List<VM> vms = (List<VM>) qretVal.getReturnValue();
                 VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
                     @Override
-                    public boolean eval(VM vm) {
-                        return vm.getId().equals(getParameters().getVm().getId());
+                    public boolean eval(VM evalVm) {
+                        return evalVm.getId().equals(getParameters().getVm().getId());
                     }
                 });
 
