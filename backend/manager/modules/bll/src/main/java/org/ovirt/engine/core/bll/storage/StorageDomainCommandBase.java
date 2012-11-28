@@ -26,9 +26,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
@@ -325,12 +328,24 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 
+    protected BaseDiskDao getBaseDiskDao() {
+        return getDbFacade().getBaseDiskDao();
+    }
+
+    protected ImageDao getImageDao() {
+        return getDbFacade().getImageDao();
+    }
+
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
     }
 
     protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
         return getDbFacade().getDiskImageDynamicDao();
+    }
+
+    protected SnapshotDao getSnapshotDao() {
+        return getDbFacade().getSnapshotDao();
     }
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {

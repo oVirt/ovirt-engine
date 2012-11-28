@@ -32,6 +32,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
@@ -507,6 +508,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VmStaticDAO getVmStaticDAO() {
         return getDbFacade().getVmStaticDao();
+    }
+
+    public VmDynamicDAO getVmDynamicDAO() {
+        return getDbFacade().getVmDynamicDao();
     }
 
     protected VmStatisticsDAO getVmStatisticsDAO() {

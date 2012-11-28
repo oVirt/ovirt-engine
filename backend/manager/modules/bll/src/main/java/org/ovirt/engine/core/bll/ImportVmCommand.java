@@ -63,11 +63,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -323,8 +320,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (retVal && getParameters().getCopyCollapse() && !templateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
             addCanDoActionMessage(String.format("$DomainName %1$s",
-                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId())
-                            .getstorage_name()));
+                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getstorage_name()));
             retVal = false;
         }
 
@@ -370,11 +366,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         }
         return retVal;
-    }
-
-    @Override
-    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     private boolean templateExistsOnExportDomain() {
@@ -608,11 +599,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setcreation_date(new Date());
                 BaseImagesCommand.saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm());
-                DbFacade.getInstance().getBaseDiskDao().save(disk);
+                getBaseDiskDao().save(disk);
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getImageId());
                 diskDynamic.setactual_size(disk.getactual_size());
-                DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
+                getDiskImageDynamicDAO().save(diskDynamic);
             }
 
             Snapshot snapshot = new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
@@ -641,7 +632,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DiskImageDynamic diskDynamic = new DiskImageDynamic();
                 diskDynamic.setId(disk.getImageId());
                 diskDynamic.setactual_size(disk.getactual_size());
-                DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
+                getDiskImageDynamicDAO().save(diskDynamic);
             }
 
             for (Guid id : images.keySet()) {
@@ -649,8 +640,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DiskImage disk = list.get(list.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
-                DbFacade.getInstance().getImageDao().update(disk.getImage());
-                DbFacade.getInstance().getBaseDiskDao().save(disk);
+                getImageDao().update(disk.getImage());
+                getBaseDiskDao().save(disk);
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
@@ -680,10 +671,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
             }
         }
-    }
-
-    protected SnapshotDao getSnapshotDao() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 
     // the last image in each list is the leaf
@@ -761,7 +748,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (getParameters().getCopyCollapse()) {
             getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         }
-        DbFacade.getInstance().getVmStaticDao().save(getVm().getStaticData());
+        getVmStaticDAO().save(getVm().getStaticData());
         getCompensationContext().snapshotNewEntity(getVm().getStaticData());
     }
 
@@ -772,7 +759,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             minAllocatedMem = getVm().getMinAllocatedMem();
         } else {
             // first get cluster memory over commit value
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(getVm().getVdsGroupId());
+            VDSGroup vdsGroup = getVdsGroupDAO().get(getVm().getVdsGroupId());
             if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
                 minAllocatedMem = (vmMem * 100) / vdsGroup.getmax_vds_memory_over_commit();
             }
@@ -848,14 +835,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         tempVar.setvm_host("");
         tempVar.setvm_ip("");
         tempVar.setapp_list(getParameters().getVm().getDynamicData().getapp_list());
-        DbFacade.getInstance().getVmDynamicDao().save(tempVar);
+        getVmDynamicDAO().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);
     }
 
     private void addVmStatistics() {
         VmStatistics stats = new VmStatistics();
         stats.setId(getVmId());
-        DbFacade.getInstance().getVmStatisticsDao().save(stats);
+        getVmStatisticsDAO().save(stats);
         getCompensationContext().snapshotNewEntity(stats);
         getCompensationContext().stateChanged();
     }
@@ -873,21 +860,20 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm());
             for (DiskImage disk : imageList) {
-                DbFacade.getInstance().getDiskImageDynamicDao().remove(disk.getImageId());
-                DbFacade.getInstance().getImageDao().remove(disk.getImageId());
+                getDiskImageDynamicDAO().remove(disk.getImageId());
+                getImageDao().remove(disk.getImageId());
 
-                List<DiskImage> imagesForDisk =
-                        DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
+                List<DiskImage> imagesForDisk = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
                 if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                    DbFacade.getInstance().getBaseDiskDao().remove(disk.getId());
+                    getBaseDiskDao().remove(disk.getId());
                 }
             }
             removeVmNetworkInterfaces();
             new SnapshotsManager().removeSnapshots(getVm().getId());
-            DbFacade.getInstance().getVmDynamicDao().remove(getVmId());
-            DbFacade.getInstance().getVmStatisticsDao().remove(getVmId());
+            getVmDynamicDAO().remove(getVmId());
+            getVmStatisticsDAO().remove(getVmId());
             new SnapshotsManager().removeSnapshots(getVmId());
-            DbFacade.getInstance().getVmStaticDao().remove(getVmId());
+            getVmStaticDAO().remove(getVmId());
             setSucceeded(true);
         } else {
             setVm(vmFromParams); // Setting VM from params, for logging purposes
