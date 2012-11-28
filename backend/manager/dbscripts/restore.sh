@@ -22,7 +22,7 @@ usage() {
     printf "\t-s SERVERNAME - The database servername for the database (def. ${SERVERNAME})\n"
     printf "\t-p PORT       - The database port for the database       (def. ${PORT})\n"
     printf "\t-u USERNAME   - The username for the database.\n"
-    printf "\t-d DATABASE   - The database name\n"
+    printf "\t-d DATABASE   - The database name, this must match the db name recorded in the backup file.\n"
     printf "\t-f File       - Backup file name to restore from. ${FILE}\n"
     printf "\t-r            - Remove existing database with same name\n"
     printf "\t-o            - Omit upgrade step\n"
