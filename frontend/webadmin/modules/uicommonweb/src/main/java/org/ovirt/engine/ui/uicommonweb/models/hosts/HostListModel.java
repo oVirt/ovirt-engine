@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Event;
@@ -70,10 +71,8 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 
 @SuppressWarnings("unused")
@@ -1660,31 +1659,31 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
             Frontend.RunQuery(VdcQueryType.GetPermissionsByAdElementId,
                     new MultilevelAdministrationByAdElementIdParameters(vdcUser.getUserId()),
-                    new IFrontendQueryAsyncCallback() {
+                    new AsyncQuery(this, new INewAsyncCallback() {
+
                         @Override
-                        public void OnSuccess(FrontendQueryAsyncResult result) {
+                        public void OnSuccess(Object model, Object returnValue) {
+                            VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                            if (response == null || !response.getSucceeded()) {
+                                hasAdminSystemPermission = false;
+                                UpdateConfigureLocalStorageCommandAvailability1();
+                            } else {
+                                ArrayList<permissions> permissions =
+                                        (ArrayList<permissions>) response.getReturnValue();
+                                for (permissions permission : permissions) {
 
-                            ArrayList<permissions> permissions =
-                                    (ArrayList<permissions>) result.getReturnValue().getReturnValue();
-                            for (permissions permission : permissions) {
-
-                                if (permission.getObjectType() == VdcObjectType.System
-                                        && permission.getRoleType() == RoleType.ADMIN) {
-                                    hasAdminSystemPermission = true;
-                                    break;
+                                    if (permission.getObjectType() == VdcObjectType.System
+                                            && permission.getRoleType() == RoleType.ADMIN) {
+                                        hasAdminSystemPermission = true;
+                                        break;
+                                    }
                                 }
+
+                                UpdateConfigureLocalStorageCommandAvailability1();
                             }
 
-                            UpdateConfigureLocalStorageCommandAvailability1();
                         }
-
-                        @Override
-                        public void OnFailure(FrontendQueryAsyncResult result) {
-
-                            hasAdminSystemPermission = false;
-                            UpdateConfigureLocalStorageCommandAvailability1();
-                        }
-                    });
+                    }, true));
         } else {
             UpdateConfigureLocalStorageCommandAvailability1();
         }

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -39,8 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
 
 @SuppressWarnings("unused")
 public class HostModel extends Model
@@ -927,36 +926,36 @@ public class HostModel extends Model
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
         param.setPmProxyPreferences(getPmProxyPreferences());
 
-        Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new IFrontendQueryAsyncCallback() {
+        Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
-            public void OnSuccess(FrontendQueryAsyncResult result) {
-                if (result != null && result.getReturnValue() != null
-                        && result.getReturnValue().getReturnValue() != null) {
-                    FenceStatusReturnValue fenceStatusReturnValue =
-                            (FenceStatusReturnValue) result.getReturnValue().getReturnValue();
-                    String message = fenceStatusReturnValue.toString();
+            public void OnSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
+                if (response == null || !response.getSucceeded()) {
+                    String message;
+                    if (response != null && response.getReturnValue() != null) {
+                        FenceStatusReturnValue fenceStatusReturnValue =
+                                (FenceStatusReturnValue) response.getReturnValue();
+                        message = fenceStatusReturnValue.toString();
+                    } else {
+                        message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+                    }
                     setMessage(message);
                     getTestCommand().setIsExecutionAllowed(true);
-                }
-            }
-
-            @Override
-            public void OnFailure(FrontendQueryAsyncResult result) {
-                String message;
-                if (result != null && result.getReturnValue() != null
-                        && result.getReturnValue().getReturnValue() != null) {
-                    FenceStatusReturnValue fenceStatusReturnValue =
-                            (FenceStatusReturnValue) result.getReturnValue().getReturnValue();
-                    message = fenceStatusReturnValue.toString();
                 } else {
-                    message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-                }
-                setMessage(message);
-                getTestCommand().setIsExecutionAllowed(true);
 
+                    if (response != null && response.getReturnValue() != null) {
+                        FenceStatusReturnValue fenceStatusReturnValue =
+                                (FenceStatusReturnValue) response.getReturnValue();
+                        String message = fenceStatusReturnValue.toString();
+                        setMessage(message);
+                        getTestCommand().setIsExecutionAllowed(true);
+                    }
+
+                }
             }
-        });
+        }
+                , true));
     }
 
     private void ValidatePmModels()

@@ -25,12 +25,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendQueryAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -137,49 +135,6 @@ public class Frontend {
 
     public static void RunQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
-            final IFrontendQueryAsyncCallback callback) {
-        initQueryParamsFilter(parameters);
-        dumpQueryDetails(queryType, parameters);
-        logger.finer("Frontend: Invoking async runQuery."); //$NON-NLS-1$
-
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-        service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
-                FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, null);
-                getEventsHandler().runQueryFailed(null);
-                failureEventHandler(caught);
-                callback.OnFailure(f);
-            }
-
-            @Override
-            public void onSuccess(VdcQueryReturnValue result) {
-                logger.finer("Succesful returned result from RunQuery."); //$NON-NLS-1$
-                FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, result);
-
-                if (!result.getSucceeded()) {
-                    logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
-                            + "]"); //$NON-NLS-1$
-                    if (getEventsHandler() != null) {
-                        ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
-                        failedResult.add(result);
-                        if (getEventsHandler().isRaiseErrorModalPanel(queryType))
-                            failureEventHandler(result.getExceptionString());
-                    }
-                    callback.OnFailure(f);
-                } else {
-                    callback.OnSuccess(f);
-                }
-            }
-        });
-    }
-
-    public static void RunQuery(final VdcQueryType queryType,
-            final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
         initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
@@ -190,7 +145,7 @@ public class Frontend {
         service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
-                if(ignoreFailure(caught)){
+                if (ignoreFailure(caught)) {
                     return;
                 }
                 logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
@@ -238,50 +193,6 @@ public class Frontend {
     public static VdcQueryReturnValue RunQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
         logger.fine("Sync RunQuery is invoked, this is not supported! replace the call with the async method!"); //$NON-NLS-1$
         return null;
-    }
-
-    public static void RunPublicQuery(final VdcQueryType queryType,
-            final VdcQueryParametersBase parameters,
-            final IFrontendQueryAsyncCallback callback) {
-        initQueryParamsFilter(parameters);
-        dumpQueryDetails(queryType, parameters);
-        logger.finer("Frontend: Invoking async runPublicQuery."); //$NON-NLS-1$
-
-        GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
-        service.RunPublicQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
-                }
-                logger.log(Level.SEVERE, "Failed to execute RunPublicQuery: " + caught, caught); //$NON-NLS-1$
-                FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, null);
-                getEventsHandler().runQueryFailed(null);
-                failureEventHandler(caught);
-                callback.OnFailure(f);
-            }
-
-            @Override
-            public void onSuccess(VdcQueryReturnValue result) {
-                logger.finer("Succesful returned result from RunPublicQuery!"); //$NON-NLS-1$
-                FrontendQueryAsyncResult f = new FrontendQueryAsyncResult(queryType, parameters, result);
-
-                if (!result.getSucceeded()) {
-                    logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
-                            + "]"); //$NON-NLS-1$
-                    if (getEventsHandler() != null) {
-                        ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
-                        failedResult.add(result);
-                        getEventsHandler().runQueryFailed(failedResult);
-                        if (getEventsHandler().isRaiseErrorModalPanel(queryType))
-                            failureEventHandler(result.getExceptionString());
-                    }
-                    callback.OnFailure(f);
-                } else {
-                    callback.OnSuccess(f);
-                }
-            }
-        });
     }
 
     public static void RunPublicQuery(final VdcQueryType queryType,
