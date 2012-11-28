@@ -14,9 +14,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -117,17 +117,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     public Guid getVmId() {
         if (getParameters().isImportAsNewEntity()) {
             return getParameters().getVm().getId();
-        } else {
-            return super.getVmId();
         }
+        return super.getVmId();
     }
     @Override
     public VM getVm() {
         if (getParameters().isImportAsNewEntity()) {
             return getParameters().getVm();
-        } else {
-            return super.getVm();
         }
+        return super.getVm();
     }
 
     @Override
@@ -174,9 +172,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         || !validator.domainIsValidDestination(canDoActionMessages)) {
                     retVal = false;
                     break;
-                } else {
-                    domainsMap.put(destGuid, storageDomain);
                 }
+
+                domainsMap.put(destGuid, storageDomain);
             }
         }
 
@@ -244,15 +242,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         }
                         if (!retVal) {
                             break;
-                        } else {
-                            image.setstorage_pool_id(getParameters().getStoragePoolId());
-                            // we put the source domain id in order that copy will
-                            // work
-                            // ok
-                            // we fix it to DestDomainId in
-                            // MoveOrCopyAllImageGroups();
-                            image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
                         }
+
+                        image.setstorage_pool_id(getParameters().getStoragePoolId());
+                        // we put the source domain id in order that copy will
+                        // work properly.
+                        // we fix it to DestDomainId in
+                        // MoveOrCopyAllImageGroups();
+                        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
                     }
                     if (retVal) {
                         Map<Guid, List<DiskImage>> images = getImagesLeaf(getVm().getImages());
