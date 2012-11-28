@@ -84,6 +84,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
         implements QuotaStorageDependent {
     private static final long serialVersionUID = -5500615685812075744L;
+    private static final Log log = LogFactory.getLog(ImportVmCommand.class);
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
@@ -799,7 +800,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     }
 
-    private void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
+    private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
         String vmName = vmStaticFromOvf.getvm_name();
         AuditLogableBase logable = new AuditLogableBase();
         logable.AddCustomValue("FieldName", fieldName);
@@ -938,8 +939,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         return super.getAuditLogTypeValue();
     }
-
-    private static Log log = LogFactory.getLog(ImportVmCommand.class);
 
     @Override
     protected List<Class<?>> getValidationGroups() {
