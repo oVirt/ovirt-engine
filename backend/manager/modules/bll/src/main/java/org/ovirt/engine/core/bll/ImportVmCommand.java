@@ -600,10 +600,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 BaseImagesCommand.saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm());
                 getBaseDiskDao().save(disk);
-                DiskImageDynamic diskDynamic = new DiskImageDynamic();
-                diskDynamic.setId(disk.getImageId());
-                diskDynamic.setactual_size(disk.getactual_size());
-                getDiskImageDynamicDAO().save(diskDynamic);
+                saveDiskImageDynamic(disk);
             }
 
             Snapshot snapshot = new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
@@ -629,10 +626,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                     disk.getappList()));
                 }
 
-                DiskImageDynamic diskDynamic = new DiskImageDynamic();
-                diskDynamic.setId(disk.getImageId());
-                diskDynamic.setactual_size(disk.getactual_size());
-                getDiskImageDynamicDAO().save(diskDynamic);
+                saveDiskImageDynamic(disk);
             }
 
             for (Guid id : images.keySet()) {
@@ -655,6 +649,17 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                             new Date(),
                             null));
         }
+    }
+
+    /**
+     * Generates and saves a {@link DiskImageDynamic} for the given {@link #disk}.
+     * @param disk The imported disk
+     **/
+    private void saveDiskImageDynamic(DiskImage disk) {
+        DiskImageDynamic diskDynamic = new DiskImageDynamic();
+        diskDynamic.setId(disk.getImageId());
+        diskDynamic.setactual_size(disk.getactual_size());
+        getDiskImageDynamicDAO().save(diskDynamic);
     }
 
     /**
