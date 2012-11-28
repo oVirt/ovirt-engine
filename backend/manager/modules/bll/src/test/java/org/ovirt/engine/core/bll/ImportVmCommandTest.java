@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.springframework.util.Assert;
 
 public class ImportVmCommandTest {
 
@@ -107,7 +107,7 @@ public class ImportVmCommandTest {
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty() == !isImportAsNewEntity);
+        assertEquals(validate.isEmpty(), !isImportAsNewEntity);
     }
 
     /**
@@ -134,14 +134,14 @@ public class ImportVmCommandTest {
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty());
+        assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(builder.toString());
         parameters.setImportAsNewEntity(false);
         command = spy(new ImportVmCommand(parameters));
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
-        Assert.isTrue(validate.isEmpty());
+        assertTrue(validate.isEmpty());
     }
 
 }
