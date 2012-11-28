@@ -875,7 +875,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             if (!vmInterfaceManager.isValidVmNetwork(iface, networksInVdsByName)) {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
-                iface.setNetworkName(StringUtils.EMPTY);
+                iface.setNetworkName(null);
             }
 
             vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity());
