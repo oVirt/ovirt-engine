@@ -587,7 +587,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
-    private void addVmImagesAndSnapshots() {
+    protected void addVmImagesAndSnapshots() {
         Map<Guid, List<DiskImage>> images = getImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
@@ -618,13 +618,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     }
                 }
                 disk.setcreation_date(new Date());
-                BaseImagesCommand.saveImage(disk);
+                saveImage(disk);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
-                getBaseDiskDao().save(disk);
+                saveBaseDisk(disk);
                 saveDiskImageDynamic(disk);
             }
 
-            Snapshot snapshot = new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
+            Snapshot snapshot = addActiveSnapshot(snapshotId);
             getVm().getSnapshots().clear();
             getVm().getSnapshots().add(snapshot);
         } else {
@@ -633,7 +633,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
                 disk.setactive(false);
-                BaseImagesCommand.saveImage(disk);
+                saveImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
                     getSnapshotDao().save(
@@ -655,7 +655,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
                 getImageDao().update(disk.getImage());
-                getBaseDiskDao().save(disk);
+                saveBaseDisk(disk);
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
@@ -671,15 +671,34 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
+    /** Saves the base disk object */
+    protected void saveBaseDisk(DiskImage disk) {
+        getBaseDiskDao().save(disk);
+    }
+
+    /** Save the entire image, including it's storage mapping */
+    protected void saveImage(DiskImage disk) {
+        BaseImagesCommand.saveImage(disk);
+    }
+
     /**
      * Generates and saves a {@link DiskImageDynamic} for the given {@link #disk}.
      * @param disk The imported disk
      **/
-    private void saveDiskImageDynamic(DiskImage disk) {
+    protected void saveDiskImageDynamic(DiskImage disk) {
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(disk.getImageId());
         diskDynamic.setactual_size(disk.getactual_size());
         getDiskImageDynamicDAO().save(diskDynamic);
+    }
+
+    /**
+     * Saves a new active snapshot for the VM
+     * @param snapshotId The ID to assign to the snapshot
+     * @return The generated snapshot
+     */
+    protected Snapshot addActiveSnapshot(Guid snapshotId) {
+        return new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
     }
 
     /**

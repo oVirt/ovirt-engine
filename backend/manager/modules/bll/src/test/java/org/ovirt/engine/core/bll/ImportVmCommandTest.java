@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -182,5 +184,23 @@ public class ImportVmCommandTest {
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
+    }
+
+    /* Tests for alias generation in addVmImagesAndSnapshots() */
+
+    @Test
+    public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
+        ImportVmParameters params = createParameters();
+        params.setCopyCollapse(true);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+
+        DiskImage collapsedDisk = params.getVm().getImages().get(1);
+
+        doNothing().when(cmd).saveImage(collapsedDisk);
+        doNothing().when(cmd).saveBaseDisk(collapsedDisk);
+        doNothing().when(cmd).saveDiskImageDynamic(collapsedDisk);
+        doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
+        cmd.addVmImagesAndSnapshots();
+        assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
     }
 }
