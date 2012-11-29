@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -133,6 +134,19 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     private static void assertGetAllForClusterResult(List<Network> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertIsSorted(result);
+    }
+
+    private static void assertIsSorted(List<Network> result) {
+        Network previous = null;
+        for (Network network : result) {
+            if (previous != null && network.getName().compareTo(previous.getName()) < 0) {
+                fail(String.format("List of networks is not ordered by network name, %s came before %s.",
+                        previous.getName(),
+                        network.getName()));
+            }
+            previous = network;
+        }
     }
 
     /**

@@ -167,13 +167,11 @@ RETURN QUERY SELECT
    FROM network
    INNER JOIN network_cluster
    ON network.id = network_cluster.network_id
-   where network_cluster.cluster_id = v_id
-  AND (NOT v_is_filtered OR EXISTS (SELECT 1
+   WHERE network_cluster.cluster_id = v_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
                                     FROM   user_vds_groups_permissions_view
-                                    WHERE  user_id = v_user_id AND entity_id = v_id));
-
-
-
+                                    WHERE  user_id = v_user_id AND entity_id = v_id))
+   ORDER BY network.name;
 END; $procedure$
 LANGUAGE plpgsql;
 
