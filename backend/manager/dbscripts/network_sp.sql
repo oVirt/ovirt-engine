@@ -74,6 +74,9 @@ BEGIN
    DELETE FROM network
    WHERE id = v_id;
 
+   -- Delete the network's permissions
+   DELETE FROM permissions WHERE object_id = v_id;
+
 END; $procedure$
 LANGUAGE plpgsql;
 
