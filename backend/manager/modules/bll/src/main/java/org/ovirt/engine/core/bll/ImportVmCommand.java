@@ -191,18 +191,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        // Load images from Import/Export domain
-        GetAllFromExportDomainQueryParameters tempVar =
-                new GetAllFromExportDomainQueryParameters
-                (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
-        VdcQueryReturnValue qretVal =
-                getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, tempVar);
-
-        if (!qretVal.getSucceeded()) {
+        List<VM> vms = getVmsFromExportDomain();
+        if (vms == null) {
             return false;
         }
 
-        List<VM> vms = (List<VM>) qretVal.getReturnValue();
         VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
             @Override
             public boolean eval(VM evalVm) {
@@ -262,6 +255,23 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
+    /**
+     * Load images from Import/Export domain.
+     * @return A {@link List} of {@link VM}s, or <code>null</code> if the query to the export domain failed.
+     */
+    protected List<VM> getVmsFromExportDomain() {
+        GetAllFromExportDomainQueryParameters p =
+                new GetAllFromExportDomainQueryParameters
+                (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
+        VdcQueryReturnValue qRetVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
+
+        if (!qRetVal.getSucceeded()) {
+            return null;
+        }
+
+        return (List<VM>) qRetVal.getReturnValue();
+    }
+
     private boolean validateImageConfig(List<String> canDoActionMessages,
             Map<Guid, storage_domains> domainsMap,
             DiskImage image) {
@@ -275,10 +285,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         VM vm = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
-        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
-        if (duplicateVm != null) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
+        if (!validateNoDuplicateVm()) {
             return false;
         }
 
@@ -319,17 +326,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return false;
         }
 
-        boolean inCluster = false;
-        List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
-        for (VDSGroup group : groups) {
-            if (group.getId().equals(getParameters().getVdsGroupId())) {
-                inCluster = true;
-                break;
-            }
-        }
-
-        if (!inCluster) {
-            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+        if (!validateVdsCluster()) {
+            return false;
         }
 
         Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
@@ -340,12 +338,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
 
-        // Check that the USB policy is legal
-        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
-        if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
-                vm.getOs(),
-                getVdsGroup(),
-                getReturnValue().getCanDoActionMessages())) {
+        if (!validateUsbPolicy()) {
             return false;
         }
 
@@ -354,6 +347,47 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
 
         return true;
+    }
+
+    /**
+     * Validates that there is no duplicate VM.
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateNoDuplicateVm() {
+        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
+        if (duplicateVm != null) {
+            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
+            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validates that that the required cluster exists.
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateVdsCluster() {
+        List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
+        for (VDSGroup group : groups) {
+            if (group.getId().equals(getParameters().getVdsGroupId())) {
+                return true;
+            }
+        }
+        return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+    }
+
+    /**
+     * Validates the USB policy.
+     * @return <code>true</code> if the validation passes, <code>false</code> otherwise.
+     */
+    protected boolean validateUsbPolicy() {
+        VM vm = getParameters().getVm();
+        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
+        return VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
+                vm.getOs(),
+                getVdsGroup(),
+                getReturnValue().getCanDoActionMessages());
     }
 
     private boolean templateExistsOnExportDomain() {
@@ -436,7 +470,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
-    private boolean canAddVm() {
+    protected boolean canAddVm() {
         // Checking if a desktop with same name already exists
         boolean exists = (Boolean) getBackend()
                 .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
