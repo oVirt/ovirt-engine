@@ -137,15 +137,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private String privatemCurrentIrsHost;
-
-        public String getmCurrentIrsHost() {
-            return privatemCurrentIrsHost;
-        }
-
-        public void setmCurrentIrsHost(String value) {
-            privatemCurrentIrsHost = value;
-        }
-
         private IIrsServer privatemIrsProxy;
 
         private IIrsServer getmIrsProxy() {
@@ -464,7 +455,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         public void Init(VDS vds) {
             mCurrentVdsId = vds.getId();
             setmIrsPort(vds.getport());
-            setmCurrentIrsHost(vds.gethost_name());
+            privatemCurrentIrsHost = vds.gethost_name();
         }
 
         public boolean failover() {
@@ -968,7 +959,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         public String getIsoDirectory() {
-            String tempVar = getmCurrentIrsHost();
+            String tempVar = privatemCurrentIrsHost;
             return String.format("\\\\%1$s\\CD", ((tempVar != null) ? tempVar : gethostFromVds()));
         }
 
@@ -985,7 +976,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             if (privatemIrsProxy != null) {
                 XmlRpcUtils.shutDownConnection(((IrsServerWrapper) privatemIrsProxy).getHttpClient());
             }
-            setmCurrentIrsHost(null);
+            privatemCurrentIrsHost = null;
             privatemIrsProxy = null;
             mCurrentVdsId = null;
         }

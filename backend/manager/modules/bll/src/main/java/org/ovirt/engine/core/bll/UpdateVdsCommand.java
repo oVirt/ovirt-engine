@@ -15,16 +15,13 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateSpmHostNameVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -122,14 +119,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
         if (NeedToUpdateVdsBroker()) {
             InitializeVds();
         }
-        // if host_name changed and host is spm we need to update irsBroker cache with the new host_name
-        if (!Guid.Empty.equals(_oldVds.getStoragePoolId()) && _oldVds.getspm_status() != VdsSpmStatus.None &&
-                !StringUtils.equals(_oldVds.gethost_name(), getParameters().getVdsStaticData().gethost_name())) {
-            runVdsCommand(VDSCommandType.UpdateSpmHostName,
-                    new UpdateSpmHostNameVDSCommandParameters(_oldVds.getStoragePoolId(),
-                            _oldVds.gethost_name(),
-                            getParameters().getVdsStaticData().gethost_name()));
-        }
+
         if (getParameters().getInstallVds()) {
             InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getRootPassword());
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
