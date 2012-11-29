@@ -138,6 +138,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return retVal && canDoAction_afterCloneVm(retVal, canDoActionMessages, domainsMap);
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+    }
 
     private void initImportClonedVm() {
         Guid guid = Guid.NewGuid();
@@ -361,10 +366,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             retVal = validateMacAddress(getVm().getInterfaces());
         }
 
-        if (!retVal) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
         return retVal;
     }
 
