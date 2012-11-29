@@ -3,7 +3,10 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -14,7 +17,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -54,7 +62,18 @@ public class ImportVmCommandTest {
     private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
         mcr.mockConfigValue(ConfigValues.FreeSpaceLow, diskSpacePct);
-        return new TestHelperImportVmCommand(createParameters());
+
+        ImportVmCommand cmd = spy(new ImportVmCommand(createParameters()));
+        doReturn(true).when(cmd).validateNoDuplicateVm();
+        doReturn(true).when(cmd).validateVdsCluster();
+        doReturn(true).when(cmd).validateUsbPolicy();
+        doReturn(true).when(cmd).canAddVm();
+        doReturn(createSourceDomain()).when(cmd).getSourceDomain();
+        doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
+        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
+        doReturn(new storage_pool()).when(cmd).getStoragePool();
+
+        return cmd;
     }
 
     protected ImportVmParameters createParameters() {
@@ -68,6 +87,13 @@ public class ImportVmCommandTest {
         v.setId(Guid.NewGuid());
         v.setDiskSize(2);
         return v;
+    }
+
+    protected storage_domains createSourceDomain() {
+        storage_domains sd = new storage_domains();
+        sd.setstorage_domain_type(StorageDomainType.ImportExport);
+        sd.setstatus(StorageDomainStatus.Active);
+        return sd;
     }
 
     @Test
