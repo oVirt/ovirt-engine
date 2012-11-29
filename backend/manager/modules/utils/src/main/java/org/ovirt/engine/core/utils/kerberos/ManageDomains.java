@@ -71,7 +71,8 @@ public class ManageDomains {
         report,
         interactive,
         addPermissions,
-        provider
+        provider,
+        forceDelete
     }
 
     public enum ActionType {
@@ -283,7 +284,7 @@ public class ManageDomains {
         } else if (actionType.equals(ActionType.edit)) {
             editDomain(parser);
         } else if (actionType.equals(ActionType.delete)) {
-            deleteDomain(parser.getArg(Arguments.domain.name()).toLowerCase());
+            deleteDomain(parser.getArg(Arguments.domain.name()).toLowerCase(), parser.hasArg(Arguments.forceDelete.name()));
         } else if (actionType.equals(ActionType.validate)) {
             validate();
         } else if (actionType.equals(ActionType.list)) {
@@ -835,7 +836,7 @@ public class ManageDomains {
                 ldapProviderTypeEntry);
     }
 
-    public void deleteDomain(String domainName) throws ManageDomainsResult {
+    public void deleteDomain(String domainName, boolean forceDelete) throws ManageDomainsResult {
 
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
@@ -843,6 +844,10 @@ public class ManageDomains {
 
         if (!domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_DOESNT_EXIST_IN_CONFIGURATION, domainName);
+        }
+
+        if(!forceDelete && !confirmDeleteDomain(domainName)) {
+            return;
         }
 
         domainNameEntry.removeValueForDomain(domainName);
@@ -891,6 +896,17 @@ public class ManageDomains {
         System.out.println(String.format(DELETE_DOMAIN_SUCCESS, domainName));
     }
 
+    private boolean confirmDeleteDomain(String domainName) {
+        String response = null;
+        while (StringUtils.isBlank(response)
+                || (!StringUtils.equalsIgnoreCase(response, "yes")
+                 && !StringUtils.equalsIgnoreCase(response, "no"))) {
+            System.out.println("Are you sure you like to delete domain "+domainName +" (yes/no) : ");
+            response = System.console().readLine();
+        }
+        return response.equals("yes");
+    }
+
     private void validate(CLIParser parser) throws ManageDomainsResult {
 
         if (parser.hasArg(Arguments.propertiesFile.name())) {
@@ -906,10 +922,12 @@ public class ManageDomains {
                 if (actionType.equals(ActionType.add)) {
                     requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
                     requireAtLeastOneArg(parser, Arguments.passwordFile, Arguments.interactive);
-                    checkInvalidArgs(parser);
+                    checkInvalidArgs(parser,
+                            Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.edit)) {
                     requireArgs(parser, Arguments.domain);
-                    checkInvalidArgs(parser);
+                    checkInvalidArgs(parser,
+                            Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.delete)) {
                     requireArgs(parser, Arguments.domain);
                     checkInvalidArgs(parser);
@@ -918,13 +936,15 @@ public class ManageDomains {
                             Arguments.domain,
                             Arguments.user,
                             Arguments.passwordFile,
-                            Arguments.interactive);
+                            Arguments.interactive,
+                            Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.list)) {
                     checkInvalidArgs(parser,
                             Arguments.domain,
                             Arguments.user,
                             Arguments.passwordFile,
-                            Arguments.interactive);
+                            Arguments.interactive,
+                            Arguments.forceDelete);
                 }
             } else {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.ACTION_IS_NOT_SPECIFIED);
