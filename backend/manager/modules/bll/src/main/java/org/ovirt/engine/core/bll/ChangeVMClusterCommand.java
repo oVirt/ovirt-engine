@@ -1,19 +1,18 @@
 package org.ovirt.engine.core.bll;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmNicValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -57,30 +56,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
 
-                // Check the destination cluster have all the networks that the VM use
-                List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getParameters().getClusterId());
-                StringBuilder missingNets = new StringBuilder();
-                for (VmNetworkInterface iface: interfaces) {
-                    String netName = iface.getNetworkName();
-                    if (isNotEmpty(netName)) {
-                        boolean exists = false;
-                        for (Network net: networks) {
-                            if (net.getname().equals(netName)) {
-                                exists = true;
-                                break;
-                            }
-                        }
-                        if (!exists) {
-                            if (missingNets.length() > 0) {
-                                missingNets.append(", ");
-                            }
-                            missingNets.append(netName);
-                        }
-                    }
-                }
-                if (missingNets.length() > 0) {
-                    addCanDoActionMessage(VdcBllMessages.MOVE_VM_CLUSTER_MISSING_NETWORK);
-                    addCanDoActionMessage(String.format("$networks %1$s", missingNets.toString()));
+                String clusterCompatibilityVersion = targetCluster.getcompatibility_version().getValue();
+                if (!validateDestinationClusterContainsNetworks(interfaces)
+                        || !validateNicsLinkedCorrectly(interfaces, clusterCompatibilityVersion)) {
                     return false;
                 }
 
@@ -88,8 +66,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 boolean isCpuSocketsValid = AddVmCommand.CheckCpuSockets(
                                                                          vm.getStaticData().getnum_of_sockets(),
                                                                          vm.getStaticData().getcpu_per_socket(),
-                                                                         targetCluster.getcompatibility_version()
-                                                                                      .getValue(),
+                                                                         clusterCompatibilityVersion,
                                                                          getReturnValue().getCanDoActionMessages());
                 if (!isCpuSocketsValid) {
                     return false;
@@ -104,6 +81,67 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Checks that when unlinking is not supported in the destination cluster and a NIC has unlinked network, it's not
+     * valid.
+     *
+     * @param interfaces
+     *            The NICs to check.
+     * @param clusterCompatibilityVersion
+     *            The destination cluster's compatibility version.
+     * @return Whether the NICs are linked correctly (with regards to the destination cluster).
+     */
+    private boolean validateNicsLinkedCorrectly(List<VmNetworkInterface> interfaces,
+            String clusterCompatibilityVersion) {
+        for (VmNetworkInterface iface : interfaces) {
+            VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
+            if (!validate(nicValidator.linkedCorrectly())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks that the destination cluster has all the networks that the given NICs require.<br>
+     * No network on a NIC is allowed (it's checked when running VM).
+     *
+     * @param interfaces
+     *            The NICs to check networks on.
+     * @return Whether the destination cluster has all networks configured or not.
+     */
+    private boolean validateDestinationClusterContainsNetworks(List<VmNetworkInterface> interfaces) {
+        List<Network> networks =
+                DbFacade.getInstance().getNetworkDao().getAllForCluster(getParameters().getClusterId());
+        StringBuilder missingNets = new StringBuilder();
+        for (VmNetworkInterface iface : interfaces) {
+            String netName = iface.getNetworkName();
+            if (netName != null) {
+                boolean exists = false;
+                for (Network net : networks) {
+                    if (net.getname().equals(netName)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                if (!exists) {
+                    if (missingNets.length() > 0) {
+                        missingNets.append(", ");
+                    }
+                    missingNets.append(netName);
+                }
+            }
+        }
+        if (missingNets.length() > 0) {
+            addCanDoActionMessage(VdcBllMessages.MOVE_VM_CLUSTER_MISSING_NETWORK);
+            addCanDoActionMessage(String.format("$networks %1$s", missingNets.toString()));
+            return false;
+        }
+
         return true;
     }
 
@@ -123,17 +161,19 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 .getAllForVm(getParameters().getVmId());
 
         for (final VmNetworkInterface iface : interfaces) {
-            Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network n) {
-                    return iface.getNetworkName().equals(n.getname());
+            if (iface.getNetworkName() != null) {
+                Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+                    @Override
+                    public boolean eval(Network n) {
+                        return iface.getNetworkName().equals(n.getname());
+                    }
+                });
+                // if network not exists in cluster we remove the network to
+                // interface connection
+                if (net == null) {
+                    iface.setNetworkName(null);
+                    DbFacade.getInstance().getVmNetworkInterfaceDao().update(iface);
                 }
-            });
-            // if network not exists in cluster we remove the network to
-            // interface connection
-            if (net == null) {
-                iface.setNetworkName(null);
-                DbFacade.getInstance().getVmNetworkInterfaceDao().update(iface);
             }
         }
 
