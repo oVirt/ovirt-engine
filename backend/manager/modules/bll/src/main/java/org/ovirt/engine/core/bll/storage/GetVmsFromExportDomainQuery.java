@@ -64,15 +64,9 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     }
 
     protected void buildOvfReturnValue(Object obj) {
-        boolean shouldAdd = true;
         ArrayList<String> ovfList = (ArrayList<String>) obj;
         OvfManager ovfManager = new OvfManager();
         ArrayList<VM> vms = new ArrayList<VM>();
-        List<VM> existsVms = DbFacade.getInstance().getVmDao().getAll();
-        java.util.HashMap<Guid, VM> existsVmDictionary = new java.util.HashMap<Guid, VM>();
-        for (VM vm : existsVms) {
-            existsVmDictionary.put(vm.getId(), vm);
-        }
 
         if (isValidExportDomain()) {
             VM vm = null;
@@ -84,24 +78,19 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                         ArrayList<VmNetworkInterface> interfaces  = new ArrayList<VmNetworkInterface>();
                         ovfManager.ImportVm(ovf, vm, diskImages, interfaces);
 
-                        shouldAdd = getParameters().getGetAll() ? shouldAdd : !existsVmDictionary
-                                .containsKey(vm.getId());
+                        // add images
+                        vm.setImages(diskImages);
+                        // add interfaces
+                        vm.setInterfaces(interfaces);
 
-                        if (shouldAdd) {
-                            // add images
-                            vm.setImages(diskImages);
-                            // add interfaces
-                            vm.setInterfaces(interfaces);
-
-                            // add disk map
-                            Map<Guid, List<DiskImage>> images = ImportVmCommand
-                                    .getImagesLeaf(diskImages);
-                            for (Guid id : images.keySet()) {
-                                List<DiskImage> list = images.get(id);
-                                vm.getDiskMap().put(id, list.get(list.size() - 1));
-                            }
-                            vms.add(vm);
+                        // add disk map
+                        Map<Guid, List<DiskImage>> images = ImportVmCommand
+                                .getImagesLeaf(diskImages);
+                        for (Guid id : images.keySet()) {
+                            List<DiskImage> list = images.get(id);
+                            vm.getDiskMap().put(id, list.get(list.size() - 1));
                         }
+                        vms.add(vm);
                     }
                 } catch (OvfReaderException ex) {
                     AuditLogableBase logable = new AuditLogableBase();

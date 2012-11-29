@@ -51,7 +51,6 @@ public class BackendStorageDomainTemplatesResource
     protected Collection<VmTemplate> getEntitiesFromExportDomain() {
         GetAllFromExportDomainQueryParameters params =
             new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
-        params.setGetAll(true);
 
         Map<VmTemplate, DiskImageList> ret = getEntity(HashMap.class,
                                                        VdcQueryType.GetTemplatesFromExportDomain,

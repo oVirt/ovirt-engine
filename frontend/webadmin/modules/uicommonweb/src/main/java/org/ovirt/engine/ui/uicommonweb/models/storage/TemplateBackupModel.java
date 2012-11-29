@@ -339,7 +339,6 @@ public class TemplateBackupModel extends VmBackupModel
                         GetAllFromExportDomainQueryParameters tempVar =
                                 new GetAllFromExportDomainQueryParameters(dataCenter.getId(), backupModel.getEntity()
                                         .getId());
-                        tempVar.setGetAll(true);
                         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, _asyncQuery1);
                     }
                 }

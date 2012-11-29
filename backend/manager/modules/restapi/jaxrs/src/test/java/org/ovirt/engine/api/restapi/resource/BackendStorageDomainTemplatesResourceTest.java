@@ -105,8 +105,8 @@ public class BackendStorageDomainTemplatesResourceTest
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
                                          GetAllFromExportDomainQueryParameters.class,
-                                         new String[] { "StoragePoolId", "StorageDomainId", "GetAll" },
-                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID, Boolean.TRUE },
+                                         new String[] { "StoragePoolId", "StorageDomainId"},
+                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
                                          setUpExportTemplates(),
                                          failure);
             break;

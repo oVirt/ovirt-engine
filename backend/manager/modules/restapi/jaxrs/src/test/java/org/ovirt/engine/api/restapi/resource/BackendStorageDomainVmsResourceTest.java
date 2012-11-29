@@ -117,8 +117,8 @@ public class BackendStorageDomainVmsResourceTest
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,
                                          GetAllFromExportDomainQueryParameters.class,
-                                         new String[] { "StoragePoolId", "StorageDomainId", "GetAll" },
-                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID, Boolean.TRUE },
+                                         new String[] { "StoragePoolId", "StorageDomainId"},
+                                         new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
                                          setUpVms(),
                                          failure);
             break;

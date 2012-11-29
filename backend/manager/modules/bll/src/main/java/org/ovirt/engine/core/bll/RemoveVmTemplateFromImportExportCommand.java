@@ -163,7 +163,6 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         if (exportTemplate == null) {
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getStorageDomainId());
-            tempVar.setGetAll(true);
             VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 

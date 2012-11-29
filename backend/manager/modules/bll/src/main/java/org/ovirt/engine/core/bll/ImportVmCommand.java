@@ -195,7 +195,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters
                 (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
-        tempVar.setGetAll(true);
         VdcQueryReturnValue qretVal =
                 getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, tempVar);
 
@@ -362,7 +361,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (!VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getVmtGuid())) {
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
-            tempVar.setGetAll(true);
             VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5436719744430725750L;
@@ -34,19 +34,7 @@ public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBas
         privateIds = value;
     }
 
-    private boolean privateGetAll;
-
-    public boolean getGetAll() {
-        return privateGetAll;
-    }
-
-    public void setGetAll(boolean value) {
-        privateGetAll = value;
-    }
-
     public GetAllFromExportDomainQueryParameters(Guid storagePoolId, Guid storageDomainId) {
-        // for getting existing Vm as well
-        setGetAll(false);
         this.setStoragePoolId(storagePoolId);
         this.setStorageDomainId(storageDomainId);
     }

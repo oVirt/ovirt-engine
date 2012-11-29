@@ -1802,7 +1802,6 @@ public final class AsyncDataProvider {
         };
         GetAllFromExportDomainQueryParameters getAllFromExportDomainQueryParamenters =
                 new GetAllFromExportDomainQueryParameters(storagePoolId, storageDomainId);
-        getAllFromExportDomainQueryParamenters.setGetAll(true);
         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, getAllFromExportDomainQueryParamenters, aQuery);
     }
 

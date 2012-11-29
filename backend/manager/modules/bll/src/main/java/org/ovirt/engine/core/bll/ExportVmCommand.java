@@ -335,7 +335,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         boolean retVal = true;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getVm()
                 .getStoragePoolId(), getParameters().getStorageDomainId());
-        tempVar.setGetAll(true);
         VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
                 tempVar);
 
@@ -362,7 +361,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         boolean retVal = false;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
                 storageDomainId);
-        tempVar.setGetAll(true);
         VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetTemplatesFromExportDomain,
                 tempVar);
 

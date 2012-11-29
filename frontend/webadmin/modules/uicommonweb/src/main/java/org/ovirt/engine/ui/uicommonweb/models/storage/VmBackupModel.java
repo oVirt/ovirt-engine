@@ -490,7 +490,6 @@ public class VmBackupModel extends ManageBackupModel {
                         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                                 dataCenter.getId(), backupModel.getEntity()
                                         .getId());
-                        tempVar.setGetAll(true);
                         Frontend.RunQuery(VdcQueryType.GetVmsFromExportDomain,
                                 tempVar, _asyncQuery1);
                     }

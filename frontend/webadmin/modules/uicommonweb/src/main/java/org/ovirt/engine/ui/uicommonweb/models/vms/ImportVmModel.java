@@ -414,7 +414,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((storage_domains) getEntity())
                         .getId());
-        tempVar.setGetAll(true);
         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
                 new INewAsyncCallback() {
 

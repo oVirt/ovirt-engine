@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
-import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
+import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -46,7 +46,6 @@ public class BackendStorageDomainVmsResource
     protected Collection<org.ovirt.engine.core.common.businessentities.VM> getEntitiesFromExportDomain() {
         GetAllFromExportDomainQueryParameters params =
             new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
-        params.setGetAll(true);
 
         return getBackendCollection(VdcQueryType.GetVmsFromExportDomain, params);
     }

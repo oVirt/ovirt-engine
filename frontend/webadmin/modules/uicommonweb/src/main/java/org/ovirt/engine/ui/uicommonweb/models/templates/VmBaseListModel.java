@@ -191,7 +191,6 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
             Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getId();
             GetAllFromExportDomainQueryParameters tempVar =
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
-            tempVar.setGetAll(true);
             Frontend.RunQuery(getVmOrTemplateQuery, tempVar, _asyncQuery);
         } else {
             exportModel.StopProgress();
