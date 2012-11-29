@@ -49,7 +49,8 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_vnc_keyboard_layout	VARCHAR(16),
  v_min_allocated_mem INTEGER,
  v_is_run_and_pause BOOLEAN,
- v_created_by_user_id UUID)
+ v_created_by_user_id UUID,
+ v_template_type VARCHAR(40))
 
 RETURNS VOID
    AS $procedure$
@@ -137,7 +138,7 @@ VALUES(
     v_initrd_url,
     v_kernel_url,
     v_kernel_params,
-    'TEMPLATE',
+    v_template_type,
     v_quota_id,
     v_migration_support,
     v_is_disabled,
@@ -204,7 +205,8 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_vnc_keyboard_layout	VARCHAR(16),
  v_min_allocated_mem INTEGER,
  v_is_run_and_pause BOOLEAN,
- v_created_by_user_id UUID)
+ v_created_by_user_id UUID,
+ v_template_type VARCHAR(40))
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -229,7 +231,7 @@ BEGIN
       is_delete_protected = v_is_delete_protected, is_disabled = v_is_disabled, tunnel_migration = v_tunnel_migration,
       vnc_keyboard_layout = v_vnc_keyboard_layout, min_allocated_mem = v_min_allocated_mem, is_run_and_pause = v_is_run_and_pause, created_by_user_id = v_created_by_user_id
       WHERE vm_guid = v_vmt_guid
-      AND   entity_type = 'TEMPLATE';
+      AND   entity_type = v_template_type;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -243,8 +245,7 @@ RETURNS VOID
 BEGIN
       UPDATE vm_static
       SET    template_status = v_status
-      WHERE  vm_guid = v_vmt_guid
-      AND    entity_type = 'TEMPLATE';
+      WHERE  vm_guid = v_vmt_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -259,10 +260,9 @@ RETURNS VOID
 BEGIN
         -- Get (and keep) a shared lock with "right to upgrade to exclusive"
 		-- in order to force locking parent before children
-      select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vmt_guid AND entity_type = 'TEMPLATE' FOR UPDATE;
+      select   vm_guid INTO v_val FROM vm_static  WHERE vm_guid = v_vmt_guid FOR UPDATE;
       DELETE FROM vm_static
-      WHERE vm_guid = v_vmt_guid
-      AND   entity_type = 'TEMPLATE';
+      WHERE vm_guid = v_vmt_guid;
 		-- delete Template permissions --
       DELETE FROM permissions where object_id = v_vmt_guid;
 END; $procedure$

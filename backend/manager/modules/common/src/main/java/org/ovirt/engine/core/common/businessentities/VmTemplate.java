@@ -46,6 +46,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
 
     private double actualDiskSize;
 
+    private VmEntityType templateType;
+
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
@@ -54,6 +56,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         status = VmTemplateStatus.OK;
         diskImageMap = new HashMap<Guid, DiskImage>();
         diskList = new ArrayList<DiskImage>();
+        templateType = VmEntityType.TEMPLATE;
     }
 
     private boolean disabled;
@@ -63,7 +66,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
             int cpuShares, boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
-            int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId) {
+            int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId, VmEntityType templateType) {
         super(
                 vmtGuid,
                 vdsGroupId,
@@ -110,6 +113,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setName(name);
         this.setNumOfMonitors(numOfMonitors);
         this.setStatus(VmTemplateStatus.forValue(status));
+        setTemplateType(templateType);
     }
 
     public int getChildCount() {
@@ -260,4 +264,11 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         this.disabled = disabled;
     }
 
+    public VmEntityType getTemplateType() {
+        return templateType;
+    }
+
+    public void setTemplateType(VmEntityType templateType) {
+        this.templateType = templateType;
+    }
 }

@@ -89,7 +89,9 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("tunnel_migration", vm.getTunnelMigration())
                 .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout())
                 .addValue("is_run_and_pause", vm.isRunAndPause())
-                .addValue("created_by_user_id", vm.getCreatedByUserId());
+                .addValue("created_by_user_id", vm.getCreatedByUserId())
+                .addValue("instance_type_id", vm.getInstanceTypeId())
+                .addValue("image_type_id", vm.getImageTypeId());
     }
 
     @Override
@@ -219,6 +221,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
+            entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));
+            entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
 
             return entity;
         }

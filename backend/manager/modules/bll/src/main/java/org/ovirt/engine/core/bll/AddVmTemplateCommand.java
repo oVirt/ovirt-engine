@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -413,7 +414,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getMinAllocatedMem(),
                         getParameters().getMasterVm().isStateless(),
                         getParameters().getMasterVm().isRunAndPause(),
-                        getUserId()));
+                        getUserId(),
+                        VmEntityType.TEMPLATE));
         getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
         getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
         getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());

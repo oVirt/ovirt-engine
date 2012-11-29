@@ -6,5 +6,7 @@ package org.ovirt.engine.core.common.businessentities;
  */
 public enum VmEntityType {
     VM,
-    TEMPLATE;
+    TEMPLATE,
+    INSTANCE_TYPE,
+    IMAGE_TYPE;
 }

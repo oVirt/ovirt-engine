@@ -44,6 +44,9 @@ public class VmStatic extends VmBase {
     @EditableField
     private boolean useHostCpuFlags;
 
+    private Guid instanceTypeId;
+    private Guid imageTypeId;
+
     public VmStatic() {
         setNumOfMonitors(1);
         initialized = false;
@@ -187,6 +190,8 @@ public class VmStatic extends VmBase {
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
         result = prime * result + (useHostCpuFlags ? 1231 : 1237);
+        result = prime * result + ((instanceTypeId == null) ? 0 : instanceTypeId.hashCode());
+        result = prime * result + ((imageTypeId == null) ? 0 : imageTypeId.hashCode());
         return result;
     }
 
@@ -209,7 +214,10 @@ public class VmStatic extends VmBase {
                 && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
                 && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
                 && ObjectUtils.objectsEqual(vmtGuid, other.vmtGuid)
-                && useHostCpuFlags == other.useHostCpuFlags);
+                && useHostCpuFlags == other.useHostCpuFlags
+                && ObjectUtils.objectsEqual(instanceTypeId, other.instanceTypeId)
+                && ObjectUtils.objectsEqual(imageTypeId, other.imageTypeId)
+         );
     }
 
     public boolean isUseHostCpuFlags() {
@@ -228,4 +236,19 @@ public class VmStatic extends VmBase {
         return getMemSizeMb();
     }
 
+    public Guid getInstanceTypeId() {
+        return instanceTypeId;
+    }
+
+    public void setInstanceTypeId(Guid instanceTypeId) {
+        this.instanceTypeId = instanceTypeId;
+    }
+
+    public Guid getImageTypeId() {
+        return imageTypeId;
+    }
+
+    public void setImageTypeId(Guid imageTypeId) {
+        this.imageTypeId = imageTypeId;
+    }
 }

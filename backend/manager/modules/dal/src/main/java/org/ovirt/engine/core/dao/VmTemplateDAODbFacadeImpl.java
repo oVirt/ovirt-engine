@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -168,7 +169,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("vnc_keyboard_layout", template.getVncKeyboardLayout())
                 .addValue("min_allocated_mem", template.getMinAllocatedMem())
                 .addValue("is_run_and_pause", template.isRunAndPause())
-                .addValue("created_by_user_id", template.getCreatedByUserId());
+                .addValue("created_by_user_id", template.getCreatedByUserId())
+                .addValue("template_type", template.getTemplateType().name());
     }
 
     @Override
@@ -246,6 +248,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
+            entity.setTemplateType(VmEntityType.valueOf(rs.getString("entity_type")));
             return entity;
         }
     }

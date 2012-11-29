@@ -1594,4 +1594,19 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return !isHostedEngine() && !isExternalVm();
     }
 
+    public Guid getInstanceTypeId() {
+        return vmStatic.getInstanceTypeId();
+    }
+
+    public void setInstanceTypeId(Guid instanceTypeId) {
+        vmStatic.setInstanceTypeId(instanceTypeId);
+    }
+
+    public Guid getImageTypeId() {
+        return vmStatic.getImageTypeId();
+    }
+
+    public void setImageTypeId(Guid ImageTypeId) {
+        vmStatic.setImageTypeId(ImageTypeId);
+    }
 }
