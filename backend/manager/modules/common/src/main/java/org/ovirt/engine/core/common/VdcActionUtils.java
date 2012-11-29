@@ -108,7 +108,7 @@ public final class VdcActionUtils {
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RunVm,
                         VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate, VdcActionType.RemoveVm,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm,
-                        VdcActionType.UpdateVmInterface, VdcActionType.CancelMigrateVm)));
+                        VdcActionType.CancelMigrateVm)));
         vmMatrix.put(
                 VMStatus.PoweringDown,
                 new HashSet<VdcActionType>(Arrays
