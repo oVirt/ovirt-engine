@@ -64,6 +64,11 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         });
     }
 
+    @Override
+    public void focusInput() {
+        descriptionEditor.setFocus(true);
+    }
+
     private void enableEditPoolFields() {
         descriptionEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
