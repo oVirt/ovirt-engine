@@ -2,7 +2,9 @@ package org.ovirt.engine.core.common;
 
 import java.util.HashMap;
 
-public enum AuditLogSeverity {
+import org.ovirt.engine.core.common.businessentities.Identifiable;
+
+public enum AuditLogSeverity implements Identifiable {
     NORMAL(0),
     WARNING(1),
     ERROR(2),
@@ -22,6 +24,7 @@ public enum AuditLogSeverity {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }
@@ -29,4 +32,5 @@ public enum AuditLogSeverity {
     public static AuditLogSeverity forValue(int value) {
         return mappings.get(value);
     }
+
 }

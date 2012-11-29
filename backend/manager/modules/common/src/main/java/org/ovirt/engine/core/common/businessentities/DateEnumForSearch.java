@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum DateEnumForSearch {
+public enum DateEnumForSearch implements Identifiable {
     Today(1),
     Yesterday(2);
 
@@ -19,9 +19,11 @@ public enum DateEnumForSearch {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }
+
 
     public static DateEnumForSearch forValue(int value) {
         return mappings.get(value);

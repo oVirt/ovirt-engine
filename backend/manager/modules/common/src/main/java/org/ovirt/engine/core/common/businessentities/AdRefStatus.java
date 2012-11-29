@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum AdRefStatus {
+public enum AdRefStatus implements Identifiable {
     Inactive(0),
     Active(1);
 
@@ -19,6 +19,7 @@ public enum AdRefStatus {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

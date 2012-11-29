@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VMStatus {
+public enum VMStatus implements Identifiable {
     Unassigned(-1),
     Down(0),
     Up(1),
@@ -35,6 +35,7 @@ public enum VMStatus {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

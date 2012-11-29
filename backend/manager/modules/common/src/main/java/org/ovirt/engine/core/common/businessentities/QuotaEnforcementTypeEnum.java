@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum QuotaEnforcementTypeEnum {
+public enum QuotaEnforcementTypeEnum implements Identifiable {
     DISABLED(0),
     SOFT_ENFORCEMENT(1),
     HARD_ENFORCEMENT(2);
@@ -17,6 +17,7 @@ public enum QuotaEnforcementTypeEnum {
         }
     }
 
+    @Override
     public int getValue() {
         return enforcementType;
     }

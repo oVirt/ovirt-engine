@@ -56,7 +56,7 @@
 		<include name="common/businessentities/network_cluster.java" />
 		<include name="common/businessentities/NetworkClusterId.java" />
 		<include name="common/businessentities/Network.java" />
-        <include name="common/businessentities/NetworkView.java" />
+                <include name="common/businessentities/NetworkView.java" />
 		<include name="common/businessentities/NetworkBootProtocol.java" />
 		<include name="common/businessentities/NetworkInterface.java" />
 		<include name="common/businessentities/NetworkStatistics.java" />
@@ -155,9 +155,9 @@
 		<include name="common/businessentities/FileTypeExtension.java" />
 		<include name="common/businessentities/BusinessEntityGuidComparator.java" />
 		<include name="common/businessentities/BusinessEntityComparator.java" />
-
+                <include name="common/businessentities/Identifiable.java" />
 		<include name="common/job/*.java" />
-		
+
 		<!-- Quota -->
 		<include name="common/businessentities/Quota.java"/>
 		<include name="common/businessentities/QuotaEnforcementTypeEnum.java"/>

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.EnumCompat;
-
 /**
  * Auto completer that presents enum names as completions, and returns the same as actual value. This is useful for
  * enums that are stored as varchars in DB, with value same as the name.
@@ -13,8 +11,8 @@ public class EnumNameAutoCompleter extends BaseAutoCompleter implements IConditi
      * @param enumerationType
      */
     public <T extends Enum<T>> EnumNameAutoCompleter(Class<T> enumerationType) {
-        for (String name : EnumCompat.GetNames(enumerationType)) {
-            mVerbs.put(name, name);
+        for (T enumMember : enumerationType.getEnumConstants()) {
+            mVerbs.put(enumMember.name(), enumMember.name());
         }
         buildCompletions();
     }

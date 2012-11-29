@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VmOsType {
+public enum VmOsType implements Identifiable {
     Unassigned(0, OsType.Other, false),
     WindowsXP(1, OsType.Windows, false),
     Windows2003(3, OsType.Windows, false),
@@ -40,6 +40,7 @@ public enum VmOsType {
         this.is64Bit = is64Bit;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

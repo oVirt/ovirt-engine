@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VDSNiceType {
+public enum VDSNiceType implements Identifiable {
     RHEL(0),
     RHEVH(2);
 
@@ -19,6 +19,7 @@ public enum VDSNiceType {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-public enum Jedi {
+import org.ovirt.engine.core.common.businessentities.Identifiable;
+
+public enum Jedi implements Identifiable {
     Anakin(0),
     Luke(1),
     Leia(2),
@@ -16,6 +18,7 @@ public enum Jedi {
         getMappings().put(value, this);
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

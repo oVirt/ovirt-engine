@@ -137,10 +137,12 @@ public abstract class Disk extends BaseDisk {
      * Enum of the disk's type, which defines which underlying storage details will be contained in the {@link Disk}
      * object instance.
      */
-    public enum DiskStorageType {
+    public enum DiskStorageType implements Identifiable {
+        // FIXME add ids and remove the ordinal impl of getValue
         IMAGE,
         LUN;
 
+        @Override
         public int getValue() {
             return this.ordinal();
         }

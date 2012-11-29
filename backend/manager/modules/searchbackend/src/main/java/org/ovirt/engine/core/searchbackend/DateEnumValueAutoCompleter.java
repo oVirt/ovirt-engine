@@ -1,18 +1,18 @@
 package org.ovirt.engine.core.searchbackend;
 
+import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
-import org.ovirt.engine.core.compat.EnumCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
     private java.util.HashMap<String, Integer> mEnumValues = new java.util.HashMap<String, Integer>();
 
-    public DateEnumValueAutoCompleter(Class enumerationType) {
+    public <E extends Enum<? extends E> & Identifiable> DateEnumValueAutoCompleter(Class<E> enumerationType) {
         super();
-        for (int val : EnumCompat.GetIntValues(enumerationType)) {
-            String ValName = EnumCompat.GetName(enumerationType, val).toUpperCase();
-            mEnumValues.put(ValName, val);
+        for (E val : enumerationType.getEnumConstants()) {
+            String ValName = val.name().toUpperCase();
+            mEnumValues.put(ValName, val.getValue());
             mVerbs.put(ValName, ValName);
         }
         AddDaysOfWeek();

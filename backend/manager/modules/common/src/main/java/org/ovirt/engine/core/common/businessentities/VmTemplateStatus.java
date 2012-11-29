@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VmTemplateStatus {
+public enum VmTemplateStatus implements Identifiable {
     OK(0),
     Locked(1),
     Illegal(2);
@@ -20,6 +20,7 @@ public enum VmTemplateStatus {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

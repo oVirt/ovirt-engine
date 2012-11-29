@@ -4,17 +4,17 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.compat.EnumCompat;
+import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public class EnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
     private final HashMap<String, Integer> mEnumValues = new HashMap<String, Integer>();
 
-    public EnumValueAutoCompleter(Class enumerationType) {
+    public <E extends Enum<E> & Identifiable> EnumValueAutoCompleter(Class<E> enumerationType) {
 
-        for (int val : EnumCompat.GetIntValues(enumerationType)) {
-            String ValName = EnumCompat.GetName(enumerationType, val).toUpperCase();
+        for (E val : enumerationType.getEnumConstants()) {
+            String ValName = val.name().toUpperCase();
             try {
-                mEnumValues.put(ValName, val);
+                mEnumValues.put(ValName, val.getValue());
                 mVerbs.put(ValName, ValName);
             } catch (RuntimeException e) {
                 log.error("EnumValueAutoCompleter. Failed to add " + ValName + " .Exception : " + e.getMessage(), e);

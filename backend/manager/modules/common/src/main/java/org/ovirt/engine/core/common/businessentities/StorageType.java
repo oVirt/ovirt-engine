@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum StorageType {
+public enum StorageType implements Identifiable {
     UNKNOWN(0, false),
     NFS(1, true),
     FCP(2, true),
@@ -29,6 +29,7 @@ public enum StorageType {
         this.isConcreteStorageType = isConcreteStorageType;
     }
 
+    @Override
     public int getValue() {
         return this.value;
     }

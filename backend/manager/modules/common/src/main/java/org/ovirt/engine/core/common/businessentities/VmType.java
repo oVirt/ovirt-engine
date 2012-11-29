@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VmType {
+public enum VmType implements Identifiable {
     Desktop(0),
     Server(1);
 
@@ -19,6 +19,7 @@ public enum VmType {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

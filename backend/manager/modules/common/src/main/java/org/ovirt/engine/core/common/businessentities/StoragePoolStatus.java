@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-public enum StoragePoolStatus {
+public enum StoragePoolStatus implements Identifiable {
     Uninitialized,
     Up,
     Maintanance,
@@ -8,6 +8,7 @@ public enum StoragePoolStatus {
     Problematic,
     Contend;
 
+    @Override
     public int getValue() {
         return this.ordinal();
     }

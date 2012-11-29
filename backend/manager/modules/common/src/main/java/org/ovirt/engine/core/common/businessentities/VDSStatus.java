@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum VDSStatus {
+public enum VDSStatus implements Identifiable {
     Unassigned(0),
     Down(1),
     Maintenance(2),
@@ -31,6 +31,7 @@ public enum VDSStatus {
         intValue = value;
     }
 
+    @Override
     public int getValue() {
         return intValue;
     }

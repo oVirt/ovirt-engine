@@ -96,7 +96,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.CultureInfo;
-import org.ovirt.engine.core.compat.EnumCompat;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -675,18 +674,18 @@ public final class DataProvider
     {
         // TODO: We can translate it here too
         ArrayList<String> ret = new ArrayList<String>();
-        for (String s : EnumCompat.GetNames(VDSType.class))
+        for (VDSType vdsType : VDSType.values())
         {
-            if (StringHelper.stringsEqual(s, VDSType.PowerClient.toString()))
+            if (VDSType.PowerClient == vdsType)
             {
                 if (showPowerclient)
                 {
-                    ret.add(s);
+                    ret.add(vdsType.name());
                 }
             }
             else
             {
-                ret.add(s);
+                ret.add(vdsType.name());
             }
         }
         return ret;
@@ -695,8 +694,7 @@ public final class DataProvider
     public static ArrayList<EventNotificationEntity> GetEventNotificationTypeList()
     {
         ArrayList<EventNotificationEntity> ret = new ArrayList<EventNotificationEntity>();
-        // TODO: We can translate it here too
-        for (EventNotificationEntity entity : EnumCompat.GetValues(EventNotificationEntity.class))
+        for (EventNotificationEntity entity : EventNotificationEntity.values())
         {
             if (entity != EventNotificationEntity.UNKNOWN)
             {
@@ -725,11 +723,7 @@ public final class DataProvider
 
     public static ArrayList<VmInterfaceType> GetNicTypeList(VmOsType osType, boolean hasDualmode)
     {
-        ArrayList<VmInterfaceType> list = new ArrayList<VmInterfaceType>();
-        for (VmInterfaceType item : EnumCompat.GetValues(VmInterfaceType.class))
-        {
-            list.add(item);
-        }
+        ArrayList<VmInterfaceType> list = new ArrayList<VmInterfaceType>(Arrays.asList(VmInterfaceType.values()));
 
         list.remove(VmInterfaceType.rtl8139_pv); // Dual mode NIC should be available only for existing NICs that have
                                                  // that type already
@@ -1030,7 +1024,7 @@ public final class DataProvider
 
     public static Iterable GetUsbPolicyList()
     {
-        return EnumCompat.GetValues(UsbPolicy.class);
+        return Arrays.asList(UsbPolicy.values());
     }
 
     public static ArrayList<VDS> GetUpHostList()
