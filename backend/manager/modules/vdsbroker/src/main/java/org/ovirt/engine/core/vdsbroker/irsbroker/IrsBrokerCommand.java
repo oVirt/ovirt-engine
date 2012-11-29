@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -96,23 +95,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         return false;
     }
 
-    public static void lockDbSave(Guid storagePoolId) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-        if (proxy != null) {
-            proxy.lockDbSave();
-        }
-    }
-
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
         return new IRSErrorException(errorMessage);
-    }
-
-    public static void unlockDbSave(Guid storagePoolId) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
-        if (proxy != null) {
-            proxy.unlockDbSave();
-        }
     }
 
     public static void Init() {
@@ -1018,17 +1003,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private final Map<Guid, String> _timers = new HashMap<Guid, String>();
         private AtomicBoolean duringReconstructMaster = new AtomicBoolean(false);
         private final Object _lockObject = new Object();
-        private final ReentrantLock _lockObjForDbSave = new ReentrantLock();
-
-        public void lockDbSave() {
-            _lockObjForDbSave.lock();
-        }
-
-        public void unlockDbSave() {
-            if (_lockObjForDbSave.isHeldByCurrentThread()) {
-                _lockObjForDbSave.unlock();
-            }
-        }
 
         public void UpdateVdsDomainsData(final Guid vdsId, final String vdsName,
                 final ArrayList<VDSDomainsData> data) {

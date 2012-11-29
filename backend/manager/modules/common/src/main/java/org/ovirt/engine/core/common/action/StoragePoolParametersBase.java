@@ -6,8 +6,7 @@ public class StoragePoolParametersBase extends VdcActionParametersBase {
     private static final long serialVersionUID = 8118928386101354539L;
 
     private Guid vdsId;
-    private Guid storagePoolId = new Guid();
-    private boolean suppressCheck;
+    private Guid storagePoolId = Guid.Empty;
     private boolean forceDelete;
 
     public StoragePoolParametersBase() {
@@ -31,14 +30,6 @@ public class StoragePoolParametersBase extends VdcActionParametersBase {
 
     public void setStoragePoolId(Guid value) {
         storagePoolId = value;
-    }
-
-    public boolean getSuppressCheck() {
-        return suppressCheck;
-    }
-
-    public void setSuppressCheck(boolean value) {
-        suppressCheck = value;
     }
 
     public boolean getForceDelete() {

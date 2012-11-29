@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -127,16 +126,12 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             _connectStorageSucceeded = true;
             _connectPoolSucceeded = true;
         } else {
-            boolean suppressCheck = getAllRunningVdssInPool().size() == 0;
             StoragePoolParametersBase tempStorageBaseParams =
                     new StoragePoolParametersBase(getVds().getstorage_pool_id());
             tempStorageBaseParams.setVdsId(getVds().getId());
-            tempStorageBaseParams.setSuppressCheck(suppressCheck);
-            tempStorageBaseParams.setTransactionScopeOption(TransactionScopeOption.Suppress);
             if (Backend.getInstance()
                     .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, tempStorageBaseParams)
-                    .getSucceeded()
-                    || suppressCheck) {
+                    .getSucceeded()) {
                 _connectStorageSucceeded = true;
                 try {
                     setStoragePool(null);
@@ -156,13 +151,6 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                         AuditLogDirector.log(new AuditLogableBase(getVdsId()),
                                 AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
                     }
-                }
-                // if couldn't connect check if this is the only vds
-                // return true if connect succeeded or it's the only vds
-                if (!returnValue && suppressCheck) {
-                    AuditLogDirector.log(new AuditLogableBase(getVdsId()),
-                            AuditLogType.VDS_STORAGE_CONNECTION_FAILED_BUT_LAST_VDS);
-                    returnValue = true;
                 }
             }
         }

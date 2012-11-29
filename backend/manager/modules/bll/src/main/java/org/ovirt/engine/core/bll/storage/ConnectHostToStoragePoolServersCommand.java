@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -11,19 +12,16 @@ import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
  * considering that connection failed only if data domains failed to connect. If
  * Iso/Export domains failed to connect - only log it.
  */
+@NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParametersBase> extends
         ConnectHostToStoragePooServerCommandBase<T> {
-
-    private static Log log = LogFactory.getLog(ConnectHostToStoragePoolServersCommand.class);
 
     public ConnectHostToStoragePoolServersCommand(T parameters) {
         super(parameters);
@@ -52,32 +50,30 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
     protected boolean canDoAction() {
         boolean returnValue = checkStoragePool()
                 && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                                                  VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
+                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && InitializeVds();
         if (returnValue) {
             InitConnectionList();
-            if (!getParameters().getSuppressCheck()) {
-                if (!ValidConnection(getStoragePool().getstorage_pool_type(), getConnections())) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
-                    returnValue = false;
-                } else {
-                    if (getIsoConnections() != null && getIsoConnections().size() != 0) {
-                        setNeedToConnectIso(ValidConnection(getIsoType(), getIsoConnections()));
-                        if (!getNeedToConnectIso()) {
-                            log.infoFormat(
-                                    "Failed to validated connections for host {0} to StoragePool {1} Iso domain/s connections",
-                                    getVds().getvds_name(),
-                                    getStoragePool().getname());
-                        }
+            if (!ValidConnection(getStoragePool().getstorage_pool_type(), getConnections())) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
+                returnValue = false;
+            } else {
+                if (getIsoConnections() != null && getIsoConnections().size() != 0) {
+                    setNeedToConnectIso(ValidConnection(getIsoType(), getIsoConnections()));
+                    if (!getNeedToConnectIso()) {
+                        log.infoFormat(
+                                "Failed to validated connections for host {0} to StoragePool {1} Iso domain/s connections",
+                                getVds().getvds_name(),
+                                getStoragePool().getname());
                     }
-                    if (getExportConnections() != null && getExportConnections().size() != 0) {
-                        setNeedToConnectExport(ValidConnection(getExportType(), getExportConnections()));
-                        if (!getNeedToConnectExport()) {
-                            log.infoFormat(
-                                    "Failed to validated connections for host {0} to StoragePool {1} Export domain/s connections",
-                                    getVds().getvds_name(),
-                                    getStoragePool().getname());
-                        }
+                }
+                if (getExportConnections() != null && getExportConnections().size() != 0) {
+                    setNeedToConnectExport(ValidConnection(getExportType(), getExportConnections()));
+                    if (!getNeedToConnectExport()) {
+                        log.infoFormat(
+                                "Failed to validated connections for host {0} to StoragePool {1} Export domain/s connections",
+                                getVds().getvds_name(),
+                                getStoragePool().getname());
                     }
                 }
             }

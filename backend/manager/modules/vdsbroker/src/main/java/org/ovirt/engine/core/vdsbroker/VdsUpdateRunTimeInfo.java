@@ -60,7 +60,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
-import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetAllVmStatsVDSCommand;
@@ -267,7 +266,6 @@ public class VdsUpdateRunTimeInfo {
                     // use this lock in order to allow only one host updating DB and
                     // calling UpEvent in a time
                     VdsManager.cancelRecoveryJob(_vds.getId());
-                    IrsBrokerCommand.lockDbSave(_vds.getstorage_pool_id());
                     if (log.isDebugEnabled()) {
                         log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getvds_name());
                     }
@@ -288,8 +286,6 @@ public class VdsUpdateRunTimeInfo {
             } catch (RuntimeException ex) {
                 logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
                 log.error(ExceptionUtils.getMessage(ex), ex);
-            } finally {
-                IrsBrokerCommand.unlockDbSave(_vds.getstorage_pool_id());
             }
         }
     }
