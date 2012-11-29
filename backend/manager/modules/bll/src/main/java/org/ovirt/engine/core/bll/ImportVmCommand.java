@@ -126,15 +126,17 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected boolean canDoAction() {
-        boolean retVal = true;
         Map<Guid, storage_domains> domainsMap = new HashMap<Guid, storage_domains>();
-        retVal = canDoAction_beforeCloneVm(domainsMap);
 
-        if (retVal && getParameters().isImportAsNewEntity()) {
+        if (!canDoAction_beforeCloneVm(domainsMap)) {
+            return false;
+        }
+
+        if (getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
         }
 
-        return retVal && canDoAction_afterCloneVm(domainsMap);
+        return canDoAction_afterCloneVm(domainsMap);
     }
 
     @Override
