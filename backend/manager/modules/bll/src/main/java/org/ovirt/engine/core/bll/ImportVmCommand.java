@@ -446,7 +446,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
-    private boolean checkImagesGUIDsLegal() {
+    protected boolean checkImagesGUIDsLegal() {
         for (DiskImage image : getVm().getImages()) {
             Guid imageGUID = image.getImageId();
             Guid storagePoolId = image.getstorage_pool_id() != null ? image.getstorage_pool_id().getValue()

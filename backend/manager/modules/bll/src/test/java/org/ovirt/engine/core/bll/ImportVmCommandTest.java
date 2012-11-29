@@ -3,20 +3,24 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -40,7 +44,6 @@ public class ImportVmCommandTest {
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Test
-    @Ignore
     public void insufficientDiskSpace() {
         final int lotsOfSpace = 1073741824;
         final int diskSpacePct = 0;
@@ -68,7 +71,10 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
         doReturn(true).when(cmd).canAddVm();
+        doReturn(true).when(cmd).checkTemplateInStorageDomain();
+        doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
+        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
         doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
         doReturn(new VmTemplate()).when(cmd).getVmTemplate();
         doReturn(new storage_pool()).when(cmd).getStoragePool();
@@ -85,7 +91,24 @@ public class ImportVmCommandTest {
     protected VM createVM() {
         final VM v = new VM();
         v.setId(Guid.NewGuid());
-        v.setDiskSize(2);
+
+        Guid imageGroupId = Guid.NewGuid();
+        DiskImage baseImage = new DiskImage();
+        baseImage.setId(imageGroupId);
+        baseImage.setImageId(Guid.NewGuid());
+        baseImage.setSizeInGigabytes(1);
+        baseImage.setactive(false);
+
+        DiskImage activeImage = new DiskImage();
+        activeImage.setId(imageGroupId);
+        activeImage.setImageId(Guid.NewGuid());
+        activeImage.setSizeInGigabytes(1);
+        activeImage.setactive(true);
+        activeImage.setParentId(baseImage.getImageId());
+
+        v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));
+        v.setImages(new ArrayList<DiskImage>(Arrays.asList(baseImage, activeImage)));
+
         return v;
     }
 
@@ -93,6 +116,14 @@ public class ImportVmCommandTest {
         storage_domains sd = new storage_domains();
         sd.setstorage_domain_type(StorageDomainType.ImportExport);
         sd.setstatus(StorageDomainStatus.Active);
+        return sd;
+    }
+
+    protected storage_domains createStorageDomain() {
+        storage_domains sd = new storage_domains();
+        sd.setstorage_domain_type(StorageDomainType.Data);
+        sd.setstatus(StorageDomainStatus.Active);
+        sd.setavailable_disk_size(2);
         return sd;
     }
 
