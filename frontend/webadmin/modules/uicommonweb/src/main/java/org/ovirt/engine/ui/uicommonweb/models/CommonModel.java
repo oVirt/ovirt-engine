@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Event;
@@ -584,6 +585,14 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Network || isDataStorage
                 || model.getType() == SystemTreeItemType.Templates
                 || model.getType() == SystemTreeItemType.System);
+
+        if (model.getType() == SystemTreeItemType.Cluster_Gluster) {
+            VDSGroup cluster = (VDSGroup) model.getEntity();
+            if (!cluster.supportsVirtService()) {
+                vmList.setIsAvailable(false);
+                templateList.setIsAvailable(false);
+            }
+        }
 
         userList.setIsAvailable(model.getType() == SystemTreeItemType.System);
         eventList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
