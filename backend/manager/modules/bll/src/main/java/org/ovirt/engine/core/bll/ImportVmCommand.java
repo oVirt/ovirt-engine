@@ -135,7 +135,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             initImportClonedVm();
         }
 
-        return retVal && canDoAction_afterCloneVm(retVal, canDoActionMessages, domainsMap);
+        return retVal && canDoAction_afterCloneVm(canDoActionMessages, domainsMap);
     }
 
     @Override
@@ -271,96 +271,89 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         canDoActionMessages);
     }
 
-    private boolean canDoAction_afterCloneVm(boolean retVal,
-            List<String> canDoActionMessages,
-            Map<Guid, storage_domains> domainsMap) {
+    private boolean canDoAction_afterCloneVm(List<String> canDoActionMessages, Map<Guid, storage_domains> domainsMap) {
         VM vm = getParameters().getVm();
+
         // check that the imported vm guid is not in engine
-        if (retVal) {
-            VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
-            if (duplicateVm != null) {
-                addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-                addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
-                retVal = false;
-            }
+        VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
+        if (duplicateVm != null) {
+            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
+            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
+            return false;
         }
 
         setVmTemplateId(getVm().getVmtGuid());
-        if (retVal) {
-            if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
-                retVal = false;
-            }
+        if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
+            return false;
         }
-        if (retVal && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid()) && getVmTemplate() != null
+
+        if (!VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
+                && getVmTemplate() != null
                 && getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
-            addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
-            retVal = false;
+            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
-        if (retVal && getParameters().getCopyCollapse() && vm.getDiskMap() != null) {
+
+        if (getParameters().getCopyCollapse() && vm.getDiskMap() != null) {
             for (Disk disk : vm.getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage key = (DiskImage) getVm().getDiskMap()
-                        .get(disk.getId());
-                if (key != null) {
-                    retVal =
-                            ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
-                                    .getStorageStaticData(),
-                                        (DiskImageBase) disk,
-                                    canDoActionMessages);
-                    if (!retVal) {
-                        break;
+                    DiskImage key = (DiskImage) getVm().getDiskMap().get(disk.getId());
+
+                    if (key != null) {
+                        if (!ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
+                                .getStorageStaticData(),
+                                (DiskImageBase) disk,
+                                canDoActionMessages)) {
+                            return false;
+                        }
                     }
-                }
                 }
             }
         }
+
         // if collapse true we check that we have the template on source
         // (backup) domain
-        if (retVal && getParameters().getCopyCollapse() && !templateExistsOnExportDomain()) {
+        if (getParameters().getCopyCollapse() && !templateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
             addCanDoActionMessage(String.format("$DomainName %1$s",
                     getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getstorage_name()));
-            retVal = false;
+            return false;
         }
 
-        if (retVal) {
-            boolean inCluster = false;
-            List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(
-                    getParameters().getStoragePoolId());
-            for (VDSGroup group : groups) {
-                if (group.getId().equals(getParameters().getVdsGroupId())) {
-                    inCluster = true;
-                    break;
-                }
-            }
-            if (!inCluster) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
-                retVal = false;
+        boolean inCluster = false;
+        List<VDSGroup> groups = getVdsGroupDAO().getAllForStoragePool(getParameters().getStoragePoolId());
+        for (VDSGroup group : groups) {
+            if (group.getId().equals(getParameters().getVdsGroupId())) {
+                inCluster = true;
+                break;
             }
         }
-        if (retVal) {
-            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
 
-            for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
-                retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
-                if (!retVal) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
-                    break;
-                }
+        if (!inCluster) {
+            return failCanDoAction(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
+        }
+
+        Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
+
+        for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+            if (!StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
             }
         }
 
         // Check that the USB policy is legal
-        if (retVal) {
-            VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
-            retVal = VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+        VmHandler.updateImportedVmUsbPolicy(vm.getStaticData());
+        if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(),
+                vm.getOs(),
+                getVdsGroup(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
 
-        if (retVal) {
-            retVal = validateMacAddress(getVm().getInterfaces());
+        if (!validateMacAddress(getVm().getInterfaces())) {
+            return false;
         }
 
-        return retVal;
+        return true;
     }
 
     private boolean templateExistsOnExportDomain() {
