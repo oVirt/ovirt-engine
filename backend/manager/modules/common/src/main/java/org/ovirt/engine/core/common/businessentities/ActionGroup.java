@@ -100,7 +100,10 @@ public enum ActionGroup {
     PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.Network, true, ApplicationMode.VirtOnly),
 
     // Login action group
-    LOGIN(1300, RoleType.USER, VdcObjectType.Bottom, false);
+    LOGIN(1300, RoleType.USER, VdcObjectType.Bottom, false),
+
+    // Inject external events action group
+    INJECT_EXTERNAL_EVENTS(1400, RoleType.ADMIN, VdcObjectType.Event, false);
 
     private int id;
     private RoleType roleType;

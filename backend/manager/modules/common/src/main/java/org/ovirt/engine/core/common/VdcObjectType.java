@@ -28,7 +28,8 @@ public enum VdcObjectType {
     GlusterVolume(18, "Gluster Volume"),
     Disk(19, "Disk"),
     Network(20, "Network"),
-    Snapshot(21, "Snapshot");
+    Snapshot(21, "Snapshot"),
+    Event(22, "Event");
 
     private int value;
     private String vdcObjectTranslationVal;
