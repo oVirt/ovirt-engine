@@ -299,12 +299,13 @@ public class Backend implements BackendInternal {
     }
 
     private VdcReturnValueBase notAllowToRunAction(VdcActionType actionType) {
-        EngineWorkingMode mode =
-                Config.<EngineWorkingMode> GetValue(ConfigValues.EngineMode);
-        switch (mode) {
-        case MAINTENANCE:
+        // Since reload of configuration values is not fully supported, we have to get this value from DB
+        // and can not use the cached configuration.
+        String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),Config.DefaultConfigurationVersion)).getoption_value();
+        if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
-        case PREPARE:
+        }
+        else if (EngineWorkingMode.PREPARE.name().equalsIgnoreCase(mode)) {
             return notAllowedInPrepForMaintMode(actionType);
         }
         return null;
@@ -387,10 +388,12 @@ public class Backend implements BackendInternal {
                 return getErrorQueryReturnValue(VdcBllMessages.USER_IS_NOT_LOGGED_IN);
             }
         }
-        if (EngineWorkingMode.MAINTENANCE == Config.<EngineWorkingMode> GetValue(ConfigValues.EngineMode)) {
-            Class<CommandBase<? extends VdcActionParametersBase>> clazz =
-                    CommandsFactory.getQueryClass(actionType.name());
-            if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
+        Class<CommandBase<? extends VdcActionParametersBase>> clazz =
+                CommandsFactory.getQueryClass(actionType.name());
+        if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
+            String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion
+                    (ConfigValues.EngineMode.name(),Config.DefaultConfigurationVersion)).getoption_value();
+            if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
         }
