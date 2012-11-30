@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
@@ -47,6 +48,7 @@ public class ReportsListModel extends SearchableListModel {
 
         setDefaultSearchString("Reports:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
+        setAvailableInModes(ApplicationMode.VirtOnly);
 
         getSearchNextPageCommand().setIsAvailable(false);
         getSearchPreviousPageCommand().setIsAvailable(false);

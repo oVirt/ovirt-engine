@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetQuotaByQuotaIdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -81,6 +82,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setDefaultSearchString("Quota:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         setSearchObjects(new String[] { SearchObjects.QUOTA_OBJ_NAME, SearchObjects.QUOTA_PLU_OBJ_NAME });
+        setAvailableInModes(ApplicationMode.VirtOnly);
 
         setCreateQuotaCommand(new UICommand("Create", this)); //$NON-NLS-1$
         setEditQuotaCommand(new UICommand("Edit", this)); //$NON-NLS-1$
