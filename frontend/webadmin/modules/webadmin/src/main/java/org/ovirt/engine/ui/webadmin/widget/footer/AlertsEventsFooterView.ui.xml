@@ -13,7 +13,8 @@
 		}
 		
 		.tablePanel {
-			height: 100%;
+			bottom: 0px;
+			top: 26px;
 			width: 100%;
 			overflow: auto;
 			position: absolute;

@@ -119,8 +119,6 @@
 		}
 		
 		.alertEventFooterPanel {
-			position: relative;
-			margin-bottom: 26px;
 		}
 	</ui:style>
 
