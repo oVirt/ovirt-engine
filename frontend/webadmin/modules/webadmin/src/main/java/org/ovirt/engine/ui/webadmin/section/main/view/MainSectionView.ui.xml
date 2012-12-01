@@ -89,13 +89,11 @@
 		@external gwt-SplitLayoutPanel-HDragger;
 		@external gwt-SplitLayoutPanel-VDragger;
 		.gwt-SplitLayoutPanel-HDragger {
-			background-color: #4a607c;
-			width: 2px !important;
+			background-color: #888888;
 		}
 
 		.gwt-SplitLayoutPanel-VDragger {
-			background-color: #4a607c;
-			height: 2px !important;
+			background-color: #888888;
 		}
 
 		@external gwt-StackLayoutPanel .gwt-StackLayoutPanelHeader;

@@ -338,7 +338,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
                                 .getParentElement()
                                 .getParentElement()
                                 .getChild(3);
-                e.getStyle().setBottom(offset + 2, Unit.PX);
+                e.getStyle().setBottom(offset + 4, Unit.PX);
             }
         });
 

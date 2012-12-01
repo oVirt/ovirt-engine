@@ -95,8 +95,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
-        verticalSplitLayoutPanel = new SplitLayoutPanel(2);
-        horizontalSplitLayoutPanel = new SplitLayoutPanel(2);
+        verticalSplitLayoutPanel = new SplitLayoutPanel(4);
+        horizontalSplitLayoutPanel = new SplitLayoutPanel(4);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initHeaders(constants);
