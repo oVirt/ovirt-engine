@@ -698,7 +698,7 @@ public class CommonModel extends ListModel
 
     private void ClearSearchString()
     {
-        setSearchString(getHasSearchStringPrefix() ? null : getSelectedItem().getDefaultSearchString(), false);
+        setSearchString(getHasSearchStringPrefix() ? "" : getSelectedItem().getDefaultSearchString(), false); //$NON-NLS-1$
         getSearchCommand().Execute();
     }
 
