@@ -126,12 +126,17 @@ public final class ImagesHandler {
     }
 
     /**
-     * Retrieve disk alias name, if the alias name is null returns the default alias name.
+     * Suggests an alias for a disk.
+     * If the disk does not already have an alias, one will be generated for it.
+     * The generated alias will be formed as prefix_DiskXXX, where XXX is an ordinal.
      *
      * @param disk
-     *            - Disk which disk alias is being initialized in.
+     *            - The disk that (possibly) requires a new alias
      * @param diskPrefix
-     *            - The prefix for disk alias if needs to be initialized.
+     *            - The prefix for the newly generated alias
+     * @param count
+     *            - The ordinal of disk to create an alias for (first, second, etc.).
+     * @return The suggested alias
      */
     public static String getSuggestedDiskAlias(BaseDisk disk, String diskPrefix, int count) {
         String diskAlias;
