@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.dialog.tab;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -26,6 +28,8 @@ public class DialogTabPanel extends Composite {
 
     private DialogTab activeTab;
 
+    private static final int SPACE_KEY_CODE = 32;
+
     @UiConstructor
     public DialogTabPanel(String height) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -40,6 +44,15 @@ public class DialogTabPanel extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 switchTab(tab);
+            }
+        });
+
+        tab.addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                if (SPACE_KEY_CODE == event.getNativeKeyCode()) {
+                    switchTab(tab);
+                }
             }
         });
 

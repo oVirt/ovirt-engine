@@ -9,6 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasKeyUpHandlers;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,7 +22,7 @@ import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId, FocusableComponentsContainer {
+public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId, HasKeyUpHandlers, FocusableComponentsContainer {
 
     interface WidgetUiBinder extends UiBinder<Widget, DialogTab> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -61,6 +63,11 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     @Override
     public HandlerRegistration addClickHandler(ClickHandler handler) {
         return tabContainer.addDomHandler(handler, ClickEvent.getType());
+    }
+
+    @Override
+    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+        return tabContainer.addKeyUpHandler(handler);
     }
 
     @Override
