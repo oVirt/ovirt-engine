@@ -66,11 +66,15 @@ public abstract class AbstractUiCommandButton extends Composite implements HasUi
                 title = title.substring(0, title.length() -1);
             }
         } else {
-            title = command.getTitle();
+            title = !getButtonWidget().getText().equals("") ? //$NON-NLS-1$
+                    getButtonWidget().getText() : command.getTitle();
         }
         getButtonWidget().setTitle(title);
 
-        if (command.getTitle() != null) {
+        if (command.getTitle() == null) {
+            getButtonWidget().setText(""); //$NON-NLS-1$
+        }
+        else if (getButtonWidget().getText().equals("")) { //$NON-NLS-1$
             getButtonWidget().setText(command.getTitle());
         }
     }

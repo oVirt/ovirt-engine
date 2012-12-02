@@ -142,6 +142,7 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
                             compulsorySection.setVisible(false);
                             optionalSection.setVisible(false);
                             // Rename dialog button.
+                            guideModel.getCommands().get(0).setTitle(null);
                             guideModel.getCommands().get(0).setTitle(ConstantsManager.getInstance().getConstants().ok());
                         } else if (guideModel.getCompulsoryActions().isEmpty()) {
                             infoLabel.setText(configurationCompleted);
