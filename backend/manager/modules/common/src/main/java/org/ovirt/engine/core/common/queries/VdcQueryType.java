@@ -167,6 +167,7 @@ public enum VdcQueryType implements Serializable {
     GetTemplateMessages,
     GetAllAuditLogsByVMName(VdcQueryAuthType.User),
     GetAllAuditLogsByVMTemplateName(VdcQueryAuthType.User),
+    GetAuditLogById,
 
     // Search queries
     Search,
