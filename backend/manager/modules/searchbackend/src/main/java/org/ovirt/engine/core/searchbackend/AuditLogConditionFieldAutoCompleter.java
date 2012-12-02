@@ -20,6 +20,9 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mVerbs.put("EVENT_DATACENTER", "EVENT_DATACENTER");
         mVerbs.put("EVENT_VOLUME", "EVENT_VOLUME");
         mVerbs.put("CORRELATION_ID", "CORRELATION_ID");
+        mVerbs.put("ORIGIN", "ORIGIN");
+        mVerbs.put("CUSTOM_EVENT_ID", "CUSTOM_EVENT_ID");
+        mVerbs.put("DELETED", "DELETED");
         buildCompletions();
         // These search options remain hidden from the autocompletion
         // but still available for the user interface
@@ -52,6 +55,9 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         getTypeDictionary().put("EVENT_VOLUME", String.class);
         getTypeDictionary().put("_EVENT_VOLUME_ID", String.class);
         getTypeDictionary().put("CORRELATION_ID", String.class);
+        getTypeDictionary().put("ORIGIN", String.class);
+        getTypeDictionary().put("CUSTOM_EVENT_ID", Integer.class);
+        getTypeDictionary().put("DELETED", Boolean.class);
         // building the ColumnName Dict
         mColumnNameDict.put("TYPE", "log_type");
         mColumnNameDict.put("SEVERITY", "severity");
@@ -73,10 +79,14 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
         mColumnNameDict.put("EVENT_VOLUME", "gluster_volume_name");
         mColumnNameDict.put("_EVENT_VOLUME_ID", "gluster_volume_id::varchar");
         mColumnNameDict.put("CORRELATION_ID", "correlation_id::varchar");
+        mColumnNameDict.put("ORIGIN", "origin::varchar");
+        mColumnNameDict.put("CUSTOM_EVENT_ID", "custom_event_id::int");
+        mColumnNameDict.put("DELETED", "deleted::boolean");
         // Building the validation dict
         buildBasicValidationTable();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(final String fieldName) {
         if (StringHelper.EqOp(fieldName, "SEVERITY")) {
@@ -94,7 +104,8 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
                 || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")
                 || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")
                 || StringHelper.EqOp(fieldName, "EVENT_VOLUME") || StringHelper.EqOp(fieldName, "_EVENT_VOLUME_ID") ||
-                StringHelper.EqOp(fieldName, "CORRELATION_ID")) {
+                StringHelper.EqOp(fieldName, "CORRELATION_ID") || StringHelper.EqOp(fieldName, "ORIGIN") ||
+                StringHelper.EqOp(fieldName, "CUSTOM_EVENT_ID") || StringHelper.EqOp(fieldName, "DELETED")) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;

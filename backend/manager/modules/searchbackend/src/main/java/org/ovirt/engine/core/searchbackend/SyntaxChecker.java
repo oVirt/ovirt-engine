@@ -18,8 +18,6 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
-
-
 public class SyntaxChecker implements ISyntaxChecker {
     private SearchObjectAutoCompleter mSearchObjectAC;
     private BaseAutoCompleter mColonAC;
@@ -57,9 +55,9 @@ public class SyntaxChecker implements ISyntaxChecker {
         mStateMap.put(SyntaxObjectType.BEGIN, new SyntaxObjectType[] { SyntaxObjectType.SEARCH_OBJECT });
         mStateMap.put(SyntaxObjectType.SEARCH_OBJECT, new SyntaxObjectType[] { SyntaxObjectType.COLON });
         SyntaxObjectType[] afterColon =
-                { SyntaxObjectType.CROSS_REF_OBJ, SyntaxObjectType.CONDITION_FIELD,
-                        SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE, SyntaxObjectType.CONDITION_VALUE,
-                        SyntaxObjectType.END };
+        { SyntaxObjectType.CROSS_REF_OBJ, SyntaxObjectType.CONDITION_FIELD,
+                SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE, SyntaxObjectType.CONDITION_VALUE,
+                SyntaxObjectType.END };
         mStateMap.put(SyntaxObjectType.COLON, afterColon);
 
         SyntaxObjectType[] afterCrossRefObj = { SyntaxObjectType.DOT, SyntaxObjectType.CONDITION_RELATION };
@@ -164,21 +162,24 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     /**
      * gets the sql injection checker class for current db vendor.
+     *
      * @return SqlInjectionChecker
      * @throws Exception
      */
     private SqlInjectionChecker getSqlInjectionChecker() throws Exception {
         // This can not be done with reflection like:
-        //    return (SqlInjectionChecker) Class.forName(props.getProperty(SQL_INJECTION)).newInstance();
+        // return (SqlInjectionChecker) Class.forName(props.getProperty(SQL_INJECTION)).newInstance();
         // GWT lacks support of reflection.
-        if  (((String)Config.GetValue(ConfigValues.DBEngine)).equalsIgnoreCase("postgres")){
-                return new PostgresSqlInjectionChecker();
+        if (((String) Config.GetValue(ConfigValues.DBEngine)).equalsIgnoreCase("postgres")) {
+            return new PostgresSqlInjectionChecker();
         }
         else {
-            throw new IllegalStateException("Failed to get correct sql injection checker instance name :" + SqlInjectionChecker.class);
+            throw new IllegalStateException("Failed to get correct sql injection checker instance name :"
+                    + SqlInjectionChecker.class);
         }
 
     }
+
     public SyntaxContainer analyzeSyntaxState(final String searchText, boolean final2) {
         final SyntaxContainer syntaxContainer = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter curConditionFieldAC = null;
@@ -259,7 +260,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                 } else if ((!"".equals(tryNextObj)) && (curConditionRelationAC.validate(tryNextObj))) {
                     break; // i.e. the relation object has another charecter
                 } else if (curConditionRelationAC.validate(nextObject)) {
-                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION,
+                            nextObject,
+                            curStartPos,
+                            idx + 1);
                     curStartPos = idx + 1;
 
                 } else if ((!curConditionRelationAC.validateCompletion(nextObject))
@@ -390,7 +394,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                     curRefObj = syntaxContainer.getSearchObjectStr();
                     curConditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(curRefObj);
                     if (curConditionFieldAC.validate(nextObject)) {
-                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_FIELD,
+                                nextObject,
+                                curStartPos,
+                                idx + 1);
                         curStartPos = idx + 1;
 
                     } else if (mSortbyAC.validate(nextObject)) {
@@ -413,7 +420,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                                 nextObject = sb.toString();
                             }
                         }
-                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ, nextObject, curStartPos, idx + 1);
+                        syntaxContainer.addSyntaxObject(SyntaxObjectType.CROSS_REF_OBJ,
+                                nextObject,
+                                curStartPos,
+                                idx + 1);
                         curStartPos = idx + 1;
                     } else if (mAndAC.validate(nextObject)) {
                         syntaxContainer.addSyntaxObject(SyntaxObjectType.AND, nextObject, curStartPos, idx + 1);
@@ -428,12 +438,15 @@ public class SyntaxChecker implements ISyntaxChecker {
                             && (!mSearchObjectAC.validateCompletion(nextObject))
                             && (!mAndAC.validateCompletion(nextObject)) && (!mOrAC.validateCompletion(nextObject))) {
                         RefObject<Integer> tempRefObject3 = new RefObject<Integer>(curStartPos);
-                        ValueParseResult ans = handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
+                        ValueParseResult ans =
+                                handleValuePhrase(final2, searchText, idx, tempRefObject3, syntaxContainer);
                         curStartPos = tempRefObject3.argvalue;
                         if (ans != ValueParseResult.Err) {
                             if (ans == ValueParseResult.FreeText) {
                                 if (freeTextObjSearched.contains(curRefObj)) {
-                                    syntaxContainer.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ, curStartPos, idx + 1);
+                                    syntaxContainer.setErr(SyntaxError.FREE_TEXT_ALLOWED_ONCE_PER_OBJ,
+                                            curStartPos,
+                                            idx + 1);
                                     return syntaxContainer;
                                 }
                                 freeTextObjSearched.add(curRefObj);
@@ -441,7 +454,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                                 keepValid = true;
                             }
                         } else {
-                            syntaxContainer.setErr(SyntaxError.INVALID_POST_CONDITION_VALUE_PHRASE, curStartPos, idx + 1);
+                            syntaxContainer.setErr(SyntaxError.INVALID_POST_CONDITION_VALUE_PHRASE,
+                                    curStartPos,
+                                    idx + 1);
                             return syntaxContainer;
                         }
                     }
@@ -471,7 +486,10 @@ public class SyntaxChecker implements ISyntaxChecker {
                         return syntaxContainer;
                     }
                 } else {
-                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION, nextObject, curStartPos, idx + 1);
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.CONDITION_RELATION,
+                            nextObject,
+                            curStartPos,
+                            idx + 1);
                 }
                 curStartPos = idx + 1;
                 syntaxContainer.setvalid(false);
@@ -512,7 +530,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 break;
             case PAGE:
-                Integer pageNumber  = IntegerCompat.tryParse(nextObject);
+                Integer pageNumber = IntegerCompat.tryParse(nextObject);
                 if (pageNumber == null) {
                     syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                     return syntaxContainer;
@@ -527,7 +545,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                         nextObject = strRealObj.toUpperCase();
                     }
                     buff.append(nextObject);
-                    syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, buff.toString(), curStartPos, idx + buff.length());
+                    syntaxContainer.addSyntaxObject(SyntaxObjectType.PAGE_VALUE, buff.toString(), curStartPos, idx
+                            + buff.length());
                     // update index position
                     idx = pos + 1;
                     syntaxContainer.setvalid(true);
@@ -795,7 +814,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     break;
                 case CONDITION_VALUE:
                     whereBuilder.addLast(generateConditionStatment(obj, syntax.listIterator(objIter.previousIndex()),
-                            searchObjStr, syntax.getCaseSensitive(),isSafe));
+                            searchObjStr, syntax.getCaseSensitive(), isSafe));
                     break;
                 case SORTBY:
                     break;
@@ -871,7 +890,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             String inQuery =
                     (primeryKey.equals("audit_log_id")
                             ?
-                            StringFormat.format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and %2$s IN (%4$s)",
+                            StringFormat.format("SELECT * FROM %1$s WHERE ( %2$s > %3$s and %2$s IN (%4$s) and not deleted",
                                     tableNameWithOutTags,
                                     primeryKey,
                                     syntax.getSearchFrom(),
@@ -883,7 +902,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     StringFormat.format(Config.<String> GetValue(ConfigValues.DBSearchTemplate), sortByPhrase, inQuery,
                             pagePhrase);
             // Check for sql injection if query is not safe
-            if (! isSafe) {
+            if (!isSafe) {
                 if (sqlInjectionChecker.hasSqlInjection(retval)) {
                     throw new SqlInjectionException();
                 }
@@ -1028,9 +1047,9 @@ public class SyntaxChecker implements ISyntaxChecker {
             customizedRelation = previous.getBody();
         }
 
-        if(conditionValueAC == null && ("".equals(fieldName) ||
+        if (conditionValueAC == null && ("".equals(fieldName) ||
                 String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
-            /* enable case-insensitive search by changing operation to I/LIKE*/
+            /* enable case-insensitive search by changing operation to I/LIKE */
             if ("=".equals(customizedRelation)) {
                 customizedRelation = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
             } else if ("!=".equals(customizedRelation)) {
@@ -1056,8 +1075,8 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (conditionValueAC != null) {
             customizedValue = StringFormat.format("'%1$s'",
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
-        } else if ("".equals(fieldName) /* search on all relevant fields */ ||
-                  (String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
+        } else if ("".equals(fieldName) /* search on all relevant fields */||
+                (String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
             customizedValue = customizedValue.replace('*', '%');
         }
         return customizedValue;
@@ -1077,10 +1096,17 @@ public class SyntaxChecker implements ISyntaxChecker {
         switch (conditionType) {
         case FreeText:
         case FreeTextSpecificObj:
-            return conditionFieldAC.buildFreeTextConditionSql(tableName, customizedRelation, customizedValue, caseSensitive);
+            return conditionFieldAC.buildFreeTextConditionSql(tableName,
+                    customizedRelation,
+                    customizedValue,
+                    caseSensitive);
         case ConditionWithDefaultObj:
         case ConditionwithSpesificObj:
-            return conditionFieldAC.buildConditionSql(fieldName, customizedValue, customizedRelation, tableName, caseSensitive);
+            return conditionFieldAC.buildConditionSql(fieldName,
+                    customizedValue,
+                    customizedRelation,
+                    tableName,
+                    caseSensitive);
         default:
             return "";
         }
