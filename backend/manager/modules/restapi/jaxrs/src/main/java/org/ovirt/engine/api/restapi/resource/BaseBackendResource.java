@@ -262,6 +262,14 @@ public class BaseBackendResource {
         return new Guid(nGuid.getUuid());
     }
 
+    protected Long asLong(String id) {
+        try {
+            return new Long(id);
+        }catch (IllegalArgumentException e) {
+            throw new MalformedIdException(e);
+        }
+    }
+
     protected <T> T instantiate(Class<T> clz) {
         T ret = null;
         try {

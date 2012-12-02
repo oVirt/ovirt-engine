@@ -8,8 +8,13 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.Events;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
+import org.ovirt.engine.core.common.action.AddExternalEventParameters;
+import org.ovirt.engine.core.common.action.RemoveExternalEventParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendEventsResource extends
 AbstractBackendCollectionResource<Event, AuditLog> implements
@@ -55,7 +60,15 @@ EventsResource {
     }
 
     @Override
+    public Response add(Event event) {
+        validateParameters(event, "origin", "severity", "customId", "description");
+        return performCreation(VdcActionType.AddExternalEvent,
+                               new AddExternalEventParameters(map(event)),
+                               new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
+    }
+
+    @Override
     protected Response performRemove(String id) {
-       throw new UnsupportedOperationException();
+        return performAction(VdcActionType.RemoveExternalEvent, new RemoveExternalEventParameters(asLong(id)));
     }
 }

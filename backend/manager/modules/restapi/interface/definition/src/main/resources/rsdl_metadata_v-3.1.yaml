@@ -1246,6 +1246,25 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
+- name: /api/events/{event:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/events|rel=add
+  request:
+    body:
+      parameterType: Event
+      signatures:
+      - mandatoryArguments: {event.description: 'xs:string', event.severity: 'xs:string', event.origin: 'xs:string', event.customId: 'xs:int'}
+        optionalArguments:{event.flood_rate: 'xs:int', event.host.id: 'xs:string',event.user.id: 'xs:string',event.vm.id: 'xs:string',event.storage_domain.id: 'xs:string',event.template.id: 'xs:string',event.cluster.id: 'xs:string',event.data_center.id: 'xs:string',}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}|rel=get
   request:
     body:

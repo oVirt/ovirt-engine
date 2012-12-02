@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -10,10 +13,10 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
 
 public class EventMapper {
 
@@ -71,9 +74,65 @@ public class EventMapper {
         if (StringUtils.isNotEmpty(entity.getCorrelationId())) {
             model.setCorrelationId(entity.getCorrelationId());
         }
+        if (StringUtils.isNotEmpty(entity.getOrigin())) {
+            model.setOrigin(entity.getOrigin());
+        }
+        model.setCustomId(entity.getCustomEventId());
+        model.setFloodRate(entity.getEventFloodInSec());
+        if (StringUtils.isNotEmpty(entity.getCustomData())) {
+            model.setCustomData(entity.getCustomData());
+        }
         return model;
     }
 
+    @Mapping(from = Event.class, to = AuditLog.class)
+    public static AuditLog map(Event event, AuditLog entity) {
+        AuditLog auditLog = (entity != null) ? entity : new AuditLog();
+        auditLog.setseverity(map(event.getSeverity(), null));
+        auditLog.setlog_time(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
+                : new Date((Calendar.getInstance().getTimeInMillis())));
+        auditLog.setmessage(event.getDescription());
+        NGuid guid = (event.isSetUser()) ? new NGuid(event.getUser().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setuser_id(guid);
+        }
+        guid = (event.isSetVm()) ? new NGuid(event.getVm().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setvm_id(guid);
+        }
+        guid = (event.isSetStorageDomain()) ? new NGuid(event.getStorageDomain().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setstorage_domain_id(guid);
+        }
+        guid = (event.isSetHost()) ? new NGuid(event.getHost().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setvds_id(guid);
+        }
+        guid = (event.isSetTemplate()) ? new NGuid(event.getTemplate().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setvm_template_id(guid);
+        }
+        guid = (event.isSetCluster()) ? new NGuid(event.getCluster().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setvds_group_id(guid);
+        }
+        guid = (event.isSetDataCenter()) ? new NGuid(event.getDataCenter().getId()) : NGuid.Empty;
+        if (!guid.equals(NGuid.Empty)) {
+            auditLog.setstorage_pool_id(guid);
+        }
+        if (event.isSetCorrelationId()) {
+            auditLog.setCorrelationId(event.getCorrelationId());
+        }
+        if (event.isSetOrigin()) {
+            auditLog.setOrigin(event.getOrigin());
+        }
+        auditLog.setCustomEventId(event.getCustomId());
+        auditLog.setEventFloodInSec(event.getFloodRate());
+        if (event.isSetCustomData()) {
+            auditLog.setCustomData(event.getCustomData());
+        }
+        return auditLog;
+    }
     @Mapping(from = AuditLogSeverity.class, to = LogSeverity.class)
     public static LogSeverity map(AuditLogSeverity entityStatus,
             LogSeverity template) {
@@ -87,6 +146,25 @@ public class EventMapper {
         case ALERT:
             return LogSeverity.ALERT;
         default:
+            return null;
+        }
+    }
+
+    @Mapping(from = String.class, to = AuditLogSeverity.class)
+    public static AuditLogSeverity map(String template, AuditLogSeverity entityStatus) {
+        if (AuditLogSeverity.NORMAL.name().equalsIgnoreCase(template)) {
+            return AuditLogSeverity.NORMAL;
+        }
+        else if (AuditLogSeverity.WARNING.name().equalsIgnoreCase(template)) {
+            return AuditLogSeverity.WARNING;
+        }
+        else if (AuditLogSeverity.ERROR.name().equalsIgnoreCase(template)) {
+            return AuditLogSeverity.ERROR;
+        }
+        else if (AuditLogSeverity.ALERT.name().equalsIgnoreCase(template)) {
+            return AuditLogSeverity.ALERT;
+        }
+        else {
             return null;
         }
     }
