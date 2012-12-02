@@ -318,6 +318,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             iDynamic.setNetworkName(iface.getNetworkName());
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iDynamic.setType(iface.getType());
+            iDynamic.setLinked(iface.isLinked());
             templateInterfaces.add(iDynamic);
             DbFacade.getInstance().getVmNetworkInterfaceDao().save(iDynamic);
         }
