@@ -635,39 +635,22 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 disk.setactive(false);
                 saveImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
-                if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
-                    getSnapshotDao().save(
-                            new Snapshot(snapshotId,
-                                    SnapshotStatus.OK,
-                                    getVm().getId(),
-                                    null,
-                                    SnapshotType.REGULAR,
-                                    disk.getdescription(),
-                                    disk.getlast_modified_date(),
-                                    disk.getappList()));
-                }
-
+                saveSnapshotIfNotExists(snapshotId, disk);
                 saveDiskImageDynamic(disk);
             }
 
+            int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
                 DiskImage disk = diskList.get(diskList.size() - 1);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 disk.setactive(true);
-                getImageDao().update(disk.getImage());
+                ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
+                updateImage(disk);
                 saveBaseDisk(disk);
             }
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
-            getSnapshotDao().update(
-                    new Snapshot(snapshotId,
-                            SnapshotStatus.OK,
-                            getVm().getId(),
-                            null,
-                            SnapshotType.ACTIVE,
-                            "Active VM snapshot",
-                            new Date(),
-                            null));
+            updateActiveSnapshot(snapshotId);
         }
     }
 
@@ -679,6 +662,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     /** Save the entire image, including it's storage mapping */
     protected void saveImage(DiskImage disk) {
         BaseImagesCommand.saveImage(disk);
+    }
+
+    /** Updates an image of a disk */
+    protected void updateImage(DiskImage disk) {
+        getImageDao().update(disk.getImage());
     }
 
     /**
@@ -715,6 +703,41 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
             }
         }
+    }
+
+    /**
+     * Save a snapshot if it does not exist in the database.
+     * @param snapshotId The snapshot to save.
+     * @param disk The disk containing the snapshot's information.
+     */
+    protected void saveSnapshotIfNotExists(Guid snapshotId, DiskImage disk) {
+        if (!getSnapshotDao().exists(getVm().getId(), snapshotId)) {
+            getSnapshotDao().save(
+                    new Snapshot(snapshotId,
+                            SnapshotStatus.OK,
+                            getVm().getId(),
+                            null,
+                            SnapshotType.REGULAR,
+                            disk.getdescription(),
+                            disk.getlast_modified_date(),
+                            disk.getappList()));
+        }
+    }
+
+    /**
+     * Update a snapshot and make it the active snapshot.
+     * @param snapshotId The snapshot to update.
+     */
+    protected void updateActiveSnapshot(Guid snapshotId) {
+        getSnapshotDao().update(
+                new Snapshot(snapshotId,
+                        SnapshotStatus.OK,
+                        getVm().getId(),
+                        null,
+                        SnapshotType.ACTIVE,
+                        "Active VM snapshot",
+                        new Date(),
+                        null));
     }
 
     // the last image in each list is the leaf

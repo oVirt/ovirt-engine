@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -99,12 +100,14 @@ public class ImportVmCommandTest {
         baseImage.setId(imageGroupId);
         baseImage.setImageId(Guid.NewGuid());
         baseImage.setSizeInGigabytes(1);
+        baseImage.setvm_snapshot_id(Guid.NewGuid());
         baseImage.setactive(false);
 
         DiskImage activeImage = new DiskImage();
         activeImage.setId(imageGroupId);
         activeImage.setImageId(Guid.NewGuid());
         activeImage.setSizeInGigabytes(1);
+        activeImage.setvm_snapshot_id(Guid.NewGuid());
         activeImage.setactive(true);
         activeImage.setParentId(baseImage.getImageId());
 
@@ -202,5 +205,26 @@ public class ImportVmCommandTest {
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
+    }
+
+    @Test
+    public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
+        ImportVmParameters params = createParameters();
+        params.setCopyCollapse(false);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+
+        for (DiskImage image : params.getVm().getImages()) {
+            doNothing().when(cmd).saveImage(image);
+            doNothing().when(cmd).saveSnapshotIfNotExists(any(Guid.class), eq(image));
+            doNothing().when(cmd).saveDiskImageDynamic(image);
+        }
+        DiskImage activeDisk = params.getVm().getImages().get(1);
+
+        doNothing().when(cmd).updateImage(activeDisk);
+        doNothing().when(cmd).saveBaseDisk(activeDisk);
+        doNothing().when(cmd).updateActiveSnapshot(any(Guid.class));
+
+        cmd.addVmImagesAndSnapshots();
+        assertEquals("Disk alias not generated", "testVm_Disk1", activeDisk.getDiskAlias());
     }
 }
