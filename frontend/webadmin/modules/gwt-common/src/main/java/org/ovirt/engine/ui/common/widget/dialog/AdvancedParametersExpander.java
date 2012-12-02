@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.dialog;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -17,7 +18,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ToggleButton;
 
-public class AdvancedParametersExpander extends Composite {
+public class AdvancedParametersExpander extends Composite implements FocusableComponentsContainer {
 
     @UiField
     ToggleButton expander;
@@ -68,5 +69,11 @@ public class AdvancedParametersExpander extends Composite {
                 expanderContent.getStyle().setDisplay(expander.isDown() ? Style.Display.BLOCK : Style.Display.NONE);
             }
         });
+    }
+
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        expander.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
     }
 }

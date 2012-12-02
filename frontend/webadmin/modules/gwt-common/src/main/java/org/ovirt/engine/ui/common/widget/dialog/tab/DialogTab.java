@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.dialog.tab;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidget;
 import org.ovirt.engine.ui.common.widget.HasLabel;
 
@@ -13,13 +14,13 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId {
+public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId, FocusableComponentsContainer {
 
     interface WidgetUiBinder extends UiBinder<Widget, DialogTab> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -32,7 +33,7 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
     }
 
     @UiField
-    SimplePanel tabContainer;
+    FocusPanel tabContainer;
 
     @UiField
     InlineLabel tabLabel;
@@ -121,4 +122,9 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
         }
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        tabContainer.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 }

@@ -978,4 +978,86 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         TableStyle cellTableStyle();
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        // ==General Tab==
+        nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
+        dataCenterEditor.setTabIndex(nextTabIndex++);
+        clusterEditor.setTabIndex(nextTabIndex++);
+        quotaEditor.setTabIndex(nextTabIndex++);
+        nameEditor.setTabIndex(nextTabIndex++);
+        descriptionEditor.setTabIndex(nextTabIndex++);
+
+        numOfVmsEditor.setTabIndex(nextTabIndex++);
+        prestartedVmsEditor.setTabIndex(nextTabIndex++);
+        editPrestartedVmsEditor.setTabIndex(nextTabIndex++);
+        incraseNumOfVmsEditor.setTabIndex(nextTabIndex++);
+
+        templateEditor.setTabIndex(nextTabIndex++);
+        memSizeEditor.setTabIndex(nextTabIndex++);
+        totalvCPUsEditor.setTabIndex(nextTabIndex++);
+
+        nextTabIndex = generalAdvancedParameterExpander.setTabIndexes(nextTabIndex);
+        corePerSocketEditor.setTabIndex(nextTabIndex++);
+        numOfSocketsEditor.setTabIndex(nextTabIndex++);
+
+        oSTypeEditor.setTabIndex(nextTabIndex++);
+        isStatelessEditor.setTabIndex(nextTabIndex++);
+
+        // == Pools ==
+        nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
+        poolTypeEditor.setTabIndex(nextTabIndex++);
+
+        // ==Initial run Tab==
+        nextTabIndex = initialRunTab.setTabIndexes(nextTabIndex);
+        timeZoneEditor.setTabIndex(nextTabIndex++);
+        domainEditor.setTabIndex(nextTabIndex++);
+
+        // ==Console Tab==
+        nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
+        displayProtocolEditor.setTabIndex(nextTabIndex++);
+        usbSupportEditor.setTabIndex(nextTabIndex++);
+        numOfMonitorsEditor.setTabIndex(nextTabIndex++);
+        isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = expander.setTabIndexes(nextTabIndex);
+        allowConsoleReconnectEditor.setTabIndex(nextTabIndex++);
+
+        // ==Host Tab==
+        nextTabIndex = hostTab.setTabIndexes(nextTabIndex);
+        isAutoAssignEditor.setTabIndex(nextTabIndex++);
+        specificHost.setTabIndex(nextTabIndex++);
+        defaultHostEditor.setTabIndex(nextTabIndex++);
+        runVMOnSpecificHostEditor.setTabIndex(nextTabIndex++);
+        dontMigrateVMEditor.setTabIndex(nextTabIndex++);
+        cpuPinning.setTabIndex(nextTabIndex++);
+
+        // ==High Availability Tab==
+        nextTabIndex = highAvailabilityTab.setTabIndexes(nextTabIndex);
+        isHighlyAvailableEditor.setTabIndex(nextTabIndex++);
+        priorityEditor.setTabIndex(nextTabIndex++);
+
+        // ==Resource Allocation Tab==
+        nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
+        minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
+        provisioningEditor.setTabIndex(nextTabIndex++);
+        provisioningThinEditor.setTabIndex(nextTabIndex++);
+        provisioningCloneEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
+
+        // ==Boot Options Tab==
+        nextTabIndex = bootOptionsTab.setTabIndexes(nextTabIndex);
+        firstBootDeviceEditor.setTabIndex(nextTabIndex++);
+        secondBootDeviceEditor.setTabIndex(nextTabIndex++);
+        cdAttachedEditor.setTabIndex(nextTabIndex++);
+        cdImageEditor.setTabIndex(nextTabIndex++);
+        kernel_pathEditor.setTabIndex(nextTabIndex++);
+        initrd_pathEditor.setTabIndex(nextTabIndex++);
+        kernel_parametersEditor.setTabIndex(nextTabIndex++);
+
+        // ==Custom Properties Tab==
+        nextTabIndex = customPropertiesTab.setTabIndexes(nextTabIndex);
+//        customPropertiesSheetEditor.setTabIndex(nextTabIndex++);
+
+        return nextTabIndex;
+    }
 }

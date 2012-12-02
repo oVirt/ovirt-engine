@@ -27,8 +27,8 @@
 		}
 	</ui:style>
 
-	<g:SimplePanel ui:field="tabContainer" addStyleNames="{style.tab} {style.inactive}">
+	<g:FocusPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.inactive}">
 		<g:InlineLabel ui:field="tabLabel"/>
-	</g:SimplePanel>
+	</g:FocusPanel>
 
 </ui:UiBinder>
