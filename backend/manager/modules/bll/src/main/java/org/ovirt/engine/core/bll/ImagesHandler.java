@@ -52,7 +52,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class ImagesHandler {
-    private static final String DISK = "_Disk";
+    public static final String DISK = "_Disk";
     public static final Guid BlankImageTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
     public static final String DefaultDriveName = "1";
     protected static final Log log = LogFactory.getLog(ImagesHandler.class);
