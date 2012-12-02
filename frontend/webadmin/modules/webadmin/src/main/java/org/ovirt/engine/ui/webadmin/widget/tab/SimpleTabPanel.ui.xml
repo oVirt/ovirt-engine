@@ -5,7 +5,7 @@
 	<ui:style>
 		.bar {
 			background-color: #BBBBBB;
-			border-bottom: 2px solid #7B7B7B;
+			border-bottom: 1px solid #7B7B7B;
 		}
 		
 		.content {

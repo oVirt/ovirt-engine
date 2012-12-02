@@ -4,7 +4,7 @@
 
 	<ui:style>
 		.content {
-			border-top: 2px solid #7B7B7B;
+			border-top: 1px solid #7B7B7B;
 			min-width: 800px;
 		}
 	</ui:style>
