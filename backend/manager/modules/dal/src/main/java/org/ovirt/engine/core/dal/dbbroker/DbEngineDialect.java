@@ -42,13 +42,6 @@ public interface DbEngineDialect {
     /**
      * TODO: Remove this method once we don't use SqlServer anymore, since it's a needed only for SqlServer
      * Compatibility.
-     * @return The command to run before executing the search query (can be empty).
-     */
-    public String getPreSearchQueryCommand();
-
-    /**
-     * TODO: Remove this method once we don't use SqlServer anymore, since it's a needed only for SqlServer
-     * Compatibility.
      * @return The default key of the returned value by a function when called using
      * {@link SimpleJdbcCallOperations#execute()}.
      */

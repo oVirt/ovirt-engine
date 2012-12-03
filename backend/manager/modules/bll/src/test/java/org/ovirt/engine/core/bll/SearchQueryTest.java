@@ -114,8 +114,6 @@ public class SearchQueryTest {
             }
         };
 
-        Mockito.when(dbEngineDialect.getPreSearchQueryCommand()).thenReturn("");
-
         // mock DAOs
         mockDiskSao(diskDao);
         mockQuotaDAO(quotaDAO);

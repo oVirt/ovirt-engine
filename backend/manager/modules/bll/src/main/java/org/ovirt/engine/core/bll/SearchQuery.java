@@ -299,7 +299,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
                 data = new QueryData2();
-                data.setPreQueryCommand(getDbFacade().getDbEngineDialect().getPreSearchQueryCommand());
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
                 final String objectName = splitted[0].toUpperCase();

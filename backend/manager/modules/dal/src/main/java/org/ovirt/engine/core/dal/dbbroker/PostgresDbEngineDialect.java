@@ -193,11 +193,6 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
     }
 
     @Override
-    public String getPreSearchQueryCommand() {
-        return "";
-    }
-
-    @Override
     public String getFunctionReturnKey() {
         return "returnvalue";
     }

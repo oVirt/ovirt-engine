@@ -6,9 +6,6 @@ public class QueryData2 {
     private java.util.Date date = new java.util.Date(0);
     private String domain;
 
-    /** Optional command to be executed prior to the actual query. */
-    private String preQueryCommand;
-
     public String getDomain() {
         return domain;
     }
@@ -18,7 +15,7 @@ public class QueryData2 {
     }
 
     public String getQuery() {
-        return preQueryCommand + query;
+        return query;
     }
 
     public void setQuery(String value) {
@@ -47,13 +44,5 @@ public class QueryData2 {
 
     public void setDate(java.util.Date value) {
         date = value;
-    }
-
-    public String getPreQueryCommand() {
-        return preQueryCommand;
-    }
-
-    public void setPreQueryCommand(String preQueryCommand) {
-        this.preQueryCommand = preQueryCommand;
     }
 }
