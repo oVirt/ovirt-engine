@@ -110,19 +110,19 @@ public final class ImagesHandler {
     }
 
     public static boolean setDiskAlias(BaseDisk disk, VM vm) {
-        if (disk != null) {
-            String vmName = "";
-            int count = 1;
-            if (vm != null) {
-                vmName = vm.getVmName();
-                count = vm.getDiskMapCount() + 1;
-            }
-            disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, count));
-            return true;
-        } else {
+        if (disk == null) {
             log.errorFormat("Disk object is null");
             return false;
         }
+
+        String vmName = "";
+        int count = 1;
+        if (vm != null) {
+            vmName = vm.getVmName();
+            count = vm.getDiskMapCount() + 1;
+        }
+        disk.setDiskAlias(getSuggestedDiskAlias(disk, vmName, count));
+        return true;
     }
 
     /**
