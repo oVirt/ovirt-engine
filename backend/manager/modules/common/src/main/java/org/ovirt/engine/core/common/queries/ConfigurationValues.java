@@ -74,7 +74,10 @@ public enum ConfigurationValues {
     MTUOverrideSupported(ConfigAuthType.User),
     GlusterVolumeOptionGroupVirtValue,
     GlusterVolumeOptionOwnerUserVirtValue,
-    GlusterVolumeOptionOwnerGroupVirtValue;
+    GlusterVolumeOptionOwnerGroupVirtValue,
+    CpuPinningEnabled,
+    CpuPinMigrationEnabled,
+    ;
 
     public static enum ConfigAuthType {
         Admin,

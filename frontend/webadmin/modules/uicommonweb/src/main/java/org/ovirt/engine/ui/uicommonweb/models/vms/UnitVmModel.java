@@ -1676,6 +1676,7 @@ public class UnitVmModel extends Model {
             clearAndDisable(getHostCpu());
             getDontMigrateVM().setIsChangable(true);
         }
+        behavior.updateCpuPinningVisibility();
     }
 
     private void DontMigrateVM_EntityChanged(Object sender, EventArgs args)
@@ -1702,6 +1703,7 @@ public class UnitVmModel extends Model {
         {
             getRunVMOnSpecificHost().setIsChangable(true);
         }
+        behavior.updateCpuPinningVisibility();
     }
 
     private void UpdateNumOfMonitors()

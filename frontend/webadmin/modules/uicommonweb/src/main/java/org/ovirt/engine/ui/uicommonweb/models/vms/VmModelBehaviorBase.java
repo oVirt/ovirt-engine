@@ -21,12 +21,13 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -710,13 +711,33 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateCpuPinningVisibility() {
         if (getModel().getCluster().getSelectedItem() != null) {
             VDSGroup cluster = (VDSGroup) getModel().getCluster().getSelectedItem();
-            boolean hasCpuPinning = cluster.getcompatibility_version().compareTo(new Version(3, 1)) >= 0;
+            String compatibilityVersion = cluster.getcompatibility_version().toString();
+            boolean hasCpuPinning = true;
+
+            if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
+                    compatibilityVersion))) {
+                hasCpuPinning = false;
+            } else if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
+                    Config.DefaultConfigurationVersion))
+                    && isVmMigratable()) {
+                hasCpuPinning = false;
+            }
+
             getModel().getCpuPinning()
                     .setIsAvailable(hasCpuPinning);
             if (!hasCpuPinning) {
                 getModel().getCpuPinning().setEntity("");
             }
         }
+    }
+
+    private boolean isVmMigratable() {
+        if (Boolean.TRUE.equals(getModel().getRunVMOnSpecificHost().getEntity())
+                || Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity())
+                || Boolean.TRUE.equals(getModel().getDontMigrateVM().getEntity())) {
+            return false;
+        }
+        return true;
     }
 
     public void numOfSocketChanged() {
