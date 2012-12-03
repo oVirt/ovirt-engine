@@ -306,6 +306,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected void setUpL10nExpectations(String error) {
         ErrorTranslator translator = control.createMock(ErrorTranslator.class);
         IAnswer<String> answer = new IAnswer<String>() {
+            @Override
             public String answer() {
                 return EasyMock.getCurrentArguments() != null && EasyMock.getCurrentArguments().length > 0
                         ? mockl10n((String) EasyMock.getCurrentArguments()[0])

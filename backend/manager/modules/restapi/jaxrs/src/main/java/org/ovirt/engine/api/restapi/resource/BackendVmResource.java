@@ -289,6 +289,7 @@ public class BackendVmResource extends
                         action);
     }
 
+    @Override
     protected Guid getStorageDomainId(Action action) {
         if (action.getStorageDomain().isSetId()) {
             return asGuid(action.getStorageDomain().getId());
@@ -297,6 +298,7 @@ public class BackendVmResource extends
         }
     }
 
+    @Override
     protected Guid lookupStorageDomainIdByName(String name) {
         return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
@@ -388,7 +390,11 @@ public class BackendVmResource extends
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
             if (incoming.isSetPayloads()) {
-                params.setVmPayload(parent.getPayload(incoming));
+                if (incoming.isSetPayloads() && incoming.getPayloads().isSetPayload()) {
+                    params.setVmPayload(parent.getPayload(incoming));
+                } else {
+                    params.setClearPayload(true);
+                }
             }
             if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
                params.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());

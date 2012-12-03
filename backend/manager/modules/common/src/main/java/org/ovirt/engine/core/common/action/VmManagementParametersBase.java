@@ -21,6 +21,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean privateDontCheckTemplateImages;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
+    private boolean clearPayload;
     private boolean balloonEnabled = true;
     private VM vm = null;
 
@@ -104,6 +105,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setVmPayload(VmPayload value) {
         this.payload = value;
+    }
+
+    public boolean isClearPayload() {
+        return clearPayload;
+    }
+
+    public void setClearPayload(boolean clearPayload) {
+        this.clearPayload = clearPayload;
     }
 
     public boolean isBalloonEnabled() {

@@ -97,7 +97,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VmDeviceDAO dao = getVmDeviceDao();
         VmPayload payload = getParameters().getVmPayload();
 
-        if (payload != null) {
+        if (payload != null || getParameters().isClearPayload()) {
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getVmId(), VmDeviceType.DISK.getName());
             VmDevice oldPayload = null;
             for (VmDevice disk : disks) {
@@ -113,12 +113,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 dao.removeAll(devs);
             }
 
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), getVmId()),
-                    VmDeviceType.DISK,
-                    payload.getType(),
-                    payload.getSpecParams(),
-                    true,
-                    true);
+            if (!getParameters().isClearPayload()) {
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), getVmId()),
+                        VmDeviceType.DISK,
+                        payload.getType(),
+                        payload.getSpecParams(),
+                        true,
+                        true);
+            }
         }
     }
 
