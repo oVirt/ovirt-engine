@@ -14,7 +14,6 @@ public class DomainsConfigurationEntry {
     public DomainsConfigurationEntry(String entry, String domainSeperator, String valueSeperator) {
         this.domainSeperator = domainSeperator;
         this.valueSeperator = valueSeperator;
-
         if (entry != null && !entry.isEmpty()) {
             String[] domainValuePairs = entry.split(domainSeperator);
 

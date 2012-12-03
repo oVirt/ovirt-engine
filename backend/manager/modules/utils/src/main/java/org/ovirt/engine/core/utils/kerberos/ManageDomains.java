@@ -197,8 +197,6 @@ public class ManageDomains {
                     getConfigValue(engineConfigExecutable,
                             engineConfigProperties,
                             ConfigValues.LDAPSecurityAuthentication);
-            ldapDnsResult = validateLdapServers(domainName);
-            validateKdcServers(ldapSecurityAuthentication,domainName);
             String adUserPassword =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserPassword);
             String adUserId = getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.AdUserId);
@@ -281,15 +279,9 @@ public class ManageDomains {
         }
 
         if (actionType.equals(ActionType.add)) {
-            addDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
-                    parser.getArg(Arguments.user.name()),
-                    getPasswordInput(parser),
-                    getLdapProviderType(parser));
+            addDomain(parser);
         } else if (actionType.equals(ActionType.edit)) {
-            editDomain(parser.getArg(Arguments.domain.name()).toLowerCase(),
-                    parser.getArg(Arguments.user.name()),
-                    getPasswordInput(parser),
-                    null, parser.hasArg(Arguments.provider.name()) ? getLdapProviderType(parser) : null);
+            editDomain(parser);
         } else if (actionType.equals(ActionType.delete)) {
             deleteDomain(parser.getArg(Arguments.domain.name()).toLowerCase());
         } else if (actionType.equals(ActionType.validate)) {
@@ -429,19 +421,18 @@ public class ManageDomains {
         }
     }
 
-    public void addDomain(String domainName,
-            String userName,
-            String password,
-            LdapProviderType ldapProviderType) throws ManageDomainsResult {
+    public void addDomain(CLIParser parser) throws ManageDomainsResult {
         String authMode = LdapAuthModeEnum.GSSAPI.name();
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
+        String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
-
+        ldapDnsResult = validateLdapServers(domainName);
+        validateKdcServers(authMode,domainName);
         domainNameEntry.setValueForDomain(domainName, null);
 
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
@@ -464,8 +455,9 @@ public class ManageDomains {
         DomainsConfigurationEntry ldapProviderTypesEntry =
                 new DomainsConfigurationEntry(currentLDAPProviderTypes, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
-        adUserNameEntry.setValueForDomain(domainName, userName);
-        adUserPasswordEntry.setValueForDomain(domainName, password);
+        LdapProviderType ldapProviderType = getLdapProviderType(parser);
+        adUserNameEntry.setValueForDomain(domainName, parser.getArg(Arguments.user.toString()));
+        adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput(parser));
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
 
@@ -530,24 +522,14 @@ public class ManageDomains {
         }
     }
 
-    public void editDomain(String domainName,
-            String userName,
-            String password,
-            String mode,
-            LdapProviderType ldapProviderType) throws ManageDomainsResult {
+    public void editDomain(CLIParser parser) throws ManageDomainsResult {
         String authMode;
-        if (mode == null) {
-            authMode = getDomainAuthMode(domainName);
-        } else {
-            authMode = DEFAULT_AUTH_MODE;
-            if (mode.equalsIgnoreCase(LdapModeEnum.LOCAL.name())) {
-                authMode = LdapAuthModeEnum.SIMPLE.name();
-            } else if (mode.equalsIgnoreCase(LdapModeEnum.REMOTE.name())) {
-                authMode = LdapAuthModeEnum.GSSAPI.name();
-            }
-        }
-
+        String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
+        authMode = getDomainAuthMode(domainName);
+        ldapDnsResult = validateLdapServers(domainName);
+        validateKdcServers(authMode,domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
+        String userName  = parser.getArg(Arguments.user.toString());
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomains, DOMAIN_SEPERATOR, null);
 
@@ -581,17 +563,15 @@ public class ManageDomains {
         if (userName != null) {
             adUserNameEntry.setValueForDomain(domainName, userName);
         }
+        String password = getPasswordInput(parser);
         if (password != null) {
             adUserPasswordEntry.setValueForDomain(domainName, password);
-        }
-
-        if (mode != null) {
-            authModeEntry.setValueForDomain(domainName, authMode);
         }
 
         if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
             ldapServersEntry.setValueForDomain(domainName, utilityConfiguration.getLocalHostEntry());
         }
+        LdapProviderType ldapProviderType = getLdapProviderType(parser);
         if (ldapProviderType != null) {
             ldapProviderTypeEntry.setValueForDomain(domainName, ldapProviderType.name());
         }
