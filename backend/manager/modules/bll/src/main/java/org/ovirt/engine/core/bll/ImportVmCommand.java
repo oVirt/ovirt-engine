@@ -476,7 +476,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             VM vm = getVm();
             // if there aren't any images- we can just perform the end
             // vm related ops
-            if (!hasSnappableDisks(vm)) {
+            if (vm.getImages().isEmpty()) {
                 endVmRelatedOps();
             } else {
                 processImages();
@@ -487,10 +487,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
 
         setSucceeded(true);
-    }
-
-    private boolean hasSnappableDisks(VM vm) {
-        return !vm.getImages().isEmpty();
     }
 
     private void addVmToDb() {
