@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -35,13 +36,19 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     }
 
     @Override
+    protected VDSGroup getVdsGroup() {
+        if (getGlusterVolume() != null) {
+            setVdsGroupId(getGlusterVolume().getClusterId());
+        }
+        return super.getVdsGroup();
+    }
+
+    @Override
     protected boolean canDoAction() {
         if (getGlusterVolume() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_INVALID);
             return false;
         }
-        setVdsGroupId(getGlusterVolume().getClusterId());
-
         // super class canDoAction expects cluster id (VdsGroupId).
         if (!super.canDoAction()) {
             return false;
