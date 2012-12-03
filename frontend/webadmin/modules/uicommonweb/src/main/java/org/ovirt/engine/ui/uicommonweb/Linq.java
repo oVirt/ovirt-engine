@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -1111,6 +1111,22 @@ public final class Linq
         public boolean Match(storage_pool source)
         {
             return source.getstatus() == status;
+        }
+    }
+
+    public final static class DataCenterNotStatusPredicate implements IPredicate<storage_pool>
+    {
+        private StoragePoolStatus status = StoragePoolStatus.values()[0];
+
+        public DataCenterNotStatusPredicate(StoragePoolStatus status)
+        {
+            this.status = status;
+        }
+
+        @Override
+        public boolean Match(storage_pool source)
+        {
+            return source.getstatus() != status;
         }
     }
 

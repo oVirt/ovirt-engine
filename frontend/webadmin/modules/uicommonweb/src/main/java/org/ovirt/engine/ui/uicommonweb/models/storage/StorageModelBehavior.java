@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -40,7 +41,7 @@ public abstract class StorageModelBehavior extends Model
 
     public List<storage_pool> FilterDataCenter(List<storage_pool> source)
     {
-        return source;
+        return Linq.ToList(Linq.Where(source, new Linq.DataCenterNotStatusPredicate(StoragePoolStatus.NotOperational)));
     }
 
     public void UpdateItemsAvailability()
