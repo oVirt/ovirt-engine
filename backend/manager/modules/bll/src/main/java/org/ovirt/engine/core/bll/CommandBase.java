@@ -545,26 +545,29 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
+    private List<QuotaConsumptionParameter> consumptionParameters;
+
     private List<QuotaConsumptionParameter> getQuotaConsumptionParameters() {
-        List<QuotaConsumptionParameter> consumptionParameters;
 
         // This a double marking mechanism which was created to ensure Quota dependencies would not be inherited
         // by descendants commands. Each Command is both marked by the QuotaDependency and implements the required
         // Interfaces (NONE does not implement any of the two interfaces).
         // The enum markings prevent Quota dependencies unintentional inheritance.
-        switch (getActionType().getQuotaDependency()) {
-            case NONE:
-                return null;
-            case STORAGE:
-                consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
-                break;
-            case VDS_GROUP:
-                consumptionParameters = getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters();
-                break;
-            default:
-                consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
-                consumptionParameters.addAll(getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters());
-                break;
+        if (consumptionParameters == null) {
+            switch (getActionType().getQuotaDependency()) {
+                case NONE:
+                    return null;
+                case STORAGE:
+                    consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
+                    break;
+                case VDS_GROUP:
+                    consumptionParameters = getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters();
+                    break;
+                default:
+                    consumptionParameters = getThisQuotaStorageDependent().getQuotaStorageConsumptionParameters();
+                    consumptionParameters.addAll(getThisQuotaVdsDependent().getQuotaVdsConsumptionParameters());
+                    break;
+            }
         }
         return consumptionParameters;
     }
