@@ -4,17 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Network;
@@ -39,7 +35,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @CustomLogFields({ @CustomLogField("InterfaceName") })
-public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
+public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
     private static final long serialVersionUID = -835005784345476993L;
 
@@ -79,7 +75,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         boolean succeeded = true;
         if (getParameters().getInterface().isActive()) {
-            succeeded = activateNic();
+            succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
         }
         setSucceeded(succeeded);
     }
@@ -97,25 +93,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
         getDbFacade().getVmNetworkStatisticsDao().save(vmNetworkInterface.getStatistics());
         getCompensationContext().snapshotNewEntity(vmNetworkInterface.getStatistics());
-    }
-
-    private boolean activateNic() {
-        ActivateDeactivateVmNicParameters activateParameters = createActivateDeactivateParameters();
-        VdcReturnValueBase activateVmNicReturnValue =
-                Backend.getInstance().runInternalAction(VdcActionType.ActivateDeactivateVmNic,
-                        activateParameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        if (!activateVmNicReturnValue.getSucceeded()) {
-            propagateFailure(activateVmNicReturnValue);
-        }
-        return activateVmNicReturnValue.getSucceeded();
-    }
-
-    private ActivateDeactivateVmNicParameters createActivateDeactivateParameters() {
-        ActivateDeactivateVmNicParameters activateDeactivateVmNicParameters =
-                new ActivateDeactivateVmNicParameters(getParameters().getInterface().getId(), PlugAction.PLUG);
-        activateDeactivateVmNicParameters.setVmId(getParameters().getVmId());
-        return activateDeactivateVmNicParameters;
     }
 
     @Override
@@ -277,12 +254,5 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
 
     private String getNetworkName() {
         return getParameters().getInterface().getNetworkName();
-    }
-
-    private void propagateFailure(VdcReturnValueBase internalReturnValue) {
-        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
-        getReturnValue().setFault(internalReturnValue.getFault());
-        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
-        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 }
