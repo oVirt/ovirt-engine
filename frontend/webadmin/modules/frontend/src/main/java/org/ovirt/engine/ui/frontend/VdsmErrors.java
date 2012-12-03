@@ -700,4 +700,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String ACTIVATE_NIC_FAILED();
 
     String DEACTIVATE_NIC_FAILED();
+
+    @DefaultStringValue("Failed to update VM Network Interface.")
+    String UPDATE_VNIC_FAILED();
 }

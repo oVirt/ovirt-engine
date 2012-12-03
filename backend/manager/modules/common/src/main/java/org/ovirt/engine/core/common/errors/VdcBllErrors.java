@@ -45,6 +45,7 @@ public enum VdcBllErrors {
     SNAPSHOT_FAILED(48),
     ACTIVATE_NIC_FAILED(49),
     DEACTIVATE_NIC_FAILED(50),
+    UPDATE_VNIC_FAILED(56),
     recovery(99),
     GeneralException(100),
     StorageException(200),
