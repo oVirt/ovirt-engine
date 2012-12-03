@@ -175,12 +175,14 @@ public class LoginModel extends Model
         setIsConnecting(true);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setHandleFailure(true);
+
         _asyncQuery.setModel(this);
+        _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
+
                 setIsConnecting(false);
 
                 LoginModel loginModel = (LoginModel) model;
@@ -191,35 +193,25 @@ public class LoginModel extends Model
                             .couldNotConnectToOvirtEngineServiceMsg());
                     return;
                 }
-                AsyncQuery _asyncQuery1 = new AsyncQuery();
-                _asyncQuery1.setModel(loginModel);
-                _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model1, Object ReturnValue1)
-                    {
-                        LoginModel loginModel1 = (LoginModel) model1;
 
-                        if (!loggingInAutomatically) {
-                            // Don't enable the screen when we are in the process of logging in automatically.
-                            // If this happens to be executed before the AutoLogin() is executed,
-                            // it is not a problem, as the AutoLogin() will disable the screen by itself.
-                            loginModel1.getLoginCommand().setIsExecutionAllowed(true);
-                            loginModel1.getAboutCommand().setIsExecutionAllowed(true);
-                            loginModel1.getUserName().setIsChangable(true);
-                            loginModel1.getPassword().setIsChangable(true);
-                            loginModel1.getDomain().setIsChangable(true);
-                        }
+                if (!loggingInAutomatically) {
+                    // Don't enable the screen when we are in the process of logging in automatically.
+                    // If this happens to be executed before the AutoLogin() is executed,
+                    // it is not a problem, as the AutoLogin() will disable the screen by itself.
+                    loginModel.getLoginCommand().setIsExecutionAllowed(true);
+                    loginModel.getAboutCommand().setIsExecutionAllowed(true);
+                    loginModel.getUserName().setIsChangable(true);
+                    loginModel.getPassword().setIsChangable(true);
+                    loginModel.getDomain().setIsChangable(true);
+                }
 
-                        List<String> domains = (List<String>) ReturnValue1;
-                        loginModel1.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
-                        loginModel1.getDomain().setItems(domains);
+                List<String> domains = (List<String>) ReturnValue;
+                loginModel.getDomain().setSelectedItem(Linq.FirstOrDefault(domains));
+                loginModel.getDomain().setItems(domains);
 
-                    }
-                };
-                AsyncDataProvider.GetDomainListViaPublic(_asyncQuery1, false);
             }
         };
-        AsyncDataProvider.IsBackendAvailable(_asyncQuery);
+        AsyncDataProvider.GetDomainListViaPublic(_asyncQuery, false);
     }
 
     @Override

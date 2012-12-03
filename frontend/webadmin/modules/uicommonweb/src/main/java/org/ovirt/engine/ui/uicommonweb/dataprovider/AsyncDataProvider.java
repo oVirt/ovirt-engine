@@ -152,19 +152,6 @@ public final class AsyncDataProvider {
         Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
     }
 
-    public static void IsBackendAvailable(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null;
-            }
-        };
-        GetDomainListParameters tempVar = new GetDomainListParameters();
-        tempVar.setFilterInternalDomain(true);
-        Frontend.RunPublicQuery(VdcQueryType.GetDomainList, tempVar, aQuery);
-    }
-
     public static void GetIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
