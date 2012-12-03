@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -361,8 +362,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 || getVm().getstatus() == VMStatus.PoweringDown) {
             list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
         } else {
-            if (getParameters().getVmStaticData().getQuotaId() != null
-                    && !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
+            if (getParameters().getVmStaticData().getQuotaId() == null
+                    || getParameters().getVmStaticData().getQuotaId().equals(NGuid.Empty)
+                    || !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
                 list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
