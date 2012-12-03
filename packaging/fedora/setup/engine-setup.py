@@ -1058,7 +1058,6 @@ def _updateVDCOptions():
     #1st we update the keystore and CA related paths, only then we can set the passwords and the rest options
     options = (
         {
-            "CABaseDirectory":[basedefs.DIR_OVIRT_PKI, 'text'],
             "keystoreUrl":[basedefs.FILE_ENGINE_KEYSTORE, 'text'],
             "CertificateFileName":[basedefs.FILE_ENGINE_CERT, 'text'],
             "CAEngineKey":[os.path.join(basedefs.DIR_OVIRT_PKI, "private", "ca.pem"), 'text'],
