@@ -117,6 +117,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         asWidget().setGlassEnabled(false);
         localize(constants);
+        addStyles();
 
         errorMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
@@ -132,6 +133,12 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         domainLabel.setText(constants.loginFormDomainLabel());
         connectAutomatically.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setLabel(constants.loginButtonLabel());
+    }
+
+    private void addStyles() {
+        userNameEditor.hideLabel();
+        passwordEditor.hideLabel();
+        domainEditor.hideLabel();
     }
 
     @Override
