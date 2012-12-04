@@ -27,6 +27,7 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -34,7 +35,6 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPool;
-import org.ovirt.engine.api.model.Event;
 
 /**
  * A container of static methods related to query resolution.

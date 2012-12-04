@@ -1,29 +1,28 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetAvailableStoragePoolVersionsParameters;
+import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-
-import static org.easymock.classextension.EasyMock.expect;
 
 public class BackendDataCentersResourceTest
         extends AbstractBackendCollectionResourceTest<DataCenter, storage_pool, BackendDataCentersResource> {
