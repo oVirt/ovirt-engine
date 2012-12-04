@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -188,9 +187,6 @@ public class UserPortalLoginModel extends LoginModel
         getDomain().setIsChangable(false);
         getLoginCommand().setIsExecutionAllowed(false);
         getIsAutoConnect().setIsChangable(false);
-
-        // Clear config cache on login (to make sure we don't use old config in a new session)
-        DataProvider.ClearConfigCache();
 
         Frontend.RunAction(VdcActionType.LoginUser, new LoginUserParameters((String) getUserName().getEntity(),
                 (String) getPassword().getEntity(),

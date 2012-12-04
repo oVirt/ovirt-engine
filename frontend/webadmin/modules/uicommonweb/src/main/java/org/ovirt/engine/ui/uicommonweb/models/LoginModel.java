@@ -12,7 +12,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -270,9 +269,6 @@ public class LoginModel extends Model
 
         StartProgress(null);
         disableLoginScreen();
-
-        // Clear config cache on login (to make sure we don't use old config in a new session)
-        DataProvider.ClearConfigCache();
 
         String fullUserName = (String) getUserName().getEntity();
         String[] parts = GetUserNameParts(fullUserName);

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -492,8 +491,8 @@ public class TemplateGeneralModel extends EntityModel
     public String PriorityToString(int value)
     {
         String priorityStr;
-        int highPriority = DataProvider.GetMaxVmPriority();
-        int roundedPriority = DataProvider.RoundPriority(value);
+        int highPriority = AsyncDataProvider.GetMaxVmPriority();
+        int roundedPriority = AsyncDataProvider.RoundPriority(value);
 
         if (roundedPriority == 1)
         {

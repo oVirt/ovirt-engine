@@ -28,7 +28,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -737,18 +736,18 @@ public class VmGeneralModel extends EntityModel
     // allowing using of converters' code available in UICommon.
     public String PriorityToString(int value)
     {
-        int highPriority = DataProvider.GetMaxVmPriority();
-        int roundedPriority = DataProvider.RoundPriority(value);
+        int highPriority = AsyncDataProvider.GetMaxVmPriority();
+        int roundedPriority = AsyncDataProvider.RoundPriority(value);
 
         if (roundedPriority == 1)
         {
             return "Low"; //$NON-NLS-1$
         }
-        else if (roundedPriority == DataProvider.GetMaxVmPriority() / 2)
+        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority() / 2)
         {
             return "Medium"; //$NON-NLS-1$
         }
-        else if (roundedPriority == DataProvider.GetMaxVmPriority())
+        else if (roundedPriority == AsyncDataProvider.GetMaxVmPriority())
         {
             return "High"; //$NON-NLS-1$
         }

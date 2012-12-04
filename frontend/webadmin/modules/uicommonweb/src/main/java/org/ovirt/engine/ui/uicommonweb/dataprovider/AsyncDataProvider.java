@@ -2867,4 +2867,33 @@ public final class AsyncDataProvider {
     {
         return "mode=802.3ad miimon=150"; //$NON-NLS-1$
     }
+
+    public static int GetMaxVmPriority()
+    {
+        return (Integer) GetConfigValuePreConverted(ConfigurationValues.VmPriorityMaxValue,
+                Config.DefaultConfigurationVersion);
+    }
+
+    public static int RoundPriority(int priority)
+    {
+        int max = GetMaxVmPriority();
+        int medium = max / 2;
+
+        int[] levels = new int[] { 1, medium, max };
+
+        for (int i = 0; i < levels.length; i++)
+        {
+            int lengthToLess = levels[i] - priority;
+            int lengthToMore = levels[i + 1] - priority;
+
+            if (lengthToMore < 0)
+            {
+                continue;
+            }
+
+            return Math.abs(lengthToLess) < lengthToMore ? levels[i] : levels[i + 1];
+        }
+
+        return 0;
+    }
 }

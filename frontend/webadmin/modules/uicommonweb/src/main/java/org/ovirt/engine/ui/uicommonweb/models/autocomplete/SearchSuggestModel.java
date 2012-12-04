@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.autocomplete;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
@@ -7,19 +12,15 @@ import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class SearchSuggestModel extends SearchableListModel implements ITaskTarget
 {
-    private ISyntaxChecker syntaxChecker;
+    private final ISyntaxChecker syntaxChecker;
 
     @Override
     public List getItems()
@@ -75,7 +76,9 @@ public class SearchSuggestModel extends SearchableListModel implements ITaskTarg
     {
         setItems(new ObservableCollection<Object>());
 
-        syntaxChecker = SyntaxCheckerFactory.CreateUISyntaxChecker(DataProvider.GetAuthenticationMethod());
+        syntaxChecker =
+                SyntaxCheckerFactory.CreateUISyntaxChecker((String)
+                        AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
 
         setIsTimerDisabled(true);
     }
