@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -46,7 +44,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -283,174 +280,14 @@ public class PoolListModel extends ListWithDetailsModel
                                     model.getDataCenter().setIsChangable(false);
                                     model.getTemplate().setIsChangable(false);
 
-                                    if (model.getDataCenter().getSelectedItem() == null)
-                                    {
-
-                                        AsyncDataProvider.GetDataCenterById(new AsyncQuery(this,
-                                                new INewAsyncCallback() {
-                                                    @Override
-                                                    public void OnSuccess(Object target, Object returnValue) {
-                                                        List<storage_pool> list =
-                                                                asList(returnValue);
-                                                        model.getDataCenter().setItems(list);
-                                                        model.getDataCenter().setSelectedItem(list.get(0));
-
-                                                        ArrayList<VmTemplate> templates = new ArrayList<VmTemplate>();
-                                                        // TODO: need to be async
-                                                        VmTemplate basedOnTemplate =
-                                                                DataProvider.GetTemplateByID(vm.getVmtGuid());
-                                                        if (basedOnTemplate != null)
-                                                        {
-                                                            templates.add(basedOnTemplate);
-                                                        }
-
-                                                        model.getTemplate().setItems(templates);
-                                                        model.getTemplate().setSelectedItem(basedOnTemplate);
-
-                                                        model.getDefaultHost().setSelectedItem(null);
-                                                        VDS host = null;
-                                                        if (model.getDefaultHost().getItems() != null) {
-                                                            for (Object item : model.getDefaultHost().getItems())
-                                                            {
-                                                                VDS a = (VDS) item;
-                                                                if (a.getId()
-                                                                        .equals(((vm.getDedicatedVmForVds()) != null) ? vm.getDedicatedVmForVds()
-                                                                                : Guid.Empty))
-                                                                {
-                                                                    host = a;
-                                                                    break;
-                                                                }
-                                                            }
-                                                        }
-
-                                                        if (host == null)
-                                                        {
-                                                            model.getIsAutoAssign().setEntity(true);
-                                                        }
-                                                        else
-                                                        {
-                                                            model.getDefaultHost().setSelectedItem(host);
-                                                            model.getIsAutoAssign().setEntity(false);
-                                                        }
-
-                                                        if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST)
-                                                        {
-                                                            model.getRunVMOnSpecificHost().setEntity(true);
-                                                        }
-                                                        else
-                                                        {
-                                                            if (vm.getMigrationSupport() == MigrationSupport.IMPLICITLY_NON_MIGRATABLE)
-                                                            {
-                                                                model.getDontMigrateVM().setEntity(true);
-                                                            }
-                                                        }
-
-                                                        model.getMemSize().setEntity(vm.getVmMemSizeMb());
-                                                        model.getMinAllocatedMemory()
-                                                                .setEntity(vm.getMinAllocatedMem());
-                                                        model.getOSType().setSelectedItem(vm.getVmOs());
-                                                        model.getDomain().setSelectedItem(vm.getVmDomain());
-
-                                                        if (!StringHelper.isNullOrEmpty(vm.getTimeZone()))
-                                                        {
-                                                            model.getTimeZone()
-                                                                    .setSelectedItem(Linq.FirstOrDefault(model.getTimeZone()
-                                                                            .getItems(),
-                                                                            new Linq.TimeZonePredicate(vm.getTimeZone())));
-                                                        }
-
-                                                        EntityModel displayType = null;
-                                                        for (Object item : model.getDisplayProtocol().getItems())
-                                                        {
-                                                            EntityModel a = (EntityModel) item;
-                                                            DisplayType dt = (DisplayType) a.getEntity();
-                                                            if (dt == vm.getDefaultDisplayType())
-                                                            {
-                                                                displayType = a;
-                                                                break;
-                                                            }
-                                                        }
-                                                        model.getDisplayProtocol().setSelectedItem(displayType);
-
-                                                        model.getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
-                                                        model.getNumOfMonitors()
-                                                                .setSelectedItem(vm.getNumOfMonitors());
-                                                        model.getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
-                                                        model.getTotalCPUCores().setEntity(Integer.toString(vm.getNumOfCpus()));
-                                                        model.setBootSequence(vm.getDefaultBootSequence());
-
-                                                        model.getKernel_path().setEntity(vm.getKernelUrl());
-                                                        model.getKernel_parameters().setEntity(vm.getKernelParams());
-                                                        model.getInitrd_path().setEntity(vm.getInitrdUrl());
-
-                                                        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                                                                new INewAsyncCallback() {
-                                                                    @Override
-                                                                    public void OnSuccess(Object modell,
-                                                                            Object returnValue) {
-
-                                                                        List<DiskImage> disks =
-                                                                                (List<DiskImage>) returnValue;
-                                                                        // feature for filling storage domain in case of
-                                                                        // data center list empty
-                                                                        if (disks.size() > 0)
-                                                                        {
-                                                                            ArrayList<Guid> storage_ids =
-                                                                                    disks.get(0).getstorage_ids();
-                                                                            Guid storageId =
-                                                                                    storage_ids != null
-                                                                                            && storage_ids.size() > 0 ? storage_ids.get(0)
-                                                                                            : null;
-
-                                                                            if (storageId != null) {
-                                                                                AsyncDataProvider.GetStorageDomainById(new AsyncQuery(this,
-                                                                                        new INewAsyncCallback() {
-                                                                                            @Override
-                                                                                            public void OnSuccess(Object target,
-                                                                                                    Object returnValue) {
-                                                                                                storage_domains storageDomain =
-                                                                                                        (storage_domains) returnValue;
-                                                                                                model.getStorageDomain()
-                                                                                                        .setItems(new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { storageDomain })));
-                                                                                                model.getStorageDomain()
-                                                                                                        .setSelectedItem(storageDomain);
-                                                                                            }
-                                                                                        }),
-                                                                                        storageId);
-                                                                            }
-                                                                        }
-                                                                        model.getStorageDomain().setIsChangable(false);
-
-                                                                    }
-                                                                }),
-                                                                vm.getId(),
-                                                                false);
-                                                    }
-
-                                                }),
-                                                vm.getStoragePoolId());
-                                    }
-
                                     cdImage = vm.getIsoPath();
+
                                 }
                                 else
                                 {
                                     model.getDataCenter()
                                             .setSelectedItem(Linq.FirstOrDefault(Linq.<storage_pool> Cast(model.getDataCenter()
                                                     .getItems())));
-                                }
-
-                                // make sure that Clusters list won't be null:
-                                ArrayList<VDSGroup> clusters = new ArrayList<VDSGroup>();
-                                if (model.getCluster().getItems() == null)
-                                {
-                                    VDSGroup poolCluster = DataProvider.GetClusterById(pool.getvds_group_id());
-                                    if (poolCluster != null)
-                                    {
-                                        clusters.add(poolCluster);
-                                    }
-
-                                    model.getCluster().setItems(clusters);
                                 }
 
                                 model.getCluster().setIsChangable(vm == null);

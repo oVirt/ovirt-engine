@@ -4,16 +4,11 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 
 /**
@@ -25,19 +20,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 @SuppressWarnings("unused")
 public final class DataProvider
 {
-    public static VmTemplate GetTemplateByID(Guid templateGUID)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateGUID));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (VmTemplate) returnValue.getReturnValue();
-        }
-
-        return null;
-    }
-
     public static boolean IsVmNameUnique(String name)
     {
         VdcQueryReturnValue returnValue =
@@ -62,19 +44,6 @@ public final class DataProvider
         }
 
         return new ArrayList<DbUser>();
-    }
-
-    public static VDSGroup GetClusterById(Guid id)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(id));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return (VDSGroup) returnValue.getReturnValue();
-        }
-
-        return null;
     }
 
 }
