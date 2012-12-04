@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,14 +8,12 @@ import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
@@ -99,57 +96,6 @@ public class VdsHandler extends BaseHandler {
     public static boolean isVdsWithSameIpExistsStatic(String ipAddress) {
         List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDao().getAllWithIpAddress(ipAddress);
         return (vds.size() != 0);
-    }
-
-    public static boolean isVdsExist(VdsStatic vdsStatic, java.util.ArrayList<String> messages) {
-        boolean exist = false;
-        if (isVdsWithSameNameExistStatic(vdsStatic.getvds_name())) {
-            messages.add(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS.toString());
-            exist = true;
-        } else if (isVdsWithSameHostExistStatic(vdsStatic.gethost_name())) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST.toString());
-            exist = true;
-        }
-        return exist;
-    }
-
-    /**
-     * Verify if an existing entity of oVirt type shares same unique-id as queried host. If verification detects a
-     * violation, e.g existing host with same name for other host or address already associated with a host differ from
-     * the host which shares the same unique-id, adds an error message.
-     *
-     * @param vdsStatic
-     *            the oVirt host to query
-     * @param messages
-     *            a list which should be updated with violations
-     * @param oVirtId
-     *            the id which represents the existed oVirt host
-     * @return
-     */
-    public static boolean isVdsExistForPendingOvirt(VdsStatic vdsStatic, ArrayList<String> messages, Guid oVirtId) {
-        boolean exists = false;
-
-        VdsStatic existVds = DbFacade.getInstance().getVdsStaticDao().get(vdsStatic.getvds_name());
-        if (existVds != null && !oVirtId.equals(existVds.getId())) {
-            VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(existVds.getId());
-            if (vdsDynamic != null && !isPendingOvirt(existVds.getvds_type(), vdsDynamic.getstatus())) {
-                messages.add(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS.toString());
-                exists = true;
-            }
-        }
-
-        if (!exists) {
-            List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForHostname(vdsStatic.gethost_name());
-            for (VDS vds : vdsList) {
-                if (!isPendingOvirt(vds) || (!oVirtId.equals(vds.getId()))) {
-                    messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST.toString());
-                    exists = true;
-                    break;
-                }
-            }
-        }
-
-        return exists;
     }
 
     static private boolean isPendingOvirt(VDSType type, VDSStatus status) {
