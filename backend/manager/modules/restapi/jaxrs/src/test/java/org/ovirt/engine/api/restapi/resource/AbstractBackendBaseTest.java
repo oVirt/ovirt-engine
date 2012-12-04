@@ -57,6 +57,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             new Guid("33333333-3333-3333-3333-333333333333") };
     protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };
+    protected static final String[] BAD_NAMES = { "unknown" };
     protected static final String[] DESCRIPTIONS = { "top notch entity", "a fine example",
             "state of the art" };
     protected static final String URI_ROOT = "http://localhost:8088";

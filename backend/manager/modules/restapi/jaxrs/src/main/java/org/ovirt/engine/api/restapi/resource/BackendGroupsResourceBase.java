@@ -100,6 +100,10 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     }
 
     protected String getSearchPattern(String param) {
+        return getSearchPattern(param, null);
+    }
+
+    protected String getSearchPattern(String param, String domain) {
         String constraint = QueryHelper.getConstraint(getUriInfo(), ad_groups.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
@@ -107,7 +111,10 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
                   parent!=null?
                         parent.getDirectory().getName()
                         :
-                        getCurrent().get(Principal.class).getDomain()));
+                        domain==null?
+                              getCurrent().get(Principal.class).getDomain()
+                              :
+                              domain));
 
         sb.append(StringHelper.isNullOrEmpty(constraint)?
                         "name="+param
@@ -118,15 +125,27 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     }
 
     protected ad_groups getAdGroup(Group group) {
+        if(group.getId() != null) {
+            return lookupGroupById(asGuid(group.getId()));
+        }
+
         List<ad_groups> adGroups = asCollection(getEntity(ArrayList.class,
                                                           SearchType.AdGroup,
-                                                          getSearchPattern("*")));
+                                                          getSearchPattern("*", getDomainName(group.getName()))));
         for (ad_groups adGroup : adGroups) {
             if (adGroup.getname().equals(group.getName())) {
                 return adGroup;
             }
         }
-        return handleError(new EntityNotFoundException(group.getName()), true);
+        return entityNotFound();
+    }
+
+    private String getDomainName(String groupName) {
+        int index = groupName.indexOf("/");
+        if(index == -1) {
+            return null;
+        }
+        return groupName.substring(0, index);
     }
 
     protected List<ad_groups> getGroupsFromDomain() {
@@ -141,7 +160,8 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         return getEntity(ad_groups.class,
                          VdcQueryType.GetAdGroupById,
                          new GetAdGroupByIdParameters(id),
-                         id.toString());
+                         id.toString(),
+                         true);
     }
 
     protected class GroupIdResolver extends EntityIdResolver {

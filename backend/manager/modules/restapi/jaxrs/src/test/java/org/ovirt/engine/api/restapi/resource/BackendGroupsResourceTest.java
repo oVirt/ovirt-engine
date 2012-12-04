@@ -132,7 +132,7 @@ public class BackendGroupsResourceTest
     }
 
     @Test
-    public void testAddUser() throws Exception {
+    public void testAddGroup() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
                                    SearchType.AdGroup,
@@ -156,6 +156,100 @@ public class BackendGroupsResourceTest
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Group);
         verifyModel((Group) response.getEntity(), 0);
+    }
+
+    @Test
+    public void testAddGroupFailure() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
+                                   SearchType.AdGroup,
+                                   getAdGroup(0));
+        control.replay();
+        Group model = new Group();
+        model.setName(BAD_NAMES[0]);
+
+        try {
+           Response response = collection.add(model);
+           fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
+    }
+
+    @Test
+    public void testAddGroupUsingDomainFromGroupName() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations("ADGROUP@" + DOMAIN + ": name=*",
+                                   SearchType.AdGroup,
+                                   getAdGroupWithDomain(0));
+        setUpCreationExpectations(VdcActionType.AddUser,
+                                  AddUserParameters.class,
+                                  new String[] { "AdGroup.id" },
+                                  new Object[] { GUIDS[0] },
+                                  true,
+                                  true,
+                                  null,
+                                  VdcQueryType.GetAdGroupById,
+                                  GetAdGroupByIdParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[0] },
+                                  getEntity(0));
+        Group model = new Group();
+        model.setName(DOMAIN+"/"+NAMES[0]);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Group);
+        verifyModel((Group) response.getEntity(), 0);
+    }
+
+    @Test
+    public void testAddGroupById() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(VdcQueryType.GetAdGroupById,
+                                   GetAdGroupByIdParameters.class,
+                                   new String[] { "Id" },
+                                   new Object[] { GUIDS[0] },
+                                   getEntity(0));
+        setUpCreationExpectations(VdcActionType.AddUser,
+                                  AddUserParameters.class,
+                                  new String[] { "AdGroup.id" },
+                                  new Object[] { GUIDS[0] },
+                                  true,
+                                  true,
+                                  null,
+                                  VdcQueryType.GetAdGroupById,
+                                  GetAdGroupByIdParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[0] },
+                                  getEntity(0));
+        Group model = new Group();
+        model.setName(NAMES[0]);
+        model.setId(GUIDS[0].toString());
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Group);
+        verifyModel((Group) response.getEntity(), 0);
+    }
+
+    @Test
+    public void testAddGroupByIdFailure() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(NON_EXISTANT_GUID, true);
+        control.replay();
+        Group model = new Group();
+        model.setName(NAMES[0]);
+        model.setId(NON_EXISTANT_GUID.toString());
+
+        try {
+           Response response = collection.add(model);
+           fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            assertNotNull(wae.getResponse());
+            assertEquals(404, wae.getResponse().getStatus());
+        }
     }
 
     @Override
@@ -199,6 +293,15 @@ public class BackendGroupsResourceTest
         ad_groups adGroup = new ad_groups();
         adGroup.setid(GUIDS[index]);
         adGroup.setname(NAMES[index]);
+        adGroup.setdomain(DOMAIN);
+
+        return adGroup;
+    }
+
+    protected ad_groups getAdGroupWithDomain(int index) {
+        ad_groups adGroup = new ad_groups();
+        adGroup.setid(GUIDS[index]);
+        adGroup.setname(DOMAIN+"/"+NAMES[index]);
         adGroup.setdomain(DOMAIN);
 
         return adGroup;
