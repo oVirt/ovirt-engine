@@ -23,7 +23,7 @@ import javax.naming.directory.DirContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -36,7 +36,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  */
 public class DirectorySearcherTest extends AbstractLdapTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.LDAPQueryTimeout, 2),
             mockConfig(ConfigValues.LDAPConnectTimeout,10),

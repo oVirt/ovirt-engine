@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,7 +45,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RestoreAllSnapshotCommandTest {
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr =
             new MockConfigRule(
                     mockConfig(ConfigValues.FreeSpaceLow, 5),

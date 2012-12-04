@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -64,7 +64,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class RunVmCommandTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),

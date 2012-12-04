@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.command.utils;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StorageDomainSpaceCheckerTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Test

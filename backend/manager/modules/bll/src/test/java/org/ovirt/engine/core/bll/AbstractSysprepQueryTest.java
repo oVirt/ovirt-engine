@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -13,6 +13,6 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  */
 public abstract class AbstractSysprepQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends AbstractUserQueryTest<P, Q> {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.AdUserName, ""));
 }

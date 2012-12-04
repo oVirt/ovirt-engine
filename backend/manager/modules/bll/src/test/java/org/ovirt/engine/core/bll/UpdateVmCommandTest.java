@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -56,7 +56,7 @@ public class UpdateVmCommandTest {
     @Mock
     private VdsDAO vdsDAO;
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
             mockConfig(ConfigValues.MaxVmNameLengthNonWindows, 64),
@@ -94,6 +94,7 @@ public class UpdateVmCommandTest {
         params.setVmStaticData(vmStatic);
 
         command = spy(new UpdateVmCommand<VmManagementParametersBase>(params) {
+            @Override
             protected VDSGroup getVdsGroup() {
                 return group;
             }

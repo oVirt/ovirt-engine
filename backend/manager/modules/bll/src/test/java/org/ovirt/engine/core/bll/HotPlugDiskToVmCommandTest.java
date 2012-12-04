@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -48,7 +48,7 @@ public class HotPlugDiskToVmCommandTest {
     protected Guid diskImageGuid = Guid.NewGuid();
     protected Guid vmId = Guid.NewGuid();
 
-    @Rule
+    @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig
             (ConfigValues.HotPlugUnsupportedOsList,

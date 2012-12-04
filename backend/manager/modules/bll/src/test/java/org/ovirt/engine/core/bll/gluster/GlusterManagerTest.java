@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,8 +76,8 @@ public class GlusterManagerTest {
     @Mock
     private ClusterUtils clusterUtils;
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
             mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300));
 

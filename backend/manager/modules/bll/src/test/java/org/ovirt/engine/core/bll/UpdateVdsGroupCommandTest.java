@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -50,7 +50,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsGroupCommandTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Version VERSION_1_0 = new Version(1, 0);

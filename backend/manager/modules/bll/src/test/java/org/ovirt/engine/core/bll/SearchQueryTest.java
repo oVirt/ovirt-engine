@@ -8,8 +8,8 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.ClassRule;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -40,7 +40,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SearchQueryTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.SearchResultsLimit, 100),
             mockConfig(ConfigValues.DBSearchTemplate,

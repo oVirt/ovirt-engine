@@ -36,7 +36,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     private static final Version EXISTING_CLUSTER_VERSION = new Version("3.1");
 
     @Rule
-    public static MockConfigRule mcr = new MockConfigRule(
+    public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.oVirtISOsRepositoryPath, OVIRT_ISOS_REPOSITORY_PATH),
             mockConfig(ConfigValues.DataDir, OVIRT_ISOS_DATA_DIR),
             mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),

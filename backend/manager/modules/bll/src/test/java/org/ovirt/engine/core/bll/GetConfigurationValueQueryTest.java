@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 
 public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetConfigurationValueParameters, GetConfigurationValueQuery<GetConfigurationValueParameters>> {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Test

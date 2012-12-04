@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -61,7 +61,7 @@ public class AddDiskToVmCommandTest {
     private static int FREE_SPACE_LOW = 10;
     private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
             mockConfig(ConfigValues.FreeSpaceLow, FREE_SPACE_LOW),

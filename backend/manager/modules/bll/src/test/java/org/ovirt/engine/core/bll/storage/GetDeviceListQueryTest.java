@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -35,7 +35,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQueryParameters, GetDeviceListQuery<GetDeviceListQueryParameters>> {
 
-    @Rule
+    @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule();
 
     private DbFacade dbFacadeMock;

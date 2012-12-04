@@ -3,7 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.ArrayList;
 
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -16,9 +16,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class OvfVmWriterTest {
 
-    @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.VdcVersion,
-            "1.0.0.0"));
+    @ClassRule
+    public static MockConfigRule mockConfigRule =
+            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.VdcVersion, "1.0.0.0"));
 
     @Test
     public void test() {

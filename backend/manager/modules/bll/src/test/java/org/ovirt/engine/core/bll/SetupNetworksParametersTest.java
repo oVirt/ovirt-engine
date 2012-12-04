@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import javax.validation.Validator;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SetupNetworksParametersTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork, "ovirtmgmt"),
             mockConfig(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds, 100));
 

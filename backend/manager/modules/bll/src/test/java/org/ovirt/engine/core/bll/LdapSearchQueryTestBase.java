@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
@@ -32,7 +32,7 @@ public abstract class LdapSearchQueryTestBase extends AbstractQueryTest<SearchPa
 
     protected static final String NAME_TO_SEARCH = "gandalf";
 
-    @Rule
+    @ClassRule
     public static final MockConfigRule mcr =
             new MockConfigRule(
                     mockConfig(ConfigValues.LDAPSecurityAuthentication, "SIMPLE"),

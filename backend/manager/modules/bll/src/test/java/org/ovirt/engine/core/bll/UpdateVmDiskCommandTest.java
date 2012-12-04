@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -63,7 +63,7 @@ public class UpdateVmDiskCommandTest {
     @Mock
     private DbFacade dbFacade;
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
             );

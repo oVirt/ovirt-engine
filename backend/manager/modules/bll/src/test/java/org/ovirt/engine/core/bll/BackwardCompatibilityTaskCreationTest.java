@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
@@ -48,7 +49,7 @@ public class BackwardCompatibilityTaskCreationTest {
     @Rule
     public static final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
-    @Rule
+    @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.AsyncTaskPollingRate, 10),
             mockConfig(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds, 10),

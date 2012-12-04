@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class AutoRecoveryManagerTest {
     private AutoRecoveryManager manager;
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr =
     new MockConfigRule(mockConfig(ConfigValues.AutoRecoveryAllowedTypes, new HashMap<String, String>()));
 

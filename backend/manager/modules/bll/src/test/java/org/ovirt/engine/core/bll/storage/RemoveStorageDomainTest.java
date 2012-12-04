@@ -12,6 +12,7 @@ import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 
 import java.util.ArrayList;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +56,7 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 public class RemoveStorageDomainTest {
     private static final Version VDS_COMPATIBILITY_VERSION = new Version(2, 2);
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr =
             new MockConfigRule(
                     MockConfigRule.mockConfig(ConfigValues.IsNeedSupportForOldVgAPI,

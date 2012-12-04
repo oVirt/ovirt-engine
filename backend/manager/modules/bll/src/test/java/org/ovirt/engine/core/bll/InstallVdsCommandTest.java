@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,7 +33,7 @@ public class InstallVdsCommandTest {
     private static final String VALID_OVIRT_VERSION = "6.2";
     private static final String INVALID_OVIRT_VERSION = "5.8";
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
             mockConfig(ConfigValues.DataDir, "."),

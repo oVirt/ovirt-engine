@@ -10,8 +10,8 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.junit.ClassRule;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
 
 public class ImportVmCommandTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Test

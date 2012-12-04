@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StorageHandlingCommandBaseTest {
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
     StorageHandlingCommandBase<StoragePoolManagementParameter> cmd;

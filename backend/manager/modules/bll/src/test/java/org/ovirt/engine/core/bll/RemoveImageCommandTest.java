@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +38,7 @@ import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveImageCommandTest {
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VdcVersion, "3.1"));
 
     @Rule

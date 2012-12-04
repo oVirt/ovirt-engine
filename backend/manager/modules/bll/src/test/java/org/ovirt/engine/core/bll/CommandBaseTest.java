@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
@@ -33,7 +34,7 @@ import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.IsMultilevelAdministrationOn, false));
 
     @Rule

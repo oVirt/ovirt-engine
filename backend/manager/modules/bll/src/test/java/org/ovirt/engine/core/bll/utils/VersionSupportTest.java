@@ -6,7 +6,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
@@ -16,7 +16,7 @@ public class VersionSupportTest {
 
     private static final Version VALID_VERSION = new Version(1, 0);
 
-    @Rule
+    @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.SupportedClusterLevels, Collections.singleton(VALID_VERSION))
             );

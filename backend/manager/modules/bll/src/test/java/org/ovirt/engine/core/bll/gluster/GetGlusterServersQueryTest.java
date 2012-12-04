@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -35,7 +35,7 @@ public class GetGlusterServersQueryTest extends AbstractQueryTest<GlusterServers
                     +
                     "<peer><uuid>85c42b0d-c2b7-424a-ae72-5174c25da40b</uuid><hostname>testserver2</hostname><connected>1</connected><state>3</state></peer></peerStatus></cliOutput>";
 
-    @Rule
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.ConnectToServerTimeoutInSeconds, CONNECT_TO_SERVER_TIMEOUT),
             mockConfig(ConfigValues.GlusterPeerStatusCommand, GLUSTER_PEER_STATUS_CMD));
