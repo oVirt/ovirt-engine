@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.net.ConnectException;
-
+import java.io.IOException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -101,25 +100,23 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             throw new VDSProtocolException(ex);
         } catch (XmlRpcRunTimeException ex) {
             Throwable rootCause = ExceptionUtils.getRootCause(ex);
-            if ((ex.isNetworkError() || rootCause instanceof ConnectException)) {
+            VDSNetworkException networkException = new VDSNetworkException(rootCause);
+            if ((ex.isNetworkError() || rootCause instanceof IOException)) {
                 log.debugFormat(msgFormat,
                         getCommandName(),
                         getAdditionalInformation(),
                         ex.getMessage(),
                         rootCause.getMessage());
-                PrintReturnValue();
-                throw new VDSNetworkException(ex);
             } else {
                 log.errorFormat(msgFormat,
                         getCommandName(),
                         getAdditionalInformation(),
                         ex.getMessage(),
                         rootCause.getMessage());
-                PrintReturnValue();
-                VDSProtocolException vdsProtocolException = new VDSProtocolException(rootCause.getMessage());
-                vdsProtocolException.setVdsError(new VDSError(VdcBllErrors.PROTOCOL_ERROR, rootCause.getMessage()));
-                throw vdsProtocolException;
+                networkException.setVdsError(new VDSError(VdcBllErrors.PROTOCOL_ERROR, rootCause.toString()));
             }
+            PrintReturnValue();
+            throw networkException;
         }
 
         // TODO: look for invalid certificates error handling

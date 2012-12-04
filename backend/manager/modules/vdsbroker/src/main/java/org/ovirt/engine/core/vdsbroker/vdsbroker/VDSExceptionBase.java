@@ -4,6 +4,9 @@ import org.ovirt.engine.core.compat.*;
 import org.ovirt.engine.core.common.errors.*;
 
 public class VDSExceptionBase extends ApplicationException {
+
+    private static final long serialVersionUID = 5709501011970689110L;
+
     private VDSError privateVdsError;
 
     public VDSError getVdsError() {
@@ -14,12 +17,12 @@ public class VDSExceptionBase extends ApplicationException {
         privateVdsError = value;
     }
 
-    // public VDSExceptionBase(SerializationInfo info, StreamingContext context)
-    // {
-    // super(info, context);
-    // }
-    public VDSExceptionBase(String errMessage, RuntimeException baseException) {
+    public VDSExceptionBase(String errMessage, Throwable baseException) {
         super(errMessage, baseException);
+    }
+
+    public VDSExceptionBase(Throwable baseException) {
+        super(baseException);
     }
 
     public VDSExceptionBase(String errMessage) {

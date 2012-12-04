@@ -3,17 +3,15 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import org.ovirt.engine.core.common.errors.*;
 
 public class VDSGenericException extends VDSExceptionBase implements java.io.Serializable {
-    // protected VDSGenericException(SerializationInfo info, StreamingContext
-    // context)
-    // {
-    // super(info, context);
-    // }
-    public VDSGenericException(String message, RuntimeException baseException) {
+
+    private static final long serialVersionUID = 4778043822136178263L;
+
+    public VDSGenericException(String message, Throwable baseException) {
         super(message, baseException);
     }
 
-    public VDSGenericException(RuntimeException baseException) {
-        super("VDSGenericException: ", baseException);
+    public VDSGenericException(Throwable baseException) {
+        super(baseException);
     }
 
     public VDSGenericException(String errorStr) {

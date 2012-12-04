@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 public class VDSNetworkException extends VDSGenericException implements java.io.Serializable {
-    // protected VDSNetworkException(SerializationInfo info, StreamingContext
-    // context)
-    // {
-    // super(info, context);
-    // }
-    public VDSNetworkException(RuntimeException baseException) {
-        super("VDSNetworkException: ", baseException);
+
+    private static final long serialVersionUID = -486466100359278549L;
+
+    public VDSNetworkException(Throwable baseException) {
+        super(baseException);
     }
 
     public VDSNetworkException(String errorStr) {
