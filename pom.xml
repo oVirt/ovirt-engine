@@ -54,7 +54,7 @@
     <gwt.plugin.version>1.3.2.google</gwt.plugin.version>
     <findbugs.version>2.5.1</findbugs.version>
     <test-jar.plugin.version>2.2</test-jar.plugin.version>
-    <mockito.version>1.8.5</mockito.version>
+    <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
     <javax.mail.version>1.4.4</javax.mail.version>
     <hibernate-core.version>3.3.0.SP1</hibernate-core.version>
