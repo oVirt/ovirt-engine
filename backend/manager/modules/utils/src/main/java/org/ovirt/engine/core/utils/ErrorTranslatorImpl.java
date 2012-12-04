@@ -59,7 +59,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
                 if (!messages.containsKey(key)) {
                     messages.put(key, bundle.getString(key));
                 } else {
-                    log.warnFormat("Code {0} appears more then once in string table.", key);
+                    log.warnFormat("Code {0} appears more than once in string table.", key);
                 }
             }
         } catch (RuntimeException e) {
