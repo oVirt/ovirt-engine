@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -509,7 +508,7 @@ public class ClusterModel extends Model
             return (Integer) getOptimizationCustom().getEntity();
         }
 
-        return DataProvider.GetClusterDefaultMemoryOverCommit();
+        return AsyncDataProvider.GetClusterDefaultMemoryOverCommit();
     }
 
     public void setMemoryOverCommit(int value)
@@ -614,7 +613,7 @@ public class ClusterModel extends Model
 
         // Optimization methods:
         // default value =100;
-        setDefaultOverCommit(DataProvider.GetClusterDefaultMemoryOverCommit());
+        setDefaultOverCommit(AsyncDataProvider.GetClusterDefaultMemoryOverCommit());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -474,12 +473,12 @@ public class DiskModel extends Model
         getPreset().getSelectedItemChangedEvent().addListener(this);
 
         setVolumeType(new ListModel());
-        getVolumeType().setItems(DataProvider.GetVolumeTypeList());
+        getVolumeType().setItems(AsyncDataProvider.GetVolumeTypeList());
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
 
         setStorageType(new ListModel());
         getStorageType().setIsAvailable(false);
-        getStorageType().setItems(DataProvider.GetStorageTypeList());
+        getStorageType().setItems(AsyncDataProvider.GetStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
         setWipeAfterDelete(new EntityModel());
@@ -601,9 +600,9 @@ public class DiskModel extends Model
             return;
         }
 
-        getInterface().setItems(DataProvider.GetDiskInterfaceList(
+        getInterface().setItems(AsyncDataProvider.GetDiskInterfaceList(
                 VmOsType.Unassigned, datacenter.getcompatibility_version()));
-        getInterface().setSelectedItem(DataProvider.GetDefaultDiskInterface(
+        getInterface().setSelectedItem(AsyncDataProvider.GetDefaultDiskInterface(
                 VmOsType.Unassigned, null));
     }
 
@@ -786,7 +785,7 @@ public class DiskModel extends Model
 
     private void updateVolumeFormat(VolumeType volumeType, StorageType storageType)
     {
-        setVolumeFormat(DataProvider.GetDiskVolumeFormat(volumeType, storageType));
+        setVolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(volumeType, storageType));
     }
 
     private void updateShareable(VolumeType volumeType, StorageType storageType) {

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -1463,8 +1462,8 @@ public class UnitVmModel extends Model {
     {
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
-        setIsWindowsOS(DataProvider.IsWindowsOsType(osType));
-        setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(osType) || osType == VmOsType.Unassigned
+        setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(osType));
+        setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(osType) || osType == VmOsType.Unassigned
                 || osType == VmOsType.Other);
 
         getInitrd_path().setIsChangable(getIsLinux_Unassign_UnknownOS());
@@ -1813,7 +1812,7 @@ public class UnitVmModel extends Model {
         }
 
         // for VM it depends on the OS type
-        return new LengthValidation(DataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT
+        return new LengthValidation(AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT
                 : NON_WINDOWS_VM_NAME_MAX_LIMIT);
     }
 
@@ -1837,7 +1836,7 @@ public class UnitVmModel extends Model {
 
             String nameExpr = "^[-\\w\\.]{1,"; //$NON-NLS-1$
             String nameMsg;
-            if (DataProvider.IsWindowsOsType(osType))
+            if (AsyncDataProvider.IsWindowsOsType(osType))
             {
                 nameExpr += WINDOWS_VM_NAME_MAX_LIMIT;
                 nameMsg =
@@ -1869,7 +1868,7 @@ public class UnitVmModel extends Model {
                     });
 
             boolean is64OsType =
-                    (osType == VmOsType.Other || osType == VmOsType.OtherLinux || DataProvider.Is64bitOsType(osType));
+                    (osType == VmOsType.Other || osType == VmOsType.OtherLinux || AsyncDataProvider.Is64bitOsType(osType));
             int maxMemSize = is64OsType ? get_MaxMemSize64() : get_MaxMemSize32();
 
             ValidateMemorySize(getMemSize(), maxMemSize, _minMemSize);

@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -621,10 +622,10 @@ public class VmGeneralModel extends EntityModel
         setCpuInfo(vm.getNumOfCpus() + " " + "(" + vm.getNumOfSockets() + " Socket(s), " + vm.getCpuPerSocket() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + " Core(s) per Socket)"); //$NON-NLS-1$
 
-        setHasDomain(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        setHasDomain(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         setDomain(vm.getVmDomain());
 
-        setHasTimeZone(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.stringsEqual(vm.getCustomProperties(), "")); //$NON-NLS-1$

@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -162,15 +161,15 @@ public class VmInterfaceListModel extends SearchableListModel
         }
 
         ArrayList<VmNetworkInterface> interfaces = Linq.<VmNetworkInterface> Cast(getItems());
-        String newNicName = DataProvider.GetNewNicName(interfaces);
+        String newNicName = AsyncDataProvider.GetNewNicName(interfaces);
 
         VmInterfaceModel model = new VmInterfaceModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         model.setHashName("new_network_interface_vms"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.getNicType().setItems(DataProvider.GetNicTypeList(vm.getVmOs(), false));
-        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(vm.getVmOs()));
+        model.getNicType().setItems(AsyncDataProvider.GetNicTypeList(vm.getVmOs(), false));
+        model.getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(vm.getVmOs()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 
@@ -256,13 +255,13 @@ public class VmInterfaceListModel extends SearchableListModel
 
         Integer selectedNicType = nic.getType();
         ArrayList<VmInterfaceType> nicTypes =
-                DataProvider.GetNicTypeList(vm.getVmOs(),
+                AsyncDataProvider.GetNicTypeList(vm.getVmOs(),
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         model.getNicType().setItems(nicTypes);
 
         if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
         {
-            selectedNicType = DataProvider.GetDefaultNicType(vm.getVmOs()).getValue();
+            selectedNicType = AsyncDataProvider.GetDefaultNicType(vm.getVmOs()).getValue();
         }
 
         model.getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));

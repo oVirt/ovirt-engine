@@ -52,7 +52,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -724,11 +723,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         model.getCustomProperties().setEntity(vm.getCustomProperties());
 
-        model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getVmOs())
+        model.setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs())
                 || vm.getVmOs() == VmOsType.Unassigned || vm.getVmOs() == VmOsType.Other);
 
         model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
-        model.setIsWindowsOS(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        model.setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         model.getIsVmFirstRun().setEntity(!vm.isInitialized());
         model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
@@ -849,7 +848,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 VM selectedVM = (VM) userPortalItemModel.getEntity();
                 List<String> images = (List<String>) result;
 
-                if (DataProvider.IsWindowsOsType(selectedVM.getVmOs()))
+                if (AsyncDataProvider.IsWindowsOsType(selectedVM.getVmOs()))
                 {
                     // Add a pseudo floppy disk image used for Windows' sysprep.
                     if (!selectedVM.isInitialized())
@@ -1384,7 +1383,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
                                 if (disk != null) {
                                     templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
-                                    templateDisk.setvolume_format(DataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
+                                    templateDisk.setvolume_format(AsyncDataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
                                             .getSelectedItem(),
                                             getstorageDomain().getstorage_type()));
                                 }
@@ -1754,6 +1753,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
+    @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
         if (item.getEntity() != null) {

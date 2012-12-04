@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 public class PoolNameLengthValidation implements IValidation {
@@ -49,7 +49,7 @@ public class PoolNameLengthValidation implements IValidation {
     }
 
     protected int getMaxNameLength() {
-        return DataProvider.IsWindowsOsType(osType) ?
+        return AsyncDataProvider.IsWindowsOsType(osType) ?
                 UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT :
                 UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
     }

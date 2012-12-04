@@ -4,19 +4,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.EventNotificationEntity;
+import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -29,7 +36,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -39,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.core.common.config.Config;
@@ -97,8 +107,10 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -107,14 +119,15 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.IAsyncConverter;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
+import org.ovirt.engine.ui.uicompat.SpiceConstantsManager;
 
 public final class AsyncDataProvider {
 
@@ -901,7 +914,7 @@ public final class AsyncDataProvider {
                     disk.setvolume_type(storageType == StorageType.ISCSI || storageType == StorageType.FCP ?
                             VolumeType.Preallocated : VolumeType.Sparse);
 
-                    disk.setvolume_format(AsyncDataProvider.GetDiskVolumeFormat(disk.getvolume_type(), storageType));
+                    disk.setvolume_format(GetDiskVolumeFormat(disk.getvolume_type(), storageType));
 
                     list.add(disk);
                 }
@@ -1696,7 +1709,7 @@ public final class AsyncDataProvider {
                                     tag.gettag_name());
                     if (tag.getChildren() != null)
                     {
-                        DataProvider.fillTagsRecursive(root, tag.getChildren());
+                        fillTagsRecursive(root, tag.getChildren());
                     }
 
                     return root;
@@ -2506,5 +2519,352 @@ public final class AsyncDataProvider {
                 new GetConfigurationValueParameters(ConfigurationValues.MTUOverrideSupported);
         tempVar.setVersion(version);
         GetConfigFromCache(tempVar, aQuery);
+    }
+
+    public static void fillTagsRecursive(tags tagToFill, List<tags> children)
+    {
+        ArrayList<tags> list = new ArrayList<tags>();
+
+        for (tags tag : children)
+        {
+            // tags child = new tags(tag.description, tag.parent_id, tag.IsReadonly, tag.tag_id, tag.tag_name);
+            if (tag.gettype() == TagsType.GeneralTag)
+            {
+                list.add(tag);
+                if (tag.getChildren() != null)
+                {
+                    fillTagsRecursive(tag, tag.getChildren());
+                }
+            }
+
+        }
+
+        tagToFill.setChildren(list);
+    }
+
+    public static ArrayList<EventNotificationEntity> GetEventNotificationTypeList()
+    {
+        ArrayList<EventNotificationEntity> ret = new ArrayList<EventNotificationEntity>();
+        // TODO: We can translate it here too
+        for (EventNotificationEntity entity : EventNotificationEntity.values())
+        {
+            if (entity != EventNotificationEntity.UNKNOWN)
+            {
+                ret.add(entity);
+            }
+        }
+        return ret;
+    }
+
+    public static Map<EventNotificationEntity, HashSet<AuditLogType>> GetAvailableNotificationEvents()
+    {
+        return VdcEventNotificationUtils.GetNotificationEvents();
+    }
+
+    public static ArrayList<VmInterfaceType> GetNicTypeList(VmOsType osType, boolean hasDualmode)
+    {
+        ArrayList<VmInterfaceType> list = new ArrayList<VmInterfaceType>(Arrays.asList(VmInterfaceType.values()));
+
+        list.remove(VmInterfaceType.rtl8139_pv); // Dual mode NIC should be available only for existing NICs that have
+                                                 // that type already
+        if (IsWindowsOsType(osType))
+        {
+            list.remove(VmInterfaceType.e1000);
+            if (osType == VmOsType.WindowsXP && hasDualmode)
+            {
+                list.add(VmInterfaceType.rtl8139_pv);
+            }
+        }
+
+        return list;
+    }
+
+    public static VmInterfaceType GetDefaultNicType(VmOsType osType)
+    {
+        return VmInterfaceType.pv;
+    }
+
+    public static ArrayList<StorageType> GetStoragePoolTypeList() {
+
+        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
+            StorageType.NFS,
+            StorageType.ISCSI,
+            StorageType.FCP,
+            StorageType.LOCALFS,
+            StorageType.POSIXFS
+        }));
+    }
+
+    public static boolean IsVersionMatchStorageType(Version version, StorageType type)
+    {
+        return !((type == StorageType.LOCALFS && version.compareTo(new Version(2, 2)) <= 0) || (type == StorageType.POSIXFS && version.compareTo(new Version(3,
+                0)) <= 0));
+    }
+
+    public static int GetClusterDefaultMemoryOverCommit()
+    {
+        return 100;
+    }
+
+    public static ArrayList<VolumeType> GetVolumeTypeList()
+    {
+        return new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {
+            VolumeType.Preallocated,
+            VolumeType.Sparse
+        }));
+    }
+
+    public static ArrayList<StorageType> GetStorageTypeList()
+    {
+        return new ArrayList<StorageType>(Arrays.asList(new StorageType[] {
+                StorageType.ISCSI,
+                StorageType.FCP
+        }));
+    }
+
+    public static ArrayList<DiskInterface> GetDiskInterfaceList(VmOsType osType, Version Version)
+    {
+        return osType == VmOsType.WindowsXP && (Version == null || Version.compareTo(new Version("2.2")) < 0) ? new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] { DiskInterface.IDE })) //$NON-NLS-1$
+                : new ArrayList<DiskInterface>(Arrays.asList(new DiskInterface[] {
+                        DiskInterface.IDE, DiskInterface.VirtIO }));
+    }
+
+    public static DiskInterface GetDefaultDiskInterface(VmOsType osType, List<Disk> disks)
+    {
+        return osType == VmOsType.WindowsXP ? DiskInterface.IDE : disks != null && disks.size() > 0 ? disks.get(0)
+                .getDiskInterface() : DiskInterface.VirtIO;
+    }
+
+    public static String GetNewNicName(ArrayList<VmNetworkInterface> existingInterfaces)
+    {
+        int maxIfaceNumber = 0;
+        if (existingInterfaces != null)
+        {
+            for (VmNetworkInterface iface : existingInterfaces)
+            {
+                // name of Interface is "eth<n>" (<n>: integer).
+                if (iface.getName().length() > 3) {
+                    final Integer ifaceNumber = IntegerCompat.tryParse(iface.getName().substring(3));
+                    if (ifaceNumber != null && ifaceNumber > maxIfaceNumber) {
+                        maxIfaceNumber = ifaceNumber;
+                    }
+                }
+            }
+        }
+
+        return "nic" + (maxIfaceNumber + 1); //$NON-NLS-1$
+    }
+
+    /**
+     * Gets a value composed of "[string1]+[string2]+..." and returns "[string1Translated]+[string2Translated]+..."
+     *
+     * @param complexValue
+     *            string in the form of "[string1]+[string2]+..."
+     * @return string in the form of "[string1Translated]+[string2Translated]+..."
+     */
+    public static String GetComplexValueFromSpiceRedKeysResource(String complexValue)
+    {
+        if (StringHelper.isNullOrEmpty(complexValue))
+        {
+            return ""; //$NON-NLS-1$
+        }
+        ArrayList<String> values = new ArrayList<String>();
+
+        for (String s : complexValue.split("[+]", -1)) //$NON-NLS-1$
+        {
+            values.add(SpiceConstantsManager.getInstance()
+                    .getSpiceRedKeys()
+                    .getString(s.replaceAll("-", "_"))); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return StringHelper.join("+", values.toArray(new String[] {})); //$NON-NLS-1$
+    }
+
+    public static Guid GetEntityGuid(Object entity)
+    {
+        if (entity instanceof VM)
+        {
+            return ((VM) entity).getId();
+        }
+        else if (entity instanceof storage_pool)
+        {
+            return ((storage_pool) entity).getId();
+        }
+        else if (entity instanceof VDSGroup)
+        {
+            return ((VDSGroup) entity).getId();
+        }
+        else if (entity instanceof VDS)
+        {
+            return ((VDS) entity).getId();
+        }
+        else if (entity instanceof storage_domains)
+        {
+            return ((storage_domains) entity).getId();
+        }
+        else if (entity instanceof VmTemplate)
+        {
+            return ((VmTemplate) entity).getId();
+        }
+        else if (entity instanceof vm_pools)
+        {
+            return ((vm_pools) entity).getvm_pool_id();
+        }
+        else if (entity instanceof DbUser)
+        {
+            return ((DbUser) entity).getuser_id();
+        }
+        else if (entity instanceof Quota)
+        {
+            return ((Quota) entity).getId();
+        }
+        else if (entity instanceof DiskImage)
+        {
+            return ((DiskImage) entity).getId();
+        }
+        else if (entity instanceof GlusterVolumeEntity)
+        {
+            return ((GlusterVolumeEntity) entity).getId();
+        }
+        else if (entity instanceof Network)
+        {
+            return ((Network) entity).getId();
+        }
+        return new Guid();
+    }
+
+    private static ArrayList<VmOsType> windowsOsTypes;
+
+    public static ArrayList<VmOsType> GetWindowsOsTypes()
+    {
+        if (windowsOsTypes != null)
+        {
+            return windowsOsTypes;
+        }
+
+        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
+        windowsOsTypes =
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.Windows2003,
+                VmOsType.Windows2003x64,
+                VmOsType.Windows2008,
+                VmOsType.Windows2008R2x64,
+                VmOsType.Windows2008x64,
+                VmOsType.Windows7,
+                VmOsType.Windows7x64,
+                VmOsType.WindowsXP
+            }));
+
+        return windowsOsTypes;
+        /*******************************************************************************/
+    }
+
+    public static boolean IsWindowsOsType(VmOsType osType)
+    {
+        if (GetWindowsOsTypes().contains(osType))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static ArrayList<VmOsType> linuxOsTypes;
+    private static ArrayList<VmOsType> x64OsTypes;
+
+    public static boolean IsLinuxOsType(VmOsType osType)
+    {
+        if (GetLinuxOsTypes().contains(osType))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static ArrayList<VmOsType> GetLinuxOsTypes()
+    {
+        if (linuxOsTypes != null)
+        {
+            return linuxOsTypes;
+        }
+
+        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
+        linuxOsTypes =
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.OtherLinux,
+                VmOsType.RHEL3,
+                VmOsType.RHEL3x64,
+                VmOsType.RHEL4,
+                VmOsType.RHEL4x64,
+                VmOsType.RHEL5,
+                VmOsType.RHEL5x64,
+                VmOsType.RHEL6,
+                VmOsType.RHEL6x64
+            }));
+
+        return linuxOsTypes;
+        /*******************************************************************************/
+    }
+
+    public static boolean Is64bitOsType(VmOsType osType)
+    {
+        if (Get64bitOsTypes().contains(osType))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static ArrayList<VmOsType> Get64bitOsTypes()
+    {
+        if (x64OsTypes != null)
+        {
+            return x64OsTypes;
+        }
+
+        /***** TODO: remove once the gwt is using generic api instead of backend! *****/
+        x64OsTypes =
+            new ArrayList<VmOsType>(Arrays.asList(new VmOsType[] {
+                VmOsType.RHEL3x64,
+                VmOsType.RHEL4x64,
+                VmOsType.RHEL5x64,
+                VmOsType.RHEL6x64,
+                VmOsType.Windows2003x64,
+                VmOsType.Windows2008R2x64,
+                VmOsType.Windows2008x64,
+                VmOsType.Windows7x64
+            }));
+
+        return x64OsTypes;
+        /*******************************************************************************/
+    }
+
+    public static ArrayList<Map.Entry<String, EntityModel>> GetBondingOptionList(RefObject<Map.Entry<String, EntityModel>> defaultItem)
+    {
+        ArrayList<Map.Entry<String, EntityModel>> list =
+                new ArrayList<Map.Entry<String, EntityModel>>();
+        EntityModel entityModel = new EntityModel();
+        entityModel.setEntity("(Mode 1) Active-Backup"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel();
+        entityModel.setEntity("(Mode 2) Load balance (balance-xor)"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel();
+        entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)"); //$NON-NLS-1$
+        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4", entityModel); //$NON-NLS-1$
+        list.add(defaultItem.argvalue);
+        entityModel = new EntityModel();
+        entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)"); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5", entityModel)); //$NON-NLS-1$
+        entityModel = new EntityModel();
+        entityModel.setEntity(""); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("custom", entityModel)); //$NON-NLS-1$
+        return list;
+    }
+
+    public static String GetDefaultBondingOption()
+    {
+        return "mode=802.3ad miimon=150"; //$NON-NLS-1$
     }
 }

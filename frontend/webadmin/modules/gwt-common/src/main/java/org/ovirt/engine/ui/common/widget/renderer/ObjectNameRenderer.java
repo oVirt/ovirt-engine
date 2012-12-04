@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 
@@ -13,7 +13,7 @@ public class ObjectNameRenderer extends AbstractRenderer<Object[]> {
         VdcObjectType vdcObjectType = (VdcObjectType) arg[0];
         String objectType = "(" + new EnumRenderer<VdcObjectType>().render(vdcObjectType) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         String objectName = (String) arg[1];
-        if (arg.length == 4 && DataProvider.GetEntityGuid(arg[2]).equals(arg[3])) {
+        if (arg.length == 4 && AsyncDataProvider.GetEntityGuid(arg[2]).equals(arg[3])) {
             return ""; //$NON-NLS-1$
         }
         if (vdcObjectType.equals(VdcObjectType.System)) {

@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.queries.GetEventSubscribersBySubscriberIdPar
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
@@ -113,7 +113,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         ArrayList<EventNotificationEntity> eventTypes =
                 ApplicationModeHelper.getModeSpecificEventNotificationTypeList();
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
-                DataProvider.GetAvailableNotificationEvents();
+                AsyncDataProvider.GetAvailableNotificationEvents();
 
         Translator eventNotificationEntityTranslator = EnumTranslator.Create(EventNotificationEntity.class);
         Translator auditLogTypeTranslator = EnumTranslator.Create(AuditLogType.class);

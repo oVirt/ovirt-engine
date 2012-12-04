@@ -31,7 +31,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -298,7 +297,7 @@ public class VmBackupModel extends ManageBackupModel {
         String nameMsg;
         VM vm = (VM) object;
         VmOsType osType = vm.getOs();
-        if (DataProvider.IsWindowsOsType(osType))
+        if (AsyncDataProvider.IsWindowsOsType(osType))
         {
             nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
             nameMsg =
@@ -361,7 +360,7 @@ public class VmBackupModel extends ManageBackupModel {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
                 disk.setvolume_format(
-                        DataProvider.GetDiskVolumeFormat(
+                        AsyncDataProvider.GetDiskVolumeFormat(
                                 importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 importModel.getDiskImportData(
                                         disk.getId()).getSelectedStorageDomain().getstorage_type()));

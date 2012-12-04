@@ -36,7 +36,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -172,7 +171,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 {
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     boolean reinitialize =
-                            !getEntity().isInitialized() && DataProvider.IsWindowsOsType(getEntity().getVmOs());
+                            !getEntity().isInitialized() && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs());
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
                     tempVar.setReinitialize(reinitialize);
@@ -389,13 +388,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
 
         String toggleFullScreenKeysTranslated =
-                DataProvider.GetComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
+                AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
                         : "shift+f11"); //$NON-NLS-1$
         String releaseCursorKeysTranslated =
-                DataProvider.GetComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
+                AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
                         : "shift+f12"); //$NON-NLS-1$
-        String ctrlAltDelTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
-        String ctrlAltEndTranslated = DataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
+        String ctrlAltDelTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
+        String ctrlAltEndTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
         getspice().setTitle(getEntity().getVmName()
                 + ":%d" //$NON-NLS-1$

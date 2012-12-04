@@ -345,6 +345,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         }
     }
 
+    @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
 

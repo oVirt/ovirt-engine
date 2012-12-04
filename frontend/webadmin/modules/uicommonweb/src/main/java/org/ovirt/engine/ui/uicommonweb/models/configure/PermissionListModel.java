@@ -28,9 +28,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -356,7 +356,7 @@ public class PermissionListModel extends SearchableListModel
 
     protected Guid getEntityGuid()
     {
-        return DataProvider.GetEntityGuid(getEntity());
+        return AsyncDataProvider.GetEntityGuid(getEntity());
     }
 
     protected VdcObjectType getObjectType()

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -227,7 +226,7 @@ public class VmGuideModel extends GuideModel
         }
 
         int nicCount = nics.size();
-        String newNicName = DataProvider.GetNewNicName(nics);
+        String newNicName = AsyncDataProvider.GetNewNicName(nics);
 
         ArrayList<Network> operationalNetworks = new ArrayList<Network>();
         for (Network a : networks)
@@ -245,8 +244,8 @@ public class VmGuideModel extends GuideModel
         model.setIsNew(true);
         model.getNetwork().setItems(operationalNetworks);
         model.getNetwork().setSelectedItem(operationalNetworks.size() > 0 ? operationalNetworks.get(0) : null);
-        model.getNicType().setItems(DataProvider.GetNicTypeList(getEntity().getVmOs(), false));
-        model.getNicType().setSelectedItem(DataProvider.GetDefaultNicType(getEntity().getVmOs()));
+        model.getNicType().setItems(AsyncDataProvider.GetNicTypeList(getEntity().getVmOs(), false));
+        model.getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(getEntity().getVmOs()));
         model.getName().setEntity(newNicName);
         model.getMAC().setIsChangable(false);
 

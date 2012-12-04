@@ -37,7 +37,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -466,7 +465,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 }
 
                 ArrayList<DiskInterface> interfaces =
-                        DataProvider.GetDiskInterfaceList(vm.getVmOs(), vm.getVdsGroupCompatibilityVersion());
+                        AsyncDataProvider.GetDiskInterfaceList(vm.getVmOs(), vm.getVdsGroupCompatibilityVersion());
                 if (!interfaces.contains(disk.getDiskInterface()))
                 {
                     interfaces.add(disk.getDiskInterface());

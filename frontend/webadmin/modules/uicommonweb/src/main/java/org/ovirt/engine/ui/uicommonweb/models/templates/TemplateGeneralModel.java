@@ -15,6 +15,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -475,10 +476,10 @@ public class TemplateGeneralModel extends EntityModel
         translator = EnumTranslator.Create(OriginType.class);
         setOrigin(translator.get(template.getorigin()));
 
-        setHasDomain(DataProvider.IsWindowsOsType(template.getos()));
+        setHasDomain(AsyncDataProvider.IsWindowsOsType(template.getos()));
         setDomain(template.getdomain());
 
-        setHasTimeZone(DataProvider.IsWindowsOsType(template.getos()));
+        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(template.getos()));
         setTimeZone(template.gettime_zone());
 
         setHasUsbPolicy(true);

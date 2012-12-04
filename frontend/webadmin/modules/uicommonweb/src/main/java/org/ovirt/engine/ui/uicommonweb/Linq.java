@@ -37,6 +37,7 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -1011,7 +1012,7 @@ public final class Linq
             ListModel volumeList = new ListModel();
             volumeList.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ?
                     new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                    : DataProvider.GetVolumeTypeList()));
+                    : AsyncDataProvider.GetVolumeTypeList()));
             volumeList.setSelectedItem(diskImage.getvolume_type());
             diskModel.setVolumeType(volumeList);
         }

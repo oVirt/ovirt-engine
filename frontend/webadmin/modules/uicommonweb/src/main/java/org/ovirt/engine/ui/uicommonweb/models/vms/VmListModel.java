@@ -755,7 +755,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             setDefaultConsoleModel(vm.getDisplayType() == DisplayType.vnc ? cachedModels.get(1) : cachedModels.get(0));
 
-            if (DataProvider.IsWindowsOsType(vm.getVmOs()))
+            if (AsyncDataProvider.IsWindowsOsType(vm.getVmOs()))
             {
                 for (ConsoleModel a : cachedModels)
                 {
@@ -1255,10 +1255,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setCustomPropertiesKeysList(this.getCustomPropertiesKeysList()
                 .get(vm.getVdsGroupCompatibilityVersion()));
 
-        model.setIsLinux_Unassign_UnknownOS(DataProvider.IsLinuxOsType(vm.getVmOs())
+        model.setIsLinux_Unassign_UnknownOS(AsyncDataProvider.IsLinuxOsType(vm.getVmOs())
                 || vm.getVmOs() == VmOsType.Unassigned || vm.getVmOs() == VmOsType.Other);
         model.getIsLinuxOptionsAvailable().setEntity(model.getIsLinux_Unassign_UnknownOS());
-        model.setIsWindowsOS(DataProvider.IsWindowsOsType(vm.getVmOs()));
+        model.setIsWindowsOS(AsyncDataProvider.IsWindowsOsType(vm.getVmOs()));
         model.getIsVmFirstRun().setEntity(!vm.isInitialized());
         model.getSysPrepDomainName().setSelectedItem(vm.getVmDomain());
 
@@ -1363,7 +1363,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         RunOnceModel model = (RunOnceModel) getWindow();
 
-        if (DataProvider.IsWindowsOsType(vm.getVmOs()))
+        if (AsyncDataProvider.IsWindowsOsType(vm.getVmOs()))
         {
             // Add a pseudo floppy disk image used for Windows' sysprep.
             if (!vm.isInitialized())
@@ -1993,7 +1993,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             VM a = (VM) item;
             // use sysprep iff the vm is not initialized and vm has Win OS
-            boolean reinitialize = !a.isInitialized() && DataProvider.IsWindowsOsType(a.getVmOs());
+            boolean reinitialize = !a.isInitialized() && AsyncDataProvider.IsWindowsOsType(a.getVmOs());
             RunVmParams tempVar = new RunVmParams(a.getId());
             tempVar.setReinitialize(reinitialize);
             list.add(tempVar);
@@ -2312,7 +2312,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                             .setvolume_type((VolumeType) disk.getVolumeType()
                                                     .getSelectedItem());
                                     dict.get(templateDisk.getId())
-                                            .setvolume_format(DataProvider.GetDiskVolumeFormat(
+                                            .setvolume_format(AsyncDataProvider.GetDiskVolumeFormat(
                                                     (VolumeType) disk.getVolumeType().getSelectedItem(),
                                                     storageDomain.getstorage_type()));
                                     if (disk.getQuota().getSelectedItem() != null) {

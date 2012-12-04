@@ -36,7 +36,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -906,7 +905,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                             new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
                     ArrayList<Map.Entry<String, EntityModel>> list =
-                            DataProvider.GetBondingOptionList(tempRef_defaultItem);
+                            AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
                     Map.Entry<String, EntityModel> selectBondingOpt =
                             new KeyValuePairCompat<String, EntityModel>();
@@ -923,7 +922,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                     if (containsSelectBondingOpt == false)
                     {
-                        if (StringHelper.stringsEqual(item.getBondOptions(), DataProvider.GetDefaultBondingOption()))
+                        if (StringHelper.stringsEqual(item.getBondOptions(), AsyncDataProvider.GetDefaultBondingOption()))
                         {
                             selectBondingOpt = defaultItem;
                         }
@@ -1049,7 +1048,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                                     new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
                             ArrayList<Map.Entry<String, EntityModel>> list =
-                                    DataProvider.GetBondingOptionList(tempRef_defaultItem);
+                                    AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
                             defaultItem = tempRef_defaultItem.argvalue;
                             Map.Entry<String, EntityModel> selectBondingOpt =
                                     new KeyValuePairCompat<String, EntityModel>();
@@ -1067,7 +1066,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             if (containsSelectBondingOpt == false)
                             {
                                 if (StringHelper.stringsEqual(item.getBondOptions(),
-                                        DataProvider.GetDefaultBondingOption()))
+                                        AsyncDataProvider.GetDefaultBondingOption()))
                                 {
                                     selectBondingOpt = defaultItem;
                                 }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -153,7 +152,7 @@ public class DataCenterModel extends Model
 
         setStorageTypeList(new ListModel());
         getStorageTypeList().getSelectedItemChangedEvent().addListener(this);
-        getStorageTypeList().setItems(DataProvider.GetStoragePoolTypeList());
+        getStorageTypeList().setItems(AsyncDataProvider.GetStoragePoolTypeList());
 
         setQuotaEnforceTypeListModel(new ListModel());
         ArrayList<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
@@ -203,7 +202,7 @@ public class DataCenterModel extends Model
 
                 for (Version item : versions)
                 {
-                    if (DataProvider.IsVersionMatchStorageType(item, type))
+                    if (AsyncDataProvider.IsVersionMatchStorageType(item, type))
                     {
                         list.add(item);
                     }

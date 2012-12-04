@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.renderer;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 
@@ -13,7 +13,7 @@ public class GroupNameRenderer extends AbstractRenderer<Object[]> {
         Object entity = arg[0];
         Guid objectGuid = (Guid) arg[1];
 
-        if (DataProvider.GetEntityGuid(entity).equals(objectGuid)) {
+        if (AsyncDataProvider.GetEntityGuid(entity).equals(objectGuid)) {
             return ""; //$NON-NLS-1$
         }
         String ownerName = (String) arg[2];

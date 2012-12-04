@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class RdpConsoleModel extends ConsoleModel
@@ -67,7 +67,8 @@ public class RdpConsoleModel extends ConsoleModel
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && DataProvider.IsWindowsOsType(getEntity().getVmOs()) && getConfigurator().isClientWindownsExplorer());
+                && AsyncDataProvider.IsWindowsOsType(getEntity().getVmOs())
+                && getConfigurator().isClientWindownsExplorer());
     }
 
     @Override

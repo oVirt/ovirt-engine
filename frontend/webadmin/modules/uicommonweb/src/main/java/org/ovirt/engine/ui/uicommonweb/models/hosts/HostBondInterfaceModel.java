@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -202,7 +202,7 @@ public class HostBondInterfaceModel extends Model
         RefObject<Map.Entry<String, EntityModel>> tempRef_defaultItem =
                 new RefObject<Map.Entry<String, EntityModel>>(defaultItem);
         ArrayList<Map.Entry<String, EntityModel>> list =
-                DataProvider.GetBondingOptionList(tempRef_defaultItem);
+                AsyncDataProvider.GetBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);

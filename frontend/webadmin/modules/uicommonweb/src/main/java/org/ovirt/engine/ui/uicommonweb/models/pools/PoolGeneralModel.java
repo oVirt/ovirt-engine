@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -24,14 +27,11 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 @SuppressWarnings("unused")
 public class PoolGeneralModel extends EntityModel
@@ -471,10 +471,10 @@ public class PoolGeneralModel extends EntityModel
                     translator = EnumTranslator.Create(UsbPolicy.class);
                     poolGeneralModel.setUsbPolicy(translator.get(getvm().getUsbPolicy()));
 
-                    setHasDomain(DataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    setHasDomain(AsyncDataProvider.IsWindowsOsType(getvm().getVmOs()));
                     poolGeneralModel.setDomain(getvm().getVmDomain());
 
-                    setHasTimeZone(DataProvider.IsWindowsOsType(getvm().getVmOs()));
+                    setHasTimeZone(AsyncDataProvider.IsWindowsOsType(getvm().getVmOs()));
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
                     poolGeneralModel.setIsStateless(getvm().isStateless());

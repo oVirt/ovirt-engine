@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleNode;
 
 public class ApplicationModeHelper {
@@ -33,7 +33,7 @@ public class ApplicationModeHelper {
 
     public static ArrayList<EventNotificationEntity> getModeSpecificEventNotificationTypeList() {
         ArrayList<EventNotificationEntity> subList = new ArrayList<EventNotificationEntity>();
-        for (EventNotificationEntity entity : DataProvider.GetEventNotificationTypeList()) {
+        for (EventNotificationEntity entity : AsyncDataProvider.GetEventNotificationTypeList()) {
             if ((entity.getAvailableInModes() & UI_MODE.getValue()) > 0) {
                 subList.add(entity);
             }

@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -529,7 +528,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
                                 tempVar2.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                                        : DataProvider.GetVolumeTypeList()));
+                                        : AsyncDataProvider.GetVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getvolume_type());
                                 diskModel.setVolumeType(tempVar2);
                                 diskModel.getVolumeType().setIsAvailable(false);

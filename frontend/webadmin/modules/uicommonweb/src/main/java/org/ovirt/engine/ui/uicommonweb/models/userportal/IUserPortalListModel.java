@@ -14,8 +14,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
@@ -194,7 +194,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             item.setDefaultConsole(determineConsoleModelFromVm(vm, cachedModels));
 
             // Update additional console
-            if (DataProvider.IsWindowsOsType(vm.getVmOs()))
+            if (AsyncDataProvider.IsWindowsOsType(vm.getVmOs()))
             {
                 item.setAdditionalConsole(cachedModels.get(RDP_INDEX));
                 item.setHasAdditionalConsole(true);

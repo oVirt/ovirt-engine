@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
@@ -141,7 +140,7 @@ public class VmItemBehavior extends ItemBehavior
     {
         VM entity = (VM) getItem().getEntity();
         // use sysprep iff the vm is not initialized and vm has Win OS
-        boolean reinitialize = !entity.isInitialized() && DataProvider.IsWindowsOsType(entity.getVmOs());
+        boolean reinitialize = !entity.isInitialized() && AsyncDataProvider.IsWindowsOsType(entity.getVmOs());
         RunVmParams tempVar = new RunVmParams(entity.getId());
         tempVar.setReinitialize(reinitialize);
         Frontend.RunAction(VdcActionType.RunVm, tempVar);
@@ -167,7 +166,7 @@ public class VmItemBehavior extends ItemBehavior
         getItem().getDefaultConsole().setEntity(entity);
 
         // Support RDP console for windows VMs.
-        if (DataProvider.IsWindowsOsType(entity.getVmOs()))
+        if (AsyncDataProvider.IsWindowsOsType(entity.getVmOs()))
         {
             if (getItem().getAdditionalConsole() == null)
             {
