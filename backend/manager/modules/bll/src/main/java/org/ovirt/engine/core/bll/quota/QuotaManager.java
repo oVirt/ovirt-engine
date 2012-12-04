@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -29,6 +30,7 @@ public class QuotaManager {
     private static final HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
 
     private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
+    private List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
 
     public static QuotaManager getInstance() {
         return INSTANCE;
@@ -609,10 +611,12 @@ public class QuotaManager {
                     if (QuotaEnforcementTypeEnum.DISABLED == parameters.getAuditLogable().getStoragePool().getQuotaEnforcementType()) {
                         auditLogPair.setFirst(null);
                     }
-                    return true;
                 }
             }
         }
+        parameters.getParameters().removeAll(corruptedParameters);
+        corruptedParameters.clear();
+
         return true;
     }
 
@@ -626,6 +630,7 @@ public class QuotaManager {
                     AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE:
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
             log.errorFormat("No Quota id passed from command: {0}",parameters.getAuditLogable().getClass().getName());
+            corruptedParameters.add(param);
             return false;
         }
 
@@ -636,6 +641,7 @@ public class QuotaManager {
                     AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE:
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
             log.errorFormat("The quota id {0} is not found in backend and DB.", param.getQuotaGuid().toString());
+            corruptedParameters.add(param);
             return false;
         } else {
             param.setQuota(quota);
