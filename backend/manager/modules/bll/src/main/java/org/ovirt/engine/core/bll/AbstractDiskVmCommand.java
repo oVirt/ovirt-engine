@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -51,11 +52,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
-                lun.setLunConnections(new ArrayList<StorageServerConnections>(getDbFacade()
-                        .getStorageServerConnectionDao()
-                        .getAllForLun(lun.getLUN_id())));
+                updateLUNConnectionsInfo(lun);
                 if (!StorageHelperDirector.getInstance()
-                        .getItem(lun.getLunConnections().get(0).getstorage_type())
+                        .getItem(getLUNStorageType(lun))
                         .ConnectStorageToLunByVdsId(null,
                                 getVm().getRunOnVds().getValue(),
                                 lun,
@@ -66,6 +65,30 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds().getValue(),
                 getVm().getId(), disk, vmDevice));
+    }
+
+    /**
+     * If the LUN has no connections we assume that it is FCP storage type, since FCP does not have connections,
+     * otherwise, we return the storage type of the first connection
+     *
+     * @param lun
+     *            - The lun we set the connection at.
+     * @return The storage type of the lun (ISCSI or FCP).
+     */
+    protected StorageType getLUNStorageType(LUNs lun) {
+        return lun.getLunConnections().isEmpty() ? StorageType.FCP : lun.getLunConnections().get(0).getstorage_type();
+    }
+
+    /**
+     * Sets the LUN connection list from the DB.
+     *
+     * @param lun
+     *            - The lun we set the connection at.
+     */
+    private void updateLUNConnectionsInfo(LUNs lun) {
+        lun.setLunConnections(new ArrayList<StorageServerConnections>(getDbFacade()
+                .getStorageServerConnectionDao()
+                .getAllForLun(lun.getLUN_id())));
     }
 
     protected boolean isDiskPassPciAndIdeLimit(Disk diskInfo) {
