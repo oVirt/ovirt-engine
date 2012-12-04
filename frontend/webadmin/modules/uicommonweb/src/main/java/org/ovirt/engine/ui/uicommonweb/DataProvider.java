@@ -38,13 +38,6 @@ public final class DataProvider
         return null;
     }
 
-    public static boolean IsLicenseHasDesktops()
-    {
-        // var dict = GetLicenseProperties();
-        // return dict.ContainsKey("ProductTypeProperty") && dict["ProductTypeProperty"].Contains("Desktop");
-        return true;
-    }
-
     public static boolean IsVmNameUnique(String name)
     {
         VdcQueryReturnValue returnValue =

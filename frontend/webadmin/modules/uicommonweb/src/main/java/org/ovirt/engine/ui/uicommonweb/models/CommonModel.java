@@ -21,7 +21,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -806,13 +805,8 @@ public class CommonModel extends ListModel
         list.add(storageList);
         vmList = new VmListModel();
         list.add(vmList);
-
-        if (DataProvider.IsLicenseHasDesktops())
-        {
-            poolList = new PoolListModel();
-            list.add(poolList);
-        }
-
+        poolList = new PoolListModel();
+        list.add(poolList);
         templateList = new TemplateListModel();
         list.add(templateList);
         eventList = new EventListModel();
