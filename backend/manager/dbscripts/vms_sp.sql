@@ -728,7 +728,7 @@ Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vm
 BEGIN
 RETURN QUERY SELECT vm.*
              FROM vms vm
-             WHERE vm.vm_guid IN (SELECT ID from fnSplitterUuid(v_vms_ids));
+             WHERE vm.vm_guid IN (SELECT * from fnSplitterUuid(v_vms_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 

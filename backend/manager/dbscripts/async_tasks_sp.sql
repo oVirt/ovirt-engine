@@ -20,7 +20,7 @@ BEGIN
 INSERT INTO async_tasks(action_type, result, status, task_id, action_parameters,action_params_class, step_id, command_id, started_at,storage_pool_id, task_type)
 	VALUES(v_action_type, v_result, v_status, v_task_id, v_action_parameters,v_action_params_class, v_step_id, v_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
 INSERT INTO async_tasks_entities (async_task_id,entity_id,entity_type)
-	SELECT v_task_id,id,v_entity_type from fnsplitteruuid(v_entity_ids);
+	SELECT v_task_id,fnsplitteruuid(v_entity_ids),v_entity_type;
 END; $procedure$
 LANGUAGE plpgsql;
 

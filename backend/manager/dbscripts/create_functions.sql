@@ -31,9 +31,6 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql IMMUTABLE;
 
-
-
-
 CREATE OR REPLACE FUNCTION public.fnSplitter(ids TEXT)  RETURNS SETOF idTextType AS
 $function$
 BEGIN
@@ -43,25 +40,16 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION fnSplitterUuid(ids TEXT)  RETURNS SETOF idUuidType AS
+CREATE OR REPLACE FUNCTION fnSplitterUuid(ids TEXT)  RETURNS SETOF UUID AS
 $function$
-DECLARE
-    tempc REFCURSOR;
-    currow TEXT;
-    result idUuidType;
 BEGIN
-  IF ids != '' THEN
-    OPEN tempc FOR SELECT regexp_split_to_table(ids, ',');
-    FETCH tempc INTO currow;
-    WHILE FOUND LOOP
-        result := CAST (ROW(currow) AS idUuidType);
-        RETURN NEXT result;
-        FETCH tempc INTO currow;
-   END LOOP;
-   CLOSE tempc;
-  END IF;
+ IF ids != '' THEN
+	RETURN QUERY
+		SELECT CAST(regexp_split_to_table(ids, ',') AS UUID);
+ END IF;
 END; $function$
 LANGUAGE plpgsql;
+
 
 
 
@@ -101,37 +89,6 @@ BEGIN
 END; $function$
 LANGUAGE 'plpgsql';
 
-
-
-CREATE OR REPLACE FUNCTION get_all_child_roles_of_role(v_roleId UUID)
-RETURNS SETOF idUuidType
-   AS $function$
-   DECLARE
-   SWV_Rs idUuidType;
-BEGIN
-   BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMP
-      (
-         id UUID
-      ) WITH OIDS;
-      exception when others then
-         truncate table tt_TEMP;
-   END;
-   insert into tt_TEMP(id) values(v_roleId);
-
-   insert into tt_TEMP   with recursive c(role_id,role_container_id)
-   as(select role_id AS role_id, role_container_id AS role_container_id from roles_relations
-   where role_container_id = v_roleId
-   union all
-   select t.role_id AS role_id, t.role_container_id AS role_container_id
-   from c join roles_relations t on c.role_id = t.role_container_id) select distinct role_id from c;
-
-   FOR SWV_Rs IN(SELECT * FROM  tt_TEMP) LOOP
-      RETURN NEXT SWV_Rs;
-   END LOOP;
-   RETURN;
-END; $function$
-LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION public.fn_get_entity_parents(v_entity_id IN uuid, v_object_type IN int4) RETURNS SETOF idUuidType AS
 $function$
@@ -522,29 +479,15 @@ LANGUAGE 'plpgsql';
 CREATE OR REPLACE FUNCTION getUserAndGroupsById(v_id UUID)
 RETURNS SETOF idUuidType
    AS $function$
-   DECLARE
-   SWV_Rs idUuidType;
 BEGIN
-   BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMP3
-      (
-         id UUID
-      ) WITH OIDS;
-      exception when others then
-         truncate table tt_TEMP3;
-   END;
-   insert INTO tt_TEMP3
+   RETURN QUERY
    select ID from ad_groups,users where users.user_id = v_id
-   and ad_groups.id in(select ID from fnsplitteruuid(users.group_ids))
+   and ad_groups.id in(select * from fnsplitteruuid(users.group_ids))
    UNION
    select v_id
    UNION
    -- user is also member of 'Everyone'
    select 'EEE00000-0000-0000-0000-123456789EEE';
-   FOR SWV_Rs IN(SELECT * FROM  tt_TEMP3) LOOP
-      RETURN NEXT SWV_Rs;
-   END LOOP;
-   RETURN;
 END; $function$
 LANGUAGE plpgsql;
 
@@ -552,28 +495,14 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION getElementIdsByIdAndGroups(v_id UUID,v_group_ids text)
 RETURNS SETOF idUuidType
    AS $function$
-   DECLARE
-   SWV_Rs idUuidType;
 BEGIN
-   BEGIN
-      CREATE GLOBAL TEMPORARY TABLE tt_LDAP_ELEMENT_IDS
-      (
-         id UUID
-      ) WITH OIDS;
-      exception when others then
-         truncate table tt_LDAP_ELEMENT_IDS;
-   END;
-   insert INTO tt_LDAP_ELEMENT_IDS
-   select ID from fnsplitteruuid(v_group_ids)
-   UNION
-   select v_id
-   UNION
-   -- user is also member of 'Everyone'
-   select 'EEE00000-0000-0000-0000-123456789EEE';
-   FOR SWV_Rs IN(SELECT * FROM  tt_LDAP_ELEMENT_IDS) LOOP
-      RETURN NEXT SWV_Rs;
-   END LOOP;
-   RETURN;
+  RETURN QUERY
+  select * from fnsplitteruuid(v_group_ids)
+  UNION
+  select v_id
+  UNION
+  -- user is also member of 'Everyone'
+  select 'EEE00000-0000-0000-0000-123456789EEE';
 END; $function$
 LANGUAGE plpgsql;
 

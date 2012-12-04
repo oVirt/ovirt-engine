@@ -199,7 +199,7 @@ Create or replace FUNCTION GetTagsByUserGroupId(v_group_ids VARCHAR(4000)) RETUR
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_group_map_view.*
       FROM tags_user_group_map_view
-      WHERE group_id in(select id from fnSplitterUuid(v_group_ids));
+      WHERE group_id in(select * from fnSplitterUuid(v_group_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -211,7 +211,7 @@ Create or replace FUNCTION GetUserGroupTagsByTagIds(v_tag_ids VARCHAR(4000)) RET
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_group_map_view.*
       FROM tags_user_group_map_view
-      WHERE tag_id in(select id from fnSplitterUuid(v_tag_ids));
+      WHERE tag_id in(select * from fnSplitterUuid(v_tag_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -293,7 +293,7 @@ Create or replace FUNCTION GetTagsByUserId(v_user_ids VARCHAR(4000)) RETURNS SET
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_map_view.*
       FROM tags_user_map_view
-      WHERE user_id in(select id from fnSplitterUuid(v_user_ids));
+      WHERE user_id in(select * from fnSplitterUuid(v_user_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -305,7 +305,7 @@ Create or replace FUNCTION GetUserTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS 
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_map_view.*
       FROM tags_user_map_view
-      WHERE tag_id in(select id from fnSplitterUuid(v_tag_ids));
+      WHERE tag_id in(select * from fnSplitterUuid(v_tag_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -387,7 +387,7 @@ Create or replace FUNCTION GetTagsByVdsId(v_vds_ids VARCHAR(4000)) RETURNS SETOF
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vds_map_view.*
       FROM tags_vds_map_view
-      WHERE vds_id in(select id from fnSplitterUuid(v_vds_ids));
+      WHERE vds_id in(select * from fnSplitterUuid(v_vds_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -399,7 +399,7 @@ Create or replace FUNCTION GetVdsTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS S
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vds_map_view.*
       FROM tags_vds_map_view
-      WHERE tag_id in(select id from fnSplitterUuid(v_tag_ids));
+      WHERE tag_id in(select * from fnSplitterUuid(v_tag_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -483,7 +483,7 @@ Create or replace FUNCTION GetTagsByVmId(v_vm_ids VARCHAR(4000)) RETURNS SETOF t
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_map_view.*
       FROM tags_vm_map_view
-      WHERE vm_id in(select id from fnSplitterUuid(v_vm_ids));
+      WHERE vm_id in(select * from fnSplitterUuid(v_vm_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -495,7 +495,7 @@ Create or replace FUNCTION GetVmTagsByTagId(v_tag_ids VARCHAR(4000)) RETURNS SET
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_map_view.*
       FROM tags_vm_map_view
-      WHERE tag_id in(select id from fnSplitterUuid(v_tag_ids));
+      WHERE tag_id in(select * from fnSplitterUuid(v_tag_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 

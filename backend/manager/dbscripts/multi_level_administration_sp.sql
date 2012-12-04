@@ -77,7 +77,7 @@ BEGIN
    FROM permissions_view
    WHERE
    (permissions_view.ad_element_id = v_ad_element_id
-    OR    ad_element_id IN (SELECT id FROM getUserAndGroupsById(v_ad_element_id)))
+    OR    ad_element_id IN (SELECT * FROM getUserAndGroupsById(v_ad_element_id)))
    AND (NOT v_is_filtered OR EXISTS (SELECT 1 FROM user_permissions_permissions_view WHERE user_id = v_user_id));
 
 END; $procedure$
@@ -260,7 +260,7 @@ BEGIN
    FROM roles INNER JOIN
    permissions ON permissions.role_id = roles.id
    WHERE permissions.ad_element_id = v_ad_element_id
-   or permissions.ad_element_id in(select id from getUserAndGroupsById(v_ad_element_id));
+   or permissions.ad_element_id in(select * from getUserAndGroupsById(v_ad_element_id));
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -418,7 +418,7 @@ BEGIN
    and (object_id in(select id from  fn_get_entity_parents(v_object_id,v_object_type_id)))
 		-- get user and his groups
    and (ad_element_id = v_everyone_object_id or
-   ad_element_id = v_user_id or ad_element_id in(select id from getUserAndGroupsById(v_user_id)))   LIMIT 1;
+   ad_element_id = v_user_id or ad_element_id in(select * from getUserAndGroupsById(v_user_id)))   LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -438,7 +438,7 @@ BEGIN
    and (object_id in(select id from  fn_get_entity_parents(v_object_id,v_object_type_id)))
 		-- get user and his groups
    and (ad_element_id = v_everyone_object_id or
-   ad_element_id = v_user_id or ad_element_id in(select ID from fnsplitteruuid(v_group_ids)))   LIMIT 1;
+   ad_element_id = v_user_id or ad_element_id in(select * from fnsplitteruuid(v_group_ids)))   LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -616,7 +616,7 @@ BEGIN
    RETURN QUERY SELECT *
    FROM permissions_view
    WHERE role_id = v_role_id and object_id = v_object_id and ad_element_id in (
-         select id from getUserAndGroupsById(v_ad_element_id));
+         select * from getUserAndGroupsById(v_ad_element_id));
 END; $procedure$
 LANGUAGE plpgsql;
 

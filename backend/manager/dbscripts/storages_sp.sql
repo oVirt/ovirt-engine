@@ -569,17 +569,17 @@ BEGIN
 
    delete FROM permissions where object_id in (select vm_id as vm_guid from vm_images_view
                                                               JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                                              where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
+                                                              where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
    delete FROM snapshots WHERE vm_id in (select vm_id as vm_guid from vm_images_view
                                          JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                         where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)));
+                                         where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)));
    delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
    delete FROM vm_static where vm_guid in(select vm_id as vm_guid from vm_images_view
                                           JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                          where v_storage_domain_id in (SELECT id FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
+                                          where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
 
    -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
    delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE));

@@ -788,6 +788,14 @@ SELECT     permissions.id as id, permissions.role_id as role_id, permissions.ad_
 FROM         permissions INNER JOIN
 roles ON permissions.role_id = roles.id;
 
+CREATE OR REPLACE VIEW internal_permissions_view
+AS
+
+SELECT     permissions.id as id, permissions.role_id as role_id, permissions.ad_element_id as ad_element_id, permissions.object_id as object_id, permissions.object_type_id as object_type_id,
+	       roles.name as role_name, roles.role_type as role_type, roles.allows_viewing_children as allows_viewing_children
+FROM         permissions
+INNER JOIN roles ON permissions.role_id = roles.id;
+
 
 --
 --SELECT     storages.id, storages.storage, storages.storage_pool_id, storages.storage_type, storage_pool.name,
@@ -1104,10 +1112,8 @@ INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
 -- Flatten all the objects a user can get permissions on them
 CREATE OR REPLACE VIEW user_flat_groups
 AS
--- User with all its groups
-SELECT users.user_id AS user_id, ad_groups.id AS granted_id
-FROM   ad_groups, users
-WHERE  ad_groups.id IN (SELECT id FROM fnsplitteruuid(users.group_ids))
+SELECT users.user_id AS user_id, fnSplitterUuid(users.group_ids) AS granted_id
+FROM   users
 UNION ALL
 -- The user itself
 SELECT user_id, user_id FROM users
@@ -1121,22 +1127,22 @@ FROM   users;
 CREATE OR REPLACE VIEW user_vds_groups_permissions_view_base (entity_id, granted_id)
 AS
 SELECT       object_id, ad_element_id
-FROM         permissions_view
+FROM         internal_permissions_view
 WHERE        object_type_id = 9 AND role_type = 2
 -- Or the object is a VM in the cluster
 UNION ALL
 SELECT       vds_group_id, ad_element_id
 FROM         vm_static
-INNER JOIN   permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type=2
+INNER JOIN   internal_permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type=2
 -- Or the object is the Data Center containing the Cluster
 UNION ALL
 SELECT       vds_group_id, ad_element_id
 FROM         vds_groups
-INNER JOIN   permissions_view ON object_id = vds_groups.storage_pool_id AND object_type_id = 14 AND role_type = 2
+INNER JOIN   internal_permissions_view ON object_id = vds_groups.storage_pool_id AND object_type_id = 14 AND role_type = 2
 -- Or the user has permissions on system;
 UNION ALL
 SELECT       vds_group_id, ad_element_id
-FROM         permissions_view
+FROM         internal_permissions_view
 CROSS JOIN   vds_groups
 WHERE        object_type_id = 1 AND role_type=2;
 
@@ -1152,29 +1158,29 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_storage_pool_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 14 AND role_type = 2
 -- Or the object is a cluster in the data center
 UNION ALL
 SELECT     storage_pool_id, ad_element_id
 FROM       vds_groups
-INNER JOIN permissions_view ON object_id = vds_groups.vds_group_id AND object_type_id = 9 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vds_groups.vds_group_id AND object_type_id = 9 AND role_type = 2
 -- Or the object is vm pool in the data center
 UNION ALL
 SELECT     storage_pool_id, ad_element_id
 FROM       vds_groups
 INNER JOIN vm_pools ON vds_groups.vds_group_id = vm_pools.vds_group_id
-INNER JOIN permissions_view ON object_id = vm_pools.vm_pool_id AND object_type_id = 5 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vm_pools.vm_pool_id AND object_type_id = 5 AND role_type = 2
 -- Or the object is a VM in the data center
 UNION ALL
 SELECT     storage_pool_id, ad_element_id
 FROM       vm_static
 INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type = 2
 -- Or the user has permission on system
 UNION ALL
 SELECT     storage_pool.id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN storage_pool
 WHERE      object_type_id = 1 AND role_type = 2;
 
@@ -1190,7 +1196,7 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_storage_domain_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 11 AND role_type = 2
 -- Or the user has permissions on a VM in the storage domain
 UNION ALL
@@ -1198,27 +1204,27 @@ SELECT     storage_domains.id, ad_element_id
 FROM       storage_domains
 INNER JOIN vds_groups ON vds_groups.storage_pool_id = storage_domains.storage_pool_id
 INNER JOIN vm_static ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on a template in the storage domain
 UNION ALL
 SELECT     storage_id, ad_element_id
 FROM       vm_templates_storage_domain
-INNER JOIN permissions_view ON vmt_guid = permissions_view.object_id AND object_type_id = 4 AND role_type = 2
+INNER JOIN internal_permissions_view ON vmt_guid = internal_permissions_view.object_id AND object_type_id = 4 AND role_type = 2
 -- Or the user has permissions on a VM created from a template in the storage domain
 UNION ALL
 SELECT     storage_id, ad_element_id
 FROM       vm_static
 INNER JOIN vm_templates_storage_domain ON vm_static.vmt_guid = vm_templates_storage_domain.vmt_guid
-INNER JOIN permissions_view ON vm_static.vm_guid = object_id AND objecT_type_id = 2 AND role_type = 2
+INNER JOIN internal_permissions_view ON vm_static.vm_guid = object_id AND objecT_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the Data Center containing the storage domain
 UNION ALL
 SELECT     storage_domains.id, ad_element_id
 FROM       storage_domains
-INNER JOIN permissions_view ON object_id = storage_domains.storage_pool_id AND object_type_id = 14 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_domains.storage_pool_id AND object_type_id = 14 AND role_type = 2
 -- Or the user has permissions on System
 UNION ALL
 SELECT     storage_domains.id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN storage_domains
 WHERE      object_type_id = 1 AND role_type = 2;
 
@@ -1234,18 +1240,18 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_vds_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 3 AND role_type = 2
 -- Or the user has permissions on a VM in the cluster or Data Center that contains the host
 UNION ALL
 SELECT     vds_id, ad_element_id
 FROM       vds
-INNER JOIN permissions_view ON (object_id = vds_group_id    AND object_type_id = 9) OR
+INNER JOIN internal_permissions_view ON (object_id = vds_group_id    AND object_type_id = 9) OR
                                     (object_id = storage_pool_id AND object_type_id = 14) AND role_type = 2
 -- Or the user has permissions on System
 UNION ALL
 SELECT     vds_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vds
 WHERE      object_type_id = 1 AND role_type = 2;
 
@@ -1261,28 +1267,28 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_vm_pool_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 5 AND role_type = 2
 -- Or the user has permissions on a VM from the pool
 UNION ALL
 SELECT     vm_pool_id, ad_element_id
 FROM       vm_pool_map
-INNER JOIN permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the cluster containing the pool
 UNION ALL
 SELECT     vm_pool_id, ad_element_id
 FROM       vm_pools
-INNER JOIN permissions_view ON object_id = vds_group_id AND object_type_id = 9 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vds_group_id AND object_type_id = 9 AND allows_viewing_children AND role_type = 2
 -- Or the user has permission on the data center containing the VM pool
 UNION ALL
 SELECT     vm_pool_id, ad_element_id
 FROM       vm_pools
 INNER JOIN vds_groups ON vm_pools.vds_group_id =  vds_groups.vds_group_id
-INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on System
 UNION ALL
 SELECT     vm_pool_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vm_pools
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
 
@@ -1298,23 +1304,23 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_vm_template_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 4 AND role_type = 2
 -- Or the user has permissions on a VM created from the tempalate
 UNION ALL
 SELECT     vmt_guid, ad_element_id
 FROM       vm_static
-INNER JOIN permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2 AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vm_static.vm_guid AND object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the data center containing the template
 UNION ALL
 SELECT     vmt_guid, ad_element_id
 FROM       vm_static
 INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
 SELECT     vm_guid, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vm_static
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2 AND vm_static.entity_type::text = 'TEMPLATE'::text;
 
@@ -1330,23 +1336,23 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_vm_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the cluster containing the VM
 UNION ALL
 SELECT     vm_guid, ad_element_id
 FROM       vm_static
-INNER JOIN permissions_view ON object_id = vds_group_id AND object_type_id = 9 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = vds_group_id AND object_type_id = 9 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on the data center containing the VM
 UNION ALL
 SELECT     vm_guid, ad_element_id
 FROM       vm_static
 INNER JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
-INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
 SELECT     vm_guid, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vm_static
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
 
@@ -1361,7 +1367,7 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_disk_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 19 AND role_type = 2
 -- Or the user has permissions on the VM the disk is attached to
 UNION ALL
@@ -1380,18 +1386,18 @@ UNION ALL
 SELECT     images.image_group_id, ad_element_id
 FROM       image_storage_domain_map
 INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
-INNER JOIN permissions_view ON object_id = storage_domain_id AND object_type_id = 11 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_domain_id AND object_type_id = 11 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on the data center containing the storage pool constaining the disk
 UNION ALL
 SELECT     images.image_group_id, ad_element_id
 FROM       image_storage_domain_map
 INNER JOIN storage_pool_iso_map ON image_storage_domain_map.storage_domain_id = storage_pool_iso_map.storage_id
 INNER JOIN images ON images.image_guid = image_storage_domain_map.image_id
-INNER JOIN permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id AND object_type_id = 14 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
 SELECT     device_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vm_device
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
 
@@ -1405,7 +1411,7 @@ NATURAL JOIN user_flat_groups;
 CREATE OR REPLACE VIEW user_permissions_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT id, user_id
-FROM         permissions_view
+FROM         internal_permissions_view
 JOIN         user_flat_groups ON granted_id = ad_element_id;
 
 
@@ -1433,36 +1439,36 @@ AND network.name = vm_interface_view.network_name;
 CREATE OR REPLACE VIEW user_network_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 WHERE      object_type_id = 20 AND role_type = 2
 -- Or the user has permissions on the Network's Data-Center directly
 UNION ALL
 SELECT     network.id, ad_element_id
 FROM       network
-INNER JOIN permissions_view ON object_id = storage_pool_id
+INNER JOIN internal_permissions_view ON object_id = storage_pool_id
 WHERE      object_type_id = 14 AND role_type = 2
 -- Or the user has permissions on the Cluster the networks are assigned to
 UNION ALL
 SELECT     network_id, ad_element_id
 FROM       network_cluster
-INNER JOIN permissions_view ON object_id = network_cluster.cluster_id
+INNER JOIN internal_permissions_view ON object_id = network_cluster.cluster_id
 WHERE      object_type_id = 9 AND role_type = 2
 -- Or the user has permissions on the VM with the network attached
 UNION ALL
 SELECT     network_id, ad_element_id
 FROM       vm_interface_ext_view
-INNER JOIN permissions_view ON object_id = vm_interface_ext_view.vm_guid
+INNER JOIN internal_permissions_view ON object_id = vm_interface_ext_view.vm_guid
 WHERE object_type_id = 2 AND role_type = 2
 -- Or the user has permissions on the Template with the network attached
 UNION ALL
 SELECT     network_id, ad_element_id
 FROM       vm_interface_ext_view
-INNER JOIN permissions_view ON object_id = vm_interface_ext_view.vmt_guid
+INNER JOIN internal_permissions_view ON object_id = vm_interface_ext_view.vmt_guid
 WHERE object_type_id = 4 AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
 SELECT     network_id, ad_element_id
-FROM       permissions_view
+FROM       internal_permissions_view
 CROSS JOIN vm_interface_ext_view
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
 

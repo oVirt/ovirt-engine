@@ -85,6 +85,6 @@ Create or replace FUNCTION GetTagsByVmpoolId(v_vm_pool_ids VARCHAR(4000)) RETURN
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_pool_map_view.*
       FROM tags_vm_pool_map_view
-      WHERE vm_pool_id in(select id from fnSplitterUuid(v_vm_pool_ids));
+      WHERE vm_pool_id in(select * from fnSplitterUuid(v_vm_pool_ids));
 END; $procedure$
 LANGUAGE plpgsql;

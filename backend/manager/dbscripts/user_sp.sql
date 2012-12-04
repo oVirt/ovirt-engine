@@ -302,7 +302,7 @@ BEGIN
       select   count(*) INTO v_result from users where user_id in(select ad_element_id as user_id from permissions,roles
          where permissions.role_id = roles.id
          and ad_element_id in((select id from ad_groups,users where users.user_id = v_id
-               and ad_groups.id in(select id from fnsplitteruuid(users.group_ids))
+               and ad_groups.id in(select * from fnsplitteruuid(users.group_ids))
                union
                select v_id))
          and (roles.role_type = 1 or permissions.role_id = '00000000-0000-0000-0000-000000000001'));
