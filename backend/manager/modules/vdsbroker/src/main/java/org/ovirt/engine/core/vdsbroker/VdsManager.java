@@ -51,10 +51,6 @@ public class VdsManager {
 
     private static Log log = LogFactory.getLog(VdsManager.class);
 
-    protected void setVds(VDS value) {
-        _vds = value;
-    }
-
     public boolean getRefreshStatistics() {
         return (_refreshIteration == _numberRefreshesBeforeSave);
     }
@@ -370,8 +366,6 @@ public class VdsManager {
         VDS vds = null;
         try {
             // refresh vds from db in case changed while was down
-            // ResourceManager.Instance.RunVdsCommand(VDSCommandType.UpdateVdsCache,
-            // new VdsIdVDSCommandParametersBase(_vds.vds_id));
             if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "ResourceManager::activateVds - trying to activate host {0} , meanwhile setting status to Unassigned meanwhile",
