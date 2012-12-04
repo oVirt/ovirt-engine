@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -45,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -1824,6 +1826,11 @@ public class UnitVmModel extends Model {
         getMinAllocatedMemory().ValidateEntity(new IValidation[] { new ByteSizeValidation() });
         getOSType().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
+        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
+            getQuota().ValidateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
+        }
+
         getTotalCPUCores().ValidateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(1, behavior.maxCpus),
@@ -1976,7 +1983,7 @@ public class UnitVmModel extends Model {
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
                 && getKernel_path().getIsValid() && behavior.Validate()
-                && customPropertySheetValid;
+                && customPropertySheetValid && getQuota().getIsValid();
     }
 
     class TotalCpuCoresComposableValidation implements IValidation {
