@@ -30,6 +30,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
@@ -70,6 +71,7 @@ public class QueryHelper {
         RETURN_TYPES.put(Event.class, "Events" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(GlusterVolume.class, "Volumes" + RETURN_TYPE_SEPARTOR);
         RETURN_TYPES.put(Disk.class, "Disks" + RETURN_TYPE_SEPARTOR);
+        RETURN_TYPES.put(Network.class, "Networks" + RETURN_TYPE_SEPARTOR);
     }
 
     /**

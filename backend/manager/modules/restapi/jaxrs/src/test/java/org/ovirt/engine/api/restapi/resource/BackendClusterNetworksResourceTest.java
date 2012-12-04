@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,9 +19,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.easymock.classextension.EasyMock.expect;
-
-public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksResourceTest {
+public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksResourceTest<BackendClusterNetworksResource> {
 
     static final Guid CLUSTER_ID = GUIDS[1];
 
@@ -107,7 +107,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                   new Object[] { CLUSTER_ID },
                                   asList(getEntity(0)));
         Network model = getModel(0);
-        Response response = ((BackendClusterNetworksResource)collection).add(model);
+        Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -135,7 +135,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         Network model = getModel(0);
 
         try {
-            ((BackendClusterNetworksResource)collection).add(model);
+            collection.add(model);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
@@ -158,7 +158,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                 new Object[] { CLUSTER_ID },
                 true,
                 true);
-        ((BackendClusterNetworksResource)collection).add(model);
+        collection.add(model);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
-            ((BackendClusterNetworksResource)collection).add(model);
+            collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
              verifyIncompleteException(wae, "Network", "add", "name");
@@ -220,4 +220,14 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                     cluster,
                     null);
         }
+
+    protected void setUpQueryExpectations(String query) throws Exception {
+        setUpEntityQueryExpectations(1);
+        control.replay();
+    }
+
+    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
+        setUpEntityQueryExpectations(1, failure);
+        control.replay();
+    }
 }

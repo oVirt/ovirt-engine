@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
@@ -83,6 +84,11 @@ public class QueryHelperTest extends Assert {
     @Test
     public void testGetTemplateConstraint() throws Exception {
         doTestGetConstraint(Template.class, "Template : ");
+    }
+
+    @Test
+    public void testGetNetworkConstraint() throws Exception {
+        doTestGetConstraint(Network.class, "Networks : ");
     }
 
     private void doTestGetConstraint(Class<?> clz, String expectedPrefix) throws Exception {
@@ -163,6 +169,11 @@ public class QueryHelperTest extends Assert {
     @Test
     public void testGetTemplateDefaultConstraint() throws Exception {
         doTestGetDefaultConstraint(Template.class, "Template : ");
+    }
+
+    @Test
+    public void testGetNetworkDefaultConstraint() throws Exception {
+        doTestGetDefaultConstraint(Network.class, "Networks : ");
     }
 
     private void doTestGetDefaultConstraint(Class<?> clz, String expectedConstraint) throws Exception {

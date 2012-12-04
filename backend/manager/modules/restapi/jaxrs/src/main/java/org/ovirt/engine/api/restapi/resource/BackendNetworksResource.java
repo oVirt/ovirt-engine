@@ -39,7 +39,14 @@ public class BackendNetworksResource
 
     @Override
     public Networks list() {
-        Networks networks = mapCollection(getBackendCollection(queryType, getQueryParameters()));
+        Networks networks;
+
+        if (isFiltered()) {
+            networks = mapCollection(getBackendCollection(queryType, getQueryParameters()));
+        } else {
+            networks = mapCollection(getBackendCollection(SearchType.Network));
+        }
+
         for (Network network : networks.getNetworks()) {
             network.setDisplay(null);
         }

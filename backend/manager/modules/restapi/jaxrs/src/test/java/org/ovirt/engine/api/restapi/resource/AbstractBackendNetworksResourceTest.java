@@ -1,29 +1,26 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 
-import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Network;
-
-import static org.easymock.classextension.EasyMock.expect;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 
-public abstract class AbstractBackendNetworksResourceTest
-        extends AbstractBackendCollectionResourceTest<Network, org.ovirt.engine.core.common.businessentities.Network, AbstractBackendNetworksResource> {
+public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBackendNetworksResource>
+        extends AbstractBackendCollectionResourceTest<Network, org.ovirt.engine.core.common.businessentities.Network, R> {
 
-    public AbstractBackendNetworksResourceTest(AbstractBackendNetworksResource collection) {
+    public AbstractBackendNetworksResourceTest(R collection) {
         super(collection, null, "");
     }
 
-    @Test
-    @Ignore
-    public void testQuery() throws Exception {
-        // skip test inherited from base class as searching
-        // over networks is unsupported by the backend
+    public AbstractBackendNetworksResourceTest(R collection, SearchType searchType, String searchPrefix) {
+        super(collection, searchType, searchPrefix);
     }
 
     @Test
@@ -35,16 +32,6 @@ public abstract class AbstractBackendNetworksResourceTest
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
         }
-    }
-
-    protected void setUpQueryExpectations(String query) throws Exception {
-        setUpEntityQueryExpectations(1);
-        control.replay();
-    }
-
-    protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(1, failure);
-        control.replay();
     }
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {

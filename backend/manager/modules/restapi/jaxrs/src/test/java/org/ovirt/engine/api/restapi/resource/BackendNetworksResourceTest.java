@@ -1,13 +1,16 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -18,15 +21,13 @@ import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.easymock.classextension.EasyMock.expect;
-
 public class BackendNetworksResourceTest
-        extends AbstractBackendNetworksResourceTest {
+        extends AbstractBackendNetworksResourceTest<BackendNetworksResource> {
 
     private static final Guid DATA_CENTER_ID = GUIDS[1];
 
     public BackendNetworksResourceTest() {
-        super(new BackendNetworksResource());
+        super(new BackendNetworksResource(), SearchType.Network, "Networks : ");
     }
 
     @Test
@@ -121,7 +122,7 @@ public class BackendNetworksResourceTest
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setId(DATA_CENTER_ID.toString());
 
-        Response response = ((BackendNetworksResource)collection).add(model);
+        Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -150,7 +151,7 @@ public class BackendNetworksResourceTest
         model.setDataCenter(new DataCenter());
         model.getDataCenter().setName(NAMES[1]);
 
-        Response response = ((BackendNetworksResource)collection).add(model);
+        Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Network);
         verifyModel((Network) response.getEntity(), 0);
@@ -178,7 +179,7 @@ public class BackendNetworksResourceTest
         model.getDataCenter().setId(DATA_CENTER_ID.toString());
 
         try {
-            ((BackendNetworksResource)collection).add(model);
+            collection.add(model);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, detail);
@@ -192,11 +193,23 @@ public class BackendNetworksResourceTest
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {
-            ((BackendNetworksResource)collection).add(model);
+            collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
              verifyIncompleteException(wae, "Network", "add", "dataCenter.name|id");
         }
+    }
+
+    @Test
+    public void testQueryWithFilter() throws Exception {
+        List<String> filterValue = new ArrayList<String>();
+        filterValue.add("true");
+        EasyMock.reset(httpHeaders);
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+        setUpEntityQueryExpectations(1);
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        verifyCollection(getCollection());
     }
 
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {

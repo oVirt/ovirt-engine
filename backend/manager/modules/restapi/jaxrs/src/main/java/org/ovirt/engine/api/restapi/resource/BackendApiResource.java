@@ -97,7 +97,7 @@ public class BackendApiResource
         links.add(createLink("datacenters", LinkFlags.SEARCHABLE));
         links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
         links.add(createLink("hosts", LinkFlags.SEARCHABLE));
-        links.add(createLink("networks"));
+        links.add(createLink("networks", LinkFlags.SEARCHABLE));
         links.add(createLink("roles"));
         links.add(createLink("storagedomains", LinkFlags.SEARCHABLE));
         links.add(createLink("tags"));
@@ -117,7 +117,7 @@ public class BackendApiResource
         links.add(createLink("clusters", LinkFlags.SEARCHABLE));
         links.add(createLink("events", LinkFlags.SEARCHABLE, getEventParams()));
         links.add(createLink("hosts", LinkFlags.SEARCHABLE));
-        links.add(createLink("networks"));
+        links.add(createLink("networks", LinkFlags.SEARCHABLE));
         links.add(createLink("roles"));
         links.add(createLink("tags"));
         links.add(createLink("users", LinkFlags.SEARCHABLE));

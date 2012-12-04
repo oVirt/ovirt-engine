@@ -220,6 +220,7 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(NetworkResource.class, NetworksResource.class);
         map.add(AssignedNetworkResource.class, AssignedNetworksResource.class, Cluster.class);
+        map.add(NetworkResource.class, NetworksResource.class, Network.class);
         TYPES.put(Network.class, map);
 
         map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class);
