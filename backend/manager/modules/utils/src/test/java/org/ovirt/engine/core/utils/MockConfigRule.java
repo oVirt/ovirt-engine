@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
  * To use it, simple add a {@link MockConfigRule} member to your test, with the {@link @Rule} annotation.
  * Mocking is done by calling {@link #mockConfigValue(ConfigValues, Object)} or {@link #mockConfigValue(ConfigValues, String, Object)} with the value you need.
  */
-public class MockConfigRule extends TestWatchman {
+public class MockConfigRule extends TestWatcher {
 
     /** A descriptor for a single config mocking */
     public static class MockConfigDescriptor<T> {
@@ -85,7 +85,7 @@ public class MockConfigRule extends TestWatchman {
     }
 
     @Override
-    public void starting(FrameworkMethod method) {
+    public void starting(Description description) {
         origConfUtils = Config.getConfigUtils();
         Config.setConfigUtils(mock(IConfigUtilsInterface.class));
 
@@ -95,7 +95,7 @@ public class MockConfigRule extends TestWatchman {
     }
 
     @Override
-    public void finished(FrameworkMethod method) {
+    public void finished(Description description) {
         Config.setConfigUtils(origConfUtils);
     }
 }
