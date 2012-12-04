@@ -25,7 +25,6 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -333,7 +332,6 @@ public class UserListModel extends ListWithDetailsModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addUsersAndGroupsTitle());
         model.setHashName("add_users_and_groups"); //$NON-NLS-1$
-        model.setExcludeItems(DataProvider.GetUserList());
         model.setIsRoleListHidden(true);
         model.getIsEveryoneSelectionHidden().setEntity(true);
 
