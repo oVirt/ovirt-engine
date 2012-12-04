@@ -63,7 +63,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -2125,10 +2124,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }, model);
     }
 
-    private void OnSave()
+    private void preSave()
     {
-        UnitVmModel model = (UnitVmModel) getWindow();
-        VM selectedItem = (VM) getSelectedItem();
+        final UnitVmModel model = (UnitVmModel) getWindow();
+        final String name = (String) model.getName().getEntity();
+
         if (model.getIsNew() == false && selectedItem == null)
         {
             Cancel();
@@ -2142,18 +2142,34 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        String name = (String) model.getName().getEntity();
+        AsyncDataProvider.IsVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 
-        // Check name unicitate.
-        if (!DataProvider.IsVmNameUnique(name) && name.compareToIgnoreCase(getcurrentVm().getVmName()) != 0)
-        {
-            model.getName().setIsValid(false);
-            model.getName()
-                    .getInvalidityReasons()
-                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-            model.setIsGeneralTabValid(false);
-            return;
-        }
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                if (!(Boolean) returnValue && name.compareToIgnoreCase(getcurrentVm().getVmName()) != 0) {
+                    model.getName()
+                            .getInvalidityReasons()
+                            .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                    model.getName().setIsValid(false);
+                    model.setIsGeneralTabValid(false);
+                } else {
+                    model.getName()
+                            .getInvalidityReasons().clear();
+                    model.getName().setIsValid(true);
+                    model.setIsGeneralTabValid(true);
+                    onSave();
+                }
+            }
+        }), name);
+
+    }
+
+    private void onSave()
+    {
+        UnitVmModel model = (UnitVmModel) getWindow();
+        VM selectedItem = (VM) getSelectedItem();
+
+        String name = (String) model.getName().getEntity();
 
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
@@ -2748,7 +2764,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
         {
-            OnSave();
+            preSave();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {

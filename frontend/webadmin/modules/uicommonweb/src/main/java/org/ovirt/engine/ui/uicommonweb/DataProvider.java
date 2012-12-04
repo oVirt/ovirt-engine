@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -20,19 +19,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 @SuppressWarnings("unused")
 public final class DataProvider
 {
-    public static boolean IsVmNameUnique(String name)
-    {
-        VdcQueryReturnValue returnValue =
-                Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name));
-
-        if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null)
-        {
-            return !(Boolean) returnValue.getReturnValue();
-        }
-
-        return true;
-    }
-
     public static ArrayList<DbUser> GetUserList()
     {
         VdcQueryReturnValue returnValue =
