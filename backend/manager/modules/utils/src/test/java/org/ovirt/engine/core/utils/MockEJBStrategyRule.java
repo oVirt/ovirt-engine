@@ -15,8 +15,8 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.junit.Assert;
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
@@ -30,7 +30,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
  *
  * To use it, simple add a {@link MockEJBStrategyRule} member to your test, with the {@link @Rule} annotation.
  */
-public class MockEJBStrategyRule extends TestWatchman {
+public class MockEJBStrategyRule extends TestWatcher {
 
     private EJBUtilsStrategy origStrategy;
     private EJBUtilsStrategy mockStrategy;
@@ -67,7 +67,7 @@ public class MockEJBStrategyRule extends TestWatchman {
     }
 
     @Override
-    public void starting(FrameworkMethod method) {
+    public void starting(Description description) {
         try {
             mockTransactionManagement();
             for (Map.Entry<BeanType, Object> mockBeanEntry : mockBeanMap.entrySet()) {
@@ -79,7 +79,7 @@ public class MockEJBStrategyRule extends TestWatchman {
     }
 
     @Override
-    public void finished(FrameworkMethod method) {
+    public void finished(Description description) {
         EjbUtils.setStrategy(origStrategy);
     }
 }
