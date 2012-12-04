@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.utils;
 
-import org.junit.rules.TestWatchman;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -16,11 +16,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * mvn clean install -Dtest.random.seed=123
  * </code>
  */
-public class RandomUtilsSeedingRule extends TestWatchman {
+public class RandomUtilsSeedingRule extends TestWatcher {
     private static final String RANDOM_SEED_PROPERTY = "test.random.seed";
 
     @Override
-    public void starting(FrameworkMethod method) {
+    public void starting(Description description) {
         String seedProperty = System.getProperty(RANDOM_SEED_PROPERTY);
         Long seed = LongCompat.tryParse(seedProperty);
         if (seed == null) {
