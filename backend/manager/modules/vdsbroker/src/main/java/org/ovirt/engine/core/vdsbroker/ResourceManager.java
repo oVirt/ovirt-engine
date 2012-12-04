@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +41,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 public class ResourceManager {
 
     private static ResourceManager _Instance = new ResourceManager();
-    private final Map<Guid, HashSet<Guid>> _vdsAndVmsList = new HashMap<Guid, HashSet<Guid>>();
+    private final Map<Guid, HashSet<Guid>> _vdsAndVmsList = new ConcurrentHashMap<Guid, HashSet<Guid>>();
     private final Map<Guid, VdsManager> _vdsManagersDict = new ConcurrentHashMap<Guid, VdsManager>();
     private final ConcurrentHashMap<Guid, Boolean> _asyncRunningVms =
             new ConcurrentHashMap<Guid, Boolean>();
@@ -231,13 +229,6 @@ public class ResourceManager {
         }
     }
 
-    public void SetVmDown(VM vm) {
-        RemoveAsyncRunningVm(vm.getId());
-        InternalSetVmStatus(vm, VMStatus.Down);
-        storeVm(vm);
-
-    }
-
     public boolean IsVmDuringInitiating(Guid vm_guid) {
         return _asyncRunningVms.containsKey(vm_guid);
     }
@@ -330,16 +321,13 @@ public class ResourceManager {
             if (constructor != null) {
                 return constructor.newInstance(new Object[] { parameters });
             }
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             if (e.getCause() != null) {
                 log.debug("CreateCommand failed", e.getCause());
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
             log.debug("CreateCommand failed", e);
-        } catch (java.lang.Exception e) {
-            log.debug("CreateCommand failed", e);
         }
-
         return null;
     }
 
@@ -355,16 +343,13 @@ public class ResourceManager {
             if (constructor != null) {
                 return constructor.newInstance(new Object[] { parameters });
             }
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             if (e.getCause() != null) {
                 log.debug("CreateCommand failed", e.getCause());
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
             log.debug("CreateCommand failed", e);
-        } catch (java.lang.Exception e) {
-            log.debug("CreateCommand failed", e);
         }
-
         return null;
 
     }
