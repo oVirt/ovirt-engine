@@ -175,11 +175,18 @@ public class JavaMailSender {
                 Transport.send(msg);
             }
         } catch (MessagingException mex) {
-            log.error(String.format("Failed to send message from [%s] to [%s] with subject [%s] due to error: [%s]",
-                    from.toString(),
-                    recipient,
-                    messageSubject,
-                    mex.getMessage()), mex);
+            StringBuilder errorMsg = new StringBuilder("Failed to send message ");
+            if (from != null) {
+                errorMsg.append(" from " + from.toString());
+            }
+            if (StringUtils.isNotBlank(recipient)) {
+                errorMsg.append(" to " + recipient);
+            }
+            if (StringUtils.isNotBlank(messageSubject)) {
+                errorMsg.append(" with subject " + messageSubject);
+            }
+            errorMsg.append(" due to to error: " + mex.getMessage());
+            log.error(errorMsg.toString(), mex);
             throw mex;
         }
     }
