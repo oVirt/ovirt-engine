@@ -59,7 +59,7 @@ APP_VERSION_DISPLAY=$(APP_VERSION)
 
 # Release Version; used to create y in <x.x.x-y> numbering.
 # Should be used to create releases.
-RPM_RELEASE_VERSION=1
+RPM_RELEASE_VERSION=0.1.$(shell date +%Y%m%d%H%M%S)
 
 SPEC_FILE_IN=packaging/fedora/spec/ovirt-engine.spec.in
 SPEC_FILE=$(PACKAGE_NAME).spec
