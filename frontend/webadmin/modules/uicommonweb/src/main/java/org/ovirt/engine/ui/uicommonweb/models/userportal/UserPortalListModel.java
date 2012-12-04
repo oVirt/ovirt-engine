@@ -68,9 +68,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
-import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalExistingVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalNewVmModelBehavior;
@@ -81,7 +79,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -269,8 +266,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         CustomPropertiesKeysList = customPropertiesKeysList;
     }
 
-    private final HashMap<Guid, ArrayList<ConsoleModel>> cachedConsoleModels;
-
     static
     {
         SearchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
@@ -279,8 +274,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     public UserPortalListModel()
     {
         setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
-
-        cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
 
         setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
         setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
@@ -1342,6 +1335,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             gettempVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
         }
 
+        updateDefaultSelectedConsoleProtocol(gettempVm());
+
         if (model.getIsNew())
         {
             if (gettempVm().getvmt_guid().equals(NGuid.Empty))
@@ -1739,11 +1734,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
-                UserPortalItemModel model = new UserPortalItemModel(this);
+                UserPortalItemModel model = new UserPortalItemModel(this, this);
                 model.setEntity(item);
                 items.add(model);
 
-                UpdateConsoleModel(model);
+                updateConsoleModel(model);
             }
 
             // In userportal 'Extended View': Set 'CanConnectAutomatically' to true if there's one and only one up VM.
@@ -1759,56 +1754,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         }
     }
 
-    private void UpdateConsoleModel(UserPortalItemModel item)
-    {
-        if (item.getEntity() != null)
-        {
-            Object tempVar = item.getEntity();
-            VM vm = (VM) ((tempVar instanceof VM) ? tempVar : null);
-            if (vm == null)
-            {
-                return;
-            }
-
-            // Caching console model if needed
-            if (!cachedConsoleModels.containsKey(vm.getId()))
-            {
-                SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
-                spiceConsoleModel.getErrorEvent().addListener(this);
-                VncConsoleModel vncConsoleModel = new VncConsoleModel();
-                vncConsoleModel.setModel(this);
-                RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
-
-                cachedConsoleModels.put(vm.getId(),
-                        new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
-                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
-            }
-
-            // Getting cached console model
-            ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
-            for (ConsoleModel cachedModel : cachedModels)
-            {
-                cachedModel.setEntity(null);
-                cachedModel.setEntity(vm);
-            }
-
-            // Set default console by vm's display type
-            item.setDefaultConsole(vm.getdisplay_type() == DisplayType.vnc ? cachedModels.get(1) : cachedModels.get(0));
-
+    protected void updateConsoleModel(UserPortalItemModel item) {
+        super.updateConsoleModel(item);
+        if (item.getEntity() != null) {
             // Adjust item's default console for userportal 'Extended View'
             item.getDefaultConsole().setForceVmStatusUp(false);
-
-            // Update additional console
-            if (DataProvider.IsWindowsOsType(vm.getvm_os()))
-            {
-                item.setAdditionalConsole(cachedModels.get(2));
-                item.setHasAdditionalConsole(true);
-            }
-            else
-            {
-                item.setAdditionalConsole(null);
-                item.setHasAdditionalConsole(false);
-            }
         }
     }
 

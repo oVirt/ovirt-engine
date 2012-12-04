@@ -133,6 +133,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remote Desktop")
     String remoteDesktop();
 
+    @DefaultStringValue("VNC")
+    String vnc();
+
     @DefaultStringValue("SPICE Options")
     String spiceOptions();
 

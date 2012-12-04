@@ -5,11 +5,13 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
@@ -33,9 +35,13 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setRdpAvailable(boolean visible);
 
+        void setVncAvailable(boolean visible);
+
         HasValueChangeHandlers<Boolean> getSpiceRadioButton();
 
         HasValueChangeHandlers<Boolean> getRdpRadioButton();
+
+        HasValueChangeHandlers<Boolean> getVncRadioButton();
 
         void rdpSelected(boolean selected);
 
@@ -44,6 +50,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void selectSpice(boolean selected);
 
         void selectRdp(boolean selected);
+
+        void selectVnc(boolean selected);
 
         void setAdditionalConsoleAvailable(boolean hasAdditionalConsole);
 
@@ -133,21 +141,28 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean spiceAvailable =
                 currentItem.getDefaultConsole() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();
+
+        boolean vncAvailable =
+                currentItem.getDefaultConsole() instanceof VncConsoleModel;
+
         boolean rdpAvailable = isAdditionalConsoleAvailable(currentItem) && consoleUtils.isRDPAvailable();
 
         getView().setSpiceAvailable(spiceAvailable);
         getView().setRdpAvailable(rdpAvailable);
+        getView().setVncAvailable(vncAvailable);
 
-        if (spiceAvailable && rdpAvailable) {
-            getView().selectSpice(true);
-            getView().selectRdp(false);
-            getView().spiceSelected(true);
-        } else {
-            getView().selectSpice(spiceAvailable);
-            getView().selectRdp(rdpAvailable);
-            getView().rdpSelected(rdpAvailable);
-            getView().spiceSelected(spiceAvailable);
-        }
+        ConsoleProtocol selectedProtocol = currentItem.getSelectedProtocol();
+
+        boolean rdpPreselected = ConsoleProtocol.RDP.equals(selectedProtocol);
+        boolean spicePreselected = ConsoleProtocol.SPICE.equals(selectedProtocol);
+        boolean vncPreselected = ConsoleProtocol.VNC.equals(selectedProtocol);
+
+        getView().selectSpice(spicePreselected);
+        getView().selectRdp(rdpPreselected);
+        getView().selectVnc(vncPreselected);
+
+        getView().spiceSelected(spicePreselected);
+        getView().rdpSelected(rdpPreselected);
 
         getView().setDisableSmartcardVisible(consoleUtils.isSmartcardGloballyEnabled(currentItem));
 
@@ -173,7 +188,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
-        if (!ctrlAltDelEnabled) {
+        if (!ctrlAltDelEnabled && spice != null) {
             spice.setSendCtrlAltDelete(false);
         }
     }
@@ -218,6 +233,20 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 getView().spiceSelected(event.getValue());
                 getView().setWanOptionsVisible(wanOptionsAvailable && event.getValue());
                 getView().rdpSelected(!event.getValue());
+            }
+        }));
+
+        registerHandler(getView().getVncRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) {
+                    // hide all detail panels if this is selected.
+                    // Ignore if deselected
+                    getView().spiceSelected(false);
+                    getView().setWanOptionsVisible(false);
+                    getView().rdpSelected(false);
+                }
             }
         }));
     }

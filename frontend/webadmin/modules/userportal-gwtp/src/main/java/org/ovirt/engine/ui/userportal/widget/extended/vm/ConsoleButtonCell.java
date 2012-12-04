@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -93,7 +93,7 @@ public class ConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
     }
 
     protected boolean isConsoleEnabled(UserPortalItemModel model) {
-        ConsoleProtocol protocol = consoleUtils.determineDefaultProtocol(model);
+        ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(model);
         return consoleUtils.canShowConsole(protocol, model);
     }
 

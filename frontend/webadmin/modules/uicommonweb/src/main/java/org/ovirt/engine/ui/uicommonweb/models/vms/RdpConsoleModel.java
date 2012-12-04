@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class RdpConsoleModel extends ConsoleModel
 {
     public static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", //$NON-NLS-1$
@@ -68,7 +67,7 @@ public class RdpConsoleModel extends ConsoleModel
 
         getConnectCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getstatus() == VMStatus.Up || getEntity().getstatus() == VMStatus.PoweringDown)
-                && DataProvider.IsWindowsOsType(getEntity().getvm_os()));
+                && DataProvider.IsWindowsOsType(getEntity().getvm_os()) && getConfigurator().isClientWindownsExplorer());
     }
 
     @Override

@@ -37,6 +37,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
 				<g:FlowPanel addStyleNames="{style.fullWidth}">
 					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
 					<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" />
+					<e:EntityModelRadioButtonEditor ui:field="vncRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" />
 				</g:FlowPanel>
 

@@ -99,6 +99,7 @@ public class UserPortalLoginModel extends LoginModel
     @Override
     public VdcUser getLoggedUser()
     {
+        privateLoggedUser.setPassword((String) getPassword().getEntity());
         return privateLoggedUser;
     }
 

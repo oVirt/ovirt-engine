@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.userportal.utils;
 
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.inject.Inject;

@@ -13,15 +13,24 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.core.compat.Version;
 
 public class UserPortalItemModel extends EntityModel
 {
+
+
+    public ConsoleProtocol getSelectedProtocol() {
+        return userSelectedDisplayProtocolManager.resolveSelectedProtocol(this);
+    }
+
+    public void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
+        userSelectedDisplayProtocolManager.setSelectedProtocol(selectedProtocol, this);
+    }
 
     private UICommand runCommand;
 
@@ -325,9 +334,11 @@ public class UserPortalItemModel extends EntityModel
     }
 
     private ItemBehavior behavior;
+    private final UserSelectedDisplayProtocolManager userSelectedDisplayProtocolManager;
 
-    public UserPortalItemModel(IVmPoolResolutionService resolutionService)
+    public UserPortalItemModel(IVmPoolResolutionService resolutionService, UserSelectedDisplayProtocolManager userSelectedDisplayManager)
     {
+        this.userSelectedDisplayProtocolManager = userSelectedDisplayManager;
         setResolutionService(resolutionService);
 
         setRunCommand(new UICommand("Run", this)); //$NON-NLS-1$

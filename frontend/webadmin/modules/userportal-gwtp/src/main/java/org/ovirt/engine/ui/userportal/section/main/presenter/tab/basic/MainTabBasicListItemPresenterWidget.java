@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.utils.ConsoleManager;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -131,7 +131,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     protected void setupSelectedProtocol(final UserPortalItemModel model) {
-        selectedProtocol = consoleUtils.determineDefaultProtocol(model);
+        selectedProtocol = consoleUtils.determineConnectionProtocol(model);
     }
 
     protected boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {

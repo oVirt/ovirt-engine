@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -61,6 +62,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
 
     @UiField(provided = true)
     @WithElementId
+    EntityModelRadioButtonEditor vncRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> ctrlAltDel;
 
     @UiField(provided = true)
@@ -96,6 +101,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
 
     private final ApplicationMessages messages;
+
+    private UserPortalConsolePopupModel model;
 
     @Inject
     public ConsolePopupView(EventBus eventBus,
@@ -189,7 +196,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
                             @Override
                             public boolean render(ConsoleModel value) {
                                 if (value instanceof RdpConsoleModel) {
-                                    ((RdpConsoleModel) value).getrdp().getUseLocalDrives();
+                                    return ((RdpConsoleModel) value).getrdp().getUseLocalDrives();
                                 }
 
                                 return false;
@@ -210,6 +217,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
         remoteDesktopRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         remoteDesktopRadioButton.setLabel(constants.remoteDesktop());
 
+        vncRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        vncRadioButton.setLabel(constants.vnc());
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -222,13 +232,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     @SuppressWarnings("unchecked")
     @Override
     public void edit(UserPortalConsolePopupModel model) {
-        editCheckBoxes(model,
+        this.model = model;
+
+        ConsoleModel defaultConsole =
+                ((UserPortalItemModel) model.getModel().getSelectedItem()).getDefaultConsole();
+        editCheckBoxes(defaultConsole,
                 ctrlAltDel,
                 enableUsbAutoshare,
                 openInFullScreen,
-                useLocalDrives,
                 wanEnabled,
                 disableSmartcard);
+
+        ConsoleModel additionalConsole =
+                ((UserPortalItemModel) model.getModel().getSelectedItem()).getAdditionalConsole();
+        editCheckBoxes(additionalConsole, useLocalDrives);
     }
 
     @Override
@@ -249,6 +266,18 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
                 wanEnabled,
                 disableSmartcard);
 
+        if (spiceRadioButton.asRadioButton().getValue()) {
+            setSelectedProtocol(ConsoleProtocol.SPICE);
+        } else if (remoteDesktopRadioButton.asRadioButton().getValue()) {
+            setSelectedProtocol(ConsoleProtocol.RDP);
+        } else if (vncRadioButton.asRadioButton().getValue()) {
+            setSelectedProtocol(ConsoleProtocol.VNC);
+        }
+
+    }
+
+    private void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
+        ((UserPortalItemModel) model.getModel().getSelectedItem()).setSelectedProtocol(selectedProtocol);
     }
 
     private void flushCheckBoxes(EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
@@ -257,13 +286,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
         }
     }
 
-    private void editCheckBoxes(UserPortalConsolePopupModel model,
+    private void editCheckBoxes(ConsoleModel consoleModel,
             EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {
         for (EntityModelValueCheckBoxEditor<ConsoleModel> checkBox : checkBoxes) {
-            ConsoleModel defaultConsole =
-                    ((UserPortalItemModel) model.getModel().getSelectedItem()).getDefaultConsole();
-
-            checkBox.asEditor().getSubEditor().setValue(defaultConsole);
+            checkBox.asEditor().getSubEditor().setValue(consoleModel);
         }
     }
 
@@ -278,6 +304,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     }
 
     @Override
+    public void setVncAvailable(boolean visible) {
+        vncRadioButton.setVisible(visible);
+    }
+
+    @Override
     public HasValueChangeHandlers<Boolean> getSpiceRadioButton() {
         return spiceRadioButton.asRadioButton();
     }
@@ -285,6 +316,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     @Override
     public HasValueChangeHandlers<Boolean> getRdpRadioButton() {
         return remoteDesktopRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getVncRadioButton() {
+        return vncRadioButton.asRadioButton();
     }
 
     @Override
@@ -305,7 +341,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     @Override
     public void selectRdp(boolean selected) {
         remoteDesktopRadioButton.asRadioButton().setValue(selected);
+    }
 
+    @Override
+    public void selectVnc(boolean selected) {
+        vncRadioButton.asRadioButton().setValue(selected);
     }
 
     abstract class SpiceRenderer implements ValueCheckboxRenderer<ConsoleModel> {

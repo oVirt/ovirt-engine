@@ -15,6 +15,19 @@ public abstract class ConsoleModel extends EntityModel
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;
 
+    /**
+     * The user have selected this model in the edit console dialog
+     */
+    private boolean userSelected;
+
+    public boolean isUserSelected() {
+        return userSelected;
+    }
+
+    public void setUserSelected(boolean userSelected) {
+        this.userSelected = userSelected;
+    }
+
     public Event getErrorEvent()
     {
         return privateErrorEvent;

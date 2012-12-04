@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.widget.basic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -108,15 +109,18 @@ public class ConsoleUtils {
         return ""; //$NON-NLS-1$
     }
 
-    public ConsoleProtocol determineDefaultProtocol(UserPortalItemModel item) {
+    public ConsoleProtocol determineConnectionProtocol(UserPortalItemModel item) {
         if (item.getIsPool()) {
             return null;
         }
 
-        if (item.getDefaultConsole() instanceof SpiceConsoleModel && isSpiceAvailable()) {
-            return ConsoleProtocol.SPICE;
-        } else if (item.getHasAdditionalConsole() && isRDPAvailable()) {
+        ConsoleProtocol selectedProtocol = item.getSelectedProtocol();
+
+        if (item.getHasAdditionalConsole() && isRDPAvailable() && selectedProtocol.equals(ConsoleProtocol.RDP)) {
             return ConsoleProtocol.RDP;
+        } else if (item.getDefaultConsole() instanceof SpiceConsoleModel && isSpiceAvailable() &&
+                selectedProtocol.equals(ConsoleProtocol.SPICE)) {
+            return ConsoleProtocol.SPICE;
         } else if (item.getDefaultConsole() instanceof VncConsoleModel) {
             return ConsoleProtocol.VNC;
         }
@@ -197,7 +201,7 @@ public class ConsoleUtils {
     }
 
     public native String getUserAgentString() /*-{
-        var userAgent = navigator.userAgent;
-        return userAgent;
-    }-*/;
+                                              var userAgent = navigator.userAgent;
+                                              return userAgent;
+                                              }-*/;
 }

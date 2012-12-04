@@ -6,6 +6,7 @@ import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
@@ -14,7 +15,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.Conso
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleProtocol;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -149,7 +149,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
 
         if (!item.getIsPool()) {
-            ConsoleProtocol protocol = consoleUtils.determineDefaultProtocol(item);
+            ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(item);
             if (protocol == null) {
                 getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
             } else {
@@ -169,7 +169,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        if (!item.getIsPool() && consoleUtils.determineDefaultProtocol(item) != null
+        if (!item.getIsPool() && consoleUtils.determineConnectionProtocol(item) != null
                 && item.getStatus().equals(VMStatus.Up)) {
             return true;
         }

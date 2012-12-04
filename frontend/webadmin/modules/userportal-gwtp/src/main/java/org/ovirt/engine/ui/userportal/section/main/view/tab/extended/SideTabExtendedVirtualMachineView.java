@@ -183,7 +183,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
                     @Override
                     public void execute(UserPortalItemModel model) {
                         String message =
-                                consoleManager.connectToConsole(consoleUtils.determineDefaultProtocol(model), model);
+                                consoleManager.connectToConsole(consoleUtils.determineConnectionProtocol(model), model);
                         if (message != null) {
                             errorPopupManager.show(message);
                         }

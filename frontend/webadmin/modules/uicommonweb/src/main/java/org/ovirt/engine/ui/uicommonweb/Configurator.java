@@ -376,11 +376,18 @@ public abstract class Configurator {
             return true;
 
         case qxl:
-            return (clientOsType().equalsIgnoreCase("Windows") && clientBrowserType().equalsIgnoreCase("Explorer")) || //$NON-NLS-1$ //$NON-NLS-2$
-                    (clientOsType().equalsIgnoreCase("Linux") && clientBrowserType().equalsIgnoreCase("Firefox")); //$NON-NLS-1$ //$NON-NLS-2$
+            return isClientWindownsExplorer() || isClientLinuxFirefox();
         }
 
         return false;
+    }
+
+    public boolean isClientLinuxFirefox() {
+        return clientOsType().equalsIgnoreCase("Linux") && clientBrowserType().equalsIgnoreCase("Firefox"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public boolean isClientWindownsExplorer() {
+        return clientOsType().equalsIgnoreCase("Windows") && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     // Create a Version object from string

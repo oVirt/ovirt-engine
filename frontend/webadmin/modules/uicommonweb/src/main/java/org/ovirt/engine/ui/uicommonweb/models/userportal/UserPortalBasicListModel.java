@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
@@ -22,16 +20,12 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.DataProvider;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 @SuppressWarnings("unused")
 public class UserPortalBasicListModel extends IUserPortalListModel implements IVmPoolResolutionService
@@ -330,11 +324,11 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)
             {
-                UserPortalItemModel model = new UserPortalItemModel(this);
+                UserPortalItemModel model = new UserPortalItemModel(this, this);
                 model.setEntity(item);
                 items.add(model);
 
-                UpdateConsoleModel(model);
+                updateConsoleModel(model);
             }
 
             // In userportal 'Basic View': Set 'CanConnectAutomatically' to true if there's one and only one VM in
@@ -351,55 +345,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         }
     }
 
-    private void UpdateConsoleModel(UserPortalItemModel item)
-    {
-        if (item.getEntity() != null)
-        {
-            Object tempVar = item.getEntity();
-            VM vm = (VM) ((tempVar instanceof VM) ? tempVar : null);
-            if (vm == null)
-            {
-                return;
-            }
+    protected void updateConsoleModel(UserPortalItemModel item) {
+        super.updateConsoleModel(item);
 
-            // Caching console model if needed
-            if (!cachedConsoleModels.containsKey(vm.getId()))
-            {
-                SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
-                spiceConsoleModel.getErrorEvent().addListener(this);
-                VncConsoleModel vncConsoleModel = new VncConsoleModel();
-                vncConsoleModel.setModel(this);
-                RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
-
-                cachedConsoleModels.put(vm.getId(),
-                        new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
-                                spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
-            }
-
-            // Getting cached console model
-            ArrayList<ConsoleModel> cachedModels = cachedConsoleModels.get(vm.getId());
-            for (ConsoleModel cachedModel : cachedModels)
-            {
-                cachedModel.setEntity(vm);
-            }
-
-            // Set default console by vm's display type
-            item.setDefaultConsole(vm.getdisplay_type() == DisplayType.vnc ? cachedModels.get(1) : cachedModels.get(0));
-
+        if (item.getEntity() != null) {
             // Adjust item's default console for userportal 'Basic View'
             item.getDefaultConsole().setForceVmStatusUp(true);
-
-            // Update additional console
-            if (DataProvider.IsWindowsOsType(vm.getvm_os()))
-            {
-                item.setAdditionalConsole(cachedModels.get(2));
-                item.setHasAdditionalConsole(true);
-            }
-            else
-            {
-                item.setAdditionalConsole(null);
-                item.setHasAdditionalConsole(false);
-            }
         }
     }
 
