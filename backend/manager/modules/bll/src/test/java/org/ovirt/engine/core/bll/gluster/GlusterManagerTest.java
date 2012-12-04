@@ -19,7 +19,6 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -81,8 +80,8 @@ public class GlusterManagerTest {
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
             mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300));
 
-    @Rule
-    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     private GlusterManager glusterManager;
 

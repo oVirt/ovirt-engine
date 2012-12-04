@@ -17,7 +17,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
@@ -37,8 +36,8 @@ public class CommandBaseTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.IsMultilevelAdministrationOn, false));
 
-    @Rule
-    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     /** The session to use */
     private String session = "";

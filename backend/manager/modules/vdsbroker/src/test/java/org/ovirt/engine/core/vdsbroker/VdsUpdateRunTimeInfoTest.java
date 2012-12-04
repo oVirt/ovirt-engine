@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,8 +36,8 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 @RunWith(MockitoJUnitRunner.class)
 public class VdsUpdateRunTimeInfoTest {
 
-    @Rule
-    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     private VDS vds;
     XmlRpcStruct[] vmInfo;

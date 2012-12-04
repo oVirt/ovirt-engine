@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -60,8 +60,8 @@ public class DeactivateStorageDomainCommandTest {
     private VDS vds;
     storage_pool_iso_map map = new storage_pool_iso_map();
 
-    @Rule
-    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     @Test
     public void statusSetInMap() {

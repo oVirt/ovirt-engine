@@ -56,8 +56,8 @@ public class BackwardCompatibilityTaskCreationTest {
             mockConfig(ConfigValues.AsyncTaskStatusCachingTimeInMinutes, 10)
             );
 
-    @Rule
-    public MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
 
     @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     @DataPoints

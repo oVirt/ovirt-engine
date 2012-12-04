@@ -13,7 +13,6 @@ import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
 import java.util.ArrayList;
 
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -64,8 +63,8 @@ public class RemoveStorageDomainTest {
                             true)
             );
 
-    @Rule
-    public MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
+    @ClassRule
+    public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
     private final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
     private final Guid STORAGE_POOL_ID = Guid.NewGuid();
