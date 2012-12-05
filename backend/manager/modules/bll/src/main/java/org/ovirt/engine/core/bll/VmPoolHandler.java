@@ -21,8 +21,13 @@ public class VmPoolHandler {
 
     /**
      * VM should be return to pool after it stopped unless Manual Return VM To Pool chosen.
+     *
      * @param vmId
      *            The VM's id.
+     * @FIXME BLL commands should invoke IVDSEventListener.processOnVmStop instead of directly calling this class. This
+     *        is not duable now since callers which aren't on BLL don't know CommandContext to avid bugs this method
+     *        must be treated as the real implementor of VdsEventListener.processOnVmStop meanwhile till a better
+     *        solution supplied
      */
     public static void ProcessVmPoolOnStopVm(Guid vmId, CommandContext context) {
         vm_pool_map map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
@@ -45,6 +50,7 @@ public class VmPoolHandler {
         }
 
         QuotaManager.getInstance().rollbackQuotaByVmId(vmId);
+        VmHandler.removeStatelessVmUnmanagedDevices(vmId);
     }
 
     public static void removeVmStatelessImages(Guid vmId, CommandContext context) {

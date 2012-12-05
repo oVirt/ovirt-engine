@@ -13,10 +13,7 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -96,50 +93,6 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         } else {
             super.executeVmCommand();
         }
-        removeStatelessVmUnmanagedDevices();
-    }
-
-    private void removeStatelessVmUnmanagedDevices() {
-        if (getSucceeded() && (getVm().isStateless() ||  isRunOnce())) {
-            // remove all unmanaged devices of a stateless VM
-
-            final List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getUnmanagedDevicesByVmId(getVm().getId());
-
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-                @Override
-                public Void runInTransaction() {
-                    for (VmDevice device : vmDevices) {
-                        // do not remove device if appears in white list
-                        if (! VmDeviceCommonUtils.isInWhiteList(device.getType(), device.getDevice())) {
-                            DbFacade.getInstance().getVmDeviceDao().remove(device.getId());
-                        }
-                    }
-                    return null;
-                }
-
-            });
-        }
-    }
-
-    /*
-     * This method checks if we are stopping a VM that was started by run-once
-     * In such case we will may have 2 devices, one managed and one unmanaged for CD or Floppy
-     * This is not supported currently by libvirt that allows only one CD/Floppy
-     * This code should be removed if libvirt will support in future multiple CD/Floppy
-     */
-    private boolean isRunOnce() {
-        List<VmDevice> cdList =
-            DbFacade.getInstance()
-                    .getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.CDROM.getName());
-        List<VmDevice> floppyList =
-            DbFacade.getInstance()
-                    .getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(getVm().getId(), VmDeviceType.DISK.getName(), VmDeviceType.FLOPPY.getName());
-
-        return (cdList.size() > 1 || floppyList.size() > 1);
     }
 
     /**
