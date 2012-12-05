@@ -41,6 +41,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.LocalConfig;
+import org.ovirt.engine.core.utils.db.DbUtils;
 
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
@@ -447,12 +448,7 @@ public class EngineMonitorService implements Runnable {
             ps.setString(5, message);
             ps.executeUpdate();
         } finally {
-            if (ps != null) {
-                ps.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            DbUtils.closeQuietly(ps,connection);
         }
     }
 
@@ -509,27 +505,7 @@ public class EngineMonitorService implements Runnable {
         } catch (Exception e) {
             log.error(MessageFormat.format("Failed to retrieve property {0} from the database", propertyName), e);
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e1) {
-                    log.error("Failed to release resultset of vdc_options", e1);
-                }
-            }
-            if (pStmt != null) {
-                try {
-                    pStmt.close();
-                } catch (SQLException e1) {
-                    log.error("Failed to release statement of vdc_options", e1);
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e1) {
-                    log.error("Failed to release connection of vdc_options", e1);
-                }
-            }
+            DbUtils.closeQuietly(rs,pStmt,connection);
         }
         return propertyValue;
     }

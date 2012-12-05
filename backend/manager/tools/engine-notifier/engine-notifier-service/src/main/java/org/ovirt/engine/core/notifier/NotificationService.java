@@ -32,6 +32,7 @@ import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
+import org.ovirt.engine.core.utils.db.DbUtils;
 
 /**
  * Responsible for an execution of the service for the current events in the system which should be notified to the
@@ -195,28 +196,7 @@ public class NotificationService implements Runnable {
                 eventSubscribers.add(getEventAuditLogSubscriber(rs));
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    log.error("Failed to release resultset of event_audit_log_subscriber", e);
-                }
-            }
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    log.error("Failed to release statement of event_audit_log_subscriber", e);
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    log.error("Failed to close connection of event_audit_log_subscriber", e);
-                    throw e;
-                }
-            }
+            DbUtils.closeQuietly(rs, ps, connection);
         }
         DbUser dbUser = null;
         for (event_audit_log_subscriber eventSubscriber:eventSubscribers) {
@@ -254,12 +234,7 @@ public class NotificationService implements Runnable {
                         + eventSubscriber.getaudit_log_id());
             }
         } finally {
-            if (ps != null) {
-                ps.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            DbUtils.closeQuietly(ps,connection);
         }
     }
 
@@ -280,12 +255,7 @@ public class NotificationService implements Runnable {
             cs.setString(7, eventHistory.getsubscriber_id().toString());
             cs.executeUpdate();
         } finally {
-            if (cs != null) {
-                cs.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            DbUtils.closeQuietly(cs,connection);
         }
     }
 
@@ -322,19 +292,7 @@ public class NotificationService implements Runnable {
                 dbUser.setemail(rs.getString("email"));
             }
         } finally {
-            if (rs != null) {
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                    log.error("Failed to release resultset of db user query", e);
-                }
-            }
-            if (ps != null) {
-                ps.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            DbUtils.closeQuietly(rs,ps,connection);
         }
         return dbUser;
     }
