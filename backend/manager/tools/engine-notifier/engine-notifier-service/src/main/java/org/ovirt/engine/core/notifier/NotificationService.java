@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +183,7 @@ public class NotificationService implements Runnable {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-
+        List<event_audit_log_subscriber> eventSubscribers  = new ArrayList<event_audit_log_subscriber>();
         try {
             connection = ds.getConnection();
             ps =
@@ -190,31 +191,8 @@ public class NotificationService implements Runnable {
                             .prepareStatement("select * from event_audit_log_subscriber_view " +
                                     "where audit_log_id <= (select max(audit_log_id) from audit_log)");
             rs = ps.executeQuery();
-            event_audit_log_subscriber eventSubscriber;
-            DbUser dbUser = null;
-
             while (rs.next()) {
-                eventSubscriber = getEventAuditLogSubscriber(rs);
-                dbUser = getUserByUserId(eventSubscriber.getsubscriber_id());
-
-                if (dbUser != null) {
-                    EventSender method =
-                        methodsMapper.getMethod(EventNotificationMethods.forValue(eventSubscriber.getmethod_id()));
-                    EventSenderResult sendResult = null;
-                    try {
-                        sendResult = method.send(eventSubscriber, dbUser.getemail());
-                    } catch (Exception e) {
-                        log.error("Failed to dispatch message", e);
-                        sendResult = new EventSenderResult();
-                        sendResult.setSent(false);
-                        sendResult.setReason(e.getMessage());
-                    }
-
-                    addEventNotificationHistory(geteventNotificationHist(eventSubscriber,
-                            sendResult.isSent(),
-                            sendResult.getReason()));
-                    updateAuditLogEventProcessed(eventSubscriber);
-                }
+                eventSubscribers.add(getEventAuditLogSubscriber(rs));
             }
         } finally {
             if (rs != null) {
@@ -229,8 +207,36 @@ public class NotificationService implements Runnable {
                     ps.close();
                 } catch (SQLException e) {
                     log.error("Failed to release statement of event_audit_log_subscriber", e);
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    log.error("Failed to close connection of event_audit_log_subscriber", e);
                     throw e;
                 }
+            }
+        }
+        DbUser dbUser = null;
+        for (event_audit_log_subscriber eventSubscriber:eventSubscribers) {
+            dbUser = getUserByUserId(eventSubscriber.getsubscriber_id());
+            if (dbUser != null) {
+                EventSender method =
+                        methodsMapper.getMethod(EventNotificationMethods.forValue(eventSubscriber.getmethod_id()));
+                EventSenderResult sendResult = null;
+                try {
+                    sendResult = method.send(eventSubscriber, dbUser.getemail());
+                } catch (Exception e) {
+                    log.error("Failed to dispatch message", e);
+                    sendResult = new EventSenderResult();
+                    sendResult.setSent(false);
+                    sendResult.setReason(e.getMessage());
+                }
+                addEventNotificationHistory(geteventNotificationHist(eventSubscriber,
+                        sendResult.isSent(),
+                        sendResult.getReason()));
+                updateAuditLogEventProcessed(eventSubscriber);
             }
         }
     }
@@ -250,6 +256,9 @@ public class NotificationService implements Runnable {
         } finally {
             if (ps != null) {
                 ps.close();
+            }
+            if (connection != null) {
+                connection.close();
             }
         }
     }
