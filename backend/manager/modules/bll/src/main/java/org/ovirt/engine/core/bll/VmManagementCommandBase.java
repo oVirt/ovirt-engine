@@ -63,8 +63,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     private final static Pattern cpuPinningPattern =
-            Pattern.compile("\\d#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*" +
-                    "(_\\d#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*)*");
+            Pattern.compile("\\d+#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*" +
+                    "(_\\d+#(\\^\\d+|\\d+\\-\\d+|\\d+)(,(\\^\\d+|\\d+\\-\\d+|\\d+))*)*");
 
     static boolean isCpuPinningValid(final String cpuPinning) {
         return StringUtils.isEmpty(cpuPinning) || cpuPinningPattern.matcher(cpuPinning).matches();
