@@ -60,7 +60,7 @@
 
 		.provisioningRadioContent  {
 			padding-top: 3px;
-			width: 80px;
+			width: 100%;
 		}
 
 		.disksAllocation {
@@ -372,8 +372,10 @@
 							</g:HorizontalPanel>
 							<g:HorizontalPanel ui:field="provisionSelectionPanel">
 								<e:ListModelListBoxEditor ui:field="provisioningEditor" addStyleNames="{style.provisioningEditor}" />
-								<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
-								<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
+								<g:VerticalPanel>
+									<e:EntityModelRadioButtonEditor ui:field="provisioningThinEditor"/>
+									<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
+								</g:VerticalPanel>
 							</g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
 							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
