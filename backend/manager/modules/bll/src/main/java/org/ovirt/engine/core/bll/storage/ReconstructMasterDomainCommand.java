@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -183,10 +184,29 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return commandSucceeded;
     }
 
+    /**
+     * performs any connect related operations if needed before attempting
+     * to connect/refresh pool information.
+     * @param vds
+     * @return
+     */
+    private boolean connectVdsToNewMaster(VDS vds) {
+        storage_domains masterDomain = getNewMaster(false);
+        if (vds.getId().equals(getVds().getId())
+                || StorageHelperDirector.getInstance().getItem(masterDomain.getstorage_type())
+                        .ConnectStorageToDomainByVdsId(masterDomain, vds.getId())) {
+            return true;
+        }
+        log.errorFormat("Error while trying connect host {0} to the needed storage server during the reinitialization of Data Center {1}",
+                vds.getId(),
+                getStoragePool().getId());
+        return false;
+    }
+
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
         for (VDS vds : getAllRunningVdssInPool()) {
             try {
-                if (!_isLastMaster && commandSucceeded) {
+                if (!_isLastMaster && commandSucceeded && connectVdsToNewMaster(vds)) {
                     try {
                         runVdsCommand(
                                 VDSCommandType.RefreshStoragePool,
