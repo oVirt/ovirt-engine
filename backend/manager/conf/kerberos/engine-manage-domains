@@ -124,13 +124,13 @@ if [ ! -e $PROPERTIES_FILE ]; then
 fi
 
 cat << EOF > $PROPERTIES_FILE
-AdUserName
+AdUserName=
 AdUserPassword.type=CompositePassword
-LDAPSecurityAuthentication
-DomainName
-AdUserId
-LdapServers
-LDAPProviderTypes
+LDAPSecurityAuthentication=
+DomainName=
+AdUserId=
+LdapServers=
+LDAPProviderTypes=
 EOF
 
 "${JAVA_HOME}/bin/java" -cp .:$CP org.ovirt.engine.core.utils.kerberos.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE
