@@ -1594,7 +1594,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Fingerprint needs to be verified before importing the gluster configuration")
     String fingerprintNotVerified();
 
-    @DefaultStringValue("Unable to fetch the gluster hosts. Please verify the host IP Address and password")
+    @DefaultStringValue("Unable to fetch the gluster hosts. Please try again")
     String emptyGlusterHosts();
 
     @DefaultStringValue("Missing Quota for the selected Storage Domain(s), Please define proper Quota")

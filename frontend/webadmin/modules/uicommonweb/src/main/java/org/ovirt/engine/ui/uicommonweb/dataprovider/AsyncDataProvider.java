@@ -1072,13 +1072,6 @@ public final class AsyncDataProvider {
     }
 
     public static void GetGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source;
-            }
-        };
         GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
         parameters.setFingerprint(fingerprint);
         Frontend.RunQuery(VdcQueryType.GetGlusterServers,

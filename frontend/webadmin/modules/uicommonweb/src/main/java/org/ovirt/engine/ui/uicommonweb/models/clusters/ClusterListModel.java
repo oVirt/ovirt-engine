@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
@@ -559,12 +560,24 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         getWindow().StartProgress(null);
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
+        aQuery.setHandleFailure(true);
         aQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object result)
             {
                 getWindow().StopProgress();
-                Map<String, String> hostMap = (Map<String, String>) result;
+
+                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
+                if (returnValue == null) {
+                    onEmptyGlusterHosts(clusterModel);
+                    return;
+                }
+                else if (!returnValue.getSucceeded()) {
+                    clusterModel.setMessage(returnValue.getExceptionString());
+                    return;
+                }
+
+                Map<String, String> hostMap = (Map<String, String>) returnValue.getReturnValue();
                 if (hostMap == null)
                 {
                     onEmptyGlusterHosts(clusterModel);
