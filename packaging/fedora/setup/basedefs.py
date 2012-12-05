@@ -62,6 +62,8 @@ DIR_ENGINE_CONFIG="%s/ovirt-engine/engine-config/" % DIR_USR_SHARE
 DIR_ENGINE_CONFIG_CONF="/etc/ovirt-engine/engine-config/"
 DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
 
+DIR_YUM_CACHE = "/var/cache/yum"
+DIR_PKGS_INSTALL = "/usr/share"
 
 FILE_INSTALLER_LOG="engine-setup.log"
 FILE_KRB_CONF="%s/deployments/configuration/krb5.conf" % DIR_ENGINE
@@ -174,6 +176,9 @@ CONST_KVM_GID  = 36
 CONST_MAX_PSQL_CONNS= 150
 CONST_SHMMAX=35554432
 CONST_CONFIG_EXTRA_IPTABLES_RULES="EXTRA_IPTABLES_RULES"
+CONST_INSTALL_SIZE_MB=500
+CONST_DOWNLOAD_SIZE_MB=500
+CONST_DB_SIZE=500
 
 # This is needed for avoiding error in create_ca when supporting max cn length of 64.
 # please DONT increase this size, any value over 55 will fail the setup.

@@ -232,6 +232,7 @@ ERR_DB_BACKUP="Database backup failed"
 ERR_DB_RESTORE="Database restore failed"
 ERR_DB_DROP="Database drop failed"
 ERR_DB_RENAME = "Failed to rename DB '%s' to '%s'. Check that there are no active connections and try again."
+ERR_DB_GET_SPACE = "Error: Failed to get %s database size."
 ERR_DB_CONNECTION = "Could not connect to host %s with provided credentials. Check that your settings are correct."
 ERR_DB_CREATE_PRIV = "Couldn't create temp database on server %s. Check provided credentials."
 ERR_DB_DROP_PRIV = "Couldn't drop temp database on server %s. Check provided credentials."
@@ -393,6 +394,7 @@ ERR_EXP_UNKWN_ERROR="Unknown error occurred during validation"
 #error running free
 ERR_EXP_FREE_MEM="Internal error occurred when trying to determine the amount of available memory.\nPlease make that there is at least %s MB of memory on the Host" % basedefs.CONST_MIN_MEMORY_MB
 ERR_EXP_NOT_EMOUGH_MEMORY="Error: Not enough available memory on the Host\n(the minimum requirement is %s MB and the recommended is %s MB)." % (basedefs.CONST_MIN_MEMORY_MB, basedefs.CONST_WARN_MEMORY_MB)
+ERR_EXP_NO_SPACE="Not enough available space on the Host\n(Current available space at %s is %s MB and %s MB is needed)."
 
 #import iso files
 ERR_FAILED_TO_COPY_FILE_TO_ISO_DOMAIN="Failed to copy files to iso domain"
@@ -437,3 +439,8 @@ WARN_IPA_INSTALLED="Warning! IPA Installation detected. Support for port 80/443 
 # passwords errors
 ERR_SPACES_IN_PASS = "Error: White spaces are not allowed in passwords"
 ERR_NOT_ALLOWED_CHAR = "Error: The %s chars are not allowed in passwords"
+
+MSG_ERROR_SPACE = "Not enough free space available."
+MSG_STOP_UPGRADE_SPACE = "Not enough free space available for the upgrade operation.\
+Stopping upgrade.\nIf you would like to perform an upgrade and ignore the space check,\n\
+run the upgrade with --no-space-check option"

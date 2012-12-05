@@ -621,6 +621,14 @@ def verifyStringFormat(str, matchRegex):
     else:
         return True
 
+
+def find_mount_point(path):
+    path = os.path.abspath(path)
+    while not os.path.ismount(path):
+        path = os.path.dirname(path)
+    return path
+
+
 def getAvailableSpace(path):
     logging.debug("Checking available space on %s" % (path))
     stat = os.statvfs(path)
@@ -1447,3 +1455,79 @@ def configureEngineForMaintenance():
 def restoreEngineFromMaintenance():
     if os.path.exists(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE):
         os.remove(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE)
+
+# Returns db size in MB
+def getDbSize(dbname):
+    sql = "SELECT pg_database_size(\'%s\')" % (dbname)
+    out, rc = execRemoteSqlCommand(getDbUser(),
+                                    getDbHostName(),
+                                    getDbPort(),
+                                    basedefs.DB_POSTGRES,
+                                    sql,
+                                    True,
+                                    output_messages.ERR_DB_GET_SPACE % (dbname))
+    size = int(out.splitlines()[2].strip())
+    size = size / 1024 / 1024 # Get size in MB
+    return size
+
+
+def checkAvailableSpace(required, dbName=None, dbFolder=None, msg=output_messages.MSG_ERROR_SPACE):
+
+    mounts = {}
+    engineDbSize = 0
+
+    # Get DB Size
+    if dbName:
+        engineDbSize = getDbSize(dbName)
+
+    # Loop over folders in the map of folders
+    for folder, req_space in required.iteritems():
+        # Find the mount point for the folder
+        mount_point = find_mount_point(folder)
+        logging.debug("Found mount point of '%s' at '%s'", folder, mount_point)
+        # Find the free space on the folder/mount
+        freeSpace = getAvailableSpace(folder)
+
+        # Hack for the DB size, adding db size to the
+        # required space value
+        if folder == str(dbFolder):
+            req_space += engineDbSize
+
+        # IMPORTANT NOTICE
+        # If the current mount point already holds
+        # another folder, update its required space
+        # by adding the new requirements to
+        # the previously stored requirements.
+        #
+        # Otherwise, create a map between the mount_point
+        # and its free space and required space.
+        if mount_point in mounts.keys():
+            mounts[mount_point]['required'] += req_space
+        else:
+            mounts[mount_point] = {'free': freeSpace,
+                                   'required': req_space}
+
+    logging.debug("Mount points are: %s", mounts)
+    # Loop over each mount point and compare its free space
+    # to the requirements.
+    # If there is a folder with less space than required, issue
+    # an error with the option to ignore the check.
+    raise_space_error = False
+    for mount, size in mounts.iteritems():
+        logging.debug("Comparing free space %s MB with required %s MB",
+                      size['free'],
+                      size['required'])
+        if size['free'] < size['required']:
+            raise_space_error = True
+            warn_msg = ("Warning: available disk space at %s (%s MB)"
+                   " is lower than the minimum requirement"
+                   " for the upgrade (%s MB)" % (mount,
+                                                 size['free'],
+                                                 size['required']))
+
+            print warn_msg
+
+    if raise_space_error:
+        logging.debug(msg)
+        print msg
+        raise Exception(msg)

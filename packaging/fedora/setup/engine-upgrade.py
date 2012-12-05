@@ -20,7 +20,7 @@ from miniyum import MiniYum
 
 # The following constants are used in maintenance mode for
 # running things in a loop
-MAINTENANCE_TASKS_WAIT_PERIOD  = 180
+MAINTENANCE_TASKS_WAIT_PERIOD = 180
 MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
 MAINTENANCE_TASKS_CYCLES = 20
 
@@ -36,7 +36,6 @@ SERVER_ADMIN = basedefs.DB_ADMIN
 
 
 # CONST
-BACKUP_DIR = "/var/lib/ovirt-engine/backups"
 BACKUP_FILE = "ovirt-engine_db_backup"
 LOG_PATH = "/var/log/ovirt-engine"
 
@@ -181,6 +180,9 @@ def getOptions():
     parser.add_option("-f", "--upgrade-ignore-tasks",
                       action="store_true", dest="ignore_tasks", default=False,
                       help=SUPPRESS_HELP)
+
+    parser.add_option("-n", "--no-space-check", help="Disable space check", action="store_true", default=False)
+
 
     (options, args) = parser.parse_args()
     return (options, args)
@@ -339,7 +341,7 @@ class MYum():
 class DB():
     def __init__(self):
         date = utils.getCurrentDateTime()
-        self.sqlfile = "%s/%s_%s.sql" % (BACKUP_DIR, BACKUP_FILE, date)
+        self.sqlfile = "%s/%s_%s.sql" % (basedefs.DIR_DB_BACKUPS, BACKUP_FILE, date)
         self.updated = False
         self.dbrenamed = False
         self.name = basedefs.DB_NAME
@@ -949,6 +951,25 @@ def main(options):
     etlService = utils.Service(basedefs.ETL_SERVICE_NAME)
     notificationService = utils.Service(basedefs.NOTIFIER_SERVICE_NAME)
 
+    # Check for the available free space in required locations:
+    # 1. DB backups location
+    # 2. Yum cache location (for downloading packages)
+    # 3. /usr/share location (for installing jboss and engine)
+    if not options.no_space_check:
+        # The second part of the map is the space required in each location for
+        # the successfull upgrade.
+        required_folders_map = {
+            basedefs.DIR_DB_BACKUPS: basedefs.CONST_DB_SIZE,
+            basedefs.DIR_YUM_CACHE: basedefs.CONST_DOWNLOAD_SIZE_MB,
+            basedefs.DIR_PKGS_INSTALL: basedefs.CONST_INSTALL_SIZE_MB,
+        }
+        utils.checkAvailableSpace(required=required_folders_map,
+                                  dbName=currentDbName,
+                                  dbFolder=basedefs.DIR_DB_BACKUPS,
+                                  msg=output_messages.MSG_STOP_UPGRADE_SPACE,
+                                  )
+
+    # Check minimal supported versions of installed components
     if unsupportedVersionsPresent(dbName=currentDbName):
         print MSG_ERROR_INCOMPATIBLE_UPGRADE
         raise Exception(MSG_ERROR_INCOMPATIBLE_UPGRADE)
@@ -1082,6 +1103,7 @@ def main(options):
         print "\n%s\n" % MSG_INFO_UPGRADE_OK
         printMessages()
 
+
 if __name__ == '__main__':
     try:
         # Must run as root
@@ -1095,7 +1117,7 @@ if __name__ == '__main__':
         SERVER_PORT = utils.getDbPort()
         SERVER_ADMIN = utils.getDbUser()
 
-        # get iso and domain from user arguments
+        # get user arguments
         (options, args) = getOptions()
 
         main(options)
