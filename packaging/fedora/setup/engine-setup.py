@@ -1066,10 +1066,10 @@ def _updateVDCOptions():
             "ENGINEEARLib":["%s/engine.ear" %(basedefs.DIR_ENGINE), 'text'],
             "CACertificatePath":[basedefs.FILE_CA_CRT_SRC, 'text'],
             "CertAlias":["1", 'text'],
+            "keystorePass":[basedefs.CONST_KEY_PASS, 'text'],
         },
         {
             "TruststorePass":[basedefs.CONST_CA_PASS, 'text'],
-            "keystorePass":[basedefs.CONST_KEY_PASS, 'text'],
             "CertificatePassword":[basedefs.CONST_CA_PASS, 'pass'],
             "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
             "SSLEnabled":[ "true", 'text'],
