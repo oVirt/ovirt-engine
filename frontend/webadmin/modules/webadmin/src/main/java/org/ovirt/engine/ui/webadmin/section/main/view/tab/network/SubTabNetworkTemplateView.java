@@ -67,7 +67,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
                 return object.getFirst().getName();
             }
         };
-        getTable().addColumn(nameColumn, constants.vnicNetworkTemplate());
+        getTable().addColumn(vnicNameColumn, constants.vnicNetworkTemplate());
 
         getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VmTemplate>>(constants.removeInterface()) {
             @Override
