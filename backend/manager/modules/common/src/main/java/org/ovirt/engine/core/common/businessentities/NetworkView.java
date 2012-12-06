@@ -1,28 +1,16 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.compat.Version;
 
-public class NetworkView extends IVdcQueryable implements Serializable {
+public class NetworkView extends Network {
 
     private static final long serialVersionUID = 7541192304006710467L;
 
-    private Network network;
     private String storagePoolName;
     private Version compatibilityVersion;
 
-    @Override
-    public Object getQueryableId() {
-        return network.getQueryableId();
-    }
-
     public Network getNetwork() {
-        return network;
-    }
-
-    public void setNetwork(Network network) {
-        this.network = network;
+        return this;
     }
 
     public String getStoragePoolName() {
@@ -44,9 +32,8 @@ public class NetworkView extends IVdcQueryable implements Serializable {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
+        int result = super.hashCode();
         result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
-        result = prime * result + ((getNetwork() == null) ? 0 : getNetwork().hashCode());
         result = prime * result + ((getStoragePoolName() == null) ? 0 : getStoragePoolName().hashCode());
         return result;
     }
@@ -56,7 +43,7 @@ public class NetworkView extends IVdcQueryable implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!super.equals(obj)) {
             return false;
         }
         if (!(obj instanceof NetworkView)) {
@@ -68,13 +55,6 @@ public class NetworkView extends IVdcQueryable implements Serializable {
                 return false;
             }
         } else if (!getCompatibilityVersion().equals(other.getCompatibilityVersion())) {
-            return false;
-        }
-        if (getNetwork() == null) {
-            if (other.getNetwork() != null) {
-                return false;
-            }
-        } else if (!getNetwork().equals(other.getNetwork())) {
             return false;
         }
         if (getStoragePoolName() == null) {

@@ -138,12 +138,12 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         }
     }
 
-    static class NetworkRowMapper implements ParameterizedRowMapper<Network> {
+    abstract static class NetworkRowMapperBase<T extends Network> implements ParameterizedRowMapper<T> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
         @Override
-        public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Network entity = new Network();
+        public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+            T entity = createNetworkEntity();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
             entity.setdescription(rs.getString("description"));
@@ -159,6 +159,16 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.setVmNetwork(rs.getBoolean("vm_network"));
 
             return entity;
+        }
+
+        abstract protected T createNetworkEntity();
+    }
+
+    static class NetworkRowMapper extends NetworkRowMapperBase<Network> {
+        public final static NetworkRowMapper instance = new NetworkRowMapper();
+
+        protected Network createNetworkEntity() {
+            return new Network();
         }
     }
 }
