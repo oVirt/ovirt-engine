@@ -12,6 +12,8 @@ public enum LockingGroup {
     VM_NAME,
     STORAGE,
     REGISTER_VDS,
-    VM_SNAPSHOTS;
+    VM_SNAPSHOTS,
+    GLUSTER,
+    ;
 
 }

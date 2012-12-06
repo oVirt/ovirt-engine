@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * BLL Command to Reset Gluster Volume Options
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class ResetGlusterVolumeOptionsCommand extends GlusterVolumeCommandBase<ResetGlusterVolumeOptionsParameters> {
 
     private static final long serialVersionUID = 7051669924582153802L;

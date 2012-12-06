@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -17,6 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActio
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeBricksActionParameters> {
 
     private static final long serialVersionUID = 1798863209150948961L;

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * BLL command for gluster peer detach
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class RemoveGlusterServerCommand extends GlusterCommandBase<RemoveGlusterServerParameters> {
 
     private static final long serialVersionUID = -3658615659129620366L;

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * BLL command to Remove Bricks from Gluster volume
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<GlusterVolumeRemoveBricksParameters> {
     private static final long serialVersionUID = 1465299601226267507L;
     private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();

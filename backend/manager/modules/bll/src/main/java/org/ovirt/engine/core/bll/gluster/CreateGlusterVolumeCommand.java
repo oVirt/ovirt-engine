@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * BLL command to create a new Gluster Volume
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGlusterVolumeParameters> {
 
     private static final long serialVersionUID = 7432566785114684972L;

@@ -226,6 +226,8 @@ public class GlusterManagerTest {
                 .getVolumeAdvancedDetails(existingServer1, CLUSTER_ID, existingReplVol.getName());
         doReturn(new VDSReturnValue()).when(glusterManager).runVdsCommand(eq(VDSCommandType.RemoveVds),
                 argThat(isRemovedServer()));
+        doNothing().when(glusterManager).acquireLock(CLUSTER_ID);
+        doNothing().when(glusterManager).releaseLock(CLUSTER_ID);
     }
 
     private ArgumentMatcher<VDSParametersBase> isRemovedServer() {
@@ -264,6 +266,9 @@ public class GlusterManagerTest {
         // get the UP server from cluster
         inOrder.verify(clusterUtils, times(1)).getUpServer(CLUSTER_ID);
 
+        // acquire lock on the cluster
+        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
+
         // servers are fetched from glusterfs
         inOrder.verify(glusterManager, times(1)).fetchServers(existingServer1);
 
@@ -275,6 +280,12 @@ public class GlusterManagerTest {
         // detached server SERVER_ID_3 is removed from resource manager
         inOrder.verify(glusterManager, times(1)).runVdsCommand(eq(VDSCommandType.RemoveVds),
                 any(RemoveVdsVDSCommandParameters.class));
+
+        // release lock on the cluster
+        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
+
+        // acquire lock on the cluster for next operation (refresh volumes)
+        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
 
         // volumes are fetched from glusterfs
         inOrder.verify(glusterManager, times(1)).fetchVolumes(any(VDS.class));
@@ -294,7 +305,10 @@ public class GlusterManagerTest {
         inOrder.verify(volumeDao, times(1)).save(newVolume);
         // get volumes by cluster id to identify those that need to be removed
         inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
+        // remove deleted volumes
         inOrder.verify(volumeDao, times(1)).removeAll(argThat(areRemovedVolumes()));
+        // release lock on the cluster
+        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
     }
 
     private void mockDaos() {
@@ -424,10 +438,10 @@ public class GlusterManagerTest {
                         && (brick.getBrickDirectory().equals(REPL_BRICK_R1D1) || brick.getBrickDirectory()
                                 .equals(REPL_BRICK_R2D1))) {
                     properties.setStatus(GlusterStatus.DOWN);
+                    bricksWithChangedStatus.add(brick);
                 }
             }
             brickDetailsList.add(brickDetails);
-            bricksWithChangedStatus.add(brick);
         }
         volDetails.setBrickDetails(brickDetailsList);
 
@@ -516,10 +530,21 @@ public class GlusterManagerTest {
         // get volumes of the cluster
         inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
 
+        // acquire lock on the cluster
+        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
+
         // get volume advance details
         inOrder.verify(glusterManager, times(1)).getVolumeAdvancedDetails(existingServer1,
                 CLUSTER_ID,
                 existingDistVol.getName());
+
+        // release lock on the cluster
+        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
+
+        // acquire lock on the cluster for repl volume
+        inOrder.verify(glusterManager, times(1)).acquireLock(CLUSTER_ID);
+
+        // get volume advance details of repl volume
         inOrder.verify(glusterManager, times(1)).getVolumeAdvancedDetails(existingServer1,
                 CLUSTER_ID,
                 existingReplVol.getName());
@@ -527,6 +552,8 @@ public class GlusterManagerTest {
         // update brick status
         inOrder.verify(brickDao, times(1)).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
 
+        // release lock on the cluster
+        inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
     }
 
     /**

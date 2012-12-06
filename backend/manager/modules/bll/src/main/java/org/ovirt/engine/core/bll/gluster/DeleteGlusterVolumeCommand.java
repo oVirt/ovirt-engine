@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * BLL command to delete a Gluster volume
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class DeleteGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeParameters> {
 
     private static final long serialVersionUID = -4045244619084727618L;

@@ -2,14 +2,15 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 
@@ -30,6 +32,11 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     public GlusterCommandBase(T params) {
         super(params);
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVdsGroupId().toString(), LockingGroup.GLUSTER.name());
     }
 
     /*

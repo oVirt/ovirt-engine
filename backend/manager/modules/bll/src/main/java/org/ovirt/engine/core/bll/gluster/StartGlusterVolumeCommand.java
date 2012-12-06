@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * BLL command to start a Gluster volume
  */
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isWait = true)
 public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
 
     private static final long serialVersionUID = -7109431150062113267L;

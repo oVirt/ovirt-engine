@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -55,6 +56,9 @@ import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -69,10 +73,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * engine as well.
  */
 public class GlusterManager {
-    private static final String ENTITY_BRICK = "brick";
-    private static final String ENTITY_OPTION = "option";
+    private final String ENTITY_BRICK = "brick";
+    private final String ENTITY_OPTION = "option";
+    private final Log log = LogFactory.getLog(GlusterManager.class);
+    private final LockManager lockManager = LockManagerFactory.getLockManager();
     private static final GlusterManager instance = new GlusterManager();
-    private static final Log log = LogFactory.getLog(GlusterManager.class);
 
     private GlusterManager() {
     }
@@ -111,6 +116,38 @@ public class GlusterManager {
     private boolean glusterModeSupported() {
         Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
         return ((appMode & ApplicationMode.GlusterOnly.getValue()) > 0);
+    }
+
+    /**
+     * Acquires a lock on the cluster with given id and locking group {@link LockingGroup#GLUSTER}
+     *
+     * @param clusterId
+     *            ID of the cluster on which the lock is to be acquired
+     */
+    protected void acquireLock(Guid clusterId) {
+        lockManager.acquireLockWait(getEngineLock(clusterId));
+    }
+
+    /**
+     * Releases the lock held on the cluster having given id and locking group {@link LockingGroup#GLUSTER}
+     *
+     * @param clusterId
+     *            ID of the cluster on which the lock is to be released
+     */
+    protected void releaseLock(Guid clusterId) {
+        lockManager.releaseLock(getEngineLock(clusterId));
+    }
+
+    /**
+     * Returns an {@link EngineLock} instance that represents a lock on a cluster with given id and the locking group
+     * {@link LockingGroup#GLUSTER}
+     *
+     * @param clusterId
+     * @return
+     */
+    private EngineLock getEngineLock(Guid clusterId) {
+        return new EngineLock(Collections.singletonMap(clusterId.toString(),
+                LockingGroup.GLUSTER.name()), null);
     }
 
     /**
@@ -174,9 +211,14 @@ public class GlusterManager {
             return;
         }
 
-        List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
-        if (fetchedServers != null) {
-            removeDetachedServers(existingServers, fetchedServers);
+        acquireLock(cluster.getId());
+        try {
+            List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
+            if (fetchedServers != null) {
+                removeDetachedServers(existingServers, fetchedServers);
+            }
+        } finally {
+            releaseLock(cluster.getId());
         }
     }
 
@@ -363,16 +405,21 @@ public class GlusterManager {
     }
 
     private void refreshVolumeData(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
-        // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
-        Map<String, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
-        if (volumesMap == null) {
-            log.errorFormat("gluster volume info command failed on all servers of the cluster {0}."
-                    + "Can't refresh it's data at this point.", cluster.getname());
-            return;
-        }
+        acquireLock(cluster.getId());
+        try {
+            // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
+            Map<String, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
+            if (volumesMap == null) {
+                log.errorFormat("gluster volume info command failed on all servers of the cluster {0}."
+                        + "Can't refresh it's data at this point.", cluster.getname());
+                return;
+            }
 
-        updateExistingAndNewVolumes(cluster.getId(), volumesMap);
-        removeDeletedVolumes(cluster.getId(), volumesMap);
+            updateExistingAndNewVolumes(cluster.getId(), volumesMap);
+            removeDeletedVolumes(cluster.getId(), volumesMap);
+        } finally {
+            releaseLock(cluster.getId());
+        }
     }
 
     /**
@@ -779,6 +826,7 @@ public class GlusterManager {
                 log.debugFormat("Refreshing brick statuses for volume {0} of cluster {1}",
                         volume.getName(),
                         cluster.getname());
+                acquireLock(cluster.getId());
                 try {
                     refreshBrickStatuses(upServer, volume);
                 } catch (Exception e) {
@@ -786,6 +834,8 @@ public class GlusterManager {
                             volume.getName(),
                             cluster.getname(),
                             e);
+                } finally {
+                    releaseLock(cluster.getId());
                 }
             }
         }
