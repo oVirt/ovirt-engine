@@ -16,10 +16,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     PSAsyncActionTimeOutInMinutes(2),
-    @Deprecated
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("120")
-    SelectCommandTimeout(3),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("VdcDbConnection")
     DefaultDataBaseName(4),
@@ -81,10 +77,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     MigrationPortRange(22),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    LogXmlRpcData(23),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
@@ -124,20 +116,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/usr/share/vdsm-reg/vdsm-upgrade")
     oVirtUpgradeScriptName(34),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("Scripts\\vds_installer.py")
-    BootstrapInstallerFileName(35),
-    @Deprecated
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-gen-cert.py")
-    CBCCertificateScriptName(36),
-    @Deprecated
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/usr/share/vdsm-reg/ovirt-vdsm-complete.py")
-    CBCCloseCertificateScriptName(37),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
@@ -179,10 +157,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     TimeoutToResetVdsInSeconds(50),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("VirtualMachineDomainName")
-    VirtualMachineDomainName(51),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -275,10 +249,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     MaxRerunVmOnVdsCount(75),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("PerServer")
-    AutoMode(78),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -322,10 +292,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("12:00")
     VmPoolLeaseEndTime(90),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("WORKGROUP")
-    DefaultWorkgroup(91),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("LDAP")
     AuthenticationMethod(92),
@@ -367,18 +333,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     CertificatePassword(103),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    CertificateFingerPrint(104),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    LicenseCertificateFingerPrint(105),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    VdcBootStrapUrl(106),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds(108),
@@ -412,10 +366,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir")
     SpiceSecureChannels(117),
-    @Deprecated
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    AutoSuspendTimeInMinutes(118),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("shift+f12")
@@ -428,10 +378,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SpiceUsbAutoShare(121),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    RDPLoginWithFQN(122),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     UseSecureConnectionWithServers(123),
@@ -531,18 +477,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     MaxVdsMemOverCommitForServers(149),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientGUI(150),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     PowerClientMaxNumberOfConcurrentVMs(151),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientAllowUsingAsIRS(152),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
@@ -622,14 +560,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts(174),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    RenewGuestIpOnVdsSubnetChange(176),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    RenewGuestIpOnVdsSubnetChangeOnParseError(177),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     PowerClientUserPortalVdcManagedSpiceState(178),
@@ -659,21 +589,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     ENMailPassword(186),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ENMailDomain(187),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ENMailIsBodyHtml(188),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     ENMailEnableSsl(189),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    ENMailUseDefaultCredentials(190),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false")
@@ -718,10 +636,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     RedirectServletReportsPage(251),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("Reports not installed, please contact your administrator")
-    RedirectServletReportsPageError(252),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -776,35 +690,15 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "SearchTemplate")
     DBSearchTemplate(219),
-    // Do not use those (used internally)
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute(" WHERE RowNum BETWEEN {0} AND {1}")
-    SQLServerPagingSyntax(220),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("Range")
-    SQLServerPagingType(221),
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("SELECT * FROM (SELECT *, ROW_NUMBER() OVER({0}) as RowNum FROM ( {1})) as T1 ) as T2 {2}")
-    SQLServerSearchTemplate(222),
-    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" OFFSET {0} LIMIT {1}")
-    PostgresPagingSyntax(223),
-    @Deprecated
+    PostgresPagingSyntax(223),      // used by behaviour DBPagingSyntax
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Offset")
-    PostgresPagingType(224),
-    @Deprecated
+    PostgresPagingType(224),        // used by behaviour DBPagingType
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SELECT * FROM ( {1}) as T1 {2}")
-    PostgresSearchTemplate(225),
-    @Deprecated
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    LogDBCommands(226),
+    PostgresSearchTemplate(225),    // used by behaviour DBSearchTemplate
     @Reloadable
     @TypeConverterAttribute(java.util.HashSet.class)
     @DefaultValueAttribute("4.4,4.5")
@@ -872,12 +766,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1")
     CertAlias(265),
-
-    @Deprecated
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("8700")
-    PublicURLPort(266),
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
@@ -1014,16 +902,9 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "LikeSyntax")
     DBLikeSyntax(298),
-
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("LIKE")
-    SQLServerLikeSyntax(299),
-
-    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
-    PostgresLikeSyntax(300),
+    PostgresLikeSyntax(300),    // used by behaviour DBLikeSyntax
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -1034,10 +915,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("N")
     SQLI18NPrefix(302),
-    @Deprecated
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    PostgresI18NPrefix(303),
+    PostgresI18NPrefix(303),    // used by behaviour DBI18NPrefix
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1113,11 +993,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     IPTablesConfig(319),
-
-    @Deprecated
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    CustomPublicConfig_AppsWebSite(320),
 
     /**
      * Lower threshold for disk space on host to be considered low, in MB.
@@ -1365,12 +1240,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"false\"}")
     AutoRecoveryAllowedTypes(371),
-
-    @Deprecated
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    BootstrapNodeIDCommand(372),
 
     /*
      * umask is required to allow only self access

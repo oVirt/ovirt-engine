@@ -51,10 +51,8 @@ select fn_db_add_config_value('AuditLogCleanupTime','03:35:35','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
 --Handling Authentication Method
 select fn_db_add_config_value('AuthenticationMethod','LDAP','general');
-select fn_db_add_config_value('AutoMode','PerServer','general');
 select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
-select fn_db_add_config_value('AutoSuspendTimeInMinutes','30','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 --Handling CA Base Directory
 select fn_db_add_config_value('CABaseDirectory','ca','general');
@@ -67,14 +65,12 @@ select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
 select fn_db_add_config_value('CertAlias','1','general');
 --Handling Certificate File Name
 select fn_db_add_config_value('CertificateFileName','vdc.pfx','general');
-select fn_db_add_config_value('CertificateFingerPrint','73 18 22 44 5d 98 b0 5d c0 f7 36 7d f8 1d 85 da e1 3c f1 c6','general');
 select fn_db_add_config_value('CertificatePassword','jlOTIS0q5avsg1GaRjf/6/tnEM1pXcCRvNoeJ5MCgHF1kCzcqqhZvzR8Pn/5iBxaKVC7Y4OdA0joXVMLGasVGLnUkxExzNCMT+6QwyFM1L9/0g+1OgGTuMbvYTfEi0jLOFv0xwWDl5MWunPUjZriGEhkiu5d6QJ5ZeEhD4rRooA=','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConfigDir','/etc/engine','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
-select fn_db_add_config_value('CustomPublicConfig_AppsWebSite','','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
 select fn_db_add_config_value('DBEngine','SQLServer','general');
@@ -111,12 +107,7 @@ select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
 select fn_db_add_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
---Handling Mail User Domain
-select fn_db_add_config_value('ENMailDomain','','general');
---Handling Use HTML in message body
-select fn_db_add_config_value('ENMailIsBodyHtml','true','general');
 --Handling Use Default Credentials
-select fn_db_add_config_value('ENMailUseDefaultCredentials','false','general');
 select fn_db_add_config_value('FailedJobCleanupTimeInMinutes','60','general');
 select fn_db_add_config_value('FenceAgentDefaultParams','ilo3:lanplus,timeout=4','general');
 select fn_db_add_config_value('FenceAgentMapping','ilo3=ipmilan','general');
@@ -248,10 +239,8 @@ select fn_db_add_config_value('LocalAdminPassword','123456','general');
 --Handling Enable lock policy for Storage Pool Manager on activation
 select fn_db_add_config_value('LockPolicy','ON','general');
 select fn_db_add_config_value('LockRenewalIntervalSec','5','general');
-select fn_db_add_config_value('LogDBCommands','false','general');
 select fn_db_add_config_value('LogPhysicalMemoryThresholdInMB','1024','general');
 --Handling Log XML-RPC Data
-select fn_db_add_config_value('LogXmlRpcData','false','general');
 select fn_db_add_config_value('LowUtilizationForEvenlyDistribute','0','general');
 select fn_db_add_config_value('LowUtilizationForPowerSave','20','general');
 select fn_db_add_config_value('MacPoolRanges','00:1A:4A:16:01:51-00:1A:4A:16:01:e6','general');
@@ -322,7 +311,6 @@ select fn_db_add_config_value('PostgresPagingType','Offset','general');
 select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
 --Handling Allow Running Guests Without Tools
 select fn_db_add_config_value('PowerClientAllowRunningGuestsWithoutTools','false','general');
-select fn_db_add_config_value('PowerClientAllowUsingAsIRS','false','general');
 --Handling Auto-AdjustMemory Base On Available Memory
 select fn_db_add_config_value('PowerClientAutoAdjustMemoryBaseOnAvailableMemory','false','general');
 --Handling Client Auto Adjust Memory
@@ -343,7 +331,6 @@ select fn_db_add_config_value('PowerClientAutoMigrateToPowerClientOnConnect','fa
 select fn_db_add_config_value('PowerClientAutoRegistrationDefaultVdsGroupID','99408929-82CF-4DC7-A532-9D998063FA95','general');
 select fn_db_add_config_value('PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts','false','general');
 --Handling Enable Power Client GUI
-select fn_db_add_config_value('PowerClientGUI','false','general');
 select fn_db_add_config_value('PowerClientLogDetection','false','general');
 select fn_db_add_config_value('PowerClientMaxNumberOfConcurrentVMs','1','general');
 select fn_db_add_config_value('PowerClientRunVmShouldVerifyPendingVMsAsWell','false','general');
@@ -367,11 +354,7 @@ select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
 select fn_db_add_config_value('QuotaThresholdVdsGroup','80','general');
 --Handling Connect to RDP console with Fully Qualified User-Name (user@domain)
-select fn_db_add_config_value('RDPLoginWithFQN','true','general');
-select fn_db_add_config_value('RedirectServletReportsPageError','Reports not installed, please contact your administrator','general');
 select fn_db_add_config_value('RedirectServletReportsPage','','general');
-select fn_db_add_config_value('RenewGuestIpOnVdsSubnetChange','false','general');
-select fn_db_add_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','false','general');
 select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 --Handling SASL QOP
@@ -379,7 +362,6 @@ select fn_db_add_config_value('SASL_QOP','auth-conf','general');
 select fn_db_add_config_value('ScriptsPath','/usr/share/engine','general');
 select fn_db_add_config_value('SearchesRefreshRateInSeconds','1','general');
 select fn_db_add_config_value('SearchResultsLimit','100','general');
-select fn_db_add_config_value('SelectCommandTimeout','120','general');
 select fn_db_add_config_value('SendSMPOnRunVm','true','general');
 select fn_db_add_config_value('SendVmTicketUID','false','3.0');
 select fn_db_add_config_value('SendVmTicketUID','true','3.1');
@@ -408,10 +390,6 @@ select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');
 select fn_db_add_config_value('SQLServerI18NPrefix','N','general');
-select fn_db_add_config_value('SQLServerLikeSyntax','LIKE','general');
-select fn_db_add_config_value('SQLServerPagingSyntax',E' WHERE RowNum BETWEEN %1$s AND %2$s','general');
-select fn_db_add_config_value('SQLServerPagingType','Range','general');
-select fn_db_add_config_value('SQLServerSearchTemplate',E'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1) as T2 %3$s','general');
 select fn_db_add_config_value('SSHInactivityTimoutSeconds','300','general');
 select fn_db_add_config_value('SSHInactivityHardTimoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
@@ -481,7 +459,6 @@ select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('VdsSelectionAlgorithm','None','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
-select fn_db_add_config_value('VirtualMachineDomainName','VirtualMachineDomainName','general');
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.1');
@@ -592,23 +569,47 @@ select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '100
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
 
+select fn_db_delete_config_value('AutoMode','general');
+select fn_db_delete_config_value('AutoSuspendTimeInMinutes','general');
 select fn_db_delete_config_value('CBCCertificateScriptName','general');
 select fn_db_delete_config_value('CBCCloseCertificateScriptName','general');
+select fn_db_delete_config_value('CertificateFingerPrint','general');
+select fn_db_delete_config_value('CustomPublicConfig_AppsWebSite','general');
+select fn_db_delete_config_value('DefaultWorkgroup','general');
+select fn_db_delete_config_value('ENMailDomain','general');
 select fn_db_delete_config_value('ENMailEnableSsl','general');
 select fn_db_delete_config_value('ENMailHost','general');
+select fn_db_delete_config_value('ENMailIsBodyHtml','general');
 select fn_db_delete_config_value('ENMailPassword','general');
 select fn_db_delete_config_value('ENMailPort','general');
+select fn_db_delete_config_value('ENMailUseDefaultCredentials','general');
 select fn_db_delete_config_value('ENMailUser','general');
 select fn_db_delete_config_value('FreeSpaceCriticalLow','general');
+select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');
 select fn_db_delete_config_value('LdapServers','3.0');
+select fn_db_delete_config_value('LicenseCertificateFingerPrint','general');
+select fn_db_delete_config_value('LogDBCommands','general');
+select fn_db_delete_config_value('LogVdsRegistration','general');
+select fn_db_delete_config_value('LogXmlRpcData','general');
 select fn_db_delete_config_value('NetConsolePort','general');
+select fn_db_delete_config_value('PowerClientAllowUsingAsIRS','general');
+select fn_db_delete_config_value('PowerClientGUI','general');
 select fn_db_delete_config_value('PredefinedVMProperties','general');
 select fn_db_delete_config_value('PublicURLPort','general');
+select fn_db_delete_config_value('RDPLoginWithFQN','general');
+select fn_db_delete_config_value('RedirectServletReportsPageError','general');
+select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChange','general');
+select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
+select fn_db_delete_config_value('SQLServerLikeSyntax','general');
+select fn_db_delete_config_value('SQLServerPagingSyntax','general');
+select fn_db_delete_config_value('SQLServerPagingType','general');
+select fn_db_delete_config_value('SQLServerSearchTemplate','general');
+select fn_db_delete_config_value('SelectCommandTimeout','general');
 select fn_db_delete_config_value('SysPrep3.0Path','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
-select fn_db_delete_config_value('HotPlugSupportedOsList','general');
+select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
 select fn_db_delete_config_value('VdcBootStrapUrl','general');
 select fn_db_delete_config_value('VdsErrorsFileName','general');
 select fn_db_delete_config_value('VM64BitMaxMemorySizeInMB','general');
@@ -621,6 +622,7 @@ select fn_db_delete_config_value('SupportCustomProperties','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('SupportGetDevicesVisibility','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('SupportStorageFormat','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('UseRtl8139_pv','2.2,3.0,3.1,3.2');
+select fn_db_delete_config_value('VirtualMachineDomainName','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
