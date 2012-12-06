@@ -1300,6 +1300,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ProductKeyWindows2012x64(406),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    NetworkLinkingSupported(407),
+
     Invalid(65535);
 
     private int intValue;

@@ -59,6 +59,7 @@ public enum ConfigurationValues {
     RhevhLocalFSPath,
     DocsURL(ConfigAuthType.User),
     HotPlugEnabled(ConfigAuthType.User),
+    NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
     ManagementNetwork,
     ApplicationMode(ConfigAuthType.User),
