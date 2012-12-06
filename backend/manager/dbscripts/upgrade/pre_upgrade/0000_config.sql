@@ -55,7 +55,7 @@ select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
 select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 --Handling CA Base Directory
-select fn_db_add_config_value('CABaseDirectory','ca','general');
+select fn_db_add_config_value('CABaseDirectory','','general');
 --Handling CA certificate path
 select fn_db_add_config_value('CACertificatePath','ca/certs.pem','general');
 --Handling PEM File Name
@@ -64,7 +64,7 @@ select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
 --Handling Certificate alias
 select fn_db_add_config_value('CertAlias','1','general');
 --Handling Certificate File Name
-select fn_db_add_config_value('CertificateFileName','vdc.pfx','general');
+select fn_db_add_config_value('CertificateFileName','','general');
 select fn_db_add_config_value('CertificatePassword','jlOTIS0q5avsg1GaRjf/6/tnEM1pXcCRvNoeJ5MCgHF1kCzcqqhZvzR8Pn/5iBxaKVC7Y4OdA0joXVMLGasVGLnUkxExzNCMT+6QwyFM1L9/0g+1OgGTuMbvYTfEi0jLOFv0xwWDl5MWunPUjZriGEhkiu5d6QJ5ZeEhD4rRooA=','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
@@ -104,7 +104,7 @@ select fn_db_add_config_value('EnableSwapCheck','true','general');
 select fn_db_add_config_value('EnableUSBAsDefault','true','general');
 --Handling Enables Host Load Balancing system.
 select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
-select fn_db_add_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
+select fn_db_add_config_value('ENGINEEARLib','','general');
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Use Default Credentials
@@ -214,9 +214,9 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
-select fn_db_add_config_value('keystorePass','NoSoup4U','general');
+select fn_db_add_config_value('keystorePass','','general');
 --Handling Keystore URL
-select fn_db_add_config_value('keystoreUrl','keys/engine.p12','general');
+select fn_db_add_config_value('keystoreUrl','','general');
 select fn_db_add_config_value('LdapQueryPageSize','1000','general');
 select fn_db_add_config_value('LDAPQueryTimeout','30','general');
 select fn_db_add_config_value('LDAPConnectTimeout','30','general');
@@ -412,16 +412,16 @@ select fn_db_add_config_value('SupportForceExtendVG','false','2.2');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.0');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.1');
 select fn_db_add_config_value('SupportForceExtendVG','true','3.2');
-select fn_db_add_config_value('SysPrep2K3Path','backend/manager/conf/sysprep/sysprep.2k3','general');
-select fn_db_add_config_value('SysPrep2K8Path','backend/manager/conf/sysprep/sysprep.2k8','general');
-select fn_db_add_config_value('SysPrep2K8R2Path','backend/manager/conf/sysprep/sysprep.2k8','general');
-select fn_db_add_config_value('SysPrep2K8x64Path','backend/manager/conf/sysprep/sysprep.2k8x86','general');
+select fn_db_add_config_value('SysPrep2K3Path','/etc/ovirt-engine/sysprep/sysprep.2k3','general');
+select fn_db_add_config_value('SysPrep2K8Path','/etc/ovirt-engine/sysprep/sysprep.2k8x86','general');
+select fn_db_add_config_value('SysPrep2K8R2Path','/etc/ovirt-engine/sysprep/sysprep.2k8','general');
+select fn_db_add_config_value('SysPrep2K8x64Path','/etc/ovirt-engine/sysprep/sysprep.2k8','general');
 select fn_db_add_config_value('SysPrepDefaultPassword','','general');
 select fn_db_add_config_value('SysPrepDefaultUser','','general');
-select fn_db_add_config_value('SysPrepWindows7Path','backend/manager/conf/sysprep/sysprep.w7','general');
-select fn_db_add_config_value('SysPrepWindows7x64Path','backend/manager/conf/sysprep/sysprep.w7x64','general');
+select fn_db_add_config_value('SysPrepWindows7Path','/etc/ovirt-engine/sysprep/sysprep.w7','general');
+select fn_db_add_config_value('SysPrepWindows7x64Path','/etc/ovirt-engine/sysprep/sysprep.w7x64','general');
 --Handling Path to an XP machine Sys-Prep file.
-select fn_db_add_config_value('SysPrepXPPath','backend/manager/conf/sysprep/sysprep.xp','general');
+select fn_db_add_config_value('SysPrepXPPath','/etc/ovirt-engine/sysprep/sysprep.xp','general');
 select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','general');
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
@@ -494,7 +494,6 @@ select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');
 select fn_db_update_config_value('DebugSearchLogging','false','general');
 select fn_db_update_config_value('DefaultTimeZone','(GMT) GMT Standard Time','general');
-select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/standalone/deployments/engine.ear','general');
 select fn_db_update_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4','general');
 select fn_db_update_config_value('IPTablesConfig','
 # oVirt default firewall configuration. Automatically generated by vdsm bootstrap script.
