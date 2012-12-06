@@ -163,7 +163,7 @@ public class VmMapper {
         if (vm.isSetStateless()) {
             staticVm.setis_stateless(vm.isStateless());
         }
-        if (vm.isDeleteProtected()) {
+        if (vm.isSetDeleteProtected()) {
             staticVm.setDeleteProtected(vm.isDeleteProtected());
         }
         if (vm.isSetHighAvailability()) {
