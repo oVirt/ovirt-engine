@@ -548,17 +548,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private List<VDS> GetNonOperationalVdssInPool() {
-            List<VDS> allVds = DbFacade.getInstance().getVdsDao().getAll();
-            List<VDS> nonOperationalvdsInPool = new ArrayList<VDS>();
-            for (VDS vds : allVds) {
-                if (VDSStatus.NonOperational == vds.getstatus() && _storagePoolId.equals(vds.getstorage_pool_id())) {
-                    nonOperationalvdsInPool.add(vds);
-                }
-            }
-            return nonOperationalvdsInPool;
-        }
-
         /**
          * Returns True if there are other vdss in pool
          */
@@ -807,7 +796,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         // if the host which is marked as SPM by the storage is
                         // non operational we want to find it as well
                         if (spmVds == null) {
-                            List<VDS> nonOperationalVds = GetNonOperationalVdssInPool();
+                            List<VDS> nonOperationalVds =
+                                    DbFacade.getInstance()
+                                            .getVdsDao()
+                                            .getAllForStoragePoolAndStatus(_storagePoolId, VDSStatus.NonOperational);
                             for (VDS tempVds : nonOperationalVds) {
                                 if (tempVds.getvds_spm_id() == spmId) {
                                     spmVds = tempVds;
