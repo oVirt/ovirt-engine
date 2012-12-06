@@ -58,9 +58,6 @@ select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general
 select fn_db_add_config_value('CABaseDirectory','','general');
 --Handling CA certificate path
 select fn_db_add_config_value('CACertificatePath','ca/certs.pem','general');
---Handling PEM File Name
-select fn_db_add_config_value('CAEngineKey','engine.pem','general');
-select fn_db_add_config_value('CbcCheckOnVdsChange','false','general');
 --Handling Certificate alias
 select fn_db_add_config_value('CertAlias','1','general');
 --Handling Certificate File Name
@@ -359,7 +356,6 @@ select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 --Handling SASL QOP
 select fn_db_add_config_value('SASL_QOP','auth-conf','general');
-select fn_db_add_config_value('ScriptsPath','/usr/share/engine','general');
 select fn_db_add_config_value('SearchesRefreshRateInSeconds','1','general');
 select fn_db_add_config_value('SearchResultsLimit','100','general');
 select fn_db_add_config_value('SendSMPOnRunVm','true','general');
@@ -389,7 +385,6 @@ select fn_db_add_config_value('WANColorDepth','16','general');
 select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');
-select fn_db_add_config_value('SQLServerI18NPrefix','N','general');
 select fn_db_add_config_value('SSHInactivityTimoutSeconds','300','general');
 select fn_db_add_config_value('SSHInactivityHardTimoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
@@ -570,8 +565,10 @@ select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '100
 
 select fn_db_delete_config_value('AutoMode','general');
 select fn_db_delete_config_value('AutoSuspendTimeInMinutes','general');
+select fn_db_delete_config_value('CAEngineKey','general');
 select fn_db_delete_config_value('CBCCertificateScriptName','general');
 select fn_db_delete_config_value('CBCCloseCertificateScriptName','general');
+select fn_db_delete_config_value('CbcCheckOnVdsChange','general');
 select fn_db_delete_config_value('CertificateFingerPrint','general');
 select fn_db_delete_config_value('CustomPublicConfig_AppsWebSite','general');
 select fn_db_delete_config_value('DefaultWorkgroup','general');
@@ -601,10 +598,12 @@ select fn_db_delete_config_value('RedirectServletReportsPageError','general');
 select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChange','general');
 select fn_db_delete_config_value('RenewGuestIpOnVdsSubnetChangeOnParseError','general');
 select fn_db_delete_config_value('RpmsRepositoryUrl','general');
+select fn_db_delete_config_value('SQLServerI18NPrefix','general');
 select fn_db_delete_config_value('SQLServerLikeSyntax','general');
 select fn_db_delete_config_value('SQLServerPagingSyntax','general');
 select fn_db_delete_config_value('SQLServerPagingType','general');
 select fn_db_delete_config_value('SQLServerSearchTemplate','general');
+select fn_db_delete_config_value('ScriptsPath','general');
 select fn_db_delete_config_value('SelectCommandTimeout','general');
 select fn_db_delete_config_value('SysPrep3.0Path','general');
 select fn_db_delete_config_value('UseENGINERepositoryRPMs','general');
