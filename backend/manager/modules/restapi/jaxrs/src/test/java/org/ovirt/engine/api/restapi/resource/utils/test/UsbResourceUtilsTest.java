@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.utils.test;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
@@ -12,14 +14,14 @@ public class UsbResourceUtilsTest {
     public void getUsbPolicyNullUsb() {
         Usb usb = null;
         VDSGroup vdsGroup = new VDSGroup();
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.DISABLED));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.DISABLED);
     }
 
     @Test
     public void getUsbPolicyIsSetDisabled() {
         Usb usb = new Usb();
         VDSGroup vdsGroup = new VDSGroup();
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.DISABLED));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.DISABLED);
     }
 
     @Test
@@ -27,7 +29,7 @@ public class UsbResourceUtilsTest {
         Usb usb = new Usb();
         usb.setEnabled(false);
         VDSGroup vdsGroup = new VDSGroup();
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.DISABLED));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.DISABLED);
     }
 
     @Test
@@ -36,7 +38,7 @@ public class UsbResourceUtilsTest {
         usb.setEnabled(true);
         usb.setType("native");
         VDSGroup vdsGroup = new VDSGroup();
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.ENABLED_NATIVE));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test
@@ -45,7 +47,7 @@ public class UsbResourceUtilsTest {
         usb.setEnabled(true);
         usb.setType("legacy");
         VDSGroup vdsGroup = new VDSGroup();
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.ENABLED_LEGACY));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
@@ -54,7 +56,7 @@ public class UsbResourceUtilsTest {
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setcompatibility_version(Version.v3_1);
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.ENABLED_NATIVE));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test
@@ -63,7 +65,7 @@ public class UsbResourceUtilsTest {
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setcompatibility_version(Version.v3_0);
-        assert(UsbResourceUtils.getUsbPolicy(usb, vdsGroup).equals(UsbPolicy.ENABLED_LEGACY));
+        assertEquals(UsbResourceUtils.getUsbPolicy(usb, vdsGroup), UsbPolicy.ENABLED_LEGACY);
     }
 
 }
