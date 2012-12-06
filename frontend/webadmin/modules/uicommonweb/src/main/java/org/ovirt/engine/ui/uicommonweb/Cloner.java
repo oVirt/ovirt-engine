@@ -278,6 +278,7 @@ public final class Cloner
         obj.setvlan_id(instance.getvlan_id());
         obj.setstp(instance.getstp());
         obj.setstorage_pool_id(instance.getstorage_pool_id());
+        obj.setMtu(instance.getMtu());
         if (instance.getCluster() !=null){
             obj.setCluster(CloneNetworkCluster(instance.getCluster()));
         }
