@@ -54,12 +54,13 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
                 targetNic.getEntity().setSubnet(netParams.getSubnet());
                 targetNic.getEntity().setGateway(netParams.getGateway());
             } else {
-                if (!isManagement()) {
-                    targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
-                } else {
-                    targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
+                if (targetNic.getEntity().getBootProtocol() == null) {
+                    if (!isManagement()) {
+                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
+                    } else {
+                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
+                    }
                 }
-
             }
         }
 
@@ -88,10 +89,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
                 bridge.setSubnet(netParams.getSubnet());
                 bridge.setGateway(netParams.getGateway());
             } else {
-                if (!isManagement()) {
-                    bridge.setBootProtocol(NetworkBootProtocol.None);
-                } else {
-                    bridge.setBootProtocol(NetworkBootProtocol.Dhcp);
+                if (bridge.getBootProtocol() == null) {
+                    if (!isManagement()) {
+                        bridge.setBootProtocol(NetworkBootProtocol.None);
+                    } else {
+                        bridge.setBootProtocol(NetworkBootProtocol.Dhcp);
+                    }
                 }
             }
             return bridge;
