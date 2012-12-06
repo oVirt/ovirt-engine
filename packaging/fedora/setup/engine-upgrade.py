@@ -127,7 +127,7 @@ MSG_ERROR_UUID_FAILED_REASON_DUPUUID = "duplicate BIOS UUID"
 MSG_INFO_DONE = "DONE"
 MSG_INFO_ERROR = "ERROR"
 MSG_INFO_REASON = " **Reason: %s**\n"
-MSG_INFO_STOP_ENGINE = "Stopping ovirt-engine service"
+MSG_INFO_STOP_ENGINE = "Stopping %s service"
 MSG_INFO_STOP_DB = "Stopping DB related services"
 MSG_INFO_START_DB = "Starting DB related services"
 MSG_INFO_PREUPGRADE = "Pre-upgrade validations"
@@ -140,7 +140,7 @@ MSG_INFO_RUN_POST = "Running post install configuration"
 MSG_ERROR_UPGRADE = "\n **Error: Upgrade failed, rolling back**"
 MSG_INFO_DB_RESTORE = "Restoring Database"
 MSG_INFO_YUM_ROLLBACK = "Rolling back rpms..."
-MSG_INFO_START_ENGINE = "Starting ovirt-engine"
+MSG_INFO_START_ENGINE = "Starting %s service"
 MSG_INFO_DB_BACKUP_FILE = "DB Backup available at "
 MSG_INFO_LOG_FILE = "Upgrade log available at"
 MSG_INFO_CHECK_UPDATE = "\nChecking for updates... (This may take several minutes)"
@@ -1016,7 +1016,7 @@ def main(options):
             # We ask the user before stoping ovirt-engine or take command line option
             if options.unattended_upgrade or checkEngine(engineService):
                 # Stopping engine
-                runFunc(stopEngineService, MSG_INFO_STOP_ENGINE)
+                runFunc(stopEngineService, MSG_INFO_STOP_ENGINE % engineService)
                 if updateRelatedToDB:
                     runFunc([[stopDbRelatedServices, etlService, notificationService]], MSG_INFO_STOP_DB)
 
@@ -1027,7 +1027,7 @@ def main(options):
                     # If something went wrong, restart DB services and the engine
                     except:
                         runFunc([[startDbRelatedServices, etlService, notificationService]], MSG_INFO_START_DB)
-                        runFunc(startEngineService, MSG_INFO_START_ENGINE)
+                        runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
                         raise
             else:
                 # This means that user chose not to stop ovirt-engine
@@ -1090,7 +1090,7 @@ def main(options):
 
         finally:
             # start engine
-            runFunc([startEngine], MSG_INFO_START_ENGINE)
+            runFunc([startEngine], MSG_INFO_START_ENGINE % engineService)
 
         # Print log location on success
         addAdditionalMessages(etlService.isServiceAvailable())
