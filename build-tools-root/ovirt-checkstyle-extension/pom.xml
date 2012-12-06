@@ -11,9 +11,9 @@
   <description>Extending the built-in validations of checkstyle with oVirt validations.</description>
   <dependencies>
     <dependency>
-      <groupId>checkstyle</groupId>
+      <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
-      <version>5.0</version>
+      <version>5.4</version>
     </dependency>
   </dependencies>
 </project>
