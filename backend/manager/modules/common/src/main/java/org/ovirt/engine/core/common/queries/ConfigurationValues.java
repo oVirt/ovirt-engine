@@ -36,7 +36,6 @@ public enum ConfigurationValues {
     InstallVds,
     AsyncTaskPollingRate,
     VdsFenceType,
-    VdsFenceOptions,
     VdsFenceOptionMapping,
     VcpuConsumptionPercentage(ConfigAuthType.User),
     SearchResultsLimit(ConfigAuthType.User),

@@ -13,12 +13,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("SQLServer")
     DBEngine(1),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("5")
-    PSAsyncActionTimeOutInMinutes(2),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("VdcDbConnection")
-    DefaultDataBaseName(4),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("administrator")
     AdUserName(5),
@@ -71,19 +65,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
     AuditLogAgingThreashold(20),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("00:1A:4A:16:72:XX")
-    MigrationMinPort(21),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100")
-    MigrationPortRange(22),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")
     VdsFenceType(24),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("drac5:secure=yes,ilo:ssl=yes,ipmilan:,rsa:secure=yes,bladecenter:secure=yes,alom:secure=yes,apc:secure=yes,eps:,wti:secure=yes,rsb:")
-    VdsFenceOptions(25),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port")
@@ -120,21 +105,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VdsCertificateValidityInYears(38),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    RemoteBackend(39),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    RemoteUserBackend(40),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("Remoting")
-    RemoteInterface(41),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("AutoBackend_tcp")
-    AutoRemoteInterface(42),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    RemoteUri(43),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("USERID")
     UserId(44),
@@ -142,9 +112,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("PASSW0RD")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     Password(45),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    IncludeDesktop(47),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
@@ -215,12 +182,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("DEFAULT")
     CipherSuite(66),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("10")
-    MinVmDiskSize(67),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("250")
-    MaxVmDiskSize(68),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
@@ -229,12 +190,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
     StorageDomainNameSizeLimit(70),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    ImageCheckFailureMessageTimout(71),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    SlowStorageResponseMessageTimout(72),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -277,9 +232,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     SysPrepWindows7x64Path(85),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("7200")
-    AutoPostbackDelay(86),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     MaxVmsInPool(87),
@@ -328,11 +280,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("certs/engine.cer")
     CertificateFileName(102),
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    CertificatePassword(103),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds(108),
@@ -359,9 +306,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Shutting Down")
     VmGracefulShutdownMessage(115),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("3")
-    SearchesRefreshRateInSeconds(116),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir")
@@ -381,9 +325,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     UseSecureConnectionWithServers(123),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("500")
-    MaxResultsPageSize(124),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
@@ -405,9 +346,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1:pentium3:vmx:pentium3;2:intel-qemu64-nx:vmx,sse2:qemu64,-nx,+sse2;3:intel-qemu64:vmx,sse2,nx:qemu64,+sse2;2:amd-qemu64-nx:svm,sse2:qemu64,-nx,+sse2;3:amd-qemu64:svm,sse2,nx:qemu64,+sse2")
     ServerCPUList(130),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    UseVdsBrokerInProc(131),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("RHEV-Agent")
@@ -424,12 +362,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     VcpuConsumptionPercentage(135),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("OvfMetaFiles\\")
-    OvfDirectoryPath(136),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("/images/export/")
-    ExportVmDefaultPath(137),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/images/import/")
     ImportDefaultPath(138),
@@ -489,9 +421,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient(154),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    PowerClientAutoMigrateCheckOnRDP(155),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -541,10 +470,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DebugTimerLogging(169),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    DebugSearchLogging(170),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     PowerClientAutoApprovePatterns(171),
@@ -560,9 +485,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts(174),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    PowerClientUserPortalVdcManagedSpiceState(178),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolRefreshTimeInSeconds(179),
@@ -576,22 +498,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ComputerADPaths(182),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ENMailHost(183),
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("-1")
-    ENMailPort(184),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ENMailUser(185),
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
-    ENMailPassword(186),
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    ENMailEnableSsl(189),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("System,Sparse,COW,true;Data,Preallocated,RAW,false;Shared,Preallocated,RAW,false;Swap,Preallocated,RAW,false;Temp,Sparse,COW,false")
@@ -741,16 +647,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("(GMT) GMT Standard Time")
     DefaultTimeZone(260),
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("30")
-    AsyncPollingCyclesBeforeRefreshSuspend(261),
-
-    @Reloadable
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("120")
-    AsyncPollingCyclesBeforeCallbackCleanup(262),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("389")
@@ -911,10 +807,6 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,
     realValue = "I18NPrefix")
     DBI18NPrefix(301),
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("N")
-    SQLI18NPrefix(302),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     PostgresI18NPrefix(303),    // used by behaviour DBI18NPrefix
@@ -1121,10 +1013,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
     JobPageSize(344),
-
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("50")
-    MaxCorrelationIdLength(345),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")

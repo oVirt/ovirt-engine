@@ -1069,11 +1069,9 @@ def _updateVDCOptions():
         },
         {
             "TruststorePass":[basedefs.CONST_CA_PASS, 'text'],
-            "CertificatePassword":[basedefs.CONST_CA_PASS, 'pass'],
             "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
             "SSLEnabled":[ "true", 'text'],
             "UseSecureConnectionWithServers":[ "true", 'text'],
-            "AsyncPollingCyclesBeforeCallbackCleanup":["30", 'text'],
             "MacPoolRanges":[controller.CONF["MAC_RANGE"], 'text'],
             "InstallVds":["true", 'text'],
             "ConfigDir":["/etc/ovirt-engine", 'text'],
