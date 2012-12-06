@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -15,8 +18,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public abstract class ConnectHostToStoragePooServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
     private List<storage_server_connections> _connections;
-    private java.util.ArrayList<storage_server_connections> _isoConnections;
-    private java.util.ArrayList<storage_server_connections> _exportConnections;
+    private List<storage_server_connections> _isoConnections;
+    private List<storage_server_connections> _exportConnections;
     private StorageType _isoType = StorageType.NFS;
     private StorageType _exportType = StorageType.NFS;
     private boolean _needToConnectIso = false;
@@ -46,11 +49,11 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         return _connections;
     }
 
-    protected java.util.ArrayList<storage_server_connections> getIsoConnections() {
+    protected List<storage_server_connections> getIsoConnections() {
         return _isoConnections;
     }
 
-    protected java.util.ArrayList<storage_server_connections> getExportConnections() {
+    protected List<storage_server_connections> getExportConnections() {
         return _exportConnections;
     }
 
@@ -63,63 +66,47 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
     }
 
     protected void InitConnectionList() {
-        java.util.ArrayList<storage_domains> isoDomains = GetStorageDomainsByStoragePoolId(StorageDomainType.ISO);
-        java.util.ArrayList<storage_domains> exportDomains =
-                GetStorageDomainsByStoragePoolId(StorageDomainType.ImportExport);
+        List<storage_domains> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
+                getStoragePool().getId());
+        List<storage_domains> isoDomains = getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ISO);
+        List<storage_domains> exportDomains =
+                getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ImportExport);
 
-        java.util.HashSet<storage_server_connections> connections = new java.util.HashSet<storage_server_connections>(
+        Set<storage_server_connections> connections = new HashSet<storage_server_connections>(
                 DbFacade.getInstance().getStorageServerConnectionDao().getAllForStoragePool(getStoragePool().getId()));
         if (isoDomains.size() != 0) {
             _isoType = isoDomains.get(0).getstorage_type();
-            java.util.HashSet<storage_server_connections> isoConnections =
-                    new java.util.HashSet<storage_server_connections>(
+            Set<storage_server_connections> isoConnections =
+                    new HashSet<storage_server_connections>(
                             StorageHelperDirector.getInstance().getItem(getIsoType())
                                     .GetStorageServerConnectionsByDomain(isoDomains.get(0).getStorageStaticData()));
             if (_isoType != getStoragePool().getstorage_pool_type()) {
-                for (storage_server_connections connection : isoConnections) {
-                    if (connections.contains(connection)) {
-                        connections.remove(connection);
-                    }
-                }
+                connections.removeAll(isoConnections);
             } else {
-                for (storage_server_connections connection : connections) {
-                    if (isoConnections.contains(connection)) {
-                        isoConnections.remove(connection);
-                    }
-                }
+                isoConnections.removeAll(connections);
             }
-            _isoConnections = new java.util.ArrayList<storage_server_connections>(isoConnections);
+            _isoConnections = new ArrayList<storage_server_connections>(isoConnections);
             setNeedToConnectIso(_isoConnections.size() > 0);
         }
         if (exportDomains.size() != 0) {
             _exportType = exportDomains.get(0).getstorage_type();
-            java.util.HashSet<storage_server_connections> exportConnections =
-                    new java.util.HashSet<storage_server_connections>(
+            Set<storage_server_connections> exportConnections =
+                    new HashSet<storage_server_connections>(
                             StorageHelperDirector.getInstance().getItem(getExportType())
                                     .GetStorageServerConnectionsByDomain(exportDomains.get(0).getStorageStaticData()));
             if (_exportType != getStoragePool().getstorage_pool_type()) {
-                for (storage_server_connections connection : exportConnections) {
-                    if (connections.contains(connection)) {
-                        connections.remove(connection);
-                    }
-                }
+                connections.removeAll(exportConnections);
             } else {
-                for (storage_server_connections connection : connections) {
-                    if (exportConnections.contains(connection)) {
-                        exportConnections.remove(connection);
-                    }
-                }
+                exportConnections.removeAll(connections);
             }
-            _exportConnections = new java.util.ArrayList<storage_server_connections>(exportConnections);
+            _exportConnections = new ArrayList<storage_server_connections>(exportConnections);
             setNeedToConnectExport(exportConnections.size() > 0);
         }
-        _connections = new java.util.ArrayList<storage_server_connections>(connections);
+        _connections = new ArrayList<storage_server_connections>(connections);
     }
 
-    protected java.util.ArrayList<storage_domains> GetStorageDomainsByStoragePoolId(StorageDomainType type) {
-        List<storage_domains> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
-                getStoragePool().getId());
-        java.util.ArrayList<storage_domains> domains = new java.util.ArrayList<storage_domains>();
+    protected List<storage_domains> getStorageDomainsByStoragePoolId(List<storage_domains> allDomains, StorageDomainType type) {
+        List<storage_domains> domains = new ArrayList<storage_domains>();
         for (storage_domains s : allDomains) {
             StorageDomainStatus status = s.getstatus();
             if (s.getstorage_domain_type() == type
