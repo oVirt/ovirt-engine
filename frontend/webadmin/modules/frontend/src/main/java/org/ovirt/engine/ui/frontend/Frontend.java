@@ -110,6 +110,15 @@ public class Frontend {
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(new Message(description, errorMessage)));
     }
 
+    private static void failureEventHandler(String description, ArrayList<String> errorMessages) {
+        ArrayList<Message> messages = new ArrayList<Message>();
+        for (String errorMessage : errorMessages) {
+            messages.add(new Message(description, errorMessage));
+        }
+
+        frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(messages));
+    }
+
     private static void handleNotLoggedInEvent(String errorMessage) {
         if (errorMessage != null && errorMessage.equals("USER_IS_NOT_LOGGED_IN")) { //$NON-NLS-1$
             frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
@@ -770,10 +779,15 @@ public class Frontend {
         }
 
         if ((!success) && (getEventsHandler() != null) && (getEventsHandler().isRaiseErrorModalPanel(actionType))) {
-            String errorMessage = !result.getCanDoAction() || !result.getCanDoActionMessages().isEmpty() ?
-                    getRunActionErrorMessage(result.getCanDoActionMessages()) : result.getFault().getMessage();
+            if (result.getCanDoActionMessages().size() <= 1) {
+                String errorMessage = !result.getCanDoAction() || !result.getCanDoActionMessages().isEmpty() ?
+                        getRunActionErrorMessage(result.getCanDoActionMessages()) : result.getFault().getMessage();
 
-            failureEventHandler(result.getDescription(), errorMessage);
+                failureEventHandler(result.getDescription(), errorMessage);
+            }
+            else {
+                failureEventHandler(result.getDescription(), result.getCanDoActionMessages());
+            }
         }
     }
 

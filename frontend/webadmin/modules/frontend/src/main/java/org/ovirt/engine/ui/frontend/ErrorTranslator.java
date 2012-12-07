@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.MissingResourceException;
 
@@ -122,7 +123,7 @@ public class ErrorTranslator {
      */
     public ArrayList<String> resolveMessages(ArrayList<String> translatedMessages) {
         ArrayList<String> translatedErrors = new ArrayList<String>();
-        Map<String, String> variables = new HashMap<String, String>();
+        Map<String, LinkedList<String>> variables = new HashMap<String, LinkedList<String>>();
 
         for (String currentMessage : translatedMessages) {
             if (currentMessage.startsWith("$")) { //$NON-NLS-1$
@@ -141,18 +142,19 @@ public class ErrorTranslator {
         return returnValue;
     }
 
-    private void addVariable(String variable, Map<String, String> variables) {
+    private void addVariable(String variable, Map<String, LinkedList<String>> variables) {
         int firstSpace = variable.indexOf(' ');
         if (firstSpace != -1 && firstSpace < variable.length()) {
             String key = variable.substring(1, firstSpace);
             String value = variable.substring(firstSpace + 1);
-            if (!variables.containsKey(key)) {
-                variables.put(key, value);
+            if (variables.get(key) == null) {
+                variables.put(key, new LinkedList<String>());
             }
+            variables.get(key).add(value);
         }
     }
 
-    private String resolveMessage(String message, Map<String, String> variables) {
+    private String resolveMessage(String message, Map<String, LinkedList<String>> variables) {
         String returnValue = message;
 
         RegExp regex = RegExp.compile("\\$\\{\\w*\\}*", "gi"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -170,9 +172,12 @@ public class ErrorTranslator {
             int index = result.getIndex();
             String match = result.getGroup(0);
 
-            String value = match.substring(2, match.length() - 1);
-            if (variables.containsKey(value)) {
-                returnValue = returnValue.replace(match, variables.get(value));
+            String key = match.substring(2, match.length() - 1);
+            if (variables.containsKey(key)) {
+                LinkedList<String> values = variables.get(key);
+                String value = values.size() == 1 ? values.getFirst() :
+                        values.size() > 1 ? values.removeFirst() : ""; //$NON-NLS-1$
+                returnValue = returnValue.replace(match, value);
             }
 
         }
