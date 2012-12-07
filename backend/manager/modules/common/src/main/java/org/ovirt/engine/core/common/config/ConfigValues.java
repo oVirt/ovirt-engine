@@ -1381,6 +1381,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SupportForceExtendVG(398),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    ENGINEEARLib(399),
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    MinimalETLVersion(400),
+
     Invalid(65535);
 
     private int intValue;
