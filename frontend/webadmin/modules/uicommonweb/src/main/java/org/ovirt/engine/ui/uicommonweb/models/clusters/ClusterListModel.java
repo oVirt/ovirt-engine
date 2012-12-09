@@ -674,8 +674,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     public void postOnSaveInternalWithImport(VdcReturnValueBase returnValue)
     {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
-        hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
-        addHosts(hostsModel);
+        if (returnValue != null && returnValue.getSucceeded())
+        {
+            hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
+            addHosts(hostsModel);
+        }
     }
 
     private void addHosts(final MultipleHostsModel hostsModel) {
