@@ -102,7 +102,7 @@ public class NetworkVmListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);

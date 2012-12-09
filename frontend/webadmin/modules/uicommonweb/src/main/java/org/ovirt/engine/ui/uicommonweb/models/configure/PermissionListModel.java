@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -399,7 +399,7 @@ public class PermissionListModel extends SearchableListModel
         if (getEntity() instanceof DiskImage) {
             return VdcObjectType.Disk;
         }
-        if (getEntity() instanceof NetworkView) {
+        if (getEntity() instanceof Network) {
             return VdcObjectType.Network;
         }
         return VdcObjectType.Unknown;

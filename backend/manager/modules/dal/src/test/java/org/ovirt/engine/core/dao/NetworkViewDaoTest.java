@@ -27,6 +27,6 @@ public class NetworkViewDaoTest extends BaseDAOTestCase {
                         FixturesTool.NETWORK_ENGINE));
 
         assertFalse(result.isEmpty());
-        assertEquals(FixturesTool.NETWORK_ENGINE, result.get(0).getNetwork().getId());
+        assertEquals(FixturesTool.NETWORK_ENGINE, result.get(0).getId());
     }
 }

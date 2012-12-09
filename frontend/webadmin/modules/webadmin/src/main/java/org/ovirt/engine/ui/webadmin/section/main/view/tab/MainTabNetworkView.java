@@ -60,7 +60,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> nameColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getNetwork().getName();
+                return object.getName();
             }
         };
 
@@ -78,7 +78,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> descriptionColumn = new TextColumnWithTooltip<NetworkView>(40) {
             @Override
             public String getValue(NetworkView object) {
-                return object.getNetwork().getdescription();
+                return object.getdescription();
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork());
@@ -90,14 +90,14 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
                         String images = ""; //$NON-NLS-1$
 
-                        if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())) {
+                        if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
 
                             images = images.concat(mgmtImage.asString());
                         } else {
                             images = images.concat(emptyImage.asString());
                         }
 
-                        if (networkView.getNetwork().isVmNetwork()) {
+                        if (networkView.isVmNetwork()) {
 
                             images = images.concat(vmImage.asString());
                         } else {
@@ -110,13 +110,13 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                     @Override
                     public SafeHtml getTooltip(NetworkView networkView) {
                         String tooltip = ""; //$NON-NLS-1$
-                        if (ENGINE_NETWORK_NAME.equals(networkView.getNetwork().getName())) {
+                        if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
                             tooltip =
                                     tooltip.concat(templates.imageTextSetupNetwork(mgmtImage,
                                             constants.managementItemInfo()).asString());
                         }
 
-                        if (networkView.getNetwork().isVmNetwork()) {
+                        if (networkView.isVmNetwork()) {
                             if (!"".equals(tooltip)) //$NON-NLS-1$
                             {
                                 tooltip = tooltip.concat("<BR>"); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> vlanColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getNetwork().getvlan_id() == null ? "-" : object.getNetwork().getvlan_id().toString(); //$NON-NLS-1$
+                return object.getvlan_id() == null ? "-" : object.getvlan_id().toString(); //$NON-NLS-1$
             }
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork());

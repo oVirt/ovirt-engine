@@ -9,10 +9,6 @@ public class NetworkView extends Network {
     private String storagePoolName;
     private Version compatibilityVersion;
 
-    public Network getNetwork() {
-        return this;
-    }
-
     public String getStoragePoolName() {
         return storagePoolName;
     }

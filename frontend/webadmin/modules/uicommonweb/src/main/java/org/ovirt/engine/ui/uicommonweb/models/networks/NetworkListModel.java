@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -77,14 +78,14 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     public void edit() {
-        final NetworkView networkView = (NetworkView) getSelectedItem();
+        final Network network = (Network) getSelectedItem();
 
         if (getWindow() != null)
         {
             return;
         }
 
-        final NetworkModel networkModel = new EditNetworkModel(networkView.getNetwork(), this);
+        final NetworkModel networkModel = new EditNetworkModel(network, this);
         setWindow(networkModel);
 
         initDcList(networkModel);
@@ -193,8 +194,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         boolean anyEngine = false;
         for (Object item : selectedItems)
         {
-            NetworkView networkView = (NetworkView) item;
-            if (StringHelper.stringsEqual(networkView.getNetwork().getname(), ENGINE_NETWORK))
+            Network network = (Network) item;
+            if (StringHelper.stringsEqual(network.getName(), ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;
@@ -260,7 +261,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                         return compareValue;
                     }
 
-                    return paramT1.getNetwork().getName().compareTo(paramT2.getNetwork().getName());
+                    return paramT1.getName().compareTo(paramT2.getName());
                 }
             });
         }

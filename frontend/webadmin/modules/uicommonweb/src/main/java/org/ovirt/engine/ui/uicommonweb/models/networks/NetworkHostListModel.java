@@ -80,7 +80,7 @@ public class NetworkHostListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
         if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
@@ -89,7 +89,7 @@ public class NetworkHostListModel extends SearchableListModel
             Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
         } else if (NetworkHostFilter.all.equals(getViewFilterType())) {
             Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool,
-                    new GetAllVdsByStoragePoolParameters(getEntity().getNetwork().getstorage_pool_id().getValue()),
+                    new GetAllVdsByStoragePoolParameters(getEntity().getstorage_pool_id().getValue()),
                     asyncQuery);
         }
 

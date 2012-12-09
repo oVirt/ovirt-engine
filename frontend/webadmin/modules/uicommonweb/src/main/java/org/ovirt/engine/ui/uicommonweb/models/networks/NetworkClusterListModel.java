@@ -69,7 +69,7 @@ public class NetworkClusterListModel extends SearchableListModel
                 (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
 
         for (PairQueryable<VDSGroup, network_cluster> item : items) {
-            Network network = (Network) Cloner.clone(getEntity().getNetwork());
+            Network network = (Network) Cloner.clone(getEntity());
             if (item.getSecond() != null) {
                 network.setCluster((network_cluster) Cloner.clone(item.getSecond()));
             }
@@ -231,7 +231,7 @@ public class NetworkClusterListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, networkIdParams, asyncQuery);
     }

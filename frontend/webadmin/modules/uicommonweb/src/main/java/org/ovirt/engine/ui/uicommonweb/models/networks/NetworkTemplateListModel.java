@@ -122,7 +122,7 @@ public class NetworkTemplateListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getNetwork().getId());
+        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
         networkIdParams.setRefresh(getIsQueryFirstTime());
 
         Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -2417,10 +2416,6 @@ public final class DataProvider
         else if (entity instanceof Network)
         {
             return ((Network) entity).getId();
-        }
-        else if (entity instanceof NetworkView)
-        {
-            return ((NetworkView) entity).getNetwork().getId();
         }
         return new Guid();
     }
