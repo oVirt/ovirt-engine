@@ -2,9 +2,12 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.Collections;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
@@ -38,7 +41,14 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         map.add(VdsProperties.Type, VmDeviceType.INTERFACE.getName());
         map.add(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
         map.add(VdsProperties.mac_addr, nic.getMacAddress());
-        map.add(VdsProperties.network, nic.getNetworkName());
+        map.add(VdsProperties.network, StringUtils.defaultString(nic.getNetworkName()));
+
+        boolean linkingSupported =
+                Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported,
+                        getParameters().getVm().getVdsGroupCompatibilityVersion().getValue());
+        if (linkingSupported) {
+            map.add(VdsProperties.linkActive, String.valueOf(nic.isLinked()));
+        }
         addAddress(map, vmDevice.getAddress());
         map.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
         map.add(VdsProperties.nic_type, VmInterfaceType.forValue(nic.getType()).name());
@@ -49,7 +59,8 @@ public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extend
         }
 
         if (nic.isPortMirroring()) {
-            map.add(VdsProperties.portMirroring, Collections.singletonList(nic.getNetworkName()));
+            map.add(VdsProperties.portMirroring, nic.getNetworkName() == null
+                    ? Collections.<String> emptyList() : Collections.singletonList(nic.getNetworkName()));
         }
 
         VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getVdsGroupCompatibilityVersion());

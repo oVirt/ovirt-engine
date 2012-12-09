@@ -43,7 +43,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             if (hotPlugVmNicRequired(getVm().getStatus())) {
                 setVdsId(getVm().getRunOnVds().getValue());
                 returnValue = canPerformHotPlug();
-                if (returnValue && !networkAttachedToVds(getNetworkName(), getVdsId())) {
+                if (returnValue && (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId()))) {
                     addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                     returnValue = false;
                 }
@@ -124,12 +124,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private boolean networkAttachedToVds(String networkName, Guid vdsId) {
-        if (networkName != null) {
-            List<VdsNetworkInterface> listOfInterfaces = getInterfaceDao().getAllInterfacesForVds(vdsId);
-            for (VdsNetworkInterface vdsNetworkInterface : listOfInterfaces) {
-                if (networkName.equals(vdsNetworkInterface.getNetworkName())) {
-                    return true;
-                }
+        List<VdsNetworkInterface> listOfInterfaces = getInterfaceDao().getAllInterfacesForVds(vdsId);
+        for (VdsNetworkInterface vdsNetworkInterface : listOfInterfaces) {
+            if (networkName.equals(vdsNetworkInterface.getNetworkName())) {
+                return true;
             }
         }
         return false;
