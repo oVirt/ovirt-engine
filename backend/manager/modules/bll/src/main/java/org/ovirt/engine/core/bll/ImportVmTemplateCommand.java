@@ -377,6 +377,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 invalidIfaceNames.add(iface.getName());
                 iDynamic.setNetworkName(null);
             }
+            iDynamic.setLinked(iface.isLinked());
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
 
