@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.common.util.TimeZoneMapping;
 import org.ovirt.engine.api.model.Boot;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CPU;
+import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
@@ -19,10 +19,9 @@ import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
-import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class TemplateMapper {
@@ -120,9 +119,6 @@ public class TemplateMapper {
         }
         if (model.isSetTimezone()) {
             entity.settime_zone(TimeZoneMapping.getWindows(model.getTimezone()));
-        }
-        if (model.isSetUsb() && model.getUsb().isSetEnabled()) {
-            entity.setusb_policy(model.getUsb().isEnabled() ? UsbPolicy.ENABLED_LEGACY : UsbPolicy.DISABLED);
         }
         return entity;
     }

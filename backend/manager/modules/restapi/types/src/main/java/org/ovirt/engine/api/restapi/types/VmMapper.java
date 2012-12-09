@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,9 +26,11 @@ import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
+import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
+import org.ovirt.engine.api.model.PayloadFile;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
@@ -34,30 +38,28 @@ import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
-import org.ovirt.engine.api.model.PayloadFile;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
+import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
-import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
-
-import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmMapper {
 
@@ -98,6 +100,7 @@ public class VmMapper {
         staticVm.setusb_policy(entity.getusb_policy());
         return staticVm;
     }
+
     @Mapping(from = VM.class, to = VmStatic.class)
     public static VmStatic map(VM vm, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
@@ -220,9 +223,6 @@ public class VmMapper {
         }
         if (vm.isSetCustomProperties() && vm.getCustomProperties().isSetCustomProperty()) {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
-        }
-        if (vm.isSetUsb() && vm.getUsb().isSetEnabled()) {
-            staticVm.setusb_policy(vm.getUsb().isEnabled() ? UsbPolicy.ENABLED_LEGACY : UsbPolicy.DISABLED);
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
@@ -982,4 +982,70 @@ public class VmMapper {
                 entity.getStatus() == VMStatus.RestoringState;
     }
 
+    public static UsbPolicy getUsbPolicyOnCreate(Usb usb, VDSGroup vdsGroup) {
+        if (usb == null || !usb.isSetEnabled() || !usb.isEnabled()) {
+            return UsbPolicy.DISABLED;
+        }
+        else {
+            UsbType usbType = getUsbType(usb);
+            if (usbType == null) {
+                return getUsbPolicyAccordingToClusterVersion(vdsGroup);
+            } else {
+                return getUsbPolicyAccordingToUsbType(usbType);
+            }
+        }
+    }
+
+    public static UsbPolicy getUsbPolicyOnUpdate(Usb usb, UsbPolicy currentPolicy, VDSGroup vdsGroup) {
+        if (usb == null)
+            return currentPolicy;
+
+        if (usb.isSetEnabled()) {
+            if (!usb.isEnabled())
+                return UsbPolicy.DISABLED;
+            else {
+                UsbType usbType = getUsbType(usb);
+                if (usbType != null) {
+                    return getUsbPolicyAccordingToUsbType(usbType);
+                }
+                else {
+                    return currentPolicy == UsbPolicy.DISABLED ?
+                            getUsbPolicyAccordingToClusterVersion(vdsGroup)
+                            : currentPolicy;
+                }
+            }
+        }
+        else {
+            if (currentPolicy == UsbPolicy.DISABLED)
+                return UsbPolicy.DISABLED;
+
+            UsbType usbType = getUsbType(usb);
+            if (usbType != null) {
+                return getUsbPolicyAccordingToUsbType(UsbType.fromValue(usb.getType()));
+            }
+            else {
+                return currentPolicy;
+            }
+        }
+    }
+
+    private static UsbType getUsbType(Usb usb) {
+        return usb.isSetType() ? UsbType.fromValue(usb.getType()) : null;
+    }
+
+    private static UsbPolicy getUsbPolicyAccordingToClusterVersion(VDSGroup vdsGroup) {
+        return vdsGroup.getcompatibility_version().compareTo(Version.v3_1) >= 0 ?
+                UsbPolicy.ENABLED_NATIVE : UsbPolicy.ENABLED_LEGACY;
+    }
+
+    private static UsbPolicy getUsbPolicyAccordingToUsbType(UsbType usbType) {
+        switch (usbType) {
+        case LEGACY:
+            return UsbPolicy.ENABLED_LEGACY;
+        case NATIVE:
+            return UsbPolicy.ENABLED_NATIVE;
+        default:
+            return null; // Should never get here
+        }
+    }
 }

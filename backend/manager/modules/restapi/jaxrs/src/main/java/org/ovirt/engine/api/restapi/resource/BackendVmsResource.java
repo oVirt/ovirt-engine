@@ -25,8 +25,8 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
-import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -91,10 +90,9 @@ public class BackendVmsResource extends
             if (namedCluster(vm)) {
                 staticVm.setvds_group_id(getClusterId(vm));
             }
-            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(vm.getUsb(), lookupCluster(staticVm.getvds_group_id()));
-            if (usbPolicy != null) {
-                staticVm.setusb_policy(usbPolicy);
-            }
+
+            staticVm.setusb_policy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(), lookupCluster(staticVm.getvds_group_id())));
+
             if (!isFiltered()) {
                 // if the user set the host-name within placement-policy, rather than the host-id (legal) -
                 // resolve the host's ID, because it will be needed down the line

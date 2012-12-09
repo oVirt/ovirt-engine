@@ -12,12 +12,11 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
-import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -63,10 +62,7 @@ public class BackendTemplatesResource
             staticVm.setvds_group_id(getClusterId(template));
         }
 
-        UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(template.getUsb(), lookupCluster(staticVm.getvds_group_id()));
-        if (usbPolicy != null) {
-            staticVm.setusb_policy(usbPolicy);
-        }
+        staticVm.setusb_policy(VmMapper.getUsbPolicyOnCreate(template.getUsb(), lookupCluster(staticVm.getvds_group_id())));
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,

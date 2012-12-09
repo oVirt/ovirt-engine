@@ -7,17 +7,21 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmMapperTest extends
         AbstractInvertibleMappingTest<VM, VmStatic, org.ovirt.engine.core.common.businessentities.VM> {
@@ -216,4 +220,241 @@ public class VmMapperTest extends
         }
     }
 
+    @Test
+    public void getUsbPolicyNullUsb() {
+        Usb usb = null;
+        VDSGroup vdsGroup = new VDSGroup();
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyIsSetDisabled() {
+        Usb usb = new Usb();
+        VDSGroup vdsGroup = new VDSGroup();
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicySetDisabled() {
+        Usb usb = new Usb();
+        usb.setEnabled(false);
+        VDSGroup vdsGroup = new VDSGroup();
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyUsbTypeNative() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("native");
+        VDSGroup vdsGroup = new VDSGroup();
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyUsbTypeLegacy() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("legacy");
+        VDSGroup vdsGroup = new VDSGroup();
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyUsbTypeNull31() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(Version.v3_1);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyUsbTypeNull30() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(Version.v3_0);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotNullUsb() {
+        Usb usb = null;
+        UsbPolicy currentPolicy = UsbPolicy.DISABLED;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotNullUsb() {
+        Usb usb = null;
+        UsbPolicy currentPolicy = UsbPolicy.ENABLED_LEGACY;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotNullUsb() {
+        Usb usb = null;
+        UsbPolicy currentPolicy = UsbPolicy.ENABLED_NATIVE;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetPolicyNotSetUsb() {
+        Usb usb = new Usb();
+        UsbPolicy currentPolicy = UsbPolicy.DISABLED;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetPolicyNotSetUsb() {
+        Usb usb = new Usb();
+        UsbPolicy currentPolicy = UsbPolicy.ENABLED_LEGACY;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetPolicyNotSetUsb() {
+        Usb usb = new Usb();
+        UsbPolicy currentPolicy = UsbPolicy.ENABLED_NATIVE;
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, currentPolicy, null), currentPolicy);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNotSetNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY, null), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledNotSetNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY, null), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNotSetNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotDisabledLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(false);
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotDisabledNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(false);
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotDisabledLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(false);
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotDisabledLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(false);
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.DISABLED);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledPolicyNotSetUsbOnPre3_1Cluster() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(Version.v3_0);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledPolicyNotSetUsbOnPost3_0Cluster() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setcompatibility_version(Version.v3_1);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyLegacyGotEnabledPolicyNotSetUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_LEGACY, null), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledPolicyNotSetUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledLegacyPolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("legacy");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.ENABLED_LEGACY);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyNativeGotEnabledNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.ENABLED_NATIVE, null), UsbPolicy.ENABLED_NATIVE);
+    }
+
+    @Test
+    public void getUsbPolicyOnUpdateCurrentlyDisabledGotEnabledNativePolicyUsb() {
+        Usb usb = new Usb();
+        usb.setEnabled(true);
+        usb.setType("native");
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, null), UsbPolicy.ENABLED_NATIVE);
+    }
 }

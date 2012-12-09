@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 
 import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
@@ -15,19 +16,18 @@ import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
-import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -112,10 +112,8 @@ public class BackendTemplateResource
         @Override
         public VdcActionParametersBase getParameters(Template incoming, VmTemplate entity) {
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
-            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(incoming.getUsb(), lookupCluster(updated.getvds_group_id()));
-            if (usbPolicy != null) {
-                updated.setusb_policy(usbPolicy);
-            }
+            updated.setusb_policy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getusb_policy(),
+                    lookupCluster(updated.getvds_group_id())));
 
             return new UpdateVmTemplateParameters(updated);
         }
@@ -124,5 +122,4 @@ public class BackendTemplateResource
     private VDSGroup lookupCluster(Guid id) {
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
     }
-
 }

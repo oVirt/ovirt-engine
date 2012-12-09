@@ -33,7 +33,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
-import org.ovirt.engine.api.restapi.resource.utils.UsbResourceUtils;
+import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
@@ -50,7 +50,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -382,10 +381,8 @@ public class BackendVmResource extends
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
 
-            UsbPolicy usbPolicy = UsbResourceUtils.getUsbPolicy(incoming.getUsb(), lookupCluster(updated.getvds_group_id()));
-            if (usbPolicy != null) {
-                updated.setusb_policy(usbPolicy);
-            }
+            updated.setusb_policy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
+                    lookupCluster(updated.getvds_group_id())));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 
