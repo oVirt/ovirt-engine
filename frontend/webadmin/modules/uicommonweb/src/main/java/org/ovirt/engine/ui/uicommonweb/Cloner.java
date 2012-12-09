@@ -470,6 +470,7 @@ public final class Cloner
         obj.setMacAddress(vmNetworkInterface.getMacAddress());
         obj.setName(vmNetworkInterface.getName());
         obj.setNetworkName(vmNetworkInterface.getNetworkName());
+        obj.setLinked(vmNetworkInterface.isLinked());
         obj.setSpeed(vmNetworkInterface.getSpeed());
         obj.setType(vmNetworkInterface.getType());
         obj.setVmId(vmNetworkInterface.getVmId());
