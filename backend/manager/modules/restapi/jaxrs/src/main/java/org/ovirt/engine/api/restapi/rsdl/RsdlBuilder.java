@@ -308,7 +308,7 @@ public class RsdlBuilder {
             } else if (m.isAnnotationPresent(Path.class)) {
                 String path = m.getAnnotation(Path.class).value();
                 if (isAction(m)) {
-                    handleAction(prefix, results, returnTypeStr, path);
+                    handleAction(prefix, results, path, m);
                 } else {
                     if (isSingleEntityResource(m)) {
                         path = "{" + getSingleForm(prefix) + ":id}";
@@ -327,7 +327,10 @@ public class RsdlBuilder {
         }
     }
 
-    private void handleAction(String prefix, Collection<DetailedLink> results, String returnValueStr, String path) {
+    private void handleAction(String prefix, Collection<DetailedLink> results, String path, Method m) {
+        Class<?>[] parameterTypes = m.getParameterTypes();
+        assert (parameterTypes.length == 1);
+        String returnValueStr = parameterTypes[0].getSimpleName();
         results.add(new RsdlBuilder.LinkBuilder().url(prefix + "/" + path).rel(path).requestParameter(ACTION).responseType(returnValueStr).httpMethod(HttpMethod.POST).build());
     }
 
