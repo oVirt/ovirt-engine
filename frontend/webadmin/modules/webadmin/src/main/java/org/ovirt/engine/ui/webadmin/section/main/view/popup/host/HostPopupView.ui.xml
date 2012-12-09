@@ -37,11 +37,6 @@
             margin-top: 20px;
         }
 
-        .testButton {
-            width: 40px;
-            float: left;
-        }
-
         .testMessagePanel {
             margin-left: 70px;
             height: 100px;
@@ -91,7 +86,7 @@
                                     <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
                                     <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
                                     <g:HTMLPanel addStyleNames="{style.testPanel}">
-                                        <w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}"/>
+                                        <w:UiCommandButton ui:field="testButton"/>
                                         <g:ScrollPanel addStyleNames="{style.testMessagePanel}">
                                             <g:Label ui:field="testMessage"/>
                                         </g:ScrollPanel>
