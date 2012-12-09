@@ -16,7 +16,7 @@ public class FullDateTimeRenderer extends AbstractRenderer<Date> {
 
     private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
     private static final String japaneseLocale = "ja"; //$NON-NLS-1$
-    private static final DateTimeFormat formatJp = DateTimeFormat.getFormat("yyyy-mm-dd, HH:mm"); //$NON-NLS-1$
+    private static final DateTimeFormat formatJp = DateTimeFormat.getFormat("yyyy-MM-dd, HH:mm"); //$NON-NLS-1$
     private static final DateTimeFormat format = DateTimeFormat.getFormat("yyyy-MMM-dd, HH:mm"); //$NON-NLS-1$
 
     @Override
