@@ -90,6 +90,15 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      */
     List<VmTemplate> getAllTemplatesRelatedToQuotaId(Guid quotaId);
 
+
+    /**
+     * Get all vm templates with the given ids
+     *
+     * @param templatesIds
+     * @return
+     */
+    public List<VmTemplate> getVmTemplatesByIds(List<Guid> templatesIds);
+
     /**
      * Retrieves templates with permissions to perform the given action.
      *

@@ -238,6 +238,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteEndElement();
         }
 
+        _writer.WriteStartElement("Generation");
+        _writer.WriteRaw(String.valueOf(vmBase.getDbGeneration()));
+        _writer.WriteEndElement();
+
         _writer.WriteStartElement("VmType");
         _writer.WriteRaw(String.valueOf(vmBase.getvm_type().getValue()));
         _writer.WriteEndElement();

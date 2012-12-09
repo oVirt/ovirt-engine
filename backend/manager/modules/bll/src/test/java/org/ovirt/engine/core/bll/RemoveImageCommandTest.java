@@ -87,6 +87,7 @@ public class RemoveImageCommandTest {
         vm.setStoragePoolId(Guid.NewGuid());
         vm.setVmtName(RandomUtils.instance().nextString(10));
         vm.setOrigin(OriginType.OVIRT);
+        vm.setDbGeneration(1L);
         Guid vmSnapshotId = Guid.NewGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);

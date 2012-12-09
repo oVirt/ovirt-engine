@@ -953,6 +953,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.vmStatic.setnice_level(value);
     }
 
+    public void setDbGeneration(long value) {
+        this.vmStatic.setDbGeneration(value);
+    }
+
+    public long getDbGeneration() {
+        return vmStatic.getDbGeneration();
+    }
+
     public MigrationSupport getMigrationSupport() {
         return this.vmStatic.getMigrationSupport();
     }

@@ -300,6 +300,8 @@ select fn_db_add_config_value('OvirtIsoPrefix','ovirt-node','general');
 select fn_db_add_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso','general');
 select fn_db_add_config_value('oVirtUpgradeScriptName','/usr/share/vdsm-reg/vdsm-upgrade','general');
 select fn_db_add_config_value('oVirtUploadPath','/data/updates/ovirt-node-image.iso','general');
+select fn_db_add_config_value('OvfUpdateIntervalInMinutes','60','general');
+select fn_db_add_config_value('OvfItemsCountPerUpdate','100','general');
 select fn_db_add_config_value('PayloadSize','8192','general');
 select fn_db_add_config_value('PosixStorageEnabled','false','3.0');
 select fn_db_add_config_value('PosixStorageEnabled','true','3.1');

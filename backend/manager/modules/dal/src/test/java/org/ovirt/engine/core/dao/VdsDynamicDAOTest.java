@@ -8,11 +8,9 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class VdsDynamicDAOTest extends BaseDAOTestCase {
-    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private VdsDynamicDAO dao;
     private VdsStaticDAO staticDao;
     private VdsStatisticsDAO statisticsDao;
@@ -27,7 +25,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getVdsDynamicDao());
         staticDao =  prepareDAO(dbFacade.getVdsStaticDao());
         statisticsDao =  prepareDAO(dbFacade.getVdsStatisticsDao());
-        existingVds = staticDao.get(EXISTING_VDS_ID);
+        existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();
         newStaticVds.sethost_name("farkle.redhat.com");

@@ -628,6 +628,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     WaitForVdsInitInSec(230),
 
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    OvfUpdateIntervalInMinutes(231),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    OvfItemsCountPerUpdate(232),
+
     // JTODO - temporarily using values from 256 for Java specific options
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("keys/engine.p12")

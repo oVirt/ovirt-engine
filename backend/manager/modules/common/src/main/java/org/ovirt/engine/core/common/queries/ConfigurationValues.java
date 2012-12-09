@@ -56,6 +56,8 @@ public enum ConfigurationValues {
     VdsFenceOptionTypes,
     ServerCPUList,
     SupportedClusterLevels(ConfigAuthType.User),
+    OvfUpdateIntervalInMinutes,
+    OvfItemsCountPerUpdate,
     ProductRPMVersion(ConfigAuthType.User),
     RhevhLocalFSPath,
     DocsURL(ConfigAuthType.User),

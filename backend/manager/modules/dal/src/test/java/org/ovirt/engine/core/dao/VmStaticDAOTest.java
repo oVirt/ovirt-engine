@@ -183,6 +183,33 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertTrue(dao.getAllNamesPinnedToHost(Guid.NewGuid()).isEmpty());
     }
 
+
+    @Test
+    public void testGetDbGeneration() {
+        Long version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        assertNotNull("db generation shouldn't be null", version);
+        assertEquals("db generation should be 1 by default for vm", 1, version.longValue());
+    }
+
+    @Test
+    public void testIncrementDbGenerationForAllInStoragePool() {
+        dao.incrementDbGenerationForAllInStoragePool(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+
+        Long version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        assertEquals("db geneeration wasn't incremented to all vms in pool", 2, version.longValue());
+        version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_51);
+        assertEquals("db generation wasn't incremented to all vms in pool", 2, version.longValue());
+        version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_60);
+        assertEquals("db generation was incremented for vm in different pool", 1, version.longValue());
+    }
+
+    @Test
+    public void testIncrementDbGeneration() {
+        dao.incrementDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        Long version = dao.getDbGeneration(FixturesTool.VM_RHEL5_POOL_50);
+        assertEquals("db generation wasn't incremented as expected", 2, version.longValue());
+    }
+
     @Test
     public void testGetAllNamesPinnedToHostReturnsNothingForHostButNotPinned() throws Exception {
         assertTrue(dao.getAllNamesPinnedToHost(Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7")).isEmpty());

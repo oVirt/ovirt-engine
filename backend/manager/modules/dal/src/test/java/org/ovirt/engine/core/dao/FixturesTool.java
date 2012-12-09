@@ -12,6 +12,11 @@ public class FixturesTool {
     protected static final Guid STORAGE_POOL_NFS = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
 
     /**
+     * Predefined NFS storage pool.
+     */
+    protected static final Guid STORAGE_POOL_NFS_2 = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
+
+    /**
      * Predefined ISCSI storage pool.
      */
     protected static final Guid STORAGE_POOL_RHEL6_ISCSI = new Guid("6d849ebf-755f-4552-ad09-9a090cda105");
@@ -53,6 +58,11 @@ public class FixturesTool {
     protected static final Guid VDS_GROUP_RHEL6_NFS = new Guid("0e57070e-2469-4b38-84a2-f111aaabd49d");
 
     /**
+     * Predefined vds group.
+     */
+    protected static final Guid VDS_GROUP_RHEL6_NFS_2 = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7c");
+
+    /**
      * Predefined vds group, with no specific quotas associated to it.
      */
     protected static final Guid VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS =
@@ -67,6 +77,11 @@ public class FixturesTool {
      * Predefined NFS storage pool.
      */
     protected static final Guid VDS_RHEL6_NFS_SPM = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
+
+    /**
+     * Predefined VDS gluster2-vdsc.redhat.com
+     */
+    protected static final Guid VDS_GLUSTER_SERVER2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
 
     /**
      * Predefined quota with general limitations. Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4399.<BR/>
@@ -135,12 +150,56 @@ public class FixturesTool {
     protected static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
+     * <li>VM name: rhel5-pool-59</li>
+     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    protected static final Guid VM_RHEL5_POOL_59 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4359");
+
+    /**
+     * Predefined VM for testing with the following properties :
+     * <ul>
+     * <li>VM name: rhel5-pool-60</li>
+     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
+     * </ul>
+     */
+    protected static final Guid VM_RHEL5_POOL_60 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4360");
+
+    /**
      * Predefined template for testing with the following properties :
      * <ul>
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
      * </ul>
      */
     protected static final Guid VM_TEMPLATE_RHEL5 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+
+    /**
+     * Predefined template for testing with the following properties :
+     * <ul>
+     * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
+     * </ul>
+     */
+    protected static final Guid VM_TEMPLATE_RHEL5_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
+
+    /**
+     * Predefined template for testing with the following properties :
+     * <ul>
+     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * </ul>
+     */
+    protected static final Guid VM_TEMPLATE_RHEL6_1 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b81");
+
+    /**
+     * Predefined template for testing with the following properties :
+     * <ul>
+     * <li>Vds group: rhel6.nfs2 (0e57070e-2469-4b38-84a2-f111aaabd49d)</li>
+     * </ul>
+     */
+    protected static final Guid VM_TEMPLATE_RHEL6_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b82");
 
     /**
      * Predefined user for testing with the following properties :

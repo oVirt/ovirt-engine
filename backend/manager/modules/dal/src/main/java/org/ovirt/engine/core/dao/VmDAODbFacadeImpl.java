@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -162,6 +163,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getVmsByIds(List<Guid> vmsIds) {
+        return getCallsHandler().executeReadList("GetVmsByIds",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vms_ids", StringUtils.join(vmsIds, ',')));
+    }
+
+    @Override
     public List<VM> getAllActiveForStorageDomain(Guid id) {
         return getCallsHandler().executeReadList("GetActiveVmsByStorageDomainId",
                 VMRowMapper.instance,
@@ -275,6 +283,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmIp(rs.getString("vm_ip"));
             entity.setVmHost(rs.getString("vm_host"));
             entity.setVmPid((Integer) rs.getObject("vm_pid"));
+            entity.setDbGeneration(rs.getLong("db_generation"));
             entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
             entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
             entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
@@ -391,5 +400,4 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             return entity;
         }
     }
-
 }

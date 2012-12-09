@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 @SuppressWarnings("synthetic-access")
 public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolDAO {
 
-    private final class StoragePoolRawMapper implements ParameterizedRowMapper<storage_pool> {
+    private static final class StoragePoolRawMapper implements ParameterizedRowMapper<storage_pool> {
         @Override
         public storage_pool mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
@@ -46,6 +46,8 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             return entity;
         }
     }
+
+    private static final ParameterizedRowMapper<storage_pool> mapper = new StoragePoolRawMapper();
 
     private static StorageFormatType getStorageFormatTypeForPool(ResultSet rs) throws SQLException {
         return StorageFormatType.forValue(rs.getString("storage_pool_format_type"));
@@ -163,6 +165,14 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     @Override
     public List<storage_pool> getAll() {
         return getAll(null, false);
+    }
+
+    @Override
+    public List<storage_pool> getAllByStatus(StoragePoolStatus status) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource().addValue("status", status.getValue());
+
+        return getCallsHandler().executeReadList("GetAllByStatus", mapper, parameterSource);
     }
 
     @Override

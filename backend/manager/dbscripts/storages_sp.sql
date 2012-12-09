@@ -132,6 +132,18 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllByStatus(v_status INTEGER) RETURNS SETOF storage_pool
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_pool
+   WHERE status = v_status;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION Getstorage_poolByid(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN

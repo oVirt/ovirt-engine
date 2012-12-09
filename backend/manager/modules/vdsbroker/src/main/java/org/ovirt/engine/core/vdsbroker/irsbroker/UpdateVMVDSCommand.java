@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.vdscommands.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends IrsBrokerCommand<P> {
     public UpdateVMVDSCommand(P parameters) {
@@ -43,5 +48,24 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
             counter++;
         }
         return result;
+    }
+
+    @Override
+    protected void ProceedProxyReturnValue() {
+        VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
+        switch (returnStatus) {
+        case Done:
+            return;
+        default:
+            VDSExceptionBase outEx = createDefaultConcreteException(getReturnStatus().mMessage);
+            InitializeVdsError(returnStatus);
+            outEx.setVdsError(getVDSReturnValue().getVdsError());
+            throw outEx;
+        }
+    }
+
+    @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new IrsOperationFailedNoFailoverException(errorMessage);
     }
 }

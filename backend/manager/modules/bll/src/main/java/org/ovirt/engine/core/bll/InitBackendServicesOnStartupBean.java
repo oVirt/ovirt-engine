@@ -41,6 +41,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         ResourceManager.getInstance().init();
         AsyncTaskManager.getInstance().InitAsyncTaskManager();
         log.infoFormat("AsyncTaskManager: {0}", new Date());
+        OvfDataUpdater.getInstance().initOvfDataUpdater();
+        log.infoFormat("OvfDataUpdater: {0}", new Date());
 
         if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
             VdsLoadBalancer.EnableLoadBalancer();

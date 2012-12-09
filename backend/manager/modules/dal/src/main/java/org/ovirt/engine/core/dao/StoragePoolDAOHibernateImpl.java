@@ -91,4 +91,10 @@ public class StoragePoolDAOHibernateImpl extends BaseDAOHibernateImpl<storage_po
 
         return (List<storage_pool>) query.uniqueResult();
     }
+
+    @Override
+    public List<storage_pool> getAllByStatus(StoragePoolStatus status) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

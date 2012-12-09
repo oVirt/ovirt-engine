@@ -343,6 +343,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("Generation");
+        if (node != null) {
+            vmBase.setDbGeneration(Long.parseLong(node.InnerText));
+        } else {
+            vmBase.setDbGeneration(1L);
+        }
+
         XmlNodeList list = content.SelectNodes("Section");
         for (XmlNode section : list) {
             String value = section.Attributes.get("xsi:type").getValue();

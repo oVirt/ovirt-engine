@@ -17,6 +17,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmTemplateHandler {
     public static Guid BlankVmTemplateId = new Guid();
+    public static String BlankVmTemplateName = "Blank";
     public static ObjectIdentityChecker mUpdateVmTemplate;
 
     /**
@@ -34,7 +35,7 @@ public class VmTemplateHandler {
                 "default_boot_sequence",
                 "iso_path", "diskImageMap", "default_display_type", "priority", "auto_startup", "is_stateless",
                 "initrd_url", "kernel_url", "kernel_params", "images", "interfaces", "quotaId", "quotaName",
-                "quotaEnforcementType", "migrationSupport", "dedicated_vm_for_vds", "smartcardEnabled", "deleteProtected"
+                "quotaEnforcementType", "migrationSupport", "dedicated_vm_for_vds", "smartcardEnabled", "dbGeneration", "deleteProtected"
         });
     }
 

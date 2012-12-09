@@ -112,6 +112,9 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
     @Column(name = "is_delete_protected")
     private boolean deleteProtected;
 
+    @Column(name = "db_generation")
+    private long dbGeneration;
+
     @Column(name = "is_smartcard_enabled")
     private boolean smartcardEnabled;
 
@@ -225,6 +228,14 @@ public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, Bus
         this.smartcardEnabled = smartcardEnabled;
         this.deleteProtected = deleteProtected;
         setQuotaId(quotaId);
+    }
+
+    public long getDbGeneration() {
+        return dbGeneration;
+    }
+
+    public void setDbGeneration(long value) {
+        this.dbGeneration = value;
     }
 
     public List<VmNetworkInterface> getInterfaces() {

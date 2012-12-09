@@ -6,9 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -70,6 +74,21 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         List<VmTemplate> result = dao.getAll();
 
         assertGetAllResult(result);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetVmTemplatesByIds() {
+        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(EXISTING_TEMPLATE_ID,DELETABLE_TEMPLATE_ID));
+        assertEquals("loaded templates list isn't in the expected size", 2, result.size());
+        Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
+            @Override
+            public Object transform(Object input) {
+                return ((VmTemplate)input).getId();
+            }
+        });
+        assertTrue("the recieved list didn't contain a expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
+        assertTrue("the recieved list didn't contain a expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
     }
 
     /**
@@ -272,10 +291,14 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
     private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(EXISTING_TEMPLATE_ID, result.getId());
+        assertEquals("Template generation wasn't loaded as expected", 1, result.getDbGeneration());
     }
 
     private static void assertGetAllResult(List<VmTemplate> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        for (VmTemplate template : result){
+            assertEquals("Template generation wasn't loaded as expected", 1, template.getDbGeneration());
+        }
     }
 }

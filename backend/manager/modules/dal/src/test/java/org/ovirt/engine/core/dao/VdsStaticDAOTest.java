@@ -11,12 +11,10 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 
 public class VdsStaticDAOTest extends BaseDAOTestCase {
-    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final String IP_ADDRESS = "192.168.122.17";
     private VdsStaticDAO dao;
     private VdsDynamicDAO dynamicDao;
@@ -30,7 +28,7 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getVdsStaticDao());
         dynamicDao = prepareDAO(dbFacade.getVdsDynamicDao());
         statisticsDao = prepareDAO(dbFacade.getVdsStatisticsDao());
-        existingVds = dao.get(EXISTING_VDS_ID);
+        existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         newStaticVds = new VdsStatic();
         newStaticVds.sethost_name("farkle.redhat.com");
         newStaticVds.setvds_group_id(existingVds.getvds_group_id());

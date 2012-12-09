@@ -89,6 +89,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -389,6 +390,16 @@ public class DbFacade {
      */
     public VdsDAO getVdsDao() {
         return getDao(VdsDAO.class);
+    }
+
+
+    /**
+     * Returns the singleton instance of {@link VmAndTemplatesGenerationsDAO}.
+     *
+     * @return the dao
+     */
+    public VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDao() {
+        return getDao(VmAndTemplatesGenerationsDAO.class);
     }
 
     /**

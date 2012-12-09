@@ -1,3 +1,116 @@
+----------------------------------------------------------------
+-- [vm_ovf_generations] Table
+
+Create or replace FUNCTION UpdateOvfGenerations(v_vms_ids VARCHAR(5000), v_vms_db_generations VARCHAR(5000))
+    RETURNS VOID
+    AS $procedure$
+DECLARE
+curs_vmids CURSOR FOR SELECT * FROM fnSplitterUuid(v_vms_ids);
+curs_newovfgen CURSOR FOR SELECT * FROM fnSplitter(v_vms_db_generations);
+id UUID;
+new_ovf_gen BIGINT;
+BEGIN
+ OPEN curs_vmids;
+ OPEN curs_newovfgen;
+LOOP
+    FETCH curs_vmids INTO id;
+    FETCH curs_newovfgen INTO new_ovf_gen;
+    IF NOT FOUND THEN
+     EXIT;
+    END IF;
+    UPDATE vm_ovf_generations
+    SET ovf_generation = new_ovf_gen WHERE vm_guid = id;
+END LOOP;
+CLOSE curs_vmids;
+CLOSE curs_newovfgen;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+Create or replace FUNCTION GetIdsForOvfDeletion(v_storage_pool_id UUID) RETURNS SETOF UUID
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT ovf.vm_guid as vm_guid
+   FROM vm_ovf_generations ovf
+   WHERE ovf.storage_pool_id = v_storage_pool_id AND ovf.vm_guid NOT IN (SELECT vm_guid FROM vm_static);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+Create or replace FUNCTION GetOvfGeneration(v_vm_id UUID) RETURNS SETOF BIGINT
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm.ovf_generation
+   FROM vm_ovf_generations vm
+   WHERE vm.vm_guid = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+Create or replace FUNCTION GetVmTemplatesIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT templates.vmt_guid as vm_guid
+   FROM vm_templates_view templates, vm_ovf_generations generations
+   WHERE generations.vm_guid = templates.vmt_guid
+   AND templates.db_generation > generations.ovf_generation
+   AND templates.storage_pool_id = v_storage_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+Create or replace FUNCTION GetVmsIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm.vm_guid as vm_guid
+   FROM vms vm, vm_ovf_generations ovf_gen
+   WHERE vm.vm_guid = ovf_gen.vm_guid
+         AND vm.db_generation >  ovf_gen.ovf_generation
+         AND vm.storage_pool_id = v_storage_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+
+Create or replace FUNCTION DeleteOvfGenerations(v_vms_ids VARCHAR(5000))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    DELETE FROM vm_ovf_generations WHERE vm_guid IN (SELECT * FROM fnSplitterUuid(v_vms_ids));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
 
 
 ----------------------------------------------------------------
@@ -319,8 +432,67 @@ RETURNS VOID
 BEGIN
 INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,allow_console_reconnect,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected,host_cpu_flags)
 	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_allow_console_reconnect, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected,v_host_cpu_flags);
+INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+
+
+
+
+Create or replace FUNCTION IncrementDbGeneration(v_vm_guid UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE vm_static
+      SET db_generation  = db_generation + 1
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+Create or replace FUNCTION GetDbGeneration(v_vm_guid UUID)
+RETURNS SETOF BIGINT
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT db_generation
+      FROM vm_static
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION IncrementDbGenerationForAllInStoragePool(v_storage_pool_id UUID)
+RETURNS VOID
+   AS $procedure$
+DECLARE
+     curs CURSOR FOR SELECT vms.vm_guid FROM vm_static vms
+                     WHERE vms.vds_group_id IN (SELECT vgs.vds_group_id FROM vds_groups vgs
+                                                WHERE vgs.storage_pool_id=v_storage_pool_id)
+                     ORDER BY vm_guid;
+     id UUID;
+BEGIN
+      OPEN curs;
+      LOOP
+         FETCH curs INTO id;
+         IF NOT FOUND THEN
+            EXIT;
+         END IF;
+         UPDATE vm_static SET db_generation  = db_generation + 1 WHERE vm_guid = id;
+      END LOOP;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 
 
@@ -549,6 +721,23 @@ LANGUAGE plpgsql;
 
 
 
+
+
+Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm.*
+             FROM vms vm
+             WHERE vm.vm_guid IN (SELECT ID from fnSplitterUuid(v_vms_ids));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
+
 Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
    AS $procedure$
 BEGIN
@@ -689,6 +878,8 @@ INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NA
       INSERT INTO vm_dynamic(vm_guid, status) VALUES(v_vm_guid, 0);
 
       INSERT INTO vm_statistics(vm_guid) VALUES(v_vm_guid);
+
+      INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (select storage_pool_id from vds_groups vg where vg.vds_group_id = v_vds_group_id));
 
       UPDATE vm_static
       SET child_count =(SELECT COUNT(*) FROM vm_static WHERE vmt_guid = v_vmt_guid)

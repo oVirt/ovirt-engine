@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
-
     /**
      * Gets all static VMs by name.
      *
@@ -62,4 +61,26 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
      * @return The names of the VMs which are pinned to the host, or empty if none.
      */
     List<String> getAllNamesPinnedToHost(Guid host);
+
+    /**
+     * get the db generation for vm/template with the given guid
+     *
+     * @param id - vm/template id
+     * @return
+     */
+    public Long getDbGeneration(Guid id);
+
+    /**
+     * Increment the db version for all vms/templates in a specific storage pool.
+     * @param storagePoolId
+     */
+    public void incrementDbGenerationForAllInStoragePool(Guid storagePoolId);
+
+    /**
+     * increment by 1 the generation of the vm/template with the given guid.
+     *
+     * @param id - vm/template id
+     * @return
+     */
+    public void incrementDbGeneration(Guid id);
 }

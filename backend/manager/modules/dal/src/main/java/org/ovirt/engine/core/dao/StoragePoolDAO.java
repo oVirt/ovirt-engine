@@ -63,6 +63,14 @@ public interface StoragePoolDAO extends GenericDao<storage_pool, Guid>, StatusAw
      */
     List<storage_pool> getAll(Guid userID, boolean isFiltered);
 
+
+    /**
+     * @param status
+     *            the status of the wanted storage pools
+     * @return The list of storage pools with the given status
+     */
+    List<storage_pool> getAllByStatus(StoragePoolStatus status);
+
     /**
      * Retrieves the list of all storage pools of a given type.
      *

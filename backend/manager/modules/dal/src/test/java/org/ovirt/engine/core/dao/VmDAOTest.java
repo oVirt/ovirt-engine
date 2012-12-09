@@ -6,9 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -23,7 +27,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
-    private static final int VM_COUNT = 3;
+    private static final int VM_COUNT = 5;
     private VmDAO dao;
     private VM existingVm;
     private VmStatic newVmStatic;
@@ -109,6 +113,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     private void assertGetResult(VM result) {
         assertNotNull(result);
+        assertEquals("Vm db generation wasn't loaded as expected", 1, result.getDbGeneration());
         assertEquals(result, existingVm);
     }
 
@@ -153,6 +158,21 @@ public class VmDAOTest extends BaseDAOTestCase {
         List<VM> result = dao.getAll();
 
         VmDAOTest.assertCorrectGetAllResult(result);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetVmsByIds() {
+        List<VM> result = dao.getVmsByIds(Arrays.asList(FixturesTool.VM_RHEL5_POOL_60, FixturesTool.VM_RHEL5_POOL_59));
+        assertEquals("loaded templates list isn't in the expected size", 2, result.size());
+        Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
+            @Override
+            public Object transform(Object input) {
+                return ((VM)input).getId();
+            }
+        });
+        assertTrue("the recieved list didn't contain a expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_60));
+        assertTrue("the recieved list didn't contain a expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_59));
     }
 
     /**
@@ -350,5 +370,8 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(VM_COUNT, result.size());
+        for (VM vm : result) {
+            assertEquals("Vm db generation wasn't loaded as expected", 1, vm.getDbGeneration());
+        }
     }
 }

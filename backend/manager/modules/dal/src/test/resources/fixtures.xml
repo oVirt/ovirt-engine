@@ -863,6 +863,57 @@
         </row>
     </table>
 
+    <table name="vm_ovf_generations">
+        <column>vm_guid</column>
+        <column>storage_pool_id</column>
+        <column>ovf_generation</column>
+        <row>
+           <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+           <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+           <value>1</value>
+       </row>
+       <row>
+          <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
+          <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+          <value>1</value>
+       </row>
+       <row>
+          <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+          <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+          <value>1</value>
+       </row>
+       <row>
+          <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+          <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+          <value>1</value>
+      </row>
+      <row>
+          <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
+          <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+          <value>1</value>
+      </row>
+      <row>
+          <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
+          <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+          <value>1</value>
+      </row>
+      <row>
+          <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
+          <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+          <value>1</value>
+      </row>
+      <row>
+          <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+          <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+          <value>1</value>
+      </row>
+      <row>
+          <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
+          <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+          <value>1</value>
+      </row>
+    </table>
+
     <table name="vm_static">
         <column>vm_guid</column>
         <column>entity_type</column>
@@ -904,6 +955,7 @@
         <column>userdefined_properties</column>
         <column>predefined_properties</column>
         <column>quota_id</column>
+        <column>db_generation</column>
 
         <!-- Templates -->
         <row>
@@ -947,6 +999,7 @@
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -989,6 +1042,7 @@
             <null />
             <null />
             <null />
+            <value>1</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1031,6 +1085,93 @@
             <null />
             <null />
             <null />
+            <value>1</value>
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
+            <value>TEMPLATE</value>
+            <value>1</value>
+            <value>512</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <null />
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+        </row>
+         <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
+            <value>TEMPLATE</value>
+            <value>1</value>
+            <value>512</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2010-11-21 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <null />
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
         </row>
 
         <!-- VMS -->
@@ -1075,6 +1216,7 @@
             <null />
             <null />
             <null />
+            <value>1</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1117,6 +1259,7 @@
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -1159,6 +1302,7 @@
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -1201,6 +1345,93 @@
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+            <value>VM</value>
+            <value>rhel5-pool-59</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
+            <value>VM</value>
+            <value>rhel5-pool-60</value>
+            <value>512</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>0</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <value>1</value>
+            <value></value>
+            <value>0</value>
+            <value>1</value>
+            <value>2010-11-18 11:13:24</value>
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <null />
+            <null />
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -1243,6 +1474,7 @@
             <null />
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
+            <value>1</value>
         </row>
     </table>
 
@@ -1703,6 +1935,72 @@
             <null />
             <value>3452354</value>
         </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null /> <!-- console_user_id -->
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null /> <!-- console_user_id -->
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <null />
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+        </row>
     </table>
 
     <table name="vm_statistics">
@@ -1733,6 +2031,24 @@
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
             <value>17</value>
             <value>0</value>
             <value>267308</value>

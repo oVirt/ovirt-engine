@@ -62,6 +62,17 @@ public abstract class BaseDAODbFacade {
         };
     }
 
+    private static ParameterizedRowMapper<Long> longRowMapper = new ParameterizedRowMapper<Long>() {
+        @Override
+        public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getLong(1);
+        };
+    };
+
+    protected ParameterizedRowMapper<Long> getLongMapper() {
+        return longRowMapper;
+    }
+
     protected SimpleJdbcCallsHandler getCallsHandler() {
         return dbFacade.getCallsHandler();
     }

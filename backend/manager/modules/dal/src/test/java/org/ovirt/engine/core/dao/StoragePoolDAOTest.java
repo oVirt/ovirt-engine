@@ -32,7 +32,6 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = prepareDAO(dbFacade.getStoragePoolDao());
-
         existingPool = dao
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
         existingPool.setstatus(StoragePoolStatus.Up);
@@ -144,6 +143,17 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         List<storage_pool> result = dao.getAll();
 
         assertCorrectGetAllResult(result);
+    }
+
+    @Test
+    public void testGetAllByStatus() {
+        List<storage_pool> result = dao.getAllByStatus(StoragePoolStatus.Up);
+        assertNotNull("list of returned pools in status up shouldn't be null", result);
+        assertEquals("wrong number of storage pools returned for up status", 5, result.size());
+
+        result = dao.getAllByStatus(StoragePoolStatus.Maintanance);
+        assertNotNull("list of returned pools in maintanance status shouldn't be null", result);
+        assertEquals("wrong number of storage pool returned for maintanance status", 0, result.size());
     }
 
     /**
@@ -274,11 +284,22 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
+        Guid poolId = existingPool.getId();
+        VmAndTemplatesGenerationsDAO vmAndTemplatesGenerationsDAO = prepareDAO(dbFacade.getVmAndTemplatesGenerationsDao());
+        VmStaticDAO vmStaticDao = prepareDAO(dbFacade.getVmStaticDao());
+
+        assertFalse(vmStaticDao.getAllByStoragePoolId(poolId).isEmpty());
+        vmStaticDao.incrementDbGenerationForAllInStoragePool(poolId);
+        assertFalse(vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(poolId).isEmpty());
+        assertFalse(vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(poolId).isEmpty());
+
         dao.remove(existingPool.getId());
 
-        storage_pool result = dao.get(existingPool.getId());
 
-        assertNull(result);
+        assertTrue(vmStaticDao.getAllByStoragePoolId(poolId).isEmpty());
+        assertTrue(vmAndTemplatesGenerationsDAO.getVmsIdsForOvfUpdate(poolId).isEmpty());
+        assertTrue(vmAndTemplatesGenerationsDAO.getVmTemplatesIdsForOvfUpdate(poolId).isEmpty());
+        assertNull(dao.get(poolId));
     }
 
     /**

@@ -146,6 +146,26 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                         .addValue("vds_id", host));
     }
 
+    @Override
+    public void incrementDbGenerationForAllInStoragePool(Guid storagePoolId) {
+        getCallsHandler().executeModification("IncrementDbGenerationForAllInStoragePool", getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", storagePoolId));
+
+    }
+
+    @Override
+    public void incrementDbGeneration(Guid id) {
+        getCallsHandler().executeModification("IncrementDbGeneration", getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id));
+    }
+
+    @Override
+    public Long getDbGeneration(Guid id) {
+        return getCallsHandler().executeRead("GetDbGeneration", getLongMapper()
+                , getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", id));
+    }
+
     /**
      * JDBC row mapper for VM static
      */

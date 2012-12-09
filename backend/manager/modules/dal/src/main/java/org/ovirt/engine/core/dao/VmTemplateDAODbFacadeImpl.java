@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -56,6 +57,13 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
         return getCallsHandler().executeReadList("GetAllFromVmTemplates",
                 VMTemplateRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
+    }
+
+    @Override
+    public List<VmTemplate> getVmTemplatesByIds(List<Guid> templatesIds) {
+        return getCallsHandler().executeReadList("GetVmTemplatesByIds",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vm_templates_ids", StringUtils.join(templatesIds,',')));
     }
 
     @Override

@@ -33,6 +33,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements Parameter
         entity.setpriority(rs.getInt("priority"));
         entity.setauto_startup(rs.getBoolean("auto_startup"));
         entity.setis_stateless(rs.getBoolean("is_stateless"));
+        entity.setDbGeneration(rs.getLong("db_generation"));
         entity.setiso_path(rs.getString("iso_path"));
         entity.setorigin(OriginType.forValue(rs.getInt("origin")));
         entity.setkernel_url(rs.getString("kernel_url"));

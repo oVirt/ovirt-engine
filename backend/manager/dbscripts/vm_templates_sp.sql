@@ -125,6 +125,10 @@ VALUES(
     v_dedicated_vm_for_vds,
     v_is_smartcard_enabled,
     v_is_delete_protected);
+INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
+VALUES (v_vmt_guid, (SELECT storage_pool_id
+                     FROM vds_groups vg
+                     WHERE vg.vds_group_id = v_vds_group_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -243,6 +247,24 @@ BEGIN
       ORDER BY name;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+
+
+
+Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_view
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT vm_templates.*
+   FROM vm_templates_view vm_templates
+   WHERE vm_templates.vmt_guid IN (SELECT * FROM fnSplitterUuid(v_vm_templates_ids));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 
 
 
