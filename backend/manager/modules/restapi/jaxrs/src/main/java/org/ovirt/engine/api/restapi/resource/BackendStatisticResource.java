@@ -43,4 +43,9 @@ public class BackendStatisticResource<R extends BaseResource, Q>
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
+    @Override
+    protected Statistic doPopulate(Statistic model, Q entity) {
+        return model;
+    }
+
 }

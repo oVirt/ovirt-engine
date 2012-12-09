@@ -76,7 +76,7 @@ public class BackendTemplatesResource
         params.setDiskInfoDestinationMap(getDiskToDestinationMap(template.getVm(),
                 params.getDestinationStorageDomainId(),
                 isDomainSet));
-        return performCreation(VdcActionType.AddVmTemplate,
+        return performCreate(VdcActionType.AddVmTemplate,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate,
                                                    GetVmTemplateParameters.class));
@@ -141,5 +141,10 @@ public class BackendTemplatesResource
     protected Guid getClusterId(Template template) {
         return getEntity(VDSGroup.class, SearchType.Cluster,
                          "Cluster: name=" + template.getCluster().getName()).getId();
+    }
+
+    @Override
+    protected Template doPopulate(Template model, VmTemplate entity) {
+        return model;
     }
 }

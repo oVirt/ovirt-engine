@@ -38,6 +38,7 @@ public class BackendResource extends BaseBackendResource {
     private static final String EXPECT_HEADER = "Expect";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
     protected static final Log LOG = LogFactory.getLog(BackendResource.class);
+    public static final String POPULATE = "All-Content";
 
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
@@ -245,5 +246,17 @@ public class BackendResource extends BaseBackendResource {
 
     protected <E> void validateEnums(Class<E> validatedClass, E instance) {
         getValidator(validatedClass).validateEnums(instance);
+    }
+
+    /**
+     * @return true if request header contains [All-Content='true']
+     */
+    protected boolean isPopulate() {
+        List<String> populates = httpHeaders.getRequestHeader(POPULATE);
+        if (populates != null && populates.size() > 0) {
+            return Boolean.valueOf(populates.get(0)).booleanValue();
+        } else {
+            return false;
+        }
     }
 }

@@ -122,4 +122,10 @@ public class BackendTemplateResource
     private VDSGroup lookupCluster(Guid id) {
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new GetVdsGroupByVdsGroupIdParameters(id), "GetVdsGroupByVdsGroupId");
     }
+
+    @Override
+    protected Template doPopulate(Template model, VmTemplate entity) {
+        return model;
+    }
+
 }

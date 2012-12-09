@@ -39,4 +39,9 @@ public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Ob
     public void setParent(BackendHostHooksResource parent) {
         this.parent = parent;
     }
+
+    @Override
+    protected Hook doPopulate(Hook model, Object entity) {
+        return model;
+    }
 }

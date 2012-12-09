@@ -121,7 +121,12 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     @Override
-    protected NIC populate(NIC model, VmNetworkInterface entity) {
+    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
+        return model;
+    }
+
+    @Override
+    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
         addReportedDevices(model, entity);
         return addStatistics(model, entity, uriInfo, httpHeaders);
     }

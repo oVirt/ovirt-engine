@@ -69,8 +69,13 @@ public class BackendVmPoolResource
     }
 
     @Override
-    protected VmPool populate(VmPool pool, vm_pools entity) {
-        return parent.populate(pool, entity);
+    protected VmPool deprecatedPopulate(VmPool pool, vm_pools entity) {
+        return parent.deprecatedPopulate(pool, entity);
+    }
+
+    @Override
+    protected VmPool doPopulate(VmPool pool, vm_pools entity) {
+        return parent.doPopulate(pool, entity);
     }
 
     protected VM mapToVM(VmPool model) {

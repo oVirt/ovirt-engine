@@ -81,7 +81,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         validateEnums(Cluster.class, cluster);
         storage_pool pool = getStoragePool(cluster, this);
         VDSGroup entity = map(cluster, map(pool));
-        return performCreation(VdcActionType.AddVdsGroup,
+        return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class));
     }
@@ -113,5 +113,10 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
      */
     protected VDSGroup map(storage_pool pool) {
         return getMapper(storage_pool.class, VDSGroup.class).map(pool, null);
+    }
+
+    @Override
+    protected Cluster doPopulate(Cluster model, VDSGroup entity) {
+        return model;
     }
 }

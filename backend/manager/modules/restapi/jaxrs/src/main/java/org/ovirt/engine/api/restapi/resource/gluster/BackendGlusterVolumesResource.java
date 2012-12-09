@@ -85,7 +85,7 @@ public class BackendGlusterVolumesResource
         volumeEntity.setClusterId(asGuid(parent.get().getId()));
         mapBricks(volume, volumeEntity);
 
-        return performCreation(VdcActionType.CreateGlusterVolume,
+        return performCreate(VdcActionType.CreateGlusterVolume,
                 new CreateGlusterVolumeParameters(volumeEntity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
@@ -126,5 +126,10 @@ public class BackendGlusterVolumesResource
     @Override
     public GlusterVolumeResource getGlusterVolumeSubResource(String id) {
         return inject(new BackendGlusterVolumeResource(id, this));
+    }
+
+    @Override
+    protected GlusterVolume doPopulate(GlusterVolume model, GlusterVolumeEntity entity) {
+        return model;
     }
 }

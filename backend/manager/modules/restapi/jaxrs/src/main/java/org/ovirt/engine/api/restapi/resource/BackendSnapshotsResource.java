@@ -44,7 +44,7 @@ public class BackendSnapshotsResource
         validateParameters(snapshot, "description");
         CreateAllSnapshotsFromVmParameters snapshotParams =
             new CreateAllSnapshotsFromVmParameters(parentId, snapshot.getDescription());
-        return performCreation(VdcActionType.CreateAllSnapshotsFromVm,
+        return performCreate(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
                                new SnapshotIdResolver(),
                                block);
@@ -118,5 +118,10 @@ public class BackendSnapshotsResource
                 Guid id) throws BackendFailureException {
             return getSnapshotById(id);
         }
+    }
+
+    @Override
+    protected Snapshot doPopulate(Snapshot model, org.ovirt.engine.core.common.businessentities.Snapshot entity) {
+        return model;
     }
 }

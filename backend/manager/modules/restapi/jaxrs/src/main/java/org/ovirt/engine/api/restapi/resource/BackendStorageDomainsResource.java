@@ -96,13 +96,13 @@ public class BackendStorageDomainsResource
             validateParameters(model, 2, "name");
         }
 
-        return performCreation(action, getAddParams(entity, hostId), ID_RESOLVER);
+        return performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
     }
 
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
         boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
 
-        return performCreation(VdcActionType.AddSANStorageDomain,
+        return performCreate(VdcActionType.AddSANStorageDomain,
                                getSanAddParams(entity,
                                                hostId,
                                                getLunIds(model.getStorage(), storageType, hostId),
@@ -395,5 +395,10 @@ public class BackendStorageDomainsResource
             }
             return performAction(VdcActionType.RemoveStorageDomain, parameters);
         }
+    }
+
+    @Override
+    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+        return model;
     }
 }

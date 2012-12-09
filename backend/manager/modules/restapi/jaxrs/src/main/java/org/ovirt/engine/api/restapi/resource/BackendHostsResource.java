@@ -96,7 +96,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetRebootAfterInstallation()) {
             addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
         }
-        return performCreation(VdcActionType.AddVds,
+        return performCreate(VdcActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class));
     }
@@ -114,7 +114,12 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     }
 
     @Override
-    protected Host populate(Host model, VDS entity) {
+    protected Host doPopulate(Host model, VDS entity) {
+        return model;
+    }
+
+    @Override
+    protected Host deprecatedPopulate(Host model, VDS entity) {
         Host host = addStatistics(model, entity, uriInfo, httpHeaders);
         addCertificateInfo(host);
         return host;

@@ -66,4 +66,9 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
         return inject(new BackendGlusterVolumesResource(this));
     }
 
+    @Override
+    protected Cluster doPopulate(Cluster model, VDSGroup entity) {
+        return model;
+    }
+
 }

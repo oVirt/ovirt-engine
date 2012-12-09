@@ -44,32 +44,56 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
         }
     }
 
-    protected R performUpdate(R incoming,
+    protected final R performUpdate(R incoming,
                               Q entity,
                               R model,
                               EntityIdResolver<Guid> entityResolver,
                               VdcActionType update,
                               ParametersProvider<R, Q> updateProvider) {
 
+        entity = doUpdate(incoming, entity, model, entityResolver, update, updateProvider);
+        R model2 = map(entity);
+        deprecatedPopulate(model2, entity);
+        return addLinks(doPopulate(model2, entity));
+    }
+
+    protected <T> Q doUpdate(R incoming,
+            Q entity,
+            R model,
+            EntityIdResolver<T> entityResolver,
+            VdcActionType update,
+            ParametersProvider<R, Q> updateProvider) {
         validateUpdate(incoming, model);
 
         performAction(update, updateProvider.getParameters(incoming, entity));
 
-        return addLinks(populate(map(getEntity(entityResolver, false)), entity));
+        entity = getEntity(entityResolver, false);
+        return entity;
     }
 
     protected R performUpdate(R incoming,
             EntityIdResolver<Guid> entityResolver,
             VdcActionType update,
             ParametersProvider<R, Q> updateProvider) {
-        // REVISIT maintain isolation across retrievals and update
         Q entity = getEntity(entityResolver, true);
 
         validateUpdate(incoming, map(entity));
+        // REVISIT maintain isolation across retrievals and update
+        entity = doUpdate(incoming, entity, entityResolver, update, updateProvider);
+        R model = map(entity);
+        deprecatedPopulate(model, entity);
+        return addLinks(doPopulate(model, entity));
+    }
 
+    protected <T> Q doUpdate(R incoming,
+            Q entity,
+            EntityIdResolver<T> entityResolver,
+            VdcActionType update,
+            ParametersProvider<R, Q> updateProvider) {
         performAction(update, updateProvider.getParameters(incoming, entity));
 
-        return addLinks(populate(map(getEntity(entityResolver, false)), entity));
+        entity = getEntity(entityResolver, false);
+        return entity;
     }
     /**
      * Validate update from an immutability point of view.

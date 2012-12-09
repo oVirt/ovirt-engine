@@ -80,6 +80,7 @@ public class BackendVmNicResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
@@ -94,6 +95,7 @@ public class BackendVmNicResourceTest
     @Test
     public void testGetNoNetwork() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setAllContentHeaderExpectation();
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1, Collections.<org.ovirt.engine.core.common.businessentities.network.Network> emptyList());
@@ -112,6 +114,7 @@ public class BackendVmNicResourceTest
         try {
             accepts.add("application/xml; detail=statistics");
             setUriInfo(setUpBasicUriExpectations());
+            setAllContentHeaderExpectation();
             setUpEntityQueryExpectations(1);
             setGetVmQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
@@ -147,6 +150,7 @@ public class BackendVmNicResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(3);
+        setAllContentHeaderExpectation();
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
         setGetGuestAgentQueryExpectations(2);
@@ -222,6 +226,7 @@ public class BackendVmNicResourceTest
     @Test
     public void testUpdateWithNoNetwork() throws Exception {
         VmNetworkInterface entity = getEntity(1, null);
+        setAllContentHeaderExpectation();
         setUpGetEntityExpectations(3, entity);
         setGetGuestAgentQueryExpectations(2);
 
@@ -388,6 +393,7 @@ public class BackendVmNicResourceTest
         setGetVmQueryExpectations(4);
         setGetNetworksQueryExpectations(4);
         setGetGuestAgentQueryExpectations(3);
+        setAllContentHeaderExpectation();
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
@@ -396,9 +402,16 @@ public class BackendVmNicResourceTest
         verifyActionResponse(backendVmNicResource.activate(new Action()));
     }
 
+    private void setAllContentHeaderExpectation() {
+        List<String> allContentHeaders = new ArrayList<String>();
+        allContentHeaders.add("true");
+        expect(httpHeaders.getRequestHeader("All-Content")).andReturn(allContentHeaders).anyTimes();
+    }
+
     @Test
     public void testDeactivateNic() throws Exception {
         BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
+        setAllContentHeaderExpectation();
         setUpGetEntityExpectations(4);
         setGetVmQueryExpectations(4);
         setGetNetworksQueryExpectations(4);

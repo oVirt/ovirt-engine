@@ -50,4 +50,9 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
         return null;
     }
 
+    @Override
+    protected Hook doPopulate(Hook model, Object entity) {
+        return model;
+    }
+
 }

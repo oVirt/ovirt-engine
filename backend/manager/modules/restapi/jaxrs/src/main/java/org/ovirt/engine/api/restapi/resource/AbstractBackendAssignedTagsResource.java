@@ -69,7 +69,7 @@ public abstract class AbstractBackendAssignedTagsResource
             tag = lookupTagByName(tag.getName());
         }
 
-        return performCreation(attachAction,
+        return performCreate(attachAction,
                                getAttachParams(tag.getId()),
                                new TagIdResolver(asGuid(tag.getId())));
     }

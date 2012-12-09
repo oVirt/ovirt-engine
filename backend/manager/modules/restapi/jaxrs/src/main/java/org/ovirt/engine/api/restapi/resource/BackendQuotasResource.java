@@ -37,7 +37,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         validateParameters(quota, "name");
         org.ovirt.engine.core.common.businessentities.Quota entity = map(quota);
         entity.setStoragePoolId(dataCenterId);
-        return performCreation(VdcActionType.AddQuota,
+        return performCreate(VdcActionType.AddQuota,
                 new QuotaCRUDParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, GetQuotaByQuotaIdQueryParameters.class));
     }
@@ -69,5 +69,10 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         quota.setDataCenter(new DataCenter());
         quota.getDataCenter().setId(dataCenterId.toString());
         return quota;
+    }
+
+    @Override
+    protected Quota doPopulate(Quota model, org.ovirt.engine.core.common.businessentities.Quota entity) {
+        return model;
     }
 }

@@ -99,4 +99,9 @@ public class BackendTemplateNicsResource
                                    new GetVmTemplateParameters(parentId), "id").getvds_group_id();
         return clusterId;
     }
+
+    @Override
+    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
+        return model;
+    }
 }

@@ -42,7 +42,7 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
     @Override
     public Response add(D device) {
         validateParameters(device, getRequiredAddFields());
-        return performCreation(addAction,
+        return performCreate(addAction,
                                getAddParameters(map(device), device),
                                getEntityIdResolver(device.getName()));
     }

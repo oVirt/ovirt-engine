@@ -95,4 +95,9 @@ public class BackendHostStorageResource
        throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected Storage doPopulate(Storage model, LUNs entity) {
+        return model;
+    }
+
 }

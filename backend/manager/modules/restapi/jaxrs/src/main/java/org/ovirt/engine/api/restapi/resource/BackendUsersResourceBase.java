@@ -175,4 +175,9 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
             return lookupUserById(this.id);
         }
     }
+
+    @Override
+    protected User doPopulate(User model, DbUser entity) {
+        return model;
+    }
 }

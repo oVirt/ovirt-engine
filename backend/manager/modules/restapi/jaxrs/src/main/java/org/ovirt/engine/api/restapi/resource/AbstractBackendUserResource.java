@@ -24,4 +24,9 @@ public class AbstractBackendUserResource
     AbstractBackendUsersResource getParent() {
         return parent;
     }
+
+    @Override
+    protected User doPopulate(User model, DbUser entity) {
+        return model;
+    }
 }

@@ -28,4 +28,9 @@ public class BackendAssignedTagResource
     protected Tag addParents(Tag tag) {
         return parent.addParents(tag);
     }
+
+    @Override
+    protected Tag doPopulate(Tag model, tags entity) {
+        return model;
+    }
 }

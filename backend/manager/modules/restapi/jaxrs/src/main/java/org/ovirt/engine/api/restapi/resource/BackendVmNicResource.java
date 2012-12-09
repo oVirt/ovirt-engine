@@ -29,7 +29,14 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     }
 
     @Override
-    protected NIC populate(NIC model, VmNetworkInterface entity) {
+    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
+        BackendVmNicsResource parent = (BackendVmNicsResource) collection;
+        parent.addReportedDevices(model, entity);
+        return model;
+    }
+
+    @Override
+    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource) collection;
         org.ovirt.engine.core.common.businessentities.network.Network network = null;
         String networkId = null;
@@ -54,7 +61,6 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
             model.setPortMirroring(portMirroring);
         }
-        parent.addReportedDevices(model, entity);
         return parent.addStatistics(model, entity, uriInfo, httpHeaders);
     }
 

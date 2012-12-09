@@ -24,4 +24,10 @@ public class AbstractBackendGroupResource
     AbstractBackendGroupsResource getParent() {
         return parent;
     }
+
+    @Override
+    protected Group doPopulate(Group model, LdapGroup entity) {
+        return model;
+    }
+
 }

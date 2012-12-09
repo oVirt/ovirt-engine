@@ -48,7 +48,7 @@ public class BackendTagsResource
             tag.getParent().getTag().setId(getParentId(tag));
         }
 
-        return performCreation(VdcActionType.AddTag,
+        return performCreate(VdcActionType.AddTag,
                                new TagsOperationParameters(map(tag)),
                                new TagNameResolver(tag.getName()));
     }
@@ -99,5 +99,10 @@ public class BackendTagsResource
             assert (id == null); // AddTag returns nothing, lookup name instead
             return lookupTagByName(name);
         }
+    }
+
+    @Override
+    protected Tag doPopulate(Tag model, tags entity) {
+        return model;
     }
 }

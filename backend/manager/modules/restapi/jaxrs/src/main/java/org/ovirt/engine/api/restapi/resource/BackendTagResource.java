@@ -67,4 +67,9 @@ public class BackendTagResource
             return new TagsOperationParameters(map(incoming, entity));
         }
     }
+
+    @Override
+    protected Tag doPopulate(Tag model, tags entity) {
+        return model;
+    }
 }

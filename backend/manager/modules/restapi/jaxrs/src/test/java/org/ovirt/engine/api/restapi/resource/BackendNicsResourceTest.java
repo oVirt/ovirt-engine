@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,6 +54,7 @@ public class BackendNicsResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(1);
+        setAllContentHeaderExpectation();
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
@@ -92,6 +96,7 @@ public class BackendNicsResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1);
+        setAllContentHeaderExpectation();
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
         setGetGuestAgentQueryExpectations(1);
@@ -231,4 +236,10 @@ public class BackendNicsResourceTest
                                              vm);
             }
         }
+
+    private void setAllContentHeaderExpectation() {
+        List<String> allContentHeaders = new ArrayList<String>();
+        allContentHeaders.add("true");
+        expect(httpHeaders.getRequestHeader("All-Content")).andReturn(allContentHeaders).anyTimes();
+    }
 }

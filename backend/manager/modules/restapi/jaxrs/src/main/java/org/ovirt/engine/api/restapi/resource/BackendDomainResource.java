@@ -47,4 +47,9 @@ implements DomainResource {
         }
         return domain;
     }
+
+    @Override
+    protected Domain doPopulate(Domain model, Directory entity) {
+        return model;
+    }
 }

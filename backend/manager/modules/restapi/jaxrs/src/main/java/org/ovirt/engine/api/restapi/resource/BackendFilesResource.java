@@ -90,4 +90,9 @@ public class BackendFilesResource
        throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected File doPopulate(File model, String entity) {
+        return model;
+    }
+
 }

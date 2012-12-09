@@ -34,4 +34,9 @@ public class BackendPermitResource
     protected Permit addParents(Permit permit) {
         return parent.addParents(permit);
     }
+
+    @Override
+    protected Permit doPopulate(Permit model, ActionGroup entity) {
+        return model;
+    }
 }

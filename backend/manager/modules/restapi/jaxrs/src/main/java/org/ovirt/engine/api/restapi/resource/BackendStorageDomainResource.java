@@ -173,15 +173,19 @@ public class BackendStorageDomainResource extends
 
 
     @Override
-    protected StorageDomain populate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+        return model;
+    }
+
+    @Override
+    protected StorageDomain deprecatedPopulate(StorageDomain model, storage_domains entity) {
         if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
             model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
         } else {
             model.setStatus(null);
         }
-        return super.populate(model, entity);
+        return super.deprecatedPopulate(model, entity);
     }
-
 
     private List<LogicalUnit> getIncomingLuns(Storage storage) {
         //user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.

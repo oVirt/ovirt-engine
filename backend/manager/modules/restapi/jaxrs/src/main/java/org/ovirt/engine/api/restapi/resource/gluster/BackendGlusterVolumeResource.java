@@ -114,4 +114,9 @@ public class BackendGlusterVolumeResource
     public void setParent(BackendGlusterVolumesResource parent) {
         this.parent = parent;
     }
+
+    @Override
+    protected GlusterVolume doPopulate(GlusterVolume model, GlusterVolumeEntity entity) {
+        return model;
+    }
 }

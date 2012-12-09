@@ -67,4 +67,9 @@ public class BackendRoleResource
             return params;
         }
     }
+
+    @Override
+    protected Role doPopulate(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
+        return model;
+    }
 }

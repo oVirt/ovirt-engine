@@ -13,8 +13,11 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.Payloads;
@@ -48,6 +51,7 @@ import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryPar
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -218,7 +222,7 @@ public class BackendVmsResource extends
                 new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
         params.setDiskInfoDestinationMap(images);
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        return performCreation(VdcActionType.AddVmFromSnapshot,
+        return performCreate(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
@@ -230,7 +234,7 @@ public class BackendVmsResource extends
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        return performCreation(VdcActionType.AddVmFromTemplate,
+        return performCreate(VdcActionType.AddVmFromTemplate,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
@@ -277,7 +281,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        return performCreation(VdcActionType.AddVm,
+        return performCreate(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
@@ -290,7 +294,7 @@ public class BackendVmsResource extends
         }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
-        return performCreation(VdcActionType.AddVmFromScratch,
+        return performCreate(VdcActionType.AddVmFromScratch,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
@@ -444,14 +448,47 @@ public class BackendVmsResource extends
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByName, new GetVdsGroupByNameParameters(name), "GetVdsGroupByName");
     }
 
+    protected void setBallooning(VM vm) {
+        Boolean balloonEnabled = getEntity(Boolean.class,
+                VdcQueryType.IsBalloonEnabled,
+                new GetVmByVmIdParameters(new Guid(vm.getId())),
+                null,
+                true);
+        if (!vm.isSetMemoryPolicy()) {
+            vm.setMemoryPolicy(new MemoryPolicy());
+        }
+        vm.getMemoryPolicy().setBallooning(balloonEnabled);
+    }
+
+    public void setCertificateInfo(VM model) {
+        VdcQueryReturnValue result =
+                runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                        new GetVmByVmIdParameters(asGuid(model.getId())));
+
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            if (!model.isSetDisplay()) {
+                model.setDisplay(new Display());
+            }
+            model.getDisplay().setCertificate(new Certificate());
+            model.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
+        }
+    }
+
     @Override
-    protected VM populate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
         model = addInlineDetails(details, model);
         if (details.contains(Detail.STATISTICS)) {
             addInlineStatistics(model);
         }
-//        setPayload(model); //TODO: removed due to (potential) performance issue, but we will need to find another way to get payload information for *all* VMs, such as a designated backend query.
+        return model;
+    }
+
+    @Override
+    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+        setPayload(model);
+        setBallooning(model);
+        setCertificateInfo(model);
         return model;
     }
 }

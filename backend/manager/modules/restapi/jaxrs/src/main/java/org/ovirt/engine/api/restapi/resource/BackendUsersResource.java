@@ -59,7 +59,7 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
         }
         AddUserParameters newUser = new AddUserParameters();
         newUser.setVdcUser(map(adUser));
-        return performCreation(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
+        return performCreate(VdcActionType.AddUser, newUser, new UserIdResolver(adUser.getUserId()), BaseResource.class);
     }
 
     private boolean isNameConatinsDomain(User user) {

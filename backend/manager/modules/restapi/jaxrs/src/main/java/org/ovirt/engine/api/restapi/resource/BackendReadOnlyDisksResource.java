@@ -47,4 +47,9 @@ public class BackendReadOnlyDisksResource
     protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, T id) {
         return id != null && id.equals(entity.getId());
     }
+
+    @Override
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        return model;
+    }
 }

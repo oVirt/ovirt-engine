@@ -69,4 +69,9 @@ public class BackendStorageDomainTemplateResource
         }
         return entityNotFound();
     }
+
+    @Override
+    protected Template doPopulate(Template model, VmTemplate entity) {
+        return model;
+    }
 }

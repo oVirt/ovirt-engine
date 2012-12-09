@@ -40,7 +40,7 @@ public class BackendGroupsResource extends BackendGroupsResourceBase implements 
         // to add groups as well as users
         AddUserParameters newGroup = new AddUserParameters();
         newGroup.setAdGroup(getAdGroup(group));
-        return performCreation(VdcActionType.AddUser, newGroup, new GroupIdResolver(newGroup.getAdGroup().getid()));
+        return performCreate(VdcActionType.AddUser, newGroup, new GroupIdResolver(newGroup.getAdGroup().getid()));
     }
 
     @Override

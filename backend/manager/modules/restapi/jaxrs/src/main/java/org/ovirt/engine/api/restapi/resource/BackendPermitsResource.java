@@ -40,7 +40,7 @@ public class BackendPermitsResource
         validateEnums(Permit.class, permit);
         ArrayList<ActionGroup> actionGroups = new ArrayList<ActionGroup>();
         actionGroups.add(map(permit));
-        return performCreation(VdcActionType.AttachActionGroupsToRole,
+        return performCreate(VdcActionType.AttachActionGroupsToRole,
                                new ActionGroupsToRoleParameter(roleId, actionGroups),
                                new PermitIdResolver(actionGroups.get(0)));
     }
@@ -93,6 +93,11 @@ public class BackendPermitsResource
         public ActionGroup lookupEntity(Guid id) {
             return actionGroup;
         }
+    }
+
+    @Override
+    protected Permit doPopulate(Permit model, ActionGroup entity) {
+        return model;
     }
 
 }

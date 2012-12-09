@@ -39,7 +39,7 @@ public class BackendClusterNetworksResource
             network.setId(getNetworkId(network.getName(), clusterId));
         }
         org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
-        return performCreation(addAction,
+        return performCreate(addAction,
                                getActionParameters(network, entity),
                                new NetworkIdResolver(network.getName()));
     }
@@ -90,4 +90,9 @@ public class BackendClusterNetworksResource
             }
             return null;
         }
+
+    @Override
+    protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return model;
+    }
 }

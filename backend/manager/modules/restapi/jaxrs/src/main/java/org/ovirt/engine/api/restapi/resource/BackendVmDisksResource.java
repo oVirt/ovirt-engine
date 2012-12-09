@@ -63,7 +63,7 @@ public class BackendVmDisksResource
                            .build();
         }else {
             validateDiskForCreation(disk);
-            return performCreation(addAction,
+            return performCreate(addAction,
                     getAddParameters(map(disk), disk),
                     getEntityIdResolver(disk.getName()));
         }
@@ -158,7 +158,12 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected Disk populate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        return model;
+    }
+
+    @Override
+    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
         return addStatistics(model, entity, uriInfo, httpHeaders);
     }
 

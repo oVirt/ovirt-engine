@@ -19,7 +19,6 @@ import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
-import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Ticket;
@@ -349,26 +348,19 @@ public class BackendVmResource extends
     }
 
     @Override
-    protected VM populate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+        return model;
+    }
+
+    @Override
+    protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
         parent.addInlineDetails(details, model);
         addStatistics(model, entity, uriInfo, httpHeaders);
         parent.setPayload(model);
-        setBallooning(model);
-        setCertificateInfo(model);
+        parent.setBallooning(model);
+        parent.setCertificateInfo(model);
         return model;
-    }
-
-    protected void setBallooning(VM vm) {
-        Boolean balloonEnabled = getEntity(Boolean.class,
-                VdcQueryType.IsBalloonEnabled,
-                new GetVmByVmIdParameters(new Guid(vm.getId())),
-                null,
-                true);
-        if (!vm.isSetMemoryPolicy()) {
-            vm.setMemoryPolicy(new MemoryPolicy());
-        }
-        vm.getMemoryPolicy().setBallooning(balloonEnabled);
     }
 
     VM addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui, HttpHeaders httpHeaders) {

@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
@@ -49,12 +50,15 @@ import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryPar
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmsResourceTest
         extends AbstractBackendCollectionResourceTest<VM, org.ovirt.engine.core.common.businessentities.VM, BackendVmsResource> {
 
     private static final String DEFAULT_TEMPLATE_ID = Guid.Empty.toString();
+    private static final String PAYLOAD_COMTENT = "payload";
+    public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
 
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
@@ -97,8 +101,8 @@ public class BackendVmsResourceTest
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(0);
-        setUpGetBallooningExpectations();
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1);
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString()));
@@ -108,8 +112,8 @@ public class BackendVmsResourceTest
     public void testRemoveForced() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(0);
-        setUpGetBallooningExpectations();
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1);
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
             "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.TRUE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{setForce(true);}}));
@@ -119,8 +123,8 @@ public class BackendVmsResourceTest
     public void testRemoveForcedIncomplete() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(0);
-        setUpGetBallooningExpectations();
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1);
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         verifyRemove(collection.remove(GUIDS[0].toString(), new Action(){{}}));
@@ -163,8 +167,8 @@ public class BackendVmsResourceTest
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(0);
-        setUpGetBallooningExpectations();
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVm,
                                            RemoveVmParameters.class,
                                            new String[] { "VmId", "Force" },
@@ -196,6 +200,9 @@ public class BackendVmsResourceTest
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1, 0);
+        setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 GetVdsGroupByVdsGroupIdParameters.class,
                 new String[] { "VdsGroupId" },
@@ -240,6 +247,9 @@ public class BackendVmsResourceTest
     public void testAddFromScratch() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpGetPayloadExpectations(2, 0);
+        setUpGetBallooningExpectations(2, 0);
+        setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      GetVmByVmIdParameters.class,
                                      new String[] { "Id" },
@@ -290,6 +300,9 @@ public class BackendVmsResourceTest
     public void testAddFromScratchWithStorageDomain() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
+        setUpGetPayloadExpectations(2, 0);
+        setUpGetBallooningExpectations(2, 0);
+        setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      GetVmByVmIdParameters.class,
                                      new String[] { "Id" },
@@ -336,6 +349,9 @@ public class BackendVmsResourceTest
     @Test
     public void testAddFromScratchNamedCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(2, 0);
+        setUpGetBallooningExpectations(2, 0);
+        setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
                                    SearchType.Cluster,
@@ -428,6 +444,10 @@ public class BackendVmsResourceTest
     public void testCloneWithDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpTemplateDisksExpectations(GUIDS[1]);
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -469,7 +489,10 @@ public class BackendVmsResourceTest
         vmStatic.setId(GUIDS[0]);
         vmStatic.setvm_name(NAMES[0]);
         expect(vmConfiguration.getStaticData()).andReturn(vmStatic).anyTimes();
-
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
                 GetVmConfigurationBySnapshotQueryParams.class,
                 new String[] { "SnapshotId" },
@@ -499,6 +522,10 @@ public class BackendVmsResourceTest
     @Test
     public void testClone() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -531,6 +558,9 @@ public class BackendVmsResourceTest
     @Test
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -562,6 +592,10 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicy() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
                 getHost());
@@ -607,6 +641,10 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithStorageDomain() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -641,7 +679,10 @@ public class BackendVmsResourceTest
     @Test
     public void testAddNamedCluster() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -699,6 +740,48 @@ public class BackendVmsResourceTest
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testListAllContent() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        List<String> populates = new ArrayList<String>();
+        populates.add("true");
+        expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+        setUpGetPayloadExpectations(3);
+        setUpGetBallooningExpectations(3);
+        setUpGetCertuficateExpectations(3);
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+
+    private VmPayload getPayloadModel() {
+        VmPayload payload = new VmPayload();
+        payload.setType(VmDeviceType.CDROM);
+        payload.setContent(PAYLOAD_COMTENT);
+        payload.setContent(new String(Base64.decodeBase64(payload.getContent())));
+        return payload;
+    }
+
+    private void setUpGetCertuficateExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[i] },
+                    CERTIFICATE);
+        }
+    }
+
+    private void setUpGetCertuficateExpectations(int times, int index) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[index] },
+                    CERTIFICATE);
+        }
     }
 
     @Test
@@ -939,20 +1022,45 @@ public class BackendVmsResourceTest
         return diskImages;
     }
 
-    protected void setUpGetPayloadExpectations(int index) throws Exception {
+    protected void setUpGetPayloadExpectations(int times) throws Exception {
         VmPayload payload = new VmPayload();
-        setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
-                                   GetVmByVmIdParameters.class,
-                                   new String[] { "Id" },
-                                   new Object[] { GUIDS[index] },
-                                   payload);
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[i] },
+                    payload);
+        }
     }
 
-    private void setUpGetBallooningExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
-                GetVmByVmIdParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
-                true);
+    protected void setUpGetPayloadExpectations(int times, int index) throws Exception {
+        VmPayload payload = new VmPayload();
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[index] },
+                    payload);
+        }
+    }
+
+    private void setUpGetBallooningExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[i] },
+                    true);
+        }
+    }
+
+    private void setUpGetBallooningExpectations(int times, int index) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+                    GetVmByVmIdParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[index] },
+                    true);
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
+import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.core.common.businessentities.tags;
@@ -25,5 +26,10 @@ public class BackendVmTagsResource
 
     protected TagsActionParametersBase getAttachParams(String id) {
         return new AttachEntityToTagParameters(asGuid(id), asList(asGuid(parentId)));
+    }
+
+    @Override
+    protected Tag doPopulate(Tag model, tags entity) {
+        return model;
     }
 }

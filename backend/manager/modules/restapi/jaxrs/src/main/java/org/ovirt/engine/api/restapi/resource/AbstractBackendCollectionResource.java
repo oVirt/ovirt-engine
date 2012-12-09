@@ -98,62 +98,37 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return getBackendCollection(entityType, query, queryParams);
     }
 
-    protected <T> Response performCreation(VdcActionType task,
+    protected final <T> Response performCreate(VdcActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             boolean block) {
-        return performCreation(task, taskParams, entityResolver, block, null);
+        return performCreate(task, taskParams, entityResolver, block, null);
     }
 
-    protected <T> Response performCreation(VdcActionType task,
-                                       VdcActionParametersBase taskParams,
-                                       IResolver<T, Q> entityResolver,
-                                       boolean block,
-                                       Class<? extends BaseResource> suggestedParentType) {
-        VdcReturnValueBase createResult;
-        try {
-            createResult = doAction(task, taskParams);
-        } catch (Exception e) {
-            return handleError(e, false);
-        }
+    protected final <T> Response performCreate(VdcActionType task,
+            VdcActionParametersBase taskParams,
+            IResolver<T, Q> entityResolver,
+            boolean block,
+            Class<? extends BaseResource> suggestedParentType) {
 
-        R model = resolveCreated(createResult, entityResolver, suggestedParentType);
-        Response response = null;
-        if (createResult.getHasAsyncTasks()) {
-            if (block) {
-                awaitCompletion(createResult);
-                // refresh model state
-                model = resolveCreated(createResult, entityResolver, suggestedParentType);
-                response = Response.created(URI.create(model.getHref())).entity(model).build();
-            } else {
-                if (model==null) {
-                    response = Response.status(ACCEPTED_STATUS).build();
-                } else {
-                    handleAsynchrony(createResult, model);
-                    response = Response.status(ACCEPTED_STATUS).entity(model).build();
-                }
-            }
-        } else {
-            if (model==null) {
-                response = Response.status(ACCEPTED_STATUS).build();
-            } else {
-                response = Response.created(URI.create(model.getHref())).entity(model).build();
-            }
-        }
-        return response;
+        // create (overidable)
+        VdcReturnValueBase createResult = doCreateEntity(task, taskParams);
+
+        // fetch + map
+        return fetchCreatedEntity(entityResolver, block, suggestedParentType, createResult);
     }
 
-    protected <T> Response performCreation(VdcActionType task,
+    protected final <T> Response performCreate(VdcActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver) {
-        return performCreation(task, taskParams, entityResolver, expectBlocking());
+        return performCreate(task, taskParams, entityResolver, expectBlocking());
     }
 
-    protected <T> Response performCreation(VdcActionType task,
+    protected final <T> Response performCreate(VdcActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             Class<? extends BaseResource> suggestedParentType) {
-        return performCreation(task, taskParams, entityResolver, expectBlocking(), suggestedParentType);
+        return performCreate(task, taskParams, entityResolver, expectBlocking(), suggestedParentType);
     }
 
     protected boolean expectBlocking() {
@@ -170,10 +145,10 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getTaskIdList()));
     }
 
-    protected <T> R resolveCreated(VdcReturnValueBase result, IResolver<T, Q> entityResolver, Class<? extends BaseResource> suggestedParentType) {
+    @SuppressWarnings("unchecked")
+    protected <T> Q resolveCreated(VdcReturnValueBase result, IResolver<T, Q> entityResolver) {
         try {
-            Q created = entityResolver.resolve((T) result.getActionReturnValue());
-            return addLinks(populate(map(created), created), suggestedParentType);
+            return entityResolver.resolve((T) result.getActionReturnValue());
         } catch (Exception e) {
             // we tolerate a failure in the entity resolution
             // as the substantive action (entity creation) has
@@ -182,7 +157,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             return null;
         }
     }
-
     protected String asString(VdcReturnValueBase result) {
         Guid guid = (Guid)result.getActionReturnValue();
         return guid != null ? guid.toString() : null;
@@ -235,5 +209,54 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     protected <C extends ActionableResource> C addActions(C model) {
         LinkHelper.addActions(getUriInfo(), model, this);
         return model;
+    }
+
+    private final <T> Response fetchCreatedEntity(IResolver<T, Q> entityResolver,
+            boolean block,
+            Class<? extends BaseResource> suggestedParentType,
+            VdcReturnValueBase createResult) {
+        Q created = resolveCreated(createResult, entityResolver);
+        R model = mapEntity(suggestedParentType, created);
+        Response response = null;
+        if (createResult.getHasAsyncTasks()) {
+            if (block) {
+                awaitCompletion(createResult);
+                // refresh model state
+                created = resolveCreated(createResult, entityResolver);
+                model = mapEntity(suggestedParentType, created);
+                response = Response.created(URI.create(model.getHref())).entity(model).build();
+            } else {
+                if (model == null) {
+                    response = Response.status(ACCEPTED_STATUS).build();
+                } else {
+                    handleAsynchrony(createResult, model);
+                    response = Response.status(ACCEPTED_STATUS).entity(model).build();
+                }
+            }
+        } else {
+            if (model == null) {
+                response = Response.status(ACCEPTED_STATUS).build();
+            } else {
+                response = Response.created(URI.create(model.getHref())).entity(model).build();
+            }
+        }
+        return response;
+    }
+
+    protected VdcReturnValueBase doCreateEntity(VdcActionType task, VdcActionParametersBase taskParams) {
+        VdcReturnValueBase createResult;
+        try {
+            createResult = doAction(task, taskParams);
+        } catch (Exception e) {
+            return handleError(e, false);
+        }
+        return createResult;
+    }
+
+    private final R mapEntity(Class<? extends BaseResource> suggestedParentType, Q created) {
+        R model = map(created);
+        model = deprecatedPopulate(model, created);
+        model = doPopulate(model, created);
+        return addLinks(model, suggestedParentType);
     }
 }

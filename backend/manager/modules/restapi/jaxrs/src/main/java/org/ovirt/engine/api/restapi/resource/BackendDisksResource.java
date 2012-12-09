@@ -44,7 +44,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
                 params.setStorageDomainId(storageDomainId);
             }
         }
-        return performCreation(VdcActionType.AddDisk, params,
+        return performCreate(VdcActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
     }
 
@@ -106,5 +106,10 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
             collection.getDisks().add(addLinks(map(disk)));
         }
         return collection;
+    }
+
+    @Override
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        return model;
     }
 }

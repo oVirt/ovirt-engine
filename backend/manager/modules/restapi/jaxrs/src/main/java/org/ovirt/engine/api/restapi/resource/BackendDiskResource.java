@@ -30,4 +30,9 @@ public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ov
     public Disk get() {
         return performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
     }
+
+    @Override
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        return model;
+    }
 }

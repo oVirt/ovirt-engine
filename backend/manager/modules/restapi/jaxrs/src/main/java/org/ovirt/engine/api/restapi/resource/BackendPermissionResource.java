@@ -50,4 +50,9 @@ public class BackendPermissionResource
     protected Permission addLinks(Permission model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
         return super.addLinks(model, model.getUser() != null ? suggestedParentType : Group.class);
     }
+
+    @Override
+    protected Permission doPopulate(Permission model, permissions entity) {
+        return model;
+    }
 }

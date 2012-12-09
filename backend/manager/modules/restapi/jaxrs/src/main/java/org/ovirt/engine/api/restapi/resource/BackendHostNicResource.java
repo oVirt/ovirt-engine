@@ -43,7 +43,7 @@ public class BackendHostNicResource
 
     @Override
     public HostNIC get() {
-        return parent.lookupNic(id);
+        return parent.lookupNic(id, false);
     }
 
     @Override
@@ -88,8 +88,13 @@ public class BackendHostNicResource
     }
 
     @Override
-    protected HostNIC populate(HostNIC model, VdsNetworkInterface entity) {
-        return parent.addStatistics(model, entity, uriInfo, httpHeaders);
+    protected HostNIC doPopulate(HostNIC model, VdsNetworkInterface entity) {
+        return parent.doPopulate(model, entity);
+    }
+
+    @Override
+    protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
+        return parent.deprecatedPopulate(model, entity);
     }
 
     @SuppressWarnings("serial")
@@ -136,7 +141,7 @@ public class BackendHostNicResource
         }
         performAction(VdcActionType.UpdateNetworkToVdsInterface, params);
 
-        return parent.lookupNic(id);
+        return parent.lookupNic(id, true);
     }
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNewNetwork(HostNIC nic) {

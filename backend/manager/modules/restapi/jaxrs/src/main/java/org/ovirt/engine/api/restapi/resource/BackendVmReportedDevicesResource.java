@@ -79,4 +79,9 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
         }
         return null;
     }
+
+    @Override
+    protected Device doPopulate(Device model, VmGuestAgentInterface entity) {
+        return model;
+    }
 }

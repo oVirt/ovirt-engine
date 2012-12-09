@@ -23,4 +23,9 @@ AbstractBackendResource<Event, AuditLog> implements EventResource {
     public Event get() {
         return parent.lookupEvent(id);
     }
+
+    @Override
+    protected Event doPopulate(Event model, AuditLog entity) {
+        return model;
+    }
 }

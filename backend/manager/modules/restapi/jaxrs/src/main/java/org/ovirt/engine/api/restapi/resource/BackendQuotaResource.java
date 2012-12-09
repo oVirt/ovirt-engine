@@ -34,4 +34,9 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
             return new QuotaCRUDParameters(map(incoming, entity));
         }
     }
+
+    @Override
+    protected Quota doPopulate(Quota model, org.ovirt.engine.core.common.businessentities.Quota entity) {
+        return model;
+    }
 }

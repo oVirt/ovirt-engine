@@ -46,7 +46,7 @@ public class BackendAssignedRolesResource
                                                                  role.getName());
             role.setId(entity.getId().toString());
         }
-        return performCreation(VdcActionType.AddSystemPermission,
+        return performCreate(VdcActionType.AddSystemPermission,
                                new PermissionsOperationsParametes(newPermission(role.getId())),
                                new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
                                                    MultilevelAdministrationByPermissionIdParameters.class));
@@ -108,5 +108,10 @@ public class BackendAssignedRolesResource
             }
         }
         return handleError(new EntityNotFoundException(roleId), true);
+    }
+
+    @Override
+    protected Role doPopulate(Role model, permissions entity) {
+        return model;
     }
 }

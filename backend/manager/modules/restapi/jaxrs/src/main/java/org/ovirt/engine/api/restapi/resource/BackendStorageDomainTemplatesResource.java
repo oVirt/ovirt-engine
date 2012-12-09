@@ -72,4 +72,9 @@ public class BackendStorageDomainTemplatesResource
                                                                   storageDomainId,
                                                                   getDataCenterId(storageDomainId)));
     }
+
+    @Override
+    protected Template doPopulate(Template model, VmTemplate entity) {
+        return model;
+    }
 }

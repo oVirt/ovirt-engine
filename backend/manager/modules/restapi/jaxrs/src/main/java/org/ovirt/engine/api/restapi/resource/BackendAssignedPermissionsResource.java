@@ -73,7 +73,7 @@ public class BackendAssignedPermissionsResource
                            ? new String[] {"role.id", "dataCenter|cluster|host|storageDomain|vm|vmpool|template.id"}
                            : new String[] {"role.id", "user|group.id"});
         permissions entity = map(permission, getPermissionsTemplate(permission));
-        return performCreation(VdcActionType.AddPermission,
+        return performCreate(VdcActionType.AddPermission,
                                getPrincipal(entity, permission),
                                new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
                                                    MultilevelAdministrationByPermissionIdParameters.class));
@@ -219,5 +219,10 @@ public class BackendAssignedPermissionsResource
                          VdcQueryType.GetPermissionById,
                          new MultilevelAdministrationByPermissionIdParameters(new Guid(id)),
                          id);
+    }
+
+    @Override
+    protected Permission doPopulate(Permission model, permissions entity) {
+        return model;
     }
 }

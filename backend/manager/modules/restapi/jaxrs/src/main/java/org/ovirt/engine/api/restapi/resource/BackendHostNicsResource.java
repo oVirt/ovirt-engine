@@ -79,7 +79,7 @@ public class BackendHostNicsResource
     public Response add(final HostNIC nic) {
         validateParameters(nic, "name", "network.id|name", "bonding.slaves.id|name");
         validateEnums(HostNIC.class, nic);
-        return performCreation(VdcActionType.AddBond,
+        return performCreate(VdcActionType.AddBond,
                                new AddBondParameters(asGuid(hostId),
                                                      nic.getName(),
                                                      lookupNetwork(nic.getNetwork()),
@@ -100,13 +100,19 @@ public class BackendHostNicsResource
         return inject(new BackendHostNicResource(id, this));
     }
 
-    public HostNIC lookupNic(String id) {
+    public HostNIC lookupNic(String id, boolean forcePopulate) {
         List<VdsNetworkInterface> ifaces = getCollection();
         for (VdsNetworkInterface iface : ifaces) {
             if (iface.getId().toString().equals(id)) {
-                HostNIC hostNic = populate(map(iface, ifaces), iface);
-                for(org.ovirt.engine.core.common.businessentities.network.Network nwk : getClusterNetworks()){
-                    if(nwk.getName().equals(iface.getNetworkName())) {
+                HostNIC hostNic = map(iface, ifaces);
+                if (forcePopulate) {
+                    deprecatedPopulate(hostNic, iface);
+                    doPopulate(hostNic, iface);
+                } else {
+                    populate(hostNic, iface);
+                }
+                for (org.ovirt.engine.core.common.businessentities.network.Network nwk : getClusterNetworks()) {
+                    if (nwk.getName().equals(iface.getNetworkName())) {
                         hostNic.getNetwork().setId(nwk.getId().toString());
                         hostNic.getNetwork().setName(null);
                         break;
@@ -284,7 +290,12 @@ public class BackendHostNicsResource
     }
 
     @Override
-    protected HostNIC populate(HostNIC model, VdsNetworkInterface entity) {
+    protected HostNIC doPopulate(HostNIC model, VdsNetworkInterface entity) {
+        return model;
+    }
+
+    @Override
+    protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
         return addStatistics(model, entity, uriInfo, httpHeaders);
     }
 

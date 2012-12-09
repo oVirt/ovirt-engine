@@ -63,4 +63,9 @@ public class BackendAttachedStorageDomainResource
         inject(resource);
         return resource.map(entity, template);
     }
+
+    @Override
+    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+        return model;
+    }
 }

@@ -103,4 +103,9 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     public void setCollectionResource(BackendSnapshotsResource collection) {
         this.collection = collection;
     }
+
+    @Override
+    protected Snapshot doPopulate(Snapshot model, org.ovirt.engine.core.common.businessentities.Snapshot entity) {
+        return model;
+    }
 }

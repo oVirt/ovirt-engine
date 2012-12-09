@@ -97,4 +97,9 @@ public class BackendCdRomsResource
                                                getUpdateParametersProvider(),
                                                getRequiredUpdateFields()));
     }
+
+    @Override
+    protected CdRom doPopulate(CdRom model, VM entity) {
+        return model;
+    }
 }

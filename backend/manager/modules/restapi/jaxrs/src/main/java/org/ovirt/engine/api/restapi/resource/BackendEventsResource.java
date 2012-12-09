@@ -67,7 +67,7 @@ EventsResource {
     @Override
     public Response add(Event event) {
         validateParameters(event, "origin", "severity", "customId", "description");
-        return performCreation(VdcActionType.AddExternalEvent,
+        return performCreate(VdcActionType.AddExternalEvent,
                                new AddExternalEventParameters(map(event)),
                                new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
     }
@@ -75,5 +75,10 @@ EventsResource {
     @Override
     protected Response performRemove(String id) {
         return performAction(VdcActionType.RemoveExternalEvent, new RemoveExternalEventParameters(asLong(id)));
+    }
+
+    @Override
+    protected Event doPopulate(Event model, AuditLog entity) {
+        return model;
     }
 }

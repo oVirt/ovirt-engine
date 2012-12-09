@@ -19,7 +19,12 @@ public class BackendTemplateNicResource extends BackendNicResource implements Ni
     }
 
     @Override
-    protected NIC populate(NIC model, VmNetworkInterface entity) {
+    protected NIC doPopulate(NIC model, VmNetworkInterface entity) {
+        return model;
+    }
+
+    @Override
+    protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
         Network network = findNetwork(model);
         if (network != null) {
             model.getNetwork().setId(network.getId().toString());
@@ -27,4 +32,5 @@ public class BackendTemplateNicResource extends BackendNicResource implements Ni
         }
         return model;
     }
+
 }

@@ -184,4 +184,9 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
                                     new SearchParameters(constraint,
                                                          searchType));
     }
+
+    @Override
+    protected Group doPopulate(Group model, LdapGroup entity) {
+        return model;
+    }
 }

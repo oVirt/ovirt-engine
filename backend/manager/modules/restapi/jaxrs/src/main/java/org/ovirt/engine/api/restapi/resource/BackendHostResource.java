@@ -330,7 +330,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    protected Host populate(Host model, VDS entity) {
+    protected Host doPopulate(Host model, VDS entity) {
+        return model;
+    }
+
+    @Override
+    protected Host deprecatedPopulate(Host model, VDS entity) {
         Host host = parent.addStatistics(model, entity, uriInfo, httpHeaders);
         parent.addCertificateInfo(host);
         return host;

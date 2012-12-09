@@ -54,7 +54,7 @@ public class BackendDataCentersResource extends
         validateEnums(DataCenter.class, dataCenter);
         validateEnum(StorageType.class, dataCenter.getStorageType().toUpperCase());
         storage_pool entity = map(dataCenter);
-        return performCreation(VdcActionType.AddEmptyStoragePool,
+        return performCreate(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
                                new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class));
     }
@@ -83,7 +83,12 @@ public class BackendDataCentersResource extends
     }
 
     @Override
-    protected DataCenter populate(DataCenter model, storage_pool entity) {
+    protected DataCenter doPopulate(DataCenter model, storage_pool entity) {
+        return model;
+    }
+
+    @Override
+    protected DataCenter deprecatedPopulate(DataCenter model, storage_pool entity) {
         GetAvailableStoragePoolVersionsParameters parameters = new GetAvailableStoragePoolVersionsParameters();
         parameters.setStoragePoolId(new Guid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
@@ -94,4 +99,5 @@ public class BackendDataCentersResource extends
                                                                           null));
         return model;
     }
+
 }

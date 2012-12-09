@@ -49,4 +49,9 @@ public class BackendGroupResource
     public BackendGroupsResource getParent() {
         return parent;
     }
+
+    @Override
+    protected Group doPopulate(Group model, LdapGroup entity) {
+        return model;
+    }
 }

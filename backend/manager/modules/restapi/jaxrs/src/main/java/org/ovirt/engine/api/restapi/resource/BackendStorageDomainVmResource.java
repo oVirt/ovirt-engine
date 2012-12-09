@@ -75,4 +75,9 @@ public class BackendStorageDomainVmResource
         return entityNotFound();
     }
 
+    @Override
+    protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+        return model;
+    }
+
 }

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 
-public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
+public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
     extends BackendResource {
 
     protected static final String ID_SEPARATOR = ",";
@@ -166,9 +166,25 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         }
     }
 
-    protected R populate(R model, Q entity) {
+    /**
+     * Populates the entity with additional information, which is not returned by the main backend query. Checks for
+     * "All-Content=true" header before populating. Population logic itself is implemented in doPopulate().
+     */
+    protected final R populate(R model, Q entity) {
+        model = deprecatedPopulate(model, entity);
+        return (isPopulate() ? doPopulate(model, entity) : model);
+    }
+
+    @Deprecated
+    protected R deprecatedPopulate(R model, Q entity) {
         return model;
     }
+
+    /**
+     * Populates the entity with additional information, which is not returned by the main backend query. Override this
+     * method to add population logic to an entity.
+     */
+    protected abstract R doPopulate(R model, Q entity);
 
     /**
      * Add any parent resource references needed for constructing links.

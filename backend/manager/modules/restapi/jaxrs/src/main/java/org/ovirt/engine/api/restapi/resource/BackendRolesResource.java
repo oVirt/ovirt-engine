@@ -40,7 +40,7 @@ public class BackendRolesResource
     public Response add(Role role) {
         validateParameters(role, "name", "permits.id");
         validateEnums(Role.class, role);
-        return performCreation(VdcActionType.AddRoleWithActionGroups,
+        return performCreate(VdcActionType.AddRoleWithActionGroups,
                                new RoleWithActionGroupsParameters(map(role), mapPermits(role.getPermits().getPermits())),
                                new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, MultilevelAdministrationByRoleIdParameters.class));
     }
@@ -71,6 +71,11 @@ public class BackendRolesResource
             actionGroups.add(mapper.map(permit, (ActionGroup)null));
         }
         return actionGroups;
+    }
+
+    @Override
+    protected Role doPopulate(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
+        return model;
     }
 
 }

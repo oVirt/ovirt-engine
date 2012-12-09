@@ -61,4 +61,9 @@ public class BackendStatisticsResource<R extends BaseResource, Q>
        throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected Statistic doPopulate(Statistic model, Q entity) {
+        return model;
+    }
+
 }

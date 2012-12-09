@@ -19,11 +19,16 @@ public class BackendCreationResource
     }
 
     @Override
-    protected Creation populate(Creation model, List entity) {
+    protected Creation deprecatedPopulate(Creation model, List entity) {
         model.setId(asString(ids));
         if (model.isSetFault()) {
             setReason(model.getFault());
         }
+        return model;
+    }
+
+    @Override
+    protected Creation doPopulate(Creation model, List entity) {
         return model;
     }
 }

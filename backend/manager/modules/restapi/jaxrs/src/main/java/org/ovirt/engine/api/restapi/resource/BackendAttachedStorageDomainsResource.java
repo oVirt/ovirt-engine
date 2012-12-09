@@ -60,7 +60,7 @@ public class BackendAttachedStorageDomainsResource
             storageDomainId = lookupStorageDomainIdByName(storageDomain.getName());
         }
 
-        return performCreation(VdcActionType.AttachStorageDomainToPool,
+        return performCreate(VdcActionType.AttachStorageDomainToPool,
                                new DetachStorageDomainFromPoolParameters(storageDomainId, dataCenterId),
                                new StorageDomainIdResolver(storageDomainId));
     }
@@ -118,5 +118,10 @@ public class BackendAttachedStorageDomainsResource
         BackendStorageDomainsResource resource = new BackendStorageDomainsResource();
         inject(resource);
         return resource.map(entity, template);
+    }
+
+    @Override
+    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+        return model;
     }
 }

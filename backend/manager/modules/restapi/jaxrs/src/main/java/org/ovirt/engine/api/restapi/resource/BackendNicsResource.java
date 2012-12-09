@@ -133,7 +133,7 @@ public abstract class BackendNicsResource
     @Override
     public Response add(NIC device) {
         validateParameters(device, getRequiredAddFields());
-        Response response = performCreation(addAction,
+        Response response = performCreate(addAction,
                                             getAddParameters(map(device), device),
                                             getEntityIdResolver(device.getName()));
         if (response!=null) {

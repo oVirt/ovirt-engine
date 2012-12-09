@@ -109,7 +109,7 @@ public class BackendGlusterBricksResource
             GlusterBricks bricks = new GlusterBricks();
             for(Guid id : (List<Guid>)result.getActionReturnValue()) {
                 GlusterBrickEntity created = entityResolver.resolve(id);
-                bricks.getGlusterBricks().add(addLinks(populate(map(created), created)));
+                bricks.getGlusterBricks().add(addLinks(doPopulate(map(created), created)));
             }
             return bricks;
         } catch (Exception e) {
@@ -174,6 +174,11 @@ public class BackendGlusterBricksResource
         GlusterBricks bricks = new GlusterBricks();
         bricks.getGlusterBricks().add(brick);
         return remove(bricks);
+    }
+
+    @Override
+    protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
+        return model;
     }
 
 }

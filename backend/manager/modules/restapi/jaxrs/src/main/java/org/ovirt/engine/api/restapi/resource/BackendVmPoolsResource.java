@@ -65,7 +65,7 @@ public class BackendVmPoolsResource
 
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
-        return performCreation(VdcActionType.AddVmPoolWithVms,
+        return performCreate(VdcActionType.AddVmPoolWithVms,
                                new AddVmPoolWithVmsParameters(entity, vm, size, -1),
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                    GetVmPoolByIdParameters.class));
@@ -83,13 +83,18 @@ public class BackendVmPoolsResource
     }
 
     @Override
-    public VmPool populate(VmPool pool, vm_pools entity) {
-        if (pool.isSetSize() && pool.getSize() > 0) {
-            VM vm = getEntity(VM.class, SearchType.VM, "Vms: pool=" + pool.getName());
-            pool.setTemplate(new Template());
-            pool.getTemplate().setId(vm.getVmtGuid().toString());
-        }
+    public VmPool doPopulate(VmPool pool, vm_pools entity) {
         return pool;
+    }
+
+    @Override
+    protected VmPool deprecatedPopulate(VmPool model, vm_pools entity) {
+        if (model.isSetSize() && model.getSize() > 0) {
+            VM vm = getEntity(VM.class, SearchType.VM, "Vms: pool=" + model.getName());
+            model.setTemplate(new Template());
+            model.getTemplate().setId(vm.getVmtGuid().toString());
+        }
+        return model;
     }
 
     protected VM mapToVM(VmPool model, VmTemplate template) {

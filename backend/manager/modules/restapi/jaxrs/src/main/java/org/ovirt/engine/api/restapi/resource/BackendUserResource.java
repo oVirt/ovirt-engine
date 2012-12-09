@@ -50,4 +50,9 @@ public class BackendUserResource
     public BackendUsersResource getParent() {
         return parent;
     }
+
+    @Override
+    protected User doPopulate(User model, DbUser entity) {
+        return model;
+    }
 }

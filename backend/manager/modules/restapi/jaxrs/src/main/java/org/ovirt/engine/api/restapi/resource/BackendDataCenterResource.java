@@ -71,8 +71,13 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     }
 
     @Override
-    protected DataCenter populate(DataCenter model, storage_pool entity) {
-        return parent.populate(model, entity);
+    protected DataCenter doPopulate(DataCenter model, storage_pool entity) {
+        return parent.doPopulate(model, entity);
+    }
+
+    @Override
+    protected DataCenter deprecatedPopulate(DataCenter model, storage_pool entity) {
+        return parent.deprecatedPopulate(model, entity);
     }
 
     protected class UpdateParametersProvider implements

@@ -30,4 +30,9 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
                                                    ImageOperation.Copy);
         return doAction(VdcActionType.MoveOrCopyDisk, params, action);
     }
+
+    @Override
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        return model;
+    }
 }

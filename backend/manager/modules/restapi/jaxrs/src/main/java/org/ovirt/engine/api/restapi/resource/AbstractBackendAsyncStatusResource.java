@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.logging.Messages;
 
-public class AbstractBackendAsyncStatusResource<R extends BaseResource>
+public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
         extends AbstractBackendSubResource<R, List/*<AsyncTaskStatus>*/> {
 
     protected ArrayList<Guid> ids;

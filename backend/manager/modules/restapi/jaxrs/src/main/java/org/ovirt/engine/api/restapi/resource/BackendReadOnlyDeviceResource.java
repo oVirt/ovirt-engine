@@ -42,4 +42,9 @@ public class BackendReadOnlyDeviceResource<D extends BaseDevice, C extends BaseD
     AbstractBackendReadOnlyDevicesResource<D, C, Q> getCollection() {
         return collection;
     }
+
+    @Override
+    protected D doPopulate(D model, Q entity) {
+        return model;
+    }
 }

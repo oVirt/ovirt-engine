@@ -76,4 +76,9 @@ public class BackendGlusterBrickResource
     public void setParent(BackendGlusterBricksResource parent) {
         this.parent = parent;
     }
+
+    @Override
+    protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
+        return model;
+    }
 }

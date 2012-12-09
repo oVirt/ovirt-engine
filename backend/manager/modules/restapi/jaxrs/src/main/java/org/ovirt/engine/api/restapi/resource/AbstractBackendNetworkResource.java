@@ -24,4 +24,9 @@ public class AbstractBackendNetworkResource
     AbstractBackendNetworksResource getParent() {
         return parent;
     }
+
+    @Override
+    protected Network doPopulate(Network model, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+        return model;
+    }
 }
