@@ -55,9 +55,7 @@ public class ImportVmCommandTest {
     protected ImportVmParameters createParameters() {
         final VM v = createVM();
         v.setVmName("testVm");
-        final ImportVmParameters p =
-                new ImportVmParameters(v, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
-        return p;
+        return new ImportVmParameters(v, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
     }
 
     protected VM createVM() {
