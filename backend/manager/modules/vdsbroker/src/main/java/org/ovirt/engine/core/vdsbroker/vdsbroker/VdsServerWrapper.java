@@ -1192,4 +1192,16 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, XmlRpcStruct device) {
+        try {
+            Map<String, Object> xmlRpcReturnValue =
+                    vdsServer.vmUpdateDevice(vmId, device.getInnerMap());
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

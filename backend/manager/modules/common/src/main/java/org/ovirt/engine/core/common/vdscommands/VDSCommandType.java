@@ -120,6 +120,7 @@ public enum VDSCommandType {
     HotPlugNic("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnplugNic("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    UpdateVmInterface("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),

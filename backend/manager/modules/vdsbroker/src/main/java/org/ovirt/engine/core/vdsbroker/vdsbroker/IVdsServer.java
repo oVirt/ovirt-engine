@@ -185,6 +185,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc hotUnplugNic(XmlRpcStruct info);
 
+    StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, XmlRpcStruct device);
+
     FutureTask<Map<String, Object>> poll();
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] snapParams);
