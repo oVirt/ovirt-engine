@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -107,7 +108,12 @@ public class OvfTemplateReader extends OvfReader {
                 if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }
-                iface.setNetworkName(node.SelectSingleNode("rasd:Connection", _xmlNS).InnerText);
+
+                String resourceSubNetworkName = node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText;
+                iface.setNetworkName(StringUtils.defaultIfEmpty(resourceSubNetworkName, null));
+
+                XmlNode linkedNode = node.SelectSingleNode(OvfProperties.VMD_LINKED, _xmlNS);
+                iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.InnerText));
                 iface.setName(node.SelectSingleNode("rasd:Name", _xmlNS).InnerText);
                 iface.setSpeed((node.SelectSingleNode("rasd:speed", _xmlNS) != null) ? Integer
                         .parseInt(node.SelectSingleNode("rasd:speed", _xmlNS).InnerText)

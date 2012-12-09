@@ -162,7 +162,8 @@ public class OvfTemplateWriter extends OvfWriter {
         for (VmNetworkInterface iface : _vmTemplate.getInterfaces()) {
             _writer.WriteStartElement("Item");
             _writer.WriteStartElement(RASD_URI, "Caption");
-            _writer.WriteRaw("Ethernet adapter on " + iface.getNetworkName());
+            String networkName = iface.getNetworkName() != null ? iface.getNetworkName() : "[No Network]";
+            _writer.WriteRaw("Ethernet adapter on " + networkName);
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "InstanceId");
             _writer.WriteRaw(iface.getId().toString());
@@ -176,7 +177,12 @@ public class OvfTemplateWriter extends OvfWriter {
             }
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "Connection");
-            _writer.WriteRaw(iface.getNetworkName());
+            if (iface.getNetworkName() != null) {
+                _writer.WriteRaw(iface.getNetworkName());
+            }
+            _writer.WriteEndElement();
+            _writer.WriteStartElement(RASD_URI, "Linked");
+            _writer.WriteRaw(String.valueOf(iface.isLinked()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "Name");
             _writer.WriteRaw(iface.getName());
