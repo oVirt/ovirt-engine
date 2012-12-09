@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -45,7 +46,11 @@ public class RemoveNetworksModel extends ConfirmationModel {
 
             } else if (a instanceof Network) {
                 Network network = (Network) a;
-                list.add(network.getdescription());
+                if (network.getdescription() == null || "".equals(network.getdescription().trim())) { //$NON-NLS-1$
+                    list.add(network.getName());
+                } else {
+                    list.add(StringFormat.format("%1$s (%2$s)", network.getName(), network.getdescription())); //$NON-NLS-1$
+                }
             }
         }
         setItems(list);
