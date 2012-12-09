@@ -22,13 +22,14 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmStatic;import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -139,7 +140,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
                     public boolean eval(Network n) {
-                        return iface.getNetworkName().equals(n.getname());
+                        return n.getName().equals(iface.getNetworkName());
                     }
                 });
                 // if network not exists in cluster we remove the network to
