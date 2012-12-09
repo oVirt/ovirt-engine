@@ -111,7 +111,7 @@ public final class ImagesHandler {
 
     public static boolean setDiskAlias(BaseDisk disk, VM vm) {
         if (disk == null) {
-            log.errorFormat("Disk object is null");
+            log.error("Disk object is null");
             return false;
         }
 
