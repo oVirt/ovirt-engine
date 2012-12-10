@@ -288,6 +288,23 @@ END; $BODY$
 
 LANGUAGE plpgsql;
 
+
+-- a method for adding an action group to a role if doesn't exist
+CREATE OR REPLACE FUNCTION fn_db_add_action_group_to_role(v_role_id UUID, v_action_group_id INTEGER)
+RETURNS VOID
+AS $procedure$
+BEGIN
+       INSERT INTO roles_groups(role_id,action_group_id)
+       SELECT v_role_id, v_action_group_id
+       WHERE NOT EXISTS (SELECT 1
+                         FROM roles_groups
+                         WHERE role_id = v_role_id
+                         AND action_group_id = v_action_group_id);
+RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 -- This function splits a config value: given a config value with one row for 'general', it creates new options
 -- with the old value, for each version, except the v_update_from_version version and beyond, which gets the input value
 CREATE OR REPLACE FUNCTION fn_db_split_config_value(v_option_name character varying, v_old_option_value character varying, v_new_option_value character varying, v_update_from_version character varying)
