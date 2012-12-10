@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -186,7 +186,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                 if (!_glusterPeerListSucceeded) {
                     type = AuditLogType.GLUSTER_SERVERS_LIST_FAILED;
                 } else if (!_glusterPeerProbeSucceeded) {
-                    type = AuditLogType.GLUSTER_HOST_ADD_FAILED;
+                    type = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
                 }
             }
             return type;
@@ -295,12 +295,12 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private boolean glusterPeerProbe(Guid upServerId, String newServerName) {
         try {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterHostAdd,
-                    new GlusterHostAddVDSParameters(upServerId, newServerName));
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.AddGlusterServer,
+                    new AddGlusterServerVDSParameters(upServerId, newServerName));
             if (!returnValue.getSucceeded()) {
                 getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                 getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                AuditLogDirector.log(new AuditLogableBase(getVdsId()), AuditLogType.GLUSTER_HOST_ADD_FAILED);
+                AuditLogDirector.log(new AuditLogableBase(getVdsId()), AuditLogType.GLUSTER_SERVER_ADD_FAILED);
                 _glusterPeerProbeSucceeded = false;
             }
             return returnValue.getSucceeded();

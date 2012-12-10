@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -208,12 +208,12 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                         : getVds().gethost_name();
         VDSReturnValue returnValue =
                 runVdsCommand(
-                        VDSCommandType.GlusterHostAdd,
-                        new GlusterHostAddVDSParameters(getClusterUtils().getUpServer(targetClusterId).getId(),
+                        VDSCommandType.AddGlusterServer,
+                        new AddGlusterServerVDSParameters(getClusterUtils().getUpServer(targetClusterId).getId(),
                                 hostName));
         if (!returnValue.getSucceeded()) {
             handleVdsError(returnValue);
-            errorType = AuditLogType.GLUSTER_HOST_ADD_FAILED;
+            errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
             return false;
         }
         return true;

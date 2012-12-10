@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
@@ -41,16 +42,16 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHostAddVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
@@ -167,14 +168,14 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                                 : getParameters().getvds().gethost_name();
                 VDSReturnValue returnValue =
                         runVdsCommand(
-                                VDSCommandType.GlusterHostAdd,
-                                new GlusterHostAddVDSParameters(upServer.getId(),
+                                VDSCommandType.AddGlusterServer,
+                                new AddGlusterServerVDSParameters(upServer.getId(),
                                         hostName));
                 setSucceeded(returnValue.getSucceeded());
                 if (!getSucceeded()) {
                     getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                     getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                    errorType = AuditLogType.GLUSTER_HOST_ADD_FAILED;
+                    errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
                     return;
                 }
             }

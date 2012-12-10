@@ -240,7 +240,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String AuditLogType___GLUSTER_VOLUME_REPLACE_BRICK_START_FAILED();
 
-	String AuditLogType___GLUSTER_HOST_ADD_FAILED();
+	String AuditLogType___GLUSTER_SERVER_ADD_FAILED();
 
 	String AuditLogType___GLUSTER_SERVER_REMOVE();
 
