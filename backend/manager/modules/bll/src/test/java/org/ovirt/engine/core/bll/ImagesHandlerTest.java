@@ -38,7 +38,7 @@ public class ImagesHandlerTest {
     @Test
     public void testGetSuggestedDiskAliasNotNullAliasDisk() {
         disk.setDiskAlias("someAlias");
-        assertEquals("a new alias was generated instead of returning the pre-difined one",
+        assertEquals("a new alias was generated instead of returning the pre-defined one",
                 disk.getDiskAlias(),
                 ImagesHandler.getSuggestedDiskAlias(disk, prefix, 1));
     }
