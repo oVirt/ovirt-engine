@@ -168,8 +168,9 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
             Integer reserved_mem, Integer guest_overhead, VDSStatus previous_status, String software_version,
             String version_name, String build_name, Long mem_available, Long mem_shared, boolean server_SSL_enabled,
             String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
-            String pm_password, Integer pm_port, String pm_options, boolean pm_enabled) // Nullable<System.Int32>
-    // mem_cached,
+            String pm_password, Integer pm_port, String pm_options, boolean pm_enabled, String pmSecondaryIp,
+            String pmSecondaryType, String pmSecondaryUser, String pmSecondaryPassword, Integer pmSecondaryPort,
+            String pmSecondaryOptions, boolean pmSecondaryConcurrent)
     {
         mVdsStatic = new VdsStatic();
         mVdsDynamic = new VdsDynamic();
@@ -227,6 +228,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setpm_options(pm_options);
         this.setpm_type(pm_type);
         this.setpm_user(pm_user);
+        this.setPmSecondaryIp(pmSecondaryIp);
+        this.setPmSecondaryType(pmSecondaryType);
+        this.setPmSecondaryPort(pmSecondaryPort);
+        this.setPmSecondaryUser(pmSecondaryUser);
+        this.setPmSecondaryPassword(pmSecondaryPassword);
+        this.setPmSecondaryConcurrent(pmSecondaryConcurrent);
     }
 
     public VDS(VdsStatic vdsStatic, VdsDynamic vdsDynamic, VdsStatistics vdsStatistics) {
@@ -287,7 +294,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getpm_password(),
                         getpm_port(),
                         getpm_options(),
-                        getpm_enabled());
+                        getpm_enabled(),
+                        getPmSecondaryIp(),
+                        getPmSecondaryType(),
+                        getPmSecondaryuser(),
+                        getPmSecondaryPassword(),
+                        getPmSecondaryPort(),
+                        getPmSecondaryOptions(),
+                        isPmSecondaryConcurrent());
 
         vds.setcpu_flags(getcpu_flags());
         vds.setVdsSpmPriority(getVdsSpmPriority());
@@ -991,6 +1005,13 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return mVdsStatic.getPmOptionsMap();
     }
 
+    public ValueObjectMap getPmSecondaryOptionsMap() {
+        return mVdsStatic.getPmSecondaryOptionsMap();
+    }
+
+    public void setPmSecondaryOptionsMap(ValueObjectMap value) {
+        mVdsStatic.setPmSecondaryOptionsMap(value);
+    }
     public void setPmOptionsMap(ValueObjectMap value) {
         mVdsStatic.setPmOptionsMap(value);
     }
@@ -1009,6 +1030,66 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setPmProxyPreferences(String pmProxyPreferences) {
         mVdsStatic.setPmProxyPreferences(pmProxyPreferences);
+    }
+
+    public String getPmSecondaryIp() {
+        return mVdsStatic.getPmSecondaryIp();
+    }
+
+    public void setPmSecondaryIp(String value) {
+        mVdsStatic.setPmSecondaryIp(value);
+    }
+
+    public String getPmSecondaryType() {
+        return mVdsStatic.getPmSecondaryType();
+    }
+
+    public void setPmSecondaryType(String value) {
+        mVdsStatic.setPmSecondaryType(value);
+    }
+
+    public String getPmSecondaryuser() {
+        return mVdsStatic.getPmSecondaryuser();
+    }
+
+    public void setPmSecondaryUser(String value) {
+        mVdsStatic.setPmSecondaryUser(value);
+    }
+
+    public String getPmSecondaryPassword() {
+        return mVdsStatic.getPmSecondaryPassword();
+    }
+
+    public void setPmSecondaryPassword(String value) {
+        mVdsStatic.setPmSecondaryPassword(value);
+    }
+
+    public Integer getPmSecondaryPort() {
+        return mVdsStatic.getPmSecondaryPort();
+    }
+
+    public void setPmSecondaryPort(Integer value) {
+        mVdsStatic.setPmSecondaryPort(value);
+    }
+
+    public String getPmSecondaryOptions() {
+        return mVdsStatic.getPmSecondaryOptions();
+    }
+
+    public void setPmSecondaryOptions(String value) {
+        mVdsStatic.setPmSecondaryOptions(value);
+    }
+
+    public void setPmSecondaryPort(String value) {
+        mVdsStatic.setPmSecondaryOptions(value);
+    }
+
+    public boolean isPmSecondaryConcurrent() {
+        return mVdsStatic.isPmSecondaryConcurrent();
+    }
+
+    public void setPmSecondaryConcurrent(boolean value) {
+        mVdsStatic.setPmSecondaryConcurrent(value);
     }
 
     public String gethost_os() {
@@ -1195,13 +1276,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                             "usage_mem_percent",
                             "usage_network_percent", "mem_commited", "vm_count", "vm_active", "host_name",
                             "vds_group_name",
-                            "vds_type", "CpuName", "vds_group_id", "net_config_dirty", "spm_status", "pm_enabled",
-                            "pm_user",
-                            "pm_password", "pm_type", "pm_port", "pm_options", "vms_cores_count", "ksm_state",
-                            "mem_shared",
-                            "Version", "vds_group_compatibility_version", "UniqueId", "TransparentHugePagesState",
-                            "swap_total",
-                            "PmOptionsMap", "swap_free", "mem_shared_percent", "ManagmentIp",
+                            "vds_type", "CpuName", "vds_group_id", "net_config_dirty", "spm_status",
+                            "pm_enabled", "ManagmentIp", "pm_user", "pm_password", "pm_type", "pm_port", "pm_options",
+                            "pmSecondaryConcurrent", "pmSecondaryIp", "pmSecondaryUser", "pmSecondaryPassword",
+                            "pmSecondaryType",
+                            "pmSecondaryPort", "pmSecondaryOptions", "PmOptionsMap", "PmSecondaryOptionsMap",
+                            "mem_shared", "vms_cores_count", "ksm_state", "Version", "vds_group_compatibility_version",
+                            "UniqueId",
+                            "TransparentHugePagesState", "swap_total", "swap_free", "mem_shared_percent",
                             "supported_cluster_levels", "ContainingHooks", "NonOperationalReason",
                             "host_os", "kernel_version", "spice_version", "kvm_version", "libvirt_version", "storage_pool_id",
                             "physical_mem_mb" }));

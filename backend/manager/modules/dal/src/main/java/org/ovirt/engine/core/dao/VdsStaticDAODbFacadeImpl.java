@@ -93,6 +93,13 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_options", vds.getpm_options())
                 .addValue("pm_enabled", vds.getpm_enabled())
                 .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
+                .addValue("pm_secondary_ip", vds.getPmSecondaryIp())
+                .addValue("pm_secondary_type", vds.getPmSecondaryType())
+                .addValue("pm_secondary_user", vds.getPmSecondaryuser())
+                .addValue("pm_secondary_password", DbFacadeUtils.encryptPassword(vds.getPmSecondaryPassword()))
+                .addValue("pm_secondary_port", vds.getPmSecondaryPort())
+                .addValue("pm_secondary_options", vds.getPmSecondaryOptions())
+                .addValue("pm_secondary_concurrent", vds.isPmSecondaryConcurrent())
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
                 .addValue("sshKeyFingerprint", vds.getSSHKeyFingerprint());
@@ -136,6 +143,13 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setpm_options(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));
             entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
+            entity.setPmSecondaryIp((rs.getString("pm_secondary_ip")));
+            entity.setPmSecondaryType(rs.getString("pm_secondary_type"));
+            entity.setPmSecondaryUser(rs.getString("pm_secondary_user"));
+            entity.setPmSecondaryPassword(DbFacadeUtils.decryptPassword(rs.getString("pm_secondary_password")));
+            entity.setPmSecondaryPort((Integer) rs.getObject("pm_secondary_port"));
+            entity.setPmSecondaryOptions(rs.getString("pm_secondary_options"));
+            entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
 

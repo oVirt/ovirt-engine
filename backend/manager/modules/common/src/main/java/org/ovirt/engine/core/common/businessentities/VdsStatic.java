@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -63,6 +64,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private String name = ""; // GREGM prevents NPE
 
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
+    @NotNull(groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
     @Column(name = "ip")
     private String ip;
@@ -73,6 +75,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
 
     @HostnameOrIp(message = "VALIDATION.VDS.HOSTNAME.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
+    @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     @Column(name = "host_name", length = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
@@ -122,8 +125,38 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     @Column(name = "pm_proxy_preferences")
     private String pmProxyPreferences;
 
+    @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
+    @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
+    @Column(name = "pm_secondary_ip")
+    private String pmSecondaryIp;
+
+    @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
+    @Column(name = "pm_secondary_type")
+    private String pmSecondaryType;
+
+    @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
+    @Column(name = "pm_secondary_user")
+    private String pmSecondaryUser;
+
+    @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
+    @Column(name = "pm_secondary_password")
+    private String pmSecondaryPassword;
+
+    @Column(name = "pm_secondary_port")
+    private Integer pmSecondaryPort;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    @Column(name = "pm_secondary_options", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String pmSecondaryOptions;
+
+    @Column(name = "pm_secondary_concurrent")
+    private boolean pmSecondaryConcurrent;
+
     @Transient
     private ValueObjectMap pmOptionsMap;
+
+    @Transient
+    private ValueObjectMap pmSecondaryOptionsMap;
 
     @Column(name = "otp_validity")
     private long otpValidity;
@@ -168,6 +201,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         this.serverSslEnabled = server_SSL_enabled;
         this.setvds_type(vds_type);
         this.setpm_options("");
+        this.setPmSecondaryOptions("");
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
@@ -320,6 +354,71 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     public void setPmProxyPreferences(String pmProxyPreferences) {
         this.pmProxyPreferences = pmProxyPreferences;
     }
+    public String getPmSecondaryIp() {
+        return this.pmSecondaryIp;
+    }
+
+    public void setPmSecondaryIp(String value) {
+        this.pmSecondaryIp = value;
+    }
+
+    public String getPmSecondaryType() {
+        return pmSecondaryType;
+    }
+
+    public void setPmSecondaryType(String value) {
+        pmSecondaryType = value;
+    }
+
+    public String getPmSecondaryuser() {
+        return pmSecondaryUser;
+    }
+
+    public void setPmSecondaryUser(String value) {
+        pmSecondaryUser = value;
+    }
+
+    public String getPmSecondaryPassword() {
+        return pmSecondaryPassword;
+    }
+
+    public void setPmSecondaryPassword(String value) {
+        pmSecondaryPassword = value;
+    }
+
+    public Integer getPmSecondaryPort() {
+        return pmSecondaryPort;
+    }
+
+    public void setPmSecondaryPort(Integer value) {
+        pmSecondaryPort = value;
+    }
+
+    public String getPmSecondaryOptions() {
+        return pmSecondaryOptions;
+    }
+
+    public void setPmSecondaryOptions(String value) {
+        pmSecondaryOptions = value;
+        // set pmSecondaryOptionsMap value content to match the given string.
+        pmSecondaryOptionsMap = PmOptionsStringToMap(value);
+    }
+
+    public boolean isPmSecondaryConcurrent() {
+        return pmSecondaryConcurrent;
+    }
+
+    public void setPmSecondaryConcurrent(boolean value) {
+        pmSecondaryConcurrent = value;
+    }
+
+    public ValueObjectMap getPmSecondaryOptionsMap() {
+        return pmSecondaryOptionsMap;
+    }
+
+    public void setPmSecondaryOptionsMap(ValueObjectMap value) {
+        pmSecondaryOptionsMap = value;
+    }
 
     public long getOtpValidity() {
         return otpValidity;
@@ -374,7 +473,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
      * @return
      */
     public static ValueObjectMap PmOptionsStringToMap(String pmOptions) {
-        if (pmOptions.equals("")) {
+        if (pmOptions == null || pmOptions.equals("")) {
             return new ValueObjectMap();
         }
         HashMap<String, String> map = new HashMap<String, String>();
@@ -409,6 +508,14 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         result = prime * result + ((pmPort == null) ? 0 : pmPort.hashCode());
         result = prime * result + ((pmType == null) ? 0 : pmType.hashCode());
         result = prime * result + ((pmUser == null) ? 0 : pmUser.hashCode());
+        result = prime * result + ((pmSecondaryIp == null) ? 0 : ip.hashCode());
+        result = prime * result + (pmSecondaryConcurrent ? 1231 : 1237);
+        result = prime * result + ((pmSecondaryOptions == null) ? 0 : pmOptions.hashCode());
+        result = prime * result + ((pmSecondaryOptionsMap == null) ? 0 : pmSecondaryOptionsMap.hashCode());
+        result = prime * result + ((pmSecondaryPassword == null) ? 0 : pmSecondaryPassword.hashCode());
+        result = prime * result + ((pmSecondaryPort == null) ? 0 : pmSecondaryPort.hashCode());
+        result = prime * result + ((pmSecondaryType == null) ? 0 : pmSecondaryType.hashCode());
+        result = prime * result + ((pmSecondaryUser == null) ? 0 : pmSecondaryUser.hashCode());
         result = prime * result + port;
         result = prime * result + ((serverSslEnabled == null) ? 0 : serverSslEnabled.hashCode());
         result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
@@ -510,6 +617,46 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
                 return false;
         } else if (!sshKeyFingerprint.equals(other.sshKeyFingerprint))
             return false;
+        if (pmSecondaryIp == null) {
+            if (other.pmSecondaryIp != null)
+                return false;
+        } else if (!pmSecondaryIp.equals(other.pmSecondaryIp))
+            return false;
+        if (pmSecondaryConcurrent != other.pmSecondaryConcurrent)
+            return false;
+        if (pmSecondaryOptions == null) {
+            if (other.pmSecondaryOptions != null)
+                return false;
+        } else if (!pmSecondaryOptions.equals(other.pmSecondaryOptions))
+            return false;
+        if (pmSecondaryOptionsMap == null) {
+            if (other.pmSecondaryOptionsMap != null)
+                return false;
+        } else if (!pmSecondaryOptionsMap.equals(other.pmSecondaryOptionsMap))
+            return false;
+        if (pmSecondaryPassword == null) {
+            if (other.pmSecondaryPassword != null)
+                return false;
+        } else if (!pmSecondaryPassword.equals(other.pmSecondaryPassword))
+            return false;
+        if (pmSecondaryPort == null) {
+            if (other.pmSecondaryPort != null)
+                return false;
+        } else if (!pmSecondaryPort.equals(other.pmSecondaryPort))
+            return false;
+        if (pmSecondaryType == null) {
+            if (other.pmSecondaryType != null)
+                return false;
+        } else if (!pmSecondaryType.equals(other.pmSecondaryType))
+            return false;
+        if (pmSecondaryUser == null) {
+            if (other.pmSecondaryUser != null)
+                return false;
+        } else if (!pmSecondaryUser.equals(other.pmSecondaryUser))
+            return false;
+        if (port != other.port)
+            return false;
+
         return true;
     }
 

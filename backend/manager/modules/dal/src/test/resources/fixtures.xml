@@ -767,6 +767,13 @@
         <column>pm_options</column>
         <column>pm_enabled</column>
         <column>pm_proxy_preferences</column>
+        <column>pm_secondary_ip</column>
+        <column>pm_secondary_type</column>
+        <column>pm_secondary_user</column>
+        <column>pm_secondary_password</column>
+        <column>pm_secondary_port</column>
+        <column>pm_secondary_options</column>
+        <column>pm_secondary_concurrent</column>
         <column>_create_date</column>
         <column>_update_date</column>
         <column>vds_spm_priority</column>
@@ -789,6 +796,13 @@
             <value></value>
             <value>0</value>
             <value>cluster,dc</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>            
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
@@ -812,6 +826,13 @@
             <value></value>
             <value>0</value>
             <value>cluster,dc</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>                        
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
@@ -835,9 +856,17 @@
             <value></value>
             <value>0</value>
             <value>cluster,dc</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>                        
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
+            <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -857,9 +886,17 @@
             <value></value>
             <value>0</value>
             <value>cluster,dc</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>                        
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>4</value>
+            <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
         </row>
     </table>
 
