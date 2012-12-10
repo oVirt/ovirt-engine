@@ -110,6 +110,13 @@ public class VmInterfaceManagerTest {
     }
 
     @Test
+    public void isValidVmNetworkForNullNetwork() {
+        Network network = createNewNetwork(true, NETWORK_NAME);
+        VmNetworkInterface iface = createNewInterface();
+        assertTrue(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+    }
+
+    @Test
     public void isValidVmNetworkForValidNetwork() {
         Network network = createNewNetwork(true, NETWORK_NAME);
         VmNetworkInterface iface = createNewInterface();

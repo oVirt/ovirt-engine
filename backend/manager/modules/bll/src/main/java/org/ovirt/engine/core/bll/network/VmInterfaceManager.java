@@ -94,7 +94,8 @@ public class VmInterfaceManager {
      */
     public boolean isValidVmNetwork(VmNetworkInterface iface, Map<String, Network> networksByName) {
         String networkName = iface.getNetworkName();
-        return (networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork());
+        return networkName == null
+                || ((networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork()));
     }
 
     /**
@@ -112,7 +113,7 @@ public class VmInterfaceManager {
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
-                if (networks.contains(vmNic.getNetworkName())) {
+                if (vmNic.getNetworkName() != null && networks.contains(vmNic.getNetworkName())) {
                     vmNames.add(vm.getVmName());
                     break;
                 }
