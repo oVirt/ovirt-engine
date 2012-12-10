@@ -13,6 +13,11 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 
 public class ErrorTranslator {
+
+    private static final String VARIABLE_PATTERN = "\\$\\{\\w*\\}*"; //$NON-NLS-1$
+
+    private static final RegExp STARTS_WITH_VARIABLE = RegExp.compile("^" + VARIABLE_PATTERN, "i"); //$NON-NLS-1$ //$NON-NLS-2$
+
     private ConstantsWithLookup errors;
 
     public ErrorTranslator() {
@@ -126,7 +131,7 @@ public class ErrorTranslator {
         Map<String, LinkedList<String>> variables = new HashMap<String, LinkedList<String>>();
 
         for (String currentMessage : translatedMessages) {
-            if (currentMessage.startsWith("$")) { //$NON-NLS-1$
+            if (isVariableDeclaration(currentMessage)) {
                 addVariable(currentMessage, variables);
             } else {
                 translatedErrors.add(currentMessage);
@@ -157,7 +162,7 @@ public class ErrorTranslator {
     private String resolveMessage(String message, Map<String, LinkedList<String>> variables) {
         String returnValue = message;
 
-        RegExp regex = RegExp.compile("\\$\\{\\w*\\}*", "gi"); //$NON-NLS-1$ //$NON-NLS-2$
+        RegExp regex = RegExp.compile(VARIABLE_PATTERN, "gi"); //$NON-NLS-1$ //$NON-NLS-2$
 
         int fromIndex = 0;
         int length = message.length();
@@ -194,5 +199,14 @@ public class ErrorTranslator {
      */
     private final boolean isDynamicVariable(String strMessage) {
         return strMessage.startsWith("$"); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns true if and only if the param starts with $ but is not a variable reference (e.g. is not ${something})
+     */
+    boolean isVariableDeclaration(String msg) {
+        boolean startsAsVariable = msg.startsWith("$"); //$NON-NLS-1$
+        boolean isVariableReference = STARTS_WITH_VARIABLE.test(msg);
+        return startsAsVariable && !isVariableReference;
     }
 }
