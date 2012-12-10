@@ -7,6 +7,7 @@ public class OvfProperties {
     final static String VMD_ADDRESS = "rasd:Address";
     final static String VMD_NAME = "rasd:Name";
     final static String VMD_CONNECTION = "rasd:Connection";
+    final static String VMD_LINKED = "rasd:Linked";
     final static String VMD_RESOURCE_TYPE = "rasd:ResourceType";
     final static String VMD_SUB_RESOURCE_TYPE = "rasd:ResourceSubType";
     final static String VMD_VIRTUAL_QUANTITY = "rasd:VirtualQuantity";

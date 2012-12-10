@@ -424,7 +424,12 @@ public abstract class OvfReader implements IOvfBuilder {
         iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).InnerText);
         iface.setMacAddress((node.SelectSingleNode("rasd:MACAddress", _xmlNS) != null) ? node.SelectSingleNode(
                 "rasd:MACAddress", _xmlNS).InnerText : "");
-        iface.setNetworkName(node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText);
+
+        String networkName = node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText;
+        iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
+
+        XmlNode linkedNode = node.SelectSingleNode(OvfProperties.VMD_LINKED, _xmlNS);
+        iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.InnerText));
 
         String resourceSubType = node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText;
         if (StringUtils.isNotEmpty(resourceSubType)) {
