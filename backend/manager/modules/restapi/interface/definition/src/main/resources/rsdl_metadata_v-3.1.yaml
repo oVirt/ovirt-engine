@@ -61,7 +61,7 @@ actions:
           vm.domain.name: xs:string
           vm.description: xs:string
           vm.stateless: xs:boolean
-	  vm.delete_protected: xs:boolean
+          vm.delete_protected: xs:boolean
           vm.cpu.topology.sockets: xs:int
           vm.placement_policy.affinity: xs:string
           vm.placement_policy.host.id|name: xs:string
