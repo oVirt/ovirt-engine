@@ -2038,7 +2038,7 @@ def initCmdLineParser():
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other option")
-    parser.add_option("--answer-file", help="Runs the configuration in none-interactive mode, extracting all information from the \
+    parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other option")
     parser.add_option("--no-mem-check", help="Disable minimum memory check", action="store_true", default=False)
 
