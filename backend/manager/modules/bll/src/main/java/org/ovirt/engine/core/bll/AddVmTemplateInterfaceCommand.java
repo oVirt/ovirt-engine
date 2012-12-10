@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
@@ -79,16 +80,25 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        // check that the network exists in current cluster
-        List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
-        if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getname().equals(getNetworkName());
-            }
-        })) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+        String clusterCompatibilityVersion = getVdsGroup().getcompatibility_version().getValue();
+        VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
+
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
             return false;
+        }
+
+        if (getNetworkName() != null) {
+            // check that the network exists in current cluster
+            List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
+            if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+                @Override
+                public boolean eval(Network network) {
+                    return network.getname().equals(getNetworkName());
+                }
+            })) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                return false;
+            }
         }
 
         return true;

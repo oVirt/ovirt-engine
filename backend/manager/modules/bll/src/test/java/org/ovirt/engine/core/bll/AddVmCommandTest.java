@@ -57,6 +57,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockU
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -86,6 +87,9 @@ public class AddVmCommandTest {
 
     @Mock
     DiskImageDAO diskImageDAO;
+
+    @Mock
+    VdsGroupDAO vdsGroupDao;
 
     @Mock
     BackendInternal backend;
@@ -381,6 +385,7 @@ public class AddVmCommandTest {
         AuditLogableBaseMockUtils.mockVmDao(cmd, vmDAO);
         doReturn(sdDAO).when(cmd).getStorageDomainDAO();
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
+        doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
     }
 
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {
