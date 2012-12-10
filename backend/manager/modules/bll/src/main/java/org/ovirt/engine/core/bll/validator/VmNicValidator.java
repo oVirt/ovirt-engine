@@ -24,7 +24,7 @@ public class VmNicValidator {
      * @return An error if unlinking is not supported and the interface is unlinked, otherwise it's OK.
      */
     public ValidationResult linkedCorrectly() {
-        return !networkLinkingSupported() && !nic.isLinked()
+        return !networkLinkingSupported(version) && !nic.isLinked()
                 ? new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
@@ -33,12 +33,12 @@ public class VmNicValidator {
      * @return An error if unlinking is not supported and the network is not set, otherwise it's OK.
      */
     public ValidationResult networkNameValid() {
-        return !networkLinkingSupported() && nic.getNetworkName() == null
+        return !networkLinkingSupported(version) && nic.getNetworkName() == null
                 ? new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
 
-    private boolean networkLinkingSupported() {
+    public static boolean networkLinkingSupported(String version) {
         return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version);
     }
 

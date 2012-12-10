@@ -464,7 +464,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Version clusterVersion) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
-        struct.add(VdsProperties.network, vmInterface.getNetworkName());
+        struct.add(VdsProperties.network, StringUtils.defaultString(vmInterface.getNetworkName()));
+
+        boolean linkingSupported =
+                Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, clusterVersion.getValue());
+        if (linkingSupported) {
+            struct.add(VdsProperties.linkActive, String.valueOf(vmInterface.isLinked()));
+        }
+
         addAddress(vmDevice, struct);
         struct.add(VdsProperties.mac_addr, vmInterface.getMacAddress());
         addBootOrder(vmDevice, struct);
@@ -473,7 +480,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.nic_type, nicModel);
         if (vmInterface.isPortMirroring()) {
             List<String> networks = new ArrayList<String>();
-            networks.add(vmInterface.getNetworkName());
+            if (vmInterface.getNetworkName() != null) {
+                networks.add(vmInterface.getNetworkName());
+            }
             struct.add(VdsProperties.portMirroring, networks);
         }
 

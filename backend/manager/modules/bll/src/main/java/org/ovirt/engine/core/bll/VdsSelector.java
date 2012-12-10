@@ -436,11 +436,16 @@ public class VdsSelector {
                 Config.<Boolean> GetValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
         for (final VmNetworkInterface vmIf : getVmNICs()) {
             boolean found = false;
-            for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
-                if (!networkRequiredOnVds(vmIf, networksByName, onlyRequiredNetworks)
-                        || StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
-                    found = true;
-                    break;
+
+            if (vmIf.getNetworkName() == null) {
+                found = true;
+            } else {
+                for (final VdsNetworkInterface vdsIf : allInterfacesForVds) {
+                    if (!networkRequiredOnVds(vmIf, networksByName, onlyRequiredNetworks)
+                            || StringUtils.equals(vmIf.getNetworkName(), vdsIf.getNetworkName())) {
+                        found = true;
+                        break;
+                    }
                 }
             }
             if (!found) {

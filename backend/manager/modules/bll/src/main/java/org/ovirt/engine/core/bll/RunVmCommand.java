@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -777,23 +778,28 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getVdsGroupId());
         Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
 
-        // Checking that the interface are all configured
-        // and they are attached to networks that are attached to the cluster
-        // and they are attached to VM networks
-        return isVmInterfacesConfigured(interfaceNetworkMap) &&
+        return isVmInterfacesConfigured() &&
                 isVmInterfacesAttachedToClusterNetworks(clusterNetworksNames, interfaceNetworkNames) &&
                 isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
     }
 
     /**
-     * @param interfaceNetworkNames
-     *            VM interface network names
-     * @return true if all VM network interfaces are attached to existing cluster networks
+     * Checking that the interfaces are all configured, interfaces with no network are allowed only if network linking
+     * is supported.
+     *
+     * @return true if all VM network interfaces are attached to existing cluster networks, or to no network (when
+     *         network linking is supported).
      */
-    private boolean isVmInterfacesConfigured(Map<String, VmNetworkInterface> interfacesMap) {
-        if (interfacesMap.containsKey(StringUtils.EMPTY)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
-            return false;
+    private boolean isVmInterfacesConfigured() {
+        for (VmNetworkInterface nic : getVm().getInterfaces()) {
+            if (nic.getNetworkName() == null) {
+                if (!VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion().getValue())) {
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
         }
         return true;
     }
@@ -810,6 +816,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         Set<String> result = new HashSet<String>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
+        if (VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion().getValue())) {
+            result.remove(null);
+        }
 
         // If after removing the cluster network names we still have objects, then we have interface on networks that
         // aren't

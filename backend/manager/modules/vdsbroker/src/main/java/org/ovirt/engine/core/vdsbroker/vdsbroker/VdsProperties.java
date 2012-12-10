@@ -61,6 +61,7 @@ public final class VdsProperties {
     public static final String images_last_check = "imagesLastCheck";
     public static final String images_last_delay = "imagesLastDelay";
     public static final String network = "network";
+    public static final String linkActive = "linkActive";
     public static final String bootproto = "BOOTPROTO";
     public static final String stp = "STP";
     public static final String mtu = "mtu";
