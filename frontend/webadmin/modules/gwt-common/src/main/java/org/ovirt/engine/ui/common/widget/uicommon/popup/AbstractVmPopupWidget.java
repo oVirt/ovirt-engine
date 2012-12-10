@@ -1008,6 +1008,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
         oSTypeEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
+        isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
 
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
