@@ -1334,8 +1334,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             gettempVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
         }
 
-        updateDefaultSelectedConsoleProtocol(gettempVm());
-
         if (model.getIsNew())
         {
             if (gettempVm().getVmtGuid().equals(NGuid.Empty))

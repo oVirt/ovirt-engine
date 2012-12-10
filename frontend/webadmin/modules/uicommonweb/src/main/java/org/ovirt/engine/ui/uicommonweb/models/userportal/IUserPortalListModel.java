@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleSelectionContext;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
@@ -36,8 +37,9 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
     private static final int VNC_INDEX = 1;
     private static final int RDP_INDEX = 2;
 
-    // TODO requires a different patch to be merged first
-    private static final List<VmOsType> vmOsTypeWithoutSpiceDriverSupport = Arrays.asList();
+    private static final List<VmOsType> vmOsTypeWithoutSpiceDriverSupport = Arrays.asList(VmOsType.Windows8,
+            VmOsType.Windows8x64,
+            VmOsType.Windows2012x64);
 
     public IUserPortalListModel() {
         cachedConsoleModels = new HashMap<Guid, ArrayList<ConsoleModel>>();
@@ -181,6 +183,10 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
                                 spiceConsoleModel, vncConsoleModel, rdpConsoleModel })));
 
                 updateDefaultSelectedConsoleProtocol(vm);
+            } else if (selectionContextChanged(vm)) {
+                // if new data comes which has changed the selection context, (e.g. the OS type changed)
+                // recalculate the default selected protocol
+                updateDefaultSelectedConsoleProtocol(vm);
             }
 
             // Getting cached console model
@@ -208,8 +214,19 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
         }
     }
 
+    private boolean selectionContextChanged(VM vm) {
+        ConsoleSelectionContext newContext = new ConsoleSelectionContext(vm.getVmOs(), vm.getDefaultDisplayType());
+        ConsoleModel selectedConsole = resolveSelectedConsoleModel(vm.getId());
+
+        if (selectedConsole == null) {
+            return true;
+        }
+
+        return !newContext.equals(selectedConsole.getSelectionContext());
+    }
+
     protected ConsoleModel determineConsoleModelFromVm(VM vm, ArrayList<ConsoleModel> cachedModels) {
-        return vm.getDisplayType() == DisplayType.vnc ? cachedModels.get(VNC_INDEX) : cachedModels.get(SPICE_INDEX);
+        return vm.getDefaultDisplayType() == DisplayType.vnc ? cachedModels.get(VNC_INDEX) : cachedModels.get(SPICE_INDEX);
     }
 
     protected void updateDefaultSelectedConsoleProtocol(VM vm) {
@@ -231,6 +248,14 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             cachedModels.get(RDP_INDEX).setUserSelected(true);
         } else {
             determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
+        }
+
+        setupSelectionContext(vm);
+    }
+
+    private void setupSelectionContext(VM vm) {
+        for (ConsoleModel model : cachedConsoleModels.get(vm.getId())) {
+            model.setSelectionContext(new ConsoleSelectionContext(vm.getVmOs(), vm.getDefaultDisplayType()));
         }
     }
 
@@ -264,11 +289,16 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             return null;
         }
 
+        ConsoleModel selectedConsoleModel = resolveSelectedConsoleModel(vmId);
+        return selectedConsoleModel == null ? null
+                : ConsoleProtocol.getProtocolByModel(selectedConsoleModel.getClass());
+    }
+
+    private ConsoleModel resolveSelectedConsoleModel(Guid vmId) {
         for (ConsoleModel model : cachedConsoleModels.get(vmId)) {
             if (model.isUserSelected()) {
-                return ConsoleProtocol.getProtocolByModel(model.getClass());
+                return model;
             }
-
         }
 
         return null;

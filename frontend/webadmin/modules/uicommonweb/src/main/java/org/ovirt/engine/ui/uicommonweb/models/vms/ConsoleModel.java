@@ -24,6 +24,16 @@ public abstract class ConsoleModel extends EntityModel
         return userSelected;
     }
 
+    private ConsoleSelectionContext selectionContext;
+
+    public ConsoleSelectionContext getSelectionContext() {
+        return selectionContext;
+    }
+
+    public void setSelectionContext(ConsoleSelectionContext selectionContext) {
+        this.selectionContext = selectionContext;
+    }
+
     public void setUserSelected(boolean userSelected) {
         this.userSelected = userSelected;
     }
