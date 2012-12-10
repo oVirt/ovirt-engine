@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -157,23 +158,32 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends V
             return false;
         }
 
-        // check that the exists in current cluster
-        List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
+        String compatibilityVersion = getVm().getVdsGroupCompatibilityVersion().getValue();
+        VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), compatibilityVersion);
 
-        Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getname().equals(getNetworkName());
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
+            return false;
+        }
+
+        if (getNetworkName() != null) {
+            // check that the network exists in current cluster
+            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
+
+            Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+                @Override
+                public boolean eval(Network network) {
+                    return network.getname().equals(getNetworkName());
+                }
+            });
+
+            if (interfaceNetwork == null) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+                return false;
+            } else if (!interfaceNetwork.isVmNetwork()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
+                addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getname()));
+                return false;
             }
-        });
-
-        if (interfaceNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-            return false;
-        } else if (!interfaceNetwork.isVmNetwork()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
-            addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getname()));
-            return false;
         }
 
         if (!StringUtils.isEmpty(getMacAddress())) {
