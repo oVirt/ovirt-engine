@@ -164,7 +164,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
                          true);
     }
 
-    protected class GroupIdResolver extends EntityIdResolver {
+    protected class GroupIdResolver extends EntityIdResolver<Guid> {
 
         private Guid id;
 
@@ -173,8 +173,8 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         }
 
         @Override
-        public LdapGroup lookupEntity(Guid nullId) {
-            return lookupGroupById(id);
+        public LdapGroup lookupEntity(Guid nullId) throws BackendFailureException {
+            return lookupGroupById(this.id);
         }
     }
 

@@ -42,7 +42,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     public DataCenter update(DataCenter incoming) {
         validateEnums(DataCenter.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class),
                              VdcActionType.UpdateStoragePool,
                              new UpdateParametersProvider());
     }

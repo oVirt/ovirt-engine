@@ -219,7 +219,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVmFromSnapshot,
                                 params,
-                                new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
@@ -231,7 +231,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVmFromTemplate,
                                params,
-                               new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
     private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
@@ -278,7 +278,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         return performCreation(VdcActionType.AddVm,
                                params,
-                               new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
@@ -291,7 +291,7 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         return performCreation(VdcActionType.AddVmFromScratch,
                                params,
-                               new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class));
     }
 
     private ArrayList<DiskImage> mapDisks(Disks disks) {
@@ -320,7 +320,7 @@ public class BackendVmsResource extends
     }
 
     private void addInlineStatistics(VM vm) {
-        EntityIdResolver resolver = new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
         BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromString(vm.getId()), query));
         Statistics statistics = statisticsResource.list();

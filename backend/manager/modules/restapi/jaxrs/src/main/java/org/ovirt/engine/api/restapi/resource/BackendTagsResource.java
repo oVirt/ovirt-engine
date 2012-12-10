@@ -86,7 +86,7 @@ public class BackendTagsResource
         return getEntity(tags.class, VdcQueryType.GetTagByTagName, new GetTagByTagNameParameters(name), name);
     }
 
-    protected class TagNameResolver extends EntityIdResolver {
+    protected class TagNameResolver extends EntityIdResolver<Guid> {
 
         private String name;
 
@@ -95,8 +95,8 @@ public class BackendTagsResource
         }
 
         @Override
-        public tags lookupEntity(Guid id) {
-            assert(id == null); // AddTag returns nothing, lookup name instead
+        public tags lookupEntity(Guid id) throws BackendFailureException {
+            assert (id == null); // AddTag returns nothing, lookup name instead
             return lookupTagByName(name);
         }
     }

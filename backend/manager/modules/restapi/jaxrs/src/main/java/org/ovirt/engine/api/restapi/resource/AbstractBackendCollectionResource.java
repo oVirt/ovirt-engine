@@ -98,16 +98,16 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return getBackendCollection(entityType, query, queryParams);
     }
 
-    protected Response performCreation(VdcActionType task,
+    protected <T> Response performCreation(VdcActionType task,
             VdcActionParametersBase taskParams,
-            EntityIdResolver entityResolver,
+            IResolver<T, Q> entityResolver,
             boolean block) {
         return performCreation(task, taskParams, entityResolver, block, null);
     }
 
-    protected Response performCreation(VdcActionType task,
+    protected <T> Response performCreation(VdcActionType task,
                                        VdcActionParametersBase taskParams,
-                                       EntityIdResolver entityResolver,
+                                       IResolver<T, Q> entityResolver,
                                        boolean block,
                                        Class<? extends BaseResource> suggestedParentType) {
         VdcReturnValueBase createResult;
@@ -143,15 +143,15 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return response;
     }
 
-    protected Response performCreation(VdcActionType task,
+    protected <T> Response performCreation(VdcActionType task,
             VdcActionParametersBase taskParams,
-            EntityIdResolver entityResolver) {
+            IResolver<T, Q> entityResolver) {
         return performCreation(task, taskParams, entityResolver, expectBlocking());
     }
 
-    protected Response performCreation(VdcActionType task,
+    protected <T> Response performCreation(VdcActionType task,
             VdcActionParametersBase taskParams,
-            EntityIdResolver entityResolver,
+            IResolver<T, Q> entityResolver,
             Class<? extends BaseResource> suggestedParentType) {
         return performCreation(task, taskParams, entityResolver, expectBlocking(), suggestedParentType);
     }
@@ -170,9 +170,9 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getTaskIdList()));
     }
 
-    protected R resolveCreated(VdcReturnValueBase result, EntityIdResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
+    protected <T> R resolveCreated(VdcReturnValueBase result, IResolver<T, Q> entityResolver, Class<? extends BaseResource> suggestedParentType) {
         try {
-            Q created = entityResolver.resolve((Guid)result.getActionReturnValue());
+            Q created = entityResolver.resolve((T) result.getActionReturnValue());
             return addLinks(populate(map(created), created), suggestedParentType);
         } catch (Exception e) {
             // we tolerate a failure in the entity resolution

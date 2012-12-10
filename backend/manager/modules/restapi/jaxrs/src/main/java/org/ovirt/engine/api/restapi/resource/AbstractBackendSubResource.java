@@ -36,9 +36,9 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
         return addLinks(populate(map(entity, null), entity), suggestedParentType);
     }
 
-    protected Q getEntity(EntityIdResolver entityResolver, boolean notFoundAs404) {
+    protected <T> Q getEntity(EntityIdResolver<T> entityResolver, boolean notFoundAs404) {
         try {
-            return entityResolver.resolve(guid);
+            return entityResolver.resolve((T) guid);
         } catch (Exception e) {
             return handleError(entityType, e, notFoundAs404);
         }
@@ -47,7 +47,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
     protected R performUpdate(R incoming,
                               Q entity,
                               R model,
-                              EntityIdResolver entityResolver,
+                              EntityIdResolver<Guid> entityResolver,
                               VdcActionType update,
                               ParametersProvider<R, Q> updateProvider) {
 
@@ -59,7 +59,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
     }
 
     protected R performUpdate(R incoming,
-            EntityIdResolver entityResolver,
+            EntityIdResolver<Guid> entityResolver,
             VdcActionType update,
             ParametersProvider<R, Q> updateProvider) {
         // REVISIT maintain isolation across retrievals and update

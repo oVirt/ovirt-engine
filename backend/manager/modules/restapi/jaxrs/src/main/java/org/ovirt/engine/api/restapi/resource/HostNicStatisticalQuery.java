@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, VdsNetworkInterface> {
 
@@ -19,7 +20,8 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
         this(null, parent);
     }
 
-    protected HostNicStatisticalQuery(AbstractBackendResource<HostNIC, VdsNetworkInterface>.EntityIdResolver entityResolver, HostNIC parent) {
+    protected HostNicStatisticalQuery(AbstractBackendResource<HostNIC, VdsNetworkInterface>.EntityIdResolver<Guid> entityResolver,
+            HostNIC parent) {
         super(HostNIC.class, parent, entityResolver);
     }
 

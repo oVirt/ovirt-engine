@@ -64,11 +64,11 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
                                                          getRequiredUpdateFields()));
     }
 
-    public EntityIdResolver getEntityIdResolver(String name) {
+    public EntityIdResolver<Guid> getEntityIdResolver(String name) {
         return new DeviceIdResolver(name);
     }
 
-    protected class DeviceIdResolver extends EntityIdResolver {
+    protected class DeviceIdResolver extends EntityIdResolver<Guid> {
 
         private String name;
 
@@ -86,7 +86,7 @@ public abstract class AbstractBackendDevicesResource<D extends BaseDevice, C ext
         }
 
         @Override
-        public Q lookupEntity(Guid id) {
+        public Q lookupEntity(Guid id) throws BackendFailureException {
             return lookupEntity(id, name);
         }
     }

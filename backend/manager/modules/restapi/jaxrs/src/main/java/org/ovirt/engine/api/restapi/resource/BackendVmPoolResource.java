@@ -53,7 +53,7 @@ public class BackendVmPoolResource
     @Override
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetVmPoolById,
+                             new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                  GetVmPoolByIdParameters.class),
                              VdcActionType.UpdateVmPoolWithVms,
                              new UpdateParametersProvider());
@@ -149,7 +149,8 @@ public class BackendVmPoolResource
             this.queryParamsClass = queryParamsClass;
         }
 
-        public org.ovirt.engine.api.model.VM lookupEntity(Guid id) throws BackendFailureException {
+        @Override
+        public Object lookupEntity(Object id) throws BackendFailureException {
             VM vm = doGetEntity(VM.class,
                     query, getQueryParams(queryParamsClass, id), id.toString());
             org.ovirt.engine.api.model.VM model = new org.ovirt.engine.api.model.VM();

@@ -319,10 +319,10 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         model.getLinks().add(link);
     }
 
-    protected VdcQueryParametersBase getQueryParams(Class<? extends VdcQueryParametersBase> queryParamsClass, Guid id) {
+    protected <T> VdcQueryParametersBase getQueryParams(Class<? extends VdcQueryParametersBase> queryParamsClass, T id) {
         VdcQueryParametersBase params = null;
         try {
-            params = queryParamsClass.getConstructor(Guid.class).newInstance(id);
+            params = queryParamsClass.getConstructor(id.getClass()).newInstance(id);
         } catch (Exception e) {
             // trivial class construction
         }
@@ -360,11 +360,12 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    protected abstract class EntityIdResolver {
+    protected abstract class EntityIdResolver<T> implements IResolver<T, Q> {
 
-        public abstract Q lookupEntity(Guid id) throws BackendFailureException;
+        public abstract Q lookupEntity(T id) throws BackendFailureException;
 
-        public Q resolve(Guid id) throws BackendFailureException {
+        @Override
+        public Q resolve(T id) throws BackendFailureException {
             Q entity = lookupEntity(id);
             if (entity == null) {
                 throw new EntityNotFoundException(id.toString());
@@ -373,12 +374,12 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         }
     }
 
-    protected abstract class EntityResolver {
+    protected abstract class EntityResolver<T> implements IResolver<T, Q> {
 
-        public abstract Object lookupEntity(Guid id) throws BackendFailureException;
+        public abstract Q lookupEntity(T id) throws BackendFailureException;
 
-        public Object resolve(Guid id) throws BackendFailureException {
-            Object entity = lookupEntity(id);
+        public Q resolve(T id) throws BackendFailureException {
+            Q entity = lookupEntity(id);
             if (entity == null) {
                 throw new EntityNotFoundException(id.toString());
             }
@@ -386,7 +387,7 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
         }
     }
 
-    protected class QueryIdResolver extends EntityIdResolver {
+    protected class QueryIdResolver<T> extends EntityIdResolver<T> {
 
         private VdcQueryType query;
         private Class<? extends VdcQueryParametersBase> queryParamsClass;
@@ -396,7 +397,8 @@ public class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQu
             this.queryParamsClass = queryParamsClass;
         }
 
-        public Q lookupEntity(Guid id) throws BackendFailureException {
+        @Override
+        public Q lookupEntity(T id) throws BackendFailureException {
             return doGetEntity(entityType, query, getQueryParams(queryParamsClass, id), id.toString());
         }
     }

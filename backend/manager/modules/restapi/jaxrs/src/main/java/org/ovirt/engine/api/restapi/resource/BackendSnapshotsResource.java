@@ -109,12 +109,13 @@ public class BackendSnapshotsResource
         return snapshot;
     }
 
-    protected class SnapshotIdResolver extends EntityIdResolver {
+    protected class SnapshotIdResolver extends EntityIdResolver<Guid> {
 
         SnapshotIdResolver() {}
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.Snapshot lookupEntity(Guid id) {
+        public org.ovirt.engine.core.common.businessentities.Snapshot lookupEntity(
+                Guid id) throws BackendFailureException {
             return getSnapshotById(id);
         }
     }

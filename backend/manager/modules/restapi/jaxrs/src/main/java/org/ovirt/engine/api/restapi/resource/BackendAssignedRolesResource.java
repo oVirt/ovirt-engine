@@ -48,7 +48,7 @@ public class BackendAssignedRolesResource
         }
         return performCreation(VdcActionType.AddSystemPermission,
                                new PermissionsOperationsParametes(newPermission(role.getId())),
-                               new QueryIdResolver(VdcQueryType.GetPermissionById,
+                               new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
                                                    MultilevelAdministrationByPermissionIdParameters.class));
     }
 

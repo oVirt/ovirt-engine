@@ -78,7 +78,7 @@ public class BackendTemplatesResource
                 isDomainSet));
         return performCreation(VdcActionType.AddVmTemplate,
                                params,
-                               new QueryIdResolver(VdcQueryType.GetVmTemplate,
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate,
                                                    GetVmTemplateParameters.class));
     }
 

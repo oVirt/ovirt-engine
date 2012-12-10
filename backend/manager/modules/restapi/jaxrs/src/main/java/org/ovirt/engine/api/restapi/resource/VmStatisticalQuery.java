@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.engine.core.common.businessentities.VM> {
@@ -19,7 +20,7 @@ public class VmStatisticalQuery extends AbstractStatisticalQuery<VM, org.ovirt.e
         this(null, parent);
     }
 
-    protected VmStatisticalQuery(AbstractBackendResource<VM, org.ovirt.engine.core.common.businessentities.VM>.EntityIdResolver entityResolver, VM parent) {
+    protected VmStatisticalQuery(AbstractBackendResource<VM, org.ovirt.engine.core.common.businessentities.VM>.EntityIdResolver<Guid> entityResolver, VM parent) {
         super(VM.class, parent, entityResolver);
     }
 

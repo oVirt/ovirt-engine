@@ -39,7 +39,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         entity.setStoragePoolId(dataCenterId);
         return performCreation(VdcActionType.AddQuota,
                 new QuotaCRUDParameters(entity),
-                new QueryIdResolver(VdcQueryType.GetQuotaByQuotaId, GetQuotaByQuotaIdQueryParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, GetQuotaByQuotaIdQueryParameters.class));
     }
 
     @Override

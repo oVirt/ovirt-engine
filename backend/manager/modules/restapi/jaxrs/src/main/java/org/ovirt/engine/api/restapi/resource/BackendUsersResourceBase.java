@@ -162,7 +162,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
                          id.toString());
     }
 
-    protected class UserIdResolver extends EntityIdResolver {
+    protected class UserIdResolver extends EntityIdResolver<Guid> {
 
         private Guid id;
 
@@ -171,8 +171,8 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
         }
 
         @Override
-        public DbUser lookupEntity(Guid nullId) {
-            return lookupUserById(id);
+        public DbUser lookupEntity(Guid id) throws BackendFailureException {
+            return lookupUserById(this.id);
         }
     }
 }

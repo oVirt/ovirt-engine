@@ -102,7 +102,7 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
         return null;
     }
 
-    protected abstract boolean matchEntity(Q entity, Guid id);
+    protected abstract <T> boolean matchEntity(Q entity, T id);
 
     @Override
     protected Response performRemove(String id) {

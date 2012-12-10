@@ -81,7 +81,7 @@ public class BackendPermitsResource
         return permit;
     }
 
-    protected class PermitIdResolver extends EntityIdResolver {
+    protected class PermitIdResolver extends EntityIdResolver<Guid> {
 
         private ActionGroup actionGroup;
 
@@ -90,7 +90,7 @@ public class BackendPermitsResource
         }
 
         @Override
-        public ActionGroup lookupEntity(Guid guid) {
+        public ActionGroup lookupEntity(Guid id) {
             return actionGroup;
         }
     }

@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.EntityIdResolver;
 
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
@@ -76,7 +77,7 @@ public class BackendHostNicResource
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new EntityIdResolver() {
+        EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
             @Override
             public VdsNetworkInterface lookupEntity(Guid guid) throws BackendFailureException {
                 return parent.lookupInterface(id);

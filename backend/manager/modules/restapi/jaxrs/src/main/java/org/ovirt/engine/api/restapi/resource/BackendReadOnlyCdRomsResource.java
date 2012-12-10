@@ -24,7 +24,7 @@ public class BackendReadOnlyCdRomsResource<Q extends IVdcQueryable>
     }
 
     @Override
-    protected boolean matchEntity(Q entity, Guid id) {
+    protected <T> boolean matchEntity(Q entity, T id) {
         return id.equals(CDROM_ID) && parentId.equals(entity.getQueryableId());
     }
 }

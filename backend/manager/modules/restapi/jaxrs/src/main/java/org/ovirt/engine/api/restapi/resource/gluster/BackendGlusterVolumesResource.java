@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Implementation of the "glustervolumes" resource
@@ -86,7 +87,7 @@ public class BackendGlusterVolumesResource
 
         return performCreation(VdcActionType.CreateGlusterVolume,
                 new CreateGlusterVolumeParameters(volumeEntity),
-                new QueryIdResolver(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
+                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
     }
 

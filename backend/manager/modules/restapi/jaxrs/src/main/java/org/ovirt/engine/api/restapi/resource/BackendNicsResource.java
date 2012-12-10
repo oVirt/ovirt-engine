@@ -76,7 +76,7 @@ public abstract class BackendNicsResource
     protected abstract Guid getClusterId();
 
     @Override
-    protected boolean matchEntity(VmNetworkInterface entity, Guid id) {
+    protected <T> boolean matchEntity(VmNetworkInterface entity, T id) {
         return id != null && id.equals(entity.getId());
     }
 

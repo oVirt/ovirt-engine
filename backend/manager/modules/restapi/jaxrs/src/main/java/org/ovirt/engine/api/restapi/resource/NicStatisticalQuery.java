@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetworkInterface> {
@@ -20,7 +21,7 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
         this(null, parent);
     }
 
-    protected NicStatisticalQuery(AbstractBackendResource<NIC, VmNetworkInterface>.EntityIdResolver resolver, NIC parent) {
+    protected NicStatisticalQuery(AbstractBackendResource<NIC, VmNetworkInterface>.EntityIdResolver<Guid> resolver, NIC parent) {
         super(NIC.class, parent, resolver);
     }
 

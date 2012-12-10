@@ -92,7 +92,7 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, Guid id) {
+    protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, T id) {
         return id != null && (id.equals(entity.getId()));
     }
 

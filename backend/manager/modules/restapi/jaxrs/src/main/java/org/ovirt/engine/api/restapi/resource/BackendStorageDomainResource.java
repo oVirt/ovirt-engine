@@ -63,7 +63,7 @@ public class BackendStorageDomainResource extends
     @Override
     public StorageDomain update(StorageDomain incoming) {
         validateEnums(StorageDomain.class, incoming);
-        QueryIdResolver storageDomainResolver = new QueryIdResolver(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
+        QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
         storage_domains entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getstorage_type();

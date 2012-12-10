@@ -302,7 +302,7 @@ public class BackendHostNicsResource
         return model;
     }
 
-    protected class HostNicResolver extends EntityIdResolver {
+    protected class HostNicResolver extends EntityIdResolver<Guid> {
 
         private String name;
 
@@ -312,7 +312,7 @@ public class BackendHostNicsResource
 
         @Override
         public VdsNetworkInterface lookupEntity(Guid id) {
-            assert(id == null); // AddBond returns nothing, lookup name instead
+            assert (id == null); // AddBond returns nothing, lookup name instead
             return lookupInterfaceByName(name);
         }
     }

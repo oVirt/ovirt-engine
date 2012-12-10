@@ -36,7 +36,7 @@ public class BackendCdRomsResource
     }
 
     @Override
-    protected boolean matchEntity(VM entity, Guid id) {
+    protected <T> boolean matchEntity(VM entity, T id) {
         return (id == null || id.equals(CDROM_ID)) && parentId.equals(entity.getQueryableId());
     }
 

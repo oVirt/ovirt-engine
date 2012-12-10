@@ -34,8 +34,11 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new EntityIdResolver() {
-            public org.ovirt.engine.core.common.businessentities.Disk lookupEntity(Guid guid) throws BackendFailureException {
+        EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
+
+            @Override
+            public org.ovirt.engine.core.common.businessentities.Disk lookupEntity(
+                    Guid guid) throws BackendFailureException {
                 return collection.lookupEntity(guid);
             }
         };

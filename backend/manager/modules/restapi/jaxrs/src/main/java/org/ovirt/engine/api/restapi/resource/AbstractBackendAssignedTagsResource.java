@@ -103,7 +103,7 @@ public abstract class AbstractBackendAssignedTagsResource
         return getEntity(tags.class, VdcQueryType.GetTagByTagId, new GetTagByTagIdParameters(id), id.toString(), true);
     }
 
-    protected class TagIdResolver extends EntityIdResolver {
+    protected class TagIdResolver extends EntityIdResolver<Guid> {
 
         private Guid id;
 
@@ -112,9 +112,9 @@ public abstract class AbstractBackendAssignedTagsResource
         }
 
         @Override
-        public tags lookupEntity(Guid nullId) {
-            assert(nullId == null); // attach actions return nothing, lookup original id instead
-            return lookupTagById(id);
+        public tags lookupEntity(Guid id) throws BackendFailureException {
+            assert (id == null); // attach actions return nothing, lookup original id instead
+            return lookupTagById(this.id);
         }
     }
 }

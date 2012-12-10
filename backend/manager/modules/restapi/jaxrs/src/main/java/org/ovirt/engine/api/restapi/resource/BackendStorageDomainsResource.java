@@ -53,8 +53,8 @@ public class BackendStorageDomainsResource
 
     private StorageDomain storageDomain = null; //utility variable; used in the context of a single activation of remove()
 
-    private final EntityIdResolver ID_RESOLVER =
-        new QueryIdResolver(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
+    private final EntityIdResolver<Guid> ID_RESOLVER =
+        new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
 
     public BackendStorageDomainsResource() {
         super(StorageDomain.class, storage_domains.class, SUB_COLLECTIONS);

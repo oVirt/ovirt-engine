@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterResource extends AbstractBackendSubResource<Cluster, VDSGroup> implements
         ClusterResource {
@@ -34,7 +35,7 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
     public Cluster update(Cluster incoming) {
         validateEnums(Cluster.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class),
                              VdcActionType.UpdateVdsGroup,
                              new UpdateParametersProvider());
     }

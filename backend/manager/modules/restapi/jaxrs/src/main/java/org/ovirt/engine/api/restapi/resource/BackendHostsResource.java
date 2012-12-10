@@ -103,7 +103,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         }
         return performCreation(VdcActionType.AddVds,
                                addParams,
-                               new QueryIdResolver(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class));
     }
 
     @Override

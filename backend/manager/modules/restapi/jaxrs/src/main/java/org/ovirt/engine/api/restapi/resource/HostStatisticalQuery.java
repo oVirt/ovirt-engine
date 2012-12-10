@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
@@ -30,7 +31,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         this(null, parent);
     }
 
-    protected HostStatisticalQuery(AbstractBackendResource<Host, VDS>.EntityIdResolver entityResolver, Host parent) {
+    protected HostStatisticalQuery(AbstractBackendResource<Host, VDS>.EntityIdResolver<Guid> entityResolver, Host parent) {
         super(Host.class, parent, entityResolver);
     }
 

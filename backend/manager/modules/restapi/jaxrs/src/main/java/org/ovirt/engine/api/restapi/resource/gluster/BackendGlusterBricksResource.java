@@ -96,7 +96,7 @@ public class BackendGlusterBricksResource
 
         return performCreationMultiple(VdcActionType.AddBricksToGlusterVolume,
                 new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()), brickEntities, replicaCount, stripeCount),
-                new QueryIdResolver(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
     }
 
     private String getVolumeId() {
@@ -104,7 +104,7 @@ public class BackendGlusterBricksResource
     }
 
     @SuppressWarnings("unchecked")
-    protected GlusterBricks resolveCreatedList(VdcReturnValueBase result, EntityIdResolver entityResolver) {
+    protected GlusterBricks resolveCreatedList(VdcReturnValueBase result, EntityIdResolver<Guid> entityResolver) {
         try {
             GlusterBricks bricks = new GlusterBricks();
             for(Guid id : (List<Guid>)result.getActionReturnValue()) {
@@ -123,7 +123,7 @@ public class BackendGlusterBricksResource
 
     protected Response performCreationMultiple(VdcActionType task,
             VdcActionParametersBase taskParams,
-            EntityIdResolver entityResolver) {
+            EntityIdResolver<Guid> entityResolver) {
         VdcReturnValueBase createResult;
         try {
             createResult = doAction(task, taskParams);

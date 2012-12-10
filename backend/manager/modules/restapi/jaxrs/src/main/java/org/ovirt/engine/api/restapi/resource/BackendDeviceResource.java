@@ -11,24 +11,24 @@ public class BackendDeviceResource<D extends BaseDevice, C extends BaseDevices, 
 
     protected VdcActionType updateType;
     protected ParametersProvider<D, Q> updateParametersProvider;
-    protected EntityIdResolver entityResolver;
+    protected EntityIdResolver<Guid> entityResolver;
     protected String[] requiredUpdateFields;
 
     public BackendDeviceResource(Class<D> modelType,
-                                 Class<Q> entityType,
-                                 final Guid guid,
-                                 final AbstractBackendReadOnlyDevicesResource<D, C, Q> collection,
-                                 VdcActionType updateType,
-                                 ParametersProvider<D, Q> updateParametersProvider,
-                                 String[] requiredUpdateFields,
-                                 String... subCollections) {
+            Class<Q> entityType,
+            final Guid guid,
+            final AbstractBackendReadOnlyDevicesResource<D, C, Q> collection,
+            VdcActionType updateType,
+            ParametersProvider<D, Q> updateParametersProvider,
+            String[] requiredUpdateFields,
+            String... subCollections) {
         super(modelType, entityType, guid, collection, subCollections);
         this.updateType = updateType;
         this.updateParametersProvider = updateParametersProvider;
         this.requiredUpdateFields = requiredUpdateFields;
-        entityResolver = new EntityIdResolver() {
+        entityResolver = new EntityIdResolver<Guid>() {
             @Override
-            public Q lookupEntity(Guid id) {
+            public Q lookupEntity(Guid id) throws BackendFailureException {
                 return collection.lookupEntity(guid);
             }
         };

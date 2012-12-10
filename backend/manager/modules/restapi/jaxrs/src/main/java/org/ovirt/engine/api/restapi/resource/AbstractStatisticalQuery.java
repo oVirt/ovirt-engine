@@ -35,11 +35,11 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
 
     protected Class<R> parentType;
     protected R parent;
-    protected AbstractBackendResource<R, E>.EntityIdResolver entityResolver;
+    protected AbstractBackendResource<R, E>.EntityIdResolver<Guid> entityResolver;
 
     public AbstractStatisticalQuery(Class<R> parentType,
                                     R parent,
-                                    AbstractBackendResource<R, E>.EntityIdResolver entityResolver) {
+                                    AbstractBackendResource<R, E>.EntityIdResolver<Guid> entityResolver) {
         this.parentType = parentType;
         this.parent = parent;
         this.entityResolver = entityResolver;

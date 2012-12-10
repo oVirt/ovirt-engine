@@ -50,7 +50,7 @@ public class BackendTemplateResource
     public Template update(Template incoming) {
         validateEnums(Template.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
                              VdcActionType.UpdateVmTemplate,
                              new UpdateParametersProvider());
     }

@@ -6,6 +6,7 @@ import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DiskResource {
 
@@ -20,7 +21,7 @@ public class BackendDiskResource extends AbstractBackendSubResource<Disk, org.ov
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        QueryIdResolver resolver = new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
     }

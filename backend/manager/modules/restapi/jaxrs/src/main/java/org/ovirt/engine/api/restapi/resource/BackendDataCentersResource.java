@@ -56,7 +56,7 @@ public class BackendDataCentersResource extends
         storage_pool entity = map(dataCenter);
         return performCreation(VdcActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
-                               new QueryIdResolver(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class));
+                               new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, StoragePoolQueryParametersBase.class));
     }
 
     @Override

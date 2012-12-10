@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolsResource
     extends AbstractBackendCollectionResource<VmPool, vm_pools>
@@ -66,7 +67,7 @@ public class BackendVmPoolsResource
 
         return performCreation(VdcActionType.AddVmPoolWithVms,
                                new AddVmPoolWithVmsParameters(entity, vm, size, -1),
-                               new QueryIdResolver(VdcQueryType.GetVmPoolById,
+                               new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                    GetVmPoolByIdParameters.class));
     }
 

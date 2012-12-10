@@ -11,7 +11,6 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.DiskResource;
 import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -46,7 +45,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
             }
         }
         return performCreation(VdcActionType.AddDisk, params,
-                new QueryIdResolver(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, GetDiskByDiskIdParameters.class));
     }
 
     protected void validateDiskForCreation(Disk disk) {

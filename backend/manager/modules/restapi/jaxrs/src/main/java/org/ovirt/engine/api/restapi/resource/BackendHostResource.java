@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
@@ -75,7 +76,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Host update(Host incoming) {
         validateEnums(Host.class, incoming);
-        QueryIdResolver hostResolver = new QueryIdResolver(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
+        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && incoming.getCluster().isSetId() && !asGuid(incoming.getCluster().getId()).equals(entity.getvds_group_id())) {
             performAction(VdcActionType.ChangeVDSCluster,
@@ -301,7 +302,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new QueryIdResolver(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
         HostStatisticalQuery query = new HostStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<Host, VDS>(entityType, guid, query));
     }

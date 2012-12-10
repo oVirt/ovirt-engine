@@ -48,7 +48,7 @@ public class BackendTagResource
         }
 
         return performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetTagByTagId, GetTagByTagIdParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetTagByTagId, GetTagByTagIdParameters.class),
                              VdcActionType.UpdateTag,
                              new UpdateParametersProvider());
     }

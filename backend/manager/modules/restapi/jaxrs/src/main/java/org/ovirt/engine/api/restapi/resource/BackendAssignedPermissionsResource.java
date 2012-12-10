@@ -75,7 +75,7 @@ public class BackendAssignedPermissionsResource
         permissions entity = map(permission, getPermissionsTemplate(permission));
         return performCreation(VdcActionType.AddPermission,
                                getPrincipal(entity, permission),
-                               new QueryIdResolver(VdcQueryType.GetPermissionById,
+                               new QueryIdResolver<Guid>(VdcQueryType.GetPermissionById,
                                                    MultilevelAdministrationByPermissionIdParameters.class));
     }
 

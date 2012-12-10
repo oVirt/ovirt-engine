@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovirt.engine.core.common.businessentities.Disk> {
@@ -23,7 +24,7 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
         this(null, parent);
     }
 
-    protected DiskStatisticalQuery(AbstractBackendResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>.EntityIdResolver resolver, Disk parent) {
+    protected DiskStatisticalQuery(AbstractBackendResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>.EntityIdResolver<Guid> resolver, Disk parent) {
         super(Disk.class, parent, resolver);
     }
 

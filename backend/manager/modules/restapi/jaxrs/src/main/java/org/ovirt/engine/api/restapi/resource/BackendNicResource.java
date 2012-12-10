@@ -32,9 +32,10 @@ public class BackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetwo
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new EntityIdResolver() {
+        EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
             @Override
-            public VmNetworkInterface lookupEntity(Guid guid) throws BackendFailureException {
+            public VmNetworkInterface lookupEntity(Guid guid)
+                    throws BackendFailureException {
                 return collection.lookupEntity(guid);
             }
         };

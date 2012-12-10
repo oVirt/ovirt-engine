@@ -91,14 +91,14 @@ public class BackendAttachedStorageDomainsResource
                          "Storage: name=" + name).getId();
     }
 
-    protected storage_domains lookupStorageDomainById(Guid storageDomainId) {
+    protected storage_domains  lookupStorageDomainById(Guid storageDomainId) {
         return getEntity(storage_domains.class,
                          VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
                          new StorageDomainAndPoolQueryParameters(storageDomainId, dataCenterId),
                          storageDomainId.toString());
     }
 
-    protected class StorageDomainIdResolver extends EntityIdResolver {
+    protected class StorageDomainIdResolver extends EntityIdResolver<Guid> {
 
         private Guid storageDomainId;
 

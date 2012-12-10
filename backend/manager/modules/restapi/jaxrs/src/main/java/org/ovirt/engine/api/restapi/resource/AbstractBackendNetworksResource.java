@@ -37,6 +37,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
     }
 
+    @Override
     public Response performRemove(String id) {
         org.ovirt.engine.core.common.businessentities.Network entity = lookupNetwork(asGuidOr404(id));
         if (entity == null) {
@@ -79,11 +80,11 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return null;
     }
 
-    public EntityIdResolver getNetworkIdResolver() {
+    public EntityIdResolver<Guid> getNetworkIdResolver() {
         return new NetworkIdResolver();
     }
 
-    protected class NetworkIdResolver extends EntityIdResolver {
+    protected class NetworkIdResolver extends EntityIdResolver<Guid> {
 
         protected String name;
 
@@ -94,7 +95,8 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         }
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id) throws BackendFailureException {
+        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id)
+                throws BackendFailureException {
             return lookupNetwork(id, name);
         }
     }
@@ -109,7 +111,8 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         }
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id) throws BackendFailureException {
+        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id)
+                throws BackendFailureException {
             return lookupNetwork(id, name, dataCenterId);
         }
     }

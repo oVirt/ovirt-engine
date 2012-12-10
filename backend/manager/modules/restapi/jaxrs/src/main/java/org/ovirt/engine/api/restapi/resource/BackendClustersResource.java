@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
         implements ClustersResource {
@@ -82,7 +83,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         VDSGroup entity = map(cluster, map(pool));
         return performCreation(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),
-                new QueryIdResolver(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class));
+                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, GetVdsGroupByIdParameters.class));
     }
 
     @Override

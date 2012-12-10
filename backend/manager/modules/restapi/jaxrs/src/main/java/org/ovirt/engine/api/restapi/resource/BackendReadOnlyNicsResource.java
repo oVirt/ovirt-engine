@@ -17,7 +17,7 @@ public class BackendReadOnlyNicsResource
     }
 
     @Override
-    protected boolean matchEntity(VmNetworkInterface entity, Guid id) {
+    protected <T> boolean matchEntity(VmNetworkInterface entity, T id) {
         return id.equals(entity.getId());
     }
 }

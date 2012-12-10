@@ -113,7 +113,7 @@ public class BackendVmResource extends
 
         return removeRestrictedInfo(
                 performUpdate(incoming,
-                             new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class),
+                             new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class),
                              VdcActionType.UpdateVm,
                              new UpdateParametersProvider()));
     }
@@ -180,7 +180,7 @@ public class BackendVmResource extends
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver resolver = new QueryIdResolver(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, GetVmByVmIdParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, guid, query));
     }
