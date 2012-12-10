@@ -3,12 +3,14 @@ package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
@@ -34,6 +36,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
     private final Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider;
     private final Provider<ConsolePopupPresenterWidget> consolePopupProvider;
+    private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
 
     @Inject
     public UserPortalListProvider(ClientGinjector ginjector,
@@ -44,6 +47,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
+            Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
             CurrentUser user,
             Provider<ConsolePopupPresenterWidget> consolePopupProvider) {
         super(ginjector, user);
@@ -55,6 +59,7 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
         this.vncInfoPopupProvider = vncInfoPopupProvider;
         this.consolePopupProvider = consolePopupProvider;
+        this.spiceToGuestWithNonRespAgentPopupProvider = spiceToGuestWithNonRespAgentPopupProvider;
     }
 
     @Override
@@ -84,6 +89,8 @@ public class UserPortalListProvider extends UserPortalDataBoundModelProvider<Use
             }
         } else if (windowModel instanceof VncInfoModel) {
             return vncInfoPopupProvider.get();
+        } else if (windowModel instanceof SpiceToGuestWithNonRespAgentModel) {
+            return spiceToGuestWithNonRespAgentPopupProvider.get();
         } else if (lastExecutedCommand == getModel().getEditConsoleCommand()) {
             return consolePopupProvider.get();
         }

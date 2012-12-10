@@ -171,6 +171,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
             {
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.getErrorEvent().addListener(this);
+                spiceConsoleModel.setModel(this);
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
                 vncConsoleModel.setModel(this);
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();

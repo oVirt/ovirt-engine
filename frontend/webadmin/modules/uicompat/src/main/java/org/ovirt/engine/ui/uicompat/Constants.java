@@ -242,6 +242,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Template(s)")
     String removeTemplatesTitle();
 
+    @DefaultStringValue("Guest Agent is not responsive")
+    String guestAgentNotResponsiveTitle();
+
     @DefaultStringValue("Data Center")
     String dataCenterTitle();
 

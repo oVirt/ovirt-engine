@@ -778,7 +778,7 @@ public class Frontend {
                 callback.Executed(f);
         }
 
-        if ((!success) && (getEventsHandler() != null) && (getEventsHandler().isRaiseErrorModalPanel(actionType))) {
+        if ((!success) && (getEventsHandler() != null) && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
             if (result.getCanDoActionMessages().size() <= 1) {
                 String errorMessage = !result.getCanDoAction() || !result.getCanDoActionMessages().isEmpty() ?
                         getRunActionErrorMessage(result.getCanDoActionMessages()) : result.getFault().getMessage();

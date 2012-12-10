@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -36,9 +37,12 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
+import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -57,6 +61,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private SpiceMenu menu;
     private ISpice privatespice;
+    private Model model;
 
     public ISpice getspice()
     {
@@ -562,8 +567,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
 
-                        SpiceConsoleModel model = (SpiceConsoleModel) result.getState();
-                        model.PostSendVmTicket(result.getReturnValue());
+                        SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
+                        spiceConsoleModel.PostSendVmTicket(result.getReturnValue());
 
                     }
                 }, this);
@@ -581,8 +586,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
         if (!getConfigurator().getIsAdmin() && getEntity().getGuestAgentVersion() != null
-                && getEntity().getStatus() == VMStatus.Up)
-        {
+                && getEntity().getStatus() == VMStatus.Up) {
             getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getVmName());
 
@@ -591,29 +595,82 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                         @Override
                         public void Executed(FrontendActionAsyncResult result) {
 
-                            SpiceConsoleModel model = (SpiceConsoleModel) result.getState();
-                            VdcReturnValueBase returnValue1 = result.getReturnValue();
-                            boolean success1 = returnValue1 != null && returnValue1.getSucceeded();
-                            if (success1)
-                            {
-                                model.ExecuteQuery(getEntity());
+                            final SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
+                            final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
+                            boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
+                            if (isLogonSucceeded) {
+                                spiceConsoleModel.ExecuteQuery(getEntity());
                             }
-                            else
-                            {
-                                String vmName = returnValue1 != null ? returnValue1.getDescription() : ""; //$NON-NLS-1$
-                                model.getLogger()
-                                        .Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
-                                                + vmName + " continuing without SSO."); //$NON-NLS-1$
+                            else {
+                                if (logonCommandReturnValue != null && logonCommandReturnValue.getFault().getError() == VdcBllErrors.nonresp) {
+                                    UICommand okCommand =
+                                            new UICommand("SpiceWithoutAgentOK", new BaseCommandTarget() { //$NON-NLS-1$
+                                                        @Override
+                                                        public void ExecuteCommand(UICommand uiCommand) {
+                                                            logSsoOnDesktopFailedAgentNonResp(spiceConsoleModel.getLogger(),
+                                                                    logonCommandReturnValue != null ?
+                                                                            logonCommandReturnValue.getDescription()
+                                                                            : ""); //$NON-NLS-1$
+                                                            spiceConsoleModel.ExecuteQuery(getEntity());
+                                                            model.setWindow(null);
+                                                        }
+                                                    });
+
+                                    UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
+                                        @Override
+                                        public void ExecuteCommand(UICommand uiCommand) {
+                                            model.setWindow(null);
+                                        }
+                                    });
+
+                                    createConnectWithoutAgentConfirmationPopup(okCommand, cancelCommand);
+                                }
+                                else {
+                                    logSsoOnDesktopFailed(spiceConsoleModel.getLogger(),
+                                            logonCommandReturnValue != null ? logonCommandReturnValue.getDescription()
+                                                    : ""); //$NON-NLS-1$
+                                }
                             }
 
                         }
                     },
                     this);
         }
-        else
-        {
+        else {
             ExecuteQuery(getEntity());
         }
+    }
+
+    private void createConnectWithoutAgentConfirmationPopup(UICommand okCommand, UICommand cancelCommand){
+        SpiceToGuestWithNonRespAgentModel spiceWithoutAgentModel = new SpiceToGuestWithNonRespAgentModel();
+        spiceWithoutAgentModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .guestAgentNotResponsiveTitle());
+        spiceWithoutAgentModel.setHashName("sso_did_not_succeeded"); //$NON-NLS-1$
+
+        spiceWithoutAgentModel.setMessage(ConstantsManager.getInstance()
+                .getMessages()
+                .connectingToGuestWithNotResponsiveAgentMsg());
+
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        spiceWithoutAgentModel.getCommands().add(okCommand);
+
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        spiceWithoutAgentModel.getCommands().add(cancelCommand);
+
+        model.setWindow(spiceWithoutAgentModel);
+    }
+
+    private void logSsoOnDesktopFailedAgentNonResp(ILogger logger, String vmName) {
+        logger.Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
+                + vmName + " because agent is non-responsive, continuing without SSO."); //$NON-NLS-1$
+    }
+
+    private void logSsoOnDesktopFailed(ILogger logger, String vmName) {
+        logger.Info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
+                + vmName + ", cancel open spice console request."); //$NON-NLS-1$
     }
 
     public void SpiceConnect()
@@ -625,6 +682,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         {
             getLogger().Error("Exception on Spice connect", ex); //$NON-NLS-1$
         }
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 
     private static final String CommandStop = "Stop"; //$NON-NLS-1$

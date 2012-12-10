@@ -348,7 +348,6 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
-
         if (item.getEntity() != null) {
             // Adjust item's default console for userportal 'Basic View'
             item.getDefaultConsole().setForceVmStatusUp(true);

@@ -27,6 +27,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
             + "Are you sure you want to disconnect the Management Interface?")
     String youAreAboutToDisconnectHostInterfaceMsg(String nicName);
 
+    @DefaultMessage("Could not connect to the agent on the guest, it may be unresponsive or not installed.\nAs a result, some features may not work.")
+    String connectingToGuestWithNotResponsiveAgentMsg();
+
     @DefaultMessage("This field can''t contain blanks or special characters, must be at least one character long, legal values are 0-9, a-z, ''_'', ''.'' and a length of up to {0} characters.")
     String hostNameMsg(int hostNameMaxLength);
 

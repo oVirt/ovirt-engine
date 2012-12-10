@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -27,8 +28,9 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public Boolean isRaiseErrorModalPanel(VdcActionType actionType) {
-        return actionType != VdcActionType.LoginUser;
+    public Boolean isRaiseErrorModalPanel(VdcActionType actionType, VdcFault fault) {
+        return (actionType != VdcActionType.LoginUser) &&
+               !(actionType == VdcActionType.VmLogon && fault.getError() == VdcBllErrors.nonresp);
     }
 
     @Override
@@ -44,8 +46,9 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runActionExecutionFailed(VdcActionType action, VdcFault fault) {
-        errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
-                        EnumTranslator.createAndTranslate(action), fault.getMessage()));
+        if (isRaiseErrorModalPanel(action, fault))
+            errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
+                    EnumTranslator.createAndTranslate(action), fault.getMessage()));
     }
 
     @Override
@@ -56,11 +59,13 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
         List<String> errors = new ArrayList<String>();
 
         for (VdcReturnValueBase v : returnValues) {
-            errors.add(messages.uiCommonRunActionFailed(v.getCanDoActionMessages().iterator().next()));
+            if (isRaiseErrorModalPanel(action, v.getFault()))
+                errors.add(messages.uiCommonRunActionFailed(v.getCanDoActionMessages().iterator().next()));
         }
 
         for (VdcFault fault : faults) {
-            errors.add(messages.uiCommonRunActionExecutionFailed(actionStr, fault.getMessage()));
+            if (isRaiseErrorModalPanel(action, fault))
+                errors.add(messages.uiCommonRunActionExecutionFailed(actionStr, fault.getMessage()));
         }
 
         errorPopupManager.show(ErrorMessageFormatter.formatErrorMessages(errors));

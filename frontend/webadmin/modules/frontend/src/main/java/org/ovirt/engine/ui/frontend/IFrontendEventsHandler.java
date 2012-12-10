@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public interface IFrontendEventsHandler {
-    Boolean isRaiseErrorModalPanel(VdcActionType action);
+    Boolean isRaiseErrorModalPanel(VdcActionType action, VdcFault fault);
 
     Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
 
