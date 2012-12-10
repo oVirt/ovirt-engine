@@ -81,14 +81,22 @@ public class Challenger implements PreProcessInterceptor {
         boolean successful = false;
         HttpHeaders headers = request.getHttpHeaders();
         boolean preferPersistentAuth = checkPersistentAuthentication(headers);
+        boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
 
         // Will create a new one if it is the first session, and then the "isNew" test below will return true
         HttpSession httpSession = getCurrentSession(true);
 
-        // If the session isn't a new session then we validate it, otherwise we authenticate
-        if (validator != null && httpSession != null && !httpSession.isNew()) {
+        // If the session isn't new and doesn't carry authorization header, we validate it
+        if (validator != null && httpSession != null && !httpSession.isNew() && !hasAuthorizationHeader) {
             successful = executeSessionValidation(httpSession, preferPersistentAuth);
         } else {
+            // If the session isn't new but carries authorization header, we invalidate it first
+            if (validator != null && httpSession != null && !httpSession.isNew()) {
+                httpSession.invalidate();
+                httpSession = getCurrentSession(true);
+            }
+
+            // Authenticate the session
             successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
         }
 
@@ -157,6 +165,11 @@ public class Challenger implements PreProcessInterceptor {
             }
         }
         return false;
+    }
+
+    private boolean checkAuthorizationHeader(HttpHeaders headers) {
+        List<String> authorizationField = headers.getRequestHeader(HttpHeaders.AUTHORIZATION);
+        return authorizationField != null && !authorizationField.isEmpty();
     }
 
     // Here to ease mocking it in the tester

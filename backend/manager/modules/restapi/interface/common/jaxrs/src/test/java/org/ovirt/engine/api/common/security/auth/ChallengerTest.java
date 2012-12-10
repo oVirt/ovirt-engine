@@ -170,7 +170,7 @@ public class ChallengerTest extends Assert {
             expect(headers.getRequestHeader(SessionUtils.PREFER_HEADER_FIELD)).andReturn(preferHeaders);
         }
         if (credentials != null) {
-            expect(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).andReturn(authHeaders);
+            expect(headers.getRequestHeader(HttpHeaders.AUTHORIZATION)).andReturn(authHeaders).anyTimes();
             Principal principal = new Principal(USER, SECRET, DOMAIN);
             expect(authorizer.decode(headers)).andReturn(principal);
             authHeaders.add(credentials);
