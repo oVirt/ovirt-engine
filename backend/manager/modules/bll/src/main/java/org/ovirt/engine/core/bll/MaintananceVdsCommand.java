@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -21,6 +22,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmsComparer;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -31,6 +36,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends VdsCommand<T> {
@@ -164,29 +172,46 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         return returnValue;
     }
 
-    public static void ProcessStorageOnVdsInactive(VDS vds) {
+    public static void ProcessStorageOnVdsInactive(final VDS vds) {
 
         // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
         // anymore.
-        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getvds_name());
+        if (!Guid.Empty.equals(vds.getStoragePoolId())) {
+            clearDomainCache(vds);
 
-        if (!vds.getStoragePoolId().equals(Guid.Empty)
-                && StoragePoolStatus.Uninitialized != DbFacade.getInstance()
-                        .getStoragePoolDao()
-                        .get(vds.getStoragePoolId())
-                        .getstatus()
-                && Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getStoragePoolId(), vds.getvds_spm_id())).getSucceeded()) {
-            StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getStoragePoolId());
-            tempVar.setVdsId(vds.getId());
-            tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
+            if (StoragePoolStatus.Uninitialized != DbFacade.getInstance()
+                    .getStoragePoolDao()
+                    .get(vds.getStoragePoolId())
+                    .getstatus()
+                    && Backend
+                            .getInstance()
+                            .getResourceManager()
+                            .RunVdsCommand(
+                                    VDSCommandType.DisconnectStoragePool,
+                                    new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                            vds.getStoragePoolId(), vds.getvds_spm_id())).getSucceeded()) {
+                StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getStoragePoolId());
+                tempVar.setVdsId(vds.getId());
+                tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
+            }
         }
+    }
+
+    /**
+     * The following method will clear a cache for problematic domains, which were reported by vds
+     * @param vds
+     */
+    private static void clearDomainCache(final VDS vds) {
+        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(vds.getStoragePoolId(),
+                null, vds.getId(), EventType.VDSCLEARCACHE),
+                new Callable<EventResult>() {
+                    @Override
+                    public EventResult call() {
+                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getvds_name());
+                        return new EventResult(true, EventType.VDSCLEARCACHE);
+                    }
+                });
     }
 
     @Override

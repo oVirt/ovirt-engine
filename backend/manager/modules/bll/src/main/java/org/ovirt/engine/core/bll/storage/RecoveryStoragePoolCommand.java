@@ -1,8 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.concurrent.Callable;
+
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -12,14 +16,21 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute
 public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     /**
@@ -33,7 +44,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     public RecoveryStoragePoolCommand(RecoveryStoragePoolParameters parameters) {
         super(parameters);
-        _newMasterStorageDomainId = getRecoveryStoragePoolParametersData().getNewMasterDomainId();
     }
 
     private RecoveryStoragePoolParameters getRecoveryStoragePoolParametersData() {
@@ -83,7 +93,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     @Override
     protected void executeCommand() {
-        StoragePoolIsoMap domainPoolMap =
         TransactionSupport.executeInNewTransaction(
                 new TransactionMethod<StoragePoolIsoMap>() {
                     @Override
@@ -100,8 +109,20 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
         getStoragePool().setstatus(StoragePoolStatus.Problematic);
         try {
             if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                    .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
-                super.executeCommand();
+                    .ConnectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
+                getRecoveryStoragePoolParametersData().setStorageDomainId(getStorageDomainId().getValue());
+                EventResult result =
+                        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                                _newMasterStorageDomainId, null, EventType.RECONSTRUCT),
+                                new Callable<EventResult>() {
+                                    @Override
+                                    public EventResult call() {
+                                        boolean isSucceeded = Backend.getInstance().runInternalAction(
+                                                VdcActionType.ReconstructMasterDomain, getParameters()).getSucceeded();
+                                        return new EventResult(isSucceeded, EventType.RECONSTRUCT);
+                                    }
+                                });
+                reconstructOpSucceeded = result != null ? result.isSuccess() : false;
             } else {
                 getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,
                         "Failed to connect storage"),

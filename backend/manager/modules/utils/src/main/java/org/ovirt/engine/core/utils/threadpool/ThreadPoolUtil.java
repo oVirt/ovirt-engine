@@ -3,6 +3,8 @@ package org.ovirt.engine.core.utils.threadpool;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -104,6 +106,16 @@ public class ThreadPoolUtil {
                     ThreadLocalParamsContainer.getCorrelationId()));
         } catch (RejectedExecutionException e) {
             log.warn("The thread pool is out of limit. A submitted task was rejected");
+            throw e;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <V> Future<V> execute(FutureTask<V> command) {
+        try {
+            return (Future<V>) es.submit(command);
+        } catch (RejectedExecutionException e) {
+            log.warn("The thread pool is out of limit. The submitted event was rejected");
             throw e;
         }
     }

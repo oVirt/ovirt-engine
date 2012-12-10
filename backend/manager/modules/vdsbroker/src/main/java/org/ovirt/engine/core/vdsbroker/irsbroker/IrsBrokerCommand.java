@@ -9,10 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -38,6 +37,10 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -56,6 +59,9 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
@@ -423,29 +429,29 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * @param logMessage
          *            The log message to write in the log.
          */
-        private void reconstructMasterDomainNotInSync(Guid storagePoolId,
-                Guid masterDomainId,
-                String exceptionMessage,
-                String logMessage) {
-            if (duringReconstructMaster.compareAndSet(false, true)) {
-                try {
-                    log.warnFormat(logMessage);
+        private void reconstructMasterDomainNotInSync(final Guid storagePoolId,
+                final Guid masterDomainId,
+                final String exceptionMessage,
+                final String logMessage) {
 
-                    AuditLogableBase logable = new AuditLogableBase(mCurrentVdsId);
-                    logable.setStorageDomainId(masterDomainId);
-                    AuditLogDirector.log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
+            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
+                    masterDomainId, null, EventType.RECONSTRUCT),
+                    new Callable<EventResult>() {
+                        @Override
+                        public EventResult call() {
+                            log.warnFormat(logMessage);
 
-                    ResourceManager.getInstance()
-                            .getEventListener()
-                            .masterDomainNotOperational(masterDomainId, storagePoolId);
-                } finally {
-                    duringReconstructMaster.set(false);
-                }
-                throw new IRSNoMasterDomainException(exceptionMessage);
-            } else {
-                log.debug("The pool is during reconstruct master, skipping handling problematic domains "
-                        + _storagePoolId);
-            }
+                            AuditLogableBase logable = new AuditLogableBase(mCurrentVdsId);
+                            logable.setStorageDomainId(masterDomainId);
+                            AuditLogDirector.log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
+
+                            return ResourceManager.getInstance()
+                                    .getEventListener()
+                                    .masterDomainNotOperational(masterDomainId, storagePoolId);
+
+                        }
+                    });
+            throw new IRSNoMasterDomainException(exceptionMessage);
         }
 
         public java.util.HashSet<Guid> getTriedVdssList() {
@@ -985,8 +991,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private final Map<Guid, HashSet<Guid>> _vdssInProblem = new HashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<Guid, HashSet<Guid>>();
         private final Map<Guid, String> _timers = new HashMap<Guid, String>();
-        private AtomicBoolean duringReconstructMaster = new AtomicBoolean(false);
-        private final Object _lockObject = new Object();
 
         public void UpdateVdsDomainsData(final Guid vdsId, final String vdsName,
                 final ArrayList<VDSDomainsData> data) {
@@ -1064,18 +1068,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
 
             }
-            if (domainsInProblems != null) {
-                synchronized (_lockObject) {
-                    // during reconstruct master we do not want to update
-                    // domains status
-                    if (duringReconstructMaster.get()) {
-                        log.debug("The pool is during reconstruct master, skipping handling problematic domains "
-                                + _storagePoolId);
-                        return;
-                    }
+            updateDomainInProblem(vdsId, vdsName, domainsInProblems);
+        }
 
-                    updateProblematicVdsData(vdsId, vdsName, domainsInProblems);
-                }
+        private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Set<Guid> domainsInProblems) {
+            if (domainsInProblems != null) {
+                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(_storagePoolId,
+                        null, vdsId, EventType.DOMAINMONITORING),
+                        new Callable<EventResult>() {
+                            @Override
+                            public EventResult call() {
+                                EventResult result = new EventResult(true, EventType.DOMAINMONITORING);
+                                updateProblematicVdsData(vdsId, vdsName, domainsInProblems);
+                                return result;
+                            }
+                        });
             }
         }
 
@@ -1197,14 +1204,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         @OnTimerMethodAnnotation("OnTimer")
-        public void OnTimer(Guid domainId) {
-            synchronized (_lockObject) {
-                if (_domainsInProblem.containsKey(domainId)) {
-                    log.info("starting ProcessDomainRecovery for domain " + getDomainIdTuple(domainId));
-                    ProcessDomainRecovery(domainId);
-                }
-                _timers.remove(domainId);
-            }
+        public void OnTimer(final Guid domainId) {
+            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(_storagePoolId,
+                    domainId, null, EventType.DOMAINFAILOVER),
+                    new Callable<EventResult>() {
+                        @Override
+                        public EventResult call() {
+                            EventResult result = null;
+                            if (_domainsInProblem.containsKey(domainId)) {
+                                log.info("starting ProcessDomainRecovery for domain " + getDomainIdTuple(domainId));
+                                result = ProcessDomainRecovery(domainId);
+                            }
+                            _timers.remove(domainId);
+                            return result;
+                        }
+                    });
         }
 
         private void UpdateDomainInProblemData(Guid domainId, Guid vdsId, String vdsName) {
@@ -1220,7 +1234,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             _vdssInProblem.get(vdsId).add(domainId);
         }
 
-        private void ProcessDomainRecovery(final Guid domainId) {
+        private EventResult ProcessDomainRecovery(final Guid domainId) {
+            EventResult result = null;
             // build a list of all the hosts in status UP in
             // Pool.
             List<Guid> vdssInPool = new ArrayList<Guid>();
@@ -1295,7 +1310,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             domainIdTuple,
                             storageDomain.getstorage_domain_type());
                 }
-
+                result = new EventResult(true, EventType.VDSSTOARGEPROBLEMS);
             } else { // Because all the hosts in status UP
                      // reported on this domain as in problem
                      // we assume the problem is with the
@@ -1303,19 +1318,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
                     log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Moving the domain to NonOperational.",
                             domainIdTuple);
-                    ResourceManager.getInstance()
+                    result = ResourceManager.getInstance()
                             .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
-                } else if (duringReconstructMaster.compareAndSet(false, true)) {
-                    try {
-                        ResourceManager.getInstance()
-                                .getEventListener().masterDomainNotOperational(domainId, _storagePoolId);
-                    } finally {
-                        duringReconstructMaster.set(false);
-                    }
                 } else {
                     log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Not moving the domain to NonOperational because it is being reconstructed now.",
                             domainIdTuple);
-                    return;
+                    result = ResourceManager.getInstance()
+                            .getEventListener().masterDomainNotOperational(domainId, _storagePoolId);
                 }
             }
 
@@ -1323,6 +1332,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // _domainsInProblem
             clearDomainFromCache(domainId);
             ClearTimer(domainId);
+            return result;
         }
 
         /**
@@ -1358,26 +1368,20 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * deletes all the jobs for the domains in the pool and clears the problematic entities caches.
          */
         public void clearCache() {
-            synchronized (_lockObject) {
-                log.info("clearing cache for problematic entities in pool " + _storagePoolId);
-                // clear lists
-                _timers.clear();
-                _domainsInProblem.clear();
-                _vdssInProblem.clear();
-                duringReconstructMaster.set(false);
-            }
+            log.info("clearing cache for problematic entities in pool " + _storagePoolId);
+            // clear lists
+            _timers.clear();
+            _domainsInProblem.clear();
+            _vdssInProblem.clear();
         }
 
         public void clearPoolTimers() {
-            synchronized (_lockObject) {
-                log.info("clear domain error-timers for pool " + _storagePoolId);
-                duringReconstructMaster.set(true);
-                for (String jobId : _timers.values()) {
-                    try {
-                        SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
-                    } catch (Exception e) {
-                        log.warn("failed deleting job " + jobId);
-                    }
+            log.info("clear domain error-timers for pool " + _storagePoolId);
+            for (String jobId : _timers.values()) {
+                try {
+                    SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
+                } catch (Exception e) {
+                    log.warn("failed deleting job " + jobId);
                 }
             }
         }
@@ -1387,9 +1391,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * need to be cleaned. This is for a case when the VDS is switched to maintenance by the user, since we
          * need to clear it's cache data and timers, or else the cache will contain stale data (since the VDS is not
          * active anymore, it won't be connected to any of the domains).<br>
-         * <br>
-         * <b>Warning:</b> To avoid deadlocks, don't call this method from anywhere which is called somehow from within
-         * <b>this</b> class, for instance when setting the VDS to Non-Operational.
          *
          * @param vdsId The ID of the VDS to remove from the cache.
          * @param vdsName The name of the VDS (for logging).
@@ -1398,11 +1399,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             log.infoFormat("Clearing cache of pool: {0} for problematic entities of VDS: {1}.",
                     _storagePoolId, vdsName);
 
-            synchronized (_lockObject) {
-                if (_vdssInProblem.containsKey(vdsId)) {
-                    for (Guid domainId : _vdssInProblem.get(vdsId)) {
-                        DomainRecoveredFromProblem(domainId, vdsId, vdsName);
-                    }
+            if (_vdssInProblem.containsKey(vdsId)) {
+                for (Guid domainId : _vdssInProblem.get(vdsId)) {
+                    DomainRecoveredFromProblem(domainId, vdsId, vdsName);
                 }
             }
         }
@@ -1612,19 +1611,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         if (masterDomain != null) {
-            if (getCurrentIrsProxyData().duringReconstructMaster.compareAndSet(false, true)) {
-                try {
-                    ResourceManager.getInstance()
-                             .getEventListener()
-                             .masterDomainNotOperational(masterDomain.getId(),
-                                     getParameters().getStoragePoolId());
-                } finally {
-                    getCurrentIrsProxyData().duringReconstructMaster.set(false);
-                }
-            } else {
-                log.debug("The pool is during reconstruct master, skipping handling problematic domains "
-                        + getParameters().getStoragePoolId());
-            }
+            final Guid masterDomainId = masterDomain.getId();
+            ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventAsync(new Event(getParameters().getStoragePoolId(),
+                    masterDomainId, null, EventType.RECONSTRUCT),
+                    new Callable<EventResult>() {
+                        @Override
+                        public EventResult call() {
+                            return ResourceManager.getInstance()
+                                    .getEventListener().masterDomainNotOperational(
+                                            masterDomainId, getParameters().getStoragePoolId());
+                        }
+                    });
         } else {
             log.errorFormat(
                     "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool {0} !!!",

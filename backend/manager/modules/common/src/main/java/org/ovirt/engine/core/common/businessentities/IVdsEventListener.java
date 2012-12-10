@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.Map;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -18,9 +19,9 @@ public interface IVdsEventListener {
 
     void vdsMovedToMaintanance(VDS vds); // BLL
 
-    void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
+    EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
-    void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
+    EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 
     /**
      * Temoporary patch. Vitaly todo: fix it

@@ -40,6 +40,8 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -73,22 +75,24 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public EventResult storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         StorageDomainPoolParametersBase parameters =
                 new StorageDomainPoolParametersBase(storageDomainId, storagePoolId);
         parameters.setIsInternal(true);
         parameters.setInactive(true);
-        Backend.getInstance().runInternalAction(VdcActionType.DeactivateStorageDomain,
+        boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.DeactivateStorageDomain,
                 parameters,
-                ExecutionHandler.createInternalJobContext());
+                ExecutionHandler.createInternalJobContext()).getSucceeded();
+        return new EventResult(isSucceeded, EventType.DOMAINNOTOPERATIONAL);
     }
 
     @Override
-    public void masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
+    public EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId) {
         VdcActionParametersBase parameters = new ReconstructMasterParameters(storagePoolId, storageDomainId, true);
-        Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
+        boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.ReconstructMasterDomain,
                 parameters,
-                ExecutionHandler.createInternalJobContext());
+                ExecutionHandler.createInternalJobContext()).getSucceeded();
+        return new EventResult(isSucceeded, EventType.RECONSTRUCT);
     }
 
     @Override

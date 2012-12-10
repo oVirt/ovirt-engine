@@ -19,6 +19,7 @@ public class EngineEJBUtilsStrategy extends EJBUtilsStrategy {
                 ENGINE_CONTEXT_PREFIX.concat("engine-bll/UsersDomainsCacheManagerService"));
         addBeanJNDIName(BeanType.VDS_EVENT_LISTENER, ENGINE_CONTEXT_PREFIX.concat("engine-bll/VdsEventListener"));
         addBeanJNDIName(BeanType.LOCK_MANAGER, ENGINE_CONTEXT_PREFIX.concat("engine-bll/LockManager"));
+        addBeanJNDIName(BeanType.EVENTQUEUE_MANAGER,  ENGINE_CONTEXT_PREFIX.concat("engine-bll/EventQueue"));
     }
 
     @Override
