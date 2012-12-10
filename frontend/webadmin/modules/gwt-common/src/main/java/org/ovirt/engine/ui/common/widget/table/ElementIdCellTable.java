@@ -73,5 +73,4 @@ public abstract class ElementIdCellTable<T> extends CellTable<T> implements HasE
     public String getElementId() {
         return elementId;
     }
-
 }

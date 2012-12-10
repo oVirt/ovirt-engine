@@ -88,7 +88,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     void initTable() {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new HostStatusColumn<VDS>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
@@ -226,7 +226,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
-            CommandLocation.OnlyFromFromContext) {
+                CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getManualFenceCommand();
@@ -285,7 +285,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDS>> resourceSubActions =
-                ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
+                    ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
                 getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
             }

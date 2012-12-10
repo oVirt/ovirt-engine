@@ -39,7 +39,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     @UiField
     SimplePanel tablePanel;
 
-    private ApplicationConstants constants;
+    private final ApplicationConstants constants;
 
     @Inject
     public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider,

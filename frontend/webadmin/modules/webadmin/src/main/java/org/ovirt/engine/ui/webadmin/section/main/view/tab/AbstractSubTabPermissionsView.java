@@ -27,5 +27,4 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
     }
 
     protected abstract void generateIds();
-
 }

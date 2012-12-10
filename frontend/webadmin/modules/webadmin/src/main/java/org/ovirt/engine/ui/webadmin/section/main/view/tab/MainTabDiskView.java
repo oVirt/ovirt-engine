@@ -36,8 +36,8 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @UiField
     SimplePanel tablePanel;
 
-    private ApplicationConstants constants;
-    private CommonModel commonModel;
+    private final ApplicationConstants constants;
+    private final CommonModel commonModel;
     private DisksViewRadioGroup disksViewRadioGroup;
 
     @Inject

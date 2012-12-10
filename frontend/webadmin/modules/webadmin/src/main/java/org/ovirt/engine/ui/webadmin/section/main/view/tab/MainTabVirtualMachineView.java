@@ -49,7 +49,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     void initTable(ApplicationResources resources, ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
+import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 import org.ovirt.engine.ui.common.widget.table.resize.ResizableHeader;
@@ -70,7 +71,6 @@ import com.google.gwt.view.client.SelectionModel;
  *            Table row data type.
  */
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasResizableColumns<T> {
-
     // Minimum width of a column used with column resizing, in pixels
     private static final int RESIZE_MINIMUM_COLUMN_WIDTH = 30;
 
@@ -113,7 +113,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private int tableContainerScrollPosition = 0;
 
     public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerRresources, EventBus eventBus) {
+            Resources resources, Resources headerResources, EventBus eventBus) {
         super(dataProvider, eventBus);
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
 
@@ -178,14 +178,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
         };
-
         // Create table header row
-        this.tableHeader = new ActionCellTable<T>(dataProvider, headerRresources);
+        this.tableHeader = new ActionCellTable<T>(dataProvider, headerResources);
         this.tableHeader.setRowData(new ArrayList<T>());
-        this.showDefaultHeader = headerRresources == null;
+        this.showDefaultHeader = headerResources == null;
 
         // Apply selection model to the table widget
         this.selectionModel.setDataDisplay(table);
+
+        //Default to 'no items to display'
+        this.table.setEmptyTableWidget(new NoItemsLabel(dataProvider.getModel().getTitle()));
     }
 
     protected void updateTableControls() {
@@ -613,5 +615,4 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public String getContentTableElementId() {
         return table.getElementId();
     }
-
 }

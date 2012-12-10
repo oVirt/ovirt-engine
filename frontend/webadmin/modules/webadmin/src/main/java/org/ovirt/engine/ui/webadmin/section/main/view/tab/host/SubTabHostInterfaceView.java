@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
-        implements SubTabHostInterfacePresenter.ViewDef {
+implements SubTabHostInterfacePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -126,6 +126,8 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         });
 
         table.showRefreshButton();
+        //The table items are in the form, so the table itself will never have items, so don't display the 'empty message'
+        table.table.setEmptyTableWidget(null);
     }
 
     @Override

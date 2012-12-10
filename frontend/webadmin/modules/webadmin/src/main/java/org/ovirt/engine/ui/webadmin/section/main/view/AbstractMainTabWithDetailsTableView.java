@@ -18,5 +18,4 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
     public AbstractMainTabWithDetailsTableView(MainModelProvider<T, M> modelProvider) {
         super(modelProvider);
     }
-
 }

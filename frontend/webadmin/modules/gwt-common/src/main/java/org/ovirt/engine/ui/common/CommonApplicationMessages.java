@@ -75,4 +75,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Clone VM from Snapshot is supported only for Clusters of version {0} and above")
     String cloneVmNotSupported(String minimalClusterVersion);
 
+    @DefaultMessage("No {0} to display")
+    String noItemsToDisplay(String items);
 }
