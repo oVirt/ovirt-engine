@@ -1144,11 +1144,13 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return vmStatic;
     }
 
-    public void setStaticData(VmStatic value) {
-        if (vmStatic == null) {
+    public void setStaticData(final VmStatic value) {
+        // TODO this null protection is here for historical reasons, it may not be needed anymore
+        if (value == null) {
             vmStatic = new VmStatic();
+        } else {
+            vmStatic = value;
         }
-        vmStatic = value;
     }
 
     public VmStatistics getStatisticsData() {
