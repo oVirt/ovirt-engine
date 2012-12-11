@@ -296,7 +296,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         sb.append(getIsPlugged());
         sb.append(", readOnly=");
         sb.append(getIsReadOnly());
-        sb.append(", alias=");
+        sb.append(", deviceAlias=");
         sb.append(getAlias());
         sb.append("}");
         return sb.toString();
