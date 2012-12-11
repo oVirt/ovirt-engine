@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -142,6 +143,7 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     }
 
     // remove this in a cleanup patch
+    @JsonProperty
     public String getname() {
         return this.name;
     }
