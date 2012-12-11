@@ -110,6 +110,32 @@ class TextConfigFileHandler(ConfigFileHandler):
                 value = found.group(1)
         return value
 
+    def renameParam(self, current_param_name, new_param_name):
+        if current_param_name == new_param_name:
+            return
+        changed = False
+        for i, line in enumerate(self.data[:]):
+            # If the line begins with comment, skip it
+            if line.startswith(self.comment):
+                continue
+
+            # Otherwise, check the param. Create param pattern first, to be
+            # like "<spaces>PARAM_NAME<spaces>SEPARATOR"
+            pattern = "\s*%s\s*%s"
+            # If the new_param already present, break the loop
+            if re.match(pattern % (new_param_name, self.sep), line):
+                changed = True
+                break
+            # Else, if the current_param found, rename it and break the loop
+            if re.match(pattern % (current_param_name, self.sep), line):
+                self.data[i] = line.replace(current_param_name, new_param_name)
+                changed = True
+                break
+
+        # If new_param nor old_param were found, add it at the end of the file
+        if not changed:
+            self.data.append("%s%s\n"%(new_param_name, self.sep))
+
     def editParam(self, param, value, uncomment=False):
         change_index = -1
 
@@ -165,7 +191,15 @@ class TextConfigFileHandler(ConfigFileHandler):
                 logging.warn(errMsg)
 
     def delParams(self, paramsDict):
-        pass
+        '''
+        This function will comment out the params provided by paramsDict
+        '''
+
+        # Find the index of the line containing the parameter that
+        # we want to modify:
+        for param in paramsDict:
+            if self.getParam(param):
+                self.renameParam(param, self.comment + param)
 
 class XMLConfigFileHandler(ConfigFileHandler):
     def __init__(self, filepath):
