@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.kerberos;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.UUID;
 
 import javax.sql.DataSource;
@@ -30,7 +31,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
             connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(actionQuery);
             String permissionId = UUID.randomUUID().toString();
-            prepareStatement.setString(1, permissionId);
+            prepareStatement.setObject(1, permissionId, Types.OTHER);
             prepareStatement.setString(2, userId);
             prepareStatement.setString(3, userName);
             prepareStatement.setString(4, domain);
