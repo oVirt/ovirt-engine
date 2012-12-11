@@ -15,10 +15,10 @@ BEGIN
 
 --INSERTING DATA INTO TABLE storage_pool
 
-INSERT INTO storage_pool (id,name,description,storage_pool_type,status,master_domain_version,compatibility_version) select v_storage_pool_id,'Default','The default Data Center',1,0,0,'3.1' where not exists (select * from storage_pool);
+INSERT INTO storage_pool (id,name,description,storage_pool_type,status,master_domain_version,compatibility_version) select v_storage_pool_id,'Default','The default Data Center',1,0,0,'3.2' where not exists (select * from storage_pool);
 --INSERTING DATA INTO TABLE vds_groups
 
-INSERT INTO vds_groups (vds_group_id,name,description,storage_pool_id,compatibility_version,transparent_hugepages) select v_cluster_id,'Default','The default server cluster',v_storage_pool_id,'3.1',true where not exists (select * from vds_groups);
+INSERT INTO vds_groups (vds_group_id,name,description,storage_pool_id,compatibility_version,transparent_hugepages) select v_cluster_id,'Default','The default server cluster',v_storage_pool_id,'3.2',true where not exists (select * from vds_groups);
 
 --INSERTING DATA INTO NETWORK table
 
