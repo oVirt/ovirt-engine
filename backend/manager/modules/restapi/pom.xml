@@ -24,7 +24,7 @@
     <resteasy.version>2.3.2.Final</resteasy.version>
     <maven-jaxb22-plugin.version>0.8.1</maven-jaxb22-plugin.version>
     <easymock.version>3.0</easymock.version>
-    <powermock.version>1.4.10</powermock.version>
+    <powermock.version>1.5</powermock.version>
   </properties>
 
   <dependencies>
