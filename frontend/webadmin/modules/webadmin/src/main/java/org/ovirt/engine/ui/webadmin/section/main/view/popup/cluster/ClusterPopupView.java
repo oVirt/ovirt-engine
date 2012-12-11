@@ -35,6 +35,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
@@ -87,6 +88,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     ListModelListBoxEditor<Object> versionEditor;
 
     @UiField
+    @Ignore
+    VerticalPanel servicesCheckboxPanel;
+
+    @UiField
     @Path(value = "enableOvirtService.entity")
     @WithElementId("enableOvirtService")
     EntityModelCheckBoxEditor enableOvirtServiceEditor;
@@ -95,6 +100,20 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Path(value = "enableGlusterService.entity")
     @WithElementId("enableGlusterService")
     EntityModelCheckBoxEditor enableGlusterServiceEditor;
+
+    @UiField
+    @Ignore
+    VerticalPanel servicesRadioPanel;
+
+    @UiField(provided = true)
+    @Path(value = "enableOvirtService.entity")
+    @WithElementId("enableOvirtServiceOption")
+    EntityModelRadioButtonEditor enableOvirtServiceOptionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "enableGlusterService.entity")
+    @WithElementId("enableGlusterServiceOption")
+    EntityModelRadioButtonEditor enableGlusterServiceOptionEditor;
 
     @UiField(provided = true)
     @Path(value = "isImportGlusterConfiguration.entity")
@@ -217,6 +236,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
         enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
         enableGlusterServiceEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
+        enableOvirtServiceOptionEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
+        enableGlusterServiceOptionEditor.setLabel(constants.clusterEnableGlusterServiceLabel());
 
         importGlusterConfigurationEditor.setLabel(constants.clusterImportGlusterConfigurationLabel());
         importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());
@@ -242,6 +263,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     }
 
     private void initRadioButtonEditors() {
+        enableOvirtServiceOptionEditor = new EntityModelRadioButtonEditor("service"); //$NON-NLS-1$
+        enableGlusterServiceOptionEditor = new EntityModelRadioButtonEditor("service"); //$NON-NLS-1$
+
         optimizationNoneEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         optimizationForServerEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
@@ -302,6 +326,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     public void edit(final ClusterModel object) {
         Driver.driver.edit(object);
 
+        servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
+        servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
+
         object.getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -357,6 +384,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         return Driver.driver.flush();
     }
 
+    @Override
+    public void allowClusterWithVirtGlusterEnabled(boolean value) {
+        servicesCheckboxPanel.setVisible(value);
+        servicesRadioPanel.setVisible(!value);
+    }
+
     interface WidgetStyle extends CssResource {
         String label();
 
@@ -364,5 +397,4 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         String editorContentWidget();
     }
-
 }

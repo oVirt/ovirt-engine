@@ -1392,6 +1392,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetAllowClusterWithVirtGlusterEnabled(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? source : Boolean.TRUE;
+            }
+        };
+        GetConfigFromCache(
+                new GetConfigurationValueParameters(ConfigurationValues.AllowClusterWithVirtGlusterEnabled,
+                        Config.DefaultConfigurationVersion),
+                aQuery);
+    }
+
     public static void GetCPUList(AsyncQuery aQuery, Version version) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

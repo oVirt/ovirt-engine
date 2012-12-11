@@ -190,6 +190,23 @@ public class ClusterModel extends Model
         privateVersion = value;
     }
 
+    private boolean allowClusterWithVirtGlusterEnabled;
+
+    public boolean getAllowClusterWithVirtGlusterEnabled()
+    {
+        return allowClusterWithVirtGlusterEnabled;
+    }
+
+    public void setAllowClusterWithVirtGlusterEnabled(boolean value)
+    {
+        allowClusterWithVirtGlusterEnabled = value;
+        if (allowClusterWithVirtGlusterEnabled != value)
+        {
+            allowClusterWithVirtGlusterEnabled = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("AllowClusterWithVirtGlusterEnabled")); //$NON-NLS-1$
+        }
+    }
+
     private EntityModel privateEnableOvirtService;
 
     public EntityModel getEnableOvirtService()
@@ -537,18 +554,39 @@ public class ClusterModel extends Model
         setIsEdit(isEdit);
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setAllowClusterWithVirtGlusterEnabled(true);
+        AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                setAllowClusterWithVirtGlusterEnabled((Boolean) returnValue);
+            }
+        }));
+
         setEnableOvirtService(new EntityModel());
+        setEnableGlusterService(new EntityModel());
+
+        getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!getAllowClusterWithVirtGlusterEnabled() && (Boolean) getEnableOvirtService().getEntity()) {
+                    getEnableGlusterService().setEntity(Boolean.FALSE);
+                }
+            }
+        });
         getEnableOvirtService().setEntity(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         initImportCluster(isEdit);
 
-        setEnableGlusterService(new EntityModel());
         getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!getAllowClusterWithVirtGlusterEnabled() && (Boolean) getEnableGlusterService().getEntity()) {
+                    getEnableOvirtService().setEntity(Boolean.FALSE);
+                }
+
                 if (!isEdit
                         && getEnableGlusterService().getEntity() != null
                         && (Boolean) getEnableGlusterService().getEntity())
@@ -719,6 +757,12 @@ public class ClusterModel extends Model
                 }
             }
         });
+
+        getIsImportGlusterConfiguration().setIsAvailable(false);
+        getGlusterHostAddress().setIsAvailable(false);
+        getGlusterHostFingerprint().setIsAvailable(false);
+        getGlusterHostPassword().setIsAvailable(false);
+
         getIsImportGlusterConfiguration().setEntity(false);
     }
 
@@ -942,7 +986,7 @@ public class ClusterModel extends Model
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.FirstOrDefault(versions,
-                            new Linq.VersionPredicate(((VDSGroup) clusterModel.getEntity()).getcompatibility_version())));
+                            new Linq.VersionPredicate(clusterModel.getEntity().getcompatibility_version())));
                 }
             }
         };

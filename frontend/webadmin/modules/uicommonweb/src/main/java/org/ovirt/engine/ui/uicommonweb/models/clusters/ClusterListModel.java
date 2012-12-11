@@ -311,73 +311,76 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             return;
         }
 
-        ClusterModel model = new ClusterModel();
-        model.setEntity(cluster);
-        model.Init(true);
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
-        model.setHashName("edit_cluster"); //$NON-NLS-1$
-        model.setOriginalName(cluster.getname());
-        model.getName().setEntity(cluster.getname());
-        model.getEnableOvirtService().setEntity(cluster.supportsVirtService());
-        model.getEnableOvirtService().setIsChangable(false);
-        model.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
-        model.getEnableGlusterService().setIsChangable(false);
+        final ClusterModel clusterModel = new ClusterModel();
+        clusterModel.setEntity(cluster);
+        clusterModel.Init(true);
+        setWindow(clusterModel);
+        clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
+        clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
+        clusterModel.setOriginalName(cluster.getname());
+        clusterModel.getName().setEntity(cluster.getname());
+        clusterModel.getEnableOvirtService().setEntity(cluster.supportsVirtService());
+        clusterModel.getEnableOvirtService().setIsChangable(true);
+        clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
+        clusterModel.getEnableGlusterService().setIsChangable(true);
 
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(model);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model1, Object result)
-            {
-                ClusterModel clusterModel = (ClusterModel) model1;
-                ArrayList<GlusterVolumeEntity> volumes =
-                        (ArrayList<GlusterVolumeEntity>) result;
-                if (volumes.size() > 0)
-                {
-                    clusterModel.getEnableGlusterService().setIsChangable(false);
-                }
-                else
-                {
-                    clusterModel.getEnableGlusterService().setIsChangable(true);
-                }
-            }
-        };
-        AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
+            public void OnSuccess(Object model, Object returnValue) {
+                final boolean isVirtGlusterAllowed = (Boolean) returnValue;
+                AsyncQuery asyncQuery = new AsyncQuery();
+                asyncQuery.setModel(clusterModel);
+                asyncQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model1, Object result)
+                    {
+                        ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
+                        if (volumes.size() > 0)
+                        {
+                            clusterModel.getEnableGlusterService().setIsChangable(false);
+                            if (!isVirtGlusterAllowed)
+                            {
+                                clusterModel.getEnableOvirtService().setIsChangable(false);
+                            }
+                        }
+                    }
+                };
+                AsyncDataProvider.GetVolumeList(asyncQuery, cluster.getname());
 
-        AsyncQuery asyncQuery1 = new AsyncQuery();
-        asyncQuery1.setModel(model);
-        asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model1, Object result)
-            {
-                ClusterModel clusterModel = (ClusterModel) model1;
-                ArrayList<VM> vmList = (ArrayList<VM>) result;
-                if (vmList.size() > 0)
-                {
-                    clusterModel.getEnableOvirtService().setIsChangable(false);
-                }
-                else
-                {
-                    clusterModel.getEnableOvirtService().setIsChangable(true);
-                }
+                AsyncQuery asyncQuery1 = new AsyncQuery();
+                asyncQuery1.setModel(clusterModel);
+                asyncQuery1.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model1, Object result)
+                    {
+                        ArrayList<VM> vmList = (ArrayList<VM>) result;
+                        if (vmList.size() > 0)
+                        {
+                            clusterModel.getEnableOvirtService().setIsChangable(false);
+                            if (!isVirtGlusterAllowed)
+                            {
+                                clusterModel.getEnableGlusterService().setIsChangable(false);
+                            }
+                        }
+                    }
+                };
+                AsyncDataProvider.GetVmListByClusterName(asyncQuery1, cluster.getname());
             }
-        };
-        AsyncDataProvider.GetVmListByClusterName(asyncQuery1, cluster.getname());
+        }));
 
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
-            model.getName().setIsChangable(false);
-            model.getName().setInfo("Cannot edit Cluster's Name in tree context"); //$NON-NLS-1$
+            clusterModel.getName().setIsChangable(false);
+            clusterModel.getName().setInfo("Cannot edit Cluster's Name in tree context"); //$NON-NLS-1$
         }
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
+        clusterModel.getCommands().add(tempVar);
         UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        clusterModel.getCommands().add(tempVar2);
     }
 
     public void remove()

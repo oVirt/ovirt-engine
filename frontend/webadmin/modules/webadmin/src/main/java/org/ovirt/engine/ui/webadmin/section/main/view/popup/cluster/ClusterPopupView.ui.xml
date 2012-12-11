@@ -68,8 +68,14 @@
 								<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 								<e:ListModelListBoxEditor ui:field="cPUEditor" />
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
-								<e:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
-								<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
+								<g:VerticalPanel ui:field="servicesCheckboxPanel">
+									<e:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
+									<e:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
+								</g:VerticalPanel>
+								<g:VerticalPanel ui:field="servicesRadioPanel">
+									<e:EntityModelRadioButtonEditor ui:field="enableOvirtServiceOptionEditor" />
+									<e:EntityModelRadioButtonEditor ui:field="enableGlusterServiceOptionEditor" />
+								</g:VerticalPanel>
 								<e:EntityModelCheckBoxEditor ui:field="importGlusterConfigurationEditor"/>
 								<g:Label ui:field="importGlusterExplanationLabel" addStyleNames="{style.explanationLabel}"/>
 								<e:EntityModelTextBoxEditor ui:field="glusterHostAddressEditor" />
