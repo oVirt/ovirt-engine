@@ -162,6 +162,7 @@ public class JndiAction implements PrivilegedAction {
             krbLoginModuleErrorMsg = saslException.getMessage();
         }
         log.error("Error during login to kerberos. Detailed information is: " + krbLoginModuleErrorMsg);
+        log.debug("Error during login to kerberos. Detailed information is: ",ex);
     }
 
     protected void handleCommunicationException(String currentLdapServer, String address) {
