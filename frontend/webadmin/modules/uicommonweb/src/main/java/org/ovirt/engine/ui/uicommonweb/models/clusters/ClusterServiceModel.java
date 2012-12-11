@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -93,10 +92,7 @@ public class ClusterServiceModel extends EntityModel {
         setServiceList(new ListModel());
         setHostList(new ListModel());
         setServiceTypeList(new ListModel());
-        ArrayList<ServiceType> serviceTypes = new ArrayList<ServiceType>();
-        serviceTypes.add(null);
-        serviceTypes.addAll(Arrays.asList(ServiceType.values()));
-        getServiceTypeList().setItems(serviceTypes);
+        updateServiceTypeList();
         setFilterServicesCommand(new UICommand("FilterServices", this)); //$NON-NLS-1$
         setClearFilterServicesCommand(new UICommand("ClearFilterServices", this)); //$NON-NLS-1$
     }
@@ -105,36 +101,51 @@ public class ClusterServiceModel extends EntityModel {
     protected void OnEntityChanged() {
         super.OnEntityChanged();
         if (getEntity() != null) {
-            updateHostList();
             updateServiceList();
+            updateHostList();
         }
     }
 
     private void updateHostList() {
+        boolean refreshNeeded = false;
+        List<VDS> hostList = (List<VDS>) getHostList().getItems();
+        if (hostList != null && hostList.size() > 1) {
+            for(VDS vds : hostList) {
+                if (vds != null && !vds.getvds_group_name().equals(getEntity().getname())) {
+                    refreshNeeded = true;
+                    break;
+                }
+            }
+        }
+        else {
+            refreshNeeded = true;
+        }
+
+        if (!refreshNeeded) {
+            return;
+        }
+
+        updateServiceTypeList();
+
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.setModel(this);
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object result)
             {
-                List<VDS> hostListNew = (List<VDS>) result;
-                List<VDS> hostListOld = new ArrayList<VDS>();
-
-                if (getHostList().getItems() != null) {
-                    hostListOld = new ArrayList((List<VDS>) getHostList().getItems());
-                }
-
-                if (hostListOld.size() > 0) {
-                    hostListOld.remove(0);
-                }
-
-                if (!ListUtils.listsEqual(hostListNew, hostListOld)) {
-                    hostListNew.add(0, null);
-                    getHostList().setItems(hostListNew);
-                }
+                List<VDS> hostList = (List<VDS>) result;
+                hostList.add(0, null);
+                getHostList().setItems(hostList);
             }
         };
         AsyncDataProvider.GetHostListByCluster(asyncQuery, getEntity().getname());
+    }
+
+    private void updateServiceTypeList() {
+        ArrayList<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+        serviceTypes.add(null);
+        serviceTypes.addAll(Arrays.asList(ServiceType.values()));
+        getServiceTypeList().setItems(serviceTypes);
     }
 
     private void updateServiceList() {
@@ -145,7 +156,12 @@ public class ClusterServiceModel extends EntityModel {
             public void OnSuccess(Object model, Object result)
             {
                 GlusterVolumeAdvancedDetails details = (GlusterVolumeAdvancedDetails) result;
-                setActualServiceList(details.getServiceInfo());
+                if (details.getServiceInfo() != null) {
+                    setActualServiceList(details.getServiceInfo());
+                }
+                else {
+                    setActualServiceList(new ArrayList<ServiceInfo>());
+                }
                 filterServices();
             }
         };
