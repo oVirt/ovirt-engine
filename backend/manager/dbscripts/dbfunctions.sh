@@ -107,8 +107,24 @@ install_common_func() {
     execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
+install_materialized_views_func() {
+    execute_file "materialized_views_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
 delete_async_tasks_and_compensation_data() {
     execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
+}
+
+drop_materialized_views() {
+    echo "Dropping materialized views..."
+    CMD="select DropAllMaterializedViews();"
+    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
+refresh_materialized_views() {
+    echo "Refreshing materialized views..."
+    CMD="select RefreshAllMaterializedViews(true);"
+    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
 run_pre_upgrade() {
@@ -118,6 +134,11 @@ run_pre_upgrade() {
     install_common_func
     #run pre upgrade scripts
     execute_commands_in_dir 'pre_upgrade' 'pre-upgrade'
+    install_materialized_views_func
+    #drop materialized views to support views changesin upgrade
+    #Materialized views are restored in the post_upgrade step
+    drop_materialized_views
+
     if [[ -n "${CLEAN_TASKS}" ]]; then
        echo "Cleaning tasks metadata..."
        delete_async_tasks_and_compensation_data
@@ -130,6 +151,14 @@ run_post_upgrade() {
     refresh_sps
     #Running post-upgrade scripts
     execute_commands_in_dir 'post_upgrade' 'post-upgrade'
+    #run custom materialized views if exists
+    custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
+    if [ -f ${custom_materialized_views_file} ]; then
+        echo "running custom materialized views from ${custom_materialized_views_file} ..."
+        execute_file ${custom_materialized_views_file} ${DATABASE} ${SERVERNAME} ${PORT}  > /dev/null
+    fi
+    refresh_materialized_views
+
 }
 
 # Runs all the SQL scripts in directory upgrade/$1/
