@@ -40,9 +40,7 @@ public class PluginEventHandler {
             public void onUserLoginChange(UserLoginChangeEvent event) {
                 if (user.isLoggedIn()) {
                     manager.invokePluginsNowOrLater("UserLogin", //$NON-NLS-1$
-                            JsArrayHelper.createStringArray(
-                                    user.getUserName(),
-                                    user.getUserId().toString()));
+                            JsArrayHelper.createStringArray(user.getUserName(), user.getUserId()));
                 } else {
                     manager.invokePluginsNowOrLater("UserLogout", null); //$NON-NLS-1$
                 }

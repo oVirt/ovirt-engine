@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
 
@@ -46,10 +47,12 @@ public class PluginManager {
     private boolean canInvokePlugins = false;
 
     private final PluginUiFunctions uiFunctions;
+    private final CurrentUser user;
 
     @Inject
-    public PluginManager(PluginUiFunctions uiFunctions) {
+    public PluginManager(PluginUiFunctions uiFunctions, CurrentUser user) {
         this.uiFunctions = uiFunctions;
+        this.user = user;
         exposePluginApi();
         defineAndLoadPlugins();
     }
@@ -353,6 +356,7 @@ public class PluginManager {
     private native void exposePluginApi() /*-{
         var ctx = this;
         var uiFunctions = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::uiFunctions;
+        var user = ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::user;
 
         var canDoPluginAction = function(pluginName) {
             return ctx.@org.ovirt.engine.ui.webadmin.plugin.PluginManager::canDoPluginAction(Ljava/lang/String;)(pluginName);
@@ -422,6 +426,16 @@ public class PluginManager {
             showDialog: function(title, contentUrl, width, height) {
                 if (canDoPluginAction(this.pluginName)) {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showDialog(Ljava/lang/String;Ljava/lang/String;II)(title,contentUrl,width,height);
+                }
+            },
+            loginUserName: function() {
+                if (canDoPluginAction(this.pluginName)) {
+                    return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserName()();
+                }
+            },
+            loginUserId: function() {
+                if (canDoPluginAction(this.pluginName)) {
+                    return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserId()();
                 }
             }
 

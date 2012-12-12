@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.auth;
 
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.Guid;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
@@ -25,7 +24,7 @@ public class CurrentUser implements HasHandlers {
 
     private boolean loggedIn = false;
     private String userName;
-    private Guid userId;
+    private String userId;
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
@@ -66,11 +65,11 @@ public class CurrentUser implements HasHandlers {
     /**
      * Returns the user ID if the user is currently logged in, {@code null} otherwise.
      */
-    public Guid getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    void setUserId(Guid userId) {
+    void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -98,7 +97,7 @@ public class CurrentUser implements HasHandlers {
      */
     public void onUserLogin(VdcUser loggedUser) {
         setUserName(loggedUser.getUserName());
-        setUserId(loggedUser.getUserId());
+        setUserId(loggedUser.getUserId().toString());
         setLoggedIn(true);
         fireLoginChangeEvent();
     }
