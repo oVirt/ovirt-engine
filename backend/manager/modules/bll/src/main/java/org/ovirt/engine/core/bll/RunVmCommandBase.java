@@ -284,12 +284,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         log();
         ExecutionHandler.setAsyncJob(getExecutionContext(), false);
         ExecutionHandler.endJob(getExecutionContext(), true);
-        for (Guid vdsId : getRunVdssList()) {
-            if (!getCurrentVdsId().equals(vdsId)) {
-                Backend.getInstance().getResourceManager()
-                        .RunVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
-            }
-        }
+        notifyHostsVmFailed();
 
         if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
             getVm().setLastVdsRunOn(getCurrentVdsId());
@@ -307,6 +302,27 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
                             new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+        }
+    }
+
+    /**
+     * notify other hosts on a failed attempt to run a Vm in a non blocking matter
+     * to avoid deadlock where other host's VdsManagers lock is taken and is awaiting the current vds lock.
+     */
+    private void notifyHostsVmFailed() {
+        if (!getRunVdssList().isEmpty()) {
+            ThreadPoolUtil.execute(new Runnable() {
+
+                public void run() {
+                    for (Guid vdsId : getRunVdssList()) {
+                        if (!getCurrentVdsId().equals(vdsId)) {
+                            Backend.getInstance().getResourceManager()
+                                    .RunVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
+                        }
+                    }
+                }
+
+            });
         }
     }
 
