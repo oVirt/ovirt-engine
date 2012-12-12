@@ -22,12 +22,12 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.bll.quota.InvalidQuotaParametersException;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
@@ -848,35 +848,45 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             addQuotaPermissionSubject(permSubjects);
         }
 
+        // If we are here then we should grant the permission:
+        return checkPermissions(permSubjects);
+    }
+
+    protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
         for (PermissionSubject permSubject : permSubjects) {
-            final Guid objectId = permSubject.getObjectId();
-            final VdcObjectType objectType = permSubject.getObjectType();
-            final ActionGroup objectActionGroup = permSubject.getActionGroup();
-
-            // if objectId is null we can't check permission
-            if (objectId == null) {
-                if (log.isDebugEnabled()) {
-                    log.debugFormat("The object to check is null for action {0}.", getActionType());
-                }
-                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
-                return false;
-            }
-            // Check that an action group is defined for this action;
-            if (objectActionGroup == null) {
-                if (log.isDebugEnabled()) {
-                    log.debugFormat("No action group is defined for action {0}.", getActionType());
-                }
-                return false;
-            }
-
-            // Check the authorization:
-            if (!checkUserAuthorization(getCurrentUser().getUserId(), objectActionGroup, objectId, objectType)) {
-                addCanDoActionMessage(permSubject.getMessage());
+            if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
         }
+        return true;
+    }
 
-        // If we are here then we should grant the permission:
+    final protected boolean checkSinglePermission(PermissionSubject permSubject, Collection<String> messages) {
+        final Guid objectId = permSubject.getObjectId();
+        final VdcObjectType objectType = permSubject.getObjectType();
+        final ActionGroup objectActionGroup = permSubject.getActionGroup();
+
+        // if objectId is null we can't check permission
+        if (objectId == null) {
+            if (log.isDebugEnabled()) {
+                log.debugFormat("The object to check is null for action {0}.", getActionType());
+            }
+            messages.add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.name());
+            return false;
+        }
+        // Check that an action group is defined for this action;
+        if (objectActionGroup == null) {
+            if (log.isDebugEnabled()) {
+                log.debugFormat("No action group is defined for action {0}.", getActionType());
+            }
+            return false;
+        }
+
+        // Check the authorization:
+        if (!checkUserAuthorization(getCurrentUser().getUserId(), objectActionGroup, objectId, objectType)) {
+            messages.add(permSubject.getMessage().name());
+            return false;
+        }
         return true;
     }
 
