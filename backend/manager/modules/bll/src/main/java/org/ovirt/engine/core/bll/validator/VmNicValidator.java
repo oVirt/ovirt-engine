@@ -11,9 +11,9 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  */
 public class VmNicValidator {
 
-    private VmNetworkInterface nic;
+    protected VmNetworkInterface nic;
 
-    private String version;
+    protected String version;
 
     public VmNicValidator(VmNetworkInterface nic, String version) {
         this.nic = nic;
@@ -42,7 +42,7 @@ public class VmNicValidator {
         return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version);
     }
 
-    private String clusterVersion() {
+    protected String clusterVersion() {
         return String.format("$clusterVersion %s", version);
     }
 }
