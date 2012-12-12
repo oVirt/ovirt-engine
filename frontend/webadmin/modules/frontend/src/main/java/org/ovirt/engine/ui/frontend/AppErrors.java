@@ -1130,8 +1130,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Network is in use by a Template.\nNetwork definition cannot be detached unless all references to it are cleared.")
     String NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE();
 
-    @DefaultStringValue("Cannot change Network Interface properties when the VM is not Down.")
-    String NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN();
+    @DefaultStringValue("Cannot ${action} ${type}. Changing interface properties is allowed only when the VM is in 'Up' or 'Down' status.")
+    String NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN_UP();
 
     @DefaultStringValue("Cannot add a Network Interface when VM is not Down, Up or Image-Locked.")
     String NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED();
@@ -1897,6 +1897,21 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Activate/Deactivate while VM is running, is only supported for Clusters of version 3.1 and above.")
     String HOT_PLUG_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
+    String UNLINKING_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. You must select a network for clusters of version ${clusterVersion}.")
+    String NULL_NETWORK_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
+    String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Updating some of the properties is not supported while the interface is plugged into a running virtual machine. Please un-plug the interface, update the properties, and then plug it back.")
+    String CANNOT_PERFOM_HOT_UPDATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Update is not possible when 'Port Mirroring' is set on the interface of a running virtual machine.")
+    String CANNOT_PERFOM_HOT_UPDATE_WITH_PORT_MIRRORING();
 
     @DefaultStringValue("Cannot ${action} ${type}. Guest OS version is not supported.")
     String ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED();
