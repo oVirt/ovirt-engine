@@ -127,7 +127,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     @Override
     protected boolean canDoAction() {
         boolean retVal = true;
-        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         Map<Guid, storage_domains> domainsMap = new HashMap<Guid, storage_domains>();
         retVal = canDoAction_beforeCloneVm(domainsMap);
 
@@ -135,7 +134,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             initImportClonedVm();
         }
 
-        return retVal && canDoAction_afterCloneVm(canDoActionMessages, domainsMap);
+        return retVal && canDoAction_afterCloneVm(domainsMap);
     }
 
     @Override
@@ -271,7 +270,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         canDoActionMessages);
     }
 
-    private boolean canDoAction_afterCloneVm(List<String> canDoActionMessages, Map<Guid, storage_domains> domainsMap) {
+    private boolean canDoAction_afterCloneVm(Map<Guid, storage_domains> domainsMap) {
         VM vm = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
@@ -302,7 +301,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         if (!ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
                                 .getStorageStaticData(),
                                 (DiskImageBase) disk,
-                                canDoActionMessages)) {
+                                getReturnValue().getCanDoActionMessages())) {
                             return false;
                         }
                     }
