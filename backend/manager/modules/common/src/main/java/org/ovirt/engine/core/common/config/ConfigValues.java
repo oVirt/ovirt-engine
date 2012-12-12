@@ -11,7 +11,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("9b9002d1-ec33-4083-8a7b-31f6b8931648")
     AdUserId(0),
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("SQLServer")
+    @DefaultValueAttribute("Postgres")
     DBEngine(1),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("administrator")
