@@ -1302,6 +1302,7 @@
             <value>RHEL - 6Server - 6.0.0.37.el6</value>
             <null />
             <null />
+            <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
@@ -1341,6 +1342,7 @@
             <value>RHEL - 6Server - 6.0.0.37.el6</value>
             <null />
             <null />
+            <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
@@ -1380,6 +1382,7 @@
             <value>RHEL - 6Server - 6.0.0.37.el6</value>
             <null />
             <null />
+            <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
@@ -1419,6 +1422,7 @@
             <value>RHEL - 6Server - 6.0.0.37.el6</value>
             <null />
             <null />
+            <value>2.3</value>
             <value>2.6.32 - 71.el6</value>
             <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
             <value>0</value>
