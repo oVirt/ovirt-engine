@@ -2,10 +2,10 @@ package org.ovirt.engine.core.dao;
 
 import static org.mockito.Mockito.mock;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 /**
  * A sparse test case for {@link NetworkDAOHibernateImpl}
