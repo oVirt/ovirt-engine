@@ -144,6 +144,8 @@ INFO_CONF_PARAMS_RANDOM_PASSWORDS_PROMPT="Override passwords with random"
 INFO_CONF_PARAMS_DB_PASSWD_USAGE="Password for the local database administrator"
 INFO_CONF_PARAMS_DB_PASSWD_PROMPT="Enter a password for a local %s DB admin user (%s)" % (basedefs.APP_NAME, basedefs.DB_USER)
 INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT="Confirm password"
+INFO_CONF_PARAMS_APPLICATION_MODE_USAGE="Application Mode"
+INFO_CONF_PARAMS_APPLICATION_MODE_PROMPT="The engine can be configured to present the UI in three different application modes. virt [Manage virtualization only], gluster [Manage gluster storage only], and both [Manage virtualization as well as gluster storage]"
 
 #Remote DB interaction
 INFO_CONF_PARAMS_REMOTE_DB_USAGE="Select local or remote DB server"
@@ -246,6 +248,8 @@ ERR_DB_TEMP_LIST = "Error: failed fetch temp remote DB list. Verify that DB serv
 ERR_DB_UUID = "Error: uuid-ossp extension is not loaded into the DB.\n\
 Verify with the DB admin that uuid-ossp extension is loaded into newly created databases and \
 rerun the setup."
+ERR_DB_SET_APPLICATION_MODE = "Error: failed to update Application Mode in DB"
+ERR_DB_SET_SERVICE_TYPE = "Error: failed to update Service type in DB"
 
 #_updateVdcOptions
 ERR_CANT_FIND_VDC_OPTION_FILE="Unexpected error, Cannot find %s"

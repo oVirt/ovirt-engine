@@ -180,6 +180,14 @@ CONST_CONFIG_EXTRA_IPTABLES_RULES="EXTRA_IPTABLES_RULES"
 CONST_INSTALL_SIZE_MB=500
 CONST_DOWNLOAD_SIZE_MB=500
 CONST_DB_SIZE=500
+CONST_DEFAULT_CLUSTER_ID="99408929-82CF-4DC7-A532-9D998063FA95"
+CONST_DEFAULT_APPLICATION_MODE="both"
+
+# If following option is True then ApplicationMode set option will not be
+# shown/prompted to the user at the time of engine-setup. Default value will be
+# CONST_DEFAULT_APPLICATION_MODE. If this definition is False then Installer
+# prompts the user to select Application Mode option.
+USE_DEFAULT_APPLICATION_MODE_WITHOUT_PROMPT=False
 
 # This is needed for avoiding error in create_ca when supporting max cn length of 64.
 # please DONT increase this size, any value over 55 will fail the setup.

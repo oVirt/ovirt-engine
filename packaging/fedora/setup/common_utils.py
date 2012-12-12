@@ -1592,3 +1592,10 @@ def getVersionNumber(version_string):
         return int(re.match("\d*", s).group(0))
     version_num = version_string.split('.')
     return 1000*_prefixNum(version_num[0]) + _prefixNum(version_num[1])
+
+
+def isApplicationModeGluster(conf):
+    if "APPLICATION_MODE" in conf and conf["APPLICATION_MODE"] == "gluster":
+        return True
+
+    return False

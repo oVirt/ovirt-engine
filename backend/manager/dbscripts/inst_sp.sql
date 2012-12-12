@@ -38,3 +38,13 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Updates service types(gluster and virt) in vds_groups table
+create or replace FUNCTION inst_update_service_type(v_cluster_id uuid, v_virt_service boolean,
+                                                     v_gluster_service boolean)
+returns void
+AS $procedure$
+begin
+    update  vds_groups set virt_service = v_virt_service, gluster_service = v_gluster_service
+    where vds_group_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
