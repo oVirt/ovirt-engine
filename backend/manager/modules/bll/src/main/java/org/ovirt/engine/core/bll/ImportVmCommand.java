@@ -129,7 +129,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         boolean retVal = true;
         List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         Map<Guid, storage_domains> domainsMap = new HashMap<Guid, storage_domains>();
-        retVal = canDoAction_beforeCloneVm(canDoActionMessages, domainsMap);
+        retVal = canDoAction_beforeCloneVm(domainsMap);
 
         if (retVal && getParameters().isImportAsNewEntity()) {
             initImportClonedVm();
@@ -156,7 +156,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
-    private boolean canDoAction_beforeCloneVm(List<String> canDoActionMessages, Map<Guid, storage_domains> domainsMap) {
+    private boolean canDoAction_beforeCloneVm(Map<Guid, storage_domains> domainsMap) {
+        List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
 
         if (getVm() != null) {
             setDescription(getVmName());
