@@ -181,6 +181,19 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private String libvirtVersion;
+
+    public String getLibvirtVersion() {
+        return libvirtVersion;
+    }
+
+    public void setLibvirtVersion(String value) {
+        if (!libvirtVersion.equals(value)) {
+            libvirtVersion = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
+        }
+    }
+
     private RpmVersion vdsmVersion;
 
     public RpmVersion getVdsmVersion()
@@ -833,6 +846,7 @@ public class HostGeneralModel extends EntityModel
         setOS(vds.gethost_os());
         setKernelVersion(vds.getkernel_version());
         setKvmVersion(vds.getkvm_version());
+        setLibvirtVersion(vds.getlibvirt_version());
         setVdsmVersion(vds.getVersion());
         setSpiceVersion(vds.getspice_version());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());

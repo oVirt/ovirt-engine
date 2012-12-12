@@ -52,7 +52,7 @@ BEGIN
           'usage_network_percent', 'mem_available', 'mem_shared', 'swap_free', 'swap_total', 'ksm_cpu_percent',
           'ksm_pages', 'ksm_state', 'cpu_flags', 'vds_group_cpu_name', 'cpu_sockets', 'vds_spm_id',
           'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
-          'vds_group_compatibility_version', 'host_os', 'kvm_version', 'spice_version', 'kernel_version',
+          'vds_group_compatibility_version', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshKeyFingerprint'));
 -- pm_options are missing

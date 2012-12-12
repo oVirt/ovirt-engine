@@ -635,7 +635,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
 					  vds_statistics.swap_total as swap_total,  vds_statistics.ksm_cpu_percent as ksm_cpu_percent,  vds_statistics.ksm_pages as ksm_pages,  vds_statistics.ksm_state as ksm_state,
                       vds_dynamic.cpu_flags as cpu_flags,vds_groups.cpu_name as vds_group_cpu_name, vds_dynamic.cpu_sockets as cpu_sockets, vds_spm_id_map.vds_spm_id as vds_spm_id, vds_static.otp_validity as otp_validity,
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END as spm_status, vds_dynamic.supported_cluster_levels as supported_cluster_levels, vds_dynamic.supported_engines as supported_engines, vds_groups.compatibility_version as vds_group_compatibility_version,
-                      vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.spice_version as spice_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
+                      vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.libvirt_version as libvirt_version, vds_dynamic.spice_version as spice_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
                       vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
 			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint
 FROM         vds_groups INNER JOIN
@@ -670,7 +670,7 @@ SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_group
                       vds_dynamic.cpu_sockets, vds_spm_id_map.vds_spm_id, vds_static.otp_validity as otp_validity,
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END AS
 spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
-                      vds_groups.compatibility_version AS vds_group_compatibility_version, vds_dynamic.host_os, vds_dynamic.kvm_version,
+                      vds_groups.compatibility_version AS vds_group_compatibility_version, vds_dynamic.host_os, vds_dynamic.kvm_version, vds_dynamic.libvirt_version,
                       vds_dynamic.spice_version, vds_dynamic.kernel_version, vds_dynamic.iscsi_initiator_name,
                       vds_dynamic.transparent_hugepages_state, vds_dynamic.anonymous_hugepages, vds_dynamic.non_operational_reason,
                       storage_pool_iso_map.storage_id

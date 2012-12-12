@@ -278,6 +278,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         vds.setOtpValidity(getOtpValidity());
         vds.setkernel_version(getkernel_version());
         vds.setkvm_version(getkvm_version());
+        vds.setlibvirt_version(getlibvirt_version());
         vds.setHooksStr(getHooksStr());
 
         return vds;
@@ -946,6 +947,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsDynamic.setkvm_version(value);
     }
 
+    public String getlibvirt_version() {
+        return this.mVdsDynamic.getlibvirt_version();
+    }
+
+    public void setlibvirt_version(String value) {
+        this.mVdsDynamic.setlibvirt_version(value);
+    }
+
     public String getspice_version() {
         return this.mVdsDynamic.getspice_version();
     }
@@ -1114,7 +1123,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                             "swap_total",
                             "PmOptionsMap", "swap_free", "mem_shared_percent", "ManagmentIp",
                             "supported_cluster_levels", "ContainingHooks", "NonOperationalReason",
-                            "host_os", "kernel_version", "spice_version", "kvm_version", "storage_pool_id",
+                            "host_os", "kernel_version", "spice_version", "kvm_version", "libvirt_version", "storage_pool_id",
                             "physical_mem_mb" }));
 
     @Override

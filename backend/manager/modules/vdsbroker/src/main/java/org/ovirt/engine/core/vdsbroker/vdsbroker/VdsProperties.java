@@ -86,6 +86,7 @@ public final class VdsProperties {
     public static final String build_name = "build_name";
     public static final String software_version = "software_version";
     public static final String kvmPackageName = "kvm";
+    public static final String libvirtPackageName = "libvirt";
     public static final String spicePackageName = "qspice-libs";
     public static final String kernelPackageName = "kernel";
     public static final String iSCSIInitiatorName = "ISCSIInitiatorName";

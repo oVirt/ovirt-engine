@@ -113,6 +113,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "kvm_version")
     private String kvm_version;
 
+    @Column(name = "libvirt_version")
+    private String libvirt_version;
+
     @Column(name = "spice_version")
     private String spice_version;
 
@@ -460,6 +463,14 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kvm_version = value;
     }
 
+    public String getlibvirt_version() {
+        return this.libvirt_version;
+    }
+
+    public void setlibvirt_version(String value) {
+        this.libvirt_version = value;
+    }
+
     public String getspice_version() {
         return this.spice_version;
     }
@@ -548,6 +559,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((kernel_version == null) ? 0 : kernel_version.hashCode());
         result = prime * result + ((kvm_enabled == null) ? 0 : kvm_enabled.hashCode());
         result = prime * result + ((kvm_version == null) ? 0 : kvm_version.hashCode());
+        result = prime * result + ((libvirt_version == null) ? 0 : libvirt_version.hashCode());
         result = prime * result + ((rpmVersion == null) ? 0 : rpmVersion.hashCode());
         result = prime * result + ((mem_commited == null) ? 0 : mem_commited.hashCode());
         result = prime * result + ((net_config_dirty == null) ? 0 : net_config_dirty.hashCode());
@@ -671,6 +683,11 @@ public class VdsDynamic implements BusinessEntity<Guid> {
             if (other.kvm_version != null)
                 return false;
         } else if (!kvm_version.equals(other.kvm_version))
+            return false;
+        if (libvirt_version == null) {
+            if (other.libvirt_version != null)
+                return false;
+        } else if (!libvirt_version.equals(other.libvirt_version))
             return false;
         if (rpmVersion == null) {
             if (other.rpmVersion != null)

@@ -1071,6 +1071,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("KVM Version")
     String kvmVersionHostGeneral();
 
+    @DefaultStringValue("LIBVIRT Version")
+    String libvirtVersionHostGeneral();
+
     @DefaultStringValue("VDSM Version")
     String vdsmVersionHostGeneral();
 

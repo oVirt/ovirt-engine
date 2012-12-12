@@ -103,6 +103,7 @@ SELECT     	a.vds_id AS host_id,
 			a.ip as pm_ip_address,
 			b.kernel_version,
 			b.kvm_version,
+			b.libvirt_version,
 			b.software_version as vdsm_version,
 			a.port AS vdsm_port,
 			a._create_date AS create_date,
@@ -139,6 +140,7 @@ SELECT     	a.vds_id AS host_id,
 			a.ip as pm_ip_address,
 			b.kernel_version,
 			b.kvm_version,
+			b.libvirt_version,
       			CASE SUBSTR(b.software_version,1,3)
 				WHEN '4.4' THEN '2.1' || SUBSTR(b.software_version,4,LENGTH(b.software_version))
 				WHEN '4.5' THEN '2.2' || SUBSTR(b.software_version,4,LENGTH(b.software_version))

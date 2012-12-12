@@ -165,6 +165,7 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_supported_engines VARCHAR(40) ,
  v_host_os VARCHAR(4000) ,
  v_kvm_version VARCHAR(4000) ,
+ v_libvirt_version VARCHAR(4000) ,
  v_spice_version VARCHAR(4000) ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
@@ -176,8 +177,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, spice_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, anonymous_hugepages,hooks)
-	VALUES(v_cpu_cores,	v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_spice_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_anonymous_hugepages,v_hooks);
+INSERT INTO vds_dynamic(cpu_cores, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, anonymous_hugepages,hooks)
+	VALUES(v_cpu_cores,	v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_anonymous_hugepages,v_hooks);
    END;
 
    RETURN;
@@ -218,6 +219,7 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_supported_engines VARCHAR(40) ,
  v_host_os VARCHAR(4000) ,
  v_kvm_version VARCHAR(4000) ,
+ v_libvirt_version VARCHAR(4000) ,
  v_spice_version VARCHAR(4000) ,
  v_kernel_version VARCHAR(4000) ,
  v_iscsi_initiator_name VARCHAR(4000) ,
@@ -246,7 +248,7 @@ BEGIN
       cpu_sockets = v_cpu_sockets,net_config_dirty = v_net_config_dirty,
       supported_cluster_levels = v_supported_cluster_levels,
       supported_engines = v_supported_engines,host_os = v_host_os,
-      kvm_version = v_kvm_version,spice_version = v_spice_version,
+      kvm_version = v_kvm_version,libvirt_version = v_libvirt_version,spice_version = v_spice_version,
       kernel_version = v_kernel_version,iscsi_initiator_name = v_iscsi_initiator_name,
       transparent_hugepages_state = v_transparent_hugepages_state,
       anonymous_hugepages = v_anonymous_hugepages,hooks = v_hooks,

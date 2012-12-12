@@ -1262,6 +1262,7 @@
         <column>supported_engines</column>
         <column>host_os</column>
         <column>kvm_version</column>
+        <column>libvirt_version</column>
         <column>spice_version</column>
         <column>kernel_version</column>
         <column>iscsi_initiator_name</column>
@@ -3924,6 +3925,10 @@
 		<row>
 		<value>vds</value>
 		<value>kvm_version</value>
+		</row>
+		<row>
+		<value>vds</value>
+		<value>libvirt_version</value>
 		</row>
 		<row>
 		<value>vds</value>

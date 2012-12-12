@@ -72,6 +72,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 entity.setsupported_engines(rs.getString("supported_engines"));
                 entity.sethost_os(rs.getString("host_os"));
                 entity.setkvm_version(rs.getString("kvm_version"));
+                entity.setlibvirt_version(rs.getString("libvirt_version"));
                 entity.setspice_version(rs.getString("spice_version"));
                 entity.setkernel_version(rs.getString("kernel_version"));
                 entity.setIScsiInitiatorName(rs
@@ -124,6 +125,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("supported_engines", vds.getsupported_engines())
                 .addValue("host_os", vds.gethost_os())
                 .addValue("kvm_version", vds.getkvm_version())
+                .addValue("libvirt_version", vds.getlibvirt_version())
                 .addValue("spice_version", vds.getspice_version())
                 .addValue("kernel_version", vds.getkernel_version())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
@@ -172,6 +174,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("supported_engines", vds.getsupported_engines())
                 .addValue("host_os", vds.gethost_os())
                 .addValue("kvm_version", vds.getkvm_version())
+                .addValue("libvirt_version", vds.getlibvirt_version())
                 .addValue("spice_version", vds.getspice_version())
                 .addValue("kernel_version", vds.getkernel_version())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())

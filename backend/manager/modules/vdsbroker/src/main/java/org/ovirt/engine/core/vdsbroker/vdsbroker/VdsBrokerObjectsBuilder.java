@@ -370,6 +370,8 @@ public class VdsBrokerObjectsBuilder {
                 String packageName = AssignStringValue(hostPackage, VdsProperties.package_name);
                 if (VdsProperties.kvmPackageName.equals(packageName)) {
                     vds.setkvm_version(GetPackageVersionFormated(hostPackage, false));
+                } else if (VdsProperties.libvirtPackageName.equals(packageName)) {
+                    vds.setlibvirt_version(GetPackageVersionFormated(hostPackage, false));
                 } else if (VdsProperties.spicePackageName.equals(packageName)) {
                     vds.setspice_version(GetPackageVersionFormated(hostPackage, false));
                 } else if (VdsProperties.kernelPackageName.equals(packageName)) {
@@ -386,6 +388,10 @@ public class VdsBrokerObjectsBuilder {
             if (packages.containsKey(VdsProperties.qemuKvmPackageName)) {
                 Map kvm = (Map) packages.get(VdsProperties.qemuKvmPackageName);
                 vds.setkvm_version(getPackageVersionFormated2(kvm));
+            }
+            if (packages.containsKey(VdsProperties.libvirtPackageName)) {
+                Map libvirt = (Map) packages.get(VdsProperties.libvirtPackageName);
+                vds.setlibvirt_version(getPackageVersionFormated2(libvirt));
             }
             if (packages.containsKey(VdsProperties.spiceServerPackageName)) {
                 Map spice = (Map) packages.get(VdsProperties.spiceServerPackageName);

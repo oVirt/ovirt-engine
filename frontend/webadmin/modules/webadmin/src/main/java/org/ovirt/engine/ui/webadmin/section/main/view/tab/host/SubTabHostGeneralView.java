@@ -51,6 +51,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel kvmVersion = new TextBoxLabel();
+    TextBoxLabel libvirtVersion = new TextBoxLabel();
     TextBoxLabel spiceVersion = new TextBoxLabel();
     TextBoxLabel kernelVersion = new TextBoxLabel();
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
@@ -119,7 +120,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         Driver.driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 6);
+        formBuilder = new FormBuilder(formPanel, 3, 7);
         formBuilder.setColumnsWidth("230px", "120px", "270px"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         ArrayList<FormItem> formItems = new ArrayList<FormItem>();
@@ -127,9 +128,10 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formItems.add(new FormItem(constants.osVersionHostGeneral(), oS, 0, 0));
         formItems.add(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 1, 0));
         formItems.add(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 2, 0));
-        formItems.add(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 3, 0));
-        formItems.add(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 4, 0));
-        formItems.add(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 5, 0));
+        formItems.add(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 3, 0));
+        formItems.add(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 4, 0));
+        formItems.add(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 5, 0));
+        formItems.add(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 6, 0));
 
         formItems.add(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, 1));
         formItems.add(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 1, 1));
