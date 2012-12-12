@@ -1328,6 +1328,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
         {
             gettempVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+            gettempVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
         }
         else if ((Boolean) model.getDontMigrateVM().getEntity())
         {

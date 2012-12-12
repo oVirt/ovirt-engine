@@ -296,6 +296,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (vmFromParams.isUseHostCpuFlags()
+                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+            return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
+        }
+
         return true;
     }
 

@@ -146,6 +146,7 @@ public final class Cloner
         vm.setMigratingToVds(instance.getmigrating_to_vds());
         vm.setMigrationSupport(instance.getMigrationSupport());
         vm.setNiceLevel(instance.getNiceLevel());
+        vm.setUseHostCpuFlags(instance.isUseHostCpuFlags());
         // TODO: this is readonly in java, since it is computed.
         // options: use calculation here in cloner, or still wrap this in VM instead of serializing it
         // vm.num_of_cpus = instance.num_of_cpus;

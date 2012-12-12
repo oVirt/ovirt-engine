@@ -73,7 +73,10 @@ public abstract class VmInfoBuilderBase {
         if (vm.isRunAndPause()) {
             createInfo.add(VdsProperties.launch_paused_param, "true");
         }
-        if (vm.getVdsGroupCpuFlagsData() != null) {
+        if(vm.isUseHostCpuFlags()) {
+            createInfo.add(VdsProperties.cpuType,
+                    "hostPassthrough");
+        } else if (vm.getVdsGroupCpuFlagsData() != null) {
             createInfo.add(VdsProperties.cpuType,
                     vm.getVdsGroupCpuFlagsData());
         }

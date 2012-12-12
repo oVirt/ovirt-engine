@@ -425,6 +425,7 @@
       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="speed" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
       <xs:element name="cpu_tune" type="CpuTune" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="mode" type="xs:string" minOccurs="0" maxOccurs="1" default="CUSTOM"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>

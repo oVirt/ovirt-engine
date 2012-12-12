@@ -68,6 +68,9 @@ public class VmStatic extends VmBase {
     @Column(name = "cpu_pinning")
     private String cpuPinning;
 
+    @Column(name = "host_cpu_flags", nullable = false)
+    private boolean useHostCpuFlags = false;
+
     public VmStatic() {
         setnum_of_monitors(1);
         is_initialized = false;
@@ -127,7 +130,7 @@ public class VmStatic extends VmBase {
             int numOfMonitors,
             UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
             BootSequence default_boot_sequence, VmType vm_type,
-            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled, boolean deleteProtected) {
+            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled, boolean deleteProtected, boolean useHostCpuFlags) {
         super(vm_guid,
                 vds_group_id,
                 os,
@@ -164,6 +167,7 @@ public class VmStatic extends VmBase {
         this.setusb_policy(usb_policy);
         this.setdedicated_vm_for_vds(dedicated_vm_for_vds);
         this.setMinAllocatedMem(minAllocatedMem);
+        this.useHostCpuFlags = useHostCpuFlags;
     }
 
     public String getCustomProperties() {
@@ -267,6 +271,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmt_guid == null) ? 0 : vmt_guid.hashCode());
+        result = prime * result + (useHostCpuFlags ? 0 : 1);
         return result;
     }
 
@@ -319,7 +324,18 @@ public class VmStatic extends VmBase {
         } else if (!vmt_guid.equals(other.vmt_guid)) {
             return false;
         }
+        if(useHostCpuFlags != other.useHostCpuFlags) {
+            return false;
+        }
         return true;
+    }
+
+    public boolean isUseHostCpuFlags() {
+        return useHostCpuFlags;
+    }
+
+    public void setUseHostCpuFlags(boolean useHostCpuFlags) {
+        this.useHostCpuFlags = useHostCpuFlags;
     }
 
 }

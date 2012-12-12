@@ -676,6 +676,7 @@ public class VmSnapshotListModel extends SearchableListModel
         if ((Boolean) model.getRunVMOnSpecificHost().getEntity())
         {
             getcurrentVm().setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+            getcurrentVm().setUseHostCpuFlags((Boolean)model.getHostCpu().getEntity());
         }
         else if ((Boolean) model.getDontMigrateVM().getEntity())
         {

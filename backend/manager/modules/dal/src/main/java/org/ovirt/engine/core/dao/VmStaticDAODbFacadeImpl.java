@@ -82,7 +82,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
                 .addValue("quota_id", vm.getQuotaId())
                 .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
-                .addValue("cpu_pinning", vm.getCpuPinning());
+                .addValue("cpu_pinning", vm.getCpuPinning())
+                .addValue("host_cpu_flags", vm.isUseHostCpuFlags());
     }
 
     @Override
@@ -177,6 +178,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
+            entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
 
             return entity;
         }

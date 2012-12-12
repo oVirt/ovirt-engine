@@ -158,6 +158,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         UpdateDomain();
 
         updateHostPinning(vm.getMigrationSupport());
+        getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 
         // Storage domain and provisioning are not available for an existing VM.
         getModel().getStorageDomain().setIsChangable(false);

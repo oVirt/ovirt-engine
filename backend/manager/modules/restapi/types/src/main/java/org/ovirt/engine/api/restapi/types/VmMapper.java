@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -122,6 +123,7 @@ public class VmMapper {
             staticVm.setvds_group_id(new Guid(vm.getCluster().getId()));
         }
         if (vm.isSetCpu()) {
+            staticVm.setUseHostCpuFlags(CpuMode.fromValue(vm.getCpu().getMode()) == CpuMode.HOST_PASSTHROUGH);
             if (vm.getCpu().isSetTopology()) {
                 if (vm.getCpu().getTopology().getCores()!=null) {
                     staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
@@ -309,6 +311,9 @@ public class VmMapper {
         topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
         final CPU cpu = new CPU();
         model.setCpu(cpu);
+        if(entity.isUseHostCpuFlags()) {
+            cpu.setMode(CpuMode.HOST_PASSTHROUGH.value());
+        }
         cpu.setCpuTune(stringToCpuTune(entity.getCpuPinning()));
         cpu.setTopology(topology);
         if (entity.getVmPoolId() != null) {

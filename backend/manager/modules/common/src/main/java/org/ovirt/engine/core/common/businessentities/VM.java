@@ -1494,6 +1494,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         return vmPayload;
     }
 
+    public boolean isUseHostCpuFlags() {
+        return vmStatic.isUseHostCpuFlags();
+    }
+
+    public void setUseHostCpuFlags(boolean useHostCpuFlags) {
+        vmStatic.setUseHostCpuFlags(useHostCpuFlags);
+    }
+
     public String getCpuPinning() {
         return vmStatic.getCpuPinning();
     }

@@ -758,6 +758,16 @@ public class UnitVmModel extends Model {
         privateRunVMOnSpecificHost = value;
     }
 
+    private EntityModel hostCpu;
+
+    public EntityModel getHostCpu() {
+        return hostCpu;
+    }
+
+    public void setHostCpu(EntityModel hostCpu) {
+        this.hostCpu = hostCpu;
+    }
+
     private EntityModel privateDontMigrateVM;
 
     public EntityModel getDontMigrateVM()
@@ -1028,6 +1038,12 @@ public class UnitVmModel extends Model {
         setRunVMOnSpecificHost(new EntityModel());
         getRunVMOnSpecificHost().getEntityChangedEvent().addListener(this);
 
+        setHostCpu(new EntityModel());
+        getHostCpu().getEntityChangedEvent().addListener(this);
+
+        setDontMigrateVM(new EntityModel());
+        getDontMigrateVM().getEntityChangedEvent().addListener(this);
+
         setIsAutoAssign(new EntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
@@ -1102,6 +1118,9 @@ public class UnitVmModel extends Model {
         getIsTemplatePublic().setEntity(true);
 
         getRunVMOnSpecificHost().setEntity(false);
+        getRunVMOnSpecificHost().setIsChangable(false);
+
+        getHostCpu().setEntity(false);
         getRunVMOnSpecificHost().setIsChangable(false);
 
         getCdImage().setIsChangable(false);
@@ -1191,6 +1210,10 @@ public class UnitVmModel extends Model {
             else if (sender == getRunVMOnSpecificHost())
             {
                 RunVMOnSpecificHost_EntityChanged(sender, args);
+            }
+            else if (sender == getDontMigrateVM())
+            {
+                DontMigrateVM_EntityChanged(sender, args);
             }
             else if (sender == getIsAutoAssign())
             {
@@ -1561,16 +1584,35 @@ public class UnitVmModel extends Model {
         behavior.coresPerSocketChanged();
     }
 
+    private void clearAndDisable(EntityModel entityModel) {
+        entityModel.setEntity(false);
+        entityModel.setIsChangable(false);
+    }
+
     private void RunVMOnSpecificHost_EntityChanged(Object sender, EventArgs args)
     {
         if ((Boolean) getRunVMOnSpecificHost().getEntity() == true)
         {
-            getDontMigrateVM().setEntity(false);
-            getDontMigrateVM().setIsChangable(false);
+            clearAndDisable(getDontMigrateVM());
+            getHostCpu().setIsChangable(true);
         }
         else
         {
+            clearAndDisable(getHostCpu());
             getDontMigrateVM().setIsChangable(true);
+        }
+    }
+
+    private void DontMigrateVM_EntityChanged(Object sender, EventArgs args)
+    {
+        if((Boolean) getDontMigrateVM().getEntity() == true ) {
+            clearAndDisable(getRunVMOnSpecificHost());
+            getHostCpu().setIsChangable(true);
+        }
+        else
+        {
+            clearAndDisable(getHostCpu());
+            getRunVMOnSpecificHost().setIsChangable(true);
         }
     }
 
@@ -1578,8 +1620,8 @@ public class UnitVmModel extends Model {
     {
         if ((Boolean) getIsAutoAssign().getEntity() == true)
         {
-            getRunVMOnSpecificHost().setEntity(false);
-            getRunVMOnSpecificHost().setIsChangable(false);
+            clearAndDisable(getRunVMOnSpecificHost());
+            clearAndDisable(getHostCpu());
         }
         else
         {

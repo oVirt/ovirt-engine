@@ -334,6 +334,7 @@
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
 						<g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
 							<e:EntityModelCheckBoxEditor ui:field="runVMOnSpecificHostEditor" addStyleNames="{style.checkbox}" />
+							<e:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="dontMigrateVMEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:VerticalPanel>
 						<e:EntityModelTextBoxEditor ui:field="cpuPinning" addStyleNames="{style.cpuPinningStyle}"/>

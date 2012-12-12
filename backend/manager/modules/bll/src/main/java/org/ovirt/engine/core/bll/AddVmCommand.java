@@ -332,6 +332,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
         }
+
+        if (getParameters().getVm().isUseHostCpuFlags()
+                && getParameters().getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+            return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
+        }
+
         return returnValue && checkCpuSockets();
     }
 
