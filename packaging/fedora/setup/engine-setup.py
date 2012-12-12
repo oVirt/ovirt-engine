@@ -130,7 +130,7 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
                                                 'functions' : [_encryptDBPass, _configEncryptedPass] },
                                               {  'title'     : output_messages.INFO_UPGRADE_DB,
-                                                'functions' : [stopRhevmDbRelatedServices, _upgradeDB, startRhevmDbRelatedServices]} ]
+                                                'functions' : [stopRhevmDbRelatedServices, _upgradeDB, _setApplicationMode, startRhevmDbRelatedServices]} ]
                        },
                       { 'description'     : 'Create DB',
                         'condition'       : [_isDbAlreadyInstalled],
@@ -138,7 +138,7 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
                                                 'functions' : [_encryptDBPass, _configEncryptedPass]},
                                               { 'title'     : output_messages.INFO_CREATE_DB,
-                                                'functions' : [_createDB,  _updateVDCOptions]},
+                                                'functions' : [_createDB,  _updateVDCOptions, _setApplicationMode]},
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
                                                 'functions' : [_updateDefaultDCType]} ]
                        },
@@ -178,6 +178,23 @@ def initSequences():
 
     for item in sequences_conf:
         controller.addSequence(item['description'], item['condition'], item['condition_match'], item['steps'])
+
+
+def _useDefaultDcType(conf):
+    return utils.isApplicationModeGluster(conf)
+
+
+def _useDefaultConfigNfs(conf):
+    # When gluster mode is selected then don't ask the questions related
+    # to NFS setup, so update default value for CONFIG_NFS as "no" if gluster
+    # is selected in application mode prompt(NFS_MP and ISO_DOMAIN_NAME).
+    if utils.isApplicationModeGluster(conf):
+        controller.getParamByName("CONFIG_NFS").setKey("DEFAULT_VALUE", "no")
+        return True
+    else:
+        controller.getParamByName("CONFIG_NFS").setKey("DEFAULT_VALUE", "yes")
+        return False
+
 
 def initConfig():
     """
@@ -320,6 +337,19 @@ def initConfig():
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False},
 
+             {  "CMD_OPTION"      : "application-mode",
+                "USAGE"           : output_messages.INFO_CONF_PARAMS_APPLICATION_MODE_USAGE,
+                "PROMPT"          : output_messages.INFO_CONF_PARAMS_APPLICATION_MODE_PROMPT,
+                "OPTION_LIST"     : ["virt","gluster", "both"],
+                "VALIDATION_FUNC" : validate.validateOptions,
+                "DEFAULT_VALUE"   : basedefs.CONST_DEFAULT_APPLICATION_MODE,
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "APPLICATION_MODE",
+                "USE_DEFAULT"     : basedefs.USE_DEFAULT_APPLICATION_MODE_WITHOUT_PROMPT,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
             {   "CMD_OPTION"      :"default-dc-type",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_DC_TYPE_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_DC_TYPE_PROMPT,
@@ -329,7 +359,7 @@ def initConfig():
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "DC_TYPE",
-                "USE_DEFAULT"     : False,
+                "USE_DEFAULT"     : _useDefaultDcType,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False},
 
@@ -463,7 +493,7 @@ def initConfig():
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "CONFIG_NFS",
-                "USE_DEFAULT"     : False,
+                "USE_DEFAULT"     : _useDefaultConfigNfs,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : True} ]
     }
@@ -520,6 +550,7 @@ def initConfig():
 
 #data center types enum
 controller.CONF["DC_TYPE_ENUM"] = utils.Enum(NFS=1, FC=2, ISCSI=3, POSIXFS=6)
+controller.CONF["APPLICATION_MODE_ENUM"] = utils.Enum(VIRT=1, GLUSTER=2, BOTH=255)
 
 def _getColoredText (text, color):
     ''' gets text string and color
@@ -540,7 +571,7 @@ def _getInputFromUser(param):
     userInput = None
 
     try:
-        if param.getKey("USE_DEFAULT"):
+        if _getConditionValue(param.getKey("USE_DEFAULT")):
             logging.debug("setting default value (%s) for key (%s)" % (mask(param.getKey("DEFAULT_VALUE")), param.getKey("CONF_NAME")))
             controller.CONF[param.getKey("CONF_NAME")] = param.getKey("DEFAULT_VALUE")
         else:
@@ -1031,6 +1062,40 @@ def _configureIptables():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CFG_IPTABLES)
+
+def _setApplicationMode():
+    virtService = 'true'
+    glusterService = 'true'
+
+    if controller.CONF["APPLICATION_MODE"].upper() == "GLUSTER":
+        virtService = 'false'
+    elif controller.CONF["APPLICATION_MODE"].upper() == "VIRT":
+        glusterService = 'false'
+
+    # Update default cluster group service types, since default value of gluster_service
+    # column is false.
+    # Ref: dbscripts/upgrade/03_01_0620_add_service_columns_to_vds_groups.sql
+    sqlQuery = "select inst_update_service_type('%s', %s, %s)" % (basedefs.CONST_DEFAULT_CLUSTER_ID, virtService, glusterService)
+    utils.execRemoteSqlCommand(getDbUser(), \
+                               getDbHostName(), \
+                               getDbPort(), \
+                               basedefs.DB_NAME, \
+                               sqlQuery, False, \
+                               output_messages.ERR_DB_SET_SERVICE_TYPE)
+
+    # No change with respect to default application mode, No DB update required
+    if controller.CONF["APPLICATION_MODE"].upper() == "BOTH":
+        return
+
+    applicationMode = controller.CONF["APPLICATION_MODE_ENUM"].parse(str.upper(controller.CONF["APPLICATION_MODE"]))
+
+    sqlQuery = "select fn_db_update_config_value('ApplicationMode', '%s', 'general')" % applicationMode
+    utils.execRemoteSqlCommand(getDbUser(), \
+                               getDbHostName(), \
+                               getDbPort(), \
+                               basedefs.DB_NAME, \
+                               sqlQuery, False, \
+                               output_messages.ERR_DB_SET_APPLICATION_MODE)
 
 def _createDB():
     """
@@ -1590,7 +1655,9 @@ def _handleParams(configFile):
 
 def _getConditionValue(matchMember):
     returnValue = False
-    if type(matchMember) == types.FunctionType:
+    if type(matchMember) == types.BooleanType:
+        returnValue = matchMember
+    elif type(matchMember) == types.FunctionType:
         returnValue = matchMember(controller.CONF)
     elif type(matchMember) == types.StringType:
         #we assume that if we get a string as a member it is the name
@@ -1611,7 +1678,7 @@ def _displaySummary():
     logging.info("*** User input summary ***")
     for group in controller.getAllGroups():
         for param in group.getAllParams():
-            if not param.getKey("USE_DEFAULT") and controller.CONF.has_key(param.getKey("CONF_NAME")):
+            if not _getConditionValue(param.getKey("USE_DEFAULT")) and controller.CONF.has_key(param.getKey("CONF_NAME")):
                 cmdOption = param.getKey("CMD_OPTION")
                 l = 30 - len(cmdOption)
                 maskParam = param.getKey("MASK_INPUT")
@@ -2158,7 +2225,7 @@ def initCmdLineParser():
             cmdOption = param.getKey("CMD_OPTION")
             paramUsage = param.getKey("USAGE")
             optionsList = param.getKey("OPTION_LIST")
-            useDefault = param.getKey("USE_DEFAULT")
+            useDefault = _getConditionValue(param.getKey("USE_DEFAULT"))
             if not useDefault:
                 if optionsList:
                     groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)

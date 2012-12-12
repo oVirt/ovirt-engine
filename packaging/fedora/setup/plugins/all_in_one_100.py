@@ -88,6 +88,17 @@ def generateLocalStorageDomainPath():
         return LOCAL_STORAGE_PATH
 
 
+def _useDefaultConfigNfs(conf):
+    # When gluster mode is selected then don't ask the questions related
+    # to NFS setup, so update default value for CONFIG_NFS as "no" if gluster
+    # is selected in application mode prompt(NFS_MP and ISO_DOMAIN_NAME).
+    if utils.isApplicationModeGluster(conf):
+        controller.getParamByName("CONFIG_NFS").setKey("DEFAULT_VALUE", "no")
+    else:
+        controller.getParamByName("CONFIG_NFS").setKey("DEFAULT_VALUE", "yes")
+    return True
+
+
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
@@ -144,9 +155,9 @@ def initConfig(controllerObject):
     # Hack:
     # We disable the question regarding the NFS configuration (ISO domain) because we always want
     # it in All In One installation.
-    controller.getParamByName("CONFIG_NFS").setKey("USE_DEFAULT", True)
+    controller.getParamByName("CONFIG_NFS").setKey("USE_DEFAULT", _useDefaultConfigNfs)
     controller.getParamByName("CONFIG_NFS").setKey("CONDITION", False)
-    controller.getGroupByName("NFS").setKey("PRE_CONDITION", returnYes)
+
 
 def initSequences(controller):
     logging.debug("Setting the Sequences for VDSM all in one installation")
@@ -217,9 +228,6 @@ def addFirewallRules():
         '#migration',
         '-A INPUT -p tcp -m state --state NEW -m multiport --dports 49152:49216 -j ACCEPT'
     ]
-
-def returnYes(controller):
-    return "yes"
 
 def waitForJbossUp():
     """
