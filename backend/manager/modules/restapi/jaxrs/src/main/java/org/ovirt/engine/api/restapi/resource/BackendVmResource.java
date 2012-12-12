@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.MemoryPolicy;
 import org.ovirt.engine.api.model.Statistic;
@@ -305,11 +306,20 @@ public class BackendVmResource extends
 
     @Override
     public Response ticket(Action action) {
-        return doAction(VdcActionType.SetVmTicket,
-                        new SetVmTicketParameters(guid,
-                                                  getTicketValue(action),
-                                                  getTicketExpiry(action)),
-                        action);
+        final Response response = doAction(VdcActionType.SetVmTicket,
+                new SetVmTicketParameters(guid,
+                                          getTicketValue(action),
+                                          getTicketExpiry(action)),
+                action);
+
+        final Action actionResponse = (Action) response.getEntity();
+
+        if (CreationStatus.FAILED.value().equals(actionResponse.getStatus().getState())) {
+            actionResponse.getTicket().setValue(null);
+            actionResponse.getTicket().setExpiry(null);
+        }
+
+        return response;
     }
 
     protected String getTicketValue(Action action) {
