@@ -13,7 +13,7 @@
 			text-align: center;
 		}
 		
-		.messageLabel {
+		.messageHTML {
 			padding-top: 20px;
 			padding-bottom: 5px;
 		}
@@ -27,7 +27,7 @@
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
+				<g:HTML ui:field="messageHTML" addStyleNames="{style.messageHTML}"/>
 				<g:ScrollPanel height="120px">
 					<g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}" />
 				</g:ScrollPanel>

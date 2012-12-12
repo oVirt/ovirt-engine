@@ -4,7 +4,7 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
 	<ui:style>
-		.messageLabel,.descriptionPanel {
+		.messageHTML,.descriptionPanel {
 			margin: 5px;
 		}
 	</ui:style>
@@ -12,7 +12,7 @@
 	<d:SimpleDialogPanel width="500px" height="400px">
 		<d:content>
 			<g:FlowPanel>
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+				<g:HTML ui:field="messageHTML" addStyleNames="{style.messageHTML}" />
 				<g:ScrollPanel>
 					<g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}" />
 				</g:ScrollPanel>

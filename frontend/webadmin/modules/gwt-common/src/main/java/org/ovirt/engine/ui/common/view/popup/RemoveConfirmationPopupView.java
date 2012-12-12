@@ -20,6 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -54,7 +55,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @UiField
     @Ignore
-    protected Label noteLabel;
+    protected HTML noteHTML;
 
     @Inject
 
@@ -92,9 +93,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     }
 
     void setNote(String note) {
-        if (note != null) {
-            noteLabel.getElement().setInnerHTML(note.replace("\n", "<br/>")); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+        noteHTML.setHTML(SafeHtmlUtils.fromString(note != null ? note : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     void addItems(Iterable<?> items) {
