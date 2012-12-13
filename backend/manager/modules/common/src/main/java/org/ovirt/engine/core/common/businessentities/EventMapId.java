@@ -5,17 +5,17 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class event_map_id implements Serializable {
+public class EventMapId implements Serializable {
     private static final long serialVersionUID = -643444133261195061L;
 
     public String eventDownName;
 
     public String eventUpName;
 
-    public event_map_id() {
+    public EventMapId() {
     }
 
-    public event_map_id(String eventDownName, String eventUpName) {
+    public EventMapId(String eventDownName, String eventUpName) {
         super();
         this.eventDownName = eventDownName;
         this.eventUpName = eventUpName;

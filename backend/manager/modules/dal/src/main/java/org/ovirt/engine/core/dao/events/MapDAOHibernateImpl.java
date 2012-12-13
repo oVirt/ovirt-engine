@@ -5,10 +5,10 @@ import java.util.List;
 import org.hibernate.criterion.Restrictions;
 
 import org.ovirt.engine.core.common.businessentities.event_map;
-import org.ovirt.engine.core.common.businessentities.event_map_id;
+import org.ovirt.engine.core.common.businessentities.EventMapId;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class MapDAOHibernateImpl extends BaseDAOHibernateImpl<event_map, event_map_id> {
+public class MapDAOHibernateImpl extends BaseDAOHibernateImpl<event_map, EventMapId> {
     public MapDAOHibernateImpl() {
         super(event_map.class);
     }

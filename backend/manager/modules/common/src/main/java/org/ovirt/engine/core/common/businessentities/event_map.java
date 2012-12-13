@@ -19,7 +19,7 @@ public class event_map implements Serializable {
     @AttributeOverrides({
             @AttributeOverride(name = "eventUpName", column = @Column(name = "event_up_name")),
             @AttributeOverride(name = "eventDownName", column = @Column(name = "event_down_name")) })
-    private event_map_id id = new event_map_id();
+    private EventMapId id = new EventMapId();
 
     @Transient
     private int eventDownId;
