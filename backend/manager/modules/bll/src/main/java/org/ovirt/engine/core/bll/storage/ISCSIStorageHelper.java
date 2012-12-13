@@ -35,7 +35,11 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain,
+            Guid vdsId,
+            int type,
+            LUNs lun,
+            Guid storagePoolId) {
         boolean isSuccess = true;
         List<StorageServerConnections> list =
                 (lun == null) ? DbFacade.getInstance()
@@ -223,7 +227,11 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean connectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
-        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue(), lun, storagePoolId);
+        return runConnectionStorageToDomain(storageDomain,
+                vdsId,
+                VDSCommandType.ConnectStorageServer.getValue(),
+                lun,
+                storagePoolId);
     }
 
     @Override

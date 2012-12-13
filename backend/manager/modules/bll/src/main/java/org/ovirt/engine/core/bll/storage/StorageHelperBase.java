@@ -46,7 +46,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected abstract boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
 
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain,
+            Guid vdsId,
+            int type,
+            LUNs lun,
+            Guid storagePoolId) {
         return true;
     }
 
@@ -63,7 +67,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public boolean connectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
-        return runConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue(), lun, storagePoolId);
+        return runConnectionStorageToDomain(storageDomain,
+                vdsId,
+                VdcActionType.ConnectStorageToVds.getValue(),
+                lun,
+                storagePoolId);
     }
 
     @Override
@@ -154,14 +162,14 @@ public abstract class StorageHelperBase implements IStorageHelper {
     protected void printLog(Log logger, String connectionField, String errorCode) {
         String translatedError = getTranslatedStorageError(errorCode);
         logger.errorFormat(
-                 "The connection with details {0} failed because of error code {1} and error message is: {2}",
-                  connectionField, errorCode, Backend.getInstance().getVdsErrorsTranslator()
-                                    .TranslateErrorTextSingle(translatedError));
+                "The connection with details {0} failed because of error code {1} and error message is: {2}",
+                connectionField, errorCode, Backend.getInstance().getVdsErrorsTranslator()
+                        .TranslateErrorTextSingle(translatedError));
     }
 
     /**
-     * Get translated error by error code ,if no enum for the error code (should not happened) ,
-     * will set the error code instead.
+     * Get translated error by error code ,if no enum for the error code (should not happened) , will set the error code
+     * instead. <BR/>
      * When no enum found for the error code, we should check it with the vdsm team.
      *
      * @param errorCode
