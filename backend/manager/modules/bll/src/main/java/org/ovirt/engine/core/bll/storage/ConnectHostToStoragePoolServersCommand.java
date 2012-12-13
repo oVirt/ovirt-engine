@@ -94,7 +94,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
 
     protected boolean ValidConnection(StorageType type, List<StorageServerConnections> connections) {
         return (connections != null && (connections.isEmpty() || StorageHelperDirector.getInstance().getItem(type)
-                .ValidateStoragePoolConnectionsInHost(getVds(), connections, getStoragePool().getId())));
+                .validateStoragePoolConnectionsInHost(getVds(), connections, getStoragePool().getId())));
     }
 
 }

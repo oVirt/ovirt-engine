@@ -33,7 +33,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
         if (!StorageHelperDirector.getInstance()
                 .getItem(getParameters().getStorageServerConnection().getstorage_type())
-                .ValidateStoragePoolConnectionsInHost(getVds(),
+                .validateStoragePoolConnectionsInHost(getVds(),
                         Arrays.asList(getConnection()),
                         getParameters().getStoragePoolId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);

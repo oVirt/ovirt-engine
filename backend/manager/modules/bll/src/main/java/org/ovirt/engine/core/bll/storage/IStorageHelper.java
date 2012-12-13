@@ -27,7 +27,7 @@ public interface IStorageHelper {
 
     void removeLun(LUNs lun);
 
-    boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
+    boolean validateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId);
 
     List<StorageServerConnections> GetStorageServerConnectionsByDomain(

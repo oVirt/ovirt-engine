@@ -82,7 +82,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             if (returnValue) {
                 IStorageHelper storageHelper = StorageHelperDirector.getInstance().getItem(
                         paramConnection.getstorage_type());
-                if (!storageHelper.ValidateStoragePoolConnectionsInHost(
+                if (!storageHelper.validateStoragePoolConnectionsInHost(
                         getVds(),
                         new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
                                 .asList(new StorageServerConnections[] { paramConnection })), Guid.Empty))
