@@ -90,7 +90,7 @@ public class BackendFilesResourceTest
         locales.add(CLIENT_LOCALE);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllIsoImagesList,
+        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
                 GetAllIsoImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
@@ -115,7 +115,7 @@ public class BackendFilesResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllIsoImagesList,
+        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
                 GetAllIsoImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
@@ -147,7 +147,7 @@ public class BackendFilesResourceTest
     @Override
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllIsoImagesList,
+        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
                 GetAllIsoImagesListParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
@@ -184,19 +184,12 @@ public class BackendFilesResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assert(query.equals(""));
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllIsoImagesList,
+        setUpEntityQueryExpectations(VdcQueryType.GetAllImagesList,
                                      GetAllIsoImagesListParameters.class,
                                      new String[] { "StorageDomainId" },
                                      new Object[] { GUIDS[0] },
                                      setUpFiles(),
                                      failure);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllFloppyImagesList,
-                GetAllIsoImagesListParameters.class,
-                new String[] { "StorageDomainId" },
-                new Object[] { GUIDS[0] },
-                setUpFiles(),
-                failure);
-
         control.replay();
     }
 
@@ -232,7 +225,7 @@ public class BackendFilesResourceTest
     @Override
     protected void verifyCollection(List<File> collection) throws Exception {
         assertNotNull(collection);
-        assertEquals(NAMES.length * 2, collection.size());
+        assertEquals(NAMES.length, collection.size());
         for (int i = 0; i < NAMES.length; i++) {
             verifyModel(collection.get(i), i);
         }

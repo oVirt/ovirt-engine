@@ -74,10 +74,8 @@ public class BackendFilesResource
         GetAllIsoImagesListParameters queryParams = new GetAllIsoImagesListParameters(asGuid(storageDomainId));
         queryParams.setForceRefresh(true);
 
-        List<RepoFileMetaData> files = getBackendCollection(RepoFileMetaData.class, VdcQueryType.GetAllIsoImagesList,
+        List<RepoFileMetaData> files = getBackendCollection(RepoFileMetaData.class, VdcQueryType.GetAllImagesList,
                                     queryParams);
-        files.addAll(getBackendCollection(RepoFileMetaData.class, VdcQueryType.GetAllFloppyImagesList,
-                queryParams));
         List<String> fileNames = new LinkedList<String>();
         for (RepoFileMetaData file : files) {
             fileNames.add(file.getRepoFileName());

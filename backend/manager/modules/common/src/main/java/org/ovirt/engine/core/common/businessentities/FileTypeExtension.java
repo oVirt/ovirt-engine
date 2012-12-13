@@ -6,7 +6,8 @@ import java.util.Map;
 public enum FileTypeExtension {
     Unknown(0),
     ISO(1),
-    Floppy(2);
+    Floppy(2),
+    All(3);
 
     private int intValue;
     private static Map<Integer, FileTypeExtension> mappings;
