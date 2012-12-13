@@ -30,7 +30,7 @@ public interface IStorageHelper {
     boolean validateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId);
 
-    List<StorageServerConnections> GetStorageServerConnectionsByDomain(
+    List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain);
 
     boolean IsConnectSucceeded(Map<String, String> returnValue,

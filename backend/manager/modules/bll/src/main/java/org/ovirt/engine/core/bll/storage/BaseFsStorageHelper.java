@@ -69,7 +69,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
         return new ArrayList<StorageServerConnections>(
                 Arrays.asList(new StorageServerConnections[] { DbFacade.getInstance()

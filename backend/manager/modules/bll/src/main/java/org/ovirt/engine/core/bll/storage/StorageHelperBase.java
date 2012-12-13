@@ -101,7 +101,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
         return new java.util.ArrayList<StorageServerConnections>();
     }

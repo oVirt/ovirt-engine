@@ -79,7 +79,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
             Set<StorageServerConnections> isoConnections =
                     new HashSet<StorageServerConnections>(
                             StorageHelperDirector.getInstance().getItem(getIsoType())
-                                    .GetStorageServerConnectionsByDomain(isoDomains.get(0).getStorageStaticData()));
+                                    .getStorageServerConnectionsByDomain(isoDomains.get(0).getStorageStaticData()));
             if (_isoType != getStoragePool().getstorage_pool_type()) {
                 connections.removeAll(isoConnections);
             } else {
@@ -93,7 +93,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
             Set<StorageServerConnections> exportConnections =
                     new HashSet<StorageServerConnections>(
                             StorageHelperDirector.getInstance().getItem(getExportType())
-                                    .GetStorageServerConnectionsByDomain(exportDomains.get(0).getStorageStaticData()));
+                                    .getStorageServerConnectionsByDomain(exportDomains.get(0).getStorageStaticData()));
             if (_exportType != getStoragePool().getstorage_pool_type()) {
                 connections.removeAll(exportConnections);
             } else {

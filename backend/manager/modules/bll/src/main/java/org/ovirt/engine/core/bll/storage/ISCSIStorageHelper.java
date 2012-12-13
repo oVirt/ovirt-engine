@@ -233,7 +233,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
         return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
     }
