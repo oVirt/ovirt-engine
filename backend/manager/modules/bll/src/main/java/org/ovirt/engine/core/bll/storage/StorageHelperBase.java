@@ -33,7 +33,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         Guid vdsId = pool.getspm_vds_id() != null ? pool.getspm_vds_id().getValue() : Guid.Empty;
 
         if (!vdsId.equals(Guid.Empty)) {
-            returnValue = RunConnectionStorageToDomain(storageDomain, vdsId, type);
+            returnValue = runConnectionStorageToDomain(storageDomain, vdsId, type);
         }
         return returnValue;
     }
@@ -44,7 +44,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
                 VdcActionType.RemoveStorageServerConnection.getValue());
     }
 
-    protected abstract boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
+    protected abstract boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
 
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
         return true;
@@ -52,12 +52,12 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue());
+        return runConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue());
     }
 
     @Override
     public boolean DisconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId,
+        return runConnectionStorageToDomain(storageDomain, vdsId,
                 VdcActionType.RemoveStorageServerConnection.getValue());
     }
 

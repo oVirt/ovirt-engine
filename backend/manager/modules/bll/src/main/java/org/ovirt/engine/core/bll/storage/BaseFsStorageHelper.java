@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.log.Log;
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
     @Override
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
         boolean returnValue = false;
         StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getstorage());

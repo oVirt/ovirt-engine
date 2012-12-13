@@ -29,7 +29,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     protected static final Log log = LogFactory.getLog(ISCSIStorageHelper.class);
 
     @Override
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
         return RunConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
@@ -213,12 +213,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
     }
 
     @Override
     public boolean DisconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue());
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue());
     }
 
     @Override

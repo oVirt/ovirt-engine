@@ -16,7 +16,7 @@ public class FCPStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
         return true;
     }
 
