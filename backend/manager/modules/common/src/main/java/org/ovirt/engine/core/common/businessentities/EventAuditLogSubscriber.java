@@ -5,13 +5,13 @@ import java.io.Serializable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class event_audit_log_subscriber implements Serializable {
+public class EventAuditLogSubscriber implements Serializable {
     private static final long serialVersionUID = 2766057261065080144L;
 
-    public event_audit_log_subscriber() {
+    public EventAuditLogSubscriber() {
     }
 
-    public event_audit_log_subscriber(int event_type, Guid subscriber_id, String event_up_name, int method_id,
+    public EventAuditLogSubscriber(int event_type, Guid subscriber_id, String event_up_name, int method_id,
             String method_address, String tag_name, long audit_log_id, NGuid user_id, String user_name, NGuid vm_id,
             String vm_name, NGuid vm_template_id, String vm_template_name, NGuid vds_id, String vds_name,
             Guid storage_pool_id, String storage_pool_name, Guid storage_domain_id, String storage_domain_name,

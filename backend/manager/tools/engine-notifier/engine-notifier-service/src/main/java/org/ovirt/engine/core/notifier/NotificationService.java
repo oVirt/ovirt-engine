@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
@@ -184,7 +184,7 @@ public class NotificationService implements Runnable {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<event_audit_log_subscriber> eventSubscribers  = new ArrayList<event_audit_log_subscriber>();
+        List<EventAuditLogSubscriber> eventSubscribers  = new ArrayList<EventAuditLogSubscriber>();
         try {
             connection = ds.getConnection();
             ps =
@@ -199,7 +199,7 @@ public class NotificationService implements Runnable {
             DbUtils.closeQuietly(rs, ps, connection);
         }
         DbUser dbUser = null;
-        for (event_audit_log_subscriber eventSubscriber:eventSubscribers) {
+        for (EventAuditLogSubscriber eventSubscriber:eventSubscribers) {
             dbUser = getUserByUserId(eventSubscriber.getsubscriber_id());
             if (dbUser != null) {
                 EventSender method =
@@ -221,7 +221,7 @@ public class NotificationService implements Runnable {
         }
     }
 
-    private void updateAuditLogEventProcessed(event_audit_log_subscriber eventSubscriber) throws SQLException {
+    private void updateAuditLogEventProcessed(EventAuditLogSubscriber eventSubscriber) throws SQLException {
         Connection connection = null;
         PreparedStatement ps = null;
         try {
@@ -259,7 +259,7 @@ public class NotificationService implements Runnable {
         }
     }
 
-    private event_notification_hist geteventNotificationHist(event_audit_log_subscriber eals,
+    private event_notification_hist geteventNotificationHist(EventAuditLogSubscriber eals,
             boolean isNotified,
             String reason) {
         event_notification_hist eventHistory = new event_notification_hist();
@@ -297,8 +297,8 @@ public class NotificationService implements Runnable {
         return dbUser;
     }
 
-    private event_audit_log_subscriber getEventAuditLogSubscriber(ResultSet rs) throws SQLException {
-        event_audit_log_subscriber eals = new event_audit_log_subscriber();
+    private EventAuditLogSubscriber getEventAuditLogSubscriber(ResultSet rs) throws SQLException {
+        EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
         eals.setevent_type(rs.getInt("event_type"));
         eals.setsubscriber_id(Guid.createGuidFromString(rs.getString("subscriber_id")));
         eals.setevent_up_name(rs.getString("event_up_name"));

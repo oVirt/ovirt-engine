@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
 import org.ovirt.engine.core.notifier.utils.sender.mail.EventSenderMailImpl;
@@ -28,7 +28,7 @@ public class MailSenderTest {
      */
     @Test
     public void testNonSecuredEventMailSender() {
-        event_audit_log_subscriber eventData = new event_audit_log_subscriber();
+        EventAuditLogSubscriber eventData = new EventAuditLogSubscriber();
         eventData.setlog_time(new Date());
         eventData.setevent_type(0);
         eventData.setuser_name("a test user name");
@@ -61,7 +61,7 @@ public class MailSenderTest {
      */
     @Test
     public void testSecuredEventMailSender() {
-        event_audit_log_subscriber eventData = new event_audit_log_subscriber();
+        EventAuditLogSubscriber eventData = new EventAuditLogSubscriber();
         eventData.setlog_time(new Date());
         eventData.setevent_type(0);
         eventData.setuser_name("a test user name");

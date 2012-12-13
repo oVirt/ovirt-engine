@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.notifier.utils.sender.mail;
 
-import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 
 /**
  * Creates a simple message subject and body using helper class {@linkplain MessageHelper} to determine <br>
@@ -10,11 +10,11 @@ public class EventMessageContent {
     private String subject;
     private String body;
 
-    private void prepareMessageSubject(String hostName, event_audit_log_subscriber eventData) {
+    private void prepareMessageSubject(String hostName, EventAuditLogSubscriber eventData) {
         subject = MessageHelper.prepareMessageSubject(eventData.getevent_type(), hostName, eventData.getmessage());
     }
 
-    private void prepareMessageBody(event_audit_log_subscriber eventData, boolean isBodyHtml) {
+    private void prepareMessageBody(EventAuditLogSubscriber eventData, boolean isBodyHtml) {
         MessageBody messageBody = new MessageBody();
         messageBody.setUserInfo(eventData.getuser_name());
         messageBody.setVmInfo(eventData.getvm_name());
@@ -59,7 +59,7 @@ public class EventMessageContent {
      * @param isBodyHtml
      *            defines the format of message body
      */
-    public void prepareMessage(String hostName, event_audit_log_subscriber eventData, boolean isBodyHtml) {
+    public void prepareMessage(String hostName, EventAuditLogSubscriber eventData, boolean isBodyHtml) {
         prepareMessageSubject(hostName, eventData);
         prepareMessageBody(eventData, isBodyHtml);
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.notifier.utils.sender;
 
-import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 
 /**
  * Defines a method designed to dispatch a message to each implementation method type
@@ -14,6 +14,6 @@ public interface EventSender {
      *            an alternate method address if not provided by {@link event_audit_log_subscriber.getmethod_address()}
      * @return the result of the notification send action
      */
-    public EventSenderResult send(event_audit_log_subscriber eventData, String methodAddress);
+    public EventSenderResult send(EventAuditLogSubscriber eventData, String methodAddress);
 
 }

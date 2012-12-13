@@ -10,7 +10,7 @@ import javax.mail.MessagingException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
+import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSender;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
@@ -53,7 +53,7 @@ public class EventSenderMailImpl implements EventSender {
     /**
      * {@link #EventSender}
      */
-    public EventSenderResult send(event_audit_log_subscriber eventData, String methodAddress) {
+    public EventSenderResult send(EventAuditLogSubscriber eventData, String methodAddress) {
         EventSenderResult result = new EventSenderResult();
         EventMessageContent message = new EventMessageContent();
         message.prepareMessage(hostName, eventData, isBodyHtml);
