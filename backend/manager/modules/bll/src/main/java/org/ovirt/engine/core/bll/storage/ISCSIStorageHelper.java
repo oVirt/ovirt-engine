@@ -201,13 +201,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return RunForSingleConnectionInHost(storageDomain, storagePoolId,
+        return runForSingleConnectionInHost(storageDomain, storagePoolId,
                 VDSCommandType.ConnectStorageServer.getValue());
     }
 
     @Override
     public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return RunForSingleConnectionInHost(storageDomain, storagePoolId,
+        return runForSingleConnectionInHost(storageDomain, storagePoolId,
                 VDSCommandType.DisconnectStorageServer.getValue());
     }
 

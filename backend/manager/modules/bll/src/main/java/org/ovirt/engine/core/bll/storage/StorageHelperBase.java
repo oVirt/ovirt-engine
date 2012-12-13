@@ -24,10 +24,10 @@ import org.ovirt.engine.core.utils.log.Log;
 public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return RunForSingleConnectionInHost(storageDomain, storagePoolId, VdcActionType.ConnectStorageToVds.getValue());
+        return runForSingleConnectionInHost(storageDomain, storagePoolId, VdcActionType.ConnectStorageToVds.getValue());
     }
 
-    public boolean RunForSingleConnectionInHost(storage_domains storageDomain, Guid storagePoolId, int type) {
+    public boolean runForSingleConnectionInHost(storage_domains storageDomain, Guid storagePoolId, int type) {
         boolean returnValue = false;
         storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
         Guid vdsId = pool.getspm_vds_id() != null ? pool.getspm_vds_id().getValue() : Guid.Empty;
@@ -40,7 +40,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return RunForSingleConnectionInHost(storageDomain, storagePoolId,
+        return runForSingleConnectionInHost(storageDomain, storagePoolId,
                 VdcActionType.RemoveStorageServerConnection.getValue());
     }
 
