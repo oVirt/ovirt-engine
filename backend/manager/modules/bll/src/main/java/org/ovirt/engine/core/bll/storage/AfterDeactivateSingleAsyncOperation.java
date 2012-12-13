@@ -45,7 +45,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
 
             if (getVdss().get(iterationId).getspm_status() == VdsSpmStatus.None) {
                 StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                        .DisconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
+                        .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to refresh storagePool. Host {0} to storage pool {1}. Exception: {3}", getVdss()

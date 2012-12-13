@@ -169,7 +169,7 @@ public class RemoveStorageDomainTest {
         IStorageHelper helper = mock(IStorageHelper.class);
         if (connect) {
             when(helper.connectStorageToDomainByVdsId(dom, VDS_ID)).thenReturn(true);
-            when(helper.DisconnectStorageFromDomainByVdsId(dom, VDS_ID)).thenReturn(true);
+            when(helper.disconnectStorageFromDomainByVdsId(dom, VDS_ID)).thenReturn(true);
         }
         if (!failure) {
             when(helper.StorageDomainRemoved(dom.getStorageStaticData())).thenReturn(true);

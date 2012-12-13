@@ -210,7 +210,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
 
         if (!getParameters().isInactive() && spm != null) {
-            getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
+            getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
         }
 
         executeInNewTransaction(new TransactionMethod<Object>() {

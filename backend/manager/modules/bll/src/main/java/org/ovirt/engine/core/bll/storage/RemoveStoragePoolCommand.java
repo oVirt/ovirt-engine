@@ -184,7 +184,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         if (getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
             for (VDS vds : vdss) {
                 StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                        .DisconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
+                        .disconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
         } else {
             try {
@@ -198,7 +198,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // Do nothing, exception already printed at logs
             }
             StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                    .DisconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getId());
+                    .disconnectStorageFromDomainByVdsId(masterDomain, vdss.get(0).getId());
             removeDomainFromDb(masterDomain);
         }
 

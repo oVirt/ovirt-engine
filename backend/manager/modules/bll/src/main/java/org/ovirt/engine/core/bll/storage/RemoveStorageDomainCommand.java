@@ -134,7 +134,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     private void DisconnectStorage() {
-        getStorageHelper(getStorageDomain()).DisconnectStorageFromDomainByVdsId(getStorageDomain(),
+        getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(),
                 getVds().getId());
     }
 

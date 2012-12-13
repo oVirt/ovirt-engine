@@ -232,7 +232,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 if (!getParameters().isInactive()) {
                     StorageHelperDirector.getInstance()
                             .getItem(getStorageDomain().getstorage_type())
-                            .DisconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
+                            .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
                 }
 
             } catch (Exception e) {
