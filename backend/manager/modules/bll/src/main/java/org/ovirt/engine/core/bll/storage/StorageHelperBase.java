@@ -41,7 +41,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean DisconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
+    public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
         return RunForSingleConnectionInHost(storageDomain, storagePoolId,
                 VdcActionType.RemoveStorageServerConnection.getValue());
     }
