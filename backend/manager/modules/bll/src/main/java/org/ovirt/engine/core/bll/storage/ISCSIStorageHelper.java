@@ -30,12 +30,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
+        return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
+    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
         boolean isSuccess = true;
         List<StorageServerConnections> list =
                 (lun == null) ? DbFacade.getInstance()
@@ -223,12 +223,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean ConnectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue(), lun, storagePoolId);
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue(), lun, storagePoolId);
     }
 
     @Override
     public boolean DisconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
-        return RunConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue(),
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue(),
                 lun, Guid.Empty);
     }
 
