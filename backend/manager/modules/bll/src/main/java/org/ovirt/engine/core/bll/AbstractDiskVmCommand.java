@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.storage.IStorageHelper;
+import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -53,18 +55,24 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
                 updateLUNConnectionsInfo(lun);
-                if (!StorageHelperDirector.getInstance()
-                        .getItem(getLUNStorageType(lun))
-                        .connectStorageToLunByVdsId(null,
-                                getVm().getRunOnVds().getValue(),
-                                lun,
-                                getVm().getStoragePoolId())) {
-                    throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+                Map<StorageType, List<StorageServerConnections>> lunsByStorageType =
+                        StorageHelperBase.filterConnectionsByStorageType(lun);
+                for (StorageType storageType : lunsByStorageType.keySet()) {
+                    if (!getStorageHelper(storageType).connectStorageToLunByVdsId(null,
+                            getVm().getRunOnVds().getValue(),
+                            lun,
+                            getVm().getStoragePoolId())) {
+                        throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
+                    }
                 }
             }
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds().getValue(),
                 getVm().getId(), disk, vmDevice));
+    }
+
+    private IStorageHelper getStorageHelper(StorageType storageType) {
+        return StorageHelperDirector.getInstance().getItem(storageType);
     }
 
     /**

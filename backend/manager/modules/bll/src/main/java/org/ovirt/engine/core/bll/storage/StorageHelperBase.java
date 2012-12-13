@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,14 +10,16 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -92,6 +95,17 @@ public abstract class StorageHelperBase implements IStorageHelper {
     public boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         return true;
+    }
+
+    public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
+        Map<StorageType, List<StorageServerConnections>> storageConnectionsForStorageTypeMap =
+                new EnumMap<StorageType, List<StorageServerConnections>>(StorageType.class);
+        for (StorageServerConnections lunConnections : lun.getLunConnections()) {
+            MultiValueMapUtils.addToMap(lunConnections.getstorage_type(),
+                    lunConnections,
+                    storageConnectionsForStorageTypeMap);
+        }
+        return storageConnectionsForStorageTypeMap;
     }
 
     protected static LunDAO getLunDao() {
