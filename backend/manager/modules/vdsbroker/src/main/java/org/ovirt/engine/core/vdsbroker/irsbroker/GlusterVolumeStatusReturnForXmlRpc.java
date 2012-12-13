@@ -115,18 +115,18 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             serviceInfo.setHostName((String) volumeServiceInfo.get(HOSTNAME));
         }
 
-        if (volumeServiceInfo.containsKey(PORT)) {
-            serviceInfo.setPort(Integer.valueOf((String) volumeServiceInfo.get(PORT)));
-        }
-
-        if (volumeServiceInfo.containsKey(PID)) {
-            serviceInfo.setPid(Integer.valueOf((String) volumeServiceInfo.get(PID)));
-        }
-
         if (volumeServiceInfo.containsKey(STATUS)) {
             String brickStatus = (String) volumeServiceInfo.get(STATUS);
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 serviceInfo.setStatus(GlusterStatus.UP);
+                // parse the port and pid only if the brick is online.
+                if (volumeServiceInfo.containsKey(PORT)) {
+                    serviceInfo.setPort(Integer.parseInt((String) volumeServiceInfo.get(PORT)));
+                }
+
+                if (volumeServiceInfo.containsKey(PID)) {
+                    serviceInfo.setPid(Integer.parseInt((String) volumeServiceInfo.get(PID)));
+                }
             } else {
                 serviceInfo.setStatus(GlusterStatus.DOWN);
             }
@@ -168,17 +168,17 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             brickProperties.setBrickId(brickEntity.getId());
         }
 
-        if (brick.containsKey(PORT)) {
-            brickProperties.setPort(Integer.valueOf((String) brick.get(PORT)));
-        }
-        if (brick.containsKey(PID)) {
-            brickProperties.setPid(Integer.valueOf((String) brick.get(PID)));
-        }
-
         if (brick.containsKey(STATUS)) {
             String brickStatus = (String) brick.get(STATUS);
             if (brickStatus.toUpperCase().equals(ONLINE)) {
                 brickProperties.setStatus(GlusterStatus.UP);
+
+                if (brick.containsKey(PORT)) {
+                    brickProperties.setPort(Integer.parseInt((String) brick.get(PORT)));
+                }
+                if (brick.containsKey(PID)) {
+                    brickProperties.setPid(Integer.parseInt((String) brick.get(PID)));
+                }
             } else {
                 brickProperties.setStatus(GlusterStatus.DOWN);
             }
