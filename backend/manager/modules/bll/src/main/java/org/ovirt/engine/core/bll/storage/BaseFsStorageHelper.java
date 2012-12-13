@@ -50,11 +50,11 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
                         VDSCommandType.ValidateStorageServerConnection,
                         new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId, getType(),
                                 connections)).getReturnValue();
-        return IsConnectSucceeded(validateConnections, connections);
+        return isConnectSucceeded(validateConnections, connections);
     }
 
     @Override
-    public boolean IsConnectSucceeded(Map<String, String> returnValue,
+    public boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         boolean result = true;
         for (Map.Entry<String, String> entry : returnValue.entrySet()) {

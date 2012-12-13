@@ -85,7 +85,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
                             new ConnectStorageServerVDSCommandParameters(getVds().getId(),
                                     getStoragePool().getId(), type, connections)).getReturnValue();
             connectSucceeded =
-                    StorageHelperDirector.getInstance().getItem(type).IsConnectSucceeded(retValues, connections);
+                    StorageHelperDirector.getInstance().getItem(type).isConnectSucceeded(retValues, connections);
             log.infoFormat("Host {0} storage connection was {1} ", getVds().getvds_name(),
                     connectSucceeded ? "succeeded" : "failed");
         }

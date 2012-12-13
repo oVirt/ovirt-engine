@@ -107,7 +107,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean IsConnectSucceeded(Map<String, String> returnValue,
+    public boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         return true;
     }

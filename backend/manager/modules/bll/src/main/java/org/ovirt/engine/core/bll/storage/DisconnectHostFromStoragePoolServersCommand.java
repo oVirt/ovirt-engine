@@ -33,7 +33,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
             StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
-                    .IsConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), getConnections());
+                    .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), getConnections());
         }
         if (getIsoConnections() != null && getIsoConnections().size() != 0) {
             vdsReturnValue = Backend
@@ -47,7 +47,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
             if (!vdsReturnValue.getSucceeded()) {
                 StorageHelperDirector.getInstance()
                         .getItem(getIsoType())
-                        .IsConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
+                        .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
                                 getIsoConnections());
             }
         }
@@ -63,7 +63,7 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
             if (!vdsReturnValue.getSucceeded()) {
                 StorageHelperDirector.getInstance()
                         .getItem(getExportType())
-                        .IsConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
+                        .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(),
                                 getExportConnections());
             }
         }

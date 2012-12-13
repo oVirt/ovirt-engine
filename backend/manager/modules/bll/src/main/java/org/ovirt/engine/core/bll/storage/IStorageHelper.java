@@ -33,6 +33,6 @@ public interface IStorageHelper {
     List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain);
 
-    boolean IsConnectSucceeded(Map<String, String> returnValue,
+    boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections);
 }

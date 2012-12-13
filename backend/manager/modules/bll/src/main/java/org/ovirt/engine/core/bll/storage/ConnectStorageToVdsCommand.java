@@ -77,7 +77,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 .getReturnValue();
         return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
                 .getItem(getParameters().getStorageServerConnection().getstorage_type())
-                .IsConnectSucceeded(result, Arrays.asList(getConnection())),
+                .isConnectSucceeded(result, Arrays.asList(getConnection())),
                 Integer.parseInt(result.values().iterator().next()));
     }
 }

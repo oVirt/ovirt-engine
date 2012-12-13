@@ -60,7 +60,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                                     poolId, StorageType.ISCSI, list));
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
-                isSuccess = IsConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
+                isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
             }
         }
         return isSuccess;
@@ -130,13 +130,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                             new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId,
                                     StorageType.ISCSI, connections)).getReturnValue();
 
-            return IsConnectSucceeded(validateConnections, connections);
+            return isConnectSucceeded(validateConnections, connections);
         }
         return true;
     }
 
     @Override
-    public boolean IsConnectSucceeded(final Map<String, String> returnValue,
+    public boolean isConnectSucceeded(final Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         boolean result = true;
         List<String> failedConnectionsList = LinqUtils.filter(returnValue.keySet(), new Predicate<String>() {
