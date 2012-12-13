@@ -89,7 +89,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                             getStoragePool().getId());
                     StorageHelperDirector.getInstance()
                             .getItem(storageDomain.getstorage_type())
-                            .ConnectStorageToDomainByVdsId(storageDomain,
+                            .connectStorageToDomainByVdsId(storageDomain,
                                     getVds().getId());
                 }
                 retVal = addStoragePoolInIrs();

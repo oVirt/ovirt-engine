@@ -16,7 +16,7 @@ public class ConnectSingleAsyncOperation extends ActivateDeactivateSingleAsyncOp
     public void execute(int iterationId) {
         try {
             StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                    .ConnectStorageToDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
+                    .connectStorageToDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}", getVdss()
                     .get(iterationId).getvds_name(), getStoragePool().getname(), e);

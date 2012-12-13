@@ -15,7 +15,7 @@ public interface IStorageHelper {
 
     boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId);
 
-    boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId);
+    boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId);
 
     boolean DisconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId);
 

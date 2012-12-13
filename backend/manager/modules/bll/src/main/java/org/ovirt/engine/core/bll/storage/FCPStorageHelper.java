@@ -21,7 +21,7 @@ public class FCPStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
         return true;
     }
 

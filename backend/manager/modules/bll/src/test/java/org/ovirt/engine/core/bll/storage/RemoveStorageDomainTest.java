@@ -168,7 +168,7 @@ public class RemoveStorageDomainTest {
             boolean failure) {
         IStorageHelper helper = mock(IStorageHelper.class);
         if (connect) {
-            when(helper.ConnectStorageToDomainByVdsId(dom, VDS_ID)).thenReturn(true);
+            when(helper.connectStorageToDomainByVdsId(dom, VDS_ID)).thenReturn(true);
             when(helper.DisconnectStorageFromDomainByVdsId(dom, VDS_ID)).thenReturn(true);
         }
         if (!failure) {

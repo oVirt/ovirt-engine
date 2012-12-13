@@ -51,7 +51,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue());
     }
 

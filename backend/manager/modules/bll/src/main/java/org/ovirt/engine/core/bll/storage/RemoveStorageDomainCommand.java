@@ -129,7 +129,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     private boolean ConnectStorage() {
-        return getStorageHelper(getStorageDomain()).ConnectStorageToDomainByVdsId(getStorageDomain(),
+        return getStorageHelper(getStorageDomain()).connectStorageToDomainByVdsId(getStorageDomain(),
                 getVds().getId());
     }
 

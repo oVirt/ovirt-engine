@@ -212,7 +212,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean ConnectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
     }
 
