@@ -1841,6 +1841,44 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/networks/{network:id}/permissions|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/networks/{network:id}/permissions/{permission:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/networks/{network:id}/permissions/{permission:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/networks/{network:id}/permissions|rel=add
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles|rel=get
   request:
     body:

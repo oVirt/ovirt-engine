@@ -19,8 +19,11 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
     protected VdcActionType addAction;
     protected VdcActionType removeAction;
 
-    public AbstractBackendNetworksResource(VdcQueryType queryType, VdcActionType addAction, VdcActionType removeAction) {
-        super(Network.class, org.ovirt.engine.core.common.businessentities.Network.class);
+    public AbstractBackendNetworksResource(VdcQueryType queryType,
+            VdcActionType addAction,
+            VdcActionType removeAction,
+            String... subCollections) {
+        super(Network.class, org.ovirt.engine.core.common.businessentities.Network.class, subCollections);
         this.queryType = queryType;
         this.addAction = addAction;
         this.removeAction = removeAction;

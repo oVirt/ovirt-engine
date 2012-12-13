@@ -16,14 +16,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendNetworksResource
-    extends AbstractBackendNetworksResource
-    implements NetworksResource {
+public class BackendNetworksResource extends AbstractBackendNetworksResource implements NetworksResource {
+
+    static final String[] SUB_COLLECTIONS = {"permissions"};
 
     public BackendNetworksResource() {
-        super(VdcQueryType.GetAllNetworks,
-              VdcActionType.AddNetwork,
-              VdcActionType.RemoveNetwork);
+        super(VdcQueryType.GetAllNetworks, VdcActionType.AddNetwork, VdcActionType.RemoveNetwork, SUB_COLLECTIONS);
     }
 
     @Override
