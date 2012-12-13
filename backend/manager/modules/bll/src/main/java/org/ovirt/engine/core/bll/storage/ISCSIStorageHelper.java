@@ -21,12 +21,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ISCSIStorageHelper extends StorageHelperBase {
-
-    protected static final Log log = LogFactory.getLog(ISCSIStorageHelper.class);
 
     @Override
     protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {

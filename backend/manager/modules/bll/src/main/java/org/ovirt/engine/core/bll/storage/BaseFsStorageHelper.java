@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
@@ -33,7 +32,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
                     .runInternalAction(VdcActionType.forValue(type),
                             new StorageServerConnectionParametersBase(connection, vdsId)).getSucceeded();
         } else {
-            getLog().warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getstorage_name()
+            log.warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getstorage_name()
                     + " because connection for connectionId:" + storageDomain.getstorage() + " is null.");
         }
         return returnValue;
@@ -60,7 +59,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
         for (Map.Entry<String, String> entry : returnValue.entrySet()) {
             if (!"0".equals(entry.getValue())) {
                 String connectionField = addToAuditLogErrorMessage(entry.getKey(), entry.getValue(), connections);
-                printLog(getLog(), connectionField, entry.getValue());
+                printLog(log, connectionField, entry.getValue());
                 result = false;
             }
         }
@@ -87,8 +86,6 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
         return true;
     }
-
-    protected abstract Log getLog();
 
     protected abstract StorageType getType();
 }
