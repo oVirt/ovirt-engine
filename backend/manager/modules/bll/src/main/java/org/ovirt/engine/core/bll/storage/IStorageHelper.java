@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
-    boolean ConnectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId);
+    boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId);
 
     boolean DisconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId);
 

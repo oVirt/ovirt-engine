@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class FCPStorageHelper extends StorageHelperBase {
     @Override
-    public boolean ConnectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
+    public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
         return true;
     }
 

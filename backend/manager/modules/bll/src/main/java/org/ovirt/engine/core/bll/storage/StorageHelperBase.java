@@ -25,7 +25,7 @@ import org.ovirt.engine.core.utils.log.Log;
 
 public abstract class StorageHelperBase implements IStorageHelper {
     @Override
-    public boolean ConnectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
+    public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
         return RunForSingleConnectionInHost(storageDomain, storagePoolId, VdcActionType.ConnectStorageToVds.getValue());
     }
 
