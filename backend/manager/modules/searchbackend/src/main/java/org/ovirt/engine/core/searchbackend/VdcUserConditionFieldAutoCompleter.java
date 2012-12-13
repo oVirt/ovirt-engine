@@ -33,7 +33,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("DEPARTMENT", String.class);
         getTypeDictionary().put("TITLE", String.class);
         getTypeDictionary().put("GROUP", String.class);
-        getTypeDictionary().put("STATUS", AdRefStatus.class);
+        getTypeDictionary().put("STATUS", LdapRefStatus.class);
         getTypeDictionary().put("ROLE", String.class);
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("POOL", String.class);
@@ -68,7 +68,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
         if (StringHelper.EqOp(fieldName, "STATUS")) {
-            retval = new EnumValueAutoCompleter(AdRefStatus.class);
+            retval = new EnumValueAutoCompleter(LdapRefStatus.class);
         }
         return retval;
     }

@@ -2,20 +2,20 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
 
-public enum AdRefStatus implements Identifiable {
+public enum LdapRefStatus implements Identifiable {
     Inactive(0),
     Active(1);
 
     private int intValue;
-    private static java.util.HashMap<Integer, AdRefStatus> mappings = new HashMap<Integer, AdRefStatus>();
+    private static java.util.HashMap<Integer, LdapRefStatus> mappings = new HashMap<Integer, LdapRefStatus>();
 
     static {
-        for (AdRefStatus status : values()) {
+        for (LdapRefStatus status : values()) {
             mappings.put(status.getValue(), status);
         }
     }
 
-    private AdRefStatus(int value) {
+    private LdapRefStatus(int value) {
         intValue = value;
     }
 
@@ -24,7 +24,7 @@ public enum AdRefStatus implements Identifiable {
         return intValue;
     }
 
-    public static AdRefStatus forValue(int value) {
+    public static LdapRefStatus forValue(int value) {
         return mappings.get(value);
     }
 }

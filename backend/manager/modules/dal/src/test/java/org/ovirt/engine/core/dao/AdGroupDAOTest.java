@@ -7,8 +7,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -34,7 +34,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
         newAdGroup.setid(Guid.NewGuid());
         newAdGroup.setdomain("domain");
         newAdGroup.setname("name");
-        newAdGroup.setstatus(AdRefStatus.Active);
+        newAdGroup.setstatus(LdapRefStatus.Active);
 
         existingAdGroup = dao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
     }
@@ -110,7 +110,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         existingAdGroup.setname(existingAdGroup.getname().toUpperCase());
         existingAdGroup.setdomain(existingAdGroup.getdomain().toUpperCase());
-        existingAdGroup.setstatus(AdRefStatus.Inactive);
+        existingAdGroup.setstatus(LdapRefStatus.Inactive);
 
         dao.update(existingAdGroup);
 

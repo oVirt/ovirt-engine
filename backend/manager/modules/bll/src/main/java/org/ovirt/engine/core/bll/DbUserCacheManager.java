@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserIdListParameters;
 import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
@@ -276,9 +276,9 @@ public class DbUserCacheManager {
                                             new LdapSearchByIdParameters(group.getdomain(), group.getid()))
                                     .getReturnValue();
 
-                    if (group.getstatus() == AdRefStatus.Active
-                                && (groupFromAD == null || groupFromAD.getstatus() == AdRefStatus.Inactive)) {
-                        group.setstatus(AdRefStatus.Inactive);
+                    if (group.getstatus() == LdapRefStatus.Active
+                                && (groupFromAD == null || groupFromAD.getstatus() == LdapRefStatus.Inactive)) {
+                        group.setstatus(LdapRefStatus.Inactive);
                         DbFacade.getInstance().getAdGroupDao().update(group);
                     } else if (groupFromAD != null
                                 && (!StringUtils.equals(group.getname(), groupFromAD.getname())

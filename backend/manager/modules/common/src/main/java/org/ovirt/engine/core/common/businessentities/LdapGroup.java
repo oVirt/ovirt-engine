@@ -35,7 +35,7 @@ public class LdapGroup extends DbUserBase implements Serializable {
     private String name;
 
     @Column(name = "status")
-    private AdRefStatus status = AdRefStatus.Inactive;
+    private LdapRefStatus status = LdapRefStatus.Inactive;
 
     @Column(name = "domain", length = 100, nullable = false)
     private String domain;
@@ -47,7 +47,7 @@ public class LdapGroup extends DbUserBase implements Serializable {
     private String distinguishedName;
 
     public LdapGroup() {
-        this.status = AdRefStatus.Active;
+        this.status = LdapRefStatus.Active;
         id = Guid.Empty;
         name = "";
         distinguishedName = "";
@@ -56,7 +56,7 @@ public class LdapGroup extends DbUserBase implements Serializable {
     public LdapGroup(Guid id, String name, int status) {
         this.id = id;
         this.name = name;
-        this.status = AdRefStatus.forValue(status);
+        this.status = LdapRefStatus.forValue(status);
     }
 
     public Guid getid() {
@@ -75,11 +75,11 @@ public class LdapGroup extends DbUserBase implements Serializable {
         this.name = value;
     }
 
-    public AdRefStatus getstatus() {
+    public LdapRefStatus getstatus() {
         return status;
     }
 
-    public void setstatus(AdRefStatus value) {
+    public void setstatus(LdapRefStatus value) {
         status = value;
     }
 
@@ -110,7 +110,7 @@ public class LdapGroup extends DbUserBase implements Serializable {
      */
     public LdapGroup(Guid id) {
         this.id = id;
-        status = AdRefStatus.Inactive;
+        status = LdapRefStatus.Inactive;
     }
 
     public String getdomain() {

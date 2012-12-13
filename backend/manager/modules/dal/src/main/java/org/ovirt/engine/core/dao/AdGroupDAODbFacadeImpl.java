@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -81,7 +81,7 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
             LdapGroup entity = new LdapGroup();
             entity.setid(Guid.createGuidFromString(rs.getString("id")));
             entity.setname(rs.getString("name"));
-            entity.setstatus(AdRefStatus.forValue(rs.getInt("status")));
+            entity.setstatus(LdapRefStatus.forValue(rs.getInt("status")));
             entity.setdomain(rs.getString("domain"));
             entity.setDistinguishedName(rs.getString("distinguishedname"));
 

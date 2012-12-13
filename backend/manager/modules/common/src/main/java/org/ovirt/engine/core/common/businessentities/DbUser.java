@@ -380,15 +380,15 @@ public class DbUser extends DbUserBase implements Serializable {
         setdomain(ldapUser.getDomainControler());
         setemail(ldapUser.getEmail());
         setgroups(ldapUser.getGroup());
-        setstatus(AdRefStatus.Active.getValue());
+        setstatus(LdapRefStatus.Active.getValue());
         setGroupIds(ldapUser.getGroupIds());
     }
 
-    public AdRefStatus getAdStatus() {
+    public LdapRefStatus getAdStatus() {
         if (getstatus() == 0) {
-            return AdRefStatus.Inactive;
+            return LdapRefStatus.Inactive;
         }
-        return AdRefStatus.Active;
+        return LdapRefStatus.Active;
     }
 
     public boolean getIsGroup() {

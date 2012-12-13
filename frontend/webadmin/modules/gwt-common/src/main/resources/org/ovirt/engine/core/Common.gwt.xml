@@ -12,8 +12,8 @@
 		<include name="common/businessentities/BusinessEntity.java" />
 		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
-		<include name="common/businessentities/AdRefStatus.java" />
 		<include name="common/businessentities/LdapUser.java" />
+		<include name="common/businessentities/LdapRefStatus.java" />
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/Bookmark.java" />
 		<include name="common/businessentities/BaseDisk.java" />

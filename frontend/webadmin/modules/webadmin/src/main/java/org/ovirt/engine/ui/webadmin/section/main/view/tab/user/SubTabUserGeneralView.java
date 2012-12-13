@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
@@ -35,7 +35,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     TextBoxLabel domain = new TextBoxLabel();
 
-    EnumLabel<AdRefStatus> status = new EnumLabel<AdRefStatus>();
+    EnumLabel<LdapRefStatus> status = new EnumLabel<LdapRefStatus>();
 
     TextBoxLabel email = new TextBoxLabel();
 

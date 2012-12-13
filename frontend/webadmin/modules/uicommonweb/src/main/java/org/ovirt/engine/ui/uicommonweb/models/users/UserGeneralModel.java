@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -48,14 +48,14 @@ public class UserGeneralModel extends EntityModel
         }
     }
 
-    private AdRefStatus status;
+    private LdapRefStatus status;
 
-    public AdRefStatus getStatus()
+    public LdapRefStatus getStatus()
     {
         return status;
     }
 
-    public void setStatus(AdRefStatus value)
+    public void setStatus(LdapRefStatus value)
     {
         if (status != value)
         {

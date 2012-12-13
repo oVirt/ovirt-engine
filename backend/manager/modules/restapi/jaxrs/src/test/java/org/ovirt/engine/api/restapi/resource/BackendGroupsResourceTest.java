@@ -15,8 +15,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AdRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -319,7 +319,7 @@ public class BackendGroupsResourceTest
     public static LdapGroup setUpEntityExpectations(LdapGroup entity, int index) {
         expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getdomain()).andReturn(DOMAIN).anyTimes();
-        expect(entity.getstatus()).andReturn(AdRefStatus.Active).anyTimes();
+        expect(entity.getstatus()).andReturn(LdapRefStatus.Active).anyTimes();
         return entity;
     }
 }
