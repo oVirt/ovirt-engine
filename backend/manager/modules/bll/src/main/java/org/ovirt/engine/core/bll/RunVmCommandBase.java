@@ -373,7 +373,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
-                            .ConnectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
+                            .connectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
                 log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
                 return false;
             }

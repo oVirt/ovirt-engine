@@ -150,7 +150,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         try {
             return StorageHelperDirector.getInstance()
                     .getItem(getStorageDomain().getstorage_type())
-                    .ConnectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
+                    .connectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
         } catch (VdcBLLException e) {
             final ConnectAllHostsToLunCommandReturnValue result = getResult();
             result.setFailedVds(vds);

@@ -55,7 +55,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 updateLUNConnectionsInfo(lun);
                 if (!StorageHelperDirector.getInstance()
                         .getItem(getLUNStorageType(lun))
-                        .ConnectStorageToLunByVdsId(null,
+                        .connectStorageToLunByVdsId(null,
                                 getVm().getRunOnVds().getValue(),
                                 lun,
                                 getVm().getStoragePoolId())) {
