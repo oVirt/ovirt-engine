@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
@@ -197,7 +197,7 @@ public abstract class BaseDAOTestCase {
                     new AnnotationConfiguration()
                             .addAnnotatedClass(action_version_map.class)
                             .addAnnotatedClass(ad_groups.class)
-                            .addAnnotatedClass(async_tasks.class)
+                            .addAnnotatedClass(AsyncTasks.class)
                             .addAnnotatedClass(AuditLog.class)
                             .addAnnotatedClass(bookmarks.class)
                             .addAnnotatedClass(DbUser.class)

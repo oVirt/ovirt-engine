@@ -23,15 +23,15 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "async_tasks")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class async_tasks implements Serializable {
+public class AsyncTasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
 
 
 
-    public async_tasks() {
+    public AsyncTasks() {
     }
 
-    public async_tasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
+    public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
             VdcActionParametersBase action_parameters, NGuid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
         this.actionType = action_type;
         this.result = result;
@@ -187,7 +187,7 @@ public class async_tasks implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        async_tasks other = (async_tasks) obj;
+        AsyncTasks other = (AsyncTasks) obj;
         if (actionParameters == null) {
             if (other.actionParameters != null)
                 return false;

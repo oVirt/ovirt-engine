@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.SetTaskGroupStatusVisitor;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -114,7 +114,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
         VdcReturnValueBase vdcReturnValue = null;
         ExecutionContext context = null;
 
-        async_tasks dbAsyncTask = getParameters().getDbAsyncTask();
+        AsyncTasks dbAsyncTask = getParameters().getDbAsyncTask();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
             dbAsyncTask.getaction_parameters()
                     .Accept(taskInfo, new SetTaskGroupStatusVisitor());

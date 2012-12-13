@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -44,12 +44,12 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
     }
 
-    private static class AsyncTaskRowMapper implements ParameterizedRowMapper<async_tasks> {
+    private static class AsyncTaskRowMapper implements ParameterizedRowMapper<AsyncTasks> {
         public static final AsyncTaskRowMapper instance = new AsyncTaskRowMapper();
 
         @Override
-        public async_tasks mapRow(ResultSet rs, int rowNum) throws SQLException {
-            async_tasks entity = new async_tasks();
+        public AsyncTasks mapRow(ResultSet rs, int rowNum) throws SQLException {
+            AsyncTasks entity = new AsyncTasks();
             entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
             entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
@@ -75,7 +75,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
     private static class AsyncTaskParameterSource extends CustomMapSqlParameterSource {
 
-        public AsyncTaskParameterSource(DbEngineDialect dialect,async_tasks task) {
+        public AsyncTaskParameterSource(DbEngineDialect dialect,AsyncTasks task) {
             super(dialect);
             addValue("action_type", task.getaction_type());
             addValue("result", task.getresult());
@@ -97,7 +97,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public async_tasks get(Guid id) {
+    public AsyncTasks get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("task_id", id);
 
@@ -105,18 +105,18 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public List<async_tasks> getAll() {
+    public List<AsyncTasks> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromasync_tasks", AsyncTaskRowMapper.instance, parameterSource);
     }
 
-    private AsyncTaskParameterSource getTaskParameterSource(async_tasks task) {
+    private AsyncTaskParameterSource getTaskParameterSource(AsyncTasks task) {
         return new AsyncTaskParameterSource(dialect,task);
     }
 
     @Override
-    public void save(async_tasks task, VdcObjectType entityType, Guid... entityIds) {
+    public void save(AsyncTasks task, VdcObjectType entityType, Guid... entityIds) {
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
         parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
         parameterSource.addValue("started_at", task.getStartTime());
@@ -127,12 +127,12 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public void saveOrUpdate(async_tasks task) {
+    public void saveOrUpdate(AsyncTasks task) {
         saveOrUpdate(task, null, EMPTY_GUIDS_ARRAY);
     }
 
     @Override
-    public void saveOrUpdate(async_tasks task, VdcObjectType entityType, Guid... entityIds) {
+    public void saveOrUpdate(AsyncTasks task, VdcObjectType entityType, Guid... entityIds) {
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
         parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
         parameterSource.addValue("started_at", task.getStartTime());
@@ -143,20 +143,20 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public void save(async_tasks task) {
+    public void save(AsyncTasks task) {
         save(task, null, EMPTY_GUIDS_ARRAY);
     }
 
 
     @Override
-    public void update(async_tasks task) {
+    public void update(AsyncTasks task) {
         logNullParameters(task);
 
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
         getCallsHandler().executeModification("Updateasync_tasks", parameterSource);
     }
 
-    private static void logNullParameters(async_tasks task) {
+    private static void logNullParameters(AsyncTasks task) {
         if (task.getaction_parameters() == null) {
             StringBuilder sb = new StringBuilder("Null action_parameters:\n");
             StackTraceElement[] st = Thread.currentThread().getStackTrace();

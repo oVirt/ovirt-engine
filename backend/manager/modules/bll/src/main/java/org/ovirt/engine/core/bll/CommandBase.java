@@ -50,7 +50,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.Enti
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -1274,7 +1274,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
         AsyncTaskParameters p =
-                new AsyncTaskParameters(asyncTaskCreationInfo, new async_tasks(parentCommand,
+                new AsyncTaskParameters(asyncTaskCreationInfo, new AsyncTasks(parentCommand,
                         AsyncTaskResultEnum.success,
                         AsyncTaskStatusEnum.running,
                         asyncTaskCreationInfo.getTaskID(),

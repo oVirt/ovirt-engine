@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.common.asynctasks;
 
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskParameters {
-    private async_tasks privateDbAsyncTask;
+    private AsyncTasks privateDbAsyncTask;
 
-    public async_tasks getDbAsyncTask() {
+    public AsyncTasks getDbAsyncTask() {
         return privateDbAsyncTask;
     }
 
-    protected void setDbAsyncTask(async_tasks value) {
+    protected void setDbAsyncTask(AsyncTasks value) {
         privateDbAsyncTask = value;
     }
 
@@ -24,7 +24,7 @@ public class AsyncTaskParameters {
         privateCreationInfo = value;
     }
 
-    public AsyncTaskParameters(AsyncTaskCreationInfo info, async_tasks dbAsyncTask) {
+    public AsyncTaskParameters(AsyncTaskCreationInfo info, AsyncTasks dbAsyncTask) {
         setCreationInfo(info);
         setDbAsyncTask(dbAsyncTask);
     }

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -458,7 +458,7 @@ public final class AsyncTaskManager {
 
     public synchronized void UpdateTaskWithActionParameters(Guid taskID, VdcActionParametersBase actionParameters) {
         if (_tasks.containsKey(taskID)) {
-            async_tasks currentDbAsyncTask = _tasks.get(taskID).getParameters().getDbAsyncTask();
+            AsyncTasks currentDbAsyncTask = _tasks.get(taskID).getParameters().getDbAsyncTask();
             currentDbAsyncTask.setaction_parameters(actionParameters);
             AsyncTaskUtils.updateAsyncTaskInDB(_tasks.get(taskID));
         }

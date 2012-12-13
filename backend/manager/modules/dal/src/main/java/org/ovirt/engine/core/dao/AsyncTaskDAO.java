@@ -3,11 +3,11 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AsyncTaskDAO</code> defines a type which performs CRUD operations on instances of {@link async_tasks}.
+ * <code>AsyncTaskDAO</code> defines a type which performs CRUD operations on instances of {@link AsyncTasks}.
  *
  *
  */
@@ -18,7 +18,7 @@ public interface AsyncTaskDAO extends DAO {
      * @param id the task id
      * @return the task
      */
-    async_tasks get(Guid id);
+    AsyncTasks get(Guid id);
 
     /**
      * Gets async task Ids by a given entity Id.
@@ -41,7 +41,7 @@ public interface AsyncTaskDAO extends DAO {
      *
      * @return the list of tasks
      */
-    List<async_tasks> getAll();
+    List<AsyncTasks> getAll();
 
     /**
      * Saves the specified task.
@@ -50,7 +50,7 @@ public interface AsyncTaskDAO extends DAO {
      * @param enitytType type of entities to be associated with the task
      * @param entityIds IDs of entities to be associated with the task
      */
-    void save(async_tasks task, VdcObjectType enitytType, Guid... entityIds);
+    void save(AsyncTasks task, VdcObjectType enitytType, Guid... entityIds);
 
     /**
      * Saves or updates the specified task and its associated entities
@@ -59,14 +59,14 @@ public interface AsyncTaskDAO extends DAO {
      * @param enitytType type of entities to be associated with the task
      * @param entityIds IDs of entities to be associated with the task
      */
-    void saveOrUpdate(async_tasks task, VdcObjectType entityType, Guid... entityIds);
+    void saveOrUpdate(AsyncTasks task, VdcObjectType entityType, Guid... entityIds);
 
     /**
      * Updates the specified task.
      *
      * @param task the task
      */
-    void update(async_tasks task);
+    void update(AsyncTasks task);
 
     /**
      * Removes the task with the specified id.
@@ -80,12 +80,12 @@ public interface AsyncTaskDAO extends DAO {
      *
      * @param task the task to save
      */
-    void save(async_tasks newAsyncTask);
+    void save(AsyncTasks newAsyncTask);
 
     /**
      * Saves or updates the async task
      * @param asyncTask the task to update or save
      */
-    void saveOrUpdate(async_tasks asyncTask);
+    void saveOrUpdate(AsyncTasks asyncTask);
 
 }

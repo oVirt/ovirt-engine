@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -28,9 +28,9 @@ public final class AsyncTaskFactory {
      * @return
      */
     public static SPMAsyncTask Construct(AsyncTaskCreationInfo creationInfo) {
-        async_tasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(creationInfo.getTaskID());
+        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(creationInfo.getTaskID());
         if (asyncTask == null || asyncTask.getaction_parameters() == null) {
-            asyncTask = new async_tasks(VdcActionType.Unknown, AsyncTaskResultEnum.success,
+            asyncTask = new AsyncTasks(VdcActionType.Unknown, AsyncTaskResultEnum.success,
                             AsyncTaskStatusEnum.running,
                             creationInfo.getTaskID(),
                             new VdcActionParametersBase(),

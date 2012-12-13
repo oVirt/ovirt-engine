@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.async_tasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -29,8 +29,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 public class AsyncTaskDAOTest extends BaseDAOTestCase {
     private static final int TASK_COUNT = 2;
     private AsyncTaskDAO dao;
-    private async_tasks newAsyncTask;
-    private async_tasks existingAsyncTask;
+    private AsyncTasks newAsyncTask;
+    private AsyncTasks existingAsyncTask;
 
     private VdcActionParametersBase params;
 
@@ -45,7 +45,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
 
         // create some test data
-        newAsyncTask = new async_tasks();
+        newAsyncTask = new AsyncTasks();
         newAsyncTask.settask_id(Guid.NewGuid());
         newAsyncTask.setStartTime(new Date());
         newAsyncTask.setaction_type(VdcActionType.AddDisk);
@@ -64,7 +64,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        async_tasks result = dao.get(Guid.NewGuid());
+        AsyncTasks result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -104,7 +104,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        async_tasks result = dao.get(existingAsyncTask.gettask_id());
+        AsyncTasks result = dao.get(existingAsyncTask.gettask_id());
 
         assertNotNull(result);
         assertEquals(existingAsyncTask, result);
@@ -115,7 +115,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<async_tasks> result = dao.getAll();
+        List<AsyncTasks> result = dao.getAll();
 
         assertEquals(TASK_COUNT, result.size());
     }
@@ -127,7 +127,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newAsyncTask);
 
-        async_tasks result = dao.get(newAsyncTask.gettask_id());
+        AsyncTasks result = dao.get(newAsyncTask.gettask_id());
         /*
         //Setting startTime to null is required as DB auto generates
         //the value of start time
@@ -163,7 +163,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         existingAsyncTask.setaction_parameters(addDiskToVmParams);
         dao.update(existingAsyncTask);
 
-        async_tasks result = dao.get(existingAsyncTask.gettask_id());
+        AsyncTasks result = dao.get(existingAsyncTask.gettask_id());
 
         assertEquals(existingAsyncTask, result);
     }
@@ -173,7 +173,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        async_tasks result = dao.get(existingAsyncTask.gettask_id());
+        AsyncTasks result = dao.get(existingAsyncTask.gettask_id());
         assertNotNull(result);
 
         assertEquals(dao.remove(existingAsyncTask.gettask_id()), 1);
@@ -197,13 +197,13 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         AddDiskParameters addDiskToVmParams = new AddDiskParameters();
         addDiskToVmParams.setSessionId("SESSION_ID");
         existingAsyncTask.setaction_parameters(addDiskToVmParams);
-        List<async_tasks> tasks = dao.getAll();
+        List<AsyncTasks> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();
         dao.saveOrUpdate(existingAsyncTask);
         tasks = dao.getAll();
         assertEquals(tasksNumber, tasks.size());
-        async_tasks taskFromDb = dao.get(existingAsyncTask.gettask_id());
+        AsyncTasks taskFromDb = dao.get(existingAsyncTask.gettask_id());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb,existingAsyncTask);
         dao.saveOrUpdate(newAsyncTask);
