@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -17,7 +17,7 @@ public interface BookmarkDAO extends DAO {
      * @param id
      * @return the bookmark
      */
-    bookmarks get(Guid id);
+    Bookmark get(Guid id);
 
     /**
      * Retrieves the bookmark with the supplied name.
@@ -26,28 +26,28 @@ public interface BookmarkDAO extends DAO {
      *            the bookmark name
      * @return the bookmark, or <code>null</code> if no such bookmark is present
      */
-    bookmarks getByName(String name);
+    Bookmark getByName(String name);
 
     /**
      * Returns all defined bookmarks.
      *
      * @return the collection of bookmarks
      */
-    List<bookmarks> getAll();
+    List<Bookmark> getAll();
 
     /**
      * Saves the bookmark.
      *
      * @param bookmark
      */
-    void save(bookmarks bookmark);
+    void save(Bookmark bookmark);
 
     /**
      * Updates the bookmark with changes.
      *
      * @param bookmark
      */
-    void update(bookmarks bookmark);
+    void update(Bookmark bookmark);
 
     /**
      * Removes the specified bookmark.

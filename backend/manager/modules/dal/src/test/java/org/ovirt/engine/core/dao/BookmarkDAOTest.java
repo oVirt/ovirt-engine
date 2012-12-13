@@ -8,7 +8,7 @@ import java.util.Random;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,8 +21,8 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
     private static final int BOOKMARK_MAX_RANDOM_NUMBER = 10000;
 
     private BookmarkDAO dao;
-    private bookmarks new_bookmark;
-    private bookmarks existing_bookmark;
+    private Bookmark new_bookmark;
+    private Bookmark existing_bookmark;
 
     @Override
     @Before
@@ -32,7 +32,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getBookmarkDao());
 
         // create some test data
-        new_bookmark = new bookmarks();
+        new_bookmark = new Bookmark();
         Random r = new Random(System.currentTimeMillis());
         new_bookmark.setbookmark_name("newbookmarkname"+ (r.nextInt() % BOOKMARK_MAX_RANDOM_NUMBER));
         new_bookmark.setbookmark_value("newbookmarkvalue");
@@ -45,7 +45,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        bookmarks result = dao.get(Guid.NewGuid());
+        Bookmark result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -55,7 +55,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        bookmarks result = dao.get(existing_bookmark.getbookmark_id());
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
 
         assertNotNull(result);
         assertEquals(existing_bookmark.getbookmark_id(),
@@ -67,7 +67,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        bookmarks result = dao.getByName("thisnameisinvalid");
+        Bookmark result = dao.getByName("thisnameisinvalid");
 
         assertNull(result);
     }
@@ -77,7 +77,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        bookmarks result = dao.getByName(existing_bookmark.getbookmark_name());
+        Bookmark result = dao.getByName(existing_bookmark.getbookmark_name());
 
         assertNotNull(result);
         assertEquals(existing_bookmark.getbookmark_name(),
@@ -89,7 +89,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<bookmarks> result = dao.getAll();
+        List<Bookmark> result = dao.getAll();
 
         assertEquals(BOOKMARK_COUNT, result.size());
     }
@@ -101,7 +101,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(new_bookmark);
 
-        bookmarks result = dao.getByName(new_bookmark.getbookmark_name());
+        Bookmark result = dao.getByName(new_bookmark.getbookmark_name());
 
         assertNotNull(result);
     }
@@ -116,7 +116,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
 
         dao.update(existing_bookmark);
 
-        bookmarks result = dao.get(existing_bookmark.getbookmark_id());
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
 
         assertNotNull(result);
         assertEquals(existing_bookmark.getbookmark_name(),
@@ -130,7 +130,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
     public void testRemove() {
         dao.remove(existing_bookmark.getbookmark_id());
 
-        bookmarks result = dao.get(existing_bookmark.getbookmark_id());
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
 
         assertNull(result);
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.bookmark;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -11,7 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 
-public class BookmarkListItemCell extends AbstractCell<bookmarks> implements HasElementId {
+public class BookmarkListItemCell extends AbstractCell<Bookmark> implements HasElementId {
 
     interface ViewIdHandler extends ElementIdHandler<BookmarkListItemCell> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -27,7 +27,7 @@ public class BookmarkListItemCell extends AbstractCell<bookmarks> implements Has
     }
 
     @Override
-    public void render(Context context, bookmarks value, SafeHtmlBuilder sb) {
+    public void render(Context context, Bookmark value, SafeHtmlBuilder sb) {
         sb.append(templates.bookmarkItem(
                 ElementIdUtils.createElementId(elementId, value.getbookmark_name()),
                 value.getbookmark_name()));

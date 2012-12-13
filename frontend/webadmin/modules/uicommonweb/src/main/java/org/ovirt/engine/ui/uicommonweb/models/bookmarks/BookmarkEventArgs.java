@@ -5,19 +5,19 @@ import org.ovirt.engine.core.compat.EventArgs;
 @SuppressWarnings("unused")
 public final class BookmarkEventArgs extends EventArgs
 {
-    private org.ovirt.engine.core.common.businessentities.bookmarks privateBookmark;
+    private org.ovirt.engine.core.common.businessentities.Bookmark privateBookmark;
 
-    public org.ovirt.engine.core.common.businessentities.bookmarks getBookmark()
+    public org.ovirt.engine.core.common.businessentities.Bookmark getBookmark()
     {
         return privateBookmark;
     }
 
-    private void setBookmark(org.ovirt.engine.core.common.businessentities.bookmarks value)
+    private void setBookmark(org.ovirt.engine.core.common.businessentities.Bookmark value)
     {
         privateBookmark = value;
     }
 
-    public BookmarkEventArgs(org.ovirt.engine.core.common.businessentities.bookmarks bookmark)
+    public BookmarkEventArgs(org.ovirt.engine.core.common.businessentities.Bookmark bookmark)
     {
         setBookmark(bookmark);
     }

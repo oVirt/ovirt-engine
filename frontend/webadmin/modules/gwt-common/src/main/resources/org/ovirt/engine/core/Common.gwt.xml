@@ -15,7 +15,7 @@
 		<include name="common/businessentities/AdRefStatus.java" />
 		<include name="common/businessentities/LdapUser.java" />
 		<include name="common/businessentities/AuditLog.java" />
-		<include name="common/businessentities/bookmarks.java" />
+		<include name="common/businessentities/Bookmark.java" />
 		<include name="common/businessentities/BaseDisk.java" />
 		<include name="common/businessentities/DiskLunMap.java" />
 		<include name="common/businessentities/DiskLunMapId.java" />

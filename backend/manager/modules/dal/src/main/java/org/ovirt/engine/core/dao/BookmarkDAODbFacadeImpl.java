@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 
@@ -17,10 +17,10 @@ import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
  */
 public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements BookmarkDAO {
     private class BookmarkRowMapper implements
-            ParameterizedRowMapper<bookmarks> {
+            ParameterizedRowMapper<Bookmark> {
         @Override
-        public bookmarks mapRow(ResultSet rs, int rowNum) throws SQLException {
-            bookmarks entity = new bookmarks();
+        public Bookmark mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Bookmark entity = new Bookmark();
             entity.setbookmark_id(new Guid(rs
                     .getString("bookmark_id")));
             entity.setbookmark_name(rs.getString("bookmark_name"));
@@ -31,7 +31,7 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
 
     private class BookmarkSqlParameterSource extends
             CustomMapSqlParameterSource {
-        public BookmarkSqlParameterSource(bookmarks bookmark) {
+        public BookmarkSqlParameterSource(Bookmark bookmark) {
             super(dialect);
             addValue("bookmark_id", bookmark.getbookmark_id());
             addValue("bookmark_name", bookmark.getbookmark_name());
@@ -54,14 +54,14 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
     }
 
     @Override
-    public bookmarks get(Guid id) {
+    public Bookmark get(Guid id) {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 id);
         return getCallsHandler().executeRead("GetBookmarkBybookmark_id", new BookmarkRowMapper(), parameterSource);
     }
 
     @Override
-    public bookmarks getByName(String name) {
+    public Bookmark getByName(String name) {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 name);
         return getCallsHandler().executeRead("GetBookmarkBybookmark_name", new BookmarkRowMapper(), parameterSource);
@@ -69,14 +69,14 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<bookmarks> getAll() {
+    public List<Bookmark> getAll() {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromBookmarks", new BookmarkRowMapper(), parameterSource);
     }
 
     @Override
-    public void save(bookmarks bookmark) {
+    public void save(Bookmark bookmark) {
         Guid id = bookmark.getbookmark_id();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.NewGuid();
@@ -89,7 +89,7 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
     }
 
     @Override
-    public void update(bookmarks bookmark) {
+    public void update(Bookmark bookmark) {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource(
                 bookmark);
 

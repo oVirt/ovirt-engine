@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -10,7 +10,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @CustomLogFields({ @CustomLogField("BookmarkName"), @CustomLogField("BookmarkValue") })
 public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> extends AdminOperationCommandBase<T> {
-    private bookmarks mBookmark;
+    private Bookmark mBookmark;
     private String mBookmarkName;
 
     public BookmarkCommandBase(T parameters) {
@@ -20,7 +20,7 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
     public BookmarkCommandBase() {
     }
 
-    protected bookmarks getBookmark() {
+    protected Bookmark getBookmark() {
         if (mBookmark == null) {
             mBookmark = DbFacade.getInstance().getBookmarkDao()
                     .get(getBookmarkId());

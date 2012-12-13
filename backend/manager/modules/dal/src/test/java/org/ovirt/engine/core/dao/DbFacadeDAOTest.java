@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -433,7 +433,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForBookmark() {
-        bookmarks bookmark = dbFacade.getBookmarkDao().get(BOOKMARK_ID);
+        Bookmark bookmark = dbFacade.getBookmarkDao().get(BOOKMARK_ID);
         assertNotNull(bookmark);
         String name = bookmark.getbookmark_name();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(BOOKMARK_ID, VdcObjectType.Bookmarks)));

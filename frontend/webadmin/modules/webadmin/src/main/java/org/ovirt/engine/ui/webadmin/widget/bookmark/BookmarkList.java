@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.bookmark;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
 
-public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProvider, bookmarks, CellList<bookmarks>> {
+public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProvider, Bookmark, CellList<Bookmark>> {
 
     interface WidgetUiBinder extends UiBinder<Widget, BookmarkList> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -48,10 +48,10 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     }
 
     @Override
-    protected CellList<bookmarks> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
+    protected CellList<Bookmark> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
         ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
-        CellList<bookmarks> display = new CellList<bookmarks>(new BookmarkListItemCell(templates));
+        CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell(templates));
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
         display.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 
@@ -61,27 +61,27 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     }
 
     @Override
-    protected SimpleActionPanel<bookmarks> createActionPanel(BookmarkModelProvider modelProvider) {
-        return new SimpleActionPanel<bookmarks>(modelProvider, modelProvider.getSelectionModel(),
+    protected SimpleActionPanel<Bookmark> createActionPanel(BookmarkModelProvider modelProvider) {
+        return new SimpleActionPanel<Bookmark>(modelProvider, modelProvider.getSelectionModel(),
                 ClientGinjectorProvider.instance().getEventBus());
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.newBookmark()) {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<Bookmark>(constants.newBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getNewCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.editBookmark()) {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<Bookmark>(constants.editBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getEditCommand();
             }
         });
 
-        actionPanel.addActionButton(new WebAdminButtonDefinition<bookmarks>(constants.removeBookmark()) {
+        actionPanel.addActionButton(new WebAdminButtonDefinition<Bookmark>(constants.removeBookmark()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 @Entity
 @Table(name = "bookmarks")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class Bookmark extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
     private static final long serialVersionUID = 8177640907822845847L;
 
     @Id
@@ -64,16 +64,16 @@ public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, 
     }
 
 
-    public bookmarks() {
+    public Bookmark() {
     }
 
-    public bookmarks(String bookmark_name, String bookmark_value) {
+    public Bookmark(String bookmark_name, String bookmark_value) {
         this.name = bookmark_name;
         this.value = bookmark_value;
 
     }
 
-    public bookmarks(String bookmark_name, String bookmark_value, Guid bookmark_id) {
+    public Bookmark(String bookmark_name, String bookmark_value, Guid bookmark_id) {
         this.name = bookmark_name;
         this.value = bookmark_value;
         this.id = bookmark_id;
@@ -94,7 +94,7 @@ public class bookmarks extends IVdcQueryable implements INotifyPropertyChanged, 
             return false;
         if (obj.getClass() != this.getClass())
             return false;
-        bookmarks that = (bookmarks) obj;
+        Bookmark that = (Bookmark) obj;
         boolean result = this.id.equals(that.id);
         result &= this.name.equals(that.name);
         result &= this.value.equals(that.value);

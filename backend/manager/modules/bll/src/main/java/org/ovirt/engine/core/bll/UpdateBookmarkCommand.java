@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -17,12 +17,12 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
     @Override
     protected boolean canDoAction() {
         boolean result = false;
-        bookmarks updated = getBookmark();
+        Bookmark updated = getBookmark();
 
         if (updated == null) {
             AddInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
         } else {
-            bookmarks current = DbFacade.getInstance().getBookmarkDao()
+            Bookmark current = DbFacade.getInstance().getBookmarkDao()
                     .getByName(updated.getbookmark_name());
 
             if (!(current == null || current.getbookmark_id().equals(

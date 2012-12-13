@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.queries.*;
 import org.ovirt.engine.core.dal.dbbroker.*;
 
@@ -12,7 +12,7 @@ public class GetBookmarkByIdQuery<P extends GetBookmarkByIdParameters> extends Q
 
     @Override
     protected void executeQueryCommand() {
-        bookmarks bookmark = DbFacade.getInstance().getBookmarkDao().get(getParameters().getBookmarkId());
+        Bookmark bookmark = DbFacade.getInstance().getBookmarkDao().get(getParameters().getBookmarkId());
 
         getQueryReturnValue().setReturnValue(bookmark);
     }

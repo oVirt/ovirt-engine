@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 
 public abstract class BookmarkOperationCommand<T extends BookmarksOperationParameters> extends BookmarkCommandBase<T> {
     public BookmarkOperationCommand(T parameters) {
@@ -9,7 +9,7 @@ public abstract class BookmarkOperationCommand<T extends BookmarksOperationParam
     }
 
     @Override
-    protected bookmarks getBookmark() {
+    protected Bookmark getBookmark() {
         return getParameters().getBookmark();
     }
 

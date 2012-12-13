@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_notification_methods;
@@ -199,7 +199,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(ad_groups.class)
                             .addAnnotatedClass(AsyncTasks.class)
                             .addAnnotatedClass(AuditLog.class)
-                            .addAnnotatedClass(bookmarks.class)
+                            .addAnnotatedClass(Bookmark.class)
                             .addAnnotatedClass(DbUser.class)
                             .addAnnotatedClass(DiskImage.class)
                             .addAnnotatedClass(DiskImageDynamic.class)

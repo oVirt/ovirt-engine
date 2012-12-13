@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -25,9 +25,9 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, BookmarkListModel> {
+public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, BookmarkListModel> {
 
-    private final SingleSelectionModel<bookmarks> selectionModel;
+    private final SingleSelectionModel<Bookmark> selectionModel;
 
     private final Provider<BookmarkPopupPresenterWidget> popupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -45,14 +45,14 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, 
         this.tagModelProvider = tagModelProvider;
 
         // Create selection model
-        selectionModel = new SingleSelectionModel<bookmarks>();
+        selectionModel = new SingleSelectionModel<Bookmark>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                bookmarks selectedObject = selectionModel.getSelectedObject();
-                List<bookmarks> selectedItems = selectedObject != null
-                        ? new ArrayList<bookmarks>(Arrays.asList(selectedObject))
-                        : new ArrayList<bookmarks>();
+                Bookmark selectedObject = selectionModel.getSelectedObject();
+                List<Bookmark> selectedItems = selectedObject != null
+                        ? new ArrayList<Bookmark>(Arrays.asList(selectedObject))
+                        : new ArrayList<Bookmark>();
                 BookmarkModelProvider.this.setSelectedItems(selectedItems);
             }
         });
@@ -91,7 +91,7 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, 
     }
 
     @Override
-    protected void updateDataProvider(List<bookmarks> items) {
+    protected void updateDataProvider(List<Bookmark> items) {
         super.updateDataProvider(items);
 
         // Clear selection when updating data
@@ -103,12 +103,12 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<bookmarks, 
         return getCommonModel().getBookmarkList();
     }
 
-    public SingleSelectionModel<bookmarks> getSelectionModel() {
+    public SingleSelectionModel<Bookmark> getSelectionModel() {
         return selectionModel;
     }
 
     @Override
-    public void addDataDisplay(HasData<bookmarks> display) {
+    public void addDataDisplay(HasData<Bookmark> display) {
         super.addDataDisplay(display);
         display.setSelectionModel(selectionModel);
     }

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -38,7 +38,7 @@ public class GeneralDbDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         // Only classes that allow user input are checked.
-        businessEntities.add(bookmarks.class);
+        businessEntities.add(Bookmark.class);
         businessEntities.add(DbUser.class);
         businessEntities.add(LUNs.class);
         businessEntities.add(NetworkInterface.class);

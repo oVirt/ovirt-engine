@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.bookmarks;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -32,10 +32,10 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class BookmarkListModel extends SearchableListModel
 {
 
-    private static class BookmarksComparator implements Comparator<bookmarks> {
+    private static class BookmarksComparator implements Comparator<Bookmark> {
 
         @Override
-        public int compare(bookmarks o1, bookmarks o2) {
+        public int compare(Bookmark o1, Bookmark o2) {
             String name1 = o1.getbookmark_name();
             String name2 = o2.getbookmark_name();
             if (name1 == null || name2 == null) {
@@ -128,7 +128,7 @@ public class BookmarkListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel bookmarkListModel = (BookmarkListModel) model;
-                List<bookmarks> resultList = (List<bookmarks>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                List<Bookmark> resultList = (List<Bookmark>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(resultList, COMPARATOR);
                 bookmarkListModel.setItems(resultList);
             }
@@ -160,8 +160,8 @@ public class BookmarkListModel extends SearchableListModel
         ArrayList<String> list = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
-            org.ovirt.engine.core.common.businessentities.bookmarks i =
-                    (org.ovirt.engine.core.common.businessentities.bookmarks) item;
+            org.ovirt.engine.core.common.businessentities.Bookmark i =
+                    (org.ovirt.engine.core.common.businessentities.Bookmark) item;
             list.add(i.getbookmark_name());
         }
         model.setItems(list);
@@ -179,7 +179,7 @@ public class BookmarkListModel extends SearchableListModel
     public void OnRemove()
     {
 
-        bookmarks selectedBookmark = (bookmarks) getSelectedItem();
+        Bookmark selectedBookmark = (Bookmark) getSelectedItem();
         BookmarksParametersBase parameters = new BookmarksParametersBase(selectedBookmark.getbookmark_id());
 
         IFrontendActionAsyncCallback async = new IFrontendActionAsyncCallback() {
@@ -196,8 +196,8 @@ public class BookmarkListModel extends SearchableListModel
 
     public void Edit()
     {
-        org.ovirt.engine.core.common.businessentities.bookmarks bookmark =
-                (org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem();
+        org.ovirt.engine.core.common.businessentities.Bookmark bookmark =
+                (org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -260,13 +260,13 @@ public class BookmarkListModel extends SearchableListModel
             return;
         }
 
-        org.ovirt.engine.core.common.businessentities.bookmarks tempVar =
-                new org.ovirt.engine.core.common.businessentities.bookmarks();
+        org.ovirt.engine.core.common.businessentities.Bookmark tempVar =
+                new org.ovirt.engine.core.common.businessentities.Bookmark();
         tempVar.setbookmark_id(model.getIsNew() ? (Guid) NGuid.Empty
-                : ((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()).getbookmark_id());
+                : ((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()).getbookmark_id());
         tempVar.setbookmark_name((String) model.getName().getEntity());
         tempVar.setbookmark_value((String) model.getSearchString().getEntity());
-        org.ovirt.engine.core.common.businessentities.bookmarks bookmark = tempVar;
+        org.ovirt.engine.core.common.businessentities.Bookmark bookmark = tempVar;
 
         model.StartProgress(null);
 
@@ -310,7 +310,7 @@ public class BookmarkListModel extends SearchableListModel
         if (getSelectedItem() != null)
         {
             getNavigatedEvent().raise(this,
-                    new BookmarkEventArgs((org.ovirt.engine.core.common.businessentities.bookmarks) getSelectedItem()));
+                    new BookmarkEventArgs((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()));
         }
     }
 
