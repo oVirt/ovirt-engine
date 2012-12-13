@@ -12,6 +12,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cancel")
     String cancel();
 
+    @DefaultStringValue("Yes")
+    String yes();
+
+    @DefaultStringValue("No")
+    String no();
+
     @DefaultStringValue("Close")
     String close();
 
@@ -1349,6 +1355,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Move Down")
     String moveBricksDownButtonLabel();
 
+    @DefaultStringValue("Replicate Confirmation")
+    String addBricksReplicateConfirmationTitle();
+
     @DefaultStringValue("Add")
     String AddVolume();
 
@@ -1456,6 +1465,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Bricks cannot be empty")
     String emptyAddBricksMsg();
+
+    @DefaultStringValue("Multiple bricks of a Replicate volume are present on the same server. This setup is not optimal. \nDo you still want to continue?")
+    String addBricksToReplicateVolumeFromSameServerMsg();
 
     @DefaultStringValue("Cannot choose Volume's Data Center in tree context")
     String cannotChooseVolumesDataCenterinTreeContect();

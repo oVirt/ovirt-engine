@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -107,11 +108,18 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @UiField
     @Ignore
+    Label infoLabel;
+
+    @UiField
+    @Ignore
     Label messageLabel;
+
+    ApplicationConstants constants;
 
     @Inject
     public AddBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
+        this.constants = constants;
         bricksTable = new EntityModelCellTable<ListModel>(true);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -239,6 +247,17 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
         moveBricksUpButton.setCommand(object.getMoveBricksUpCommand());
         moveBricksDownButton.setCommand(object.getMoveBricksDownCommand());
+
+        GlusterVolumeType volumeType = (GlusterVolumeType) object.getVolumeType().getEntity();
+        if (volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+            infoLabel.setText(constants.distributedReplicateVolumeBrickInfoLabel());
+        }
+        else if (volumeType == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+            infoLabel.setText(constants.distributedStripeVolumeBrickInfoLabel());
+        }
+        else {
+            infoLabel.setText(null);
+        }
     }
 
     @Override

@@ -2306,6 +2306,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Move Down")
     String moveBricksDownButtonLabel();
 
+    @DefaultStringValue("NOTE: Replicate groups will be create based on the order of the bricks.")
+    String distributedReplicateVolumeBrickInfoLabel();
+
+    @DefaultStringValue("NOTE: Stripe groups will be create based on the order of the bricks.")
+    String distributedStripeVolumeBrickInfoLabel();
+
     // Volume Brick Details
     @DefaultStringValue("General")
     String generalBrickAdvancedPopupLabel();

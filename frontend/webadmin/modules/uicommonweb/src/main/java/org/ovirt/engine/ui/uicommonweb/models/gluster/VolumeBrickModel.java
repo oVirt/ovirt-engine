@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -583,6 +585,59 @@ public class VolumeBrickModel extends Model {
         }
 
         return getReplicaCount().getIsValid() && getStripeCount().getIsValid();
+    }
+
+    public boolean validateReplicateBricks() {
+        return validateReplicateBricks(getReplicaCountValue(), null);
+    }
+
+    public boolean validateReplicateBricks(int oldReplicaCount, List<GlusterBrickEntity> existingBricks) {
+
+        int brickCount = ((List) bricks.getItems()).size() + (existingBricks != null ? existingBricks.size() : 0);
+        int replicaCount = getReplicaCountValue();
+        Set<String> servers = new HashSet<String>();
+
+        if(replicaCount > oldReplicaCount) {
+            int count = 0;
+            for (GlusterBrickEntity brick : existingBricks) {
+                servers.add(brick.getServerName());
+                count++;
+            }
+
+            for (Object model : bricks.getItems()) {
+                if (count > replicaCount) {
+                    break;
+                }
+                GlusterBrickEntity brick = (GlusterBrickEntity) ((EntityModel) model).getEntity();
+                if (servers.contains(brick.getServerName())) {
+                    return false;
+                }
+                else {
+                    servers.add(brick.getServerName());
+                }
+                count++;
+            }
+        }
+        else {
+
+            int count = 0;
+            for (Object model : bricks.getItems())
+            {
+                count++;
+                GlusterBrickEntity brick = (GlusterBrickEntity) ((EntityModel) model).getEntity();
+                if (servers.contains(brick.getServerName())) {
+                    return false;
+                }
+                else {
+                    servers.add(brick.getServerName());
+                }
+                if (count % replicaCount == 0) {
+                    servers.clear();
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override

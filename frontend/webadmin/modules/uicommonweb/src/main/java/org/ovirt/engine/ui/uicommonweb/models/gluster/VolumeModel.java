@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -328,7 +329,7 @@ public class VolumeModel extends Model {
         else
             volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
 
-        UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
+        UICommand command = new UICommand("OnAddBricks", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeBrickModel.getCommands().add(command);
@@ -348,7 +349,8 @@ public class VolumeModel extends Model {
             return;
         }
 
-        if (!volumeBrickModel.validateBrickCount((GlusterVolumeType) getTypeList().getSelectedItem(), true))
+        GlusterVolumeType volumeType = (GlusterVolumeType) getTypeList().getSelectedItem();
+        if (!volumeBrickModel.validateBrickCount(volumeType, true))
         {
             String validationMsg =
                     volumeBrickModel.getValidationFailedMsg((GlusterVolumeType) getTypeList().getSelectedItem(), true);
@@ -356,7 +358,43 @@ public class VolumeModel extends Model {
             {
                 volumeBrickModel.setMessage(validationMsg);
             }
+            return;
+        }
 
+        if ((volumeType == GlusterVolumeType.REPLICATE || volumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                && !volumeBrickModel.validateReplicateBricks()) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .addBricksReplicateConfirmationTitle());
+            confirmModel.setHashName("add_bricks_confirmation"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .addBricksToReplicateVolumeFromSameServerMsg());
+
+            UICommand okCommand = new UICommand("OnAddBricksInternal", this); //$NON-NLS-1$
+            okCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+            okCommand.setIsDefault(true);
+            getConfirmWindow().getCommands().add(okCommand);
+
+            UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
+            cancelCommand.setIsCancel(true);
+            getConfirmWindow().getCommands().add(cancelCommand);
+        }
+        else {
+            onAddBricksInternal();
+        }
+    }
+
+    private void onAddBricksInternal() {
+        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
+
+        cancelConfirmation();
+
+        if (!volumeBrickModel.validate())
+        {
             return;
         }
 
@@ -385,6 +423,10 @@ public class VolumeModel extends Model {
 
         setBricks(brickListModel);
         setWindow(null);
+    }
+
+    private void cancelConfirmation() {
+        setConfirmWindow(null);
     }
 
     public boolean validateBrickCount()
@@ -517,10 +559,14 @@ public class VolumeModel extends Model {
         if (command == getAddBricksCommand())
         {
             addBricks();
-        } else if (command.getName().equals("Ok")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnAddBricks")) { //$NON-NLS-1$
             onAddBricks();
         } else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             setWindow(null);
+        } else if (command.getName().equals("OnAddBricksInternal")) { //$NON-NLS-1$
+            onAddBricksInternal();
+        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+            cancelConfirmation();
         }
     }
 

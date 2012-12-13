@@ -186,10 +186,11 @@ public class VolumeBrickListModel extends SearchableListModel {
         volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
                 || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE);
 
-        setWindow(volumeBrickModel);
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
         volumeBrickModel.getVolumeType().setEntity(volumeEntity.getVolumeType());
+
+        setWindow(volumeBrickModel);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(volumeBrickModel);
@@ -227,7 +228,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel>());
 
-        UICommand command = new UICommand("Ok", this); //$NON-NLS-1$
+        UICommand command = new UICommand("OnAddBricks", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         volumeBrickModel.getCommands().add(command);
@@ -286,6 +287,47 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
+        if ((volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
+                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+                && !volumeBrickModel.validateReplicateBricks(volumeEntity.getReplicaCount(), volumeEntity.getBricks())) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .addBricksReplicateConfirmationTitle());
+            confirmModel.setHashName("add_bricks_confirmation"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .addBricksToReplicateVolumeFromSameServerMsg());
+
+            UICommand okCommand = new UICommand("OnAddBricksInternal", this); //$NON-NLS-1$
+            okCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+            okCommand.setIsDefault(true);
+            getConfirmWindow().getCommands().add(okCommand);
+
+            UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().no());
+            cancelCommand.setIsCancel(true);
+            getConfirmWindow().getCommands().add(cancelCommand);
+        }
+        else {
+            onAddBricksInternal();
+        }
+    }
+
+    private void onAddBricksInternal() {
+        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+
+        ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
+        for (Object model : volumeBrickModel.getBricks().getItems())
+        {
+            GlusterBrickEntity brickEntity = (GlusterBrickEntity) ((EntityModel) model).getEntity();
+            brickEntity.setVolumeId(volumeEntity.getId());
+            brickList.add(brickEntity);
+        }
+
         volumeBrickModel.StartProgress(null);
 
         GlusterVolumeBricksActionParameters parameter = new GlusterVolumeBricksActionParameters(volumeEntity.getId(),
@@ -300,6 +342,10 @@ public class VolumeBrickListModel extends SearchableListModel {
 
             }
         }, this);
+    }
+
+    private void cancelConfirmation() {
+        setConfirmWindow(null);
     }
 
     public void postOnAddBricks(VdcReturnValueBase returnValue)
@@ -761,8 +807,12 @@ public class VolumeBrickListModel extends SearchableListModel {
         super.ExecuteCommand(command);
         if (command.equals(getAddBricksCommand())) {
             addBricks();
-        } else if (command.getName().equals("Ok")) { //$NON-NLS-1$
+        } else if (command.getName().equals("OnAddBricks")) { //$NON-NLS-1$
             onAddBricks();
+        } else if (command.getName().equals("OnAddBricksInternal")) { //$NON-NLS-1$
+            onAddBricksInternal();
+        } else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
+            cancelConfirmation();
         } else if (command.equals(getRemoveBricksCommand())) {
             removeBricks();
         } else if (command.getName().equals("OnRemove")) { //$NON-NLS-1$

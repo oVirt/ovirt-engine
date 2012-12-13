@@ -39,9 +39,16 @@
 		.brickButton table{
 			width: 100%;
 		}
+
+		.infoLabel {
+			font-size: 13px;
+			left: 10px;
+			padding-left: 5px;
+			color: #0000FF;
+		}
 	</ui:style>
 	
-	<d:SimpleDialogPanel width="550px" height="530px">
+	<d:SimpleDialogPanel width="550px" height="590px">
 		<d:content>
 			<g:VerticalPanel>
 
@@ -76,6 +83,7 @@
 								<w:UiCommandButton ui:field="removeBricksButton" addStyleNames="{style.brickButton}"/>
 								<w:UiCommandButton ui:field="removeAllBricksButton" addStyleNames="{style.brickButton}"/>
 							</g:HorizontalPanel>
+							<g:Label ui:field="infoLabel" addStyleNames="{style.infoLabel}" />
 						</g:VerticalPanel>
 						<g:VerticalPanel spacing="5">
 							<w:UiCommandButton ui:field="moveBricksUpButton" addStyleNames="{style.brickButton}"/>
