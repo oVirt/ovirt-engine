@@ -6,10 +6,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -44,18 +42,6 @@ public abstract class StorageHelperBase implements IStorageHelper {
     public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
         return RunForSingleConnectionInHost(storageDomain, storagePoolId,
                 VdcActionType.RemoveStorageServerConnection.getValue());
-    }
-
-    protected void RunForAllConnectionsInPool(VdcActionType type, VDS vds) {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(vds.getStoragePoolId());
-        if (pool.getstatus() != StoragePoolStatus.Uninitialized) {
-            List<StorageServerConnections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDao().getAllForStoragePool(vds.getStoragePoolId());
-            for (StorageServerConnections connection : connections) {
-                Backend.getInstance().runInternalAction(type,
-                        new StorageServerConnectionParametersBase(connection, vds.getId()));
-            }
-        }
     }
 
     protected abstract boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
