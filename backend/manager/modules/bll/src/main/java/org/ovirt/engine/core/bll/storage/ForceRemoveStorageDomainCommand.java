@@ -51,7 +51,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         }
 
         StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
-                .StorageDomainRemoved(getStorageDomain().getStorageStaticData());
+                .storageDomainRemoved(getStorageDomain().getStorageStaticData());
 
         DbFacade.getInstance().getStorageDomainDao().remove(getStorageDomain().getId());
 

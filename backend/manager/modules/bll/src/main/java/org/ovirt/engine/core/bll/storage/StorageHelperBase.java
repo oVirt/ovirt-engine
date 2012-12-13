@@ -73,7 +73,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
+    public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         return true;
     }
 

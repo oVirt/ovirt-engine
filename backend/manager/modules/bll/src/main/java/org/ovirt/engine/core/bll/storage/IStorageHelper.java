@@ -23,7 +23,7 @@ public interface IStorageHelper {
 
     boolean disconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun);
 
-    boolean StorageDomainRemoved(StorageDomainStatic storageDomain);
+    boolean storageDomainRemoved(StorageDomainStatic storageDomain);
 
     void removeLun(LUNs lun);
 

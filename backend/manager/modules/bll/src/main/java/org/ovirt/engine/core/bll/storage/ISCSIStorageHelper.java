@@ -187,7 +187,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
+    public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
         if (numOfRemovedLuns > 0) {
             List<StorageServerConnections> list = DbFacade.getInstance()

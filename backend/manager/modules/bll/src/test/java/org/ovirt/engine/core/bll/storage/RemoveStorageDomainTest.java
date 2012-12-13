@@ -172,7 +172,7 @@ public class RemoveStorageDomainTest {
             when(helper.disconnectStorageFromDomainByVdsId(dom, VDS_ID)).thenReturn(true);
         }
         if (!failure) {
-            when(helper.StorageDomainRemoved(dom.getStorageStaticData())).thenReturn(true);
+            when(helper.storageDomainRemoved(dom.getStorageStaticData())).thenReturn(true);
         }
         doReturn(helper).when(cmd).getStorageHelper(dom);
     }

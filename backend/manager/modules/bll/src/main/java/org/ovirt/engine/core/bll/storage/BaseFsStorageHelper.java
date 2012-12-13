@@ -77,7 +77,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
+    public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         StorageServerConnections connection =
                 DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getstorage());
 

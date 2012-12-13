@@ -31,7 +31,7 @@ public class FCPStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
+    public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         removeStorageDomainLuns(storageDomain);
         return true;
     }

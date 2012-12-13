@@ -243,7 +243,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // problems if a domain got deleted in VDSM and not in backend
                 // as it will be impossible to remove it.
                 StorageHelperDirector.getInstance().getItem(domain.getstorage_type())
-                        .StorageDomainRemoved(domain.getStorageStaticData());
+                        .storageDomainRemoved(domain.getStorageStaticData());
                 DbFacade.getInstance().getStorageDomainDao().remove(domain.getId());
                 return null;
             }
