@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.tags_user_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -14,12 +14,12 @@ public class AttachUserToTagCommand<T extends AttachEntityToTagParameters> exten
 
     @Override
     protected void executeCommand() {
-        tags_user_map map;
+        TagsUserMap map;
         if (getTagId() != null) {
             for (Guid userGuid : getUserList()) {
                 DbUser user = DbFacade.getInstance().getDbUserDao().get(userGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) == null) {
-                    map = new tags_user_map(getTagId(), userGuid);
+                    map = new TagsUserMap(getTagId(), userGuid);
                     DbFacade.getInstance().getTagDao().attachUserToTag(map);
                     noActionDone = false;
                     if (user != null) {

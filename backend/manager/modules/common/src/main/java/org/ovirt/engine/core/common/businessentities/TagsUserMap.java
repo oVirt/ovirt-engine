@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries({ @NamedQuery(name = "all_tag_user_maps_by_tag_name",
         query = "select m from tags_user_map m, tags t where (m.tagId = t.id) and (t.name = :tag_name)") })
-public class tags_user_map implements Serializable {
+public class TagsUserMap implements Serializable {
     private static final long serialVersionUID = 8616194965200914499L;
 
     @Id
@@ -37,10 +37,10 @@ public class tags_user_map implements Serializable {
     @Column(name = "_create_date")
     private Date created = new Date();
 
-    public tags_user_map() {
+    public TagsUserMap() {
     }
 
-    public tags_user_map(Guid tag_id, Guid user_id) {
+    public TagsUserMap(Guid tag_id, Guid user_id) {
         this.tagId = tag_id;
         this.userId = user_id;
     }
@@ -78,7 +78,7 @@ public class tags_user_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        tags_user_map other = (tags_user_map) obj;
+        TagsUserMap other = (TagsUserMap) obj;
         if (tagId == null) {
             if (other.tagId != null)
                 return false;

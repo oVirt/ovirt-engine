@@ -54,7 +54,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
-import org.ovirt.engine.core.common.businessentities.tags_user_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
@@ -224,7 +224,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(storage_server_connections.class)
                             .addAnnotatedClass(tags.class)
                             .addAnnotatedClass(TagsUserGroupMap.class)
-                            .addAnnotatedClass(tags_user_map.class)
+                            .addAnnotatedClass(TagsUserMap.class)
                             .addAnnotatedClass(tags_vds_map.class)
                             .addAnnotatedClass(tags_vm_map.class)
                             .addAnnotatedClass(tags_vm_pool_map.class)

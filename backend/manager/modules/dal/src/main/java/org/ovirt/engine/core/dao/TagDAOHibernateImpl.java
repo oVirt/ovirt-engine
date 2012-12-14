@@ -10,7 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
-import org.ovirt.engine.core.common.businessentities.tags_user_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMapId;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
@@ -140,7 +140,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public tags_user_map getTagUserByTagIdAndByuserId(Guid tagId, Guid userId) {
+    public TagsUserMap getTagUserByTagIdAndByuserId(Guid tagId, Guid userId) {
         return tagUserMapDAO.findOneByCriteria(Restrictions.eq("tagId", tagId), Restrictions.eq("userId", userId));
     }
 
@@ -150,7 +150,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public void attachUserToTag(tags_user_map tagUserMap) {
+    public void attachUserToTag(TagsUserMap tagUserMap) {
         tagUserMapDAO.save(tagUserMap);
     }
 
@@ -160,7 +160,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public List<tags_user_map> getTagUserMapByTagName(String tagName) {
+    public List<TagsUserMap> getTagUserMapByTagName(String tagName) {
         return tagUserMapDAO.getTaguserMapByTagName(tagName);
     }
 

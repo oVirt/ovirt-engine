@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
-import org.ovirt.engine.core.common.businessentities.tags_user_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     private Guid user;
     private Guid vm;
     private TagsUserGroupMap existingUserGroupTag;
-    private tags_user_map existingUserTag;
+    private TagsUserMap existingUserTag;
     private tags_vds_map existingVdsTag;
     private tags_vds_map newVdsTag;
     private tags_vm_map existingVmTag;
@@ -375,14 +375,14 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetUserTag() {
-        tags_user_map result =
+        TagsUserMap result =
                 dao.getTagUserByTagIdAndByuserId(existingUserTag.gettag_id(), existingUserTag.getuser_id());
 
         assertNotNull(result);
         assertEqualsTagUserMap(existingUserTag,result);
     }
 
-    private void assertEqualsTagUserMap(tags_user_map existing, tags_user_map result) {
+    private void assertEqualsTagUserMap(TagsUserMap existing, TagsUserMap result) {
         assertEquals("Tag ID is not equal",existing.gettag_id(), result.gettag_id());
         assertEquals("USER ID is not equal",existing.getuser_id(), result.getuser_id());
         assertEquals("Object equation",existing,result);
@@ -390,11 +390,11 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetTagUserMapByTagName() {
-        List<tags_user_map> result = dao.getTagUserMapByTagName(existingTag.gettag_name());
+        List<TagsUserMap> result = dao.getTagUserMapByTagName(existingTag.gettag_name());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (tags_user_map mapping : result) {
+        for (TagsUserMap mapping : result) {
             assertEquals(existingTag.gettag_id(), mapping.gettag_id());
         }
     }

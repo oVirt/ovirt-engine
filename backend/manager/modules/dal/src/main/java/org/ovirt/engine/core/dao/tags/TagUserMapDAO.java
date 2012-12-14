@@ -5,17 +5,17 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import org.ovirt.engine.core.common.businessentities.tags_user_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class TagUserMapDAO extends BaseDAOHibernateImpl<tags_user_map, Guid> {
+public class TagUserMapDAO extends BaseDAOHibernateImpl<TagsUserMap, Guid> {
     public TagUserMapDAO() {
-        super(tags_user_map.class);
+        super(TagsUserMap.class);
     }
 
     @SuppressWarnings("unchecked")
-    public List<tags_user_map> getTaguserMapByTagName(String tagName) {
+    public List<TagsUserMap> getTaguserMapByTagName(String tagName) {
         Session session = getSession();
         Query query = session.getNamedQuery("all_tag_user_maps_by_tag_name");
 
