@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -122,7 +122,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() != 0;
     }
 
-    private storage_pool_iso_map getStoragePoolIsoMap() {
+    private StoragePoolIsoMap getStoragePoolIsoMap() {
         return getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getStoragePoolId()));
@@ -219,7 +219,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected void setStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
         if (getStorageDomain() != null && getStorageDomain().getstorage_pool_id() != null) {
-            storage_pool_iso_map map = getStorageDomain().getStoragePoolIsoMapData();
+            StoragePoolIsoMap map = getStorageDomain().getStoragePoolIsoMapData();
             if(context != null) {
                 context.snapshotEntityStatus(map, map.getstatus());
             }
@@ -306,12 +306,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 getActionType().getActionGroup()));
     }
 
-    protected void changeStorageDomainStatusInTransaction(final storage_pool_iso_map map,
+    protected void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
             final StorageDomainStatus status) {
-        executeInNewTransaction(new TransactionMethod<storage_pool_iso_map>() {
+        executeInNewTransaction(new TransactionMethod<StoragePoolIsoMap>() {
             @SuppressWarnings("synthetic-access")
             @Override
-            public storage_pool_iso_map runInTransaction() {
+            public StoragePoolIsoMap runInTransaction() {
                 CompensationContext context = getCompensationContext();
                 context.snapshotEntityStatus(map, map.getstatus());
                 map.setstatus(status);

@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -202,7 +202,7 @@ public class RemoveStorageDomainTest {
     }
 
     protected void expectGetIsoMap(Guid id) {
-        ArrayList<storage_pool_iso_map> ret = new ArrayList<storage_pool_iso_map>();
+        ArrayList<StoragePoolIsoMap> ret = new ArrayList<StoragePoolIsoMap>();
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
         when(db.getStoragePoolIsoMapDao()).thenReturn(dao);
         when(dao.getAllForStorage(id)).thenReturn(ret);
@@ -217,7 +217,7 @@ public class RemoveStorageDomainTest {
     protected void expectGetIsAttached(Guid id, Guid poolId) {
         StoragePoolIsoMapDAO dao = mock(StoragePoolIsoMapDAO.class);
         when(db.getStoragePoolIsoMapDao()).thenReturn(dao);
-        when(dao.get(new StoragePoolIsoMapId(id, poolId))).thenReturn(new storage_pool_iso_map());
+        when(dao.get(new StoragePoolIsoMapId(id, poolId))).thenReturn(new StoragePoolIsoMap());
     }
 
     protected void expectDetach() {

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.NotImplementedException;
@@ -79,7 +79,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         query.setParameter("id", result.getId());
 
         @SuppressWarnings("unchecked")
-        List<storage_pool_iso_map> spimaps = query.list();
+        List<StoragePoolIsoMap> spimaps = query.list();
 
         result.setStoragePoolIsoMapData(spimaps.size() > 0 ? spimaps.get(0) : null);
     }

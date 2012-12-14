@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -56,7 +56,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
-                storage_pool_iso_map mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
+                StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
                 getCompensationContext().snapshotEntity(mapToRemove);
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()

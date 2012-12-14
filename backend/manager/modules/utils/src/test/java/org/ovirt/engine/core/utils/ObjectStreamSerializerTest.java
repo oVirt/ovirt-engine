@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainOwnerType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ObjectStreamSerializerTest {
@@ -19,14 +19,14 @@ public class ObjectStreamSerializerTest {
     public void testSerialize() {
         try {
             ObjectStreamSerializer serializer = new ObjectStreamSerializer();
-            storage_pool_iso_map isoMap = new storage_pool_iso_map();
+            StoragePoolIsoMap isoMap = new StoragePoolIsoMap();
             isoMap.setstorage_id(Guid.NewGuid());
             isoMap.setstorage_pool_id(Guid.NewGuid());
             isoMap.setstatus(StorageDomainStatus.Active);
             isoMap.setowner(StorageDomainOwnerType.Unknown);
             byte[] bytes = (byte[]) serializer.serialize(isoMap);
-            storage_pool_iso_map readEntity =
-                    (storage_pool_iso_map) new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
+            StoragePoolIsoMap readEntity =
+                    (StoragePoolIsoMap) new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
             assertEquals(isoMap, readEntity);
         } catch (Exception ex) {
             assertTrue(ex.getMessage(), false);

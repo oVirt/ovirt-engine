@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -62,7 +62,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected void executeCommand() {
-        final storage_pool_iso_map map =
+        final StoragePoolIsoMap map =
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
                         .get(new StoragePoolIsoMapId(getParameters().getStorageDomainId(),

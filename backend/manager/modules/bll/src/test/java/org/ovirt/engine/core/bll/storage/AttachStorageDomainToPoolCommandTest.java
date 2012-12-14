@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -67,7 +67,7 @@ public class AttachStorageDomainToPoolCommandTest {
     private VDSBrokerFrontend vdsBrokerFrontend;
     @Mock
     private VDS vds;
-    storage_pool_iso_map map = null;
+    StoragePoolIsoMap map = null;
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
@@ -108,10 +108,10 @@ public class AttachStorageDomainToPoolCommandTest {
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                map = (storage_pool_iso_map) invocation.getArguments()[0];
+                map = (StoragePoolIsoMap) invocation.getArguments()[0];
                 return null;
             }
-        }).when(isoMapDAO).save(any(storage_pool_iso_map.class));
+        }).when(isoMapDAO).save(any(StoragePoolIsoMap.class));
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();

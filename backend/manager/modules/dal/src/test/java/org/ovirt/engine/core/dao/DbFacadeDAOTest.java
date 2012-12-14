@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
@@ -377,7 +377,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
                 dbFacade.getStorageDomainDao().getMasterStorageDomainIdForPool(STORAGE_POOL_WITH_MASTER_DOWN);
         assertNotNull(masterStorageDomainGuid);
 
-        storage_pool_iso_map storagePoolIsoMapToCheck = dbFacade.getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
+        StoragePoolIsoMap storagePoolIsoMapToCheck = dbFacade.getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
                 masterStorageDomainGuid, storagePoolToCheck.getId()));
         assertNotNull(storagePoolIsoMapToCheck);
 

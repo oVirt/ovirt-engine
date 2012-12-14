@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -295,7 +295,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private void ProceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
             storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
             StorageDomainStatic domainFromDb = null;
-            storage_pool_iso_map domainPoolMap = null;
+            StoragePoolIsoMap domainPoolMap = null;
 
             if (storage_domain != null) {
                 domainFromDb = storage_domain.getStorageStaticData();
@@ -1043,7 +1043,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     getDomainIdTuple(tempData.getDomainId()),
                                     vdsName,
                                     _storagePoolId);
-                            storage_pool_iso_map map =
+                            StoragePoolIsoMap map =
                                     DbFacade.getInstance()
                                             .getStoragePoolIsoMapDao()
                                             .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));

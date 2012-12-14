@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -121,7 +121,7 @@ public class DbFacade {
     {
         {
             put(storage_pool.class, StoragePoolDAO.class);
-            put(storage_pool_iso_map.class, StoragePoolIsoMapDAO.class);
+            put(StoragePoolIsoMap.class, StoragePoolIsoMapDAO.class);
             put(StorageDomainStatic.class, StorageDomainStaticDAO.class);
             put(StorageDomainDynamic.class, StorageDomainDynamicDAO.class);
             put(VdsStatic.class, VdsStaticDAO.class);

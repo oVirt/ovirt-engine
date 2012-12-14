@@ -75,7 +75,7 @@
 		<include name="common/businessentities/StorageDomainDynamic.java" />
 		<include name="common/businessentities/StorageDomainStatic.java" />
 		<include name="common/businessentities/storage_domains.java" />
-		<include name="common/businessentities/storage_pool_iso_map.java" />
+		<include name="common/businessentities/StoragePoolIsoMap.java" />
 		<include name="common/businessentities/StoragePoolIsoMapId.java" />
 		<include name="common/businessentities/storage_pool.java" />
 		<include name="common/businessentities/storage_server_connections.java" />

@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -142,7 +142,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
                                 storageDomainId);
                     if (storageDomain != null) {
-                        storage_pool_iso_map mapFromDB =
+                        StoragePoolIsoMap mapFromDB =
                             DbFacade.getInstance()
                             .getStoragePoolIsoMapDao()
                                         .get(new StoragePoolIsoMapId(storageDomain.getId(), getStoragePool().getId()));

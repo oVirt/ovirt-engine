@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -388,10 +388,10 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
-     * Mock a good {@link storage_pool_iso_map}.
+     * Mock a good {@link StoragePoolIsoMap}.
      */
     private void mockStoragePoolIsoMap() {
-        storage_pool_iso_map spim = new storage_pool_iso_map();
+        StoragePoolIsoMap spim = new StoragePoolIsoMap();
         when(storagePoolIsoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(spim);
     }
 

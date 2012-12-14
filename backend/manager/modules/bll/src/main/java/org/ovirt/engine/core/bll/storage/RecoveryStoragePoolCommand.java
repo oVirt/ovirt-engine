@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -83,13 +83,13 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     @Override
     protected void executeCommand() {
-        storage_pool_iso_map domainPoolMap =
+        StoragePoolIsoMap domainPoolMap =
         TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<storage_pool_iso_map>() {
+                new TransactionMethod<StoragePoolIsoMap>() {
                     @Override
-                    public storage_pool_iso_map runInTransaction() {
-                        storage_pool_iso_map domainPoolMap =
-                                new storage_pool_iso_map(getRecoveryStoragePoolParametersData()
+                    public StoragePoolIsoMap runInTransaction() {
+                        StoragePoolIsoMap domainPoolMap =
+                                new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
                                         .getNewMasterDomainId(),
                                         getRecoveryStoragePoolParametersData().getStoragePoolId(),
                                         StorageDomainStatus.Active);

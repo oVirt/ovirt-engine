@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -55,9 +55,9 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     @Override
     protected boolean canDoAction() {
-        List<storage_pool_iso_map> poolDomains = DbFacade.getInstance()
+        List<StoragePoolIsoMap> poolDomains = DbFacade.getInstance()
                 .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
-        for (storage_pool_iso_map poolDomain : poolDomains) {
+        for (StoragePoolIsoMap poolDomain : poolDomains) {
             if (poolDomain.getstatus() == StorageDomainStatus.Locked) {
                 addInvalidSDStatusMessage(poolDomain.getstatus());
                 return false;
@@ -119,7 +119,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             return false;
         }
 
-        List<storage_pool_iso_map> domains = getStoragePoolIsoMapDAO()
+        List<StoragePoolIsoMap> domains = getStoragePoolIsoMapDAO()
                 .getAllForStoragePool(getStoragePool().getId());
 
         // set to true here in case of failure in executing/getting answer from the reconstruct vds command,

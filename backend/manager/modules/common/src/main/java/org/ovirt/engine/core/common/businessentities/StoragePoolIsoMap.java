@@ -28,14 +28,14 @@ import org.ovirt.engine.core.compat.NGuid;
         @NamedQuery(
                 name = "all_storage_pool_iso_map_by_storage_id_and_storage_pool_id",
                 query = "select m from storage_pool_iso_map m where m.id = :id") })
-public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId> {
+public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
     private static final long serialVersionUID = -2829958589095415567L;
 
-    public storage_pool_iso_map() {
+    public StoragePoolIsoMap() {
     }
 
-    public storage_pool_iso_map(Guid storage_id, Guid storage_pool_id, StorageDomainStatus status) {
+    public StoragePoolIsoMap(Guid storage_id, Guid storage_pool_id, StorageDomainStatus status) {
         setstorage_id(storage_id);
         setstorage_pool_id(storage_pool_id);
         this.setstatus(status);
@@ -129,7 +129,7 @@ public class storage_pool_iso_map implements BusinessEntity<StoragePoolIsoMapId>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        storage_pool_iso_map other = (storage_pool_iso_map) obj;
+        StoragePoolIsoMap other = (StoragePoolIsoMap) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

@@ -6,17 +6,17 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * StoragePoolIsoMap DAO hibernate implementation
  *
  */
-public class StoragePoolIsoMapDAOHibernateImpl extends BaseDAOHibernateImpl<storage_pool_iso_map, StoragePoolIsoMapId> {
+public class StoragePoolIsoMapDAOHibernateImpl extends BaseDAOHibernateImpl<StoragePoolIsoMap, StoragePoolIsoMapId> {
 
     public StoragePoolIsoMapDAOHibernateImpl() {
-        super(storage_pool_iso_map.class);
+        super(StoragePoolIsoMap.class);
     }
 
     /**
@@ -25,7 +25,7 @@ public class StoragePoolIsoMapDAOHibernateImpl extends BaseDAOHibernateImpl<stor
      * @return list of maps
      */
     @SuppressWarnings("unchecked")
-    public List<storage_pool_iso_map> getAllForStoragePool(Guid storagePoolId) {
+    public List<StoragePoolIsoMap> getAllForStoragePool(Guid storagePoolId) {
         Session session = getSession();
         Query query = session.getNamedQuery("all_storage_pool_iso_map_by_storage_pool_id");
         query.setParameter("storagePoolId", storagePoolId);
@@ -38,7 +38,7 @@ public class StoragePoolIsoMapDAOHibernateImpl extends BaseDAOHibernateImpl<stor
      * @return list of maps (empty list if there is no matching map)
      */
     @SuppressWarnings("unchecked")
-    public List<storage_pool_iso_map> getAllForStorage(Guid storageId) {
+    public List<StoragePoolIsoMap> getAllForStorage(Guid storageId) {
         Session session = getSession();
         Query query = session.getNamedQuery("all_storage_pool_iso_map_by_storage_id");
         query.setParameter("storageId", storageId);

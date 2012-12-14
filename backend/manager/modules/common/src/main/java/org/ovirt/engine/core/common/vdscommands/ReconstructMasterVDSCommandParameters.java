@@ -46,13 +46,13 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateMasterDomainId = value;
     }
 
-    private List<storage_pool_iso_map> privateDomainsList;
+    private List<StoragePoolIsoMap> privateDomainsList;
 
-    public List<storage_pool_iso_map> getDomainsList() {
+    public List<StoragePoolIsoMap> getDomainsList() {
         return privateDomainsList;
     }
 
-    private void setDomainsList(List<storage_pool_iso_map> value) {
+    private void setDomainsList(List<StoragePoolIsoMap> value) {
         privateDomainsList = value;
     }
 
@@ -67,7 +67,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     public ReconstructMasterVDSCommandParameters(Guid vdsId, int vdsSpmId, Guid storagePoolId,
-            String storagePoolName, Guid masterDomainId, List<storage_pool_iso_map> domainsList,
+            String storagePoolName, Guid masterDomainId, List<StoragePoolIsoMap> domainsList,
             int masterVersion) {
         super(vdsId);
         setVdsSpmId(vdsSpmId);
@@ -97,7 +97,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
 
     private String getPrintableDomainsList() {
         StringBuilder sb = new StringBuilder();
-        for (storage_pool_iso_map map : getDomainsList()) {
+        for (StoragePoolIsoMap map : getDomainsList()) {
             sb.append("{ domainId: ");
             sb.append(map.getstorage_id());
             sb.append(", status: ");

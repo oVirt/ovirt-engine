@@ -50,7 +50,7 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
@@ -220,7 +220,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(StorageDomainDynamic.class)
                             .addAnnotatedClass(StorageDomainStatic.class)
                             .addAnnotatedClass(storage_pool.class)
-                            .addAnnotatedClass(storage_pool_iso_map.class)
+                            .addAnnotatedClass(StoragePoolIsoMap.class)
                             .addAnnotatedClass(storage_server_connections.class)
                             .addAnnotatedClass(tags.class)
                             .addAnnotatedClass(TagsUserGroupMap.class)
@@ -239,7 +239,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(vm_template_image_map.class)
                             .addAnnotatedClass(VmDynamic.class)
                             .addAnnotatedClass(VmStatic.class)
-                            .addAnnotatedClass(storage_pool_iso_map.class)
+                            .addAnnotatedClass(StoragePoolIsoMap.class)
                             .addAnnotatedClass(VmTemplate.class)
                             .configure().buildSessionFactory();
         }

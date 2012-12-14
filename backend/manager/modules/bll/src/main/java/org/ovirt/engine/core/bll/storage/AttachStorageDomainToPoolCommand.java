@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
-    private storage_pool_iso_map map;
+    private StoragePoolIsoMap map;
 
     public AttachStorageDomainToPoolCommand(T parameters) {
         super(parameters);
@@ -68,7 +68,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
                         @Override
                         public Object runInTransaction() {
-                            map = new storage_pool_iso_map(getStorageDomain().getId(), getParameters()
+                            map = new StoragePoolIsoMap(getStorageDomain().getId(), getParameters()
                                     .getStoragePoolId(), StorageDomainStatus.Locked);
                             getStoragePoolIsoMapDAO().save(map);
                             getCompensationContext().snapshotNewEntity(map);

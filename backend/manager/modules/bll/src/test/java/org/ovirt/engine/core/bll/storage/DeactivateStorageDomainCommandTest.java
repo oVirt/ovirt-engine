@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -58,7 +58,7 @@ public class DeactivateStorageDomainCommandTest {
     private AsyncTaskDAO asyncTaskDAO;
     @Mock
     private VDS vds;
-    storage_pool_iso_map map = new storage_pool_iso_map();
+    StoragePoolIsoMap map = new StoragePoolIsoMap();
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();

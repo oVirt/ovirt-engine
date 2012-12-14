@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -27,9 +27,9 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
         DbFacade.getInstance().getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
         if (getParameters().getStatus() == StoragePoolStatus.Problematic
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {
-            List<storage_pool_iso_map> storagesStatusInPool = DbFacade.getInstance()
+            List<StoragePoolIsoMap> storagesStatusInPool = DbFacade.getInstance()
                     .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
-            for (storage_pool_iso_map storageStatusInPool : storagesStatusInPool) {
+            for (StoragePoolIsoMap storageStatusInPool : storagesStatusInPool) {
                 if (storageStatusInPool.getstatus() != null
                         && storageStatusInPool.getstatus() == StorageDomainStatus.Active) {
                     storageStatusInPool.setstatus(StorageDomainStatus.Unknown);

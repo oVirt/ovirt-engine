@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
@@ -154,7 +154,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (getStoragePool().getspm_vds_id() != null) {
             spm = getVdsDAO().get(getStoragePool().getspm_vds_id());
         }
-        final storage_pool_iso_map map =
+        final StoragePoolIsoMap map =
                 getStoragePoolIsoMapDAO().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
@@ -223,7 +223,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 }
                 getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
                 if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
-                    storage_pool_iso_map mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
+                    StoragePoolIsoMap mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
                     mapOfNewMaster.setstatus(StorageDomainStatus.Active);
                     getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
                 }
@@ -265,7 +265,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
                     @Override
                     public Object runInTransaction() {
-                        storage_pool_iso_map newMasterMap = newMaster.getStoragePoolIsoMapData();
+                        StoragePoolIsoMap newMasterMap = newMaster.getStoragePoolIsoMapData();
                         // We do not need to compensate storage pool, it will be committed if run during reconstruct
                         getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
                         newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());

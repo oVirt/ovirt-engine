@@ -17,7 +17,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
     public storage_domains() {
         _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
-        setStoragePoolIsoMapData(new storage_pool_iso_map());
+        setStoragePoolIsoMapData(new StoragePoolIsoMap());
     }
 
     public storage_domains(Guid id, String storage, String storage_name, Guid storage_pool_id,
@@ -25,7 +25,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
             int storage_pool_type, int storage_type) {
         _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
-        setStoragePoolIsoMapData(new storage_pool_iso_map());
+        setStoragePoolIsoMapData(new StoragePoolIsoMap());
         this.setId(id);
         this.setstorage(storage);
         this.setstorage_name(storage_name);
@@ -58,13 +58,13 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
         this.alerts = alerts;
     }
 
-    private storage_pool_iso_map privateStoragePoolIsoMapData;
+    private StoragePoolIsoMap privateStoragePoolIsoMapData;
 
-    public storage_pool_iso_map getStoragePoolIsoMapData() {
+    public StoragePoolIsoMap getStoragePoolIsoMapData() {
         return privateStoragePoolIsoMapData;
     }
 
-    public void setStoragePoolIsoMapData(storage_pool_iso_map value) {
+    public void setStoragePoolIsoMapData(StoragePoolIsoMap value) {
         privateStoragePoolIsoMapData = value;
     }
 

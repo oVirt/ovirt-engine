@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -281,7 +281,7 @@ public class IsoDomainListSyncronizer {
         List<RepoFileMetaData> tempProblematicRepoFileList = new ArrayList<RepoFileMetaData>();
 
         // Fetch all the Storage pools for this Iso domain Id.
-        List<storage_pool_iso_map> isoMapList =
+        List<StoragePoolIsoMap> isoMapList =
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
                         .getAllForStorage(storageDomainId);
@@ -289,10 +289,10 @@ public class IsoDomainListSyncronizer {
                 isoMapList.size(),
                 fileTypeExt,
                 storageDomainId);
-        Iterator<storage_pool_iso_map> iter = isoMapList.iterator();
+        Iterator<StoragePoolIsoMap> iter = isoMapList.iterator();
 
         while (iter.hasNext() && !refreshSucceeded) {
-            storage_pool_iso_map storagePoolIsoMap = iter.next();
+            StoragePoolIsoMap storagePoolIsoMap = iter.next();
             Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id().getValue();
             if ((storagePoolIsoMap.getstatus() != null)
                     && (storagePoolIsoMap.getstatus() == StorageDomainStatus.Active)) {
