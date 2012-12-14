@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -76,7 +76,7 @@ public class BackendStorageDomainsResource
     }
 
     private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
-        storage_server_connections cnx = mapToCnx(model);
+        StorageServerConnections cnx = mapToCnx(model);
 
         entity.setstorage(addStorageServerConnection(cnx, hostId));
 
@@ -155,7 +155,7 @@ public class BackendStorageDomainsResource
     }
 
     private void connectStorageToHost(Guid hostId, StorageType storageType, LogicalUnit unit) {
-        storage_server_connections cnx = StorageDomainHelper.getConnection(storageType, unit.getAddress(), unit.getTarget(), unit.getUsername(), unit.getPassword(), unit.getPort());
+        StorageServerConnections cnx = StorageDomainHelper.getConnection(storageType, unit.getAddress(), unit.getTarget(), unit.getUsername(), unit.getPassword(), unit.getPort());
         performAction(VdcActionType.ConnectStorageToVds,
                       new StorageServerConnectionParametersBase(cnx, hostId));
     }
@@ -237,7 +237,7 @@ public class BackendStorageDomainsResource
 
     protected void mapNfsOrLocalOrPosix(StorageDomain model, storage_domains entity) {
         final Storage storage = model.getStorage();
-        storage_server_connections cnx = getStorageServerConnection(entity.getstorage());
+        StorageServerConnections cnx = getStorageServerConnection(entity.getstorage());
         if (cnx.getconnection().contains(":")) {
             String[] parts = cnx.getconnection().split(":");
             model.getStorage().setAddress(parts[0]);
@@ -261,9 +261,9 @@ public class BackendStorageDomainsResource
     protected void mapVolumeGroupIscsi(StorageDomain model, storage_domains entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
-            List<storage_server_connections> lunConnections = lun.getLunConnections();
+            List<StorageServerConnections> lunConnections = lun.getLunConnections();
             if (lunConnections!=null) {
-                for (storage_server_connections cnx : lunConnections) {
+                for (StorageServerConnections cnx : lunConnections) {
                     LogicalUnit unit = map(lun);
                     unit = map(cnx, unit);
                     vg.getLogicalUnits().add(unit);
@@ -284,8 +284,8 @@ public class BackendStorageDomainsResource
         return getMapper(LUNs.class, LogicalUnit.class).map(lun, null);
     }
 
-    protected LogicalUnit map(storage_server_connections cnx, LogicalUnit template) {
-        return getMapper(storage_server_connections.class, LogicalUnit.class).map(cnx, template);
+    protected LogicalUnit map(StorageServerConnections cnx, LogicalUnit template) {
+        return getMapper(StorageServerConnections.class, LogicalUnit.class).map(cnx, template);
     }
 
     protected StorageType map(org.ovirt.engine.api.model.StorageType type) {
@@ -311,9 +311,9 @@ public class BackendStorageDomainsResource
         return collection;
     }
 
-    protected storage_server_connections mapToCnx(StorageDomain model) {
+    protected StorageServerConnections mapToCnx(StorageDomain model) {
         return getMapper(StorageDomain.class,
-                         storage_server_connections.class).map(model, null);
+                         StorageServerConnections.class).map(model, null);
     }
 
     private Guid getHostId(StorageDomain storageDomain) {
@@ -327,14 +327,14 @@ public class BackendStorageDomainsResource
                  : null;
     }
 
-    private String addStorageServerConnection(storage_server_connections cnx, Guid hostId) {
+    private String addStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.AddStorageServerConnection,
                              new StorageServerConnectionParametersBase(cnx, hostId),
                              String.class);
     }
 
-    private storage_server_connections getStorageServerConnection(String id) {
-        return getEntity(storage_server_connections.class,
+    private StorageServerConnections getStorageServerConnection(String id) {
+        return getEntity(StorageServerConnections.class,
                          VdcQueryType.GetStorageServerConnectionById,
                          new StorageServerConnectionQueryParametersBase(id),
                          "Storage server connection: id=" + id);
@@ -351,7 +351,7 @@ public class BackendStorageDomainsResource
     private storage_domains getExistingStorageDomain(Guid hostId,
                                                            StorageType storageType,
                                                            StorageDomainType domainType,
-                                                           storage_server_connections cnx) {
+                                                           StorageServerConnections cnx) {
         List<storage_domains> existing =
             asCollection(storage_domains.class,
                          getEntity(ArrayList.class,

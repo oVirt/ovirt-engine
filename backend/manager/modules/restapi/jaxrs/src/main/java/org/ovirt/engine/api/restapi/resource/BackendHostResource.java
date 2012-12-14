@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -148,7 +148,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response iscsiLogin(Action action) {
         validateParameters(action, "iscsi.address", "iscsi.target");
-        storage_server_connections cnx = new storage_server_connections();
+        StorageServerConnections cnx = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
         cnx.setconnection(iscsiDetails.getAddress());
         cnx.setiqn(iscsiDetails.getTarget());
@@ -172,28 +172,28 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response iscsiDiscover(Action action) {
         validateParameters(action, "iscsi.address");
 
-        List<storage_server_connections> result = getBackendCollection(storage_server_connections.class,
+        List<StorageServerConnections> result = getBackendCollection(StorageServerConnections.class,
                                                                        VdcQueryType.DiscoverSendTargets,
                                                                        createDiscoveryQueryParams(action));
 
         return actionSuccess(mapTargets(action, result));
     }
 
-    private Action mapTargets(Action action, List<storage_server_connections> targets) {
+    private Action mapTargets(Action action, List<StorageServerConnections> targets) {
         if (targets != null) {
-            for (storage_server_connections cnx : targets) {
+            for (StorageServerConnections cnx : targets) {
                 action.getIscsiTargets().add(map(cnx).getTarget());
             }
         }
         return action;
     }
 
-    protected LogicalUnit map(storage_server_connections cnx) {
-        return getMapper(storage_server_connections.class, LogicalUnit.class).map(cnx, null);
+    protected LogicalUnit map(StorageServerConnections cnx) {
+        return getMapper(StorageServerConnections.class, LogicalUnit.class).map(cnx, null);
     }
 
     private DiscoverSendTargetsQueryParameters createDiscoveryQueryParams(Action action) {
-        storage_server_connections connectionDetails = new storage_server_connections();
+        StorageServerConnections connectionDetails = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
         connectionDetails.setconnection(iscsiDetails.getAddress());
         connectionDetails.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);

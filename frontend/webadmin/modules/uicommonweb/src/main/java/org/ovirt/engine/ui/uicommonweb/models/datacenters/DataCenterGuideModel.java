@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -116,8 +116,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private TaskContext context;
     private IStorageModel storageModel;
     private NGuid storageId;
-    private storage_server_connections nfsConnection;
-    private storage_server_connections connection;
+    private StorageServerConnections nfsConnection;
+    private StorageServerConnections connection;
     private Guid hostId = new Guid();
     private String path;
     private StorageDomainType domainType = StorageDomainType.values()[0];
@@ -804,7 +804,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         hostId = host.getId();
 
         // Create storage connection.
-        storage_server_connections tempVar = new storage_server_connections();
+        StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
@@ -867,7 +867,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 this);
     }
 
-    private void CleanConnection(storage_server_connections connection, Guid hostId)
+    private void CleanConnection(StorageServerConnections connection, Guid hostId)
     {
         Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
@@ -956,7 +956,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         hostId = host.getId();
 
         // Create storage connection.
-        storage_server_connections tempVar = new storage_server_connections();
+        StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
         connection = tempVar;

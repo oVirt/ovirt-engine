@@ -46,7 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -1309,7 +1309,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (storage_server_connections) source : null;
+                return source != null ? (StorageServerConnections) source : null;
             }
         };
         StorageServerConnectionQueryParametersBase params = new StorageServerConnectionQueryParametersBase(id);

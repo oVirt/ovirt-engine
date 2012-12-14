@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -674,7 +674,7 @@ public final class ImagesHandler {
                 .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUN_id()));
         DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
 
-        lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+        lun.setLunConnections(new ArrayList<StorageServerConnections>(DbFacade.getInstance()
                 .getStorageServerConnectionDao()
                 .getAllForLun(lun.getLUN_id())));
 

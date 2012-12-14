@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -72,8 +72,8 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                         VDSCommandType.ConnectStorageServer,
                         new ConnectStorageServerVDSCommandParameters(vdsId, getParameters().getStoragePoolId(),
                                 getParameters().getStorageServerConnection().getstorage_type(),
-                                new java.util.ArrayList<storage_server_connections>(java.util.Arrays
-                                        .asList(new storage_server_connections[] { getConnection() }))))
+                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
+                                        .asList(new StorageServerConnections[] { getConnection() }))))
                 .getReturnValue();
         return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
                 .getItem(getParameters().getStorageServerConnection().getstorage_type())

@@ -19,10 +19,10 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
         ProceedProxyReturnValue();
 
         // parse result to storage_server_connections
-        java.util.ArrayList<storage_server_connections> connections =
-                new java.util.ArrayList<storage_server_connections>();
+        java.util.ArrayList<StorageServerConnections> connections =
+                new java.util.ArrayList<StorageServerConnections>();
         for (XmlRpcStruct x : _result.mConnectionList) {
-            storage_server_connections storageCon = new storage_server_connections();
+            StorageServerConnections storageCon = new StorageServerConnections();
             if (x.contains("serverType")) {
                 storageCon.setstorage_type((StorageType) x.getItem("serverType"));
             }

@@ -2,12 +2,12 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>StorageServerConnectionDAO</code> defines a type that performs CRUD operations on instances of
- * {@link storage_server_connections}.
+ * {@link StorageServerConnections}.
  *
  *
  */
@@ -19,7 +19,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the connection id
      * @return the connection
      */
-    storage_server_connections get(String id);
+    StorageServerConnections get(String id);
 
     /**
      * Retrieves the connection for the given iqn.
@@ -28,14 +28,14 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the iqn
      * @return the connection
      */
-    storage_server_connections getForIqn(String iqn);
+    StorageServerConnections getForIqn(String iqn);
 
     /**
      * Retrieves all connections.
      *
      * @return the list of connections
      */
-    List<storage_server_connections> getAll();
+    List<StorageServerConnections> getAll();
 
     /**
      * Retrieves all connections for the specified storage pool.
@@ -44,7 +44,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the storage pool
      * @return the list of connections
      */
-    List<storage_server_connections> getAllForStoragePool(Guid pool);
+    List<StorageServerConnections> getAllForStoragePool(Guid pool);
 
     /**
      * Retrieves all connections for the specified volume group.
@@ -53,7 +53,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the volume group
      * @return the list of connections
      */
-    List<storage_server_connections> getAllForVolumeGroup(String group);
+    List<StorageServerConnections> getAllForVolumeGroup(String group);
 
     /**
      * Retrieves all connections for the specified storage.
@@ -62,7 +62,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the storage
      * @return the list of connections
      */
-    List<storage_server_connections> getAllForStorage(String storage);
+    List<StorageServerConnections> getAllForStorage(String storage);
 
     /**
      * Retrieves all connections for the specified Lun.
@@ -71,7 +71,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the lun
      * @return the list of connections
      */
-    List<storage_server_connections> getAllForLun(String lunId);
+    List<StorageServerConnections> getAllForLun(String lunId);
 
     /**
      * Retrieves all connections for the specified connection.
@@ -80,8 +80,8 @@ public interface StorageServerConnectionDAO extends DAO {
      *            the connection
      * @return the list of connections
      */
-    List<storage_server_connections> getAllForConnection(
-            storage_server_connections connection);
+    List<StorageServerConnections> getAllForConnection(
+            StorageServerConnections connection);
 
     /**
      * Saves the specified connection.
@@ -89,7 +89,7 @@ public interface StorageServerConnectionDAO extends DAO {
      * @param connection
      *            the connection
      */
-    void save(storage_server_connections connection);
+    void save(StorageServerConnections connection);
 
     /**
      * Updates the specified connection.
@@ -97,7 +97,7 @@ public interface StorageServerConnectionDAO extends DAO {
      * @param connection
      *            the connection
      */
-    void update(storage_server_connections connection);
+    void update(StorageServerConnections connection);
 
     /**
      * Removes the connection with the specified id.

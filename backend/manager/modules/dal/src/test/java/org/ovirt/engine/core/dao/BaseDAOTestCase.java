@@ -51,7 +51,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
@@ -221,7 +221,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(StorageDomainStatic.class)
                             .addAnnotatedClass(storage_pool.class)
                             .addAnnotatedClass(StoragePoolIsoMap.class)
-                            .addAnnotatedClass(storage_server_connections.class)
+                            .addAnnotatedClass(StorageServerConnections.class)
                             .addAnnotatedClass(tags.class)
                             .addAnnotatedClass(TagsUserGroupMap.class)
                             .addAnnotatedClass(TagsUserMap.class)

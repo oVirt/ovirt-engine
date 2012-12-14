@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 
@@ -21,26 +21,26 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
         StorageServerConnectionDAO {
 
     @Override
-    public storage_server_connections get(String id) {
+    public StorageServerConnections get(String id) {
         return getCallsHandler().executeRead("Getstorage_server_connectionsByid", mapper, getIdParameterSource(id));
     }
 
     @Override
-    public storage_server_connections getForIqn(String iqn) {
+    public StorageServerConnections getForIqn(String iqn) {
         return getCallsHandler().executeRead("Getstorage_server_connectionsByIqn", mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("iqn", iqn));
     }
 
     @Override
-    public List<storage_server_connections> getAll() {
+    public List<StorageServerConnections> getAll() {
         return getCallsHandler().executeReadList("GetAllFromstorage_server_connections",
                 mapper,
                 getCustomMapSqlParameterSource());
     }
 
     @Override
-    public List<storage_server_connections> getAllForStoragePool(Guid pool) {
+    public List<StorageServerConnections> getAllForStoragePool(Guid pool) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByStoragePoolId",
                 mapper,
                 getCustomMapSqlParameterSource()
@@ -48,7 +48,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
-    public List<storage_server_connections> getAllForVolumeGroup(String group) {
+    public List<StorageServerConnections> getAllForVolumeGroup(String group) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByVolumeGroupId",
                 mapper,
                 getCustomMapSqlParameterSource()
@@ -56,22 +56,22 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
-    public List<storage_server_connections> getAllForStorage(String storage) {
+    public List<StorageServerConnections> getAllForStorage(String storage) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByConnection", mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("connection", storage));
     }
 
     @Override
-    public List<storage_server_connections> getAllForLun(String lunId) {
+    public List<StorageServerConnections> getAllForLun(String lunId) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByLunId", mapper,
                 getCustomMapSqlParameterSource()
                         .addValue("lunId", lunId));
     }
 
     @Override
-    public List<storage_server_connections> getAllForConnection(
-            storage_server_connections connection) {
+    public List<StorageServerConnections> getAllForConnection(
+            StorageServerConnections connection) {
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByKey",
                 mapper,
                 getCustomMapSqlParameterSource()
@@ -84,12 +84,12 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
-    public void save(storage_server_connections connection) {
+    public void save(StorageServerConnections connection) {
         getCallsHandler().executeModification("Insertstorage_server_connections", getFullParameterSource(connection));
     }
 
     @Override
-    public void update(storage_server_connections connection) {
+    public void update(StorageServerConnections connection) {
         getCallsHandler().executeModification("Updatestorage_server_connections", getFullParameterSource(connection));
     }
 
@@ -103,7 +103,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("id", id);
     }
 
-    private MapSqlParameterSource getFullParameterSource(final storage_server_connections connection) {
+    private MapSqlParameterSource getFullParameterSource(final StorageServerConnections connection) {
         return getIdParameterSource(connection.getid())
                 .addValue("connection", connection.getconnection())
                 .addValue("iqn", connection.getiqn())
@@ -119,12 +119,12 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                 .addValue("nfs_retrans", connection.getNfsRetrans());
     }
 
-    private static final ParameterizedRowMapper<storage_server_connections> mapper =
-            new ParameterizedRowMapper<storage_server_connections>() {
+    private static final ParameterizedRowMapper<StorageServerConnections> mapper =
+            new ParameterizedRowMapper<StorageServerConnections>() {
                 @Override
-                public storage_server_connections mapRow(ResultSet rs, int rowNum)
+                public StorageServerConnections mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
-                    storage_server_connections entity = new storage_server_connections();
+                    StorageServerConnections entity = new StorageServerConnections();
                     entity.setconnection(rs.getString("connection"));
                     entity.setid(rs.getString("id"));
                     entity.setiqn(rs.getString("iqn"));

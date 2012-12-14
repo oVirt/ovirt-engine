@@ -1,21 +1,21 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiscoverSendTargetsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    public DiscoverSendTargetsVDSCommandParameters(Guid vdsId, storage_server_connections connection) {
+    public DiscoverSendTargetsVDSCommandParameters(Guid vdsId, StorageServerConnections connection) {
         super(vdsId);
         setConnection(connection);
     }
 
-    private storage_server_connections privateConnection;
+    private StorageServerConnections privateConnection;
 
-    public storage_server_connections getConnection() {
+    public StorageServerConnections getConnection() {
         return privateConnection;
     }
 
-    private void setConnection(storage_server_connections value) {
+    private void setConnection(StorageServerConnections value) {
         privateConnection = value;
     }
 

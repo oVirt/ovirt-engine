@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 
 public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";
@@ -16,8 +16,8 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
 
     private StorageServerConnectionLunMapDAO dao;
     private StorageServerConnectionDAO storageServerConnectionDao;
-    private storage_server_connections newServerConnection;
-    private storage_server_connections existingConnection;
+    private StorageServerConnections newServerConnection;
+    private StorageServerConnections existingConnection;
     private LUN_storage_server_connection_map existingLUNStorageMap;
     private LUN_storage_server_connection_map newLUNStorageMap;
 
@@ -30,7 +30,7 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
 
         existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
 
-        newServerConnection = new storage_server_connections();
+        newServerConnection = new StorageServerConnections();
         newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");
         newServerConnection.setconnection(EXISTING_DOMAIN_STORAGE_NAME);
 

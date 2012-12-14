@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,7 +25,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
         boolean returnValue = false;
-        storage_server_connections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
+        StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getstorage());
         if (connection != null) {
             returnValue = Backend
@@ -40,7 +40,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
+    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId) {
         @SuppressWarnings("unchecked")
         HashMap<String, String> validateConnections = (HashMap<String, String>) Backend
@@ -55,7 +55,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean IsConnectSucceeded(Map<String, String> returnValue,
-            List<storage_server_connections> connections) {
+            List<StorageServerConnections> connections) {
         boolean result = true;
         for (Map.Entry<String, String> entry : returnValue.entrySet()) {
             if (!"0".equals(entry.getValue())) {
@@ -69,16 +69,16 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public List<storage_server_connections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
-        return new ArrayList<storage_server_connections>(
-                Arrays.asList(new storage_server_connections[] { DbFacade.getInstance()
+        return new ArrayList<StorageServerConnections>(
+                Arrays.asList(new StorageServerConnections[] { DbFacade.getInstance()
                         .getStorageServerConnectionDao().get(storageDomain.getstorage()) }));
     }
 
     @Override
     public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
-        storage_server_connections connection =
+        StorageServerConnections connection =
                 DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getstorage());
 
         if (connection != null) {

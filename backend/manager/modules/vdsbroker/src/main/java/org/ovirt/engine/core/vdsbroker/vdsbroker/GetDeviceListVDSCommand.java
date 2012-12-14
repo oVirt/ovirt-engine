@@ -7,7 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -96,7 +96,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         if (xlun.contains("productID")) {
             lun.setProductId(xlun.getItem("productID").toString());
         }
-        lun.setLunConnections(new ArrayList<storage_server_connections>());
+        lun.setLunConnections(new ArrayList<StorageServerConnections>());
         if (xlun.contains("pathlist")) {
             Object[] temp = (Object[]) xlun.getItem("pathlist");
             XmlRpcStruct[] pathList = null;
@@ -134,8 +134,8 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         return lun;
     }
 
-    public static storage_server_connections ParseConnection(XmlRpcStruct xcon) {
-        storage_server_connections con = new storage_server_connections();
+    public static StorageServerConnections ParseConnection(XmlRpcStruct xcon) {
+        StorageServerConnections con = new StorageServerConnections();
         if (xcon.contains("connection")) {
             con.setconnection(xcon.getItem("connection").toString());
         }

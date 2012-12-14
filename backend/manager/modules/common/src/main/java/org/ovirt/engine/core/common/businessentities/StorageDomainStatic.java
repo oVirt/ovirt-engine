@@ -65,7 +65,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     private StorageType storagePoolType = StorageType.UNKNOWN;
 
     @Transient
-    private storage_server_connections connection;
+    private StorageServerConnections connection;
 
     @Column(name = "storage_domain_format_type")
     private StorageFormatType storageFormat = StorageFormatType.V1;
@@ -138,11 +138,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         name = value;
     }
 
-    public storage_server_connections getConnection() {
+    public StorageServerConnections getConnection() {
         return connection;
     }
 
-    public void setConnection(storage_server_connections value) {
+    public void setConnection(StorageServerConnections value) {
         connection = value;
     }
 

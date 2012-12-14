@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -147,8 +147,8 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         return luns;
     }
 
-    protected storage_server_connections setUpConnection(int idx) {
-        return new storage_server_connections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
+    protected StorageServerConnections setUpConnection(int idx) {
+        return new StorageServerConnections(ADDRESS, GUIDS[idx].toString(), IQNS[idx], null,
                 StorageType.ISCSI, null, PORT, null);
     }
 
@@ -164,7 +164,7 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
             assertEquals(GUIDS[i].toString(), lun.getLUN_id());
             assertNotNull(lun.getLunConnections());
             assertEquals(1, lun.getLunConnections().size());
-            storage_server_connections cnx = lun.getLunConnections().get(0);
+            StorageServerConnections cnx = lun.getLunConnections().get(0);
             assertEquals(ADDRESS, cnx.getconnection());
             assertEquals(PORT, cnx.getport());
             assertEquals(GUIDS[i].toString(), cnx.getid());

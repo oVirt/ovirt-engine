@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -49,9 +49,9 @@ public abstract class StorageHelperBase implements IStorageHelper {
     protected void RunForAllConnectionsInPool(VdcActionType type, VDS vds) {
         storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(vds.getStoragePoolId());
         if (pool.getstatus() != StoragePoolStatus.Uninitialized) {
-            List<storage_server_connections> connections = DbFacade.getInstance()
+            List<StorageServerConnections> connections = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForStoragePool(vds.getStoragePoolId());
-            for (storage_server_connections connection : connections) {
+            for (StorageServerConnections connection : connections) {
                 Backend.getInstance().runInternalAction(type,
                         new StorageServerConnectionParametersBase(connection, vds.getId()));
             }
@@ -95,7 +95,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     public void removeLun(LUNs lun) {
         if (lun.getvolume_group_id().isEmpty()) {
             DbFacade.getInstance().getLunDao().remove(lun.getLUN_id());
-            for (storage_server_connections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
+            for (StorageServerConnections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
                     lun.getLUN_id())) {
                 DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
@@ -103,26 +103,26 @@ public abstract class StorageHelperBase implements IStorageHelper {
         }
     }
 
-    protected List<storage_server_connections> filterConnectionsUsedByOthers(
-            List<storage_server_connections> connections, String vgId, final String lunId) {
+    protected List<StorageServerConnections> filterConnectionsUsedByOthers(
+            List<StorageServerConnections> connections, String vgId, final String lunId) {
         return Collections.emptyList();
     }
 
     @Override
-    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
+    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId) {
         return true;
     }
 
     @Override
-    public List<storage_server_connections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
-        return new java.util.ArrayList<storage_server_connections>();
+        return new java.util.ArrayList<StorageServerConnections>();
     }
 
     @Override
     public boolean IsConnectSucceeded(Map<String, String> returnValue,
-            List<storage_server_connections> connections) {
+            List<StorageServerConnections> connections) {
         return true;
     }
 
@@ -145,12 +145,12 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
-            List<storage_server_connections> connections) {
+            List<StorageServerConnections> connections) {
         return addToAuditLogErrorMessage(connection, errorCode, connections, null);
     }
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
-            List<storage_server_connections> connections, LUNs lun) {
+            List<StorageServerConnections> connections, LUNs lun) {
         AuditLogableBase logable = new AuditLogableBase();
 
         String connectionField = getConnectionDescription(connections, connection) +
@@ -194,11 +194,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return translatedError;
     }
 
-    private String getConnectionDescription(List<storage_server_connections> connections, String connectionId) {
+    private String getConnectionDescription(List<StorageServerConnections> connections, String connectionId) {
         // Using Guid in order to handle nulls. This can happened when we trying
         // to import an existing domain
         Guid connectionIdGuid = Guid.createGuidFromString(connectionId);
-        for (storage_server_connections connection : connections) {
+        for (StorageServerConnections connection : connections) {
             Guid connectionGuid = Guid.createGuidFromString(connection.getid());
             if (connectionGuid.equals(connectionIdGuid)) {
                 String desc = connection.getconnection();

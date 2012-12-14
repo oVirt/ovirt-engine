@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -243,8 +243,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
         }
 
-        for (storage_server_connections connection : lun.getLunConnections()) {
-            List<storage_server_connections> connections = DbFacade.getInstance()
+        for (StorageServerConnections connection : lun.getLunConnections()) {
+            List<StorageServerConnections> connections = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForConnection(connection);
             if (connections.isEmpty()) {
                 connection.setid(Guid.NewGuid().toString());

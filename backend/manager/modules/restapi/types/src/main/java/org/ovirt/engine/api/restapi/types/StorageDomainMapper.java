@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 
@@ -52,9 +52,9 @@ public class StorageDomainMapper {
         return entity;
     }
 
-    @Mapping(from = StorageDomain.class, to = storage_server_connections.class)
-    public static storage_server_connections map(StorageDomain model, storage_server_connections template) {
-        storage_server_connections entity = template != null ? template : new storage_server_connections();
+    @Mapping(from = StorageDomain.class, to = StorageServerConnections.class)
+    public static StorageServerConnections map(StorageDomain model, StorageServerConnections template) {
+        StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetStorage() && model.getStorage().isSetType()) {
             Storage storage = model.getStorage();
             StorageType storageType = StorageType.fromValue(storage.getType());

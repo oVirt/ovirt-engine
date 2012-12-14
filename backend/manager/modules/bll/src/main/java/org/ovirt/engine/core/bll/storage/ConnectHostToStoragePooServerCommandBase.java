@@ -11,15 +11,15 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePooServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
-    private List<storage_server_connections> _connections;
-    private List<storage_server_connections> _isoConnections;
-    private List<storage_server_connections> _exportConnections;
+    private List<StorageServerConnections> _connections;
+    private List<StorageServerConnections> _isoConnections;
+    private List<StorageServerConnections> _exportConnections;
     private StorageType _isoType = StorageType.NFS;
     private StorageType _exportType = StorageType.NFS;
     private boolean _needToConnectIso = false;
@@ -45,15 +45,15 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         _needToConnectExport = value;
     }
 
-    protected List<storage_server_connections> getConnections() {
+    protected List<StorageServerConnections> getConnections() {
         return _connections;
     }
 
-    protected List<storage_server_connections> getIsoConnections() {
+    protected List<StorageServerConnections> getIsoConnections() {
         return _isoConnections;
     }
 
-    protected List<storage_server_connections> getExportConnections() {
+    protected List<StorageServerConnections> getExportConnections() {
         return _exportConnections;
     }
 
@@ -72,12 +72,12 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         List<storage_domains> exportDomains =
                 getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ImportExport);
 
-        Set<storage_server_connections> connections = new HashSet<storage_server_connections>(
+        Set<StorageServerConnections> connections = new HashSet<StorageServerConnections>(
                 DbFacade.getInstance().getStorageServerConnectionDao().getAllForStoragePool(getStoragePool().getId()));
         if (isoDomains.size() != 0) {
             _isoType = isoDomains.get(0).getstorage_type();
-            Set<storage_server_connections> isoConnections =
-                    new HashSet<storage_server_connections>(
+            Set<StorageServerConnections> isoConnections =
+                    new HashSet<StorageServerConnections>(
                             StorageHelperDirector.getInstance().getItem(getIsoType())
                                     .GetStorageServerConnectionsByDomain(isoDomains.get(0).getStorageStaticData()));
             if (_isoType != getStoragePool().getstorage_pool_type()) {
@@ -85,13 +85,13 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
             } else {
                 isoConnections.removeAll(connections);
             }
-            _isoConnections = new ArrayList<storage_server_connections>(isoConnections);
+            _isoConnections = new ArrayList<StorageServerConnections>(isoConnections);
             setNeedToConnectIso(_isoConnections.size() > 0);
         }
         if (exportDomains.size() != 0) {
             _exportType = exportDomains.get(0).getstorage_type();
-            Set<storage_server_connections> exportConnections =
-                    new HashSet<storage_server_connections>(
+            Set<StorageServerConnections> exportConnections =
+                    new HashSet<StorageServerConnections>(
                             StorageHelperDirector.getInstance().getItem(getExportType())
                                     .GetStorageServerConnectionsByDomain(exportDomains.get(0).getStorageStaticData()));
             if (_exportType != getStoragePool().getstorage_pool_type()) {
@@ -99,10 +99,10 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
             } else {
                 exportConnections.removeAll(connections);
             }
-            _exportConnections = new ArrayList<storage_server_connections>(exportConnections);
+            _exportConnections = new ArrayList<StorageServerConnections>(exportConnections);
             setNeedToConnectExport(exportConnections.size() > 0);
         }
-        _connections = new ArrayList<storage_server_connections>(connections);
+        _connections = new ArrayList<StorageServerConnections>(connections);
     }
 
     protected List<storage_domains> getStorageDomainsByStoragePoolId(List<storage_domains> allDomains, StorageDomainType type) {

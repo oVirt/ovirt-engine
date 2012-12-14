@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Job;
@@ -351,7 +351,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
-            lun.setLunConnections(new ArrayList<storage_server_connections>(DbFacade.getInstance()
+            lun.setLunConnections(new ArrayList<StorageServerConnections>(DbFacade.getInstance()
                                             .getStorageServerConnectionDao()
                                             .getAllForLun(lun.getLUN_id())));
 

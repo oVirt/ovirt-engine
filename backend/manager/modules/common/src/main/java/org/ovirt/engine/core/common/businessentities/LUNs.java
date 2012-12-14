@@ -231,13 +231,13 @@ public class LUNs implements Serializable {
     }
 
     @Transient
-    private java.util.ArrayList<storage_server_connections> _lunConnections;
+    private java.util.ArrayList<StorageServerConnections> _lunConnections;
 
-    public java.util.ArrayList<storage_server_connections> getLunConnections() {
+    public java.util.ArrayList<StorageServerConnections> getLunConnections() {
         return _lunConnections;
     }
 
-    public void setLunConnections(java.util.ArrayList<storage_server_connections> value) {
+    public void setLunConnections(java.util.ArrayList<StorageServerConnections> value) {
         _lunConnections = value;
     }
 

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -104,7 +104,7 @@ public class StorageGeneralModel extends EntityModel
                     @Override
                     public void OnSuccess(Object model, Object ReturnValue)
                     {
-                        storage_server_connections connection = (storage_server_connections) ReturnValue;
+                        StorageServerConnections connection = (StorageServerConnections) ReturnValue;
                         StorageGeneralModel generalModel = (StorageGeneralModel) model;
                         String path = null;
                         if (connection != null)

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -37,7 +37,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     @Override
     protected boolean RunConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type, LUNs lun, Guid storagePoolId) {
         boolean isSuccess = true;
-        List<storage_server_connections> list =
+        List<StorageServerConnections> list =
                 (lun == null) ? DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage())
                         : lun.getLunConnections();
@@ -66,15 +66,15 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return isSuccess;
     }
 
-    private List<storage_server_connections> FilterConnectionsUsedByOthers(
-            List<storage_server_connections> connections, String vgId) {
+    private List<StorageServerConnections> FilterConnectionsUsedByOthers(
+            List<StorageServerConnections> connections, String vgId) {
         return filterConnectionsUsedByOthers(connections, vgId, "");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected List<storage_server_connections> filterConnectionsUsedByOthers(
-            List<storage_server_connections> connections, String vgId, final String lunId) {
+    protected List<StorageServerConnections> filterConnectionsUsedByOthers(
+            List<StorageServerConnections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
@@ -98,9 +98,9 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             lunsByVgWithNoDisks.add(lunId);
         }
 
-        List<storage_server_connections> toRemove =
-                new ArrayList<storage_server_connections>();
-        for (storage_server_connections connection : connections) {
+        List<StorageServerConnections> toRemove =
+                new ArrayList<StorageServerConnections>();
+        for (StorageServerConnections connection : connections) {
             List<String> list = LinqUtils.foreach(
                     DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
                     new Function<LUNs, String>() {
@@ -114,11 +114,11 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 toRemove.add(connection);
             }
         }
-        return (List<storage_server_connections>) CollectionUtils.subtract(connections, toRemove);
+        return (List<StorageServerConnections>) CollectionUtils.subtract(connections, toRemove);
     }
 
     @Override
-    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
+    public boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId) {
         if (connections.size() > 0) {
             @SuppressWarnings("unchecked")
@@ -137,7 +137,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean IsConnectSucceeded(final Map<String, String> returnValue,
-            List<storage_server_connections> connections) {
+            List<StorageServerConnections> connections) {
         boolean result = true;
         List<String> failedConnectionsList = LinqUtils.filter(returnValue.keySet(), new Predicate<String>() {
             @Override
@@ -190,9 +190,9 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
         int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
         if (numOfRemovedLuns > 0) {
-            List<storage_server_connections> list = DbFacade.getInstance()
+            List<StorageServerConnections> list = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
-            for (storage_server_connections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
+            for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
                 DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
             }
         }
@@ -233,7 +233,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public List<storage_server_connections> GetStorageServerConnectionsByDomain(
+    public List<StorageServerConnections> GetStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
         return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
     }

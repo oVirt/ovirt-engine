@@ -8,7 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -53,7 +53,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             List<LUN_storage_server_connection_map> lunConnections = getLunConnections(lun.getLUN_id());
 
             if (!lunConnections.isEmpty()) {
-                storage_server_connections connection =
+                StorageServerConnections connection =
                         getConnection(lunConnections.get(0).getstorage_server_connection());
                 storageType = connection.getstorage_type();
             }
@@ -98,13 +98,13 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
         return getDbFacade().getStorageServerConnectionLunMapDao().getAll(lunId);
     }
 
-    protected storage_server_connections getConnection(String cnxId) {
+    protected StorageServerConnections getConnection(String cnxId) {
         return getDbFacade().getStorageServerConnectionDao().get(cnxId);
     }
 
-    protected void addConnection(LUNs lun, storage_server_connections cnx) {
+    protected void addConnection(LUNs lun, StorageServerConnections cnx) {
         if (lun.getLunConnections() == null) {
-            lun.setLunConnections(new ArrayList<storage_server_connections>());
+            lun.setLunConnections(new ArrayList<StorageServerConnections>());
         }
         lun.getLunConnections().add(cnx);
     }

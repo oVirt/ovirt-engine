@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 
 public abstract class StorageServerConnectionCommandBase<T extends StorageServerConnectionParametersBase> extends
         StorageHandlingCommandBase<T> {
@@ -16,7 +16,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         setVdsId(parameters.getVdsId());
     }
 
-    protected storage_server_connections getConnection() {
+    protected StorageServerConnections getConnection() {
         return getParameters().getStorageServerConnection();
     }
 

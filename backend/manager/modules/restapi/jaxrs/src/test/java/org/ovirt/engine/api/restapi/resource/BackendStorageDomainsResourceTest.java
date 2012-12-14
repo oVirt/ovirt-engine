@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -602,20 +602,20 @@ public class BackendStorageDomainsResourceTest
         super.setUpQueryExpectations(query, failure);
     }
 
-    static storage_server_connections setUpLocalStorageServerConnection(int index) {
+    static StorageServerConnections setUpLocalStorageServerConnection(int index) {
         return setUpStorageServerConnection(index, index, StorageType.LOCALFS);
     }
 
-    static storage_server_connections setUpPosixStorageServerConnection(int index) {
+    static StorageServerConnections setUpPosixStorageServerConnection(int index) {
         return setUpStorageServerConnection(index, index, StorageType.POSIXFS);
     }
 
-    static storage_server_connections setUpStorageServerConnection(int index) {
+    static StorageServerConnections setUpStorageServerConnection(int index) {
         return setUpStorageServerConnection(index, index, StorageType.NFS);
     }
 
-    static storage_server_connections setUpStorageServerConnection(int idIndex, int index, StorageType storageType) {
-        storage_server_connections cnx = new storage_server_connections();
+    static StorageServerConnections setUpStorageServerConnection(int idIndex, int index, StorageType storageType) {
+        StorageServerConnections cnx = new StorageServerConnections();
         if (idIndex != -1) {
             cnx.setid(GUIDS[idIndex].toString());
         }
@@ -659,14 +659,14 @@ public class BackendStorageDomainsResourceTest
     }
 
     protected List<LUNs> setUpLuns() {
-        storage_server_connections cnx = new storage_server_connections();
+        StorageServerConnections cnx = new StorageServerConnections();
         cnx.setconnection(ADDRESSES[0]);
         cnx.setiqn(TARGET);
         cnx.setport(Integer.toString(PORT));
 
         LUNs lun = new LUNs();
         lun.setLUN_id(LUN);
-        lun.setLunConnections(new ArrayList<storage_server_connections>());
+        lun.setLunConnections(new ArrayList<StorageServerConnections>());
         lun.getLunConnections().add(cnx);
 
         List<LUNs> luns = new ArrayList<LUNs>();

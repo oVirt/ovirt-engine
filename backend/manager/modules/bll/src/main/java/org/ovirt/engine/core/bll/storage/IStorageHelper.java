@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
@@ -27,12 +27,12 @@ public interface IStorageHelper {
 
     void removeLun(LUNs lun);
 
-    boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<storage_server_connections> connections,
+    boolean ValidateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
             Guid storagePoolId);
 
-    List<storage_server_connections> GetStorageServerConnectionsByDomain(
+    List<StorageServerConnections> GetStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain);
 
     boolean IsConnectSucceeded(Map<String, String> returnValue,
-            List<storage_server_connections> connections);
+            List<StorageServerConnections> connections);
 }

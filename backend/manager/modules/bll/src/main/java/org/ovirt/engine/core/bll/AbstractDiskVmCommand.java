@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -51,7 +51,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperatinParameterBas
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
-                lun.setLunConnections(new ArrayList<storage_server_connections>(getDbFacade()
+                lun.setLunConnections(new ArrayList<StorageServerConnections>(getDbFacade()
                         .getStorageServerConnectionDao()
                         .getAllForLun(lun.getLUN_id())));
                 if (!StorageHelperDirector.getInstance()

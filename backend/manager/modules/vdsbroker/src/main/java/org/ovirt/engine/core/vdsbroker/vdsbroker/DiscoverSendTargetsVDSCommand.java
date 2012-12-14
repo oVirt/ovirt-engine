@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.DiscoverSendTargetsVDSCommandParameters;
 
 public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSCommandParameters>
@@ -33,10 +33,10 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
         return _result;
     }
 
-    private List<storage_server_connections> parseFullTargets(List<String> iqnList) {
-        ArrayList<storage_server_connections> connections = new ArrayList<storage_server_connections>(iqnList.size());
+    private List<StorageServerConnections> parseFullTargets(List<String> iqnList) {
+        ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>(iqnList.size());
         for (String fullTarget : iqnList) {
-            storage_server_connections con = storage_server_connections.copyOf(getParameters().getConnection());
+            StorageServerConnections con = StorageServerConnections.copyOf(getParameters().getConnection());
             // fullTarget format: <ip>:<port>, <portal> <targetName>
             // e.g 10.35.104.8:3600,1 blue-20G
             String[] tokens = fullTarget.split(",");
@@ -53,10 +53,10 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
         return connections;
     }
 
-    private List<storage_server_connections> parseTargets(List<String> iqnList) {
-        List<storage_server_connections> connections = new ArrayList<storage_server_connections>(iqnList.size());
+    private List<StorageServerConnections> parseTargets(List<String> iqnList) {
+        List<StorageServerConnections> connections = new ArrayList<StorageServerConnections>(iqnList.size());
         for (String iqn : iqnList) {
-            storage_server_connections con = storage_server_connections.copyOf(getParameters().getConnection());
+            StorageServerConnections con = StorageServerConnections.copyOf(getParameters().getConnection());
             con.setiqn(iqn);
             connections.add(con);
         }

@@ -12,13 +12,13 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 @Entity
 @Table(name = "storage_server_connections")
-public class storage_server_connections implements Serializable {
+public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 
-    public storage_server_connections() {
+    public StorageServerConnections() {
     }
 
-    public storage_server_connections(String connection,
+    public StorageServerConnections(String connection,
             String id,
             String iqn,
             String password,
@@ -46,7 +46,7 @@ public class storage_server_connections implements Serializable {
         this.nfsTimeo = nfsTimeo;
     }
 
-    public storage_server_connections(String connection,
+    public StorageServerConnections(String connection,
             String id,
             String iqn,
             String password,
@@ -206,9 +206,9 @@ public class storage_server_connections implements Serializable {
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
-        if (!returnValue && obj != null && obj instanceof storage_server_connections) {
+        if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
             returnValue = (!StringHelper.EqOp(getid(), "") && StringHelper.EqOp(getid(),
-                    ((storage_server_connections) obj).getid()));
+                    ((StorageServerConnections) obj).getid()));
         }
         return returnValue;
     }
@@ -218,10 +218,10 @@ public class storage_server_connections implements Serializable {
         return getid() != null ? getid().hashCode() : 0;
     }
 
-    public static storage_server_connections copyOf(storage_server_connections ssc) {
+    public static StorageServerConnections copyOf(StorageServerConnections ssc) {
         // using the constructor since all fields do not need deep copy (string
         // is immutable, and storageType and nfsVersion are enums
-        return new storage_server_connections(ssc.connection,
+        return new StorageServerConnections(ssc.connection,
                 ssc.id,
                 ssc.iqn,
                 ssc.password,

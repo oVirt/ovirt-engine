@@ -5,13 +5,13 @@ import org.ovirt.engine.core.common.businessentities.*;
 
 public class DiscoverSendTargetsQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5247364599284007838L;
-    private storage_server_connections privateConnection;
+    private StorageServerConnections privateConnection;
 
-    public storage_server_connections getConnection() {
+    public StorageServerConnections getConnection() {
         return privateConnection;
     }
 
-    private void setConnection(storage_server_connections value) {
+    private void setConnection(StorageServerConnections value) {
         privateConnection = value;
     }
 
@@ -25,7 +25,7 @@ public class DiscoverSendTargetsQueryParameters extends VdcQueryParametersBase {
         privateVdsId = value;
     }
 
-    public DiscoverSendTargetsQueryParameters(Guid vdsId, storage_server_connections connection) {
+    public DiscoverSendTargetsQueryParameters(Guid vdsId, StorageServerConnections connection) {
         setVdsId(vdsId);
         setConnection(connection);
     }

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -75,7 +75,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
         return returnValue;
     }
 
-    protected boolean ConnectStorageServer(StorageType type, List<storage_server_connections> connections) {
+    protected boolean ConnectStorageServer(StorageType type, List<StorageServerConnections> connections) {
         boolean connectSucceeded = true;
         if (connections != null && connections.size() > 0) {
             java.util.HashMap<String, String> retValues = (java.util.HashMap<String, String>) Backend
@@ -93,7 +93,7 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
         return connectSucceeded;
     }
 
-    protected boolean ValidConnection(StorageType type, List<storage_server_connections> connections) {
+    protected boolean ValidConnection(StorageType type, List<StorageServerConnections> connections) {
         return (connections != null && (connections.isEmpty() || StorageHelperDirector.getInstance().getItem(type)
                 .ValidateStoragePoolConnectionsInHost(getVds(), connections, getStoragePool().getId())));
     }

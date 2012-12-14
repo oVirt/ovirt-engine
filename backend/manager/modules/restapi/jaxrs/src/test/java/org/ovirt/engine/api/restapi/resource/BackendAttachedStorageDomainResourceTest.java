@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -166,8 +166,8 @@ public class BackendAttachedStorageDomainResourceTest
         return setUpEntityExpectations(control.createMock(storage_domains.class), index, StorageType.NFS);
     }
 
-    static storage_server_connections setUpStorageServerConnection() {
-        storage_server_connections cnx = new storage_server_connections();
+    static StorageServerConnections setUpStorageServerConnection() {
+        StorageServerConnections cnx = new StorageServerConnections();
             cnx.setid(GUIDS[0].toString());
             cnx.setconnection("10.11.12.13" + ":" + "/1");
         return cnx;

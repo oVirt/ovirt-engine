@@ -15,7 +15,7 @@ import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
@@ -36,9 +36,9 @@ public class BackendHostStorageResource
 
         for (LUNs lun : getLogicalUnits()) {
             Storage storage = map(lun);
-            ArrayList<storage_server_connections> lunConnections = lun.getLunConnections();
+            ArrayList<StorageServerConnections> lunConnections = lun.getLunConnections();
             if (lunConnections!=null && !lunConnections.isEmpty()) {
-                getMapper(storage_server_connections.class, LogicalUnit.class).map(lunConnections.get(0), storage.getLogicalUnits().get(0));
+                getMapper(StorageServerConnections.class, LogicalUnit.class).map(lunConnections.get(0), storage.getLogicalUnits().get(0));
             }
             ret.getStorage().add(addLinks(storage));
         }

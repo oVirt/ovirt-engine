@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -194,8 +194,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public TaskContext context;
     public IStorageModel storageModel;
     public NGuid storageId;
-    public storage_server_connections nfsConnection;
-    public storage_server_connections connection;
+    public StorageServerConnections nfsConnection;
+    public StorageServerConnections connection;
     public Guid hostId = new Guid();
     public String path;
     public StorageDomainType domainType = StorageDomainType.values()[0];
@@ -428,7 +428,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
-                storage_server_connections connection = (storage_server_connections) returnValue;
+                StorageServerConnections connection = (StorageServerConnections) returnValue;
                 model.getPath().setEntity(connection.getconnection());
                 model.getRetransmissions().setEntity(connection.getNfsRetrans());
                 model.getTimeout().setEntity(connection.getNfsTimeo());
@@ -469,7 +469,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             public void OnSuccess(Object target, Object returnValue) {
 
                 LocalStorageModel localStorageModel = (LocalStorageModel) target;
-                storage_server_connections connection = (storage_server_connections) returnValue;
+                StorageServerConnections connection = (StorageServerConnections) returnValue;
                 localStorageModel.getPath().setEntity(connection.getconnection());
 
             }
@@ -490,7 +490,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
-                storage_server_connections connection = (storage_server_connections) returnValue;
+                StorageServerConnections connection = (StorageServerConnections) returnValue;
                 model.getPath().setEntity(connection.getconnection());
                 model.getVfsType().setEntity(connection.getVfsType());
                 model.getMountOptions().setEntity(connection.getMountOptions());
@@ -693,7 +693,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private void CleanConnection(storage_server_connections connection, Guid hostId) {
+    private void CleanConnection(StorageServerConnections connection, Guid hostId) {
 
         Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId), new IFrontendActionAsyncCallback() {
             @Override
@@ -1191,7 +1191,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         hostId = host.getId();
 
         // Create storage connection.
-        storage_server_connections connection = new storage_server_connections();
+        StorageServerConnections connection = new StorageServerConnections();
         connection.setconnection(path);
         connection.setstorage_type(posixModel.getType());
         connection.setVfsType((String) posixModel.getVfsType().getEntity());
@@ -1323,7 +1323,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         hostId = host.getId();
 
         // Create storage connection.
-        storage_server_connections tempVar = new storage_server_connections();
+        StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
         if ((Boolean) nfsModel.getOverride().getEntity()) {
@@ -1509,7 +1509,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         hostId = host.getId();
 
         // Create storage connection.
-        storage_server_connections tempVar = new storage_server_connections();
+        StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(localModel.getType());
         connection = tempVar;
@@ -1721,7 +1721,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         storageListModel.storageModel,
                         ConstantsManager.getInstance().getMessages().importFailedDomainAlreadyExistStorageMsg(storageName));
                 } else {
-                    storage_server_connections tempVar = new storage_server_connections();
+                    StorageServerConnections tempVar = new StorageServerConnections();
                     storageModel = storageListModel.storageModel;
                     NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
 

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,7 +57,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/
             if (retVal && this.getVds().getvds_type() == VDSType.oVirtNode) {
 
-                storage_server_connections conn =
+                StorageServerConnections conn =
                         DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
                                 .getstorage());
 

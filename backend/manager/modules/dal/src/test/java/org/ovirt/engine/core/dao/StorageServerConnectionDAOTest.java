@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
@@ -20,9 +20,9 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");;
 
     private StorageServerConnectionDAO dao;
-    private storage_server_connections newServerConnection;
-    private storage_server_connections existingConnection;
-    private storage_server_connections existingNfsAutoConnection;
+    private StorageServerConnections newServerConnection;
+    private StorageServerConnections existingConnection;
+    private StorageServerConnections existingNfsAutoConnection;
 
     @Override
     public void setUp() throws Exception {
@@ -33,7 +33,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         existingConnection = dao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
         existingNfsAutoConnection = dao.get(FixturesTool.EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID.toString());
 
-        newServerConnection = new storage_server_connections();
+        newServerConnection = new StorageServerConnections();
         newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");
         newServerConnection.setconnection(EXISTING_DOMAIN_STORAGE_NAME);
     }
@@ -43,7 +43,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetServerConnectionWithInvalidId() {
-        storage_server_connections result = dao.get("fakrel");
+        StorageServerConnections result = dao.get("fakrel");
 
         assertNull(result);
     }
@@ -53,7 +53,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetServerConnection() {
-        storage_server_connections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getid());
 
         assertNotNull(result);
         assertEquals(existingConnection, result);
@@ -61,14 +61,14 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetForIqnWithInvalidIqn() {
-        storage_server_connections result = dao.getForIqn("farkle");
+        StorageServerConnections result = dao.getForIqn("farkle");
 
         assertNull(result);
     }
 
     @Test
     public void testGetForIqn() {
-        storage_server_connections result = dao.getForIqn(existingConnection.getiqn());
+        StorageServerConnections result = dao.getForIqn(existingConnection.getiqn());
 
         assertNotNull(result);
         assertEquals(existingConnection, result);
@@ -79,7 +79,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAll() {
-        List<storage_server_connections> result = dao.getAll();
+        List<StorageServerConnections> result = dao.getAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -91,7 +91,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAllForStoragePoolWithNoConnections() {
-        List<storage_server_connections> result = dao.getAllForStoragePool(Guid.NewGuid());
+        List<StorageServerConnections> result = dao.getAllForStoragePool(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -102,7 +102,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAllForStoragePool() {
-        List<storage_server_connections> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID);
+        List<StorageServerConnections> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -114,7 +114,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAllForVolumeGroup() {
-        List<storage_server_connections> result =
+        List<StorageServerConnections> result =
                 dao.getAllForVolumeGroup(EXISTING_DOMAIN_STORAGE_NAME);
 
         assertNotNull(result);
@@ -126,7 +126,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAllForStorage() {
-        List<storage_server_connections> result = dao.getAllForStorage("10.35.64.25");
+        List<StorageServerConnections> result = dao.getAllForStorage("10.35.64.25");
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -138,11 +138,11 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSaveServerConnection() {
-        List<storage_server_connections> before = dao.getAll();
+        List<StorageServerConnections> before = dao.getAll();
 
         dao.save(newServerConnection);
 
-        List<storage_server_connections> after = dao.getAll();
+        List<StorageServerConnections> after = dao.getAll();
 
         assertEquals(before.size() + 1, after.size());
     }
@@ -156,7 +156,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
 
         dao.update(existingConnection);
 
-        storage_server_connections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getid());
 
         assertEquals(existingConnection, result);
     }
@@ -168,7 +168,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     public void testRemoveServerConnection() {
         dao.remove(existingConnection.getid());
 
-        storage_server_connections result = dao.get(existingConnection.getid());
+        StorageServerConnections result = dao.get(existingConnection.getid());
 
         assertNull(result);
     }
@@ -182,7 +182,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         newServerConnection.setNfsRetrans((short)5);
         dao.save(newServerConnection);
 
-        storage_server_connections result = dao.get(newServerConnection.getid());
+        StorageServerConnections result = dao.get(newServerConnection.getid());
         assertEquals(result.getNfsVersion(), NfsVersion.V4);
         assertTrue(result.getNfsRetrans() == 5);
         assertNull(result.getNfsTimeo());

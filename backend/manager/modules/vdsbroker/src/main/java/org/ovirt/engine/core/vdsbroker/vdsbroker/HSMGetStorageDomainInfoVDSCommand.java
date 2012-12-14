@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -56,10 +56,10 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         if (sdStatic.getstorage_type() != StorageType.UNKNOWN) {
             if (sdStatic.getstorage_type() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
                 String path = xmlRpcStruct.getItem("remotePath").toString();
-                List<storage_server_connections> connections = DbFacade.getInstance()
+                List<StorageServerConnections> connections = DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForStorage(path);
                 if (connections.isEmpty()) {
-                    sdStatic.setConnection(new storage_server_connections());
+                    sdStatic.setConnection(new StorageServerConnections());
                     sdStatic.getConnection().setconnection(path);
                     sdStatic.getConnection().setstorage_type(StorageType.NFS);
                 } else {

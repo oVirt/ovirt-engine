@@ -23,8 +23,8 @@ public class GetStorageSessionsListVDSCommand<P extends VdsIdVDSCommandParameter
         return _result.mStatus;
     }
 
-    private java.util.ArrayList<storage_server_connections> ParseSessionsList(XmlRpcStruct[] sessionsList) {
-        java.util.ArrayList<storage_server_connections> result = new java.util.ArrayList<storage_server_connections>(
+    private java.util.ArrayList<StorageServerConnections> ParseSessionsList(XmlRpcStruct[] sessionsList) {
+        java.util.ArrayList<StorageServerConnections> result = new java.util.ArrayList<StorageServerConnections>(
                 sessionsList.length);
         for (XmlRpcStruct session : sessionsList) {
             result.add(GetDeviceListVDSCommand.ParseConnection(session));

@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -42,14 +42,14 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
                 DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
-        for (storage_server_connections connection : getParameters().getConnectionList()) {
+        for (StorageServerConnections connection : getParameters().getConnectionList()) {
             result[i] = CreateStructFromConnection(connection, storage_pool);
             i++;
         }
         return result;
     }
 
-    public static Map<String, String> CreateStructFromConnection(final storage_server_connections connection,
+    public static Map<String, String> CreateStructFromConnection(final StorageServerConnections connection,
             final storage_pool storage_pool) {
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
         DefaultValueMap con = new DefaultValueMap();

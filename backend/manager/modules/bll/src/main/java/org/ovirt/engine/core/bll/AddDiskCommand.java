@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -110,7 +110,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
             }
 
-            for (storage_server_connections conn : lun.getLunConnections()) {
+            for (StorageServerConnections conn : lun.getLunConnections()) {
                 if (StringUtils.isEmpty(conn.getiqn()) || StringUtils.isEmpty(conn.getconnection())
                         || StringUtils.isEmpty(conn.getport())) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);

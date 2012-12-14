@@ -5,7 +5,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -27,8 +27,8 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
                         VDSCommandType.DisconnectStorageServer,
                         new ConnectStorageServerVDSCommandParameters(getParameters().getVdsId(), getParameters()
                                 .getStoragePoolId(), getParameters().getStorageServerConnection().getstorage_type(),
-                                new java.util.ArrayList<storage_server_connections>(java.util.Arrays
-                                        .asList(new storage_server_connections[] { getConnection() })))).getSucceeded());
+                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
+                                        .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded());
     }
 
     @Override

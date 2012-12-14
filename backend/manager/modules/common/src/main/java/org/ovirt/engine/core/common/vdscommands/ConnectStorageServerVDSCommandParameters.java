@@ -16,18 +16,18 @@ public class ConnectStorageServerVDSCommandParameters extends GetStorageConnecti
         privateStorageType = value;
     }
 
-    private List<storage_server_connections> privateConnectionList;
+    private List<StorageServerConnections> privateConnectionList;
 
-    public List<storage_server_connections> getConnectionList() {
+    public List<StorageServerConnections> getConnectionList() {
         return privateConnectionList;
     }
 
-    private void setConnectionList(List<storage_server_connections> value) {
+    private void setConnectionList(List<StorageServerConnections> value) {
         privateConnectionList = value;
     }
 
     public ConnectStorageServerVDSCommandParameters(Guid vdsId, Guid storagePoolId, StorageType storageType,
-            List<storage_server_connections> connectionList) {
+            List<StorageServerConnections> connectionList) {
         super(vdsId, storagePoolId);
         setStorageType(storageType);
         setConnectionList(connectionList);
@@ -44,7 +44,7 @@ public class ConnectStorageServerVDSCommandParameters extends GetStorageConnecti
 
     private String getPrintableConnectionsList() {
         StringBuilder sb = new StringBuilder();
-        for (storage_server_connections con : getConnectionList()) {
+        for (StorageServerConnections con : getConnectionList()) {
             sb.append(con);
         }
         return sb.toString();

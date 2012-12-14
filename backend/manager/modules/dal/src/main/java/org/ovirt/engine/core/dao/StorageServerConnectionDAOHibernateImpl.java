@@ -6,14 +6,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImpl<storage_server_connections, String> implements StorageServerConnectionDAO {
+public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImpl<StorageServerConnections, String> implements StorageServerConnectionDAO {
     private StorageServerConnectionLunMapDAOHibernateImpl mapDAO = new StorageServerConnectionLunMapDAOHibernateImpl();
 
     public StorageServerConnectionDAOHibernateImpl() {
-        super(storage_server_connections.class);
+        super(StorageServerConnections.class);
     }
 
     @Override
@@ -24,13 +24,13 @@ public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImp
     }
 
     @Override
-    public storage_server_connections getForIqn(String iqn) {
+    public StorageServerConnections getForIqn(String iqn) {
         return findOneByCriteria(Restrictions.eq("iqn", iqn));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<storage_server_connections> getAllForStoragePool(Guid storagePoolId) {
+    public List<StorageServerConnections> getAllForStoragePool(Guid storagePoolId) {
         Query query = getSession().createQuery("select conn from " +
                 "LUN_storage_server_connection_map map1, " +
                 "LUNs lun, " +
@@ -52,7 +52,7 @@ public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImp
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<storage_server_connections> getAllForVolumeGroup(String group) {
+    public List<StorageServerConnections> getAllForVolumeGroup(String group) {
         Query query = getSession().createQuery("select conn from " +
                 "LUN_storage_server_connection_map map1, " +
                 "LUNs lun, " +
@@ -69,12 +69,12 @@ public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImp
     }
 
     @Override
-    public List<storage_server_connections> getAllForStorage(String storage) {
+    public List<StorageServerConnections> getAllForStorage(String storage) {
         return findByCriteria(Restrictions.eq("connection", storage));
     }
 
     @Override
-    public List<storage_server_connections> getAllForConnection(storage_server_connections connection) {
+    public List<StorageServerConnections> getAllForConnection(StorageServerConnections connection) {
         return findByCriteria(Restrictions.eq("connection", connection));
     }
     /* TODO - align with Storage Connection Lun Map split
@@ -96,7 +96,7 @@ public class StorageServerConnectionDAOHibernateImpl extends BaseDAOHibernateImp
     */
 
     @Override
-    public List<storage_server_connections> getAllForLun(String lunId) {
+    public List<StorageServerConnections> getAllForLun(String lunId) {
         // TODO Auto-generated method stub
         return null;
     }

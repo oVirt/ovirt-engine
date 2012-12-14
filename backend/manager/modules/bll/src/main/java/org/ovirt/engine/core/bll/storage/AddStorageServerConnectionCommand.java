@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,7 +25,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void executeCommand() {
-        storage_server_connections currConnection = getConnection();
+        StorageServerConnections currConnection = getConnection();
         boolean isValidConnection = true;
         isValidConnection = Connect(getVds().getId()).getFirst();
 
@@ -40,9 +40,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     }
 
     @Override
-    protected storage_server_connections getConnection() {
+    protected StorageServerConnections getConnection() {
         if (StringUtils.isEmpty(getParameters().getStorageServerConnection().getid())) {
-            List<storage_server_connections> connections;
+            List<StorageServerConnections> connections;
             if ((connections = DbFacade.getInstance().getStorageServerConnectionDao().getAllForStorage(
                     getParameters().getStorageServerConnection().getconnection())).size() != 0) {
                 getParameters().setStorageServerConnection(connections.get(0));
@@ -54,7 +54,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        storage_server_connections paramConnection = getParameters().getStorageServerConnection();
+        StorageServerConnections paramConnection = getParameters().getStorageServerConnection();
         if (returnValue && paramConnection.getstorage_type() == StorageType.NFS
                 && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
             returnValue = false;
@@ -84,8 +84,8 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                         paramConnection.getstorage_type());
                 if (!storageHelper.ValidateStoragePoolConnectionsInHost(
                         getVds(),
-                        new java.util.ArrayList<storage_server_connections>(java.util.Arrays
-                                .asList(new storage_server_connections[] { paramConnection })), Guid.Empty))
+                        new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
+                                .asList(new StorageServerConnections[] { paramConnection })), Guid.Empty))
 
                 {
                     returnValue = false;

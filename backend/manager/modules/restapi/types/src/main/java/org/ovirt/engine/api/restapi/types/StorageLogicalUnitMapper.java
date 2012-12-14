@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 
 public class StorageLogicalUnitMapper {
@@ -45,8 +45,8 @@ public class StorageLogicalUnitMapper {
         return model;
     }
 
-    @Mapping(from = storage_server_connections.class, to = LogicalUnit.class)
-    public static LogicalUnit map(storage_server_connections entity, LogicalUnit template) {
+    @Mapping(from = StorageServerConnections.class, to = LogicalUnit.class)
+    public static LogicalUnit map(StorageServerConnections entity, LogicalUnit template) {
         LogicalUnit model = template != null ? template : new LogicalUnit();
         model.setAddress(entity.getconnection());
         model.setTarget(entity.getiqn());
@@ -76,7 +76,7 @@ public class StorageLogicalUnitMapper {
         if (model.isSetLogicalUnits()) {
             LogicalUnit logicalUnit = model.getLogicalUnits().get(0);
             entity.setLUN_id(logicalUnit.getId());
-            ArrayList<storage_server_connections> connections = new ArrayList<storage_server_connections>();
+            ArrayList<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
             connections.add(map(logicalUnit, null));
             entity.setLunConnections(connections);
         }
@@ -89,9 +89,9 @@ public class StorageLogicalUnitMapper {
         return entity;
     }
 
-    @Mapping(from = LogicalUnit.class, to = storage_server_connections.class)
-    public static storage_server_connections map(LogicalUnit logicalUnit, storage_server_connections connection) {
-        storage_server_connections entity = connection != null ? connection : new storage_server_connections();
+    @Mapping(from = LogicalUnit.class, to = StorageServerConnections.class)
+    public static StorageServerConnections map(LogicalUnit logicalUnit, StorageServerConnections connection) {
+        StorageServerConnections entity = connection != null ? connection : new StorageServerConnections();
         if (logicalUnit.isSetAddress()) {
             entity.setconnection(logicalUnit.getAddress());
         }

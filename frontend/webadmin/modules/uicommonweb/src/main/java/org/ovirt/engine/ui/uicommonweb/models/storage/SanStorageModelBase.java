@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -374,7 +374,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         for (int i = 0; i < targetsToConnect.size(); i++) {
             SanTargetModel model = targetsToConnect.get(i);
-            storage_server_connections connection = new storage_server_connections();
+            StorageServerConnections connection = new StorageServerConnections();
             connection.setportal("0"); //$NON-NLS-1$
             connection.setstorage_type(StorageType.ISCSI);
             connection.setuser_name((Boolean) getUseUserAuth().getEntity() ? (String) getUserName().getEntity() : ""); //$NON-NLS-1$
@@ -428,7 +428,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         VDS host = (VDS) getContainer().getHost().getSelectedItem();
 
-        storage_server_connections tempVar = new storage_server_connections();
+        StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(((String) getAddress().getEntity()).trim());
         tempVar.setport(((String) getPort().getEntity()).trim());
         tempVar.setportal("0"); //$NON-NLS-1$
@@ -445,19 +445,19 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             public void OnSuccess(Object target, Object returnValue) {
                 SanStorageModelBase model = (SanStorageModelBase) target;
                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                model.PostDiscoverTargetsInternal(result != null ? (ArrayList<storage_server_connections>) result
-                        : new ArrayList<storage_server_connections>());
+                model.PostDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
+                        : new ArrayList<StorageServerConnections>());
             }
         }, true);
         asyncQuery.setContext(getHash());
         Frontend.RunQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
-    private void PostDiscoverTargetsInternal(ArrayList<storage_server_connections> items)
+    private void PostDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
     {
         ArrayList<SanTargetModel> newItems = new ArrayList<SanTargetModel>();
 
-        for (storage_server_connections a : items)
+        for (StorageServerConnections a : items)
         {
             SanTargetModel tempVar = new SanTargetModel();
             tempVar.setAddress(a.getconnection());

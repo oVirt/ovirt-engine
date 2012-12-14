@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -132,7 +132,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         } else {
 
             // Add storage domain.
-            storage_server_connections connection = new storage_server_connections();
+            StorageServerConnections connection = new StorageServerConnections();
             connection.setconnection((String) configureModel.getStorage().getPath().getEntity());
             connection.setstorage_type(StorageType.LOCALFS);
             context.connection = connection;
@@ -332,7 +332,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         public Enlistment enlistment;
         public VDS host;
-        storage_server_connections connection;
+        StorageServerConnections connection;
         public VdcReturnValueBase activateVdsReturnValue;
         public VdcReturnValueBase addStorageServerConnectionReturnValue;
         public VdcReturnValueBase addLocalStorageDomainReturnValue;

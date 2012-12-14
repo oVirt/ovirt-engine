@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -229,7 +229,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
                 if (a.getLunConnections() != null)
                 {
-                    for (storage_server_connections b : a.getLunConnections())
+                    for (StorageServerConnections b : a.getLunConnections())
                     {
                         SanTargetModel tempVar = new SanTargetModel();
                         tempVar.setAddress(b.getconnection());

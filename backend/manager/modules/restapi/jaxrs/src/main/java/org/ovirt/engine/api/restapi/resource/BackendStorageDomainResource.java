@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_server_connections;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -139,7 +139,7 @@ public class BackendStorageDomainResource extends
     private void addLunsToStorageDomain(StorageDomain incoming, StorageType storageType, List<LogicalUnit> newLuns, boolean overrideLuns) {
         for (LogicalUnit lun : newLuns) {
             if (lun.isSetAddress() && lun.isSetTarget()) {
-                storage_server_connections connection = StorageDomainHelper.getConnection(storageType, lun.getAddress(), lun.getTarget(), lun.getUsername(), lun.getPassword(), lun.getPort());
+                StorageServerConnections connection = StorageDomainHelper.getConnection(storageType, lun.getAddress(), lun.getTarget(), lun.getUsername(), lun.getPassword(), lun.getPort());
                 performAction(VdcActionType.ConnectStorageToVds,
                         new StorageServerConnectionParametersBase(connection, getHostId(incoming)));
             }
