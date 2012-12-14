@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 
 /**
  * Populates a event notification method list by a database content<br>
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.event_notification_methods;
  */
 public class EventMethodFiller {
 
-    private List<event_notification_methods> methods = new ArrayList<event_notification_methods>();
+    private List<EventNotificationMethod> methods = new ArrayList<EventNotificationMethod>();
 
     /**
      * Populates the list of event notification methods by its content in table <i>event_notification_methods</i>
@@ -32,9 +32,9 @@ public class EventMethodFiller {
         try {
             stmt = conn.createStatement();
             rs = stmt.executeQuery("select * from event_notification_methods");
-            event_notification_methods method;
+            EventNotificationMethod method;
             while (rs.next()) {
-                method = new event_notification_methods();
+                method = new EventNotificationMethod();
                 method.setmethod_id(rs.getInt("method_id"));
                 method.setmethod_type(getMethodTypeByName(rs.getString("method_type")));
                 methods.add(method);
@@ -66,7 +66,7 @@ public class EventMethodFiller {
      * {@link #fillEventNotificationMethods(Connection)} was invoked
      * @return list of configured notification methods
      */
-    public List<event_notification_methods> getEventNotificationMethods() {
+    public List<EventNotificationMethod> getEventNotificationMethods() {
         return methods;
     }
 }

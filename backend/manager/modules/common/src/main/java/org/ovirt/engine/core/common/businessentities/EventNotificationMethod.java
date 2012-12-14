@@ -12,13 +12,13 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 
 @Entity
 @Table(name = "event_notification_methods")
-public class event_notification_methods implements Serializable {
+public class EventNotificationMethod implements Serializable {
     private static final long serialVersionUID = -8648391842192154307L;
 
-    public event_notification_methods() {
+    public EventNotificationMethod() {
     }
 
-    public event_notification_methods(int method_id, String method_type) {
+    public EventNotificationMethod(int method_id, String method_type) {
         this.methodId = method_id;
         this.methodType = method_type;
     }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_map;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,7 +36,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
             retValue = false;
         } else {
             // get notification method
-            List<event_notification_methods> event_notification_methods = (DbFacade.getInstance()
+            List<EventNotificationMethod> event_notification_methods = (DbFacade.getInstance()
                     .getEventDao().getEventNotificationMethodsById(method_id));
             if (event_notification_methods.size() > 0) {
                 // validate event

@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -87,7 +87,7 @@ public class EventDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllEventNotificationMethods() {
-        List<event_notification_methods> result = dao.getAllEventNotificationMethods();
+        List<EventNotificationMethod> result = dao.getAllEventNotificationMethods();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -96,7 +96,7 @@ public class EventDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEventNotificationMethodsById() {
-        List<event_notification_methods> result = dao.getEventNotificationMethodsById(1);
+        List<EventNotificationMethod> result = dao.getEventNotificationMethodsById(1);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -107,12 +107,12 @@ public class EventDAOTest extends BaseDAOTestCase {
     public void testGetEventNotificationMethodsByType() {
         String target = "Email";
 
-        List<event_notification_methods> result =
+        List<EventNotificationMethod> result =
                 dao.getEventNotificationMethodsByType(target);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (event_notification_methods method : result) {
+        for (EventNotificationMethod method : result) {
             assertEquals(EventNotificationMethods.EMAIL, method.getmethod_type());
         }
     }

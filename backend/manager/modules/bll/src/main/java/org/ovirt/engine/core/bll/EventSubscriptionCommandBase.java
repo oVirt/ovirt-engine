@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Regex;
@@ -22,18 +22,18 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     /**
      * Validates the notification method.
      *
-     * @param event_notification_methods
-     *            The event_notification_methods.
+     * @param eventNotificationMethods
+     *            The eventNotificationMethods.
      * @param event_subscriber
      *            The event_subscriber.
      * @param user
      *            The user.
      * @return
      */
-    protected boolean ValidateNotificationMethod(java.util.List<event_notification_methods> event_notification_methods,
+    protected boolean ValidateNotificationMethod(java.util.List<EventNotificationMethod> eventNotificationMethods,
                                                  event_subscriber event_subscriber, DbUser user) {
         boolean retValue = true;
-        EventNotificationMethods notificationMethod = event_notification_methods.get(0).getmethod_type();
+        EventNotificationMethods notificationMethod = eventNotificationMethods.get(0).getmethod_type();
 
         switch (notificationMethod) {
         case EMAIL:
@@ -56,19 +56,19 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
     /**
      * Validates the notification method and tag.
      *
-     * @param event_notification_methods
-     *            The event_notification_methods.
+     * @param eventNotificationMethods
+     *            The eventNotificationMethods.
      * @param event_subscriber
      *            The event_subscriber.
      * @param user
      *            The user.
      * @return
      */
-    protected boolean ValidateAdd(List<event_notification_methods> event_notification_methods,
+    protected boolean ValidateAdd(List<EventNotificationMethod> eventNotificationMethods,
                                   event_subscriber event_subscriber, DbUser user) {
         String tagName = event_subscriber.gettag_name();
         // validate notification method
-        boolean retValue = ValidateNotificationMethod(event_notification_methods, event_subscriber, user);
+        boolean retValue = ValidateNotificationMethod(eventNotificationMethods, event_subscriber, user);
 
         // validate tag name if exists
         if (retValue && StringUtils.isNotEmpty(tagName)) {
@@ -77,7 +77,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
         return retValue;
     }
 
-    protected boolean ValidateRemove(List<event_notification_methods> event_notification_methods,
+    protected boolean ValidateRemove(List<EventNotificationMethod> eventNotificationMethods,
                                      event_subscriber event_subscriber, DbUser user) {
         boolean retValue = false;
         // check if user is subscribed to the event
@@ -92,7 +92,7 @@ public abstract class EventSubscriptionCommandBase<T extends EventSubscriptionPa
             } else {
                 String tagName = event_subscriber.gettag_name();
                 // validate notification method
-                retValue = ValidateNotificationMethod(event_notification_methods, event_subscriber, user);
+                retValue = ValidateNotificationMethod(eventNotificationMethods, event_subscriber, user);
 
                 // validate tag name if exists
                 if (retValue && StringUtils.isNotEmpty(tagName)) {

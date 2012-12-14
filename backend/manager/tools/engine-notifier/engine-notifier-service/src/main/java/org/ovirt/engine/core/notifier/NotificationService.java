@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_audit_log_subscriber;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
@@ -168,7 +168,7 @@ public class NotificationService implements Runnable {
             }
         }
 
-        List<event_notification_methods> eventNotificationMethods = methodFiller.getEventNotificationMethods();
+        List<EventNotificationMethod> eventNotificationMethods = methodFiller.getEventNotificationMethods();
         methodsMapper = NotificationMethodMapBuilder.instance().createMethodsMapper(eventNotificationMethods, prop);
     }
 

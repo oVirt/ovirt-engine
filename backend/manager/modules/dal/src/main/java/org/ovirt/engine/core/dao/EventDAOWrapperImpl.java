@@ -6,7 +6,7 @@ import org.hibernate.Session;
 
 import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.event_subscriber_id;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,17 +42,17 @@ public class EventDAOWrapperImpl extends BaseDAOWrapperImpl implements EventDAO 
     }
 
     @Override
-    public List<event_notification_methods> getAllEventNotificationMethods() {
+    public List<EventNotificationMethod> getAllEventNotificationMethods() {
         return notificationMethodsDAO.getAll();
     }
 
     @Override
-    public List<event_notification_methods> getEventNotificationMethodsById(int method_id) {
+    public List<EventNotificationMethod> getEventNotificationMethodsById(int method_id) {
         return notificationMethodsDAO.getEventNotificationMethodsById(method_id);
     }
 
     @Override
-    public List<event_notification_methods> getEventNotificationMethodsByType(String method_type) {
+    public List<EventNotificationMethod> getEventNotificationMethodsByType(String method_type) {
         return notificationMethodsDAO.getEventNotificationMethodsByType(method_type);
     }
 

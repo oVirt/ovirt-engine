@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.event_map;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.image_vm_map;
@@ -205,7 +205,7 @@ public abstract class BaseDAOTestCase {
                             .addAnnotatedClass(DiskImageDynamic.class)
                             .addAnnotatedClass(event_map.class)
                             .addAnnotatedClass(event_notification_hist.class)
-                            .addAnnotatedClass(event_notification_methods.class)
+                            .addAnnotatedClass(EventNotificationMethod.class)
                             .addAnnotatedClass(event_subscriber.class)
                             .addAnnotatedClass(image_storage_domain_map.class)
                             .addAnnotatedClass(image_vm_map.class)

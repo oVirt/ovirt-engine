@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.event_map;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -66,14 +66,14 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_notification_methods> getAllEventNotificationMethods() {
+    public List<EventNotificationMethod> getAllEventNotificationMethods() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        ParameterizedRowMapper<event_notification_methods> mapper =
-                new ParameterizedRowMapper<event_notification_methods>() {
+        ParameterizedRowMapper<EventNotificationMethod> mapper =
+                new ParameterizedRowMapper<EventNotificationMethod>() {
                     @Override
-                    public event_notification_methods mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        event_notification_methods entity = new event_notification_methods();
+                    public EventNotificationMethod mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        EventNotificationMethod entity = new EventNotificationMethod();
                         entity.setmethod_id(rs.getInt("method_id"));
                         entity.setmethod_type(EventNotificationMethods.EMAIL);
                         return entity;
@@ -85,14 +85,14 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_notification_methods> getEventNotificationMethodsById(int method_id) {
+    public List<EventNotificationMethod> getEventNotificationMethodsById(int method_id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("method_id", method_id);
 
-        ParameterizedRowMapper<event_notification_methods> mapper =
-                new ParameterizedRowMapper<event_notification_methods>() {
+        ParameterizedRowMapper<EventNotificationMethod> mapper =
+                new ParameterizedRowMapper<EventNotificationMethod>() {
                     @Override
-                    public event_notification_methods mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        event_notification_methods entity = new event_notification_methods();
+                    public EventNotificationMethod mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        EventNotificationMethod entity = new EventNotificationMethod();
                         entity.setmethod_id(rs.getInt("method_id"));
                         entity.setmethod_type(EventNotificationMethods.EMAIL);
                         return entity;
@@ -104,14 +104,14 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_notification_methods> getEventNotificationMethodsByType(String method_type) {
+    public List<EventNotificationMethod> getEventNotificationMethodsByType(String method_type) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("method_type", method_type);
 
-        ParameterizedRowMapper<event_notification_methods> mapper =
-                new ParameterizedRowMapper<event_notification_methods>() {
+        ParameterizedRowMapper<EventNotificationMethod> mapper =
+                new ParameterizedRowMapper<EventNotificationMethod>() {
                     @Override
-                    public event_notification_methods mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        event_notification_methods entity = new event_notification_methods();
+                    public EventNotificationMethod mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        EventNotificationMethod entity = new EventNotificationMethod();
                         entity.setmethod_id(rs.getInt("method_id"));
                         entity.setmethod_type(EventNotificationMethods.EMAIL);
                         return entity;

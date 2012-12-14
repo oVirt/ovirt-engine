@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.event_map;
-import org.ovirt.engine.core.common.businessentities.event_notification_methods;
+import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,11 +34,11 @@ public interface EventDAO extends DAO {
      *
      * @return the event notificationet methods
      */
-    List<event_notification_methods> getAllEventNotificationMethods();
+    List<EventNotificationMethod> getAllEventNotificationMethods();
 
-    List<event_notification_methods> getEventNotificationMethodsById(int method_id);
+    List<EventNotificationMethod> getEventNotificationMethodsById(int method_id);
 
-    List<event_notification_methods> getEventNotificationMethodsByType(String method_type);
+    List<EventNotificationMethod> getEventNotificationMethodsByType(String method_type);
 
     /**
      * Saves the provided subscriber.
