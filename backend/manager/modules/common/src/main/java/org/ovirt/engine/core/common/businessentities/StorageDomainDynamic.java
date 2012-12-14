@@ -14,13 +14,13 @@ import org.ovirt.engine.core.compat.Guid;
 @Entity
 @Table(name = "storage_domain_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class storage_domain_dynamic implements BusinessEntity<Guid> {
+public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;
 
-    public storage_domain_dynamic() {
+    public StorageDomainDynamic() {
     }
 
-    public storage_domain_dynamic(Integer available_disk_size, Guid id, Integer used_disk_size) {
+    public StorageDomainDynamic(Integer available_disk_size, Guid id, Integer used_disk_size) {
         this.availableDiskSize = available_disk_size;
         this.id = id;
         this.usedDiskSize = used_disk_size;
@@ -80,8 +80,8 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
             return availableDiskSize;
     }
 
-    public static storage_domain_dynamic copyOf(storage_domain_dynamic domain) {
-        storage_domain_dynamic sdd = new storage_domain_dynamic();
+    public static StorageDomainDynamic copyOf(StorageDomainDynamic domain) {
+        StorageDomainDynamic sdd = new StorageDomainDynamic();
         sdd.availableDiskSize = domain.availableDiskSize;
         sdd.id = new Guid(domain.id.getUuid());
         sdd.usedDiskSize = domain.usedDiskSize;
@@ -106,7 +106,7 @@ public class storage_domain_dynamic implements BusinessEntity<Guid> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        storage_domain_dynamic other = (storage_domain_dynamic) obj;
+        StorageDomainDynamic other = (StorageDomainDynamic) obj;
         if (availableDiskSize == null) {
             if (other.availableDiskSize != null)
                 return false;

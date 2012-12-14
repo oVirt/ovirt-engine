@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -70,8 +70,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             public Void runInTransaction() {
                 DbFacade.getInstance().getStorageDomainStaticDao().save(getStorageDomain().getStorageStaticData());
                 getCompensationContext().snapshotNewEntity(getStorageDomain().getStorageStaticData());
-                storage_domain_dynamic newStorageDynamic =
-                        new storage_domain_dynamic(null, getStorageDomain().getId(), null);
+                StorageDomainDynamic newStorageDynamic =
+                        new StorageDomainDynamic(null, getStorageDomain().getId(), null);
                 getReturnValue().setActionReturnValue(getStorageDomain().getId());
                 DbFacade.getInstance().getStorageDomainDynamicDao().save(newStorageDynamic);
                 getCompensationContext().snapshotNewEntity(newStorageDynamic);

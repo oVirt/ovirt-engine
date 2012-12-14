@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -12,15 +12,15 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDynamicDAO{
 
     @Override
-    public storage_domain_dynamic get(Guid id) {
+    public StorageDomainDynamic get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        ParameterizedRowMapper<storage_domain_dynamic> mapper = new ParameterizedRowMapper<storage_domain_dynamic>() {
+        ParameterizedRowMapper<StorageDomainDynamic> mapper = new ParameterizedRowMapper<StorageDomainDynamic>() {
             @Override
-            public storage_domain_dynamic mapRow(ResultSet rs, int rowNum)
+            public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
-                storage_domain_dynamic entity = new storage_domain_dynamic();
+                StorageDomainDynamic entity = new StorageDomainDynamic();
                 entity.setavailable_disk_size((Integer) rs
                         .getObject("available_disk_size"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
@@ -35,7 +35,7 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
 
 
     @Override
-    public void save(storage_domain_dynamic domain) {
+    public void save(StorageDomainDynamic domain) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("available_disk_size",
                         domain.getavailable_disk_size())
@@ -46,7 +46,7 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
     }
 
     @Override
-    public void update(storage_domain_dynamic domain) {
+    public void update(StorageDomainDynamic domain) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("available_disk_size",
                         domain.getavailable_disk_size())
@@ -66,14 +66,14 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
 
 
     @Override
-    public List<storage_domain_dynamic> getAll() {
+    public List<StorageDomainDynamic> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        ParameterizedRowMapper<storage_domain_dynamic> mapper = new ParameterizedRowMapper<storage_domain_dynamic>() {
+        ParameterizedRowMapper<StorageDomainDynamic> mapper = new ParameterizedRowMapper<StorageDomainDynamic>() {
             @Override
-            public storage_domain_dynamic mapRow(ResultSet rs, int rowNum)
+            public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
-                storage_domain_dynamic entity = new storage_domain_dynamic();
+                StorageDomainDynamic entity = new StorageDomainDynamic();
                 entity.setavailable_disk_size((Integer) rs
                         .getObject("available_disk_size"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -49,7 +49,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
 
         final StorageDomainDAO d = mock(StorageDomainDAO.class);
         when(d.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(destination);
-        storage_domain_dynamic dy = new storage_domain_dynamic();
+        StorageDomainDynamic dy = new StorageDomainDynamic();
         dy.setavailable_disk_size(10);
         dy.setused_disk_size(0);
         destination.setStorageDynamicData(dy);

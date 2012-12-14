@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -96,7 +96,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextString(10),
                                 random.nextInt(StorageDomainType.values().length),
                                 random.nextString(10)) },
-                        { new storage_domain_dynamic(random.nextInt(), Guid.NewGuid(), random.nextInt()) },
+                        { new StorageDomainDynamic(random.nextInt(), Guid.NewGuid(), random.nextInt()) },
                         { new storage_pool(random.nextString(10),
                                 Guid.NewGuid(),
                                 random.nextString(10),

@@ -7,7 +7,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -54,7 +54,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         storage_domains result = null;
 
         if (staticPart != null) {
-            storage_domain_dynamic dynamicPart = dynamicDAO.get(staticPart.getId());
+            StorageDomainDynamic dynamicPart = dynamicDAO.get(staticPart.getId());
             if (dynamicPart != null) {
                 result = new storage_domains();
 

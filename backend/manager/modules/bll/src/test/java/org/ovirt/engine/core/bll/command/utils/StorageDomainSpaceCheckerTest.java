@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -115,7 +115,7 @@ public class StorageDomainSpaceCheckerTest {
     }
 
     public storage_domains setupForSpaceTest(final SpaceTestSettings settings) {
-        storage_domain_dynamic dynamic = new storage_domain_dynamic();
+        StorageDomainDynamic dynamic = new StorageDomainDynamic();
         dynamic.setavailable_disk_size(settings.diskSpaceFree);
         dynamic.setused_disk_size(settings.diskSpaceUsed);
         storage_domains domain = new storage_domains();

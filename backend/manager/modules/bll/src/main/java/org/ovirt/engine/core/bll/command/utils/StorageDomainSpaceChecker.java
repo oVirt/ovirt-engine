@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.command.utils;
 
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -20,7 +20,7 @@ public class StorageDomainSpaceChecker {
     }
 
     private static boolean isBelowPctThreshold(final storage_domains domain) {
-        storage_domain_dynamic dynamic = domain.getStorageDynamicData();
+        StorageDomainDynamic dynamic = domain.getStorageDynamicData();
         return (dynamic != null
                                && dynamic.getfreeDiskInGB() > Config
                                        .<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB) && dynamic.getfreeDiskPercent() > Config

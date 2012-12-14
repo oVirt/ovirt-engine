@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import org.ovirt.engine.core.common.businessentities.storage_domain_dynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domain_static;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,9 +15,9 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
 
     private StorageDomainDynamicDAO dao;
     private StorageDomainStaticDAO staticDao;
-    private storage_domain_dynamic newDynamicDomain;
+    private StorageDomainDynamic newDynamicDomain;
     private storage_domain_static newStaticDomain;
-    private storage_domain_dynamic existingDynamic;
+    private StorageDomainDynamic existingDynamic;
 
     @Override
     public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
 
         newStaticDomain = new storage_domain_static();
         newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
-        newDynamicDomain = new storage_domain_dynamic();
+        newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setavailable_disk_size(USED_DISK_SIZE);
     }
 
@@ -39,7 +39,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        storage_domain_dynamic result = dao.get(EXISTING_DOMAIN_ID);
+        StorageDomainDynamic result = dao.get(EXISTING_DOMAIN_ID);
 
         assertNotNull(result);
         assertEquals(EXISTING_DOMAIN_ID, result.getId());
@@ -50,7 +50,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<storage_domain_dynamic> result = dao.getAll();
+        List<StorageDomainDynamic> result = dao.getAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -65,7 +65,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
         newDynamicDomain.setId(newStaticDomain.getId());
         dao.save(newDynamicDomain);
 
-        storage_domain_dynamic result = dao.get(newDynamicDomain.getId());
+        StorageDomainDynamic result = dao.get(newDynamicDomain.getId());
 
         assertNotNull(result);
     }
@@ -78,7 +78,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
         existingDynamic.setused_disk_size(USED_DISK_SIZE);
         dao.update(existingDynamic);
 
-        storage_domain_dynamic result = dao.get(existingDynamic.getId());
+        StorageDomainDynamic result = dao.get(existingDynamic.getId());
 
         assertEquals(existingDynamic, result);
     }
