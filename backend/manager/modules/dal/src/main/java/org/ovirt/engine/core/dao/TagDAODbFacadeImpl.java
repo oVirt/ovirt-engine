@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -390,14 +390,14 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public tags_vm_map getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId) {
+    public TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "vm_id", vmId);
 
-        ParameterizedRowMapper<tags_vm_map> mapper = new ParameterizedRowMapper<tags_vm_map>() {
+        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
             @Override
-            public tags_vm_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vm_map entity = new tags_vm_map();
+            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVmMap entity = new TagsVmMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
@@ -410,7 +410,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void attachVmToTag(tags_vm_map tagVmMap) {
+    public void attachVmToTag(TagsVmMap tagVmMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
                 tagVmMap.gettag_id()).addValue("vm_id", tagVmMap.getvm_id()).addValue("DefaultDisplayType",
                 tagVmMap.getDefaultDisplayType());
@@ -420,7 +420,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void updateDefaultDisplayForVmTag(tags_vm_map tagsVmMap) {
+    public void updateDefaultDisplayForVmTag(TagsVmMap tagsVmMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
                 tagsVmMap.gettag_id()).addValue("vm_id", tagsVmMap.getvm_id()).addValue("DefaultDisplayType",
                 tagsVmMap.getDefaultDisplayType());
@@ -440,13 +440,13 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_vm_map> getTagVmMapByTagName(String tagName) {
+    public List<TagsVmMap> getTagVmMapByTagName(String tagName) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_name", tagName);
 
-        ParameterizedRowMapper<tags_vm_map> mapper = new ParameterizedRowMapper<tags_vm_map>() {
+        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
             @Override
-            public tags_vm_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vm_map entity = new tags_vm_map();
+            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVmMap entity = new TagsVmMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
                 return entity;
@@ -459,13 +459,13 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_vm_map> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
+    public List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_id", vmid);
 
-        ParameterizedRowMapper<tags_vm_map> mapper = new ParameterizedRowMapper<tags_vm_map>() {
+        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
             @Override
-            public tags_vm_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vm_map entity = new tags_vm_map();
+            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVmMap entity = new TagsVmMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
@@ -480,14 +480,14 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_vm_map> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId) {
+    public List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("groupId", adGroupId)
                 .addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<tags_vm_map> mapper = new ParameterizedRowMapper<tags_vm_map>() {
+        ParameterizedRowMapper<TagsVmMap> mapper = new ParameterizedRowMapper<TagsVmMap>() {
             @Override
-            public tags_vm_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vm_map entity = new tags_vm_map();
+            public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVmMap entity = new TagsVmMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));

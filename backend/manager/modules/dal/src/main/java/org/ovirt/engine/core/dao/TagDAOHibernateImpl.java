@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMapId;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -191,17 +191,17 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public tags_vm_map getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId) {
+    public TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId) {
         return tagVmMapDAO.findOneByCriteria(Restrictions.eq("id.tagId", tagId), Restrictions.eq("id.vmId", vmId));
     }
 
     @Override
-    public void attachVmToTag(tags_vm_map tagVmMap) {
+    public void attachVmToTag(TagsVmMap tagVmMap) {
         tagVmMapDAO.save(tagVmMap);
     }
 
     @Override
-    public void updateDefaultDisplayForVmTag(tags_vm_map tagsVmMap) {
+    public void updateDefaultDisplayForVmTag(TagsVmMap tagsVmMap) {
         tagVmMapDAO.save(tagsVmMap);
     }
 
@@ -211,18 +211,18 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public List<tags_vm_map> getTagVmMapByTagName(String tagName) {
+    public List<TagsVmMap> getTagVmMapByTagName(String tagName) {
         tags tag = getByName(tagName);
 
         if (tag != null) {
             return tagVmMapDAO.findByCriteria(Restrictions.eq("id.tagId", tag.gettag_id()));
         } else {
-            return new ArrayList<tags_vm_map>();
+            return new ArrayList<TagsVmMap>();
         }
     }
 
     @Override
-    public List<tags_vm_map> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
+    public List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid) {
         List<tags> defaultTags = findByCriteria(Restrictions.eq("type", TagsType.AdElementTag));
         List<Guid> ids = new ArrayList<Guid>();
 
@@ -234,7 +234,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public List<tags_vm_map> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId) {
+    public List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId) {
         // TODO Auto-generated method stub
         return null;
     }

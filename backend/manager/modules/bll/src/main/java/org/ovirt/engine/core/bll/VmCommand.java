@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -240,8 +240,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmUsers() {
-        List<tags_vm_map> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
-        for (tags_vm_map tagVm : all) {
+        List<TagsVmMap> all = getTagDao().getTagVmMapByVmIdAndDefaultTag(getVmId());
+        for (TagsVmMap tagVm : all) {
             getTagDao().detachVmFromTag(tagVm.gettag_id(), getVmId());
         }
     }

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -182,19 +182,19 @@ public interface TagDAO extends DAO {
 
     List<TagsVdsMap> getTagVdsMapByTagName(String tagName);
 
-    tags_vm_map getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId);
+    TagsVmMap getTagVmByTagIdAndByVmId(Guid tagId, Guid vmId);
 
-    void attachVmToTag(tags_vm_map tagVmMap);
+    void attachVmToTag(TagsVmMap tagVmMap);
 
-    void updateDefaultDisplayForVmTag(tags_vm_map tagsVmMap);
+    void updateDefaultDisplayForVmTag(TagsVmMap tagsVmMap);
 
     void detachVmFromTag(Guid tagId, Guid vmId);
 
-    List<tags_vm_map> getTagVmMapByTagName(String tagName);
+    List<TagsVmMap> getTagVmMapByTagName(String tagName);
 
-    List<tags_vm_map> getTagVmMapByVmIdAndDefaultTag(Guid vmid);
+    List<TagsVmMap> getTagVmMapByVmIdAndDefaultTag(Guid vmid);
 
-    List<tags_vm_map> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);
+    List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);
 
     List<tags_vm_pool_map> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId);
 }

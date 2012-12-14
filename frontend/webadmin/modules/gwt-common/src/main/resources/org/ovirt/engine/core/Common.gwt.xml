@@ -87,7 +87,7 @@
 		<include name="common/businessentities/StorageType.java" />
 		<include name="common/businessentities/StorageFormatType.java" />
 		<include name="common/businessentities/TabType.java" />
-		<include name="common/businessentities/tags_vm_map.java" />
+		<include name="common/businessentities/TagsVmMap.java" />
 		<include name="common/businessentities/tags.java" />
 		<include name="common/businessentities/TagsType.java" />
 		<include name="common/queries/IRegisterQueryUpdatedData.java" />

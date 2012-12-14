@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 @Entity
 @Table(name = "tags_vm_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class tags_vm_map implements Serializable {
+public class TagsVmMap implements Serializable {
     private static final long serialVersionUID = 4061390921955269261L;
 
     @EmbeddedId
@@ -33,10 +33,10 @@ public class tags_vm_map implements Serializable {
     @Column(name = "_create_date")
     private Date created = new Date();
 
-    public tags_vm_map() {
+    public TagsVmMap() {
     }
 
-    public tags_vm_map(Guid tag_id, Guid vm_id) {
+    public TagsVmMap(Guid tag_id, Guid vm_id) {
         this.id.tagId = tag_id;
         this.id.vmId = vm_id;
     }
@@ -83,7 +83,7 @@ public class tags_vm_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        tags_vm_map other = (tags_vm_map) obj;
+        TagsVmMap other = (TagsVmMap) obj;
         if (defaultDisplayType == null) {
             if (other.defaultDisplayType != null)
                 return false;

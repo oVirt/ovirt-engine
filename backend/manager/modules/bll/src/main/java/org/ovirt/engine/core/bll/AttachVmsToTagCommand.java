@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -22,7 +22,7 @@ public class AttachVmsToTagCommand<T extends AttachEntityToTagParameters> extend
                     if (vm != null) {
                         AppendCustomValue("VmsNames", vm.getVmName(), ", ");
                     }
-                    tags_vm_map map = new tags_vm_map(getTagId(), vmGuid);
+                    TagsVmMap map = new TagsVmMap(getTagId(), vmGuid);
                     DbFacade.getInstance().getTagDao().attachVmToTag(map);
                     noActionDone = false;
                 } else {

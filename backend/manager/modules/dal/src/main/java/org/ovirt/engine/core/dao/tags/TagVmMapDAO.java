@@ -3,14 +3,14 @@ package org.ovirt.engine.core.dao.tags;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import org.ovirt.engine.core.common.businessentities.tags_vm_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class TagVmMapDAO extends BaseDAOHibernateImpl<tags_vm_map, TagsVmMapId> {
+public class TagVmMapDAO extends BaseDAOHibernateImpl<TagsVmMap, TagsVmMapId> {
     public TagVmMapDAO() {
-        super(tags_vm_map.class);
+        super(TagsVmMap.class);
     }
 
     public void remove(Guid tagId, Guid vmId) {
