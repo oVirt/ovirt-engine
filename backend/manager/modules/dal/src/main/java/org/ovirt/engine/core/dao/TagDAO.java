@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -196,5 +196,5 @@ public interface TagDAO extends DAO {
 
     List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);
 
-    List<tags_vm_pool_map> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId);
+    List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId);
 }

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -503,14 +503,14 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_vm_pool_map> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId) {
+    public List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("ad_id", adElementId)
                 .addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<tags_vm_pool_map> mapper = new ParameterizedRowMapper<tags_vm_pool_map>() {
+        ParameterizedRowMapper<TagsVmPoolMap> mapper = new ParameterizedRowMapper<TagsVmPoolMap>() {
             @Override
-            public tags_vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vm_pool_map entity = new tags_vm_pool_map();
+            public TagsVmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVmPoolMap entity = new TagsVmPoolMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
                 return entity;

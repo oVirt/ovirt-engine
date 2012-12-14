@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMapId;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
-import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.tags.TagUserGroupMapDAO;
@@ -240,7 +240,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public List<tags_vm_pool_map> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId) {
+    public List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId) {
         // TODO Auto-generated method stub
         return null;
     }

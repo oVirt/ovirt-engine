@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "tags_vm_pool_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class tags_vm_pool_map implements Serializable {
+public class TagsVmPoolMap implements Serializable {
     private static final long serialVersionUID = 1110697686039279639L;
 
     @EmbeddedId
@@ -31,10 +31,10 @@ public class tags_vm_pool_map implements Serializable {
     @Column(name = "_create_date")
     private Date created = new Date();
 
-    public tags_vm_pool_map() {
+    public TagsVmPoolMap() {
     }
 
-    public tags_vm_pool_map(Guid tag_id, NGuid vm_pool_id) {
+    public TagsVmPoolMap(Guid tag_id, NGuid vm_pool_id) {
         this.id.tagId = tag_id;
         this.id.vmPoolId = vm_pool_id;
     }
@@ -72,7 +72,7 @@ public class tags_vm_pool_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        tags_vm_pool_map other = (tags_vm_pool_map) obj;
+        TagsVmPoolMap other = (TagsVmPoolMap) obj;
         if (created == null) {
             if (other.created != null)
                 return false;
