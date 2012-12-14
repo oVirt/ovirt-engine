@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -103,7 +103,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             List<String> problematicDomains = new ArrayList<String>();
             for (Guid domainId : storageDomainsList) {
                 if (!allDomainsList.contains(domainId)) {
-                    storage_domain_static domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+                    StorageDomainStatic domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
                     if (domain == null) {
                         problematicDomains.add(domainId.toString());
                     } else {

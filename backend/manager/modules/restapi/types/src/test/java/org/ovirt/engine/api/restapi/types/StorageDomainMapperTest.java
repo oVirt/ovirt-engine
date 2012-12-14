@@ -7,14 +7,14 @@ import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 
 public class StorageDomainMapperTest extends
-        AbstractInvertibleMappingTest<StorageDomain, storage_domain_static, storage_domains> {
+        AbstractInvertibleMappingTest<StorageDomain, StorageDomainStatic, storage_domains> {
 
     public StorageDomainMapperTest() {
-        super(StorageDomain.class, storage_domain_static.class, storage_domains.class);
+        super(StorageDomain.class, StorageDomainStatic.class, storage_domains.class);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class StorageDomainMapperTest extends
     }
 
     @Override
-    protected storage_domains getInverse(storage_domain_static to) {
+    protected storage_domains getInverse(StorageDomainStatic to) {
         storage_domains inverse = new storage_domains();
         inverse.setId(to.getId());
         inverse.setstorage_name(to.getstorage_name());

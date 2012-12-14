@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -169,7 +169,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             enlistment.Done();
         } else {
 
-            storage_domain_static storage = new storage_domain_static();
+            StorageDomainStatic storage = new StorageDomainStatic();
             storage.setstorage_type(StorageType.LOCALFS);
             storage.setstorage_domain_type(StorageDomainType.Data);
             storage.setstorage_name((String) configureModel.getFormattedStorageName().getEntity());

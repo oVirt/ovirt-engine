@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -29,7 +29,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         boolean returnValue = super.canDoAction() && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active) && checkStorageDomainNameLengthValid();
-        storage_domain_static oldDomain =
+        StorageDomainStatic oldDomain =
                 DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId());
 
         // Only after validating the existing of the storage domain in DB, we set the field lastTimeUsedAsMaster in the

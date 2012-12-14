@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -190,7 +190,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private ListModel templateListModel;
     private ListModel isoListModel;
 
-    public storage_domain_static storageDomain;
+    public StorageDomainStatic storageDomain;
     public TaskContext context;
     public IStorageModel storageModel;
     public NGuid storageId;
@@ -1143,7 +1143,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         PosixStorageModel posixModel = (PosixStorageModel) storageModel;
         path = (String) posixModel.getPath().getEntity();
 
-        storageDomain = isNew ? new storage_domain_static() : (storage_domain_static) Cloner.clone(selectedItem.getStorageStaticData());
+        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
         storageDomain.setstorage_name((String) model.getName().getEntity());
@@ -1268,8 +1268,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         path = (String) nfsModel.getPath().getEntity();
 
         storageDomain =
-                isNew ? new storage_domain_static()
-                        : (storage_domain_static) Cloner.clone(selectedItem.getStorageStaticData());
+                isNew ? new StorageDomainStatic()
+                        : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
 
@@ -1456,8 +1456,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         path = (String) localModel.getPath().getEntity();
 
         storageDomain =
-                isNew ? new storage_domain_static()
-                        : (storage_domain_static) Cloner.clone(selectedItem.getStorageStaticData());
+                isNew ? new StorageDomainStatic()
+                        : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
 
@@ -1596,8 +1596,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         boolean isNew = model.getStorage() == null;
 
         storageDomain =
-                isNew ? new storage_domain_static()
-                        : (storage_domain_static) Cloner.clone(storage.getStorageStaticData());
+                isNew ? new StorageDomainStatic()
+                        : (StorageDomainStatic) Cloner.clone(storage.getStorageStaticData());
 
         storageDomain.setstorage_type(isNew ? sanModel.getType() : storageDomain.getstorage_type());
 
@@ -1808,7 +1808,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void ImportNfsStorageAddDomain(ArrayList<storage_domains> domains)
     {
         storage_domains sdToAdd = Linq.FirstOrDefault(domains);
-        storage_domain_static sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
+        StorageDomainStatic sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);

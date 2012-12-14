@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network_cluster;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.NotImplementedException;
@@ -51,9 +51,9 @@ public final class Cloner
         {
             return CloneVmPool((vm_pools) instance);
         }
-        if (instance instanceof storage_domain_static)
+        if (instance instanceof StorageDomainStatic)
         {
-            return CloneStorageDomainStatic((storage_domain_static) instance);
+            return CloneStorageDomainStatic((StorageDomainStatic) instance);
         }
         if (instance instanceof VmTemplate)
         {
@@ -319,9 +319,9 @@ public final class Cloner
         return obj;
     }
 
-    private static storage_domain_static CloneStorageDomainStatic(storage_domain_static instance)
+    private static StorageDomainStatic CloneStorageDomainStatic(StorageDomainStatic instance)
     {
-        storage_domain_static obj = new storage_domain_static();
+        StorageDomainStatic obj = new StorageDomainStatic();
         obj.setConnection(instance.getConnection());
         obj.setId(instance.getId());
         obj.setstorage(instance.getstorage());

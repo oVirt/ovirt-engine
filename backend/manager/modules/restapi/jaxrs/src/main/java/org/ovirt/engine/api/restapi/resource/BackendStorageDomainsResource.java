@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -75,7 +75,7 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, storage_domain_static entity, Guid hostId) {
+    private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
         storage_server_connections cnx = mapToCnx(model);
 
         entity.setstorage(addStorageServerConnection(cnx, hostId));
@@ -99,7 +99,7 @@ public class BackendStorageDomainsResource
         return performCreation(action, getAddParams(entity, hostId), ID_RESOLVER);
     }
 
-    private Response addSAN(StorageDomain model, StorageType storageType, storage_domain_static entity, Guid hostId) {
+    private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
         boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
 
         return performCreation(VdcActionType.AddSANStorageDomain,
@@ -165,7 +165,7 @@ public class BackendStorageDomainsResource
         validateParameters(storageDomain, "host.id|name", "type", "storage.type");
         validateEnums(StorageDomain.class, storageDomain);
 
-        storage_domain_static entity = mapToStatic(storageDomain);
+        StorageDomainStatic entity = mapToStatic(storageDomain);
         Guid hostId = getHostId(storageDomain);
 
         Response resp = null;
@@ -207,8 +207,8 @@ public class BackendStorageDomainsResource
         return super.remove(id);
     }
 
-    protected storage_domain_static mapToStatic(StorageDomain model) {
-        return getMapper(modelType, storage_domain_static.class).map(model, null);
+    protected StorageDomainStatic mapToStatic(StorageDomain model) {
+        return getMapper(modelType, StorageDomainStatic.class).map(model, null);
     }
 
     @Override
@@ -364,13 +364,13 @@ public class BackendStorageDomainsResource
         return existing.size() != 0 ? existing.get(0) : null;
     }
 
-    private StorageDomainManagementParameter getAddParams(storage_domain_static entity, Guid hostId) {
+    private StorageDomainManagementParameter getAddParams(StorageDomainStatic entity, Guid hostId) {
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(entity);
         params.setVdsId(hostId);
         return params;
     }
 
-    private AddSANStorageDomainParameters getSanAddParams(storage_domain_static entity,
+    private AddSANStorageDomainParameters getSanAddParams(StorageDomainStatic entity,
                                                           Guid hostId,
                                                           ArrayList<String> lunIds,
                                                           boolean force) {

@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -44,7 +44,7 @@ public class AddExistingSANStorageDomainCommand<T extends AddSANStorageDomainPar
     }
 
     @Override
-    protected boolean ConcreteCheckExistingStorageDomain(Pair<storage_domain_static, SANState> domainFromIrs) {
+    protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domainFromIrs) {
         boolean returnValue = false;
         if (StringUtils.isNotEmpty(getStorageDomain().getStorageStaticData().getstorage())
                 && StringUtils.isNotEmpty(domainFromIrs.getFirst().getstorage())) {

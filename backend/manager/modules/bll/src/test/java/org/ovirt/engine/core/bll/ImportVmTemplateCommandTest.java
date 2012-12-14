@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -210,7 +210,7 @@ public class ImportVmTemplateCommandTest {
             StorageType storageType) {
         final StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
 
-        final storage_domain_static domain = new storage_domain_static();
+        final StorageDomainStatic domain = new StorageDomainStatic();
         domain.setstorage_type(storageType);
         when(dao.get(any(Guid.class))).thenReturn(domain);
 

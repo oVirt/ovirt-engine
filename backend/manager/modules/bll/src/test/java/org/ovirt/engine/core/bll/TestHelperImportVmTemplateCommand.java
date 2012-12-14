@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -59,7 +59,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     @Override
     protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
         StorageDomainStaticDAO d = mock(StorageDomainStaticDAO.class);
-        when(d.get(any(Guid.class))).thenReturn(new storage_domain_static());
+        when(d.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         return d;
     }
 

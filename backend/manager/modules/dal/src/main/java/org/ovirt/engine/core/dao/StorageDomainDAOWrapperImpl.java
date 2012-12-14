@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,7 +40,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
 
     @Override
     public storage_domains get(Guid id) {
-        storage_domain_static staticPart = staticDAO.get(id);
+        StorageDomainStatic staticPart = staticDAO.get(id);
 
         return createDomain(staticPart);
     }
@@ -50,7 +50,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         throw new NotImplementedException();
     }
 
-    private storage_domains createDomain(storage_domain_static staticPart) {
+    private storage_domains createDomain(StorageDomainStatic staticPart) {
         storage_domains result = null;
 
         if (staticPart != null) {
@@ -86,7 +86,7 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
 
     @Override
     public storage_domains getForStoragePool(Guid id, NGuid storagepool) {
-        storage_domain_static staticPart = staticDAO.getForStoragePool(id, storagepool);
+        StorageDomainStatic staticPart = staticDAO.getForStoragePool(id, storagepool);
 
         if (staticPart != null) {
             return createDomain(staticPart);
@@ -117,10 +117,10 @@ public class StorageDomainDAOWrapperImpl extends BaseDAOWrapperImpl implements S
         throw new NotImplementedException();
     }
 
-    private List<storage_domains> createDomains(List<storage_domain_static> staticParts) {
+    private List<storage_domains> createDomains(List<StorageDomainStatic> staticParts) {
         List<storage_domains> result = new ArrayList<storage_domains>();
 
-        for (storage_domain_static staticPart : staticParts) {
+        for (StorageDomainStatic staticPart : staticParts) {
             storage_domains domain = createDomain(staticPart);
 
             if (domain != null)

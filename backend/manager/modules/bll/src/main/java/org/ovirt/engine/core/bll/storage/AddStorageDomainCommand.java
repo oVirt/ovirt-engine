@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -215,8 +215,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
                 returnValue = false;
             } else {
-                Pair<storage_domain_static, SANState> domainFromIrs =
-                        (Pair<storage_domain_static, SANState>) Backend
+                Pair<StorageDomainStatic, SANState> domainFromIrs =
+                        (Pair<StorageDomainStatic, SANState>) Backend
                                 .getInstance()
                                 .getResourceManager()
                                 .RunVdsCommand(VDSCommandType.HSMGetStorageDomainInfo,
@@ -234,7 +234,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         return returnValue;
     }
 
-    protected boolean ConcreteCheckExistingStorageDomain(Pair<storage_domain_static, SANState> domainFromIrs) {
+    protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domainFromIrs) {
         return true;
     }
 

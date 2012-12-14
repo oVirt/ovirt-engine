@@ -26,7 +26,7 @@ public class AddSANStorageDomainParameters extends StorageDomainManagementParame
         this.force = force;
     }
 
-    public AddSANStorageDomainParameters(storage_domain_static storageDomain) {
+    public AddSANStorageDomainParameters(StorageDomainStatic storageDomain) {
         super(storageDomain);
     }
 

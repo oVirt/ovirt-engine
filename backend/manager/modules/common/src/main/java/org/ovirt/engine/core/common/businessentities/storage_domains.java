@@ -15,7 +15,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
     private static final long serialVersionUID = -6162192446628804305L;
 
     public storage_domains() {
-        _staticData = new storage_domain_static();
+        _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new storage_pool_iso_map());
     }
@@ -23,7 +23,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
     public storage_domains(Guid id, String storage, String storage_name, Guid storage_pool_id,
             Integer available_disk_size, Integer used_disk_size, StorageDomainStatus status, String storage_pool_name,
             int storage_pool_type, int storage_type) {
-        _staticData = new storage_domain_static();
+        _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new storage_pool_iso_map());
         this.setId(id);
@@ -68,13 +68,13 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
         privateStoragePoolIsoMapData = value;
     }
 
-    private storage_domain_static _staticData;
+    private StorageDomainStatic _staticData;
 
-    public storage_domain_static getStorageStaticData() {
+    public StorageDomainStatic getStorageStaticData() {
         return _staticData;
     }
 
-    public void setStorageStaticData(storage_domain_static value) {
+    public void setStorageStaticData(StorageDomainStatic value) {
         _staticData = value;
     }
 

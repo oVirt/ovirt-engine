@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.Guid;
         @NamedQuery(
                 name = "all_storage_domain_static_for_storage_domain",
                 query = "select sds from storage_domain_static sds, storage_domain_dynamic sdd, storage_pool pool, VDSGroup vdsg, storage_pool_iso_map spimap, VdsStatic vdss where sds.id = sdd.id and sds.id = spimap.id.storageId and spimap.id.storagePoolId = pool.id and vdsg.storagePool = spimap.id.storagePoolId and vdss.vdsGroupId = vdsg.id and sds.id = :storage_domain_id") })
-public class storage_domain_static implements BusinessEntity<Guid> {
+public class StorageDomainStatic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 8635263021145935458L;
 
     @Id
@@ -78,10 +78,10 @@ public class storage_domain_static implements BusinessEntity<Guid> {
     @Column(name = "last_time_used_as_master")
     private transient long lastTimeUsedAsMaster;
 
-    public storage_domain_static() {
+    public StorageDomainStatic() {
     }
 
-    public storage_domain_static(Guid id, String storage, int storage_domain_type, String storage_name) {
+    public StorageDomainStatic(Guid id, String storage, int storage_domain_type, String storage_name) {
         this.id = id;
         this.storage = storage;
         this.storageType = StorageDomainType.forValue(storage_domain_type);
@@ -193,7 +193,7 @@ public class storage_domain_static implements BusinessEntity<Guid> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        storage_domain_static other = (storage_domain_static) obj;
+        StorageDomainStatic other = (StorageDomainStatic) obj;
         if (autoRecoverable != other.autoRecoverable)
             return false;
         if (connection == null) {

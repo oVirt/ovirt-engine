@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -268,8 +268,8 @@ public class RemoveStorageDomainTest {
         return dom;
     }
 
-    protected storage_domain_static getStorageDomainStatic(Guid id) {
-        storage_domain_static dom = new storage_domain_static();
+    protected StorageDomainStatic getStorageDomainStatic(Guid id) {
+        StorageDomainStatic dom = new StorageDomainStatic();
         dom.setId(id);
         return dom;
     }

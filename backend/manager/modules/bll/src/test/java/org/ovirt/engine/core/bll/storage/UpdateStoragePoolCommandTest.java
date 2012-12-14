@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -47,7 +47,7 @@ public class UpdateStoragePoolCommandTest {
     @Mock
     private StorageDomainStaticDAO sdDao;
     @Mock
-    private List<storage_domain_static> sdList;
+    private List<StorageDomainStatic> sdList;
     @Mock
     private VdsGroupDAO vdsDao;
 

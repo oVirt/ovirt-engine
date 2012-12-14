@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SANState;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -50,9 +50,9 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
     }
 
     @Override
-    protected boolean ConcreteCheckExistingStorageDomain(Pair<storage_domain_static, SANState> domain) {
+    protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
         boolean returnValue = false;
-        storage_domain_static domainFromIrs = domain.getFirst();
+        StorageDomainStatic domainFromIrs = domain.getFirst();
         if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getstorage())
                 && StringUtils.isEmpty(domainFromIrs.getstorage()) && domainFromIrs.getConnection() != null
                 && getStorageDomain().getStorageStaticData().getConnection() != null) {

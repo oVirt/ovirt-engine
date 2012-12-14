@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -112,7 +112,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             .getConstants()
             .noDataDomainAttachedReason();
 
-    private storage_domain_static storageDomain;
+    private StorageDomainStatic storageDomain;
     private TaskContext context;
     private IStorageModel storageModel;
     private NGuid storageId;
@@ -762,7 +762,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
         path = (String) localModel.getPath().getEntity();
 
-        storageDomain = new storage_domain_static();
+        storageDomain = new StorageDomainStatic();
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
         storageDomain.setstorage_name((String) model.getName().getEntity());
@@ -913,7 +913,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
         path = (String) nfsModel.getPath().getEntity();
 
-        storageDomain = new storage_domain_static();
+        storageDomain = new StorageDomainStatic();
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
         storageDomain.setstorage_name((String) model.getName().getEntity());
@@ -1050,7 +1050,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
 
-        storageDomain = new storage_domain_static();
+        storageDomain = new StorageDomainStatic();
         storageDomain.setstorage_type(sanModel.getType());
         storageDomain.setstorage_domain_type(sanModel.getRole());
         storageDomain.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());

@@ -11,16 +11,16 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 
 public class StorageDomainMapper {
 
-    @Mapping(from = StorageDomain.class, to = storage_domain_static.class)
-    public static storage_domain_static map(StorageDomain model, storage_domain_static template) {
-        storage_domain_static entity = template != null ? template : new storage_domain_static();
+    @Mapping(from = StorageDomain.class, to = StorageDomainStatic.class)
+    public static StorageDomainStatic map(StorageDomain model, StorageDomainStatic template) {
+        StorageDomainStatic entity = template != null ? template : new StorageDomainStatic();
         if (model.isSetId()) {
             entity.setId(new Guid(model.getId()));
         }

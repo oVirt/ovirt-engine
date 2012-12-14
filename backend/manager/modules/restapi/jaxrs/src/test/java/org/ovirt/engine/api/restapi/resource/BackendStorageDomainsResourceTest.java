@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -499,7 +499,7 @@ public class BackendStorageDomainsResourceTest
                                    GetExistingStorageDomainListParameters.class,
                                    new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
                                    new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
-                                   new ArrayList<storage_domain_static>());
+                                   new ArrayList<StorageDomainStatic>());
 
         setUpActionExpectations(VdcActionType.AddNFSStorageDomain,
                                 StorageDomainManagementParameter.class,

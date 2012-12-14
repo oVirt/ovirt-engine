@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -187,7 +187,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
+    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
         int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
         if (numOfRemovedLuns > 0) {
             List<storage_server_connections> list = DbFacade.getInstance()
@@ -234,7 +234,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public List<storage_server_connections> GetStorageServerConnectionsByDomain(
-            storage_domain_static storageDomain) {
+            StorageDomainStatic storageDomain) {
         return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
@@ -16,7 +16,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
     private StorageDomainDynamicDAO dao;
     private StorageDomainStaticDAO staticDao;
     private StorageDomainDynamic newDynamicDomain;
-    private storage_domain_static newStaticDomain;
+    private StorageDomainStatic newStaticDomain;
     private StorageDomainDynamic existingDynamic;
 
     @Override
@@ -28,7 +28,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
 
         existingDynamic = dao.get(EXISTING_DOMAIN_ID);
 
-        newStaticDomain = new storage_domain_static();
+        newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setavailable_disk_size(USED_DISK_SIZE);

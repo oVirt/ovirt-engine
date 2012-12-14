@@ -101,7 +101,7 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
     @ManyToMany
     @JoinTable(name = "storage_pool_iso_map", joinColumns = @JoinColumn(name = "storage_pool_id"),
             inverseJoinColumns = @JoinColumn(name = "storage_id"))
-    private List<storage_domain_static> domains;
+    private List<StorageDomainStatic> domains;
 
     @Transient
     private Version version;

@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface StorageDomainStaticDAO extends GenericDao<storage_domain_static, Guid> {
+public interface StorageDomainStaticDAO extends GenericDao<StorageDomainStatic, Guid> {
 
     /**
      * Retrieves the instance with the specified name.
@@ -16,7 +16,7 @@ public interface StorageDomainStaticDAO extends GenericDao<storage_domain_static
      *            the domain name
      * @return the domain
      */
-    storage_domain_static getByName(String name);
+    StorageDomainStatic getByName(String name);
 
     /**
      * Retrieves all domains of the specified type for the specified pool.
@@ -27,7 +27,7 @@ public interface StorageDomainStaticDAO extends GenericDao<storage_domain_static
      *            the storage pool
      * @return the list of domains
      */
-    List<storage_domain_static> getAllForStoragePoolOfStorageType(
+    List<StorageDomainStatic> getAllForStoragePoolOfStorageType(
             StorageType type, Guid pool);
 
     /**
@@ -37,7 +37,7 @@ public interface StorageDomainStaticDAO extends GenericDao<storage_domain_static
      *            the pool
      * @return the list of domains
      */
-    List<storage_domain_static> getAllForStoragePool(Guid pool);
+    List<StorageDomainStatic> getAllForStoragePool(Guid pool);
 
     /**
      * Retrieves all domains for the given type.
@@ -46,7 +46,7 @@ public interface StorageDomainStaticDAO extends GenericDao<storage_domain_static
      *            the domain type
      * @return the list of domains
      */
-    List<storage_domain_static> getAllOfStorageType(StorageType type);
+    List<StorageDomainStatic> getAllOfStorageType(StorageType type);
 
     /**
      * Return all the domains of the given status which belong to the given pool.

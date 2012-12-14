@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -59,10 +59,10 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public NGuid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
-            List<storage_domain_static> domainsInPool = DbFacade.getInstance()
+            List<StorageDomainStatic> domainsInPool = DbFacade.getInstance()
                         .getStorageDomainStaticDao().getAllForStoragePool(getVm().getStoragePoolId());
             if (domainsInPool.size() > 0) {
-                for (storage_domain_static currDomain : domainsInPool) {
+                for (StorageDomainStatic currDomain : domainsInPool) {
                     if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
                                 || currDomain.getstorage_domain_type().equals(StorageDomainType.Data)) {
                         _storageDomainId = currDomain.getId();

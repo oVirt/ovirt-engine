@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -70,14 +70,14 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
     @Override
     public List<storage_server_connections> GetStorageServerConnectionsByDomain(
-            storage_domain_static storageDomain) {
+            StorageDomainStatic storageDomain) {
         return new ArrayList<storage_server_connections>(
                 Arrays.asList(new storage_server_connections[] { DbFacade.getInstance()
                         .getStorageServerConnectionDao().get(storageDomain.getstorage()) }));
     }
 
     @Override
-    public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
+    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
         storage_server_connections connection =
                 DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getstorage());
 

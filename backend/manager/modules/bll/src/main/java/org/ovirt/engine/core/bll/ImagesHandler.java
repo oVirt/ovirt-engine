@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -414,7 +414,7 @@ public final class ImagesHandler {
         return DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotStatus.IN_PREVIEW);
     }
 
-    public static boolean CheckImageConfiguration(storage_domain_static storageDomain,
+    public static boolean CheckImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
         boolean result = true;
         if ((diskInfo.getvolume_type() == VolumeType.Preallocated && diskInfo.getvolume_format() == VolumeFormat.COW)
@@ -432,7 +432,7 @@ public final class ImagesHandler {
             Collection<? extends Disk> disksConfigList,
             List<String> messages) {
         boolean result = true;
-        storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
+        StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
         for (Disk diskInfo : disksConfigList) {
             if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
                 result = CheckImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);

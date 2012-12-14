@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
@@ -134,8 +134,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private void updateMemberDomainsFormat(StorageFormatType targetFormat) {
         Guid spId = getStoragePool().getId();
         StorageDomainStaticDAO sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
-        List<storage_domain_static> domains = sdStatDao.getAllForStoragePool(spId);
-        for (storage_domain_static domain : domains) {
+        List<StorageDomainStatic> domains = sdStatDao.getAllForStoragePool(spId);
+        for (StorageDomainStatic domain : domains) {
             StorageDomainType sdType = domain.getstorage_domain_type();
 
             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {

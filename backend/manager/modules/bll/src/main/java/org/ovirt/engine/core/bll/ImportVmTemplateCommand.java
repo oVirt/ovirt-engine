@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -128,7 +128,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     if (!retVal) {
                         break;
                     }
-                    storage_domain_static targetDomain = storageDomain.getStorageStaticData();
+                    StorageDomainStatic targetDomain = storageDomain.getStorageStaticData();
                     changeRawToCowIfSparseOnBlockDevice(targetDomain.getstorage_type(), image);
                     retVal = ImagesHandler.CheckImageConfiguration(targetDomain, image,
                             getReturnValue().getCanDoActionMessages());

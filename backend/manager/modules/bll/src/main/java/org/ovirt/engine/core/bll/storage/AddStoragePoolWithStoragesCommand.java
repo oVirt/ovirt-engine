@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -150,7 +150,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         if (existingInDb) {
                             getCompensationContext().snapshotEntity(mapFromDB);
                         }
-                        final storage_domain_static staticDomain = storageDomain.getStorageStaticData();
+                        final StorageDomainStatic staticDomain = storageDomain.getStorageStaticData();
                         boolean staticDomainChanged = false;
                         // for data centers >= 3.1 we enforce the domain version to V3
                         // this strictly needs to be before selecting the masterStorageDomain because the pool master

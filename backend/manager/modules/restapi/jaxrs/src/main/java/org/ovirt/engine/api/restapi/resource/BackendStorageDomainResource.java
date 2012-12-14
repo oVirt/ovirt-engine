@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -238,7 +238,7 @@ public class BackendStorageDomainResource extends
         public VdcActionParametersBase getParameters(StorageDomain incoming, storage_domains entity) {
             //save SD type before mapping
             org.ovirt.engine.core.common.businessentities.StorageDomainType currentType = entity.getStorageStaticData()==null ? null : entity.getStorageStaticData().getstorage_domain_type();
-            storage_domain_static updated = getMapper(modelType, storage_domain_static.class).map(
+            StorageDomainStatic updated = getMapper(modelType, StorageDomainStatic.class).map(
                     incoming, entity.getStorageStaticData());
             //if SD type was 'Master', and user gave 'Data', they are the same, this is not a real update, so exchange data back to master.
             if (currentType==org.ovirt.engine.core.common.businessentities.StorageDomainType.Master && updated.getstorage_domain_type()==org.ovirt.engine.core.common.businessentities.StorageDomainType.Data) {

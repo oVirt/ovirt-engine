@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
@@ -87,7 +87,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean StorageDomainRemoved(storage_domain_static storageDomain) {
+    public boolean StorageDomainRemoved(StorageDomainStatic storageDomain) {
         return true;
     }
 
@@ -116,7 +116,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     @Override
     public List<storage_server_connections> GetStorageServerConnectionsByDomain(
-            storage_domain_static storageDomain) {
+            StorageDomainStatic storageDomain) {
         return new java.util.ArrayList<storage_server_connections>();
     }
 
@@ -130,7 +130,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return DbFacade.getInstance().getLunDao();
     }
 
-    protected int removeStorageDomainLuns(storage_domain_static storageDomain) {
+    protected int removeStorageDomainLuns(StorageDomainStatic storageDomain) {
         final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {

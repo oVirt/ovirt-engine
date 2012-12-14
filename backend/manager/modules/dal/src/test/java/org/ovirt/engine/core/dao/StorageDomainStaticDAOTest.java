@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
@@ -24,8 +24,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     private StorageDomainDynamicDAO dynamicDao;
     private DiskImageDAO diskImageDao;
     private ImageDao imageDao;
-    private storage_domain_static existingDomain;
-    private storage_domain_static newStaticDomain;
+    private StorageDomainStatic existingDomain;
+    private StorageDomainStatic newStaticDomain;
 
     @Override
     public void setUp() throws Exception {
@@ -37,7 +37,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         imageDao = prepareDAO(dbFacade.getImageDao());
         existingDomain = dao.get(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
 
-        newStaticDomain = new storage_domain_static();
+        newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setstorage_name("NewStorageDomain");
         newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
     }
@@ -47,7 +47,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        storage_domain_static result = dao.get(Guid.NewGuid());
+        StorageDomainStatic result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -57,7 +57,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        storage_domain_static result = dao.get(existingDomain.getId());
+        StorageDomainStatic result = dao.get(existingDomain.getId());
 
         assertNotNull(result);
         assertEquals(existingDomain.getId(), result.getId());
@@ -68,7 +68,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<storage_domain_static> result = dao.getAll();
+        List<StorageDomainStatic> result = dao.getAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -79,7 +79,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        storage_domain_static result = dao.getByName("farkle");
+        StorageDomainStatic result = dao.getByName("farkle");
 
         assertNull(result);
     }
@@ -89,7 +89,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        storage_domain_static result = dao.getByName(existingDomain
+        StorageDomainStatic result = dao.getByName(existingDomain
                 .getstorage_name());
 
         assertNotNull(result);
@@ -101,7 +101,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithInvalidPool() {
-        List<storage_domain_static> result = dao
+        List<StorageDomainStatic> result = dao
                 .getAllForStoragePool(Guid.NewGuid());
 
         assertNotNull(result);
@@ -113,7 +113,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePool() {
-        List<storage_domain_static> result = dao.getAllForStoragePool(EXISTING_POOL_ID);
+        List<StorageDomainStatic> result = dao.getAllForStoragePool(EXISTING_POOL_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -124,11 +124,11 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolOfStorageType() {
-        List<storage_domain_static> result = dao.getAllForStoragePoolOfStorageType(StorageType.ISCSI, EXISTING_POOL_ID);
+        List<StorageDomainStatic> result = dao.getAllForStoragePoolOfStorageType(StorageType.ISCSI, EXISTING_POOL_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (storage_domain_static domain : result) {
+        for (StorageDomainStatic domain : result) {
             assertEquals(StorageType.ISCSI, domain.getstorage_type());
         }
     }
@@ -138,7 +138,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllOfStorageTypeWithInvalidType() {
-        List<storage_domain_static> result = dao.getAllOfStorageType(StorageType.FCP);
+        List<StorageDomainStatic> result = dao.getAllOfStorageType(StorageType.FCP);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -149,12 +149,12 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllOfStorageType() {
-        List<storage_domain_static> result = dao
+        List<StorageDomainStatic> result = dao
                 .getAllOfStorageType(StorageType.ISCSI);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (storage_domain_static domain : result) {
+        for (StorageDomainStatic domain : result) {
             assertEquals(StorageType.ISCSI, domain.getstorage_type());
         }
     }
@@ -194,7 +194,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newStaticDomain);
 
-        storage_domain_static result = dao.get(newStaticDomain.getId());
+        StorageDomainStatic result = dao.get(newStaticDomain.getId());
 
         assertNotNull(result);
     }
@@ -207,7 +207,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         existingDomain.setstorage_name("UpdatedName");
         dao.update(existingDomain);
 
-        storage_domain_static after = dao.get(existingDomain.getId());
+        StorageDomainStatic after = dao.get(existingDomain.getId());
 
         assertEquals(after, existingDomain);
     }
@@ -238,7 +238,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         }
         dao.remove(existingDomain.getId());
 
-        storage_domain_static domainResult = dao.get(existingDomain.getId());
+        StorageDomainStatic domainResult = dao.get(existingDomain.getId());
 
         assertNull(domainResult);
     }

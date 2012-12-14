@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_server_connections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -26,14 +26,14 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         ProceedProxyReturnValue();
-        Pair<storage_domain_static, SANState> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);
+        Pair<StorageDomainStatic, SANState> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);
         pairSdStatic.getFirst().setId(getParameters().getStorageDomainId());
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<storage_domain_static, SANState> BuildStorageStaticFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
-        Pair<storage_domain_static, SANState> returnValue = new Pair<storage_domain_static, SANState>();
-        storage_domain_static sdStatic = new storage_domain_static();
+    private static Pair<StorageDomainStatic, SANState> BuildStorageStaticFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
+        Pair<StorageDomainStatic, SANState> returnValue = new Pair<StorageDomainStatic, SANState>();
+        StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (xmlRpcStruct.contains("name")) {
             sdStatic.setstorage_name(xmlRpcStruct.getItem("name").toString());
         }

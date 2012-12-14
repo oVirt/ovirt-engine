@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private storage_domain_static privateStorageDomain;
+    private StorageDomainStatic privateStorageDomain;
 
-    public storage_domain_static getStorageDomain() {
+    public StorageDomainStatic getStorageDomain() {
         return privateStorageDomain;
     }
 
-    private void setStorageDomain(storage_domain_static value) {
+    private void setStorageDomain(StorageDomainStatic value) {
         privateStorageDomain = value;
     }
 
@@ -24,7 +24,7 @@ public class CreateStorageDomainVDSCommandParameters extends VdsIdVDSCommandPara
         privateArgs = value;
     }
 
-    public CreateStorageDomainVDSCommandParameters(Guid vdsId, storage_domain_static storageDomain, String args) {
+    public CreateStorageDomainVDSCommandParameters(Guid vdsId, StorageDomainStatic storageDomain, String args) {
         super(vdsId);
         setStorageDomain(storageDomain);
         setArgs(args);

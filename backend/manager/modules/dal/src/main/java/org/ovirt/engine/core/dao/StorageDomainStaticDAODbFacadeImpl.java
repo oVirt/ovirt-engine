@@ -7,12 +7,12 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacade<storage_domain_static, Guid> implements StorageDomainStaticDAO {
+public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacade<StorageDomainStatic, Guid> implements StorageDomainStaticDAO {
 
     public StorageDomainStaticDAODbFacadeImpl() {
         super("storage_domain_static");
@@ -21,7 +21,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    public storage_domain_static getByName(String name) {
+    public StorageDomainStatic getByName(String name) {
         return getCallsHandler().executeRead("Getstorage_domain_staticByName",
                 StorageDomainStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -29,7 +29,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    public List<storage_domain_static> getAllOfStorageType(
+    public List<StorageDomainStatic> getAllOfStorageType(
             StorageType type) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_type",
                 StorageDomainStaticRowMapper.instance,
@@ -38,7 +38,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    public List<storage_domain_static> getAllForStoragePoolOfStorageType(
+    public List<StorageDomainStatic> getAllForStoragePoolOfStorageType(
             StorageType type, Guid pool) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_type_and_storage_pool_id",
                 StorageDomainStaticRowMapper.instance,
@@ -47,7 +47,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    public List<storage_domain_static> getAllForStoragePool(Guid id) {
+    public List<StorageDomainStatic> getAllForStoragePool(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domain_staticBystorage_pool_id",
                 StorageDomainStaticRowMapper.instance,
                 getStoragePoolIdParameterSource(id));
@@ -80,7 +80,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    protected MapSqlParameterSource createFullParametersMapper(storage_domain_static domain) {
+    protected MapSqlParameterSource createFullParametersMapper(StorageDomainStatic domain) {
         return getCustomMapSqlParameterSource()
                 .addValue("id", domain.getId())
                 .addValue("storage", domain.getstorage())
@@ -93,17 +93,17 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     }
 
     @Override
-    protected ParameterizedRowMapper<storage_domain_static> createEntityRowMapper() {
+    protected ParameterizedRowMapper<StorageDomainStatic> createEntityRowMapper() {
         return StorageDomainStaticRowMapper.instance;
     }
 
-    private static final class StorageDomainStaticRowMapper implements ParameterizedRowMapper<storage_domain_static> {
+    private static final class StorageDomainStaticRowMapper implements ParameterizedRowMapper<StorageDomainStatic> {
         public static final StorageDomainStaticRowMapper instance = new StorageDomainStaticRowMapper();
 
         @Override
-        public storage_domain_static mapRow(ResultSet rs, int rowNum)
+        public StorageDomainStatic mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
-            storage_domain_static entity = new storage_domain_static();
+            StorageDomainStatic entity = new StorageDomainStatic();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));

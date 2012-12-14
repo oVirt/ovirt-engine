@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.storage_pool_iso_map;
@@ -294,7 +294,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private void ProceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
             storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
-            storage_domain_static domainFromDb = null;
+            StorageDomainStatic domainFromDb = null;
             storage_pool_iso_map domainPoolMap = null;
 
             if (storage_domain != null) {
@@ -1249,7 +1249,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // is with the hosts
             // that did report on a problem with this domain.
             // (and not a problem with the domain itself).
-            storage_domain_static storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+            StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
             String domainIdTuple = getDomainIdTuple(domainId);
             if (vdssInProblem.size() > 0) {
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
@@ -1427,7 +1427,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private static String getDomainIdTuple(Guid domainId) {
-            storage_domain_static storage_domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+            StorageDomainStatic storage_domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
             if (storage_domain != null) {
                 return domainId + ":" + storage_domain.getstorage_name();
             } else {
@@ -1602,10 +1602,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     private void startReconstruct() {
-        storage_domain_static masterDomain = null;
-        List<storage_domain_static> storageDomainStaticList = DbFacade.getInstance()
+        StorageDomainStatic masterDomain = null;
+        List<StorageDomainStatic> storageDomainStaticList = DbFacade.getInstance()
                 .getStorageDomainStaticDao().getAllForStoragePool(getParameters().getStoragePoolId());
-        for (storage_domain_static storageDomainStatic : storageDomainStaticList) {
+        for (StorageDomainStatic storageDomainStatic : storageDomainStaticList) {
             if (storageDomainStatic.getstorage_domain_type() == StorageDomainType.Master) {
                 masterDomain = storageDomainStatic;
                 break;

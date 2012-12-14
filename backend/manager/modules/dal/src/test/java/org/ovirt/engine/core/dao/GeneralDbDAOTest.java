@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.bookmarks;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.storage_domain_static;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -44,7 +44,7 @@ public class GeneralDbDAOTest extends BaseDAOTestCase {
         businessEntities.add(NetworkInterface.class);
         businessEntities.add(Network.class);
         businessEntities.add(Role.class);
-        businessEntities.add(storage_domain_static.class);
+        businessEntities.add(StorageDomainStatic.class);
         businessEntities.add(storage_pool.class);
         businessEntities.add(tags.class);
         businessEntities.add(VDSGroup.class);
