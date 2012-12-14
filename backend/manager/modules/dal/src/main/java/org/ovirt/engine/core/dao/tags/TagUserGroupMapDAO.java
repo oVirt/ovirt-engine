@@ -3,13 +3,13 @@ package org.ovirt.engine.core.dao.tags;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import org.ovirt.engine.core.common.businessentities.tags_user_group_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class TagUserGroupMapDAO extends BaseDAOHibernateImpl<tags_user_group_map, Guid> {
+public class TagUserGroupMapDAO extends BaseDAOHibernateImpl<TagsUserGroupMap, Guid> {
     public TagUserGroupMapDAO() {
-        super(tags_user_group_map.class);
+        super(TagsUserGroupMap.class);
     }
 
     public void remove(Guid tagId, Guid groupId) {

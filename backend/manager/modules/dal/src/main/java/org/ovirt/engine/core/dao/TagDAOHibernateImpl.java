@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.tags_user_group_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map_id;
@@ -118,7 +118,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public tags_user_group_map getTagUserGroupByGroupIdAndByTagId(Guid tagId, Guid groupId) {
+    public TagsUserGroupMap getTagUserGroupByGroupIdAndByTagId(Guid tagId, Guid groupId) {
         return tagUserGroupMapDAO.findOneByCriteria(Restrictions.eq("tagId", tagId),
                 Restrictions.eq("groupId", groupId));
     }
@@ -130,7 +130,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_user_group_map> getTagUserGroupMapsForTagName(String tagName) {
+    public List<TagsUserGroupMap> getTagUserGroupMapsForTagName(String tagName) {
         Session session = getSession();
         Query query = session.getNamedQuery("get_all_tags_user_group_maps_for_tag_name");
 
@@ -145,7 +145,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public void attachUserGroupToTag(tags_user_group_map map) {
+    public void attachUserGroupToTag(TagsUserGroupMap map) {
         tagUserGroupMapDAO.save(map);
     }
 

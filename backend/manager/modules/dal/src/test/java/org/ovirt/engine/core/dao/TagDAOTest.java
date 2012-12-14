@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.tags_user_group_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
@@ -34,7 +34,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     private Guid parent;
     private Guid user;
     private Guid vm;
-    private tags_user_group_map existingUserGroupTag;
+    private TagsUserGroupMap existingUserGroupTag;
     private tags_user_map existingUserTag;
     private tags_vds_map existingVdsTag;
     private tags_vds_map newVdsTag;
@@ -337,7 +337,7 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetTagUserGroupByGroupIdAndTagId() {
-        tags_user_group_map result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
+        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
                         existingUserGroupTag.getgroup_id());
 
         assertNotNull(result);
@@ -345,7 +345,7 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     }
 
-    private void assertEqualsTagUserGroupMap(tags_user_group_map existing, tags_user_group_map result) {
+    private void assertEqualsTagUserGroupMap(TagsUserGroupMap existing, TagsUserGroupMap result) {
         assertEquals("Group IDs not equal",existing.getgroup_id(), result.getgroup_id());
         assertEquals("Tag IDs not equal",existing.gettag_id(), result.gettag_id());
         assertEquals("Object equation",existing,result);
@@ -356,7 +356,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void testDetachUserGroupFromTag() {
         dao.detachUserGroupFromTag(existingUserGroupTag.gettag_id(), existingUserGroupTag.getgroup_id());
 
-        tags_user_group_map result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
+        TagsUserGroupMap result = dao.getTagUserGroupByGroupIdAndByTagId(existingUserGroupTag.gettag_id(),
                 existingUserGroupTag.getgroup_id());
 
         assertNull(result);
@@ -364,11 +364,11 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllUserGroupMapsForTagName() {
-        List<tags_user_group_map> result = dao.getTagUserGroupMapsForTagName(existingTag.gettag_name());
+        List<TagsUserGroupMap> result = dao.getTagUserGroupMapsForTagName(existingTag.gettag_name());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (tags_user_group_map mapping : result) {
+        for (TagsUserGroupMap mapping : result) {
             assertEquals(existingTag.gettag_id(), mapping.gettag_id());
         }
     }

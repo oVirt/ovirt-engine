@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.tags_user_group_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
@@ -158,13 +158,13 @@ public interface TagDAO extends DAO {
 
     // TODO these APIs will be eliminated when we move to hibernate
 
-    void attachUserGroupToTag(tags_user_group_map map);
+    void attachUserGroupToTag(TagsUserGroupMap map);
 
-    tags_user_group_map getTagUserGroupByGroupIdAndByTagId(Guid tagId, Guid groupId);
+    TagsUserGroupMap getTagUserGroupByGroupIdAndByTagId(Guid tagId, Guid groupId);
 
     void detachUserGroupFromTag(Guid tagId, Guid groupId);
 
-    List<tags_user_group_map> getTagUserGroupMapsForTagName(String tagName);
+    List<TagsUserGroupMap> getTagUserGroupMapsForTagName(String tagName);
 
     tags_user_map getTagUserByTagIdAndByuserId(Guid tagId, Guid userId);
 

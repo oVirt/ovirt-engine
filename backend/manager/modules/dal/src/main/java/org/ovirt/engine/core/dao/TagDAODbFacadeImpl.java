@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.tags_user_group_map;
+import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
@@ -222,14 +222,14 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public tags_user_group_map getTagUserGroupByGroupIdAndByTagId(Guid tag, Guid group) {
+    public TagsUserGroupMap getTagUserGroupByGroupIdAndByTagId(Guid tag, Guid group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("group_id", group)
                 .addValue("tag_id", tag);
 
-        ParameterizedRowMapper<tags_user_group_map> mapper = new ParameterizedRowMapper<tags_user_group_map>() {
+        ParameterizedRowMapper<TagsUserGroupMap> mapper = new ParameterizedRowMapper<TagsUserGroupMap>() {
             @Override
-            public tags_user_group_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_user_group_map entity = new tags_user_group_map();
+            public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsUserGroupMap entity = new TagsUserGroupMap();
                 entity.setgroup_id(Guid.createGuidFromString(rs.getString("group_id")));
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 return entity;
@@ -241,7 +241,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void attachUserGroupToTag(tags_user_group_map tagUserGroupMap) {
+    public void attachUserGroupToTag(TagsUserGroupMap tagUserGroupMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("group_id",
                 tagUserGroupMap.getgroup_id()).addValue("tag_id", tagUserGroupMap.gettag_id());
 
@@ -260,13 +260,13 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_user_group_map> getTagUserGroupMapsForTagName(String tagName) {
+    public List<TagsUserGroupMap> getTagUserGroupMapsForTagName(String tagName) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_name", tagName);
 
-        ParameterizedRowMapper<tags_user_group_map> mapper = new ParameterizedRowMapper<tags_user_group_map>() {
+        ParameterizedRowMapper<TagsUserGroupMap> mapper = new ParameterizedRowMapper<TagsUserGroupMap>() {
             @Override
-            public tags_user_group_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_user_group_map entity = new tags_user_group_map();
+            public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsUserGroupMap entity = new TagsUserGroupMap();
                 entity.setgroup_id(Guid.createGuidFromString(rs.getString("group_id")));
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 return entity;
