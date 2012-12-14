@@ -25,7 +25,7 @@ public class tags_vds_map implements Serializable {
     @AttributeOverrides({
         @AttributeOverride(name = "tagId", column = @Column(name = "tag_id")),
         @AttributeOverride(name = "vdsId", column = @Column(name = "vds_id")) })
-        private tags_vds_map_id id = new tags_vds_map_id();
+        private TagsVdsMapId id = new TagsVdsMapId();
 
     @Column(name = "_create_date")
     private Date created = new Date();

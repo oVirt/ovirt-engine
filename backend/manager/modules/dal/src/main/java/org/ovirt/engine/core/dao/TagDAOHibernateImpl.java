@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.tags_user_map;
 import org.ovirt.engine.core.common.businessentities.tags_vds_map;
-import org.ovirt.engine.core.common.businessentities.tags_vds_map_id;
+import org.ovirt.engine.core.common.businessentities.TagsVdsMapId;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
 import org.ovirt.engine.core.compat.Guid;
@@ -176,7 +176,7 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
 
     @Override
     public void detachVdsFromTag(Guid tagId, Guid vdsId) {
-        tagVdsMapDAO.remove(new tags_vds_map_id(tagId, vdsId));
+        tagVdsMapDAO.remove(new TagsVdsMapId(tagId, vdsId));
     }
 
     @Override

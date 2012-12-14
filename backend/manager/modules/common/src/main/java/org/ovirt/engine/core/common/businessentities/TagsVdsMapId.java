@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @Embeddable
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class tags_vds_map_id implements Serializable {
+public class TagsVdsMapId implements Serializable {
     private static final long serialVersionUID = -8781389672965898588L;
 
     @Type(type = "guid")
@@ -21,10 +21,10 @@ public class tags_vds_map_id implements Serializable {
     @Type(type = "guid")
     Guid vdsId;
 
-    public tags_vds_map_id() {
+    public TagsVdsMapId() {
     }
 
-    public tags_vds_map_id(Guid tagId, Guid vdsId) {
+    public TagsVdsMapId(Guid tagId, Guid vdsId) {
         this.tagId = tagId;
         this.vdsId = vdsId;
     }
