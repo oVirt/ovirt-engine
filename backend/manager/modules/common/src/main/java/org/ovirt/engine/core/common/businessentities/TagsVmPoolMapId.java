@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.NGuid;
 
 @Embeddable
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class tags_vm_pool_map_id implements Serializable {
+public class TagsVmPoolMapId implements Serializable {
     private static final long serialVersionUID = 2342243725530378982L;
 
     @Type(type = "guid")
@@ -22,10 +22,10 @@ public class tags_vm_pool_map_id implements Serializable {
     @Type(type = "guid")
     NGuid vmPoolId;
 
-    public tags_vm_pool_map_id() {
+    public TagsVmPoolMapId() {
     }
 
-    public tags_vm_pool_map_id(Guid tagId, Guid vmPoolId) {
+    public TagsVmPoolMapId(Guid tagId, Guid vmPoolId) {
         super();
         this.tagId = tagId;
         this.vmPoolId = vmPoolId;

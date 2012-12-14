@@ -26,7 +26,7 @@ public class tags_vm_pool_map implements Serializable {
     @AttributeOverrides({
             @AttributeOverride(name = "tagId", column = @Column(name = "tag_id")),
             @AttributeOverride(name = "vmPoolId", column = @Column(name = "vm_pool_id")) })
-    private tags_vm_pool_map_id id = new tags_vm_pool_map_id();
+    private TagsVmPoolMapId id = new TagsVmPoolMapId();
 
     @Column(name = "_create_date")
     private Date created = new Date();
