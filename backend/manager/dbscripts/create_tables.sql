@@ -1075,21 +1075,6 @@ CREATE TABLE disk_image_dynamic
 
 
 -- ----------------------------------------------------------------------
--- License Usage
--- ----------------------------------------------------------------------
-
-CREATE TABLE engine_license_usage
-(
-   date TIMESTAMP WITH TIME ZONE primary key NOT NULL,
-   quarter CHAR(7) NOT NULL,
-   lic_desktops INTEGER NOT NULL,
-   max_used_desktops INTEGER NOT NULL,
-   lic_sockets INTEGER NOT NULL,
-   max_used_sockets INTEGER NOT NULL
-) WITH OIDS;
-
-
--- ----------------------------------------------------------------------
 --  table "repo_file_meta_data"
 -- ----------------------------------------------------------------------
 CREATE TABLE repo_file_meta_data
