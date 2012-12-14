@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 @NamedQueries(value = { @NamedQuery(name = "delete_network_cluster",
                                     query = "delete from network_cluster n where n.clusterId = :cluster_id and n.networkId = :network_id") })
-public class network_cluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
+public class NetworkCluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id = new NetworkClusterId();
@@ -32,13 +32,13 @@ public class network_cluster extends IVdcQueryable implements BusinessEntity<Net
      */
     private boolean required = true;
 
-    public network_cluster() {
+    public NetworkCluster() {
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("network_cluster {id=")
+        builder.append("NetworkCluster {id=")
                 .append(getId())
                 .append(", status=")
                 .append(getstatus())
@@ -69,7 +69,7 @@ public class network_cluster extends IVdcQueryable implements BusinessEntity<Net
             return false;
         if (getClass() != obj.getClass())
             return false;
-        network_cluster other = (network_cluster) obj;
+        NetworkCluster other = (NetworkCluster) obj;
         if (isDisplay == null) {
             if (other.isDisplay != null)
                 return false;
@@ -92,7 +92,7 @@ public class network_cluster extends IVdcQueryable implements BusinessEntity<Net
     }
 
 
-    public network_cluster(Guid cluster_id, Guid network_id, NetworkStatus status, boolean isDisplay, boolean required) {
+    public NetworkCluster(Guid cluster_id, Guid network_id, NetworkStatus status, boolean isDisplay, boolean required) {
         id.setClusterId(cluster_id);
         id.setNetworkId(network_id);
         this.status = status;

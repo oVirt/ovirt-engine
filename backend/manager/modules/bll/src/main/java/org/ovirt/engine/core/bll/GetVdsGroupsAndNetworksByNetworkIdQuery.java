@@ -8,12 +8,12 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 
 /**
- * A query to retrieve all VDSGroup-network_cluster pairs in the Storage Pool of the given Network. In case the Network
+ * A query to retrieve all VDSGroup-NetworkCluster pairs in the Storage Pool of the given Network. In case the Network
  * is not assigned to a VDSGroup, the VDSGroup is paired with null.
  */
 public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends NetworkIdParameters> extends QueriesCommandBase<P> {
@@ -23,21 +23,21 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends NetworkIdParamete
 
     @Override
     protected void executeQueryCommand() {
-        List<PairQueryable<VDSGroup, network_cluster>> networkClusterPairs =
-                new ArrayList<PairQueryable<VDSGroup, network_cluster>>();
+        List<PairQueryable<VDSGroup, NetworkCluster>> networkClusterPairs =
+                new ArrayList<PairQueryable<VDSGroup, NetworkCluster>>();
 
         Network network = getDbFacade().getNetworkDao().get(getParameters().getNetworkId());
         if (network != null && network.getstorage_pool_id() != null) {
             List<VDSGroup> vdsGroups = getDbFacade().getVdsGroupDao()
                     .getAllForStoragePool(network.getstorage_pool_id().getValue());
-            List<network_cluster> networkClusters = getDbFacade().getNetworkClusterDao()
+            List<NetworkCluster> networkClusters = getDbFacade().getNetworkClusterDao()
                     .getAllForNetwork(getParameters().getNetworkId());
 
-            final Map<NetworkClusterId, network_cluster> networkClustersById =
+            final Map<NetworkClusterId, NetworkCluster> networkClustersById =
                     Entities.businessEntitiesById(networkClusters);
 
             for (VDSGroup vdsGroup : vdsGroups) {
-                networkClusterPairs.add(new PairQueryable<VDSGroup, network_cluster>(vdsGroup,
+                networkClusterPairs.add(new PairQueryable<VDSGroup, NetworkCluster>(vdsGroup,
                         networkClustersById.get(new NetworkClusterId(vdsGroup.getId(), getParameters().getNetworkId()))));
             }
         }

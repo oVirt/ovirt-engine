@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkDAOTest extends BaseDAOTestCase {
@@ -264,8 +264,8 @@ public class NetworkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSave() {
-        List<network_cluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(cluster);
-        network_cluster clusterFromDB = clustersFromDB.get(0);
+        List<NetworkCluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(cluster);
+        NetworkCluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
         new_net.setCluster(clusterFromDB);
         new_net.setId(Guid.NewGuid());

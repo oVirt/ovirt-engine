@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -35,7 +35,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return network;
     }
 
-    private network_cluster getNetworkCluster() {
+    private NetworkCluster getNetworkCluster() {
         return getParameters().getNetworkCluster();
     }
 

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -101,9 +101,9 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
-        return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>(ginjector,
                 NetworkListModel.class,
                 NetworkClusterListModel.class) {
             @Override

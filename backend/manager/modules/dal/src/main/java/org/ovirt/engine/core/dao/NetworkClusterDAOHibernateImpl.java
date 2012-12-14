@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -14,23 +14,23 @@ import org.ovirt.engine.core.compat.Guid;
  * Hibernate for the persistence implementation.
  *
  */
-public class NetworkClusterDAOHibernateImpl extends BaseDAOHibernateImpl<network_cluster, Guid> implements NetworkClusterDAO {
+public class NetworkClusterDAOHibernateImpl extends BaseDAOHibernateImpl<NetworkCluster, Guid> implements NetworkClusterDAO {
     public NetworkClusterDAOHibernateImpl() {
-        super(network_cluster.class);
+        super(NetworkCluster.class);
     }
 
     @Override
-    public network_cluster get(NetworkClusterId id) {
+    public NetworkCluster get(NetworkClusterId id) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<network_cluster> getAllForCluster(Guid cluster) {
+    public List<NetworkCluster> getAllForCluster(Guid cluster) {
         return findByCriteria(Restrictions.eq("clusterId", cluster));
     }
 
     @Override
-    public List<network_cluster> getAllForNetwork(Guid network) {
+    public List<NetworkCluster> getAllForNetwork(Guid network) {
         return findByCriteria(Restrictions.eq("networkId", network));
     }
 

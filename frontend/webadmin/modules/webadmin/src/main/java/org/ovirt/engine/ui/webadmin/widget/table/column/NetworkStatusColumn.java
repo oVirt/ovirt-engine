@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 
 import com.google.gwt.resources.client.ImageResource;
 
@@ -12,7 +12,7 @@ public class NetworkStatusColumn extends WebAdminImageResourceColumn<Network> {
         return getValue(nwk.getCluster());
     }
 
-    public ImageResource getValue(network_cluster net_cluster) {
+    public ImageResource getValue(NetworkCluster net_cluster) {
         setEnumTitle(net_cluster.getstatus());
         switch (net_cluster.getstatus()) {
         case Operational:

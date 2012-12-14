@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.TimeZoneInfo;
@@ -116,10 +116,10 @@ public abstract class VmInfoBuilderBase {
 
     protected void buildVmNetworkCluster() {
         // set Display network
-        List<network_cluster> all = DbFacade.getInstance()
+        List<NetworkCluster> all = DbFacade.getInstance()
                 .getNetworkClusterDao().getAllForCluster(vm.getVdsGroupId());
-        network_cluster networkCluster = null;
-        for (network_cluster tempNetworkCluster : all) {
+        NetworkCluster networkCluster = null;
+        for (NetworkCluster tempNetworkCluster : all) {
             if (tempNetworkCluster.getis_display()) {
                 networkCluster = tempNetworkCluster;
                 break;

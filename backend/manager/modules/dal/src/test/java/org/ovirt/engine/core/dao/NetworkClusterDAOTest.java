@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkClusterDAOTest extends BaseDAOTestCase {
@@ -19,9 +19,9 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
     private NetworkClusterDAO dao;
     private VDSGroup cluster;
     private Network network;
-    private network_cluster newNetworkCluster;
+    private NetworkCluster newNetworkCluster;
     private Network networkNoCluster;
-    private network_cluster existingNetworkCluster;
+    private NetworkCluster existingNetworkCluster;
     private VDSGroup freeCluster;
 
     @Override
@@ -40,7 +40,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
         network = networkDAO.getByName("engine");
         networkNoCluster = networkDAO.getByName("engine3");
 
-        newNetworkCluster = new network_cluster();
+        newNetworkCluster = new NetworkCluster();
         newNetworkCluster.setnetwork_id(networkNoCluster.getId());
         newNetworkCluster.setcluster_id(freeCluster.getId());
 
@@ -60,7 +60,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<network_cluster> result = dao.getAll();
+        List<NetworkCluster> result = dao.getAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -72,7 +72,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForClusterWithInvalidCluster() {
-        List<network_cluster> result = dao.getAllForCluster(Guid.NewGuid());
+        List<NetworkCluster> result = dao.getAllForCluster(Guid.NewGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -83,11 +83,11 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForCluster() {
-        List<network_cluster> result = dao.getAllForCluster(cluster.getId());
+        List<NetworkCluster> result = dao.getAllForCluster(cluster.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (network_cluster thiscluster : result) {
+        for (NetworkCluster thiscluster : result) {
             assertEquals(cluster.getId(), thiscluster.getcluster_id());
         }
     }
@@ -97,7 +97,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForNetworkWithInvalidNetwork() {
-        List<network_cluster> result = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> result = dao.getAllForNetwork(networkNoCluster.getId());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -108,11 +108,11 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForNetwork() {
-        List<network_cluster> result = dao.getAllForNetwork(network.getId());
+        List<NetworkCluster> result = dao.getAllForNetwork(network.getId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (network_cluster cluster : result) {
+        for (NetworkCluster cluster : result) {
             assertEquals(network.getId(), cluster.getnetwork_id());
         }
     }
@@ -122,14 +122,14 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSave() {
-        List<network_cluster> before = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> before = dao.getAllForNetwork(networkNoCluster.getId());
 
         // ensure that we have nothing to start
         assertTrue(before.isEmpty());
 
         dao.save(newNetworkCluster);
 
-        List<network_cluster> after = dao.getAllForNetwork(networkNoCluster.getId());
+        List<NetworkCluster> after = dao.getAllForNetwork(networkNoCluster.getId());
 
         assertFalse(after.isEmpty());
         assertEquals(newNetworkCluster, after.get(0));
@@ -144,10 +144,10 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
 
         dao.update(existingNetworkCluster);
 
-        List<network_cluster> result = dao.getAll();
+        List<NetworkCluster> result = dao.getAll();
         boolean itworked = false;
 
-        for (network_cluster thiscluster : result) {
+        for (NetworkCluster thiscluster : result) {
             itworked |= (thiscluster.getcluster_id().equals(existingNetworkCluster.getcluster_id())) &&
                     (thiscluster.getnetwork_id().equals(existingNetworkCluster.getnetwork_id())) &&
                     (thiscluster.getstatus() == existingNetworkCluster.getstatus());
@@ -165,10 +165,10 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
 
         dao.updateStatus(existingNetworkCluster);
 
-        List<network_cluster> result = dao.getAll();
+        List<NetworkCluster> result = dao.getAll();
         boolean itworked = false;
 
-        for (network_cluster thiscluster : result) {
+        for (NetworkCluster thiscluster : result) {
             itworked |= (thiscluster.getcluster_id().equals(existingNetworkCluster.getcluster_id())) &&
             (thiscluster.getnetwork_id().equals(existingNetworkCluster.getnetwork_id())) &&
             (thiscluster.getstatus() == existingNetworkCluster.getstatus());
@@ -195,8 +195,8 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
     public void testSetDisplay() {
         dao.setNetworkExclusivelyAsDisplay(existingNetworkCluster.getcluster_id(),
                 existingNetworkCluster.getnetwork_id());
-        List<network_cluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getcluster_id());
-        for (network_cluster net : allForCluster) {
+        List<NetworkCluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getcluster_id());
+        for (NetworkCluster net : allForCluster) {
             if (net.getcluster_id().equals(existingNetworkCluster.getcluster_id())
                     && net.getnetwork_id().equals(existingNetworkCluster.getnetwork_id())) {
                 assertTrue(net.getis_display());

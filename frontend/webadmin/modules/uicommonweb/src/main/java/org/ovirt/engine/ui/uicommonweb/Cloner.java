@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -43,9 +43,9 @@ public final class Cloner
         {
             return CloneNetwork((Network) instance);
         }
-        if (instance instanceof network_cluster)
+        if (instance instanceof NetworkCluster)
         {
-            return CloneNetworkCluster((network_cluster) instance);
+            return CloneNetworkCluster((NetworkCluster) instance);
         }
         if (instance instanceof vm_pools)
         {
@@ -287,9 +287,9 @@ public final class Cloner
         return obj;
     }
 
-    private static network_cluster CloneNetworkCluster(network_cluster instance)
+    private static NetworkCluster CloneNetworkCluster(NetworkCluster instance)
     {
-        network_cluster obj = new network_cluster();
+        NetworkCluster obj = new NetworkCluster();
 
         obj.setstatus(instance.getstatus());
         obj.setis_display(instance.getis_display());

@@ -9,7 +9,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
 public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBackendNetworksResource>
@@ -57,7 +57,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
     }
 
     static org.ovirt.engine.core.common.businessentities.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.Network entity, boolean isDisplay, boolean isRequired, int index) {
-        network_cluster networkCluster = new network_cluster();
+        NetworkCluster networkCluster = new NetworkCluster();
         networkCluster.setis_display(isDisplay);
         networkCluster.setRequired(isRequired);
         expect(entity.getCluster()).andReturn(networkCluster).anyTimes();

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -53,7 +53,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         if (networkExists()) {
             getNetworkClusterDAO().update(getNetworkCluster());
         } else {
-            getNetworkClusterDAO().save(new network_cluster(getVdsGroupId(), getNetwork().getId(),
+            getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
                     NetworkStatus.Operational, false, getNetworkCluster().isRequired()));
         }
         if (getNetwork().getCluster().getis_display()) {
@@ -65,7 +65,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     public static void SetNetworkStatus(Guid vdsGroupId, final Network net) {
         NetworkStatus status = NetworkStatus.Operational;
-        network_cluster networkCluster =
+        NetworkCluster networkCluster =
                 DbFacade.getInstance().getNetworkClusterDao().get(new NetworkClusterId(vdsGroupId, net.getId()));
 
         if (networkCluster != null) {
@@ -132,8 +132,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean networkExists() {
-        List<network_cluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
-        for (network_cluster network_cluster : networks) {
+        List<NetworkCluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
+        for (NetworkCluster network_cluster : networks) {
             if (network_cluster.getnetwork_id().equals(
                     getNetworkCluster().getnetwork_id())) {
                 return true;
@@ -155,7 +155,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return getVdsGroup() != null;
     }
 
-    private network_cluster getNetworkCluster() {
+    private NetworkCluster getNetworkCluster() {
         return getParameters().getNetworkCluster();
     }
 

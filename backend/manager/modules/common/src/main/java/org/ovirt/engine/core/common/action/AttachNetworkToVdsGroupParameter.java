@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 
 public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     private static final long serialVersionUID = -2874549285727269806L;
@@ -14,7 +14,7 @@ public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     private Network _network;
 
     public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {
-        super(new network_cluster(group.getId(),
+        super(new NetworkCluster(group.getId(),
                 net.getId(),
                 NetworkStatus.NonOperational,
 

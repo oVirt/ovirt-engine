@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -65,13 +65,13 @@ public class NetworkClusterListModel extends SearchableListModel
 
     private ClusterNetworkManageModel createManageList() {
         List<ClusterNetworkModel> networkManageModelList = new ArrayList<ClusterNetworkModel>();
-        List<PairQueryable<VDSGroup, network_cluster>> items =
-                (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
+        List<PairQueryable<VDSGroup, NetworkCluster>> items =
+                (List<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
 
-        for (PairQueryable<VDSGroup, network_cluster> item : items) {
+        for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
             Network network = (Network) Cloner.clone(getEntity());
             if (item.getSecond() != null) {
-                network.setCluster((network_cluster) Cloner.clone(item.getSecond()));
+                network.setCluster((NetworkCluster) Cloner.clone(item.getSecond()));
             }
             ClusterNetworkModel networkManageModel = new ClusterNetworkModel(network) {
                 @Override
@@ -115,7 +115,7 @@ public class NetworkClusterListModel extends SearchableListModel
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 
         for (ClusterNetworkModel manageModel : manageList) {
-            PairQueryable<VDSGroup, network_cluster> item = getItem(manageModel.getCluster().getname());
+            PairQueryable<VDSGroup, NetworkCluster> item = getItem(manageModel.getCluster().getname());
             boolean wasAttached = item.getSecond() != null;
 
             boolean needsAttach = manageModel.isAttached() && !wasAttached;
@@ -176,10 +176,10 @@ public class NetworkClusterListModel extends SearchableListModel
         windowModel.StartProgress(null);
     }
 
-    private PairQueryable<VDSGroup, network_cluster> getItem(String clusterName) {
-        List<PairQueryable<VDSGroup, network_cluster>> items =
-                (List<PairQueryable<VDSGroup, network_cluster>>) getItems();
-        for (PairQueryable<VDSGroup, network_cluster> item : items) {
+    private PairQueryable<VDSGroup, NetworkCluster> getItem(String clusterName) {
+        List<PairQueryable<VDSGroup, NetworkCluster>> items =
+                (List<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
+        for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
             if (item.getFirst().getname().equals(clusterName)) {
                 return item;
             }
@@ -227,7 +227,7 @@ public class NetworkClusterListModel extends SearchableListModel
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                NetworkClusterListModel.this.setItems((List<PairQueryable<VDSGroup, network_cluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                NetworkClusterListModel.this.setItems((List<PairQueryable<VDSGroup, NetworkCluster>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

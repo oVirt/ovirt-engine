@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,7 +31,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
     private Guid clusterId = Guid.NewGuid();
     private Network network = new Network();
     private VDSGroup cluster = new VDSGroup();
-    private network_cluster networkCluster = new network_cluster();
+    private NetworkCluster networkCluster = new NetworkCluster();
 
     @Test
     public void testExecuteQueryCommand() {
@@ -48,9 +48,9 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         setupVdsGroupDao();
         setupNetworkClusterDao();
 
-        PairQueryable<VDSGroup, network_cluster> networkClusterPair =
-                new PairQueryable<VDSGroup, network_cluster>(cluster, networkCluster);
-        List<PairQueryable<VDSGroup, network_cluster>> expected = Collections.singletonList(networkClusterPair);
+        PairQueryable<VDSGroup, NetworkCluster> networkClusterPair =
+                new PairQueryable<VDSGroup, NetworkCluster>(cluster, networkCluster);
+        List<PairQueryable<VDSGroup, NetworkCluster>> expected = Collections.singletonList(networkClusterPair);
 
         // Run the query
         GetVdsGroupsAndNetworksByNetworkIdQuery<NetworkIdParameters> query = getQuery();
@@ -74,7 +74,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
     }
 
     private void setupVdsGroupDao() {
-        List<network_cluster> expectedNetworkCluster = Collections.singletonList(networkCluster);
+        List<NetworkCluster> expectedNetworkCluster = Collections.singletonList(networkCluster);
         NetworkClusterDAO networkClusterDaoMock = mock(NetworkClusterDAO.class);
         when(networkClusterDaoMock.getAllForNetwork(networkId)).thenReturn(expectedNetworkCluster);
         when(getDbFacadeMockInstance().getNetworkClusterDao()).thenReturn(networkClusterDaoMock);

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -241,8 +241,8 @@ public class EditNetworkModel extends NetworkModel {
             return;
         }
 
-        // Init default network_cluster values (required, display, status)
-        getNetwork().setCluster(new network_cluster());
+        // Init default NetworkCluster values (required, display, status)
+        getNetwork().setCluster(new NetworkCluster());
 
         final ArrayList<VDSGroup> detachNetworkFromClusters =
                 Linq.Except(getOriginalClusters(), getnewClusters());

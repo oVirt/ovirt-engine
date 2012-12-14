@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Event;
@@ -455,8 +455,8 @@ public abstract class NetworkModel extends Model
             Network tempVar = new Network();
             tempVar.setId(networkId);
             tempVar.setname(network.getname());
-            // Init default network_cluster values (required, display, status)
-            tempVar.setCluster(new network_cluster());
+            // Init default NetworkCluster values (required, display, status)
+            tempVar.setCluster(new NetworkCluster());
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
         }
 

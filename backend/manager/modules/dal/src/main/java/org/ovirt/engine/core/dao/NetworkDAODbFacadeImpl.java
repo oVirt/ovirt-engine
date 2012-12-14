@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -129,7 +129,7 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         public Network mapRow(ResultSet rs, int rowNum) throws SQLException {
             Network entity = super.mapRow(rs, rowNum);
 
-            entity.setCluster(new network_cluster());
+            entity.setCluster(new NetworkCluster());
             entity.getCluster().setis_display((Boolean) rs.getObject("is_display"));
             entity.getCluster().setRequired(rs.getBoolean("required"));
             entity.getCluster().setstatus(NetworkStatus.forValue(rs.getInt("status")));

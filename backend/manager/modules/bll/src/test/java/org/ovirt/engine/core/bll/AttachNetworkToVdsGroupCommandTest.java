@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -132,7 +132,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     private void dbFacadeThrowOnNetworkClusterSave() {
         doThrow(new DataIntegrityViolationException("test violations")).when(networkClusterDAO)
-                .save(Matchers.<network_cluster> any(network_cluster.class));
+                .save(Matchers.<NetworkCluster> any(NetworkCluster.class));
     }
 
     private Network getNetwork() {

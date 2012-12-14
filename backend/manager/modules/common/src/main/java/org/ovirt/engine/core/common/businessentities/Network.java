@@ -81,7 +81,7 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     @ManyToOne
     @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
     inverseJoinColumns = @JoinColumn(name = "cluster_id"))
-    private network_cluster cluster;
+    private NetworkCluster cluster;
 
     private boolean vmNetwork = true;
 
@@ -106,7 +106,7 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.vmNetwork = vmNetwork;
     }
 
-    public network_cluster getCluster() {
+    public NetworkCluster getCluster() {
         return cluster;
     }
 
@@ -200,7 +200,7 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.storage_pool_id = value;
     }
 
-    public void setCluster(network_cluster cluster) {
+    public void setCluster(NetworkCluster cluster) {
         this.cluster = cluster;
     }
 

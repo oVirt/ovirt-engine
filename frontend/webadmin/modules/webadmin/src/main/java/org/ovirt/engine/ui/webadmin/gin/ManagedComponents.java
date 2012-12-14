@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -657,7 +657,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabNetworkClusterPresenter> getSubTabNetworkClusterPresenter();
 
-    SearchableDetailModelProvider<PairQueryable<VDSGroup, network_cluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
+    SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
 
     AsyncProvider<SubTabNetworkHostPresenter> getSubTabNetworkHostPresenter();
 

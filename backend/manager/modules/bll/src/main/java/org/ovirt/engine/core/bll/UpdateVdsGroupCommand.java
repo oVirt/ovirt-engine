@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.Config;
@@ -101,7 +101,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                                 .getValue());
                 for (Network net : storagePoolNets) {
                     if (StringUtils.equals(net.getname(), managementNetwork)) {
-                        getNetworkClusterDAO().save(new network_cluster(getVdsGroup().getId(), net.getId(),
+                        getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.Operational, true, true));
                     }
                 }

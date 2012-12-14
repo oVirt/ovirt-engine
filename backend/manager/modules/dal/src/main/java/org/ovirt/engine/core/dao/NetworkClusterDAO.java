@@ -3,11 +3,11 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>NetworkClusterDAO</code> defines a type for performing CRUD operations on instances of {@link network_cluster}.
+ * <code>NetworkClusterDAO</code> defines a type for performing CRUD operations on instances of {@link NetworkCluster}.
  *
  *
  */
@@ -20,14 +20,14 @@ public interface NetworkClusterDAO extends DAO {
      *            The id to look by (can't be <code>null</code>).
      * @return The entity instance, or <code>null</code> if not found.
      */
-    public network_cluster get(NetworkClusterId id);
+    public NetworkCluster get(NetworkClusterId id);
 
     /**
      * Retrieves all network clusters.
      *
      * @return the list of network clusters
      */
-    List<network_cluster> getAll();
+    List<NetworkCluster> getAll();
 
     /**
      * Retrieves all network clusters for the specified cluster.
@@ -36,7 +36,7 @@ public interface NetworkClusterDAO extends DAO {
      *            network cluster
      * @return the list of clusters
      */
-    List<network_cluster> getAllForCluster(Guid cluster);
+    List<NetworkCluster> getAllForCluster(Guid cluster);
 
     /**
      * Retrieves all network clusters for the specified network.
@@ -45,7 +45,7 @@ public interface NetworkClusterDAO extends DAO {
      *            the network
      * @return
      */
-    List<network_cluster> getAllForNetwork(Guid network);
+    List<NetworkCluster> getAllForNetwork(Guid network);
 
     /**
      * Saves the new network cluster.
@@ -53,7 +53,7 @@ public interface NetworkClusterDAO extends DAO {
      * @param cluster
      *            the network cluster
      */
-    void save(network_cluster cluster);
+    void save(NetworkCluster cluster);
 
     /**
      * Updates the network cluster.
@@ -61,7 +61,7 @@ public interface NetworkClusterDAO extends DAO {
      * @param cluster
      *            the network cluster
      */
-    void update(network_cluster cluster);
+    void update(NetworkCluster cluster);
 
     /**
      * Updates the network cluster status.
@@ -69,7 +69,7 @@ public interface NetworkClusterDAO extends DAO {
      * @param cluster
      *            the network cluster
      */
-    void updateStatus(network_cluster cluster);
+    void updateStatus(NetworkCluster cluster);
     /**
      * Removes the specified network from the specified cluster.
      *

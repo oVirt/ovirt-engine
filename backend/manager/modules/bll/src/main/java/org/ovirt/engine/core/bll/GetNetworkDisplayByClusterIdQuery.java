@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -18,10 +18,10 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
     @Override
     protected void executeQueryCommand() {
         Guid vdsgroupid = getParameters().getVdsGroupId();
-        List<network_cluster> all = DbFacade.getInstance().getNetworkClusterDao().getAllForCluster(vdsgroupid);
-        final network_cluster nc = LinqUtils.firstOrNull(all, new Predicate<network_cluster>() {
+        List<NetworkCluster> all = DbFacade.getInstance().getNetworkClusterDao().getAllForCluster(vdsgroupid);
+        final NetworkCluster nc = LinqUtils.firstOrNull(all, new Predicate<NetworkCluster>() {
             @Override
-            public boolean eval(network_cluster network_cluster) {
+            public boolean eval(NetworkCluster network_cluster) {
                 return network_cluster.getis_display();
             }
         });

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -84,7 +84,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             });
             if (net != null) {
                 DbFacade.getInstance().getNetworkClusterDao().save(
-                        new network_cluster(getParameters().getVdsGroup().getId(), net.getId(),
+                        new NetworkCluster(getParameters().getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.Operational, false, true));
             }
         }

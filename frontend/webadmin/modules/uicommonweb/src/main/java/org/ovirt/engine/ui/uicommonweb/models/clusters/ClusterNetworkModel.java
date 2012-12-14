@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network_cluster;
+import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
@@ -17,7 +17,7 @@ public class ClusterNetworkModel extends EntityModel {
         if (network.getCluster() == null){
             attached = false;
             // Init with default values
-            getEntity().setCluster(new network_cluster());
+            getEntity().setCluster(new NetworkCluster());
         }
         if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
             setManagement(true);
