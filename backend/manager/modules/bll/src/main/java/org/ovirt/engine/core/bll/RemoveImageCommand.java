@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
@@ -268,7 +268,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             removeImageFromDB(true);
         } else {
             getImageStorageDomainMapDao().remove(
-                    new image_storage_domain_map_id(getParameters().getImageId(),
+                    new ImageStorageDomainMapId(getParameters().getImageId(),
                             getParameters().getStorageDomainId()));
             unLockImage();
         }

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -157,7 +157,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             setSnapshotForShareableDisk(snapshots);
             for (DiskImage snapshot : snapshots) {
                 getImageStorageDomainMapDao().remove
-                        (new image_storage_domain_map_id(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
+                        (new ImageStorageDomainMapId(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
                 getImageStorageDomainMapDao().save
                         (new image_storage_domain_map(snapshot.getImageId(), getParameters().getStorageDomainId()));
             }
@@ -178,7 +178,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             if (getParameters().getAddImageDomainMapping()) {
                 // remove image-storage mapping
                 getImageStorageDomainMapDao().remove
-                        (new image_storage_domain_map_id(getParameters().getImageId(),
+                        (new ImageStorageDomainMapId(getParameters().getImageId(),
                                 getParameters().getStorageDomainId()));
             }
             revertTasks();

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -63,7 +63,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         for (DiskImage di : getDiskImageDao().getAllSnapshotsForImageGroup
                                 (getEnclosingCommand().getParameters().getImageGroupID())) {
                             getImageStorageDomainMapDao().remove
-                                    (new image_storage_domain_map_id(di.getImageId(),
+                                    (new ImageStorageDomainMapId(di.getImageId(),
                                             getEnclosingCommand().getParameters().getSourceStorageDomainId()));
                             getImageStorageDomainMapDao().save
                                     (new image_storage_domain_map(di.getImageId(),

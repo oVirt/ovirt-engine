@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
@@ -26,7 +26,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public void remove(image_storage_domain_map_id id) {
+    public void remove(ImageStorageDomainMapId id) {
         getCallsHandler().executeModification("Deleteimage_storage_domain_map",
                 getCustomMapSqlParameterSource().addValue("image_id",
                         id.getImageId()).addValue("storage_domain_id",
@@ -57,7 +57,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public image_storage_domain_map get(image_storage_domain_map_id id) {
+    public image_storage_domain_map get(ImageStorageDomainMapId id) {
         throw new UnsupportedOperationException();
     }
 

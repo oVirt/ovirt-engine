@@ -14,14 +14,14 @@ import org.ovirt.engine.core.compat.Guid;
 @Entity
 @Table(name = "image_storage_domain_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class image_storage_domain_map implements BusinessEntity<image_storage_domain_map_id> {
+public class image_storage_domain_map implements BusinessEntity<ImageStorageDomainMapId> {
     private static final long serialVersionUID = 8459502119344718863L;
 
     @EmbeddedId
     @AttributeOverrides({
             @AttributeOverride(name = "imageId", column = @Column(name = "image_id")),
             @AttributeOverride(name = "storageDomainId", column = @Column(name = "storage_domain_id")) })
-    private image_storage_domain_map_id id = new image_storage_domain_map_id();
+    private ImageStorageDomainMapId id = new ImageStorageDomainMapId();
 
 
     public image_storage_domain_map() {
@@ -79,12 +79,12 @@ public class image_storage_domain_map implements BusinessEntity<image_storage_do
     }
 
     @Override
-    public image_storage_domain_map_id getId() {
+    public ImageStorageDomainMapId getId() {
         return id;
     }
 
     @Override
-    public void setId(image_storage_domain_map_id id) {
+    public void setId(ImageStorageDomainMapId id) {
         this.id = id;
     }
 }

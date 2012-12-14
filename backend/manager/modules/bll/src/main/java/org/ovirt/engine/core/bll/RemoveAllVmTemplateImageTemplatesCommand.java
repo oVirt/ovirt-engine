@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -68,7 +68,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 }
 
                 DbFacade.getInstance().getImageStorageDomainMapDao().remove(
-                        new image_storage_domain_map_id(template.getImageId(), domain));
+                        new ImageStorageDomainMapId(template.getImageId(), domain));
                 noImagesRemovedYet = false;
             }
 

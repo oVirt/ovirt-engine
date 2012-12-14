@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @Embeddable
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class image_storage_domain_map_id implements Serializable {
+public class ImageStorageDomainMapId implements Serializable {
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -30,7 +30,7 @@ public class image_storage_domain_map_id implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        image_storage_domain_map_id other = (image_storage_domain_map_id) obj;
+        ImageStorageDomainMapId other = (ImageStorageDomainMapId) obj;
         if (imageId == null) {
             if (other.imageId != null)
                 return false;
@@ -68,10 +68,10 @@ public class image_storage_domain_map_id implements Serializable {
         this.imageId = imageId;
     }
 
-    public image_storage_domain_map_id() {
+    public ImageStorageDomainMapId() {
     }
 
-    public image_storage_domain_map_id(Guid imageId, Guid storageDomainId) {
+    public ImageStorageDomainMapId(Guid imageId, Guid storageDomainId) {
         this.imageId = imageId;
         this.storageDomainId = storageDomainId;
     }

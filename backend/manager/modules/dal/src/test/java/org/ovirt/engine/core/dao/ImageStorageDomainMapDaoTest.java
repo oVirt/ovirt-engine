@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map_id;
+import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
@@ -71,7 +71,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testRemoveById() {
-        dao.remove(new image_storage_domain_map_id(EXISTING_IMAGE_ID, EXISTING_DOMAIN_ID));
+        dao.remove(new ImageStorageDomainMapId(EXISTING_IMAGE_ID, EXISTING_DOMAIN_ID));
         List<image_storage_domain_map> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
         for (image_storage_domain_map entry : entries) {
             assertFalse(entry.getstorage_domain_id().equals(EXISTING_DOMAIN_ID));
