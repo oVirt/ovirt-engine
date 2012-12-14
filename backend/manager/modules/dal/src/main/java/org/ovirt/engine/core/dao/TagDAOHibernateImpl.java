@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
-import org.ovirt.engine.core.common.businessentities.tags_vds_map;
+import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMapId;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
@@ -165,12 +165,12 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public tags_vds_map getTagVdsByTagIdAndByVdsId(Guid tagId, Guid vdsId) {
+    public TagsVdsMap getTagVdsByTagIdAndByVdsId(Guid tagId, Guid vdsId) {
         return tagVdsMapDAO.findOneByCriteria(Restrictions.eq("id.tagId", tagId), Restrictions.eq("id.vdsId", vdsId));
     }
 
     @Override
-    public void attachVdsToTag(tags_vds_map tagVdsMap) {
+    public void attachVdsToTag(TagsVdsMap tagVdsMap) {
         tagVdsMapDAO.save(tagVdsMap);
     }
 
@@ -180,13 +180,13 @@ public class TagDAOHibernateImpl extends BaseDAOHibernateImpl<tags, Guid> implem
     }
 
     @Override
-    public List<tags_vds_map> getTagVdsMapByTagName(String tagName) {
+    public List<TagsVdsMap> getTagVdsMapByTagName(String tagName) {
         tags tag = getByName(tagName);
 
         if (tag != null) {
             return tagVdsMapDAO.findByCriteria(Restrictions.eq("id.tagId", tag.gettag_id()));
         } else {
-            return new ArrayList<tags_vds_map>();
+            return new ArrayList<TagsVdsMap>();
         }
     }
 

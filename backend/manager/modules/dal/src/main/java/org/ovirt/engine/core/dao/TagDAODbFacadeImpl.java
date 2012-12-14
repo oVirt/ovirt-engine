@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
-import org.ovirt.engine.core.common.businessentities.tags_vds_map;
+import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.common.businessentities.tags_vm_pool_map;
 import org.ovirt.engine.core.compat.Guid;
@@ -334,14 +334,14 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public tags_vds_map getTagVdsByTagIdAndByVdsId(Guid tagId, Guid vdsId) {
+    public TagsVdsMap getTagVdsByTagIdAndByVdsId(Guid tagId, Guid vdsId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id", tagId).addValue(
                 "vds_id", vdsId);
 
-        ParameterizedRowMapper<tags_vds_map> mapper = new ParameterizedRowMapper<tags_vds_map>() {
+        ParameterizedRowMapper<TagsVdsMap> mapper = new ParameterizedRowMapper<TagsVdsMap>() {
             @Override
-            public tags_vds_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vds_map entity = new tags_vds_map();
+            public TagsVdsMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVdsMap entity = new TagsVdsMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvds_id(Guid.createGuidFromString(rs.getString("vds_id")));
                 return entity;
@@ -353,7 +353,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     }
 
     @Override
-    public void attachVdsToTag(tags_vds_map tagVdsMap) {
+    public void attachVdsToTag(TagsVdsMap tagVdsMap) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_id",
                 tagVdsMap.gettag_id()).addValue("vds_id", tagVdsMap.getvds_id());
 
@@ -372,13 +372,13 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<tags_vds_map> getTagVdsMapByTagName(String tagName) {
+    public List<TagsVdsMap> getTagVdsMapByTagName(String tagName) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("tag_name", tagName);
 
-        ParameterizedRowMapper<tags_vds_map> mapper = new ParameterizedRowMapper<tags_vds_map>() {
+        ParameterizedRowMapper<TagsVdsMap> mapper = new ParameterizedRowMapper<TagsVdsMap>() {
             @Override
-            public tags_vds_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                tags_vds_map entity = new tags_vds_map();
+            public TagsVdsMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                TagsVdsMap entity = new TagsVdsMap();
                 entity.settag_id(Guid.createGuidFromString(rs.getString("tag_id")));
                 entity.setvds_id(Guid.createGuidFromString(rs.getString("vds_id")));
                 return entity;

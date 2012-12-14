@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
-import org.ovirt.engine.core.common.businessentities.tags_vds_map;
+import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,8 +36,8 @@ public class TagDAOTest extends BaseDAOTestCase {
     private Guid vm;
     private TagsUserGroupMap existingUserGroupTag;
     private TagsUserMap existingUserTag;
-    private tags_vds_map existingVdsTag;
-    private tags_vds_map newVdsTag;
+    private TagsVdsMap existingVdsTag;
+    private TagsVdsMap newVdsTag;
     private tags_vm_map existingVmTag;
     private tags_vm_map newVmTag;
     private Guid vmPool;
@@ -68,7 +68,7 @@ public class TagDAOTest extends BaseDAOTestCase {
         existingUserTag = dao.getTagUserByTagIdAndByuserId(EXISTING_TAG_ID, EXISTING_USER_ID);
 
         existingVdsTag = dao.getTagVdsByTagIdAndByVdsId(EXISTING_TAG_ID, EXISTING_VDS_ID);
-        newVdsTag = new tags_vds_map(EXISTING_TAG_ID, FREE_VDS_ID);
+        newVdsTag = new TagsVdsMap(EXISTING_TAG_ID, FREE_VDS_ID);
 
         existingVmTag = dao.getTagVmByTagIdAndByVmId(EXISTING_TAG_ID, EXISTING_VM_ID);
         newVmTag = new tags_vm_map(EXISTING_TAG_ID, FREE_VM_ID);
@@ -401,13 +401,13 @@ public class TagDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetTagVdsMap() {
-        tags_vds_map result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
 
         assertNotNull(result);
         assertEqualsTagsVdsMap(existingVdsTag,result);
     }
 
-    private void assertEqualsTagsVdsMap(tags_vds_map existing, tags_vds_map result) {
+    private void assertEqualsTagsVdsMap(TagsVdsMap existing, TagsVdsMap result) {
         assertEquals("Tag ID is not equal",existing.gettag_id(), result.gettag_id());
         assertEquals("VDS ID is not equal",existing.getvds_id(), result.getvds_id());
         assertEquals("Object equation",existing,result);
@@ -417,7 +417,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void testAttachVdsToTag() {
         dao.attachVdsToTag(newVdsTag);
 
-        tags_vds_map result = dao.getTagVdsByTagIdAndByVdsId(newVdsTag.gettag_id(), newVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(newVdsTag.gettag_id(), newVdsTag.getvds_id());
 
         assertNotNull(result);
         assertEqualsTagsVdsMap(newVdsTag,result);
@@ -427,18 +427,18 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void testDetachVdsFromTag() {
         dao.detachVdsFromTag(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
 
-        tags_vds_map result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
+        TagsVdsMap result = dao.getTagVdsByTagIdAndByVdsId(existingVdsTag.gettag_id(), existingVdsTag.getvds_id());
 
         assertNull(result);
     }
 
     @Test
     public void testGetTagVdsMapByTagName() {
-        List<tags_vds_map> result = dao.getTagVdsMapByTagName(existingTag.gettag_name());
+        List<TagsVdsMap> result = dao.getTagVdsMapByTagName(existingTag.gettag_name());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (tags_vds_map mapping : result) {
+        for (TagsVdsMap mapping : result) {
             assertEquals(existingTag.gettag_id(), mapping.gettag_id());
         }
     }
