@@ -25,7 +25,7 @@ public class tags_vm_map implements Serializable {
     @AttributeOverrides({
             @AttributeOverride(name = "tagId", column = @Column(name = "tag_id")),
             @AttributeOverride(name = "vmId", column = @Column(name = "vm_id")) })
-    private tags_vm_map_id id = new tags_vm_map_id();
+    private TagsVmMapId id = new TagsVmMapId();
 
     @Column(name = "defaultdisplaytype")
     private Integer defaultDisplayType = 0;

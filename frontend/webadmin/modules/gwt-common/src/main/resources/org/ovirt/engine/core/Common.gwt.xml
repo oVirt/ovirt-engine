@@ -149,7 +149,7 @@
 		<include name="common/businessentities/AsyncTasks.java" />
 		<include name="common/businessentities/NonOperationalReason.java" />
 		<include name="common/businessentities/MigrateOnErrorOptions.java" />
-		<include name="common/businessentities/tags_vm_map_id.java" />
+		<include name="common/businessentities/TagsVmMapId.java" />
 		<include name="common/businessentities/FileRepoMetaData.java" />
 		<include name="common/businessentities/RepoFileMetaData.java" />
 		<include name="common/businessentities/FileTypeExtension.java" />

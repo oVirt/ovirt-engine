@@ -4,11 +4,11 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import org.ovirt.engine.core.common.businessentities.tags_vm_map;
-import org.ovirt.engine.core.common.businessentities.tags_vm_map_id;
+import org.ovirt.engine.core.common.businessentities.TagsVmMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class TagVmMapDAO extends BaseDAOHibernateImpl<tags_vm_map, tags_vm_map_id> {
+public class TagVmMapDAO extends BaseDAOHibernateImpl<tags_vm_map, TagsVmMapId> {
     public TagVmMapDAO() {
         super(tags_vm_map.class);
     }
