@@ -341,6 +341,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. At least one of the VMs is not down.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} must be in status Down or Up.")
+    String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM is in saving/restoring state.\n-Please wait until the VM's status has changed.")
     String ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING();
 
@@ -406,6 +409,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Low disk space on relevant Storage Domain.")
     String ACTION_TYPE_FAILED_DISK_SPACE_LOW();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Low disk space on target Storage Domain ${storageName}.")
+    String ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN();
 
     @DefaultStringValue("Cannot ${action} ${type}. Dedicated Host Cluster is not identical to VM Cluster.")
     String ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER();
@@ -1985,14 +1991,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} to a Snapshot that is not being previewed. Please select the correct Snapshot to restore to: Either the one being previewed, or the one before the preview.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} a floating ${type}. This operation is not supported.")
+    @DefaultStringValue("Cannot ${action} a floating ${type} (${diskAliases}). This operation is not supported.")
     String ACTION_TYPE_FAILED_FLOATING_DISK_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} a shareable ${type}. This operation is not supported.")
+    @DefaultStringValue("Cannot ${action} a shareable ${type} (${diskAliases}). This operation is not supported.")
     String ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified disk does not exist.")
     String ACTION_TYPE_FAILED_DISK_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No disks have been specified.")
+    String ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The selected disk is not a template disk. Only template disks can be copied.")
     String ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK();

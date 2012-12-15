@@ -1011,7 +1011,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 Linq.<Disk> Cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk) || !disk.getPlugged()) {
+            if (!isImageDiskOK(disk)) {
                 return false;
             }
         }

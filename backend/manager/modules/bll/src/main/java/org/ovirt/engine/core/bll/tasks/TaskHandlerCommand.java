@@ -18,6 +18,8 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     ExecutionContext getExecutionContext();
 
+    void setExecutionContext(ExecutionContext executionContext);
+
     Guid createTask(AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             VdcObjectType entityType,

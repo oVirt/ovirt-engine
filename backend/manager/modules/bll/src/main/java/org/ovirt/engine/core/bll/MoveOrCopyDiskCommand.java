@@ -150,7 +150,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         boolean retValue = true;
         if (!isStorageDomainSpaceBelowThresholds()) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
+            addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", getStorageDomain().getstorage_name()));
         }
 
         if (retValue) {
@@ -275,9 +276,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             setSucceeded(false);
             getReturnValue().setFault(vdcRetValue.getFault());
         } else {
+            setSucceeded(true);
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
         }
-        setSucceeded(true);
     }
 
     @Override
@@ -311,7 +312,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
 
             addStoragePermissionByQuotaMode(permsList,
-                    getParameters().getStoragePoolId(),
+                    getStoragePoolId().getValue(),
                     getParameters().getStorageDomainId());
         }
         return permsList;
@@ -430,6 +431,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             jobProperties = super.getJobMessageProperties();
             jobProperties.put("sourcesd", sourceSDName);
             jobProperties.put("targetsd", getStorageDomainName());
+            jobProperties.put("diskalias", getDiskAlias());
             if (ImageOperation.Move == getParameters().getOperation()) {
                 jobProperties.put("action", "Moving");
             } else {

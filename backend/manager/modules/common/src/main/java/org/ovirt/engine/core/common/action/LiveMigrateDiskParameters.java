@@ -8,12 +8,21 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
     private static final long serialVersionUID = 962820715327420896L;
 
     public LiveMigrateDiskParameters() {
-        // Empty constructor for serializing in deseriazlizing
+        // Empty constructor for serializing / deserializing
     }
 
-    public LiveMigrateDiskParameters(Guid imageId, NGuid sourceDomainId, Guid destDomainId, Guid vmId) {
+    public LiveMigrateDiskParameters(Guid imageId, NGuid sourceDomainId, Guid destDomainId, Guid vmId, Guid quotaId) {
         super(imageId, sourceDomainId, destDomainId, ImageOperation.Move);
         setVmId(vmId);
+        setQuotaId(quotaId);
+    }
+
+    public Guid getSourceStorageDomainId() {
+        return getSourceDomainId().getValue();
+    }
+
+    public Guid getTargetStorageDomainId() {
+        return getStorageDomainId();
     }
 
     private Guid vmId;
@@ -24,14 +33,6 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
 
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
-    }
-
-    public Guid getSourceStorageDomainId() {
-        return getSourceDomainId().getValue();
-    }
-
-    public Guid getTargetStorageDomainId() {
-        return getStorageDomainId();
     }
 
 }

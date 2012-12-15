@@ -18,18 +18,14 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implements ICommandTarget
 {
@@ -248,15 +244,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return null;
     }
 
-    private void OnMove() {
-        OnMoveOrCopy();
-    }
-
-    private void OnCopy() {
-        OnMoveOrCopy();
-    }
-
-    protected void OnMoveOrCopy() {
+    protected void OnExecute() {
         if (this.getProgress() != null)
         {
             return;
@@ -266,6 +254,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             return;
         }
 
+        StartProgress(null);
+    }
+
+    protected ArrayList<VdcActionParametersBase> getParameters() {
         boolean iSingleStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity();
 
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
@@ -305,18 +297,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             }
         }
 
-        StartProgress(null);
-
-        Frontend.RunMultipleAction(getActionType(), parameters,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendMultipleActionAsyncResult result) {
-                        MoveOrCopyDiskModel localModel = (MoveOrCopyDiskModel) result.getState();
-                        localModel.StopProgress();
-                        ListModel listModel = (ListModel) localModel.getEntity();
-                        listModel.setWindow(null);
-                    }
-                }, this);
+        return parameters;
     }
 
     protected void addMoveOrCopyParameters(ArrayList<VdcActionParametersBase> parameters,
@@ -335,13 +316,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnMove")) //$NON-NLS-1$
+        if (StringHelper.stringsEqual(command.getName(), "OnMove") || //$NON-NLS-1$
+                StringHelper.stringsEqual(command.getName(), "OnCopy")) //$NON-NLS-1$
         {
-            OnMove();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnCopy")) //$NON-NLS-1$
-        {
-            OnCopy();
+            OnExecute();
         }
     }
 
@@ -353,11 +331,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         boolean isValid = true;
         for (DiskModel diskModel : getDisks()) {
-            diskModel.getQuota().ValidateSelectedItem(new IValidation[]{new SelectedQuotaValidation()});
+            diskModel.getQuota().ValidateSelectedItem(new IValidation[] { new SelectedQuotaValidation() });
             isValid &= diskModel.getQuota().getIsValid();
         }
 
         return isValid;
     }
 }
-

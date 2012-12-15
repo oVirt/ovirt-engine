@@ -225,7 +225,8 @@ public enum VdcActionType {
     ConnectAllHostsToLun(1008, QuotaDependency.NONE),
     AddPosixFsStorageDomain(1009, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     LiveMigrateDisk(1010, QuotaDependency.NONE),
-    MoveDisk(1011, QuotaDependency.STORAGE),
+    LiveMigrateVmDisks(1011, false, QuotaDependency.STORAGE),
+    MoveDisks(1012, false, QuotaDependency.NONE),
     // Event Notification
     AddEventSubscription(1100, QuotaDependency.NONE),
     RemoveEventSubscription(1101, QuotaDependency.NONE),

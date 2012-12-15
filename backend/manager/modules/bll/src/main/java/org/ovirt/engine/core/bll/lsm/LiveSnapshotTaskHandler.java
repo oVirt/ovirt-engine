@@ -5,10 +5,11 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
+import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -17,12 +18,15 @@ import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
-    private final TaskHandlerCommand<? extends LiveMigrateDiskParameters> enclosingCommand;
+    private final TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand;
+    protected Log log = LogFactory.getLog(getClass());
 
-    public LiveSnapshotTaskHandler(TaskHandlerCommand<? extends LiveMigrateDiskParameters> enclosingCommand) {
+    public LiveSnapshotTaskHandler(TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
     }
 
@@ -31,30 +35,35 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         if (enclosingCommand.getParameters().getTaskGroupSuccess()) {
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
-                            getCreateSnapshotParameters(),
-                            ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext()));
+                    getCreateSnapshotParameters(),
+                    ExecutionHandler.createInternalJobContext());
             enclosingCommand.getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
         }
-
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
     @Override
     public void endSuccessfully() {
-        updateDestinitationImageId();
         endCreateAllSnapshots();
-        ImagesHandler.updateImageStatus(enclosingCommand.getParameters().getDestinationImageId(), ImageStatus.LOCKED);
+
+        for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
+            updateDestinitationImageId(parameters);
+            ImagesHandler.updateImageStatus(parameters.getDestinationImageId(), ImageStatus.LOCKED);
+        }
+
+        ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), true);
+        enclosingCommand.setExecutionContext(null);
     }
 
-    private void updateDestinitationImageId() {
+    private void updateDestinitationImageId(LiveMigrateDiskParameters parameters) {
         Image oldLeaf =
-                DbFacade.getInstance().getImageDao().get(enclosingCommand.getParameters().getImageId());
+                DbFacade.getInstance().getImageDao().get(parameters.getImageId());
         List<DiskImage> allImages =
                 DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(oldLeaf.getDiskId());
 
         for (DiskImage image : allImages) {
             if (image.getImage().isActive()) {
-                enclosingCommand.getParameters().setDestinationImageId(image.getImageId());
+                parameters.setDestinationImageId(image.getImageId());
                 break;
             }
         }
@@ -68,16 +77,23 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endWithFailure() {
-        updateDestinitationImageId();
+        for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
+            updateDestinitationImageId(parameters);
+        }
         endCreateAllSnapshots();
+
+        ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), false);
+        enclosingCommand.setExecutionContext(null);
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
     @Override
     public void compensate() {
         // Unlock the image we left locked
-        ImagesHandler.updateImageStatus(enclosingCommand.getParameters().getImageId(), ImageStatus.OK);
-        ImagesHandler.updateImageStatus(enclosingCommand.getParameters().getDestinationImageId(), ImageStatus.OK);
+        for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
+            ImagesHandler.updateImageStatus(parameters.getImageId(), ImageStatus.OK);
+            ImagesHandler.updateImageStatus(parameters.getDestinationImageId(), ImageStatus.OK);
+        }
     }
 
     @Override
@@ -94,11 +110,9 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
-                (enclosingCommand.getParameters().getVmId(),
-                        "Auto-generated for Live Storage Migration of "
-                                + enclosingCommand.getParameters().getDiskAlias());
+                (enclosingCommand.getParameters().getVmId(), "Auto-generated for Live Storage Migration");
 
-        params.setParentCommand(VdcActionType.LiveMigrateDisk);
+        params.setParentCommand(VdcActionType.LiveMigrateVmDisks);
         params.setSnapshotType(SnapshotType.REGULAR);
         params.setParentParameters(enclosingCommand.getParameters());
         params.setImagesParameters(enclosingCommand.getParameters().getImagesParameters());

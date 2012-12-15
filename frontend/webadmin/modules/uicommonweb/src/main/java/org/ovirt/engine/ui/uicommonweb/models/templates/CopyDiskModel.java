@@ -12,13 +12,17 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class CopyDiskModel extends MoveOrCopyDiskModel
 {
@@ -132,6 +136,22 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
                 sourceStorageDomainGuid,
                 destStorageDomainGuid,
                 ImageOperation.Copy);
+    }
+
+    @Override
+    protected void OnExecute() {
+        super.OnExecute();
+
+        Frontend.RunMultipleAction(getActionType(), getParameters(),
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+                        CopyDiskModel localModel = (CopyDiskModel) result.getState();
+                        localModel.StopProgress();
+                        ListModel listModel = (ListModel) localModel.getEntity();
+                        listModel.setWindow(null);
+                    }
+                }, this);
     }
 
 }

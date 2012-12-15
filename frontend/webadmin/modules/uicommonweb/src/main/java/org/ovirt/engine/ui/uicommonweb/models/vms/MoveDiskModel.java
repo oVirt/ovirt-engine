@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
+import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -12,12 +14,16 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel
 {
@@ -103,7 +109,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
 
     @Override
     protected VdcActionType getActionType() {
-        return VdcActionType.MoveDisk;
+        return VdcActionType.MoveDisks;
     }
 
     @Override
@@ -115,4 +121,20 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
                 destStorageDomainGuid);
     }
 
+    @Override
+    protected void OnExecute() {
+        super.OnExecute();
+
+        MoveDisksParameters parameters = new MoveDisksParameters((List) getParameters());
+        Frontend.RunAction(getActionType(), parameters,
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+                        MoveDiskModel localModel = (MoveDiskModel) result.getState();
+                        localModel.StopProgress();
+                        ListModel listModel = (ListModel) localModel.getEntity();
+                        listModel.setWindow(null);
+                    }
+                }, this);
+    }
 }

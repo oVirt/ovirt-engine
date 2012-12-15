@@ -5,9 +5,11 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.SyncImageGroupDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -30,7 +32,15 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
                         getEnclosingCommand().getParameters().getImageGroupID(),
                         getEnclosingCommand().getParameters().getDestinationImageId()
                 );
-        ResourceManager.getInstance().runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
+        VDSReturnValue ret =
+                ResourceManager.getInstance().runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
+
+        if (!ret.getSucceeded()) {
+            log.errorFormat("Failed VmReplicateDiskStart (Disk {0} , VM {1})",
+                    getEnclosingCommand().getParameters().getImageGroupID(),
+                    getEnclosingCommand().getParameters().getVmId());
+            throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
+        }
     }
 
     @Override

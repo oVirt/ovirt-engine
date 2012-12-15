@@ -9,8 +9,9 @@ import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -51,6 +52,12 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
             moveDiskInDB();
             ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(),
                     ImageStatus.OK);
+        }
+        else {
+            log.errorFormat("Failed VmReplicateDiskFinish (Disk {0} , VM {1})",
+                    getEnclosingCommand().getParameters().getImageGroupID(),
+                    getEnclosingCommand().getParameters().getVmId());
+            throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
         }
     }
 
@@ -102,6 +109,16 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
     }
 
     @Override
+    public void endWithFailure() {
+        super.endWithFailure();
+
+        // Preventing rollback on DeleteImageGroup failure
+        if (getEnclosingCommand().getReturnValue().getSucceeded()) {
+            getEnclosingCommand().getParameters().setExecutionIndex(0);
+        }
+    }
+
+    @Override
     protected VdcObjectType getTaskObjectType() {
         return VdcObjectType.VM;
     }
@@ -138,4 +155,5 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         // No revert task - reverting is handled in the previous handler
         return null;
     }
+
 }

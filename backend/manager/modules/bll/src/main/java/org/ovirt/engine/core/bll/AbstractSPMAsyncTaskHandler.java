@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -9,8 +10,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?>> implements SPMAsyncTaskHandler {
+
+    protected Log log = LogFactory.getLog(getClass());
 
     private final C cmd;
 
@@ -34,7 +39,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
             addTask(Backend.getInstance().getResourceManager()
                     .RunVdsCommand(getVDSCommandType(), getVDSParameters()));
         }
-
+        ExecutionHandler.setAsyncJob(getEnclosingCommand().getExecutionContext(), true);
         getReturnValue().setSucceeded(true);
     }
 

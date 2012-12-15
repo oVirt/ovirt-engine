@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.lsm;
 
 import org.ovirt.engine.core.bll.AbstractSPMAsyncTaskHandler;
+import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.TargetDomainImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -54,7 +56,9 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
 
     @Override
     protected void revertTask() {
-        // No op reverting in the database side
+        // Unlock the image we left locked
+        ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getImageId(), ImageStatus.OK);
+        ImagesHandler.updateImageStatus(getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.OK);
     }
 
     @Override
