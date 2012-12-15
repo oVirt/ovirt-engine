@@ -92,6 +92,7 @@ import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
 import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
 import org.ovirt.engine.core.dao.VmPoolDAO;
@@ -872,5 +873,14 @@ public class DbFacade {
 
     public int getConnectionCheckInterval() {
         return connectionCheckInterval;
+    }
+
+    /**
+     * Returns the singleton instance of {@link VmGuestAgentInterfaceDao}.
+     *
+     * @return the dao
+     */
+    public VmGuestAgentInterfaceDao getVmGuestAgentInterfaceDao() {
+        return getDao(VmGuestAgentInterfaceDao.class);
     }
 }

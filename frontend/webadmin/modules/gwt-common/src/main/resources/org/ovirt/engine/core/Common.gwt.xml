@@ -156,6 +156,7 @@
 		<include name="common/businessentities/BusinessEntityGuidComparator.java" />
 		<include name="common/businessentities/BusinessEntityComparator.java" />
                 <include name="common/businessentities/Identifiable.java" />
+		<include name="common/businessentities/VmGuestAgentInterface.java" />
 		<include name="common/job/*.java" />
 
 		<!-- Quota -->

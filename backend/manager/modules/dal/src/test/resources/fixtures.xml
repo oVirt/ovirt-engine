@@ -2585,6 +2585,28 @@
         </row>
     </table>
 
+    <table name="vm_guest_agent_interfaces">
+        <column>vm_id</column>
+        <column>interface_name</column>
+        <column>mac_address</column>
+        <column>ipv4_addresses</column>
+        <column>ipv6_addresses</column>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>p1p2</value>
+            <value>BB:BB:BB:BB:BB:BB</value>
+            <value>12.12.12.12,23.23.23.23</value>
+            <value>AAAA:AAAA:AAAA:AAAA:AAAA:AAAA,AAAA:AAAA:AAAA:AAAA:AAAA:BBBB</value>
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>p1p3</value>
+            <value>CC:BB:BB:BB:BB:BB</value>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
     <table name="vm_interface">
         <column>id</column>
         <column>network_name</column>

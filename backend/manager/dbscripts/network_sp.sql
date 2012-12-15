@@ -6,7 +6,6 @@
 
 
 
-
 Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_description VARCHAR(4000) ,
 	v_id UUID,
@@ -597,6 +596,47 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+
+
+----------------------------------------------------------------
+-- [network_cluster] Table
+--
+Create or replace FUNCTION GetVmGuestAgentInterfacesByVmId(v_vm_id UUID, v_user_id UUID, v_filtered BOOLEAN)
+RETURNS SETOF vm_guest_agent_interfaces
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM vm_guest_agent_interfaces
+   WHERE vm_id = v_vm_id
+   AND (NOT v_filtered OR EXISTS (SELECT 1
+                                  FROM   user_vm_permissions_view
+                                  WHERE  user_id = v_user_id AND entity_id = v_vm_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION DeleteVmGuestAgentInterfacesByVmId(v_vm_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM vm_guest_agent_interfaces
+   WHERE vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION InsertVmGuestAgentInterface(v_vm_id UUID,
+   v_interface_name VARCHAR(50),
+   v_mac_address VARCHAR(59),
+   v_ipv4_addresses text,
+   v_ipv6_addresses text)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO vm_guest_agent_interfaces(vm_id, interface_name, mac_address, ipv4_addresses, ipv6_addresses)
+       VALUES(v_vm_id, v_interface_name, v_mac_address, v_ipv4_addresses, v_ipv6_addresses);
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 ----------------------------------------------------------------
