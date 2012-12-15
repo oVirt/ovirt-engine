@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -95,18 +95,18 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
 
     // TODO APIS to be moved to hibernate relationships
 
-    vm_pool_map getVmPoolMapByVmGuid(Guid vmId);
+    VmPoolMap getVmPoolMapByVmGuid(Guid vmId);
 
-    void addVmToPool(vm_pool_map map);
+    void addVmToPool(VmPoolMap map);
 
-    List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId);
+    List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId);
 
     /**
      * Gets the maps of the given pool, for the Vms that are in the given status
      * @param vmPoolId
      * @return
      */
-    List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus);
+    List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus);
 
     /**
      * Returns a single VM from the vm pool with the specified id, with optional filtering.

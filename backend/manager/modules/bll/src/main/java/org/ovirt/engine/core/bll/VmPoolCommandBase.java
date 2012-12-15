@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -82,10 +82,10 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
-            for (vm_pool_map map : vmPoolMaps) {
+            for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachNonPrestartedVmToUser(map.getvm_guid())) {
                     return map.getvm_guid();
                 }
@@ -95,10 +95,10 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static Guid getPrestartedVmToAttach(NGuid vmPoolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
-            for (vm_pool_map map : vmPoolMaps) {
+            for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachPrestartedVmToUser(map.getvm_guid())) {
                     return map.getvm_guid();
                 }
@@ -108,11 +108,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
         int prestartedVmsInPool = 0;
         if (vmPoolMaps != null) {
-            for (vm_pool_map map : vmPoolMaps) {
+            for (VmPoolMap map : vmPoolMaps) {
                 if (canAttachPrestartedVmToUser(map.getvm_guid())) {
                     prestartedVmsInPool++;
                 }
@@ -121,7 +121,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return prestartedVmsInPool;
     }
 
-    protected static List<vm_pool_map> getListOfVmsInPool(NGuid poolId) {
+    protected static List<VmPoolMap> getListOfVmsInPool(NGuid poolId) {
         return DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(poolId);
     }
 

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -109,22 +109,22 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
     }
 
     @Override
-    public vm_pool_map getVmPoolMapByVmGuid(Guid vmId) {
+    public VmPoolMap getVmPoolMapByVmGuid(Guid vmId) {
         return vmPoolMapDAO.getByVmGuid(vmId);
     }
 
     @Override
-    public void addVmToPool(vm_pool_map map) {
+    public void addVmToPool(VmPoolMap map) {
         vmPoolMapDAO.save(map);
     }
 
     @Override
-    public List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
+    public List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
         return vmPoolMapDAO.getVmPoolsMapByVmPoolId(vmPoolId);
     }
 
     @Override
-    public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
+    public List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
         // TODO Auto-generated method stub
         return null;
     }

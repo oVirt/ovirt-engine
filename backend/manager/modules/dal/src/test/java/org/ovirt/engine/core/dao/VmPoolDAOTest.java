@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -27,8 +27,8 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     private vm_pools existingVmPool;
     private vm_pools deletableVmPool;
     private vm_pools newVmPool;
-    private vm_pool_map newVmPoolMap;
-    private vm_pool_map existingVmPoolMap;
+    private VmPoolMap newVmPoolMap;
+    private VmPoolMap existingVmPoolMap;
 
     @Override
     public void setUp() throws Exception {
@@ -46,7 +46,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
         existingVmPoolMap = dao.getVmPoolMapByVmGuid(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         newVmPoolMap =
-                new vm_pool_map(FREE_VM_ID, existingVmPool.getvm_pool_id());
+                new VmPoolMap(FREE_VM_ID, existingVmPool.getvm_pool_id());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
         assertEquals(before - 1, after);
 
-        vm_pool_map result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
+        VmPoolMap result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
 
         assertNull(result);
     }
@@ -206,7 +206,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetVmPoolMap() {
-        vm_pool_map result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
+        VmPoolMap result = dao.getVmPoolMapByVmGuid(EXISTING_VM_ID);
 
         assertNotNull(result);
         assertEquals(existingVmPoolMap, result);
@@ -222,7 +222,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
         assertEquals(before + 1, after);
 
-        vm_pool_map result = dao.getVmPoolMapByVmGuid(newVmPoolMap.getvm_guid());
+        VmPoolMap result = dao.getVmPoolMapByVmGuid(newVmPoolMap.getvm_guid());
 
         assertNotNull(result);
         assertEquals(newVmPoolMap, result);
@@ -230,7 +230,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetVmMapsInVmPoolByVmPoolIdAndStatus() {
-        List<vm_pool_map> result = dao.getVmMapsInVmPoolByVmPoolIdAndStatus(
+        List<VmPoolMap> result = dao.getVmMapsInVmPoolByVmPoolIdAndStatus(
                 existingVmPool.getvm_pool_id(), VMStatus.MigratingFrom);
 
         assertNotNull(result);

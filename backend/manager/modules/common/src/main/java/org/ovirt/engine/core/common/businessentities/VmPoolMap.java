@@ -17,13 +17,13 @@ import org.ovirt.engine.core.compat.NGuid;
 @Entity
 @Table(name = "vm_pool_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class vm_pool_map implements Serializable {
+public class VmPoolMap implements Serializable {
     private static final long serialVersionUID = 5876397644156138863L;
 
-    public vm_pool_map() {
+    public VmPoolMap() {
     }
 
-    public vm_pool_map(Guid vm_guid, NGuid vm_pool_id) {
+    public VmPoolMap(Guid vm_guid, NGuid vm_pool_id) {
         this.vmId = vm_guid;
         this.vmPoolId = vm_pool_id;
     }
@@ -70,7 +70,7 @@ public class vm_pool_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        vm_pool_map other = (vm_pool_map) obj;
+        VmPoolMap other = (VmPoolMap) obj;
         if (vmId == null) {
             if (other.vmId != null)
                 return false;

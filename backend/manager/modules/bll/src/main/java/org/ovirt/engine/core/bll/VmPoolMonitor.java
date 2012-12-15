@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -68,13 +68,13 @@ public class VmPoolMonitor {
      */
     private void prestartVms(Guid vmPoolId, int numOfVmsToPrestart) {
         // Fetch all vms that are in status down
-        List<vm_pool_map> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
+        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
                 .getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         int failedAttempts = 0;
         int prestartedVmsCounter = 0;
         final int maxFailedAttempts = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorMaxAttempts);
         if (vmPoolMaps != null && vmPoolMaps.size() > 0) {
-            for (vm_pool_map map : vmPoolMaps) {
+            for (VmPoolMap map : vmPoolMaps) {
                 if (failedAttempts < maxFailedAttempts && prestartedVmsCounter < numOfVmsToPrestart) {
                     if (prestartVm(map.getvm_guid())) {
                         prestartedVmsCounter++;

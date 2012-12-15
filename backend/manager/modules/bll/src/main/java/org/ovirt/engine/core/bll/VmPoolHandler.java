@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -30,7 +30,7 @@ public class VmPoolHandler {
      *        solution supplied
      */
     public static void ProcessVmPoolOnStopVm(Guid vmId, CommandContext context) {
-        vm_pool_map map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
+        VmPoolMap map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId);
         List<DbUser> users = DbFacade.getInstance().getDbUserDao().getAllForVm(vmId);
         // Check if this is a Vm from a Vm pool, and is attached to a user
         if (map != null && users != null && !users.isEmpty()) {

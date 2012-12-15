@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -11,7 +11,7 @@ public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> exten
     public RemoveVmFromPoolCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
-        vm_pool_map map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(parameters.getVmId());
+        VmPoolMap map = DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(parameters.getVmId());
         if (map != null) {
             setVmPoolId(map.getvm_pool_id());
         }

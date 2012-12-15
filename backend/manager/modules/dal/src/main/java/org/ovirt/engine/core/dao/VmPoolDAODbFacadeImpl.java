@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -112,13 +112,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public vm_pool_map getVmPoolMapByVmGuid(Guid vmId) {
+    public VmPoolMap getVmPoolMapByVmGuid(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
 
-        ParameterizedRowMapper<vm_pool_map> mapper = new ParameterizedRowMapper<vm_pool_map>() {
+        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
             @Override
-            public vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vm_pool_map entity = new vm_pool_map();
+            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                VmPoolMap entity = new VmPoolMap();
                 entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
                 entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
                 return entity;
@@ -129,7 +129,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public void addVmToPool(vm_pool_map map) {
+    public void addVmToPool(VmPoolMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", map.getvm_guid())
                 .addValue("vm_pool_id", map.getvm_pool_id());
 
@@ -137,13 +137,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<vm_pool_map> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
+    public List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
 
-        ParameterizedRowMapper<vm_pool_map> mapper = new ParameterizedRowMapper<vm_pool_map>() {
+        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
             @Override
-            public vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vm_pool_map entity = new vm_pool_map();
+            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                VmPoolMap entity = new VmPoolMap();
                 entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
                 entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
                 return entity;
@@ -154,15 +154,15 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<vm_pool_map> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
+    public List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
                         vmStatus.getValue());
 
-        ParameterizedRowMapper<vm_pool_map> mapper = new ParameterizedRowMapper<vm_pool_map>() {
+        ParameterizedRowMapper<VmPoolMap> mapper = new ParameterizedRowMapper<VmPoolMap>() {
             @Override
-            public vm_pool_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vm_pool_map entity = new vm_pool_map();
+            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                VmPoolMap entity = new VmPoolMap();
                 entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
                 entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
                 return entity;

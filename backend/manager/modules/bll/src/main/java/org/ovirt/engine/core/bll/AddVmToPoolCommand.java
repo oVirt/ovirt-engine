@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pool_map;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -67,7 +67,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getVmPoolDao().addVmToPool(new vm_pool_map(getVmId(), getVmPoolId()));
+        DbFacade.getInstance().getVmPoolDao().addVmToPool(new VmPoolMap(getVmId(), getVmPoolId()));
         setSucceeded(true);
     }
 
