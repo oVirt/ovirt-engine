@@ -136,17 +136,20 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
     }
 
+    /**
+     * command succeeded and VM is up => migration done
+     * command succeeded and VM is not up => migration started
+     * command failed and rerun flag is set => rerun migration was initiated
+     * command failed and rerun flag is not set => migration failed
+     */
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        AuditLogType startMessage = isInternalExecution() ? AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
-                : AuditLogType.VM_MIGRATION_START;
-        // all good, succeeded and the vm is up
-        // succeeded false, rerun
-        // succeeded false, rerun false = migration failed
         return getSucceeded() ?
                 getActionReturnValue() == VMStatus.Up ?
                         AuditLogType.VM_MIGRATION_DONE
-                        : startMessage
+                        : isInternalExecution() ?
+                                AuditLogType.VM_MIGRATION_START_SYSTEM_INITIATED
+                                : AuditLogType.VM_MIGRATION_START
                 : _isRerun ?
                         AuditLogType.VM_MIGRATION_TRYING_RERUN
                         : getVds().getstatus() == VDSStatus.PreparingForMaintenance ?
