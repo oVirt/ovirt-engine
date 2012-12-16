@@ -362,6 +362,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is not found.")
     String ACTION_TYPE_FAILED_VM_NOT_FOUND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM is non migratable.")
+    String ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM is non migratable and user did not specify the force-migration flag")
     String ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE_AND_IS_NOT_FORCED_BY_USER_TO_MIGRATE();
 

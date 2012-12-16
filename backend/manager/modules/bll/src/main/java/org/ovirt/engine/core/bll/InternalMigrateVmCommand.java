@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @InternalCommandAttribute
 public class InternalMigrateVmCommand<T extends MigrateVmParameters> extends MigrateVmCommand<T> {
@@ -23,16 +23,18 @@ public class InternalMigrateVmCommand<T extends MigrateVmParameters> extends Mig
         }
     }
 
+    /**
+     * Internal migrate command is initiated by server.
+     * if the VM's migration support is not set to {@link MigrationSupport.MIGRATABLE},
+     * the internal migration command should fail
+     */
     @Override
     protected boolean canMigrateVm(Guid vmGuid, java.util.ArrayList<String> reasons) {
-        boolean canMigrateVM = super.canMigrateVm(vmGuid, reasons);
-        VM vm = getVm();
-        // Internal migrate command is initiated by server, if migration support
-        // is not set to "migratable" the internal migration
-        // should fail
-
-        canMigrateVM = vm.getMigrationSupport() == MigrationSupport.MIGRATABLE && canMigrateVM;
-        return canMigrateVM;
-
+        if (getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+            return super.canMigrateVm(vmGuid, reasons);
+        }
+        else {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
+        }
     }
 }
