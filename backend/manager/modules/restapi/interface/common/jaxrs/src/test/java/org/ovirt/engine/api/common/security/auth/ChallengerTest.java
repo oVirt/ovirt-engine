@@ -112,7 +112,7 @@ public class ChallengerTest extends Assert {
         doReturn(httpSession).when(challenger).getCurrentSession(anyBoolean());
         challenger.setValidator(new ConstValidator(true, sessionId));
         ResourceMethod resource = control.createMock(ResourceMethod.class);
-        ServerResponse response = challenger.preProcess(setUpRequestExpectations(null, true, false), resource);
+        ServerResponse response = challenger.preProcess(setUpRequestExpectations(null, true, true), resource);
         assertNull(response);
         control.verify();
     }
