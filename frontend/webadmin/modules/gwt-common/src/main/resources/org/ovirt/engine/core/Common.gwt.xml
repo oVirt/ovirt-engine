@@ -166,6 +166,7 @@
 		<include name="common/businessentities/QuotaStorageProperties.java"/>
 		<include name="common/businessentities/QuotaVdsGroup.java"/>
 		<include name="common/businessentities/QuotaVdsGroupProperties.java"/>
+		<include name="common/businessentities/QuotaUsagePerUser.java"/>
 		<include name="common/action/QuotaCRUDParameters.java"/>
 		<include name="common/queries/GetQuotaByStoragePoolIdQueryParameters.java"/>
 		<include name="common/queries/GetQuotaByQuotaIdQueryParameters.java"/>
@@ -174,6 +175,7 @@
 		<include name="common/queries/GetEntitiesRelatedToQuotaIdParameters.java"/>
 		<include name="common/queries/GetDisksByQuotaIdParameters.java"/>
 		<include name="common/queries/GetQuotasByAdElementIdQueryParameters.java"/>
+        <include name="common/queries/GetQuotasConsumptionByAdElementIdQueryParameters.java"/>
 
 		<!-- Misc -->
 		<include name="common/AuditLogType.java" />

@@ -8,12 +8,8 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -727,6 +723,8 @@ public class QuotaManager {
      */
     private Quota fetchQuotaFromCache(Guid quotaId, Guid storagePoolId) throws InvalidQuotaParametersException {
         Quota quota;
+
+
         Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(storagePoolId);
 
         quota = quotaMap.get(quotaId);
@@ -745,5 +743,239 @@ public class QuotaManager {
             }
         }
         return quota;
+    }
+
+    /**
+     * REturn a list of QuotaUsagePerUser representing the status of all the quotas in quotaIdsList
+     *
+     * @param quotaList
+     *            quota list
+     */
+    public void updateUsage(List<Quota> quotaList) {
+        List<Quota> needToCache = new ArrayList<Quota>();
+
+        if (quotaList == null) {
+            return;
+        }
+
+        lock.readLock().lock();
+        try {
+            for (Quota quotaExternal : quotaList) {
+                // look for the quota in the cache
+                Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(quotaExternal.getStoragePoolId());
+                Quota quota = null;
+                if (quotaMap != null) {
+                    quota = quotaMap.get(quotaExternal.getId());
+                }
+
+                // if quota not in cache look for it in DB and add it to cache
+                if (quota == null) {
+                    needToCache.add(quotaExternal);
+                } else {
+                    copyUsageData(quota, quotaExternal);
+                }
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        // if some of the quota are not in cache and need to be cached
+        if (!needToCache.isEmpty()) {
+            lock.writeLock().lock();
+            try {
+                for (Quota quotaExternal : needToCache) {
+                    if (!storagePoolQuotaMap.containsKey(quotaExternal.getStoragePoolId())) {
+                        storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<Guid, Quota>());
+                    }
+                    Quota quota = fetchQuotaFromCache(quotaExternal.getId(), quotaExternal.getStoragePoolId());
+                    if (quota != null) {
+                        copyUsageData(quota, quotaExternal);
+                    }
+                }
+            } finally {
+                lock.writeLock().unlock();
+            }
+        }
+    }
+
+    private void copyUsageData(Quota quota, Quota quotaExternal) {
+        if (quota.getGlobalQuotaStorage() != null) {
+            quotaExternal.setGlobalQuotaStorage(copyQuotaStorageUsage(quota.getGlobalQuotaStorage()));
+        }
+        if (quota.getGlobalQuotaVdsGroup() != null) {
+            quotaExternal.setGlobalQuotaVdsGroup(copyQuotaVdsGroupUsage(quota.getGlobalQuotaVdsGroup()));
+        }
+
+        if (quota.getQuotaStorages() != null) {
+            quotaExternal.setQuotaStorages(new ArrayList<QuotaStorage>());
+            for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+                quotaExternal.getQuotaStorages().add(copyQuotaStorageUsage(quotaStorage));
+            }
+        }
+
+        if (quota.getQuotaVdsGroups() != null) {
+            quotaExternal.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
+            for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
+                quotaExternal.getQuotaVdsGroups().add(copyQuotaVdsGroupUsage(quotaVdsGroup));
+            }
+        }
+    }
+
+    private QuotaStorage copyQuotaStorageUsage(QuotaStorage quotaStorage) {
+        return new QuotaStorage(null, null, null,
+                quotaStorage.getStorageSizeGB(),
+                quotaStorage.getStorageSizeGBUsage());
+    }
+
+    private QuotaVdsGroup copyQuotaVdsGroupUsage(QuotaVdsGroup quotaVdsGroup) {
+        return new QuotaVdsGroup(null, null, null,
+                quotaVdsGroup.getVirtualCpu(),
+                quotaVdsGroup.getVirtualCpuUsage(),
+                quotaVdsGroup.getMemSizeMB(),
+                quotaVdsGroup.getMemSizeMBUsage());
+    }
+
+    /**
+     * Return a list of QuotaUsagePerUser representing the status of all the quotas available for a specific user
+     *
+     * @param quotaIdsList
+     *            - quotas available for user
+     * @param vms
+     *            - vm available for user
+     * @return - list of QuotaUsagePerUser
+     */
+    public List<QuotaUsagePerUser> generatePerUserUsageReport(List<Quota> quotaIdsList, List<VM> vms) {
+        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = new HashMap<Guid, QuotaUsagePerUser>();
+        List<Quota> needToCache = new ArrayList<Quota>();
+
+        if (quotaIdsList != null) {
+            lock.readLock().lock();
+            try {
+                for (Quota quotaExternal : quotaIdsList) {
+                    // look for the quota in the cache
+                    Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(quotaExternal.getStoragePoolId());
+                    Quota quota = null;
+                    if (quotaMap != null) {
+                        quota = quotaMap.get(quotaExternal.getId());
+                    }
+
+                    // if quota not in cache look for it in DB and add it to cache
+                    if (quota == null) {
+                        needToCache.add(quotaExternal);
+                    } else {
+                        QuotaUsagePerUser usagePerUser = addQuotaEntry(quota);
+                        if (usagePerUser != null) {
+                            quotaPerUserUsageEntityMap.put(quota.getId(), usagePerUser);
+                        }
+                    }
+                }
+            } finally {
+                lock.readLock().unlock();
+            }
+
+            if (!needToCache.isEmpty()) {
+                lock.writeLock().lock();
+                try {
+                    for (Quota quotaExternal : needToCache) {
+                        // look for the quota in the cache again (it may have been added by now)
+                        if (!storagePoolQuotaMap.containsKey(quotaExternal.getStoragePoolId())) {
+                            storagePoolQuotaMap.put(quotaExternal.getStoragePoolId(), new HashMap<Guid, Quota>());
+                        }
+                        Quota quota = fetchQuotaFromCache(quotaExternal.getId(), quotaExternal.getStoragePoolId());
+
+                        QuotaUsagePerUser usagePerUser = addQuotaEntry(quota);
+                        if (usagePerUser != null) {
+                            quotaPerUserUsageEntityMap.put(quota.getId(), usagePerUser);
+                        }
+                    }
+                } finally {
+                    lock.writeLock().unlock();
+                }
+            }
+        }
+        countPersonalUsage(vms, quotaPerUserUsageEntityMap);
+
+        return new ArrayList<QuotaUsagePerUser>(quotaPerUserUsageEntityMap.values());
+    }
+
+    private void countPersonalUsage(List<VM> vms, Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap) {
+        if (vms != null) {
+            for (VM vm : vms) {
+                // if vm is running and have a quota
+                if (vm.getStatus() != VMStatus.Down
+                        && vm.getStatus() != VMStatus.Suspended
+                        && vm.getStatus() != VMStatus.ImageIllegal
+                        && vm.getStatus() != VMStatus.ImageLocked
+                        && vm.getStatus() != VMStatus.PoweringDown
+                        && vm.getQuotaId() != null) {
+                    QuotaUsagePerUser quotaUsagePerUser = quotaPerUserUsageEntityMap.get(vm.getQuotaId());
+                    // add the vm cpu and mem to the user quota consumption
+                    if (quotaUsagePerUser != null) {
+                        quotaUsagePerUser.setMemoryUsageForUser(quotaUsagePerUser.getMemoryUsageForUser()
+                                + vm.getMemSizeMb());
+                        quotaUsagePerUser.setVcpuUsageForUser(quotaUsagePerUser.getVcpuUsageForUser()
+                                + vm.getCpuPerSocket() * vm.getNumOfSockets());
+                    }
+                }
+                // for each image of each disk of the vm - if it has a quota
+                for (DiskImage image : vm.getDiskList()) {
+                    QuotaUsagePerUser quotaUsagePerUser = quotaPerUserUsageEntityMap.get(image.getQuotaId());
+                    double imageSize = image.getImage().isActive() ? image.getSizeInGigabytes() : image.getActualSize();
+                    // add the disk size to the user storage consumption
+                    if (quotaUsagePerUser != null) {
+                        quotaUsagePerUser.setStorageUsageForUser(quotaUsagePerUser.getStorageUsageForUser()
+                                + imageSize);
+                    }
+                }
+            }
+        }
+    }
+
+    private QuotaUsagePerUser addQuotaEntry(Quota quota) {
+        // if quota is not null (found in cache or DB) - add entry to quotaPerUserUsageEntityMap
+        if (quota != null) {
+            double storageLimit = 0;
+            double storageUsage = 0;
+            int cpuLimit = 0;
+            int cpuUsage = 0;
+            long memLimit = 0;
+            long memUsage = 0;
+
+            // calc storage
+            if (quota.getGlobalQuotaStorage() != null) {
+                storageLimit = quota.getGlobalQuotaStorage().getStorageSizeGB();
+                storageUsage = quota.getGlobalQuotaStorage().getStorageSizeGBUsage();
+            } else {
+                for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
+                    storageLimit += quotaStorage.getStorageSizeGB();
+                    storageUsage += quotaStorage.getStorageSizeGBUsage();
+                }
+            }
+
+            // calc cpu and mem
+            if (quota.getGlobalQuotaVdsGroup() != null) {
+                memLimit = quota.getGlobalQuotaVdsGroup().getMemSizeMB();
+                memUsage = quota.getGlobalQuotaVdsGroup().getMemSizeMBUsage();
+                cpuLimit = quota.getGlobalQuotaVdsGroup().getVirtualCpu();
+                cpuUsage = quota.getGlobalQuotaVdsGroup().getVirtualCpuUsage();
+            } else {
+                for (QuotaVdsGroup quotaVdsGroup : quota.getQuotaVdsGroups()) {
+                    memLimit += quotaVdsGroup.getMemSizeMB();
+                    memUsage += quotaVdsGroup.getMemSizeMBUsage();
+                    cpuLimit += quotaVdsGroup.getVirtualCpu();
+                    cpuUsage += quotaVdsGroup.getVirtualCpuUsage();
+                }
+            }
+
+            return new QuotaUsagePerUser(quota.getId(),
+                    quota.getQuotaName(),
+                    storageLimit,
+                    storageUsage,
+                    cpuLimit,
+                    cpuUsage,
+                    memLimit,
+                    memUsage);
+        }
+        return null;
     }
 }

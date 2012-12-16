@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
-    private final ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
     private Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> vmUnManagedDeviceList = new ArrayList<VmDevice>();

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AdUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -252,7 +253,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<Quota> searchQuota() {
-        return genericSearch(getDbFacade().getQuotaDao(), true, null);
+        List<Quota> quotaList = genericSearch(getDbFacade().getQuotaDao(), true, null);
+        QuotaManager.getInstance().updateUsage(quotaList);
+        return quotaList;
     }
 
     private List<Disk> searchDisk() {
