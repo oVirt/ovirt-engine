@@ -16,7 +16,7 @@ public interface IVdsEventListener {
             Guid domainId,
             Map<String, String> customLogValues); // BLL
 
-    void vdsMovedToMaintanance(Guid vdsId); // BLL
+    void vdsMovedToMaintanance(VDS vds); // BLL
 
     void storageDomainNotOperational(Guid storageDomainId, Guid storagePoolId); // BLL
 

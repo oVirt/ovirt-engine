@@ -64,10 +64,12 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class VdsEventListener implements IVdsEventListener {
 
     @Override
-    public void vdsMovedToMaintanance(Guid vdsId) {
-        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
-        MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
-        ExecutionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintananceVds, true);
+    public void vdsMovedToMaintanance(VDS vds) {
+        try {
+            MaintananceVdsCommand.ProcessStorageOnVdsInactive(vds);
+        } finally {
+            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, true);
+        }
     }
 
     @Override

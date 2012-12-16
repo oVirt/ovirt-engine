@@ -312,15 +312,10 @@ public class VdsUpdateRunTimeInfo {
 
             if (_vds.getstatus() == VDSStatus.Maintenance) {
                 try {
-                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintanance(_vds.getId());
+                    ResourceManager.getInstance().getEventListener().vdsMovedToMaintanance(_vds);
                 } catch (RuntimeException ex) {
-                    log.error("Host encounter a problem moving to maintenance mode. The Host status will change to Non operational status.");
-                    ResourceManager
-                            .getInstance()
-                            .getEventListener()
-                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, true,
-                                    Guid.Empty);
-                    throw ex;
+                    log.errorFormat("Host encounter a problem moving to maintenance mode, probably error during disconnecting it from pool {0}. The Host will stay in Maintenance",
+                            ex.getMessage());
                 }
             } else if (_vds.getstatus() == VDSStatus.NonOperational && _firstStatus != VDSStatus.NonOperational) {
 
