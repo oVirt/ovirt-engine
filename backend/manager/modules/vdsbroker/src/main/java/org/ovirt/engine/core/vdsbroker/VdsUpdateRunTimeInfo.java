@@ -72,11 +72,12 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSProtocolException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
 @SuppressWarnings({ "synthetic-access", "unchecked" })
 public class VdsUpdateRunTimeInfo {
-    private Map<Guid, Entry<VmDynamic, VmStatistics>> _runningVms;
+    private Map<Guid, VmInternalData> _runningVms;
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<Guid, VmDynamic>();
     private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<Guid, VmStatistics>();
     private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave =
@@ -806,7 +807,7 @@ public class VdsUpdateRunTimeInfo {
             command = new GetAllVmStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(
                     new VdsIdAndVdsVDSCommandParametersBase(_vds));
         }
-        _runningVms = (Map<Guid, Entry<VmDynamic, VmStatistics>>) command.ExecuteWithReturnValue();
+        _runningVms = (Map<Guid, VmInternalData>) command.ExecuteWithReturnValue();
 
         if (command.getVDSReturnValue().getSucceeded()) {
             List<VM> running = checkVmsStatusChanged();
@@ -850,8 +851,8 @@ public class VdsUpdateRunTimeInfo {
     private void handleVmDeviceChange() {
         // Go over all the vms and detemine which ones require updating
         List<String> vmsToUpdateFromVds = new ArrayList<String>();
-        for (Entry<VmDynamic, VmStatistics> vmHelper : _runningVms.values()) {
-            VmDynamic vmDynamic = vmHelper.getKey();
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VmDynamic vmDynamic = vmInternalData.getVmDynamic();
             if (vmDynamic != null) {
                 VM vm = _vmDict.get(vmDynamic.getId());
                 if (vm != null) {
@@ -1042,8 +1043,8 @@ public class VdsUpdateRunTimeInfo {
         List<VM> running = new ArrayList<VM>();
         if (!_vdsManager.getRefreshStatistics()) {
             List<VmDynamic> tempRunningList = new ArrayList<VmDynamic>();
-            for (Entry<VmDynamic, VmStatistics> runningVm : _runningVms.values()) {
-                tempRunningList.add(runningVm.getKey());
+            for (VmInternalData runningVm : _runningVms.values()) {
+                tempRunningList.add(runningVm.getVmDynamic());
             }
             for (VmDynamic runningVm : tempRunningList) {
                 VM vmToUpdate = null;
@@ -1058,7 +1059,7 @@ public class VdsUpdateRunTimeInfo {
                     command.Execute();
                     if (command.getVDSReturnValue().getSucceeded()) {
                         _runningVms.put(runningVm.getId(),
-                                (Entry<VmDynamic, VmStatistics>) command.getReturnValue());
+                                (VmInternalData) command.getReturnValue());
                     } else {
                         _runningVms.remove(runningVm.getId());
                     }
@@ -1076,8 +1077,8 @@ public class VdsUpdateRunTimeInfo {
      * Delete all vms with status Down
      */
     private void proceedDownVms() {
-        for (Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
-            VmDynamic vm = vm_helper.getKey();
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VmDynamic vm = vmInternalData.getVmDynamic();
             if (vm.getstatus() != VMStatus.Down) {
                 continue;
             }
@@ -1224,8 +1225,8 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void updateRepository(List<VM> running) {
-        for (Entry<VmDynamic, VmStatistics> vm_helper : _runningVms.values()) {
-            VmDynamic runningVm = vm_helper.getKey();
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VmDynamic runningVm = vmInternalData.getVmDynamic();
             VM vmToUpdate = null;
             vmToUpdate = _vmDict.get(runningVm.getId());
 
@@ -1385,7 +1386,7 @@ public class VdsUpdateRunTimeInfo {
             else if (vmToRemove.isAutoStartup()
                     && !_autoVmsToRun.contains(vmGuid)
                     && (!_runningVms.containsKey(vmGuid) || (_runningVms.containsKey(vmGuid) && _runningVms.get(vmGuid)
-                            .getKey()
+                            .getVmDynamic()
                             .getExitStatus() != VmExitStatus.Normal))) {
                 _autoVmsToRun.add(vmGuid);
             }
@@ -1533,12 +1534,12 @@ public class VdsUpdateRunTimeInfo {
     private void UpdateVmStatistics(VM vmToUpdate) {
         // check if time for vm statistics refresh - update cache and DB
         if (_vdsManager.getRefreshStatistics()) {
-            VmStatistics vmStatistics = _runningVms.get(vmToUpdate.getId()).getValue();
+            VmStatistics vmStatistics = _runningVms.get(vmToUpdate.getId()).getVmStatistics();
             vmToUpdate.updateRunTimeStatisticsData(vmStatistics, vmToUpdate);
             AddVmStatisticsToList(vmToUpdate.getStatisticsData());
             UpdateInterfaceStatistics(vmToUpdate, vmStatistics);
 
-            for (DiskImageDynamic imageDynamic : _runningVms.get(vmToUpdate.getId()).getKey().getDisks()) {
+            for (DiskImageDynamic imageDynamic : _runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks()) {
                 _vmDiskImageDynamicToSave.put(imageDynamic.getId(), imageDynamic);
             }
         }

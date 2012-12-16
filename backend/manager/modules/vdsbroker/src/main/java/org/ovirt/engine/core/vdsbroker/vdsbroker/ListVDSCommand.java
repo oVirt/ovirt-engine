@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
 @Logged(executionLevel = LogLevel.TRACE)
 public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> extends VdsBrokerCommand<P> {
@@ -20,13 +22,11 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     protected void ExecuteVdsBrokerCommand() {
         mVmListReturn = getBroker().list();
         ProceedProxyReturnValue();
-        java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>> returnVMs =
-                new java.util.HashMap<Guid, java.util.Map.Entry<VmDynamic, VmStatistics>>();
-        for (int idx = 0; idx < mVmListReturn.mVmList.length; ++idx) // fix
-                                                                     // GetLength(0)
-        {
+        Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
+        for (int idx = 0; idx < mVmListReturn.mVmList.length; ++idx) {
             VmDynamic dynamicData = VdsBrokerObjectsBuilder.buildVMDynamicDataFromList(mVmListReturn.mVmList[idx]);
-            returnVMs.put(dynamicData.getId(), new KeyValuePairCompat<VmDynamic, VmStatistics>(dynamicData, null));
+            VmInternalData vmData = new VmInternalData(dynamicData, null, null);
+            returnVMs.put(dynamicData.getId(), vmData);
         }
         setReturnValue(returnVMs);
     }

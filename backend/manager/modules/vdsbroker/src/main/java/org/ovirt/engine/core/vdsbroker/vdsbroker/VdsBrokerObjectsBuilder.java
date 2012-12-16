@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -1294,6 +1295,11 @@ public class VdsBrokerObjectsBuilder {
         if (NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())) {
             iface.setGateway(gateway);
         }
+    }
+
+    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(XmlRpcStruct xmlRpcStruct) {
+        // TODO: implement
+        return null;
     }
 
     private static final Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
