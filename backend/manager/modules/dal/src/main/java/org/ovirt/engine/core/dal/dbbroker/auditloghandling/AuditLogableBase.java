@@ -318,9 +318,10 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     protected VDS getVds() {
-        if (mVds == null && (mVdsId != null || (getVm() != null && getVm().getRunOnVds() != null))) {
-            if (mVdsId == null) {
-                mVdsId = new Guid(getVm().getRunOnVds().toString());
+        if (mVds == null
+                && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+            if (mVdsId == null || Guid.Empty.equals(mVdsId)) {
+                mVdsId = getVm().getRunOnVds().getValue();
             }
             try {
                 mVds = getVdsDAO().get(getVdsId());

@@ -15,6 +15,12 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
         setInactive(isInactive);
     }
 
+    public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, Guid vdsId, boolean isInactive) {
+        super(storageDomainId, storagePoolId);
+        setInactive(isInactive);
+        setVdsId(vdsId);
+    }
+
     public ReconstructMasterParameters(Guid storagePoolId, Guid newMasterDomainId) {
         this(storagePoolId, Guid.Empty, false);
         this.privateNewMasterDomainId = newMasterDomainId;

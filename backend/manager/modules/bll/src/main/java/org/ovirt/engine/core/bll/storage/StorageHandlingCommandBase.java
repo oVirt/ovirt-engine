@@ -39,6 +39,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public abstract class StorageHandlingCommandBase<T extends StoragePoolParametersBase> extends CommandBase<T> {
     public StorageHandlingCommandBase(T parameters) {
         super(parameters);
+        setVdsId(parameters.getVdsId());
         if (getParameters() != null && !getParameters().getStoragePoolId().equals(Guid.Empty)) {
             setStoragePoolId(getParameters().getStoragePoolId());
         }

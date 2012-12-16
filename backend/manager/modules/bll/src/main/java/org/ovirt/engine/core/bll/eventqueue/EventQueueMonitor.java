@@ -71,17 +71,19 @@ public class EventQueueMonitor implements EventQueue {
             if (currentEvent != null) {
                 switch (currentEvent.getEventType()) {
                 case RECONSTRUCT:
-                    log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
-                            storagePoolId, event);
+                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL) {
+                        task = addTaskToQueue(event, callable, storagePoolId);
+                    } else {
+                        log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
+                                storagePoolId, event);
+                    }
                     break;
                 default:
-                    task = new FutureTask<EventResult>(callable);
-                    getEventQueue(storagePoolId).add(new Pair<Event, FutureTask<EventResult>>(event, task));
+                    task = addTaskToQueue(event, callable, storagePoolId);
                     break;
                 }
             } else {
-                task = new FutureTask<EventResult>(callable);
-                getEventQueue(storagePoolId).add(new Pair<Event, FutureTask<EventResult>>(event, task));
+                task = addTaskToQueue(event, callable, storagePoolId);
                 poolCurrentEventMap.put(storagePoolId, event);
                 ThreadPoolUtil.execute(new InternalEventQueueThread(storagePoolId, lock,
                         poolsEventsMap, poolCurrentEventMap));
@@ -89,6 +91,12 @@ public class EventQueueMonitor implements EventQueue {
         } finally {
             lock.unlock();
         }
+        return task;
+    }
+
+    private FutureTask<EventResult> addTaskToQueue(Event event, Callable<EventResult> callable, Guid storagePoolId) {
+        FutureTask<EventResult> task = new FutureTask<EventResult>(callable);
+        getEventQueue(storagePoolId).add(new Pair<Event, FutureTask<EventResult>>(event, task));
         return task;
     }
 
@@ -151,14 +159,24 @@ public class EventQueueMonitor implements EventQueue {
                             log.infoFormat("Finished reconstruct for pool {0}. Clearing all event queue", storagePoolId);
                             lock.lock();
                             try {
+                                Queue<Pair<Event, FutureTask<EventResult>>> queue =
+                                        new LinkedList<Pair<Event, FutureTask<EventResult>>>();
                                 for (Pair<Event, FutureTask<EventResult>> task : poolsEventsMap.get(storagePoolId)) {
-                                    log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",
-                                            task.getFirst());
-                                    task.getSecond().cancel(true);
+                                    if (task.getFirst().getEventType() != EventType.VDSCONNECTTOPOOL) {
+                                        log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",
+                                                task.getFirst());
+                                        task.getSecond().cancel(true);
+                                    } else {
+                                        queue.add(task);
+                                    }
                                 }
-                                poolCurrentEventMap.remove(storagePoolId);
-                                poolsEventsMap.remove(storagePoolId);
-                                break;
+                                if (queue.isEmpty()) {
+                                    poolCurrentEventMap.remove(storagePoolId);
+                                    poolsEventsMap.remove(storagePoolId);
+                                    break;
+                                } else {
+                                    poolsEventsMap.put(storagePoolId, queue);
+                                }
                             } finally {
                                 lock.unlock();
                             }

@@ -137,14 +137,12 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         try {
             reconstructOpSucceeded = reconstructMaster();
             connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-
             if (!_isLastMaster && reconstructOpSucceeded) {
                 // all vms/templates metadata should be copied to the new master domain, so we need
                 // to perform increment of the db version for all the vms in the storage pool.
                 // currently this method is used for both templates and vms.
                 getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
             }
-
             setSucceeded(reconstructOpSucceeded);
         } finally {
             // reset cache and mark reconstruct for pool as finished

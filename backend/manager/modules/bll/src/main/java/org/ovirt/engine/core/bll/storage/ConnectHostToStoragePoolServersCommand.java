@@ -24,7 +24,6 @@ public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParamet
 
     public ConnectHostToStoragePoolServersCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     @Override

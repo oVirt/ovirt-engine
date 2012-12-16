@@ -5,11 +5,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,6 +27,11 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.eventqueue.Event;
+import org.ovirt.engine.core.common.eventqueue.EventQueue;
+import org.ovirt.engine.core.common.eventqueue.EventResult;
+import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -37,6 +44,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.utils.ejb.BeanProxyType;
+import org.ovirt.engine.core.utils.ejb.BeanType;
+import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 /**
@@ -56,7 +66,6 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     public InitVdsOnUpCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     @Override
@@ -133,28 +142,73 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                     .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, tempStorageBaseParams)
                     .getSucceeded()) {
                 _connectStorageSucceeded = true;
-                try {
-                    setStoragePool(null);
-                    returnValue = _connectPoolSucceeded = runVdsCommand(
-                                    VDSCommandType.ConnectStoragePool,
-                                    new ConnectStoragePoolVDSCommandParameters(getVds().getId(), getVds()
-                                            .getStoragePoolId(), getVds().getvds_spm_id(), getMasterDomainIdFromDb(),
-                                            getStoragePool().getmaster_domain_version())).getSucceeded();
-                } catch (RuntimeException exp) {
-                    log.errorFormat("Could not connect host {0} to pool {1}", getVds().getvds_name(), getStoragePool()
-                            .getname());
-                    returnValue = false;
-                }
-                if(returnValue) {
-                    returnValue = proceedVdsStats();
-                    if(!returnValue) {
-                        AuditLogDirector.log(new AuditLogableBase(getVdsId()),
-                                AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
-                    }
-                }
+                returnValue = connectHostToPool();
+                _connectPoolSucceeded = returnValue;
             }
         }
         return returnValue;
+    }
+
+    /**
+     * The following method should connect host to pool
+     * The method will perform a connect storage pool operation,
+     * if operation will wail on StoragePoolWrongMaster or StoragePoolMasterNotFound errors
+     * we will try to run reconstruct
+     * @return
+     */
+    private boolean connectHostToPool() {
+        final VDS vds = getVds();
+        EventResult result =
+                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getStoragePool().getId(),
+                        null, vds.getId(), EventType.VDSCONNECTTOPOOL),
+                        new Callable<EventResult>() {
+                            @Override
+                            public EventResult call() {
+                                return runConnectHostToPoolEvent(getStoragePool().getId(), vds);
+                            }
+                        });
+        if (result != null) {
+            return result.isSuccess();
+        }
+        return false;
+    }
+
+    private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
+        EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
+        storage_pool storagePool = getStoragePoolDAO().get(storagePoolId);
+        Guid masterDomainIdFromDb = getStorageDomainDAO().getMasterStorageDomainIdForPool(storagePoolId);
+        try {
+            runVdsCommand(VDSCommandType.ConnectStoragePool,
+                    new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
+                            vds.getvds_spm_id(), masterDomainIdFromDb,
+                            storagePool.getmaster_domain_version())).getSucceeded();
+        } catch (VdcBLLException e) {
+            if (e.getErrorCode() == VdcBllErrors.StoragePoolWrongMaster
+                    || e.getErrorCode() == VdcBllErrors.StoragePoolMasterNotFound) {
+                boolean returnValue =
+                        Backend.getInstance()
+                                .runInternalAction(VdcActionType.ReconstructMasterDomain,
+                                        new ReconstructMasterParameters(vds.getStoragePoolId(),
+                                                masterDomainIdFromDb, vds.getId(), false)).getSucceeded();
+                result = new EventResult(returnValue, EventType.RECONSTRUCT);
+            } else {
+                log.errorFormat("Could not connect host {0} to pool {1}", vds.getvds_name(), storagePool
+                        .getname());
+                result.setSuccess(false);
+            }
+        } catch (RuntimeException exp) {
+            log.errorFormat("Could not connect host {0} to pool {1}", vds.getvds_name(), storagePool
+                    .getname());
+            result.setSuccess(false);
+        }
+        if (result.isSuccess() && result.getEventType() != EventType.RECONSTRUCT) {
+            result.setSuccess(proceedVdsStats());
+            if (!result.isSuccess()) {
+                AuditLogDirector.log(new AuditLogableBase(getVdsId()),
+                        AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
+            }
+        }
+        return result;
     }
 
     protected boolean proceedVdsStats() {
