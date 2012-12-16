@@ -77,14 +77,17 @@ public class Challenger implements PreProcessInterceptor {
     @Override
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) throws Failure, WebApplicationException {
 
+        HttpSession httpSession = null;
         ServerResponse response = null;
         boolean successful = false;
         HttpHeaders headers = request.getHttpHeaders();
         boolean preferPersistentAuth = checkPersistentAuthentication(headers);
         boolean hasAuthorizationHeader = checkAuthorizationHeader(headers);
 
-        // Will create a new one if it is the first session, and then the "isNew" test below will return true
-        HttpSession httpSession = getCurrentSession(true);
+        if (preferPersistentAuth) {
+            // Will create a new one if it is the first session, and then the "isNew" test below will return true
+            httpSession = getCurrentSession(true);
+        }
 
         // If the session isn't new and doesn't carry authorization header, we validate it
         if (validator != null && httpSession != null && !httpSession.isNew() && !hasAuthorizationHeader) {

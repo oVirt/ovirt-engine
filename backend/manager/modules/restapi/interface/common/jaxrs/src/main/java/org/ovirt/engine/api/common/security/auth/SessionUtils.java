@@ -68,8 +68,10 @@ public class SessionUtils {
      * This method sets the engine session ID on the http session
      */
     public static void setEngineSessionId(HttpSession session, String sessionId) {
-        log.debug("setting engine session ID to " + sessionId);
-        session.setAttribute(ENGINE_SESSION_ID_KEY, sessionId);
+        if (session != null) {
+            log.debug("setting engine session ID to " + sessionId);
+            session.setAttribute(ENGINE_SESSION_ID_KEY, sessionId);
+        }
     }
 
     /*
