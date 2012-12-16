@@ -23,7 +23,7 @@ public final class ValidationResult {
      * Default validation result is success with no message.
      * This constructor is private, it is only used to create a 'valid' result. Please use {@link ValidationResult#VALID}
      */
-    public ValidationResult() {
+    private ValidationResult() {
         message = null;
     }
 
