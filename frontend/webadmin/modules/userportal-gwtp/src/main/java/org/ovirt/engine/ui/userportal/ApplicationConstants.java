@@ -369,4 +369,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Double Click for Console")
     String doubleClickForConsole();
 
+
+    @DefaultStringValue("Consumed by Others")
+    String othersUseQuota();
+
+    @DefaultStringValue("Consumed by You")
+    String youUseQuota();
+
+    @DefaultStringValue("Free Memory: ")
+    String freeMemory();
+
+    @DefaultStringValue("Free Storage: ")
+    String freeStorage();
 }

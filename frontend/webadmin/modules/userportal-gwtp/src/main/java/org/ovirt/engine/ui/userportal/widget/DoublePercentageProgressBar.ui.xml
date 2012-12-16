@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<ui:style type="org.ovirt.engine.ui.userportal.widget.DoublePercentageProgressBar.WidgetStyle">
+        .progressBar {
+            width: 95%;
+        }
+
+        .percentageBox {
+            float: left;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #c9d6e6;
+            width: 100%;
+            height: 17px;
+        }
+
+        .percentageLabel, .percentageLabelBlack {
+            text-align: center;
+            font-family: Arial,sans-serif;
+            font-size: 12px;
+        }
+
+        .percentageLabel {
+            color: white;
+        }
+
+        .percentageLabelBlack {
+            color: black;
+        }
+
+        .percentageBarA {
+            float: left;
+            background-color: #b6c2cb;
+            width: 0%;
+            height: 15px;
+            margin: 1px;
+        }
+
+        .percentageBarB {
+            float: left;
+            background-color: #043459;
+            width: 0%;
+            height: 15px;
+            margin: 1px;
+        }
+
+        .percentageBarUnlimited {
+            float: left;
+            background-color: #e0e7ec;
+            width: 100%;
+            height: 15px;
+            margin: 1px;
+        }
+
+        .empty {
+            float: left;
+            background-color: #ffffff;
+            width: 100%;
+            height: 15px;
+            margin: 1px;
+        }
+
+	</ui:style>
+
+    <g:FlowPanel addStyleNames="{style.progressBar}">
+        <g:FlowPanel addStyleNames="{style.percentageBox}">
+            <g:FlowPanel ui:field="percentageBarA" addStyleNames="{style.percentageBarA}">
+                <g:Label text="0%" ui:field="percentageLabelA" addStyleNames="{style.percentageLabel}"/>
+            </g:FlowPanel>
+
+            <g:FlowPanel ui:field="percentageBarB" addStyleNames="{style.percentageBarB}">
+                <g:Label text="0%" ui:field="percentageLabelB" addStyleNames="{style.percentageLabel}"/>
+            </g:FlowPanel>
+        </g:FlowPanel>
+
+
+    </g:FlowPanel>
+
+</ui:UiBinder>

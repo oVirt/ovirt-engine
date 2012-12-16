@@ -1084,4 +1084,11 @@ public interface CommonApplicationConstants extends Constants {
     // Network Template
     @DefaultStringValue("Vnic")
     String vnicNetworkTemplate();
+
+    @DefaultStringValue("Show Quota Distribution")
+    String showQuotaDistribution();
+
+    @DefaultStringValue("Hide Quota Distribution")
+    String hideQuotaDistribution();
+
 }

@@ -109,9 +109,11 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         for (VM vm : (Iterable<VM>) model.getItems()) {
             VmTreeItem vmItem = createVmItem(vm);
-            for (DiskImage disk : vm.getDiskList()) {
-                TreeItem diskItem = createDiskItem(disk);
-                vmItem.addItem(diskItem);
+            if (vm.getDiskList() != null){
+                for (DiskImage disk : vm.getDiskList()) {
+                    TreeItem diskItem = createDiskItem(disk);
+                    vmItem.addItem(diskItem);
+                }
             }
             vmTree.addItem(vmItem);
         }
@@ -248,7 +250,8 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         TextColumnWithTooltip<EntityModel> diskSizeColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asVm(entity).getDiskList().size() + ""; //$NON-NLS-1$
+                ArrayList<DiskImage> diskImages = asVm(entity).getDiskList();
+                return diskImages != null ? diskImages.size() + "" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
 
@@ -270,8 +273,9 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         TextColumnWithTooltip<EntityModel> snapshotsColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
-                return asVm(entity).getDiskList().size() > 0 ? asVm(entity).getDiskList().get(0).getSnapshots().size()
-                        + "" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
+                ArrayList<DiskImage> diskImages = asVm(entity).getDiskList();
+                return diskImages != null ? diskImages.size() > 0 ? diskImages.get(0).getSnapshots().size()
+                        + "" : "0" : "0"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
         };
 

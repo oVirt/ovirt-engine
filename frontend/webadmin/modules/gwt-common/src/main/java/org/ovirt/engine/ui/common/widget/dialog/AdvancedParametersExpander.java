@@ -25,6 +25,9 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
 
     private Element expanderContent;
 
+    private String titleExpended = constants.advancedParameters();
+    private String titleCollapsed = constants.advancedParameters();
+
     private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
@@ -50,11 +53,11 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
     private void initStyle() {
         SafeHtml expandImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderImage()).getHTML());
-        expander.getUpFace().setHTML(templates.imageTextButton(expandImage, constants.advancedParameters()));
+        expander.getUpFace().setHTML(templates.imageTextButton(expandImage, titleCollapsed));
 
         SafeHtml collapseImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderDownImage()).getHTML());
-        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, constants.advancedParameters()));
+        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, titleExpended));
 
     }
 
@@ -71,9 +74,27 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
         });
     }
 
+    public void addClickHandler(ClickHandler clickHandler) {
+        expander.addClickHandler(clickHandler);
+    }
+
+    public boolean isDown() {
+        return expander.isDown();
+    }
+
     @Override
     public int setTabIndexes(int nextTabIndex) {
         expander.setTabIndex(nextTabIndex++);
         return nextTabIndex;
+    }
+
+    public void setTitleWhenExpended(String title) {
+        titleExpended = title;
+        initStyle();
+    }
+
+    public void setTitleWhenCollapsed(String title) {
+        titleCollapsed = title;
+        initStyle();
     }
 }

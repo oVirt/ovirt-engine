@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.GetQuotasConsumptionForCurrentUserQueryParameters;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -175,6 +176,18 @@ public class ResourcesModel extends SearchableListModel
         privateTotalSnapshotsSize = value;
     }
 
+    private EntityModel privateUsedQuotaPercentage;
+
+    public EntityModel getUsedQuotaPercentage()
+    {
+        return privateUsedQuotaPercentage;
+    }
+
+    private void setUsedQuotaPercentage(EntityModel value)
+    {
+        privateUsedQuotaPercentage = value;
+    }
+
     public ResourcesModel()
     {
         setDefinedVMs(new EntityModel());
@@ -189,6 +202,7 @@ public class ResourcesModel extends SearchableListModel
         setTotalDisksSize(new EntityModel());
         setNumOfSnapshots(new EntityModel());
         setTotalSnapshotsSize(new EntityModel());
+        setUsedQuotaPercentage(new EntityModel());
     }
 
     @Override
@@ -274,7 +288,7 @@ public class ResourcesModel extends SearchableListModel
 
                 getDefinedVMs().setEntity(list.size());
                 getRunningVMs().setEntity(runningVMs);
-                getRunningVMsPercentage().setEntity(runningVMs * 100 / list.size());
+                getRunningVMsPercentage().setEntity(list.isEmpty() ? 0 : runningVMs * 100 / list.size());
                 getDefinedCPUs().setEntity(definedCPUs);
                 getUsedCPUs().setEntity(usedCPUs);
                 getUsedCPUsPercentage().setEntity(usedCPUs * 100 / definedCPUs);
@@ -287,8 +301,22 @@ public class ResourcesModel extends SearchableListModel
 
                 Collections.sort(list, COMPARATOR);
                 resourcesModel.setItems(list);
+
             }
         };
+
+        // async Query for quota
+        AsyncQuery _asyncQueryForQuota = new AsyncQuery();
+        _asyncQueryForQuota.setModel(this);
+        GetQuotasConsumptionForCurrentUserQueryParameters parameters = new GetQuotasConsumptionForCurrentUserQueryParameters();
+        parameters.setRefresh(getIsQueryFirstTime());
+        Frontend.RunQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object ReturnValue)
+            {
+                getUsedQuotaPercentage().setEntity(((VdcQueryReturnValue) ReturnValue).getReturnValue());
+            }
+        }));
 
         // Items property will contain list of VMs.
         GetUserVmsByUserIdAndGroupsParameters getUserVmsByUserIdAndGroupsParameters =
