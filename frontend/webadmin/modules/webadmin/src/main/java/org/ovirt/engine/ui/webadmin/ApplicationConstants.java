@@ -1451,14 +1451,29 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String dcQuota();
 
-    @DefaultStringValue("Used Memory/Total")
+    @DefaultStringValue("Free Memory")
+    String freeMemory();
+
+    @DefaultStringValue("Free vCPU")
+    String freeVcpu();
+
+    @DefaultStringValue("Free Storage")
+    String freeStorage();
+
+    @DefaultStringValue("Memory Consumption")
     String usedMemoryQuota();
 
-    @DefaultStringValue("Running CPU/Total")
+    @DefaultStringValue("VCPU Consumption")
     String runningCpuQuota();
 
-    @DefaultStringValue("Used Storage/Total")
+    @DefaultStringValue("Storage Consumption")
     String usedStorageQuota();
+
+    @DefaultStringValue("Unlimited")
+    String unlimited();
+
+    @DefaultStringValue("Exceeded")
+    String exceeded();
 
     @DefaultStringValue("Add")
     String addQuota();
