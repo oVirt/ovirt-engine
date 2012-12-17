@@ -901,7 +901,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
             if (consumptionParameters != null) {
                 for (QuotaConsumptionParameter parameter : getQuotaConsumptionParameters()) {
-                    quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+                    if (parameter.getQuotaGuid() != null && parameter.getQuotaGuid() != Guid.Empty) {
+                        quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
+                    }
                 }
             }
         }

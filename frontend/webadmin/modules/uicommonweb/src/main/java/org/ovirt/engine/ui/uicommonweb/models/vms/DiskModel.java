@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class DiskModel extends Model
@@ -993,7 +994,12 @@ public class DiskModel extends Model
             isSanStorageModelValid = getSanStorageModel().getIsValid();
         }
 
+        storage_pool dataCenter = (storage_pool) getDataCenter().getSelectedItem();
+        if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
+            getQuota().ValidateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
+        }
+
         return getSize().getIsValid() && getStorageDomain().getIsValid() && getAlias().getIsValid()
-                && isSanStorageModelValid;
+                && isSanStorageModelValid && getQuota().getIsValid();
     }
 }
