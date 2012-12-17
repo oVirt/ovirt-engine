@@ -246,6 +246,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())
+                    && canDoSnapshot(getVm())
                     && ImagesHandler.PerformImagesChecks(getVm(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getStoragePoolId(),
@@ -255,9 +256,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            checkVmIsDown(),
+                            false,
                             true, true, disksList);
         }
+
         return result;
     }
 
@@ -267,11 +269,22 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
     }
 
+    private boolean canDoSnapshot(VM vm) {
+        // if live snapshot is not available, then if vm is up - snapshot is not possible so it needs to be
+        // checked if vm up or not
+        // if live snapshot is enabled, there is no need to check if vm is up since in any case snapshot is possible
+        if (!isLiveSnapshotEnabled() && !ImagesHandler.isVmDown(vm)) {
+            // if there is no live snapshot and the vm is up - snapshot is not possible
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT);
+        }
+        return true;
+    }
+
     /**
-     * @return Check for VM down only if DC level does not support live snapshots.
+     * @return If DC level does not support live snapshots.
      */
-    private boolean checkVmIsDown() {
-        return !Config.<Boolean> GetValue(
+    private boolean isLiveSnapshotEnabled() {
+        return Config.<Boolean> GetValue(
                 ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
 

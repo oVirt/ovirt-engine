@@ -1271,6 +1271,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected Compatibility Version is not supported.")
     String ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Selected data center compatibility version does not support live snapshot.")
+    String ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT();
+
     @DefaultStringValue("Network address must be specified when using static ip")
     String NETWORK_ADDR_MANDATORY_IN_STATIC_IP();
 
