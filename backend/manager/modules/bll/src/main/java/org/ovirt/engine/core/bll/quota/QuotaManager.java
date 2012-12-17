@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -23,15 +25,21 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
 public class QuotaManager {
     private static final QuotaManager INSTANCE = new QuotaManager();
     private static final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private static final Log log = LogFactory.getLog(QuotaManager.class);
-    private static final HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
+    private static HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
 
     private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
+
+    // when (cache size/number of quota in DB) ratio is under this minimum threshold - the calls to
+    // updateQuotaCache() would result in cache update. otherwise update will be executed.
+    private static final double MINIMUM_CACHE_FACTOR =
+            Config.<Integer> GetValue(ConfigValues.MinimumPercentageToUpdateQuotaCache);
 
     public static QuotaManager getInstance() {
         return INSTANCE;
@@ -950,5 +958,56 @@ public class QuotaManager {
                     memUsage);
         }
         return null;
+    }
+
+    /**
+     * InitializeCache is called by SchedulerUtilQuartzImpl.
+     */
+    @OnTimerMethodAnnotation("updateQuotaCache")
+    public synchronized void updateQuotaCache() {
+        if (!isCacheUpdateNeeded()) {
+            return;
+        }
+
+        log.debug("Updating Quota Cache...");
+        long timeStart = System.currentTimeMillis();
+        List<Quota> allQuotaIncludingConsumption = getQuotaDAO().getAllQuotaIncludingConsumption();
+
+        if (allQuotaIncludingConsumption.isEmpty()) {
+            return;
+        }
+
+        HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
+        for (Quota quota : allQuotaIncludingConsumption) {
+            if (!newStoragePoolQuotaMap.containsKey(quota.getStoragePoolId())) {
+                newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<Guid,Quota>());
+            }
+            newStoragePoolQuotaMap.get(quota.getStoragePoolId()).put(quota.getId(), quota);
+        }
+
+        lock.writeLock().lock();
+        try {
+            storagePoolQuotaMap = newStoragePoolQuotaMap;
+        } finally {
+            lock.writeLock().unlock();
+        }
+        long timeEnd = System.currentTimeMillis();
+        log.infoFormat("Quota Cache updated. ({0} msec)", timeEnd-timeStart);
+    }
+
+    public boolean isCacheUpdateNeeded() {
+        int quotaCount = getQuotaDAO().getQuotaCount();
+        int cacheCount = 0;
+
+        lock.readLock().lock();
+        try {
+            for(Map<Guid, Quota> quotaMap : storagePoolQuotaMap.values()) {
+                cacheCount += quotaMap.size();
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        return cacheCount < quotaCount * MINIMUM_CACHE_FACTOR/100;
     }
 }

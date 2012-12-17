@@ -603,6 +603,69 @@ END; $function$
 LANGUAGE plpgsql;
 
 
+DROP TYPE IF EXISTS all_vds_group_usage_rs CASCADE;
+CREATE TYPE all_vds_group_usage_rs AS
+    (quota_vds_group_id UUID, quota_id UUID,vds_group_id UUID,vds_group_name character varying(40),virtual_cpu INTEGER,virtual_cpu_usage INTEGER,mem_size_mb BIGINT,mem_size_mb_usage BIGINT);
+
+
+-- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
+-- If vds group id is null, then returns the global usage of the quota, otherwise returns only the sum of all VMs in the specific cluster.
+-- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
+CREATE OR REPLACE FUNCTION calculateAllVdsGroupUsage()
+RETURNS SETOF all_vds_group_usage_rs
+AS $function$
+BEGIN
+    RETURN QUERY SELECT
+        quota_limitation.id AS quota_vds_group_id,
+        quota_limitation.quota_id as quota_id,
+        quota_limitation.vds_group_id as vds_group_id,
+        vds_groups.name AS vds_group_name,
+        quota_limitation.virtual_cpu,
+        cast(COALESCE(sum(num_of_sockets * cpu_per_socket * cast(vm_dynamic.status not in (0, 13 , 14, 15) as INTEGER)), 0) as INTEGER) as virtual_cpu_usage,
+        --(Down(0),Suspended(13),ImageIllegal(14),ImageLocked(15))
+
+        quota_limitation.mem_size_mb,
+        COALESCE(sum(vm_static.mem_size_mb), 0) as mem_size_mb_usage
+    FROM quota_limitation
+        LEFT JOIN vm_static ON vm_static.quota_id = quota_limitation.quota_id
+        LEFT JOIN vm_dynamic ON vm_dynamic.vm_guid = vm_static.vm_guid
+        LEFT JOIN vds_groups ON vds_groups.vds_group_id = vm_static.vds_group_id
+    WHERE quota_limitation.virtual_cpu IS NOT NULL
+        AND quota_limitation.mem_size_mb IS NOT NULL
+    GROUP BY vm_static.quota_id, vds_groups.vds_group_id, vm_static.vds_group_id, quota_limitation.id;
+END; $function$
+LANGUAGE plpgsql;
+
+
+
+DROP TYPE IF EXISTS all_storage_usage_rs CASCADE;
+CREATE TYPE all_storage_usage_rs AS
+    (quota_storage_id UUID,quota_id UUID,storage_id UUID,storage_name character varying(250),storage_size_gb BIGINT,storage_size_gb_usage double precision);
+
+
+CREATE OR REPLACE FUNCTION calculateAllStorageUsage()
+RETURNS SETOF all_storage_usage_rs
+AS $function$
+BEGIN
+    -- Summarize size of all disks that are active.
+    RETURN QUERY SELECT
+        quota_limitation.id AS quota_storage_id,
+        quota_limitation.quota_id as quota_id,
+        quota_limitation.storage_id as storage_id,
+        storage_domain_static.storage_name,
+        quota_limitation.storage_size_gb,
+        cast(COALESCE(sum(size * cast(active as integer) + disk_image_dynamic.actual_size * cast((not active) as integer)) / 1073741824 ,0) as double precision)  as storage_usage -- 1073741824 is 1024^3 (for GB)
+    FROM quota_limitation
+        LEFT JOIN images ON quota_limitation.quota_id = images.quota_id
+        LEFT JOIN image_storage_domain_map ON images.image_guid = image_storage_domain_map.image_id
+        LEFT JOIN disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
+        LEFT JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
+    WHERE quota_limitation.storage_size_gb IS NOT NULL
+    GROUP BY images.quota_id, storage_id,quota_limitation.id,storage_domain_static.storage_name;
+END; $function$
+LANGUAGE plpgsql;
+
+
 -- Summarize the storage usage for all the disks in the quota
 -- For active disks, we summarize the full size and for snapshots and other disks, we summarize only the actual size.
 -- If v_storage_id is null, then return only the global usage of the quota, other wise return only the summarize in the specific storage.

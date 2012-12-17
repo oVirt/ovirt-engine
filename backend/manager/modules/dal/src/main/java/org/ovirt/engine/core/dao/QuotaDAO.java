@@ -30,6 +30,20 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
     public Quota getById(Guid id);
 
     /**
+     * Get total number of quota in the DB
+     * @return total number of quota
+     */
+    public int getQuotaCount();
+
+    /**
+     * Get all the full quotas. Including consumption data. This call is very heavy and should be used really and with
+     * caution. It was created to support cache initialization
+     *
+     * @return all quota in DB (including consumption calculation)
+     */
+    public List<Quota> getAllQuotaIncludingConsumption();
+
+    /**
      * Removes the Quota with the specified id.
      *
      * @param id
@@ -94,6 +108,14 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
     public List<QuotaStorage> getQuotaStorageByStorageGuid(Guid storageId, Guid quotaId);
 
     /**
+     * Get all the QuotaStorage in the system including consumption calculation. This call is very heavy and should be
+     * used really and with caution. It was created to support cache initialization
+     *
+     * @return all QuotaStorage (including consumption calculation)
+     */
+    public List<QuotaStorage> getAllQuotaStorageIncludingConsumption();
+
+    /**
      * Get <code>Quota</code> by name.
      *
      * @param quotaName
@@ -132,6 +154,14 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * Get all quota vds groups, which belong to quota with quotaId.
      */
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId);
+
+    /**
+     * Get all the QuotaVdsGroup in the system including consumption calculation. This call is very heavy and should be
+     * used really and with caution. It was created to support cache initialization
+     *
+     * @return all QuotaVdsGroup (including consumption calculation)
+     */
+    public List<QuotaVdsGroup> getAllQuotaVdsGroupIncludingConsumption();
 
     /**
      * Get all quota Vds groups, which belong to quota with quotaId.

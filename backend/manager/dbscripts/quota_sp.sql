@@ -58,6 +58,24 @@ BEGIN
   END; $procedure$
 LANGUAGE plpgsql;
 
+-- Returns all the quotas in a thin view (only basic quota meta data. no limits or consumption)
+Create or replace FUNCTION getAllThinQuota()
+RETURNS SETOF quota_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM quota_view;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION getQuotaCount()
+RETURNS SETOF BIGINT
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT count(*) as num_quota
+    FROM quota;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetQuotaStorageByQuotaGuid(v_id UUID)
 RETURNS SETOF quota_storage_view

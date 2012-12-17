@@ -1303,9 +1303,18 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     ProductKeyWindows2012x64(406),
 
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     NetworkLinkingSupported(407),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    QuotaCacheIntervalInMinutes(408),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    MinimumPercentageToUpdateQuotaCache(409),
 
     Invalid(65535);
 

@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
@@ -225,6 +226,11 @@ public class Backend implements BackendInternal {
                 "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
                 vmPoolMonitorIntervalInMinutes,
                 vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
+
+        int quotaCacheIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.QuotaCacheIntervalInMinutes);
+        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
+                "updateQuotaCache",  new Class[] {}, new Object[] {},
+                1, quotaCacheIntervalInMinutes, TimeUnit.MINUTES);
 
         try {
             File fLock = new File(Config.<String> GetValue(ConfigValues.SignLockFile));

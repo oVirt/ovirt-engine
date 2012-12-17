@@ -2,6 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +147,14 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return quotaStorageList;
     }
 
+    @Override
+    public List<QuotaStorage> getAllQuotaStorageIncludingConsumption() {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        return getCallsHandler().executeReadList("calculateAllStorageUsage",
+                getQuotaStorageResultSet(),
+                parameterSource);
+    }
+
     /**
      * Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a
      * specific quota storage will be returned.
@@ -176,6 +186,77 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
         return quotaEntity;
     }
 
+    private static ParameterizedRowMapper<Long> longMapper = new ParameterizedRowMapper<Long>() {
+        @Override
+        public Long mapRow(ResultSet resultSet, int i) throws SQLException {
+            return (Long) resultSet.getObject(1);
+        }
+    };
+
+    @Override
+    public int getQuotaCount() {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        return getCallsHandler().executeRead("getQuotaCount", longMapper, parameterSource).intValue();
+    }
+
+    /**
+     * Get all the full quotas. Including consumption data. This call is very heavy and should be used really and with
+     * caution. It was created to support cache initialization
+     *
+     * @return all quota in DB (including consumption calculation)
+     */
+    @Override
+    public List<Quota> getAllQuotaIncludingConsumption() {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        // get thin quota (only basic quota meta data)
+        List<Quota> allThinQuota = getCallsHandler().executeReadList("getAllThinQuota", getQuotaMetaDataFromResultSet(), parameterSource);
+
+        if (allThinQuota != null && !allThinQuota.isEmpty()){
+            Map<Guid, Quota> allQuotaMap = new HashMap<Guid, Quota>();
+            for (Quota quota : allThinQuota) {
+                allQuotaMap.put(quota.getId(), quota);
+            }
+
+            List<QuotaStorage> quotaStorageList = getAllQuotaStorageIncludingConsumption();
+            List<QuotaVdsGroup> quotaVdsGroupList = getAllQuotaVdsGroupIncludingConsumption();
+
+            if (quotaStorageList != null) {
+                for (QuotaStorage quotaStorage : quotaStorageList) {
+                    Quota quota = allQuotaMap.get(quotaStorage.getQuotaId());
+                    if (quota != null) {
+                        if (quotaStorage.getStorageId() == null || quotaStorage.getStorageId().equals(Guid.Empty)) {
+                            quota.setGlobalQuotaStorage(quotaStorage);
+                        } else {
+                            if (quota.getQuotaStorages() == null) {
+                                quota.setQuotaStorages(new ArrayList<QuotaStorage>());
+                            }
+                            quota.getQuotaStorages().add(quotaStorage);
+                        }
+                    }
+                }
+            }
+
+            if (quotaVdsGroupList != null) {
+                for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
+                    Quota quota = allQuotaMap.get(quotaVdsGroup.getQuotaId());
+                    if (quota != null) {
+                        if (quotaVdsGroup.getVdsGroupId() == null || quotaVdsGroup.getVdsGroupId().equals(Guid.Empty)) {
+                            quota.setGlobalQuotaVdsGroup(quotaVdsGroup);
+                        } else {
+                            if (quota.getQuotaVdsGroups() == null) {
+                                quota.setQuotaVdsGroups(new ArrayList<QuotaVdsGroup>());
+                            }
+                            quota.getQuotaVdsGroups().add(quotaVdsGroup);
+                        }
+                    }
+                }
+            }
+        }
+
+        // The thin quota were all filled
+        return allThinQuota;
+    }
+
     /**
      * Get all quota storages which belong to quota with quotaId.
      */
@@ -202,6 +283,14 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     public List<QuotaVdsGroup> getQuotaVdsGroupByQuotaGuid(Guid quotaId) {
         MapSqlParameterSource parameterSource = createQuotaIdParameterMapper(quotaId);
         return getCallsHandler().executeReadList("GetQuotaVdsGroupByQuotaGuid",
+                getVdsGroupQuotaResultSet(),
+                parameterSource);
+    }
+
+    @Override
+    public List<QuotaVdsGroup> getAllQuotaVdsGroupIncludingConsumption() {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        return getCallsHandler().executeReadList("calculateAllVdsGroupUsage",
                 getVdsGroupQuotaResultSet(),
                 parameterSource);
     }
