@@ -45,14 +45,14 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("All references to objects that belong to Data Center {0} in the database will be removed. You may need to manually clean the Storage Domains in order to reuse them.")
     String detaCenterForceRemovePopupMessageLabel(String dcName);
 
-    @DefaultMessage("Memory Page Sharing Threshold set to {0}. Allow VMs to run on the Host up to the overcommit threshold")
-    String clusterPopupOptimizationForServerExplainationLabel(String a);
+    @DefaultMessage("For Server Load - Enable memory page sharing to {0}%")
+    String clusterPopupMemoryOptimizationForServerLabel(String a);
 
-    @DefaultMessage("Memory Page Sharing Threshold set to {0}. Allow VMs to run on the Host up to the overcommit threshold")
-    String clusterPopupOptimizationForDesktopExplainationLabel( String a);
+    @DefaultMessage("For Desktop Load - Enable memory page sharing to {0}%")
+    String clusterPopupMemoryOptimizationForDesktopLabel(String a);
 
-    @DefaultMessage("Memory Page Sharing Threshold set to {0} via API/CLI")
-    String clusterPopupOptimizationCustomExplainationLabel(String a);
+    @DefaultMessage("Custom Overcommit Threshold - Set to {0}% via API/CLI")
+    String clusterPopupMemoryOptimizationCustomLabel(String a);
 
     @DefaultMessage("The Network will be added to the Data Center {0} as well.")
     String theNetworkWillBeAddedToTheDataCenterAsWell(String dcName);

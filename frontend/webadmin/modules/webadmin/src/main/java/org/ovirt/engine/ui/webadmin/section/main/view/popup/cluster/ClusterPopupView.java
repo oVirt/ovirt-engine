@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -25,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -145,43 +147,49 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     @UiField
     @WithElementId
-    DialogTab memoryOptimizationTab;
+    DialogTab optimizationTab;
+
+    @UiField
+    @Ignore
+    Label memoryOptimizationPanelTitle;
+
+    @UiField(provided = true)
+    InfoIcon memoryOptimizationInfo;
 
     @UiField(provided = true)
     @Path(value = "optimizationNone_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationNoneEditor;
 
-    @UiField
-    @Ignore
-    Label optimizationNoneExplanationLabel;
-
     @UiField(provided = true)
     @Path(value = "optimizationForServer_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationForServerEditor;
-
-    @UiField
-    @Ignore
-    Label optimizationForServerExplanationLabel;
 
     @UiField(provided = true)
     @Path(value = "optimizationForDesktop_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationForDesktopEditor;
 
-    @UiField
-    @Ignore
-    Label optimizationForDesktopExplanationLabel;
-
     @UiField(provided = true)
     @Path(value = "optimizationCustom_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
-    @UiField(provided = true)
+    @UiField
+    FlowPanel cpuThreadsPanel;
+
+    @UiField
     @Ignore
-    Label optimizationCustomExplanationLabel;
+    Label cpuThreadsPanelTitle;
+
+    @UiField(provided = true)
+    InfoIcon cpuThreadsInfo;
+
+    @UiField(provided = true)
+    @Path(value = "countThreadsAsCores.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor countThreadsAsCoresEditor;
 
     @UiField
     @WithElementId
@@ -205,12 +213,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     private ApplicationMessages messages;
 
     @Inject
-    public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
+    public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
         super(eventBus, resources);
         this.messages = messages;
         initListBoxEditors();
         initRadioButtonEditors();
         initCheckBoxEditors();
+        initInfoIcons(resources, constants, templates);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
@@ -224,6 +233,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         migrateOnErrorOption_NOEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_YESEditor.addContentWidgetStyleName(style.label());
         migrateOnErrorOption_HA_ONLYEditor.addContentWidgetStyleName(style.label());
+
+        optimizationNoneEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationForServerEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationForDesktopEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
+
+        countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
     }
 
     private void localize(ApplicationConstants constants) {
@@ -245,14 +261,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         glusterHostFingerprintEditor.setLabel(constants.hostPopupHostFingerprintLabel());
         glusterHostPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
 
-        memoryOptimizationTab.setLabel(constants.clusterPopupMemoryOptimizationTabLabel());
+        optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
 
+        memoryOptimizationPanelTitle.setText(constants.clusterPopupMemoryOptimizationPanelTitle());
         optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
-        optimizationForServerEditor.setLabel(constants.clusterPopupOptimizationForServerLabel());
-        optimizationForDesktopEditor.setLabel(constants.clusterPopupOptimizationForDesktopLabel());
-        optimizationCustomEditor.setLabel(constants.clusterPopupOptimizationCustomLabel());
 
-        optimizationNoneExplanationLabel.setText(constants.clusterPopupOptimizationNoneExplainationLabel());
+        cpuThreadsPanelTitle.setText(constants.clusterPopupCpuThreadsPanelTitle());
+        countThreadsAsCoresEditor.setLabel(constants.clusterPopupCountThreadsAsCoresLabel());
 
         resiliencePolicyTab.setLabel(constants.clusterPopupResiliencePolicyTabLabel());
 
@@ -274,9 +289,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         migrateOnErrorOption_YESEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         migrateOnErrorOption_HA_ONLYEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         migrateOnErrorOption_NOEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
-
-        optimizationCustomExplanationLabel = new Label();
-        optimizationCustomExplanationLabel.setVisible(false);
     }
 
     private void initListBoxEditors() {
@@ -306,12 +318,21 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     private void initCheckBoxEditors()
     {
         importGlusterConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+    }
+
+    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)
+    {
+        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
+
+        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
     }
 
     private void applyModeCustomizations() {
         if (ApplicationModeHelper.getUiMode() == ApplicationMode.GlusterOnly)
         {
-            memoryOptimizationTab.setVisible(false);
+            optimizationTab.setVisible(false);
             resiliencePolicyTab.setVisible(false);
             dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
         }
@@ -329,40 +350,43 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
         servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
 
+        optimizationForServerFormatter(object);
+        optimizationForDesktopFormatter(object);
+        optimizationCustomFormatter(object);
+
         object.getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForServerExplanationLabel.setText(messages.clusterPopupOptimizationForServerExplainationLabel( object.getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
+                optimizationForServerFormatter(object);
             }
         });
+
         object.getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                optimizationForDesktopExplanationLabel.setText(messages.clusterPopupOptimizationForDesktopExplainationLabel(object.getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
+                optimizationForDesktopFormatter(object);
             }
         });
-        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
 
+        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ((Boolean) object.getOptimizationCustom_IsSelected().getEntity()) {
-                    optimizationCustomExplanationLabel.setText(messages.clusterPopupOptimizationCustomExplainationLabel(object.getOptimizationCustom().getEntity().toString() + "%")); //$NON-NLS-1$
-                    optimizationCustomExplanationLabel.setVisible(true);
+                    optimizationCustomFormatter(object);
+                    optimizationCustomEditor.setVisible(true);
                 }
             }
         });
-        object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
+        object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 resiliencePolicyTab.setVisible(object.getisResiliencePolicyTabAvailable());
                 applyModeCustomizations();
             }
         });
-        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
 
+        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
@@ -371,6 +395,38 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         });
         importGlusterExplanationLabel.setVisible((Boolean) object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
+
+        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                cpuThreadsPanel.setVisible((Boolean) object.getVersionSupportsCpuThreads().getEntity());
+            }
+        });
+    }
+
+    private void optimizationForServerFormatter(ClusterModel object) {
+        if (object.getOptimizationForServer() != null
+                && object.getOptimizationForServer().getEntity() != null) {
+            optimizationForServerEditor.setLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
+                    object.getOptimizationForServer().getEntity().toString()));
+        }
+    }
+
+    private void optimizationForDesktopFormatter(ClusterModel object) {
+        if (object.getOptimizationForDesktop() != null
+                && object.getOptimizationForDesktop().getEntity() != null) {
+            optimizationForDesktopEditor.setLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
+                    object.getOptimizationForDesktop().getEntity().toString()));
+        }
+    }
+
+    private void optimizationCustomFormatter(ClusterModel object) {
+        if (object.getOptimizationCustom() != null
+                && object.getOptimizationCustom().getEntity() != null) {
+            // Use current value because object.getOptimizationCustom.getEntity() can be null
+            optimizationCustomEditor.setLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
+                    String.valueOf(object.getMemoryOverCommit())));
+        }
     }
 
     @Override
@@ -396,5 +452,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         String generalTabTopDecoratorEmpty();
 
         String editorContentWidget();
+
+        String fullWidth();
     }
 }

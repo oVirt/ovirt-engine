@@ -57,11 +57,13 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
     TextBoxLabel cpuName = new TextBoxLabel();
     TextBoxLabel cpuType = new TextBoxLabel();
+    TextBoxLabel threadsPerCore = new TextBoxLabel();
     VersionLabel vdsmVersion = new VersionLabel();
     PercentLabel<Integer> sharedMemory = new PercentLabel<Integer>();
     BooleanLabel memoryPageSharing = new BooleanLabel("Active", "Inactive"); //$NON-NLS-1$ //$NON-NLS-2$
     NullableNumberLabel<Integer> activeVms = new NullableNumberLabel<Integer>();
-    NullableNumberLabel<Integer> numberOfCPUs = new NullableNumberLabel<Integer>();
+    NullableNumberLabel<Integer> numberOfSockets = new NullableNumberLabel<Integer>("Unknown"); //$NON-NLS-1$
+    NullableNumberLabel<Integer> coresPerSocket = new NullableNumberLabel<Integer>("Unknown"); //$NON-NLS-1$
 
     MemorySizeLabel<Integer> physicalMemory;
     MemorySizeLabel<Integer> usedMemory;
@@ -134,16 +136,18 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formItems.add(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 6, 0));
 
         formItems.add(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, 1));
-        formItems.add(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 1, 1));
-        formItems.add(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2, 1));
-        formItems.add(new FormItem(constants.numOfCpusHostGeneral(), numberOfCPUs, 3, 1));
-        formItems.add(new FormItem(constants.cpuNameHostGeneral(), cpuName, 4, 1));
-        formItems.add(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 5, 1));
+        formItems.add(new FormItem(constants.cpuNameHostGeneral(), cpuName, 1, 1));
+        formItems.add(new FormItem(constants.cpuTypeHostGeneral(), cpuType, 2, 1));
+        formItems.add(new FormItem(constants.numOfSocketsHostGeneral(), numberOfSockets, 3, 1));
+        formItems.add(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 4, 1));
+        formItems.add(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 5, 1));
 
         formItems.add(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 0, 2));
         formItems.add(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1, 2));
         formItems.add(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2, 2));
         formItems.add(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 3, 2));
+        formItems.add(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 4, 2));
+        formItems.add(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 5, 2));
 
         applyModeCustomizations(formItems);
 

@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class ClusterModel extends Model
 {
-
     private int privateServerOverCommit;
 
     public int getServerOverCommit()
@@ -56,16 +55,16 @@ public class ClusterModel extends Model
         privateDesktopOverCommit = value;
     }
 
-    private int privateDefaultOverCommit;
+    private int privateDefaultMemoryOvercommit;
 
-    public int getDefaultOverCommit()
+    public int getDefaultMemoryOvercommit()
     {
-        return privateDefaultOverCommit;
+        return privateDefaultMemoryOvercommit;
     }
 
-    public void setDefaultOverCommit(int value)
+    public void setDefaultMemoryOvercommit(int value)
     {
-        privateDefaultOverCommit = value;
+        privateDefaultMemoryOvercommit = value;
     }
 
     private VDSGroup privateEntity;
@@ -375,6 +374,30 @@ public class ClusterModel extends Model
         privateOptimizationCustom_IsSelected = value;
     }
 
+    private EntityModel privateCountThreadsAsCores;
+
+    public EntityModel getCountThreadsAsCores()
+    {
+        return privateCountThreadsAsCores;
+    }
+
+    public void setCountThreadsAsCores(EntityModel value)
+    {
+        privateCountThreadsAsCores = value;
+    }
+
+    private EntityModel privateVersionSupportsCpuThreads;
+
+    public EntityModel getVersionSupportsCpuThreads()
+    {
+        return privateVersionSupportsCpuThreads;
+    }
+
+    public void setVersionSupportsCpuThreads(EntityModel value)
+    {
+        privateVersionSupportsCpuThreads = value;
+    }
+
     private EntityModel privateMigrateOnErrorOption_NO;
 
     public EntityModel getMigrateOnErrorOption_NO()
@@ -651,7 +674,11 @@ public class ClusterModel extends Model
 
         // Optimization methods:
         // default value =100;
-        setDefaultOverCommit(AsyncDataProvider.GetClusterDefaultMemoryOverCommit());
+        setDefaultMemoryOvercommit(AsyncDataProvider.GetClusterDefaultMemoryOverCommit());
+
+        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.GetClusterDefaultCountThreadsAsCores()));
+
+        setVersionSupportsCpuThreads(new EntityModel(true));
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -674,10 +701,10 @@ public class ClusterModel extends Model
                         EntityModel temp;
 
                         temp = clusterModel1.getOptimizationNone();
-                        temp.setEntity(clusterModel1.getDefaultOverCommit());
+                        temp.setEntity(clusterModel1.getDefaultMemoryOvercommit());
                         // res1, res2 is used for conversion purposes.
-                        boolean res1 = clusterModel1.getDesktopOverCommit() != clusterModel1.getDefaultOverCommit();
-                        boolean res2 = clusterModel1.getServerOverCommit() != clusterModel1.getDefaultOverCommit();
+                        boolean res1 = clusterModel1.getDesktopOverCommit() != clusterModel1.getDefaultMemoryOvercommit();
+                        boolean res2 = clusterModel1.getServerOverCommit() != clusterModel1.getDefaultMemoryOvercommit();
                         temp = clusterModel1.getOptimizationNone_IsSelected();
                         setIsSelected(res1 && res2);
                         temp.setEntity(getIsSelected());
@@ -685,12 +712,12 @@ public class ClusterModel extends Model
                         temp = clusterModel1.getOptimizationForServer();
                         temp.setEntity(clusterModel1.getServerOverCommit());
                         temp = clusterModel1.getOptimizationForServer_IsSelected();
-                        temp.setEntity(clusterModel1.getServerOverCommit() == clusterModel1.getDefaultOverCommit());
+                        temp.setEntity(clusterModel1.getServerOverCommit() == clusterModel1.getDefaultMemoryOvercommit());
 
                         temp = clusterModel1.getOptimizationForDesktop();
                         temp.setEntity(clusterModel1.getDesktopOverCommit());
                         temp = temp = clusterModel1.getOptimizationForDesktop_IsSelected();
-                        temp.setEntity(clusterModel1.getDesktopOverCommit() == clusterModel1.getDefaultOverCommit());
+                        temp.setEntity(clusterModel1.getDesktopOverCommit() == clusterModel1.getDefaultMemoryOvercommit());
 
                         temp = clusterModel1.getOptimizationCustom();
                         temp.setIsAvailable(false);
@@ -796,6 +823,8 @@ public class ClusterModel extends Model
     {
         getDescription().setEntity(getEntity().getdescription());
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
+
+        getCountThreadsAsCores().setEntity((boolean) getEntity().getCountThreadsAsCores());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -924,6 +953,9 @@ public class ClusterModel extends Model
             }
         };
         AsyncDataProvider.GetCPUList(_asyncQuery, version);
+
+        // CPU Thread support is only available for clusters of version 3.2 or greater
+        getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
 
     }
 

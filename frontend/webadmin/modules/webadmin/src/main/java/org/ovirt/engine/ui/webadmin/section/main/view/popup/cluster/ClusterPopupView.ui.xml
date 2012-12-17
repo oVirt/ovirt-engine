@@ -52,6 +52,26 @@
 			width: 350px;
 			margin-top: 10px;
 		}
+
+		.fullWidth {
+			float: right;
+			width: 460px;
+			padding: 0 5px;
+			line-height: 26px;
+		}
+		.panelTitle {
+			font-size: 14px;
+			padding-left: 3px;
+			padding-bottom: 10px;
+			display: inline-block;
+		}
+		.panelInfo {
+			display: inline-block;
+			margin-left: 20px;
+		}
+		.nestedSubsequentPanel {
+			padding-top: 24px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="610px" height="560px">
@@ -87,17 +107,22 @@
 					</t:DialogTab>
 				</t:tab>
 				<t:tab>
-					<t:DialogTab ui:field="memoryOptimizationTab">
+					<t:DialogTab ui:field="optimizationTab">
 						<t:content>
-							<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
-								<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
-								<g:Label ui:field="optimizationNoneExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
-								<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
-								<g:Label ui:field="optimizationForServerExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
-								<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
-								<g:Label ui:field="optimizationForDesktopExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
-								<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
-								<g:Label ui:field="optimizationCustomExplanationLabel" addStyleNames="{style.explanationLabel},generalDialogComment" />
+							<g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
+									<g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
+									<d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
+									<e:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" />
+									<e:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" />
+									<e:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" />
+									<e:EntityModelRadioButtonEditor ui:field="optimizationCustomEditor" />
+								</g:FlowPanel>
+								<g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
+									<g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />
+									<d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
+									<e:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
+								</g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

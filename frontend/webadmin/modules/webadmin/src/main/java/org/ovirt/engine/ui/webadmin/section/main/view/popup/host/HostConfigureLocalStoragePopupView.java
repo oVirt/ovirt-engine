@@ -4,20 +4,24 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -25,9 +29,11 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
@@ -55,6 +61,14 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         return constants;
     }
 
+    private final ApplicationMessages messages;
+
+    private ApplicationMessages getMessages() {
+        return messages;
+    }
+
+    @UiField
+    WidgetStyle style;
 
     @UiField
     DialogTab generalTab;
@@ -114,55 +128,63 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @UiField
     @WithElementId
-    DialogTab memoryOptimizationTab;
+    DialogTab optimizationTab;
+
+    @UiField
+    @Ignore
+    Label memoryOptimizationPanelTitle;
+
+    @UiField(provided = true)
+    InfoIcon memoryOptimizationInfo;
 
     @UiField(provided = true)
     @Path(value = "cluster.optimizationNone_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationNoneEditor;
 
-    @UiField
-    @Ignore
-    Label optimizationNoneExplanationLabel;
-
     @UiField(provided = true)
     @Path(value = "cluster.optimizationForServer_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationForServerEditor;
-
-    @UiField
-    @Ignore
-    Label optimizationForServerExplanationLabel;
 
     @UiField(provided = true)
     @Path(value = "cluster.optimizationForDesktop_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationForDesktopEditor;
 
-    @UiField
-    @Ignore
-    Label optimizationForDesktopExplanationLabel;
-
     @UiField(provided = true)
     @Path(value = "cluster.optimizationCustom_IsSelected.entity")
     @WithElementId
     EntityModelRadioButtonEditor optimizationCustomEditor;
 
-    @UiField(provided = true)
-    @Ignore
-    Label optimizationCustomExplanationLabel;
+    @UiField
+    FlowPanel cpuThreadsPanel;
 
+    @UiField
+    @Ignore
+    Label cpuThreadsPanelTitle;
+
+    @UiField(provided = true)
+    InfoIcon cpuThreadsInfo;
+
+    @UiField(provided = true)
+    @Path(value = "cluster.countThreadsAsCores.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor countThreadsAsCoresEditor;
 
     @Inject
-    public HostConfigureLocalStoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public HostConfigureLocalStoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
+            ApplicationMessages messages, ApplicationTemplates templates) {
         super(eventBus, resources);
 
         this.constants = constants;
+        this.messages = messages;
 
-        initialize();
+        initialize(resources, templates);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        addStyles();
         localize();
         Driver.driver.initialize(this);
 
@@ -209,7 +231,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         });
     }
 
-    private void initialize() {
+    private void initialize(ApplicationResources resources, ApplicationTemplates templates) {
 
         dataCenterVersionEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -232,14 +254,27 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         optimizationForDesktopEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         optimizationCustomEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
-        optimizationCustomExplanationLabel = new Label();
-        optimizationCustomExplanationLabel.setVisible(false);
+        optimizationCustomEditor.setVisible(false);
+
+        countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", getConstants().clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
+        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", getConstants().clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
+
+    }
+
+    private void addStyles() {
+        optimizationNoneEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationForServerEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationForDesktopEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
+
+        countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
     }
 
     void localize() {
 
         generalTab.setLabel(getConstants().hostPopupGeneralTabLabel());
-        memoryOptimizationTab.setLabel(getConstants().hostPopupMemoryOptimizationTabLabel());
 
         dataCenterButton.setText(getConstants().editText());
         dataCenterNameEditor.setLabel(getConstants().nameLabel());
@@ -256,17 +291,13 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
         pathLabel.setText(getConstants().configureLocalStoragePopupPathLabel());
 
-        memoryOptimizationTab.setLabel(constants.clusterPopupMemoryOptimizationTabLabel());
+        optimizationTab.setLabel(getConstants().clusterPopupOptimizationTabLabel());
 
-        optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
-        optimizationForServerEditor.setLabel(constants.clusterPopupOptimizationForServerLabel());
-        optimizationForDesktopEditor.setLabel(constants.clusterPopupOptimizationForDesktopLabel());
-        optimizationCustomEditor.setLabel(constants.clusterPopupOptimizationCustomLabel());
+        memoryOptimizationPanelTitle.setText(getConstants().clusterPopupMemoryOptimizationPanelTitle());
+        optimizationNoneEditor.setLabel(getConstants().clusterPopupOptimizationNoneLabel());
 
-        optimizationNoneExplanationLabel.setText(constants.clusterPopupOptimizationNoneExplainationLabel());
-        optimizationForServerExplanationLabel.setText(constants.clusterPopupOptimizationForServerExplainationLabel());
-        optimizationForDesktopExplanationLabel.setText(constants.clusterPopupOptimizationForDesktopExplainationLabel());
-        optimizationCustomExplanationLabel.setText(constants.clusterPopupOptimizationCustomExplainationLabel());
+        cpuThreadsPanelTitle.setText(getConstants().clusterPopupCpuThreadsPanelTitle());
+        countThreadsAsCoresEditor.setLabel(getConstants().clusterPopupCountThreadsAsCoresLabel());
     }
 
     @Override
@@ -279,9 +310,9 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
         optimizationForServerFormatter(model);
         optimizationForDesktopFormatter(model);
+        optimizationCustomFormatter(model);
 
         model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 optimizationForServerFormatter(model);
@@ -289,7 +320,6 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         });
 
         model.getCluster().getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 optimizationForDesktopFormatter(model);
@@ -297,14 +327,19 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         });
 
         model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if ((Boolean) model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
-                    optimizationCustomExplanationLabel.setText(StringFormat.format(optimizationCustomExplanationLabel.getText(),
-                        model.getCluster().getOptimizationCustom().getEntity().toString() + "%")); //$NON-NLS-1$
-                    optimizationCustomExplanationLabel.setVisible(true);
+                    optimizationCustomFormatter(model);
+                    optimizationCustomEditor.setVisible(true);
                 }
+            }
+        });
+
+        model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                cpuThreadsPanel.setVisible((Boolean) model.getCluster().getVersionSupportsCpuThreads().getEntity());
             }
         });
     }
@@ -312,16 +347,25 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
     private void optimizationForDesktopFormatter(ConfigureLocalStorageModel model) {
         if (model.getCluster() != null && model.getCluster().getOptimizationForDesktop() != null
                 && model.getCluster().getOptimizationForDesktop().getEntity() != null) {
-            optimizationForDesktopExplanationLabel.setText(StringFormat.format(optimizationForDesktopExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForDesktop().getEntity().toString() + "%")); //$NON-NLS-1$
+            optimizationForDesktopEditor.setLabel(getMessages().clusterPopupMemoryOptimizationForDesktopLabel(
+                    model.getCluster().getOptimizationForDesktop().getEntity().toString()));
         }
     }
 
     private void optimizationForServerFormatter(ConfigureLocalStorageModel model) {
         if (model.getCluster() != null && model.getCluster().getOptimizationForServer() != null
                 && model.getCluster().getOptimizationForServer().getEntity() != null) {
-            optimizationForServerExplanationLabel.setText(StringFormat.format(optimizationForServerExplanationLabel.getText(),
-                    model.getCluster().getOptimizationForServer().getEntity().toString() + "%")); //$NON-NLS-1$
+            optimizationForServerEditor.setLabel(getMessages().clusterPopupMemoryOptimizationForServerLabel(
+                    model.getCluster().getOptimizationForServer().getEntity().toString()));
+        }
+    }
+
+    private void optimizationCustomFormatter(ConfigureLocalStorageModel model) {
+        if (model.getCluster() != null && model.getCluster().getOptimizationCustom() != null
+                && model.getCluster().getOptimizationCustom().getEntity() != null) {
+            // Use current value because object.getOptimizationCustom.getEntity() can be null
+            optimizationCustomEditor.setLabel(getMessages().clusterPopupMemoryOptimizationCustomLabel(
+                    String.valueOf(model.getCluster().getMemoryOverCommit())));
         }
     }
 
@@ -332,5 +376,9 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
 
     @Override
     public void focusInput() {
+    }
+
+    interface WidgetStyle extends CssResource {
+        String fullWidth();
     }
 }

@@ -121,6 +121,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<I>{0}<BR>{1}</I>")
     SafeHtml italicTwoLines(String firstLine, String secondLine);
 
+    @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")
+    SafeHtml italicFixedWidth(String pxWidth, String text);
+
     @Template("<div style='background: url({0}) no-repeat; height: {1}px; width: {2}px;'></div>")
     SafeHtml image(String url, int height, int width);
 

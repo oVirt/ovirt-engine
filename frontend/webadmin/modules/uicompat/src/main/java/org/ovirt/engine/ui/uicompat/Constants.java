@@ -61,6 +61,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Cluster Compatibility Version")
     String changeClusterCompatibilityVersionTitle();
 
+    @DefaultStringValue("Disable CPU Thread Support")
+    String disableClusterCpuThreadSupportTitle();
+
     @DefaultStringValue("General")
     String generalTitle();
 
@@ -572,6 +575,11 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
     String youAreAboutChangeClusterCompatibilityVersionMsg();
+
+    @DefaultStringValue("You are about to disable CPU thread support for this cluster. Disabling this can affect the ability to run VMs with certain CPU configurations.\n\n" +
+            "Please ensure there are no VMs in this cluster making use of specific CPU settings such as CPU-pinning which may be affected by this change.\n\n" +
+            "Are you sure you want to continue?")
+    String youAreAboutChangeClusterCpuThreadSupportMsg();
 
     @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
     String asciiNameValidationMsg();

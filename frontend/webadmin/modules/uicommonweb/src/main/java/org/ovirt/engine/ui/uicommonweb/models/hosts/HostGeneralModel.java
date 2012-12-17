@@ -131,6 +131,8 @@ public class HostGeneralModel extends EntityModel
         super.setEntity(value);
     }
 
+    // 1st column in General tab
+
     private String os;
 
     public String getOS()
@@ -244,6 +246,8 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    // 2nd column in General tab
+
     private Integer activeVms;
 
     public Integer getActiveVms()
@@ -261,62 +265,6 @@ public class HostGeneralModel extends EntityModel
         {
             activeVms = value;
             OnPropertyChanged(new PropertyChangedEventArgs("ActiveVms")); //$NON-NLS-1$
-        }
-    }
-
-    private Boolean memoryPageSharing;
-
-    public Boolean getMemoryPageSharing()
-    {
-        return memoryPageSharing;
-    }
-
-    public void setMemoryPageSharing(Boolean value)
-    {
-        if (memoryPageSharing == null && value == null)
-        {
-            return;
-        }
-        if (memoryPageSharing == null || !memoryPageSharing.equals(value))
-        {
-            memoryPageSharing = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
-        }
-    }
-
-    private Object automaticLargePage;
-
-    public Object getAutomaticLargePage()
-    {
-        return automaticLargePage;
-    }
-
-    public void setAutomaticLargePage(Object value)
-    {
-        if (automaticLargePage != value)
-        {
-            automaticLargePage = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
-        }
-    }
-
-    private Integer numberOfCPUs;
-
-    public Integer getNumberOfCPUs()
-    {
-        return numberOfCPUs;
-    }
-
-    public void setNumberOfCPUs(Integer value)
-    {
-        if (numberOfCPUs == null && value == null)
-        {
-            return;
-        }
-        if (numberOfCPUs == null || !numberOfCPUs.equals(value))
-        {
-            numberOfCPUs = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("NumberOfCPUs")); //$NON-NLS-1$
         }
     }
 
@@ -351,6 +299,68 @@ public class HostGeneralModel extends EntityModel
             OnPropertyChanged(new PropertyChangedEventArgs("CpuType")); //$NON-NLS-1$
         }
     }
+
+    private Integer numberOfSockets;
+
+    public Integer getNumberOfSockets()
+    {
+        return numberOfSockets;
+    }
+
+    public void setNumberOfSockets(Integer value)
+    {
+        if (numberOfSockets == null && value == null)
+        {
+            return;
+        }
+        if (numberOfSockets == null || !numberOfSockets.equals(value))
+        {
+            numberOfSockets = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("NumberOfSockets")); //$NON-NLS-1$
+        }
+    }
+
+    private Integer coresPerSocket;
+
+    public Integer getCoresPerSocket()
+    {
+        return coresPerSocket;
+    }
+
+    public void setCoresPerSocket(Integer value)
+    {
+        if (coresPerSocket == null && value == null)
+        {
+            return;
+        }
+        if (coresPerSocket == null || !coresPerSocket.equals(value))
+        {
+            coresPerSocket = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("CoresPerSocket")); //$NON-NLS-1$
+        }
+    }
+
+    private String threadsPerCore;
+
+    public String getThreadsPerCore()
+    {
+        return threadsPerCore;
+    }
+
+    public void setThreadsPerCore(String value)
+    {
+        if (threadsPerCore == null && value == null)
+        {
+            return;
+        }
+        if (threadsPerCore == null || !threadsPerCore.equals(value))
+        {
+            threadsPerCore = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("ThreadsPerCore")); //$NON-NLS-1$
+        }
+    }
+
+    // 3rd column in General tab
 
     private Integer sharedMemory;
 
@@ -497,6 +507,44 @@ public class HostGeneralModel extends EntityModel
     public Float getMaxSchedulingMemory() {
         return maxSchedulingMemory;
     }
+
+    private Boolean memoryPageSharing;
+
+    public Boolean getMemoryPageSharing()
+    {
+        return memoryPageSharing;
+    }
+
+    public void setMemoryPageSharing(Boolean value)
+    {
+        if (memoryPageSharing == null && value == null)
+        {
+            return;
+        }
+        if (memoryPageSharing == null || !memoryPageSharing.equals(value))
+        {
+            memoryPageSharing = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("MemoryPageSharing")); //$NON-NLS-1$
+        }
+    }
+
+    private Object automaticLargePage;
+
+    public Object getAutomaticLargePage()
+    {
+        return automaticLargePage;
+    }
+
+    public void setAutomaticLargePage(Object value)
+    {
+        if (automaticLargePage != value)
+        {
+            automaticLargePage = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("AutomaticLargePage")); //$NON-NLS-1$
+        }
+    }
+
+    // Alert section in general tab
 
     private boolean hasAnyAlert;
 
@@ -846,16 +894,31 @@ public class HostGeneralModel extends EntityModel
         setVdsmVersion(vds.getVersion());
         setSpiceVersion(vds.getspice_version());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
+
         setActiveVms(vds.getvm_active());
-        setMemoryPageSharing(vds.getksm_state());
-        setAutomaticLargePage(vds.getTransparentHugePagesState());
-        setNumberOfCPUs(vds.getcpu_cores());
         setCpuName(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
         setCpuType(vds.getcpu_model());
-        setSharedMemory(vds.getmem_shared_percent());
+        setNumberOfSockets(vds.getcpu_sockets());
+        setCoresPerSocket((vds.getcpu_cores() != null && vds.getcpu_sockets() != null)
+                ? vds.getcpu_cores() / vds.getcpu_sockets() : null);
+
+        if (vds.getvds_group_compatibility_version() != null
+                && Version.v3_2.compareTo(vds.getvds_group_compatibility_version()) > 0) {
+            // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
+            setThreadsPerCore("Unsupported"); //$NON-NLS-1$
+        } else if (vds.getCpuThreads() == null || vds.getcpu_cores() == null) {
+            setThreadsPerCore("Unknown"); //$NON-NLS-1$
+        } else {
+            Integer threads = vds.getCpuThreads() / vds.getcpu_cores();
+            setThreadsPerCore(threads.toString() + (threads > 1 ? " (SMT Enabled)" : " (SMT Disabled)")); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
         setPhysicalMemory(vds.getphysical_mem_mb());
         setSwapTotal(vds.getswap_total());
         setSwapFree(vds.getswap_free());
+        setSharedMemory(vds.getmem_shared_percent());
+        setMemoryPageSharing(vds.getksm_state());
+        setAutomaticLargePage(vds.getTransparentHugePagesState());
     }
 
     private void UpdateAlerts()

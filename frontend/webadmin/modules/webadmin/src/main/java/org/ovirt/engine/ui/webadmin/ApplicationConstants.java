@@ -547,32 +547,29 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Compatibility Version")
     String clusterPopupVersionLabel();
 
-    @DefaultStringValue("Memory Optimization")
-    String clusterPopupMemoryOptimizationTabLabel();
+    @DefaultStringValue("Optimization")
+    String clusterPopupOptimizationTabLabel();
 
-    @DefaultStringValue("None")
+    @DefaultStringValue("Memory Optimization")
+    String clusterPopupMemoryOptimizationPanelTitle();
+
+    @DefaultStringValue("Allow VMs to run on the hosts up to the specified overcommit threshold." +
+                        " Higher values conserve memory at the expense of greater host CPU usage.")
+    String clusterPopupMemoryOptimizationInfo();
+
+    @DefaultStringValue("None - Disable memory page sharing")
     String clusterPopupOptimizationNoneLabel();
 
-    @DefaultStringValue("For Server Load")
-    String clusterPopupOptimizationForServerLabel();
+    @DefaultStringValue("CPU Threads")
+    String clusterPopupCpuThreadsPanelTitle();
 
-    @DefaultStringValue("For Desktop Load")
-    String clusterPopupOptimizationForDesktopLabel();
+    @DefaultStringValue("Allow guests to use host threads as virtual CPU cores, utilizing AMD Clustered MultiThreading or Intel" +
+                        " Hyper-Threading technology on the virtualization host. Enabling this option may be useful for less" +
+                        " CPU-intensive workloads, or to run guests with CPU configurations that would otherwise be restricted.")
+    String clusterPopupCpuThreadsInfo();
 
-    @DefaultStringValue("Custom Value")
-    String clusterPopupOptimizationCustomLabel();
-
-    @DefaultStringValue("Memory Page Sharing is Disabled")
-    String clusterPopupOptimizationNoneExplainationLabel();
-
-    @DefaultStringValue("Memory Page Sharing Threshold set to %1$s. Allow VMs to run on the Host up to the overcommit threshold")
-    String clusterPopupOptimizationForServerExplainationLabel();
-
-    @DefaultStringValue("Memory Page Sharing Threshold set to %1$s. Allow VMs to run on the Host up to the overcommit threshold")
-    String clusterPopupOptimizationForDesktopExplainationLabel();
-
-    @DefaultStringValue("Memory Page Sharing Threshold set to %1$s via API/CLI")
-    String clusterPopupOptimizationCustomExplainationLabel();
+    @DefaultStringValue("Count Threads As Cores")
+    String clusterPopupCountThreadsAsCoresLabel();
 
     @DefaultStringValue("Resilience Policy")
     String clusterPopupResiliencePolicyTabLabel();
@@ -1086,20 +1083,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Active VMs")
     String activeVmsHostGeneral();
 
-    @DefaultStringValue("Memory Page Sharing")
-    String memPageSharingHostGeneral();
-
-    @DefaultStringValue("Automatic Large Pages")
-    String autoLargePagesHostGeneral();
-
-    @DefaultStringValue("Number of CPUs")
-    String numOfCpusHostGeneral();
-
     @DefaultStringValue("CPU Name")
     String cpuNameHostGeneral();
 
     @DefaultStringValue("CPU Type")
     String cpuTypeHostGeneral();
+
+    @DefaultStringValue("CPU Sockets")
+    String numOfSocketsHostGeneral();
+
+    @DefaultStringValue("CPU Cores per Socket")
+    String numOfCoresPerSocketHostGeneral();
+
+    @DefaultStringValue("CPU Threads per Core")
+    String numOfThreadsPerCoreHostGeneral();
 
     @DefaultStringValue("Physical Memory")
     String physMemHostGeneral();
@@ -1109,6 +1106,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Max free Memory for scheduling new VMs")
     String maxSchedulingMemory();
+
+    @DefaultStringValue("Memory Page Sharing")
+    String memPageSharingHostGeneral();
+
+    @DefaultStringValue("Automatic Large Pages")
+    String autoLargePagesHostGeneral();
 
     @DefaultStringValue("Shared Memory")
     String sharedMemHostGeneral();

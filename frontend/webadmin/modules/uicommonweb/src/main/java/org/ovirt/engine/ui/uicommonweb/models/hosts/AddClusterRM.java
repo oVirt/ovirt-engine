@@ -94,6 +94,8 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
                 cluster.setcpu_name(((ServerCpu) clusterModel.getCPU().getSelectedItem()).getCpuName());
                 cluster.setmax_vds_memory_over_commit(clusterModel.getMemoryOverCommit());
+                cluster.setCountThreadsAsCores(Boolean.TRUE.equals((Boolean) clusterModel.getVersionSupportsCpuThreads().getEntity())
+                        && Boolean.TRUE.equals((Boolean) clusterModel.getCountThreadsAsCores().getEntity()));
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
                 cluster.setcompatibility_version(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());

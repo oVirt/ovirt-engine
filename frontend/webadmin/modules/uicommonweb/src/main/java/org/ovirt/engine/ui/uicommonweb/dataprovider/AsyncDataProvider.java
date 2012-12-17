@@ -2612,6 +2612,11 @@ public final class AsyncDataProvider {
         return 100;
     }
 
+    public static boolean GetClusterDefaultCountThreadsAsCores()
+    {
+        return false;
+    }
+
     public static ArrayList<VolumeType> GetVolumeTypeList()
     {
         return new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {

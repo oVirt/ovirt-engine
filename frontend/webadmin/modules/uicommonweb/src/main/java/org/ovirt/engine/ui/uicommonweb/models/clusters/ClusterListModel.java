@@ -456,10 +456,19 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         {
             return;
         }
-
-        if (!model.getIsNew()
-                && !((Version) model.getVersion().getSelectedItem()).equals(((VDSGroup) getSelectedItem()).getcompatibility_version()))
+        else if (model.getIsNew())
         {
+            OnPreSaveInternal(model);
+        }
+        else
+        {
+            OnSaveConfirmCV(model);
+        }
+    }
+
+    private void OnSaveConfirmCV(ClusterModel model)
+    {
+        if (!((Version) model.getVersion().getSelectedItem()).equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -470,6 +479,39 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     .getConstants()
                     .youAreAboutChangeClusterCompatibilityVersionMsg());
 
+            UICommand tempVar = new UICommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            tempVar.setIsDefault(true);
+            getConfirmWindow().getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar2.setIsCancel(true);
+            getConfirmWindow().getCommands().add(tempVar2);
+        } else {
+            OnSaveConfirmCpuThreads();
+        }
+    }
+
+    private void OnSaveConfirmCpuThreads()
+    {
+        ClusterModel model = (ClusterModel) getWindow();
+
+        // cancel confirm window if there is one
+        CancelConfirmation();
+
+        // CPU thread support is being turned off either explicitly or via version change
+        if (!((Boolean) model.getVersionSupportsCpuThreads().getEntity() && (Boolean) model.getCountThreadsAsCores().getEntity())
+                && ((VDSGroup) getSelectedItem()).getCountThreadsAsCores()) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .disableClusterCpuThreadSupportTitle());
+            confirmModel.setHashName("disable_cpu_thread_support"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutChangeClusterCpuThreadSupportMsg());
+
             UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
@@ -478,13 +520,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
-        }
-        else if (model.getIsNew())
-        {
-            OnPreSaveInternal(model);
-        }
-        else
-        {
+        } else {
             OnSaveInternal();
         }
     }
@@ -529,6 +565,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             cluster.setcpu_name(((ServerCpu) model.getCPU().getSelectedItem()).getCpuName());
         }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
+        cluster.setCountThreadsAsCores(Boolean.TRUE.equals((Boolean) model.getVersionSupportsCpuThreads().getEntity())
+                                       && Boolean.TRUE.equals((Boolean) model.getCountThreadsAsCores().getEntity()));
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
@@ -842,6 +880,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {
             OnRemove();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnSaveConfirmCpuThreads")) //$NON-NLS-1$
+        {
+            OnSaveConfirmCpuThreads();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnSaveInternal")) //$NON-NLS-1$
         {
