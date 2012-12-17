@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.*;
 public class VmPoolToAdGroupParameters extends AdGroupElementParametersBase {
     private static final long serialVersionUID = 5695955304480728659L;
 
-    public VmPoolToAdGroupParameters(Guid vmPoolId, ad_groups group, boolean isInternal) {
+    public VmPoolToAdGroupParameters(Guid vmPoolId, LdapGroup group, boolean isInternal) {
         super(group);
         setVmPoolId(vmPoolId);
         setIsInternal(isInternal);

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -16,7 +16,7 @@ public class GroupSearchResult {
     private String _distinguishedName;
     private Guid guid;
 
-    public GroupSearchResult(ad_groups groups) {
+    public GroupSearchResult(LdapGroup groups) {
         guid = groups.getid();
         _distinguishedName = groups.getDistinguishedName();
         _memberOf = groups.getMemberOf();

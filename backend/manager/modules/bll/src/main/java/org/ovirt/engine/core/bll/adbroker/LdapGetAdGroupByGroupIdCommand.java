@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 //
@@ -36,12 +36,12 @@ public class LdapGetAdGroupByGroupIdCommand extends LdapWithConfiguredCredential
                 /**
                  * Cannot find group - group is Inactive
                  */
-                group = new ad_groups(getGroupId());
+                group = new LdapGroup(getGroupId());
             } else {
                 String distinguishedName = result.getDistinguishedName();
                 List<String> memberOf = result.getMemberOf();
                 String groupName = LdapBrokerUtils.generateGroupDisplayValue(distinguishedName);
-                group = new ad_groups(groupId, groupName, getDomain(), distinguishedName, memberOf);
+                group = new LdapGroup(groupId, groupName, getDomain(), distinguishedName, memberOf);
             }
         }
         setReturnValue(group);

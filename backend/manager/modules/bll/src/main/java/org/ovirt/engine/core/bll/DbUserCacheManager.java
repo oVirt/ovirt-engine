@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.AdRefStatus;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -154,7 +154,7 @@ public class DbUserCacheManager {
         }
     }
 
-    public void refreshAllUserData(List<ad_groups> updatedGroups) {
+    public void refreshAllUserData(List<LdapGroup> updatedGroups) {
         try {
             log.info("DbUserCacheManager::refreshAllUserData() - entered");
             List<DbUser> allUsers = DbFacade.getInstance().getDbUserDao().getAll();
@@ -227,13 +227,13 @@ public class DbUserCacheManager {
 
     @OnTimerMethodAnnotation("OnTimer")
     public void OnTimer() {
-        List<ad_groups> groups = updateGroups();
+        List<LdapGroup> groups = updateGroups();
         refreshAllUserData(groups);
     }
 
-    private List<ad_groups> updateGroups() {
-        List<ad_groups> groups = DbFacade.getInstance().getAdGroupDao().getAll();
-        for (ad_groups group : groups) {
+    private List<LdapGroup> updateGroups() {
+        List<LdapGroup> groups = DbFacade.getInstance().getAdGroupDao().getAll();
+        for (LdapGroup group : groups) {
             /**
              * Vitaly workaround. Temporary treatment on missing group domains
              */
@@ -269,8 +269,8 @@ public class DbUserCacheManager {
                             group.getname(),
                             group.getdomain());
                 } else {
-                    ad_groups groupFromAD =
-                            (ad_groups) LdapFactory
+                    LdapGroup groupFromAD =
+                            (LdapGroup) LdapFactory
                                     .getInstance(group.getdomain())
                                     .RunAdAction(AdActionType.GetAdGroupByGroupId,
                                             new LdapSearchByIdParameters(group.getdomain(), group.getid()))

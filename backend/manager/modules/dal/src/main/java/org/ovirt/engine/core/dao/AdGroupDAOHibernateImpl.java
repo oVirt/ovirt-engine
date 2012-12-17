@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
  * underlying persistence.
  *
  */
-public class AdGroupDAOHibernateImpl extends BaseDAOHibernateImpl<ad_groups, Guid> implements AdGroupDAO {
+public class AdGroupDAOHibernateImpl extends BaseDAOHibernateImpl<LdapGroup, Guid> implements AdGroupDAO {
     @Override
     public void remove(Guid id) {
         /*
@@ -31,7 +31,7 @@ public class AdGroupDAOHibernateImpl extends BaseDAOHibernateImpl<ad_groups, Gui
         query.setParameter("group_id", id);
         query.executeUpdate();
 
-        ad_groups instance = get(id);
+        LdapGroup instance = get(id);
 
         if (instance != null) {
             session.delete(instance);
@@ -41,11 +41,11 @@ public class AdGroupDAOHibernateImpl extends BaseDAOHibernateImpl<ad_groups, Gui
     }
 
     public AdGroupDAOHibernateImpl() {
-        super(ad_groups.class);
+        super(LdapGroup.class);
     }
 
     @Override
-    public List<ad_groups> getAllTimeLeasedForPool(int id) {
+    public List<LdapGroup> getAllTimeLeasedForPool(int id) {
         // TODO Auto-generated method stub
         return null;
     }

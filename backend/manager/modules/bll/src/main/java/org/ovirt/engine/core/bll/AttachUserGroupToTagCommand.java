@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -17,7 +17,7 @@ public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> 
     protected void executeCommand() {
         if (getTagId() != null) {
             for (Guid groupGuid : getGroupList()) {
-                ad_groups group = DbFacade.getInstance().getAdGroupDao().get(groupGuid);
+                LdapGroup group = DbFacade.getInstance().getAdGroupDao().get(groupGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserGroupByGroupIdAndByTagId(getTagId(), groupGuid) == null) {
                     TagsUserGroupMap map = new TagsUserGroupMap(groupGuid, getTagId());
                     DbFacade.getInstance().getTagDao().attachUserGroupToTag(map);

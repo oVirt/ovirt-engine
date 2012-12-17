@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.ovirt.engine.core.common.businessentities.AdRefStatus;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -19,8 +19,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class AdGroupDAOTest extends BaseDAOTestCase {
     private static final int AD_GROUP_COUNT = 10;
     private AdGroupDAO dao;
-    private ad_groups newAdGroup;
-    private ad_groups existingAdGroup;
+    private LdapGroup newAdGroup;
+    private LdapGroup existingAdGroup;
 
     @Override
     @Before
@@ -30,7 +30,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
         dao = prepareDAO(dbFacade.getAdGroupDao());
 
         // create some test data
-        newAdGroup = new ad_groups();
+        newAdGroup = new LdapGroup();
         newAdGroup.setid(Guid.NewGuid());
         newAdGroup.setdomain("domain");
         newAdGroup.setname("name");
@@ -44,7 +44,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        ad_groups result = dao.get(Guid.NewGuid());
+        LdapGroup result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -54,7 +54,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        ad_groups result = dao.get(existingAdGroup.getid());
+        LdapGroup result = dao.get(existingAdGroup.getid());
 
         assertNotNull(result);
         assertEquals(existingAdGroup, result);
@@ -65,7 +65,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        ad_groups result = dao.getByName("thisnameisinvalid");
+        LdapGroup result = dao.getByName("thisnameisinvalid");
 
         assertNull(result);
     }
@@ -75,7 +75,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        ad_groups result = dao.getByName(existingAdGroup.getname());
+        LdapGroup result = dao.getByName(existingAdGroup.getname());
 
         assertNotNull(result);
         assertEquals(existingAdGroup, result);
@@ -86,7 +86,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<ad_groups> result = dao.getAll();
+        List<LdapGroup> result = dao.getAll();
 
         assertEquals(AD_GROUP_COUNT, result.size());
     }
@@ -98,7 +98,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newAdGroup);
 
-        ad_groups result = dao.getByName(newAdGroup.getname());
+        LdapGroup result = dao.getByName(newAdGroup.getname());
 
         assertEquals(newAdGroup, result);
     }
@@ -114,7 +114,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
 
         dao.update(existingAdGroup);
 
-        ad_groups result = dao.get(existingAdGroup.getid());
+        LdapGroup result = dao.get(existingAdGroup.getid());
 
         assertNotNull(result);
         assertEquals(existingAdGroup, result);
@@ -127,7 +127,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
     public void testRemove() {
         dao.remove(existingAdGroup.getid());
 
-        ad_groups result = dao.get(existingAdGroup.getid());
+        LdapGroup result = dao.get(existingAdGroup.getid());
 
         assertNull(result);
     }

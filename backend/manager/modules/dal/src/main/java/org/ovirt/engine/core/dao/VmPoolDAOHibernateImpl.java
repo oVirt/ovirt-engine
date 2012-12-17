@@ -12,7 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.vm_pool_map;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,10 +59,10 @@ public class VmPoolDAOHibernateImpl extends BaseDAOHibernateImpl<vm_pools, NGuid
 
         if (user != null) {
             Criteria criteria =
-                    getSession().createCriteria(ad_groups.class).add(Restrictions.in("name",
+                    getSession().createCriteria(LdapGroup.class).add(Restrictions.in("name",
                             splitApartNames(user.getgroups())));
 
-            List<ad_groups> adElements = criteria.list();
+            List<LdapGroup> adElements = criteria.list();
             Guid[] ids = new Guid[adElements.size() + 1];
 
             ids[0] = userid;

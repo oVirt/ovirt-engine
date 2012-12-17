@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -472,7 +472,7 @@ public class UserListModel extends ListWithDetailsModel
             else
             {
                 AddUserParameters tempVar2 = new AddUserParameters();
-                tempVar2.setAdGroup(new ad_groups(item.getuser_id(), item.getname(), item.getdomain()));
+                tempVar2.setAdGroup(new LdapGroup(item.getuser_id(), item.getname(), item.getdomain()));
                 parameters.add(tempVar2);
             }
         }

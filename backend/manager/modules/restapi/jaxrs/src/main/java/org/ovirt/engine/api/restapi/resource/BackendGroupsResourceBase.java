@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class BackendGroupsResourceBase extends AbstractBackendCollectionResource<Group, ad_groups> {
+public class BackendGroupsResourceBase extends AbstractBackendCollectionResource<Group, LdapGroup> {
 
     static final String[] SUB_COLLECTIONS = { "permissions", "roles", "tags" };
     private static final String AD_SEARCH_TEMPLATE = "ADGROUP@{0}: ";
@@ -34,15 +34,15 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     private BackendDomainResource parent;
 
     public BackendGroupsResourceBase() {
-        super(Group.class, ad_groups.class, SUB_COLLECTIONS);
+        super(Group.class, LdapGroup.class, SUB_COLLECTIONS);
     }
 
     public BackendGroupsResourceBase(String id, BackendDomainResource parent) {
-        super(Group.class, ad_groups.class, SUB_COLLECTIONS);
+        super(Group.class, LdapGroup.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
-    public BackendGroupsResourceBase(Class<Group> class1, Class<ad_groups> class2, String[] subCollections) {
+    public BackendGroupsResourceBase(Class<Group> class1, Class<LdapGroup> class2, String[] subCollections) {
         super(class1, class2, subCollections);
     }
 
@@ -60,9 +60,9 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         return performAction(VdcActionType.RemoveAdGroup, new AdElementParametersBase(asGuid(id)));
     }
 
-    protected Groups mapDomainGroupsCollection(List<ad_groups> entities) {
+    protected Groups mapDomainGroupsCollection(List<LdapGroup> entities) {
         Groups collection = new Groups();
-        for (ad_groups entity : entities) {
+        for (LdapGroup entity : entities) {
             collection.getGroups().add(addLinks(modifyDomain(mapAdGroup(entity)), true));
 
         }
@@ -83,8 +83,8 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         return group;
     }
 
-    protected Group mapAdGroup(ad_groups entity) {
-        return getMapper(ad_groups.class, Group.class).map(entity, null);
+    protected Group mapAdGroup(LdapGroup entity) {
+        return getMapper(LdapGroup.class, Group.class).map(entity, null);
     }
 
     protected Group mapDbUser(DbUser entity) {
@@ -104,7 +104,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     }
 
     protected String getSearchPattern(String param, String domain) {
-        String constraint = QueryHelper.getConstraint(getUriInfo(), ad_groups.class, false);
+        String constraint = QueryHelper.getConstraint(getUriInfo(), LdapGroup.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
         sb.append(MessageFormat.format(AD_SEARCH_TEMPLATE,
@@ -124,15 +124,15 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         return sb.toString();
     }
 
-    protected ad_groups getAdGroup(Group group) {
+    protected LdapGroup getAdGroup(Group group) {
         if(group.getId() != null) {
             return lookupGroupById(asGuid(group.getId()));
         }
 
-        List<ad_groups> adGroups = asCollection(getEntity(ArrayList.class,
+        List<LdapGroup> adGroups = asCollection(getEntity(ArrayList.class,
                                                           SearchType.AdGroup,
                                                           getSearchPattern("*", getDomainName(group.getName()))));
-        for (ad_groups adGroup : adGroups) {
+        for (LdapGroup adGroup : adGroups) {
             if (adGroup.getname().equals(group.getName())) {
                 return adGroup;
             }
@@ -148,16 +148,16 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         return groupName.substring(0, index);
     }
 
-    protected List<ad_groups> getGroupsFromDomain() {
-        return asCollection(ad_groups.class,
+    protected List<LdapGroup> getGroupsFromDomain() {
+        return asCollection(LdapGroup.class,
                 getEntity(ArrayList.class,
                         SearchType.AdGroup,
                         getSearchPattern("*")));
 
     }
 
-    public ad_groups lookupGroupById(Guid id) {
-        return getEntity(ad_groups.class,
+    public LdapGroup lookupGroupById(Guid id) {
+        return getEntity(LdapGroup.class,
                          VdcQueryType.GetAdGroupById,
                          new GetAdGroupByIdParameters(id),
                          id.toString(),
@@ -173,7 +173,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
         }
 
         @Override
-        public ad_groups lookupEntity(Guid nullId) {
+        public LdapGroup lookupEntity(Guid nullId) {
             return lookupGroupById(id);
         }
     }

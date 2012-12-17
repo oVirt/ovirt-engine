@@ -16,7 +16,7 @@ public class PermissionsOperationsParametes extends VdcActionParametersBase {
         setVdcUser(vdcUser);
     }
 
-    public PermissionsOperationsParametes(permissions permission, ad_groups adGroup) {
+    public PermissionsOperationsParametes(permissions permission, LdapGroup adGroup) {
         this(permission);
         setAdGroup(adGroup);
     }
@@ -31,13 +31,13 @@ public class PermissionsOperationsParametes extends VdcActionParametersBase {
         privateVdcUser = value;
     }
 
-    private ad_groups privateAdGroup;
+    private LdapGroup privateAdGroup;
 
-    public ad_groups getAdGroup() {
+    public LdapGroup getAdGroup() {
         return privateAdGroup;
     }
 
-    public void setAdGroup(ad_groups value) {
+    public void setAdGroup(LdapGroup value) {
         privateAdGroup = value;
     }
 

@@ -5,7 +5,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -53,7 +53,7 @@ public class BackendDomainGroupResourceTest
     }
 
     protected void setUpGetEntityExpectations(int index) throws Exception {
-        ad_groups user = BackendGroupsResourceTest.setUpEntityExpectations(control.createMock(ad_groups.class), index);
+        LdapGroup user = BackendGroupsResourceTest.setUpEntityExpectations(control.createMock(LdapGroup.class), index);
         setUpGetEntityExpectations("ADGROUP@"+DOMAIN+": name=*",
                 SearchType.AdGroup,
                 user);

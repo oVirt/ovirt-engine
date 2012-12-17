@@ -1,15 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 
 public class AbstractBackendGroupResource
-    extends AbstractBackendSubResource<Group, ad_groups> {
+    extends AbstractBackendSubResource<Group, LdapGroup> {
 
     protected AbstractBackendGroupsResource parent;
 
     public AbstractBackendGroupResource(String id, AbstractBackendGroupsResource parent) {
-        super(id, Group.class, ad_groups.class);
+        super(id, Group.class, LdapGroup.class);
         this.parent = parent;
     }
 

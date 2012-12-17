@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -174,7 +174,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return adSearch(LdapQueryType.searchUsers, AdActionType.SearchUserByQuery);
     }
 
-    private List<ad_groups> searchAdGroups() {
+    private List<LdapGroup> searchAdGroups() {
         return adSearch(LdapQueryType.searchGroups, AdActionType.SearchGroupsByQuery);
     }
 

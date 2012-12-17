@@ -29,11 +29,11 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     private boolean _passwordExpired;
     private List<String> memberof;
 
-    private Map<String, ad_groups> mGroups;
+    private Map<String, LdapGroup> mGroups;
 
     public LdapUser() {
         mUserId = Guid.Empty;
-        mGroups = new HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, LdapGroup>();
     }
 
     public LdapUser(DbUser dbUser) {
@@ -44,7 +44,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         setDepartment(dbUser.getdepartment());
         setDomainControler(dbUser.getdomain());
         setEmail(dbUser.getemail());
-        mGroups = new HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, LdapGroup>();
     }
 
     public LdapUser(String userName, String password, Guid userId, String domainControler) {
@@ -52,7 +52,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         mPassword = password;
         mUserId = userId;
         mDomainControler = domainControler;
-        mGroups = new HashMap<String, ad_groups>();
+        mGroups = new HashMap<String, LdapGroup>();
     }
 
     public String getUserName() {
@@ -135,11 +135,11 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         _passwordExpired = value;
     }
 
-    public Map<String, ad_groups> getGroups() {
+    public Map<String, LdapGroup> getGroups() {
         return mGroups;
     }
 
-    public void setGroups(HashMap<String, ad_groups> value) {
+    public void setGroups(HashMap<String, LdapGroup> value) {
         mGroups = value;
     }
 
@@ -170,7 +170,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         String groupIds = "";
         if (!mGroups.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            for (Iterator<ad_groups> iterator = mGroups.values().iterator(); iterator.hasNext();) {
+            for (Iterator<LdapGroup> iterator = mGroups.values().iterator(); iterator.hasNext();) {
                 sb.append(iterator.next().getid().toString());
                 if (iterator.hasNext()) {
                     sb.append(",");

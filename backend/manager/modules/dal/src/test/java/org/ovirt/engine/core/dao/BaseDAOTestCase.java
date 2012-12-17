@@ -35,7 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.event_map;
@@ -196,7 +196,7 @@ public abstract class BaseDAOTestCase {
             sessionFactory =
                     new AnnotationConfiguration()
                             .addAnnotatedClass(action_version_map.class)
-                            .addAnnotatedClass(ad_groups.class)
+                            .addAnnotatedClass(LdapGroup.class)
                             .addAnnotatedClass(AsyncTasks.class)
                             .addAnnotatedClass(AuditLog.class)
                             .addAnnotatedClass(Bookmark.class)

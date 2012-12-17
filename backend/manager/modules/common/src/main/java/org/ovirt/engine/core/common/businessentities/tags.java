@@ -64,7 +64,7 @@ public class tags implements Serializable {
     @JoinTable(name = "tags_user_group_map", joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     @Cascade(CascadeType.MERGE)
-    private ad_groups userGroup;
+    private LdapGroup userGroup;
 
     @ManyToOne
     @JoinTable(name = "tags_user_map", joinColumns = @JoinColumn(name = "tag_id"),
@@ -267,7 +267,7 @@ public class tags implements Serializable {
         settag_name(from.gettag_name());
     }
 
-    public ad_groups getUserGroup() {
+    public LdapGroup getUserGroup() {
         return userGroup;
     }
 }

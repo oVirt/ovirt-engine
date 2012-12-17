@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,7 +21,7 @@ public class InternalBrokerUtils {
         return DbFacade.getInstance().getDbUserDao();
     }
 
-    public static ad_groups getGroupByGroupGuid(Guid groupGuid) {
+    public static LdapGroup getGroupByGroupGuid(Guid groupGuid) {
         return null;
     }
 
@@ -45,8 +45,8 @@ public class InternalBrokerUtils {
         return retVal;
     }
 
-    public static List<ad_groups> getAllGroups() {
-        return new ArrayList<ad_groups>();
+    public static List<LdapGroup> getAllGroups() {
+        return new ArrayList<LdapGroup>();
     }
 
     public static List<LdapUser> getAllUsers() {

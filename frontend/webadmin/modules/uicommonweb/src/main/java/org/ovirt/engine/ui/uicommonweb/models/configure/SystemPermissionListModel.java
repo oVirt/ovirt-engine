@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -179,7 +179,7 @@ public class SystemPermissionListModel extends SearchableListModel
             {
                 PermissionsOperationsParametes tempVar2 = new PermissionsOperationsParametes();
                 tempVar2.setPermission(perm);
-                tempVar2.setAdGroup(new ad_groups(user.getuser_id(), user.getname(), user.getdomain()));
+                tempVar2.setAdGroup(new LdapGroup(user.getuser_id(), user.getname(), user.getdomain()));
                 list.add(tempVar2);
             }
             else

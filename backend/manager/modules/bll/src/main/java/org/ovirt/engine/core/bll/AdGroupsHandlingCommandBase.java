@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 @CustomLogFields({ @CustomLogField("AdGroupName") })
 public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersBase> extends CommandBase<T> {
     protected tags _tag;
-    private ad_groups mGroup;
+    private LdapGroup mGroup;
     private String mGroupName;
 
     /**
@@ -43,7 +43,7 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
         return mGroupName;
     }
 
-    protected ad_groups getAdGroup() {
+    protected LdapGroup getAdGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
             mGroup = DbFacade.getInstance().getAdGroupDao().get(getGroupId());
         }
@@ -55,8 +55,8 @@ public abstract class AdGroupsHandlingCommandBase<T extends AdElementParametersB
         return getAdGroupName();
     }
 
-    public static ad_groups initAdGroup(ad_groups adGroup) {
-        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDao().get(adGroup.getid());
+    public static LdapGroup initAdGroup(LdapGroup adGroup) {
+        LdapGroup dbGroup = DbFacade.getInstance().getAdGroupDao().get(adGroup.getid());
         if (dbGroup == null) {
             DbFacade.getInstance().getAdGroupDao().save(adGroup);
             dbGroup = adGroup;

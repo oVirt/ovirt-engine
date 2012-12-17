@@ -5,12 +5,12 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupResourceTest
-        extends AbstractBackendSubResourceTest<Group, ad_groups, BackendGroupResource> {
+        extends AbstractBackendSubResourceTest<Group, LdapGroup, BackendGroupResource> {
 
     public BackendGroupResourceTest() {
         super(new BackendGroupResource(GUIDS[0].toString(), new BackendGroupsResource()));
@@ -73,8 +73,8 @@ public class BackendGroupResourceTest
     }
 
     @Override
-    protected ad_groups getEntity(int index) {
-        ad_groups entity = new ad_groups();
+    protected LdapGroup getEntity(int index) {
+        LdapGroup entity = new LdapGroup();
         entity.setid(GUIDS[index]);
         entity.setname(NAMES[index]);
         entity.setdomain(DOMAIN);

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 public class InternalGetAdGroupByGroupIdCommand extends InternalBrokerCommandBase {
@@ -14,7 +14,7 @@ public class InternalGetAdGroupByGroupIdCommand extends InternalBrokerCommandBas
 
     @Override
     protected void ExecuteQuery() {
-        ad_groups group = InternalBrokerUtils.getGroupByGroupGuid(getGroupId());
+        LdapGroup group = InternalBrokerUtils.getGroupByGroupGuid(getGroupId());
         setReturnValue(group);
         if (group != null) {
             setSucceeded(true);

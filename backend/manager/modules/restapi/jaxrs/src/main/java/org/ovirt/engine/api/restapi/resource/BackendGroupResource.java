@@ -5,7 +5,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.GroupResource;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -13,13 +13,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import static org.ovirt.engine.api.restapi.resource.BackendGroupsResource.SUB_COLLECTIONS;
 
 public class BackendGroupResource
-        extends AbstractBackendSubResource<Group, ad_groups>
+        extends AbstractBackendSubResource<Group, LdapGroup>
         implements GroupResource {
 
     private BackendGroupsResource parent;
 
     public BackendGroupResource(String id, BackendGroupsResource parent) {
-        super(id, Group.class, ad_groups.class, SUB_COLLECTIONS);
+        super(id, Group.class, LdapGroup.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 

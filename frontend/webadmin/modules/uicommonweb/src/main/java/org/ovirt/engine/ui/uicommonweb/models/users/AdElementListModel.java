@@ -6,7 +6,7 @@ import java.util.HashSet;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -281,7 +281,7 @@ public class AdElementListModel extends SearchableListModel
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
                 for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
-                    ad_groups a = (ad_groups) item;
+                    LdapGroup a = (LdapGroup) item;
                     if (!excludeUsers.contains(a.getid()))
                     {
                         DbUser tempVar3 = new DbUser();

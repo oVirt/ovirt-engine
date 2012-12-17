@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
@@ -57,12 +57,12 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         query.setParameterList("names", user.getGroupsAsArray());
 
         @SuppressWarnings("unchecked")
-        List<ad_groups> groups = query.list();
+        List<LdapGroup> groups = query.list();
 
         List<Guid> ids = new ArrayList<Guid>();
 
         ids.add(user.getuser_id());
-        for (ad_groups group : groups) {
+        for (LdapGroup group : groups) {
             ids.add(group.getid());
         }
 

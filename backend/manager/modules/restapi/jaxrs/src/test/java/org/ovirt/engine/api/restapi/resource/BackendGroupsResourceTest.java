@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AdRefStatus;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAdGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class BackendGroupsResourceTest
-    extends AbstractBackendCollectionResourceTest<Group, ad_groups, BackendGroupsResource> {
+    extends AbstractBackendCollectionResourceTest<Group, LdapGroup, BackendGroupsResource> {
 
     public BackendGroupsResourceTest() {
         super(new BackendGroupsResource(), null, "");
@@ -272,8 +272,8 @@ public class BackendGroupsResourceTest
     }
 
     @Override
-    protected ad_groups getEntity(int index) {
-        ad_groups entity = new ad_groups();
+    protected LdapGroup getEntity(int index) {
+        LdapGroup entity = new LdapGroup();
         entity.setid(GUIDS[index]);
         entity.setname(NAMES[index]);
         entity.setdomain(DOMAIN);
@@ -281,16 +281,16 @@ public class BackendGroupsResourceTest
         return entity;
     }
 
-    protected List<ad_groups> setUpGroups() {
-        List<ad_groups> groups = new ArrayList<ad_groups>();
+    protected List<LdapGroup> setUpGroups() {
+        List<LdapGroup> groups = new ArrayList<LdapGroup>();
         for (int i = 0; i < NAMES.length; i++) {
             groups.add(getEntity(i));
         }
         return groups;
     }
 
-    protected ad_groups getAdGroup(int index) {
-        ad_groups adGroup = new ad_groups();
+    protected LdapGroup getAdGroup(int index) {
+        LdapGroup adGroup = new LdapGroup();
         adGroup.setid(GUIDS[index]);
         adGroup.setname(NAMES[index]);
         adGroup.setdomain(DOMAIN);
@@ -298,8 +298,8 @@ public class BackendGroupsResourceTest
         return adGroup;
     }
 
-    protected ad_groups getAdGroupWithDomain(int index) {
-        ad_groups adGroup = new ad_groups();
+    protected LdapGroup getAdGroupWithDomain(int index) {
+        LdapGroup adGroup = new LdapGroup();
         adGroup.setid(GUIDS[index]);
         adGroup.setname(DOMAIN+"/"+NAMES[index]);
         adGroup.setdomain(DOMAIN);
@@ -316,7 +316,7 @@ public class BackendGroupsResourceTest
         verifyLinks(model);
     }
 
-    public static ad_groups setUpEntityExpectations(ad_groups entity, int index) {
+    public static LdapGroup setUpEntityExpectations(LdapGroup entity, int index) {
         expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getdomain()).andReturn(DOMAIN).anyTimes();
         expect(entity.getstatus()).andReturn(AdRefStatus.Active).anyTimes();

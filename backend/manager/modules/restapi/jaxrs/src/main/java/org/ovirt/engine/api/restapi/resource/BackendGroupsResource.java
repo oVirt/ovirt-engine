@@ -8,13 +8,13 @@ import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
 public class BackendGroupsResource extends BackendGroupsResourceBase implements GroupsResource {
 
     public BackendGroupsResource() {
-        super(Group.class, ad_groups.class, SUB_COLLECTIONS);
+        super(Group.class, LdapGroup.class, SUB_COLLECTIONS);
     }
 
     public BackendGroupsResource(String id, BackendDomainResource parent) {

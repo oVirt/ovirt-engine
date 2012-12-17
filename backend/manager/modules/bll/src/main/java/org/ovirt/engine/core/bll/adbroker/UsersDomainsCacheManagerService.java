@@ -19,7 +19,7 @@ import javax.ejb.ConcurrencyManagementType;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.DbUserCacheManager;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -55,8 +55,8 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
     private Map<String, Domain> domainsByName = new HashMap<String, Domain>();
     private Map<String, ConcurrentHashMap<String, UserDomainInfo>> domainsUsersInfoByUserNameAndDomainName =
             new HashMap<String, ConcurrentHashMap<String, UserDomainInfo>>();
-    private Map<String, ConcurrentHashMap<String, ad_groups>> groupsPerDomain =
-            new HashMap<String, ConcurrentHashMap<String, ad_groups>>();
+    private Map<String, ConcurrentHashMap<String, LdapGroup>> groupsPerDomain =
+            new HashMap<String, ConcurrentHashMap<String, LdapGroup>>();
     private Map<String, URI> ldapServerPerDomain = new HashMap<String, URI>();
     private final String DEFAULT_SECURITY_AUTHENTICATION_KEY = "default";
     private Map<String, LDAPSecurityAuthentication> ldapSecurityAuthenticationPerDomain =
@@ -166,7 +166,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             // Each domain has LDAP servers that one of them should be used to
             // perform an LDAP query against the domain
             obtainLDAPServersForDomain(domain);
-            groupsPerDomain.put(domain.getName(), new ConcurrentHashMap<String, ad_groups>());
+            groupsPerDomain.put(domain.getName(), new ConcurrentHashMap<String, LdapGroup>());
         }
 
         DbUserCacheManager.getInstance().init();

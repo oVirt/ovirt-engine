@@ -6,7 +6,7 @@ public class SetAdGroupRoleParameters extends AdGroupElementParametersBase {
     private static final long serialVersionUID = 3039952946152646137L;
     private boolean _isRestored;
 
-    public SetAdGroupRoleParameters(ad_groups adGroup, boolean isRestored) {
+    public SetAdGroupRoleParameters(LdapGroup adGroup, boolean isRestored) {
         super(adGroup);
         _isRestored = isRestored;
     }

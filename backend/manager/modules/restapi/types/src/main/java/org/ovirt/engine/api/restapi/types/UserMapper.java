@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -60,7 +60,7 @@ public class UserMapper {
         model.setDepartment(entity.getDepartment());
         if (entity.getGroups() != null) {
             model.setGroups(new Groups());
-            for (ad_groups adgroup : entity.getGroups().values()) {
+            for (LdapGroup adgroup : entity.getGroups().values()) {
                 Group group = new Group();
                 group.setName(adgroup.getname());
                 model.getGroups().getGroups().add(group);

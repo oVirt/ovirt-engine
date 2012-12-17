@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredentialsCommandBase {
@@ -17,7 +17,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
 
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
-        java.util.ArrayList<ad_groups> groupList = new java.util.ArrayList<ad_groups>();
+        java.util.ArrayList<LdapGroup> groupList = new java.util.ArrayList<LdapGroup>();
 
         List<GroupSearchResult> searchResults = (List<GroupSearchResult>)directorySearcher.FindAll(getLdapQueryData());
         {
@@ -26,7 +26,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
                 List<String> memberOf = searchResult.getMemberOf();
                 if (distinguishedName != null) {
                     String groupName = LdapBrokerUtils.generateGroupDisplayValue(searchResult.getDistinguishedName());
-                    ad_groups group = new ad_groups(searchResult.getGuid(), groupName, getDomain(),distinguishedName,memberOf);
+                    LdapGroup group = new LdapGroup(searchResult.getGuid(), groupName, getDomain(),distinguishedName,memberOf);
                     initGroupFromDb(group);
                     groupList.add(group);
                 }
@@ -36,7 +36,7 @@ public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredential
         setSucceeded(true);
     }
 
-    private void initGroupFromDb(ad_groups group) {
-        ad_groups dbGroup = DbFacade.getInstance().getAdGroupDao().get(group.getid());
+    private void initGroupFromDb(LdapGroup group) {
+        LdapGroup dbGroup = DbFacade.getInstance().getAdGroupDao().get(group.getid());
     }
 }

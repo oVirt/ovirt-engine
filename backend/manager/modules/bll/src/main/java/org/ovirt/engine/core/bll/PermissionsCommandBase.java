@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     protected DbUser _dbUser;
-    protected ad_groups _adGroup;
+    protected LdapGroup _adGroup;
 
     /**
      * Get the object translated type (e.g Host , VM), on which the MLA operation has been executed on.

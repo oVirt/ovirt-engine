@@ -4,14 +4,14 @@ import org.ovirt.engine.core.common.businessentities.*;
 
 public class AdGroupElementParametersBase extends AdElementParametersBase {
     private static final long serialVersionUID = 407769818057698987L;
-    private ad_groups _adGroup;
+    private LdapGroup _adGroup;
 
-    public AdGroupElementParametersBase(ad_groups adGroup) {
+    public AdGroupElementParametersBase(LdapGroup adGroup) {
         super(adGroup.getid());
         _adGroup = adGroup;
     }
 
-    public ad_groups getAdGroup() {
+    public LdapGroup getAdGroup() {
         return _adGroup;
     }
 

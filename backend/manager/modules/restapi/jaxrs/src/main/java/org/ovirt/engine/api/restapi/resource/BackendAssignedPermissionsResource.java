@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByPermissionIdParameters;
@@ -160,7 +160,7 @@ public class BackendAssignedPermissionsResource
             user.setDomainControler(getCurrent().get(Principal.class).getDomain());
             ret = new PermissionsOperationsParametes(entity, user);
         } else if (isGroupSubCollection() || permission.isSetGroup()) {
-            ad_groups group = new ad_groups();
+            LdapGroup group = new LdapGroup();
             group.setid(isGroupSubCollection()
                         ? targetId
                         : asGuid(permission.getGroup().getId()));

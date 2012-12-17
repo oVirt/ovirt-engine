@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 @Entity
 @Table(name = "ad_groups")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class ad_groups extends DbUserBase implements Serializable {
+public class LdapGroup extends DbUserBase implements Serializable {
     private static final long serialVersionUID = 6717840754119287059L;
 
     @Id
@@ -46,14 +46,14 @@ public class ad_groups extends DbUserBase implements Serializable {
     @Transient
     private String distinguishedName;
 
-    public ad_groups() {
+    public LdapGroup() {
         this.status = AdRefStatus.Active;
         id = Guid.Empty;
         name = "";
         distinguishedName = "";
     }
 
-    public ad_groups(Guid id, String name, int status) {
+    public LdapGroup(Guid id, String name, int status) {
         this.id = id;
         this.name = name;
         this.status = AdRefStatus.forValue(status);
@@ -83,22 +83,22 @@ public class ad_groups extends DbUserBase implements Serializable {
         status = value;
     }
 
-    public ad_groups(Guid id, String name) {
+    public LdapGroup(Guid id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public ad_groups(Guid id, String name, String domain) {
+    public LdapGroup(Guid id, String name, String domain) {
         this(id, name);
         this.domain = domain;
     }
 
-    public ad_groups(Guid id, String name, String domain, String distinguishedName) {
+    public LdapGroup(Guid id, String name, String domain, String distinguishedName) {
         this(id, name, domain);
         this.distinguishedName = distinguishedName;
     }
 
-    public ad_groups(Guid id, String name, String domain, String distinguishedName, List<String> memberOf) {
+    public LdapGroup(Guid id, String name, String domain, String distinguishedName, List<String> memberOf) {
         this(id, name, domain, distinguishedName);
         this.setMemberOf(memberOf);
     }
@@ -108,7 +108,7 @@ public class ad_groups extends DbUserBase implements Serializable {
      *
      * @param id
      */
-    public ad_groups(Guid id) {
+    public LdapGroup(Guid id) {
         this.id = id;
         status = AdRefStatus.Inactive;
     }
@@ -168,7 +168,7 @@ public class ad_groups extends DbUserBase implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ad_groups other = (ad_groups) obj;
+        LdapGroup other = (LdapGroup) obj;
         if (distinguishedName == null) {
             if (other.distinguishedName != null)
                 return false;

@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -89,7 +89,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         user.setDomainControler(domain);
 
         // Getting the groups
-        java.util.HashMap<String, ad_groups> groupsDict = new java.util.HashMap<String, ad_groups>();
+        java.util.HashMap<String, LdapGroup> groupsDict = new java.util.HashMap<String, LdapGroup>();
 
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
         proceedGroupsSearchResult(user.getMemberof(), groupsDict, generator);
@@ -101,7 +101,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected void PopulateGroup(LdapQueryData queryData,
             String domain,
-            java.util.Map<String, ad_groups> groupsDict,
+            java.util.Map<String, LdapGroup> groupsDict,
             String loginName,
             String password) {
         try {
@@ -126,22 +126,22 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     private void ProceedGroupsSearchResult(GroupSearchResult groupsResult,
-            java.util.Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
+            java.util.Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         List<String> groupsList = groupsResult.getMemberOf();
         proceedGroupsSearchResult(groupsList, groupsDict, generator);
     }
 
     private void proceedGroupsSearchResult(List<String> groupDNList,
-            Map<String, ad_groups> groupsDict, GroupsDNQueryGenerator generator) {
+            Map<String, LdapGroup> groupsDict, GroupsDNQueryGenerator generator) {
         if (groupDNList == null) {
             return;
         }
         for (String groupDN : groupDNList) {
             String groupName = LdapBrokerUtils.generateGroupDisplayValue(groupDN);
             if (!groupsDict.containsKey(groupName)) {
-                ad_groups group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
+                LdapGroup group = DbFacade.getInstance().getAdGroupDao().getByName(groupName);
                 if (group == null) {
-                    group = new ad_groups();
+                    group = new LdapGroup();
                     group.setname(groupName);
                 }
                 group.setDistinguishedName(groupDN);
@@ -153,7 +153,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected GroupsDNQueryGenerator createGroupsGeneratorForUser(LdapUser user) {
         List<String> dnsList = new ArrayList<String>();
-        for (ad_groups adGroup : user.getGroups().values()) {
+        for (LdapGroup adGroup : user.getGroups().values()) {
             dnsList.add(adGroup.getDistinguishedName());
         }
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator(new HashSet<String>(dnsList));

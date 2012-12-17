@@ -10,7 +10,7 @@
 		<!-- Business entities -->
 		<include name="common/businessentities/HasStoragePool.java" />
 		<include name="common/businessentities/BusinessEntity.java" />
-		<include name="common/businessentities/ad_groups.java" />
+		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
 		<include name="common/businessentities/AdRefStatus.java" />
 		<include name="common/businessentities/LdapUser.java" />

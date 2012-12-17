@@ -5,14 +5,14 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class GroupMapper {
 
-    @Mapping(from = ad_groups.class, to = Group.class)
-    public static Group map(ad_groups entity, Group template) {
+    @Mapping(from = LdapGroup.class, to = Group.class)
+    public static Group map(LdapGroup entity, Group template) {
         Group model = template != null ? template : new Group();
         model.setName(entity.getname());
         model.setId(entity.getid().toString());

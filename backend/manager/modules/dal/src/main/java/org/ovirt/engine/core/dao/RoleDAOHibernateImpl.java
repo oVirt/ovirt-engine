@@ -7,7 +7,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Query;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -56,7 +56,7 @@ public class RoleDAOHibernateImpl extends BaseDAOHibernateImpl<Role, Guid> imple
         query.setParameterList("names", user.getGroupsAsArray());
 
         @SuppressWarnings("unchecked")
-        List<ad_groups> groups = query.list();
+        List<LdapGroup> groups = query.list();
 
         Guid[] result = new Guid[groups.size() + 1];
 

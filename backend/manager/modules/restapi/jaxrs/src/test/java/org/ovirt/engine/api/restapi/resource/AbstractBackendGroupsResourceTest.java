@@ -8,12 +8,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 
 import static org.easymock.classextension.EasyMock.expect;
 
 public abstract class AbstractBackendGroupsResourceTest
-        extends AbstractBackendCollectionResourceTest<Group, ad_groups, BackendGroupsResource> {
+        extends AbstractBackendCollectionResourceTest<Group, LdapGroup, BackendGroupsResource> {
 
     public AbstractBackendGroupsResourceTest(BackendGroupsResource collection) {
         super(collection, null, "");
@@ -52,19 +52,19 @@ public abstract class AbstractBackendGroupsResourceTest
 
     protected abstract void setUpEntityQueryExpectations(int times, Object failure) throws Exception;
 
-    protected List<ad_groups> getEntityList() {
-        List<ad_groups> entities = new ArrayList<ad_groups>();
+    protected List<LdapGroup> getEntityList() {
+        List<LdapGroup> entities = new ArrayList<LdapGroup>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
         return entities;
     }
 
-    protected ad_groups getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(ad_groups.class), index);
+    protected LdapGroup getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(LdapGroup.class), index);
     }
 
-    static ad_groups setUpEntityExpectations(ad_groups entity, int index) {
+    static LdapGroup setUpEntityExpectations(LdapGroup entity, int index) {
         expect(entity.getid()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
         return entity;

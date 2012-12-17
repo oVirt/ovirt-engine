@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -77,7 +77,7 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
                         getLoginName(),
                         getPassword(),
                         getDomain(),
-                        new ArrayList<ad_groups>());
+                        new ArrayList<LdapGroup>());
             }
 
         } catch (RuntimeException ex) {

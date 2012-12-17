@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -279,7 +279,7 @@ public class PermissionListModel extends SearchableListModel
             {
                 PermissionsOperationsParametes tempVar3 = new PermissionsOperationsParametes();
                 tempVar3.setPermission(perm);
-                tempVar3.setAdGroup(new ad_groups(user.getuser_id(), user.getname(), user.getdomain()));
+                tempVar3.setAdGroup(new LdapGroup(user.getuser_id(), user.getname(), user.getdomain()));
                 list.add(tempVar3);
             }
             else

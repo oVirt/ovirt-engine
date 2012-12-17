@@ -2,11 +2,11 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.ad_groups;
+import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>AdGroupDAO</code> defines a type that performs CRUD operations on instances of {@link ad_groups}.
+ * <code>AdGroupDAO</code> defines a type that performs CRUD operations on instances of {@link LdapGroup}.
  *
  *
  */
@@ -18,7 +18,7 @@ public interface AdGroupDAO extends DAO {
      *            the group id
      * @return the group
      */
-    ad_groups get(Guid id);
+    LdapGroup get(Guid id);
 
     /**
      * Retrieves the group with the specified name.
@@ -27,14 +27,14 @@ public interface AdGroupDAO extends DAO {
      *            the group name
      * @return the group
      */
-    ad_groups getByName(String name);
+    LdapGroup getByName(String name);
 
     /**
      * Retrieves all groups.
      *
      * @return the list of all groups
      */
-    List<ad_groups> getAll();
+    List<LdapGroup> getAll();
 
     /**
      * Retrieves all time leased groups for the specified pool.
@@ -43,7 +43,7 @@ public interface AdGroupDAO extends DAO {
      *            the pool
      * @return the list of groups
      */
-    List<ad_groups> getAllTimeLeasedForPool(int id);
+    List<LdapGroup> getAllTimeLeasedForPool(int id);
 
     /**
      * Saves the supplied group.
@@ -51,7 +51,7 @@ public interface AdGroupDAO extends DAO {
      * @param group
      *            the group
      */
-    void save(ad_groups group);
+    void save(LdapGroup group);
 
     /**
      * Updates the supplied group.
@@ -59,7 +59,7 @@ public interface AdGroupDAO extends DAO {
      * @param group
      *            the group
      */
-    void update(ad_groups group);
+    void update(LdapGroup group);
 
     /**
      * Removes the group with the specified id.
