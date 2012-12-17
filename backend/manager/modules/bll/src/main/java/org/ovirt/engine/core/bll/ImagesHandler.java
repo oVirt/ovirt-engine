@@ -243,8 +243,6 @@ public final class ImagesHandler {
      * VM
      *
      * @param image
-     * @param active
-     * @param imageStorageDomainMap
      */
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
@@ -257,8 +255,6 @@ public final class ImagesHandler {
      *
      * @param disk
      *            disk to add
-     * @param vmId
-     *            ID of the VM the disk will be associated with
      */
     public static void addDisk(BaseDisk disk) {
         if (!DbFacade.getInstance().getBaseDiskDao().exists(disk.getId())) {
@@ -626,7 +622,7 @@ public final class ImagesHandler {
      * Filter image disks by attributes.
      * @param listOfDisks - The list of disks to be filtered.
      * @param filterNotShareableDisks - Indication whether to filter disks which are not shareable.
-     * @param filterAllowSnapshot - Indication whether to filter disks which are allowed to be snapshot.
+     * @param filterAllowSnapshotDisks - Indication whether to filter disks which are allowed to be snapshot.
      * @return - List filtered of disk images.
      */
     public static List<DiskImage> filterImageDisks(Collection<Disk> listOfDisks,
