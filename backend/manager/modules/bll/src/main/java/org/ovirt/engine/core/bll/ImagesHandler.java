@@ -446,6 +446,21 @@ public final class ImagesHandler {
         return result;
     }
 
+
+    public static boolean isVmDown(VM vm) {
+        return vm.getStatus() == VMStatus.Down;
+    }
+
+
+    public static boolean isStoragePoolValid(Guid storagePoolId) {
+        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
+        if (pool == null || pool.getstatus() != StoragePoolStatus.Up) {
+             return false;
+        }
+        return true;
+    }
+
+
     public static boolean PerformImagesChecks(VM vm,
             List<String> messages,
             Guid storagePoolId,
@@ -459,28 +474,28 @@ public final class ImagesHandler {
             boolean checkStorageDomain,
             boolean checkIsValid, Collection diskImageList) {
 
-        boolean returnValue = true;;
-        if (checkIsValid) {
-            storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(
-                    storagePoolId);
-            if (pool == null || pool.getstatus() != StoragePoolStatus.Up) {
+        boolean returnValue = true;
+
+        if (checkIsValid && !isStoragePoolValid(storagePoolId)) {
                 returnValue = false;
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
-            }
         }
 
         List<DiskImage> images = getImages(vm, diskImageList);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(vm, messages, images);
         }
-        if (returnValue && checkVmIsDown && vm.getStatus() != VMStatus.Down) {
+
+        if (returnValue && checkVmIsDown && !isVmDown(vm)) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
         }
+
         if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         }
+
         if (returnValue && checkIsValid) {
             if (images.size() > 0) {
                 returnValue = returnValue &&
