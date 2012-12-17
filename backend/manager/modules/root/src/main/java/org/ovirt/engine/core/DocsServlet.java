@@ -27,7 +27,6 @@ public class DocsServlet extends FileServlet {
     private static final long serialVersionUID = 3804716423059474163L;
 
     public static final String REFERER = "Referer";
-    private static final String LOCALE = "locale";
     public static final String LANG_PAGE_SHOWN = "langPageShown";
 
     private static final String ENGLISH_HREF = "englishHref";
@@ -49,7 +48,7 @@ public class DocsServlet extends FileServlet {
                 String redirect = request.getServletPath() + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
                 if ((languagePageShown == null || !Boolean.parseBoolean(languagePageShown.toString()))) {
                     request.getSession(true).setAttribute(LANG_PAGE_SHOWN, true);
-                    request.setAttribute(LOCALE, locale);
+                    request.setAttribute(LocaleFilter.LOCALE, locale);
                     request.setAttribute(ENGLISH_HREF, redirect);
                     RequestDispatcher dispatcher = request.getRequestDispatcher(LANG_JSP);
                     if (dispatcher != null) {
@@ -165,7 +164,7 @@ public class DocsServlet extends FileServlet {
                     String[] parameters = query.split("&");
                     for (int i = 0; i < parameters.length; i++) {
                         String[] keyValues = parameters[i].split("=");
-                        if (LOCALE.equalsIgnoreCase(keyValues[0])) {
+                        if (LocaleFilter.LOCALE.equalsIgnoreCase(keyValues[0])) {
                             result = keyValues[1];
                             break;
                         }

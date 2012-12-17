@@ -210,6 +210,12 @@
     <welcome-file>ovirt-engine.html</welcome-file>
   </welcome-file-list>
 
+  <!-- Filters -->
+  <filter-mapping>
+    <filter-name>LocaleFilter</filter-name>
+    <url-pattern>/index</url-pattern>
+  </filter-mapping>
+
   <!-- Go to the index when a page is not found (preserving the
        404 status code): -->
   <error-page>
@@ -217,4 +223,8 @@
     <location>/404.html</location>
   </error-page>
 
+  <!-- This is handled by the splash servlet -->
+  <welcome-file-list>
+    <welcome-file>index</welcome-file>
+  </welcome-file-list>
 </web-app>
