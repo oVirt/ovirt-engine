@@ -34,6 +34,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                     throws SQLException {
                 VdsDynamic entity = new VdsDynamic();
                 entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
+                entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
                 entity.setcpu_model(rs.getString("cpu_model"));
                 entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
                 entity.setif_total_speed(rs.getString("if_total_speed"));
@@ -94,6 +95,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
     public void save(VdsDynamic vds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cpu_cores", vds.getcpu_cores())
+                .addValue("cpu_threads", vds.getCpuThreads())
                 .addValue("cpu_model", vds.getcpu_model())
                 .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
                 .addValue("if_total_speed", vds.getif_total_speed())
@@ -143,6 +145,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
     public void update(VdsDynamic vds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cpu_cores", vds.getcpu_cores())
+                .addValue("cpu_threads", vds.getCpuThreads())
                 .addValue("cpu_model", vds.getcpu_model())
                 .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
                 .addValue("if_total_speed", vds.getif_total_speed())

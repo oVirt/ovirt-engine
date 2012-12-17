@@ -143,6 +143,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("storage_pool_id", group.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
                         group.getmax_vds_memory_over_commit())
+                .addValue("count_threads_as_cores",
+                        group.getCountThreadsAsCores())
                 .addValue("transparent_hugepages",
                         group.getTransparentHugepages())
                 .addValue("compatibility_version",
@@ -175,6 +177,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                     .getString("storage_pool_id")));
             entity.setmax_vds_memory_over_commit(rs
                     .getInt("max_vds_memory_over_commit"));
+            entity.setCountThreadsAsCores(rs
+                    .getBoolean("count_threads_as_cores"));
             entity.setTransparentHugepages(rs
                     .getBoolean("transparent_hugepages"));
             entity.setcompatibility_version(new Version(rs

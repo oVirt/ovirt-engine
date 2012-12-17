@@ -158,7 +158,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     }
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
-            String ip, String host_name, int port, int status, Integer cpu_cores, String cpu_model,
+            String ip, String host_name, int port, int status, Integer cpu_cores, Integer cpuThreads, String cpu_model,
             Double cpu_speed_mh, String if_total_speed, Boolean kvm_enabled, Integer physical_mem_mb,
             Double cpu_idle, Double cpu_load, Double cpu_sys,
             Double cpu_user, Integer mem_commited, Integer vm_active, int vm_count,
@@ -184,6 +184,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setport(port);
         this.setstatus(VDSStatus.forValue(status));
         this.setcpu_cores(cpu_cores);
+        this.setCpuThreads(cpuThreads);
         this.setcpu_model(cpu_model);
         this.setcpu_speed_mh(cpu_speed_mh);
         this.setif_total_speed(if_total_speed);
@@ -238,6 +239,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getport(),
                         getstatus().getValue(),
                         getcpu_cores(),
+                        getCpuThreads(),
                         getcpu_model(),
                         getcpu_speed_mh(),
                         getif_total_speed(),
@@ -436,6 +438,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setcpu_cores(Integer value) {
         this.mVdsDynamic.setcpu_cores(value);
+    }
+
+    public Integer getCpuThreads() {
+        return this.mVdsDynamic.getCpuThreads();
+    }
+
+    public void setCpuThreads(Integer value) {
+        this.mVdsDynamic.setCpuThreads(value);
     }
 
     public Integer getcpu_sockets() {

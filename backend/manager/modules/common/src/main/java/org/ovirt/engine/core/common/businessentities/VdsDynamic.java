@@ -38,6 +38,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "cpu_cores")
     private Integer cpu_cores;
 
+    @Column(name = "cpu_threads")
+    private Integer cpuThreads;
+
     @Column(name = "cpu_model")
     private String cpu_model;
 
@@ -166,7 +169,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         transparentHugePagesState = VdsTransparentHugePagesState.Never;
     }
 
-    public VdsDynamic(Integer cpu_cores, String cpu_model, Double cpu_speed_mh, String if_total_speed,
+    public VdsDynamic(Integer cpu_cores, Integer cpuThreads, String cpu_model, Double cpu_speed_mh, String if_total_speed,
                       Boolean kvm_enabled, Integer mem_commited, Integer physical_mem_mb, int status, Guid vds_id,
                       Integer vm_active, int vm_count, Integer vm_migrating, Integer reserved_mem, Integer guest_overhead,
                       VDSStatus previous_status, String software_version, String version_name, String build_name,
@@ -174,6 +177,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       Integer pending_vmem_sizeField, Boolean net_config_dirty) {
         rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
+        this.cpuThreads = cpuThreads;
         this.cpu_model = cpu_model;
         this.cpu_speed_mh = BigDecimal.valueOf(cpu_speed_mh);
         this.if_total_speed = if_total_speed;
@@ -203,6 +207,14 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     public void setcpu_cores(Integer value) {
         this.cpu_cores = value;
+    }
+
+    public Integer getCpuThreads() {
+        return this.cpuThreads;
+    }
+
+    public void setCpuThreads(Integer value) {
+        this.cpuThreads = value;
     }
 
     public Integer getcpu_sockets() {
@@ -545,6 +557,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + anonymousHugePages;
         result = prime * result + ((buildName == null) ? 0 : buildName.hashCode());
         result = prime * result + ((cpu_cores == null) ? 0 : cpu_cores.hashCode());
+        result = prime * result + ((cpuThreads == null) ? 0 : cpuThreads.hashCode());
         result = prime * result + ((cpu_flags == null) ? 0 : cpu_flags.hashCode());
         result = prime * result + ((cpu_model == null) ? 0 : cpu_model.hashCode());
         result = prime * result + ((cpu_over_commit_time_stamp == null) ? 0 : cpu_over_commit_time_stamp.hashCode());
@@ -613,6 +626,11 @@ public class VdsDynamic implements BusinessEntity<Guid> {
             if (other.cpu_cores != null)
                 return false;
         } else if (!cpu_cores.equals(other.cpu_cores))
+            return false;
+        if (cpuThreads == null) {
+            if (other.cpuThreads != null)
+                return false;
+        } else if (!cpuThreads.equals(other.cpuThreads))
             return false;
         if (cpu_flags == null) {
             if (other.cpu_flags != null)

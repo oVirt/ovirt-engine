@@ -219,6 +219,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setport(rs.getInt("port"));
             entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
             entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
+            entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
             entity.setcpu_model(rs.getString("cpu_model"));
             entity.setcpu_user(rs.getDouble("cpu_user"));
             entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));

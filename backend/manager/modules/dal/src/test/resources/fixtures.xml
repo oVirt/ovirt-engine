@@ -480,6 +480,7 @@
         <column>transparent_hugepages</column>
         <column>virt_service</column>
         <column>gluster_service</column>
+        <column>count_threads_as_cores</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -496,6 +497,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -515,6 +517,7 @@
             <value>0</value>
             <value>true</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -532,6 +535,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -551,6 +555,7 @@
             <value>0</value>
             <value>true</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -568,6 +573,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
 		<row>
@@ -587,6 +593,7 @@
             <value>0</value>
             <value>true</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -604,6 +611,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -623,6 +631,7 @@
             <value>0</value>
             <value>false</value>
             <value>true</value>
+            <value>false</value>
         </row>
     </table>
 
@@ -1271,6 +1280,7 @@
         <column>_update_date</column>
         <column>hooks</column>
         <column>non_operational_reason</column>
+        <column>cpu_threads</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -1310,6 +1320,7 @@
             <value>2010-12-01 14:13:10</value>
             <value>{}</value>
             <value>0</value>
+            <value>16</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -1350,6 +1361,7 @@
             <value>2010-12-01 14:13:10</value>
             <value>{}</value>
             <value>0</value>
+            <value>16</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -1390,6 +1402,7 @@
             <value>2010-12-01 14:13:10</value>
             <value>{}</value>
             <value>0</value>
+            <value>16</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -1430,6 +1443,7 @@
             <value>2010-12-01 14:13:10</value>
             <value>{}</value>
             <value>0</value>
+            <value>16</value>
         </row>
     </table>
 

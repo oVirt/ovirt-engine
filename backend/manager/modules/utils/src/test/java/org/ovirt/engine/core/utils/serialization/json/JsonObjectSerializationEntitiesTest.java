@@ -60,6 +60,7 @@ public class JsonObjectSerializationEntitiesTest {
                 new Object[][] {
                         { vdsStatic },
                         { new VdsDynamic(random.nextInt(),
+                                random.nextInt(),
                                 random.nextString(10),
                                 random.nextDouble(),
                                 random.nextString(10),

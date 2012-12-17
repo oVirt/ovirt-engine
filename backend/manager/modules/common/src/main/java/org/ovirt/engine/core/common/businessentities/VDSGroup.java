@@ -86,6 +86,9 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     @Column(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commit = 0;
 
+    @Column(name = "count_threads_as_cores")
+    private boolean countThreadsAsCores = false;
+
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     @Column(name = "compatibility_version")
     private String compatibility_version;
@@ -210,6 +213,14 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         this.max_vds_memory_over_commit = value;
     }
 
+    public boolean getCountThreadsAsCores() {
+        return this.countThreadsAsCores;
+    }
+
+    public void setCountThreadsAsCores(boolean value) {
+        this.countThreadsAsCores = value;
+    }
+
     public Version getcompatibility_version() {
         return compatVersion;
     }
@@ -235,7 +246,7 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
     private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(
             java.util.Arrays.asList(new String[] { "name", "description", "cpu_name",
                     "cpu_over_commit_duration_minutes", "low_utilization", "high_utilization", "selection_algorithm",
-                    "max_vds_memory_over_commit", "storage_pool_id", "compatibility_version",
+                    "max_vds_memory_over_commit", "storage_pool_id", "countThreadsAsCores", "compatibility_version",
                     "TransparentHugepages", "MigrateOnError" }));
 
     @Override
@@ -283,6 +294,7 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + low_utilization;
         result = prime * result + max_vds_memory_over_commit;
+        result = prime * result + (countThreadsAsCores ? 1231 : 1237);
         result = prime * result + ((migrateOnError == null) ? 0 : migrateOnError.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((selection_algorithm == null) ? 0 : selection_algorithm.hashCode());
@@ -333,6 +345,8 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         if (low_utilization != other.low_utilization)
             return false;
         if (max_vds_memory_over_commit != other.max_vds_memory_over_commit)
+            return false;
+        if (countThreadsAsCores != other.countThreadsAsCores)
             return false;
         if (migrateOnError != other.migrateOnError)
             return false;

@@ -25,6 +25,7 @@ public final class VdsProperties {
     public static final String cpu_flags = "cpuFlags";
 
     public static final String SpiceSecureChannels = "spiceSecureChannels";
+    public static final String cpuThreads = "cpuThreads";
     public static final String cpu_cores = "cpuCores";
     public static final String cpu_sockets = "cpuSockets";
     public static final String cpu_model = "cpuModel";

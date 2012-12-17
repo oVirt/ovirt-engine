@@ -298,6 +298,7 @@ public class VdsBrokerObjectsBuilder {
     public static void updateVDSDynamicData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         updateNetworkData(vds, xmlRpcStruct);
 
+        vds.setCpuThreads(AssignIntValue(xmlRpcStruct, VdsProperties.cpuThreads));
         vds.setcpu_cores(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_cores));
         vds.setcpu_sockets(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_sockets));
         vds.setcpu_model(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_model));
