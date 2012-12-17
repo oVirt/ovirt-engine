@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
@@ -59,6 +60,14 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 return i.getId().equals(getParameters().getInterface().getId());
             }
         });
+
+
+        String clusterCompatibilityVersion = getVdsGroup().getcompatibility_version().getValue();
+        VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
+
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
+            return false;
+        }
 
         if (!StringHelper.EqOp(oldIface.getName(), getParameters().getInterface().getName())) {
             if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
