@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
+import org.ovirt.engine.core.config.entity.helper.CompositePasswordValueHelper;
+import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValidationResult;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
 
@@ -153,5 +155,10 @@ public class ConfigKey {
 
     public boolean isReloadable() {
         return reloadable;
+    }
+
+    public boolean isPasswordKey() {
+        return CompositePasswordValueHelper.class.isAssignableFrom(valueHelper.getClass()) ||
+                PasswordValueHelper.class.isAssignableFrom(valueHelper.getClass());
     }
 }

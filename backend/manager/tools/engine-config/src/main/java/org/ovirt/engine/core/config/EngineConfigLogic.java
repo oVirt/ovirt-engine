@@ -215,14 +215,20 @@ public class EngineConfigLogic {
         }
 
         StringBuilder buffer = new StringBuilder();
+        boolean isPasswordKey = false;
         for (ConfigKey configKey : keysForName) {
             buffer.append(String.format("%s: %s version: %s\n",
                     key,
                     configKey.getDisplayValue(),
                     configKey.getVersion()));
+            isPasswordKey = isPasswordKey || configKey.isPasswordKey();
         }
         buffer.deleteCharAt(buffer.length() - 1);
-        log.info(buffer);
+        if (isPasswordKey) {
+            System.out.print(buffer);
+        } else {
+            log.info(buffer);
+        }
     }
 
     /**
@@ -307,6 +313,9 @@ public class EngineConfigLogic {
             log.debug("getValue: error fetching " + key + " value: no such entry with version '" + version + "'.");
             throw new RuntimeException("Error fetching " + key + " value: no such entry with version '" + version
                     + "'.");
+        }
+        if (configKey.isPasswordKey()) {
+            System.out.println(configKey.getDisplayValue());
         } else {
             log.info(configKey.getDisplayValue());
         }
