@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.plugin;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
-import org.ovirt.engine.ui.webadmin.plugin.entity.BaseEntity;
+import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsArrayHelper;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquiredEvent;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquiredEvent.RestApiSessionAcquiredHandler;
@@ -60,43 +60,43 @@ public class PluginEventHandler {
         eventBus.addHandler(ClusterSelectionChangeEvent.getType(), new ClusterSelectionChangeHandler() {
             @Override
             public void onClusterSelectionChange(ClusterSelectionChangeEvent event) {
-                manager.invokePluginsNow("ClusterSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("ClusterSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(DataCenterSelectionChangeEvent.getType(), new DataCenterSelectionChangeHandler() {
             @Override
             public void onDataCenterSelectionChange(DataCenterSelectionChangeEvent event) {
-                manager.invokePluginsNow("DataCenterSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("DataCenterSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(DiskSelectionChangeEvent.getType(), new DiskSelectionChangeHandler() {
             @Override
             public void onDiskSelectionChange(DiskSelectionChangeEvent event) {
-                manager.invokePluginsNow("DiskSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("DiskSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(HostSelectionChangeEvent.getType(), new HostSelectionChangeHandler() {
             @Override
             public void onHostSelectionChange(HostSelectionChangeEvent event) {
-                manager.invokePluginsNow("HostSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("HostSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(StorageSelectionChangeEvent.getType(), new StorageSelectionChangeHandler() {
             @Override
             public void onStorageSelectionChange(StorageSelectionChangeEvent event) {
-                manager.invokePluginsNow("StorageSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("StorageSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(TemplateSelectionChangeEvent.getType(), new TemplateSelectionChangeHandler() {
             @Override
             public void onTemplateSelectionChange(TemplateSelectionChangeEvent event) {
-                manager.invokePluginsNow("TemplateSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("TemplateSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
         eventBus.addHandler(VirtualMachineSelectionChangeEvent.getType(), new VirtualMachineSelectionChangeHandler() {
             @Override
             public void onVirtualMachineSelectionChange(VirtualMachineSelectionChangeEvent event) {
-                manager.invokePluginsNow("VirtualMachineSelectionChange", BaseEntity.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
+                manager.invokePluginsNow("VirtualMachineSelectionChange", EntityObject.arrayFrom(event.getSelectedItems())); //$NON-NLS-1$
             }
         });
     }

@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.webadmin.plugin.entity.BaseEntity;
+import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
@@ -217,7 +217,7 @@ public class PluginUiFunctions implements HasHandlers {
         final UICommand command = new UICommand(label, new BaseCommandTarget() {
             @Override
             public void ExecuteCommand(UICommand uiCommand) {
-                actionButtonInterface.onClick().invoke(BaseEntity.arrayFrom(table.getSelectedItems()), null);
+                actionButtonInterface.onClick().invoke(EntityObject.arrayFrom(table.getSelectedItems()), null);
             }
         });
 
@@ -242,13 +242,13 @@ public class PluginUiFunctions implements HasHandlers {
         // Update 'IsExecutionAllowed' property
         boolean isEnabled = true;
         isEnabled = JsFunctionResultHelper.invokeAndGetResultAsBoolean(actionButtonInterface.isEnabled(),
-                BaseEntity.arrayFrom(selectedItems), null, isEnabled);
+                EntityObject.arrayFrom(selectedItems), null, isEnabled);
         command.setIsExecutionAllowed(isEnabled);
 
         // Update 'IsAvailable' property
         boolean isAccessible = true;
         isAccessible = JsFunctionResultHelper.invokeAndGetResultAsBoolean(actionButtonInterface.isAccessible(),
-                BaseEntity.arrayFrom(selectedItems), null, isAccessible);
+                EntityObject.arrayFrom(selectedItems), null, isAccessible);
         command.setIsAvailable(isAccessible);
     }
 
