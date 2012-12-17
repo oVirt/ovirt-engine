@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
-import org.ovirt.engine.core.common.queries.gluster.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 /**
  * Query to fetch a single gluster brick given the brick ID

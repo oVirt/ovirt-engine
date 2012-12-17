@@ -1,6 +1,5 @@
-package org.ovirt.engine.core.common.queries.gluster;
+package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -11,15 +10,14 @@ public class IdQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -4601447036978553847L;
     private Guid id;
 
+    public IdQueryParameters() {
+    }
+
     public IdQueryParameters(Guid id) {
-        setId(id);
+        this.id = id;
     }
 
     public Guid getId() {
         return id;
-    }
-
-    public void setId(Guid volumeId) {
-        this.id = volumeId;
     }
 }
