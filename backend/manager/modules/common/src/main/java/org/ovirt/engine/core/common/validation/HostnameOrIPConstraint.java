@@ -14,7 +14,7 @@ public class HostnameOrIPConstraint implements ConstraintValidator<HostnameOrIp,
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
-        return (name != null) && ValidationUtils.validHostname(name);
+        return name == null || ValidationUtils.validHostname(name);
     }
 
 }
