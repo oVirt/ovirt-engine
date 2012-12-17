@@ -26,8 +26,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
@@ -64,18 +62,13 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             return false;
         }
 
-        // chech that no template is using this network
+        // check that no template is using this network
         List<VmTemplate> templates = DbFacade.getInstance().getVmTemplateDao()
                 .getAllForVdsGroup(getParameters().getVdsGroupId());
         for (VmTemplate tmpl : templates) {
             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDao().getAllForTemplate(tmpl.getId());
-            if (LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-                @Override
-                public boolean eval(VmNetworkInterface t) {
-                    return t.getNetworkName().equals(getParameters().getNetwork().getname());
-                }
-            }) != null) {
+            if (networkUsedByAnInterface(interfaces)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE);
                 return false;
             }
@@ -95,13 +88,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 VM vm = (VM) vm_helper;
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                         .getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-                VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
-                    @Override
-                    public boolean eval(VmNetworkInterface i) {
-                        return i.getNetworkName().equals(getParameters().getNetwork().getname());
-                    }
-                });
-                if (iface != null) {
+                if (networkUsedByAnInterface(interfaces)) {
                     addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
                     return false;
                 }
@@ -117,6 +104,19 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         return true;
+    }
+
+    /**
+     * Check if the given list has a {@link VmNetworkInterface} with the Network name that is being detached.
+     */
+    private boolean networkUsedByAnInterface(List<VmNetworkInterface> interfaces) {
+        for (VmNetworkInterface vmNetworkInterface : interfaces) {
+            if (getNetworkName().equals(vmNetworkInterface.getNetworkName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
