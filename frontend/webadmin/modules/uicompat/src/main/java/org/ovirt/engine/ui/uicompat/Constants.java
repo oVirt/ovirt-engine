@@ -1350,9 +1350,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit Option")
     String editOptionVolume();
 
-    @DefaultStringValue("Configure Local Storage")
-    String configuringLocalStorage();
-
     @DefaultStringValue("Reset Option")
     String resetOptionVolumeTitle();
 

@@ -1424,9 +1424,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 },
                 model);
 
-        String correlationId = TaskListModel.createCorrelationId(ConstantsManager.getInstance()
-                .getConstants()
-                .configuringLocalStorage());
+        String correlationId = TaskListModel.createCorrelationId("Configure Local Storage"); //$NON-NLS-1$
         flow.enlist(new AddDataCenterRM(correlationId));
         flow.enlist(new AddClusterRM(correlationId));
         flow.enlist(new ChangeHostClusterRM(correlationId));
