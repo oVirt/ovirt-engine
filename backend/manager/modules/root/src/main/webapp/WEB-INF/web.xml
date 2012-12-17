@@ -60,7 +60,7 @@
   <!-- Documentation: -->
   <servlet>
     <servlet-name>docs</servlet-name>
-    <servlet-class>org.ovirt.engine.core.FileServlet</servlet-class>
+    <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
     <init-param>
       <param-name>file</param-name>
       <param-value>/usr/share/doc/ovirt-engine/manual</param-value>

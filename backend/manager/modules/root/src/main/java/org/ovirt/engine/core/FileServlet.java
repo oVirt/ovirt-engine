@@ -63,8 +63,8 @@ public class FileServlet extends HttpServlet {
     private static final String INDEX = "index.html";
 
     // The values of the parameters:
-    private String type;
-    private File base;
+    protected String type;
+    protected File base;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -89,26 +89,22 @@ public class FileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get the requested path:
-        String path = request.getPathInfo();
-
         // Locate the requested file:
-        File file = null;
-        if (path == null) {
-            file = base;
-        }
-        else if (!ServletUtils.isSane(path)) {
-            log.error("The path \"" + path + "\" is not sane, will send a 404 error response.");
+        File file = ServletUtils.makeFileFromSanePath(request.getPathInfo(), base);
+        file = checkForIndex(request, response, file, request.getPathInfo());
+        if (file == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+        } else {
+            // Send the content of the file:
+            // type is the default MIME type of the Servlet.
+            ServletUtils.sendFile(request, response, file, type);
         }
-        else {
-            file = new File(base, path);
-        }
+    }
 
+    protected File checkForIndex(HttpServletRequest request, HttpServletResponse response, File file, String path) throws IOException {
         // If the requested file is a directory then try to replace it with the
         // corresponding index page (if it exists):
-        if (file.isDirectory()) {
+        if (file != null && file.isDirectory()) {
             File index = new File(file, INDEX);
             log.info("Index is \"" + index.getAbsolutePath() + "\".");
             if (index.isFile()) {
@@ -120,21 +116,15 @@ public class FileServlet extends HttpServlet {
                     redirect = request.getServletPath() + path + "/" + INDEX;
                 }
                 response.sendRedirect(redirect);
+                file = new File(file, INDEX);
             }
             else {
                 log.error("There is no index page for directory \"" + file.getAbsolutePath() + "\", will send a 404 error response.");
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                file = null;
             }
-            return;
+        } else if (!ServletUtils.canReadFile(file)) {
+            file = null;
         }
-
-        // Find the MIME type:
-        String mime = type;
-        if (mime == null) {
-            mime = ServletUtils.getMimeMap().getContentType(file);
-        }
-
-        // Send the content of the file:
-        ServletUtils.sendFile(request, response, file, mime);
+        return file;
     }
 }
