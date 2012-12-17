@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -132,6 +133,10 @@ public class FencingExecutor {
     }
 
     public VDSReturnValue Fence() {
+        return Fence(FenceAgentOrder.Primary);
+    }
+
+    public VDSReturnValue Fence(FenceAgentOrder order) {
         VDSReturnValue retValue = null;
         try {
             // skip following code in case of testing a new host status
@@ -147,7 +152,7 @@ public class FencingExecutor {
                                     new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
                 }
             }
-            retValue = runFencingAction(_action);
+            retValue = runFencingAction(_action, order);
         } catch (VdcBLLException e) {
             retValue = new VDSReturnValue();
             retValue.setReturnValue(new FenceStatusReturnValue("unknown", e.getMessage()));
@@ -162,7 +167,7 @@ public class FencingExecutor {
      * @return Whether the proxy host can be used to fence the host successfully.
      */
     public boolean checkProxyHostConnectionToHost() {
-        return runFencingAction(FenceActionType.Status).getSucceeded();
+        return runFencingAction(FenceActionType.Status, FenceAgentOrder.Primary).getSucceeded();
     }
 
 
@@ -171,31 +176,102 @@ public class FencingExecutor {
      * @param actionType The action to run.
      * @return The result of running the fencing command.
      */
-    private VDSReturnValue runFencingAction(FenceActionType actionType) {
-        String managementPort = "";
-        if (_vds.getpm_port() != null && _vds.getpm_port() != 0) {
-            managementPort = _vds.getpm_port().toString();
-        }
-        // get real agent and default parameters
-        String agent = VdsFencingOptions.getRealAgent(_vds.getpm_type());
-        String managementOptions = VdsFencingOptions.getDefaultAgentOptions(_vds.getpm_type(),_vds.getpm_options());
+    private VDSReturnValue runFencingAction(FenceActionType actionType, FenceAgentOrder order) {
+        String managementIp = getManagementIp(order);
+        String managementPort = getManagementPort(order);
+        String managementAgent = getManagementAgent(order);
+        String managementUser = getManagementUser(order);
+        String managementPassword = getManagementPassword(order);
+        String managementOptions = getManagementOptions(order);
+
         log.infoFormat("Executing <{0}> Power Management command, Proxy Host:{1}, "
                 + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}", actionType, proxyHostName,
-                agent, _vds.getvds_name(), _vds.getManagmentIp(), _vds.getpm_user(), managementOptions);
+                managementAgent, _vds.getvds_name(), managementIp, managementUser, managementOptions);
         return Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.FenceVds,
-                        new FenceVdsVDSCommandParameters(proxyHostId, _vds.getId(), _vds.getManagmentIp(),
-                                    managementPort, agent, _vds.getpm_user(), _vds.getpm_password(),
+                        new FenceVdsVDSCommandParameters(proxyHostId, _vds.getId(), managementIp,
+                                    managementPort, managementAgent, managementUser, managementPassword,
                                     managementOptions, actionType));
+    }
+
+    private String getManagementOptions(FenceAgentOrder order) {
+        String managementOptions = "";
+        if (order == FenceAgentOrder.Primary) {
+            managementOptions = VdsFencingOptions.getDefaultAgentOptions(_vds.getpm_type(), _vds.getpm_options());
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            managementOptions =
+                    VdsFencingOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions());
+        }
+        return managementOptions;
+    }
+
+    private String getManagementPassword(FenceAgentOrder order) {
+        String managementPassword = "";
+        if (order == FenceAgentOrder.Primary) {
+            managementPassword = _vds.getpm_password();
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            managementPassword = _vds.getPmSecondaryPassword();
+        }
+        return managementPassword;
+    }
+
+    private String getManagementUser(FenceAgentOrder order) {
+        String managementUser = "";
+        if (order == FenceAgentOrder.Primary) {
+            managementUser = _vds.getpm_user();
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            managementUser = _vds.getPmSecondaryuser();
+        }
+        return managementUser;
+    }
+
+    private String getManagementAgent(FenceAgentOrder order) {
+        String agent = "";
+     // get real agent and default parameters
+        if (order == FenceAgentOrder.Primary) {
+            agent = VdsFencingOptions.getRealAgent(_vds.getpm_type());
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            agent = VdsFencingOptions.getRealAgent(_vds.getPmSecondaryType());
+        }
+        return agent;
+    }
+
+    private String getManagementPort(FenceAgentOrder order) {
+        String managementPort = "";
+        if (order == FenceAgentOrder.Primary) {
+            if (_vds.getpm_port() != null && _vds.getpm_port() != 0) {
+                managementPort = _vds.getpm_port().toString();
+            }
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            if (_vds.getPmSecondaryPort() != null && _vds.getPmSecondaryPort() != 0) {
+                managementPort = _vds.getPmSecondaryPort().toString();
+            }
+        }
+        return managementPort;
+    }
+
+    private String getManagementIp(FenceAgentOrder order) {
+        String managementIp = "";
+        if (order == FenceAgentOrder.Primary) {
+            managementIp = _vds.getManagmentIp();
+        }
+        else if (order == FenceAgentOrder.Secondary) {
+            managementIp = _vds.getPmSecondaryIp();
+        }
+        return managementIp;
     }
 
     private boolean isHostNetworkUnreacable(VDS vds) {
         VdsDynamic vdsDynamic = vds.getDynamicData();
-        return (vdsDynamic.getstatus() == VDSStatus.NonOperational &&
-            vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
+        return (vdsDynamic.getstatus() == VDSStatus.NonOperational && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE);
     }
 
     private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions) {

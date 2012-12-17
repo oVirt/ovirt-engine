@@ -47,6 +47,7 @@
 		<include name="common/businessentities/InterfaceStatus.java" />
 		<include name="common/businessentities/IrsStatus.java" />
 		<include name="common/businessentities/IVdcQueryable.java" />
+		<include name="common/businessentities/FenceAgentOrder.java" />
 		<include
 			name="common/businessentities/LUN_storage_server_connection_map.java" />
 		<include

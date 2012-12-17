@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
@@ -22,15 +23,24 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         VDS tempVar = new VDS();
         tempVar.setId((Guid) ((id != null) ? id : Guid.Empty));
         tempVar.setStoragePoolId(getParameters().getStoragePoolId());
+        if (getParameters().getOrder() == FenceAgentOrder.Primary) {
         tempVar.setManagmentIp(getParameters().getManagementIp());
         tempVar.setPmOptionsMap(getParameters().getFencingOptions());
         tempVar.setpm_type(getParameters().getPmType());
         tempVar.setpm_user(getParameters().getUser());
         tempVar.setpm_password(getParameters().getPassword());
+        }
+        else if (getParameters().getOrder() == FenceAgentOrder.Secondary) {
+            tempVar.setPmSecondaryIp(getParameters().getManagementIp());
+            tempVar.setPmSecondaryOptionsMap(getParameters().getFencingOptions());
+            tempVar.setPmSecondaryType(getParameters().getPmType());
+            tempVar.setPmSecondaryUser(getParameters().getUser());
+            tempVar.setPmSecondaryPassword(getParameters().getPassword());
+        }
         VDS vds = tempVar;
         FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);
         if (executor.FindVdsToFence()) {
-            VDSReturnValue returnValue = executor.Fence();
+            VDSReturnValue returnValue = executor.Fence(getParameters().getOrder());
             if (returnValue.getReturnValue() != null) {
                 getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
             }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
@@ -20,7 +21,21 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _password = password;
         this.vdsGrouoId = vdsGroupId;
         this.PmProxyPreferences = pmProxyPreferences;
+        this.order = FenceAgentOrder.Primary;
     }
+
+    public GetNewVdsFenceStatusParameters(Guid vds_id, Guid storagePolId, String managementIp,
+            ValueObjectMap fencinOptions, String pmType, String user, String password, FenceAgentOrder order) {
+        _vds_id = vds_id;
+        _storagePoolId = storagePolId;
+        _managementIp = managementIp;
+        _fencingOptions = fencinOptions;
+        _pmType = pmType;
+        _user = user;
+        _password = password;
+        this.order = order;
+    }
+
 
     private Guid _vds_id;
 
@@ -116,5 +131,15 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
 
     public void setPmProxyPreferences(String pmProxyPreferences) {
         PmProxyPreferences = pmProxyPreferences;
+    }
+
+    private FenceAgentOrder order;
+
+    public FenceAgentOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(FenceAgentOrder order) {
+        this.order = order;
     }
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
@@ -25,16 +26,25 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
         FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;
         if (executor.FindVdsToFence()) {
-            returnValue = executor.Fence();
+            returnValue = executor.Fence(FenceAgentOrder.Primary);
             if (returnValue.getReturnValue() != null) {
                 if (returnValue.getSucceeded()) {
-                    // Remove all alerts including NOT CONFIG alert
-                    AlertDirector.RemoveAllVdsAlerts(getVdsId(), true);
-                    getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
+                    boolean succeeded = true;
+                    // check if we have secondary agent settings
+                    if (vds.getPmSecondaryIp() != null && !vds.getPmSecondaryIp().isEmpty()) {
+                        returnValue = executor.Fence(FenceAgentOrder.Secondary);
+                        succeeded = returnValue.getSucceeded();
+                    }
+                    if (succeeded) {
+                        // Remove all alerts including NOT CONFIG alert
+                        AlertDirector.RemoveAllVdsAlerts(getVdsId(), true);
+                        getQueryReturnValue().setReturnValue(returnValue.getReturnValue());
+                    }
+                    else {
+                        handleError(returnValue);
+                    }
                 } else {
-                    msg = ((FenceStatusReturnValue) returnValue.getReturnValue()).getMessage();
-                    getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
-                    AlertPowerManagementStatusFailed(msg);
+                    handleError(returnValue);
                 }
             }
         } else {
@@ -44,6 +54,12 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
             getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
             AlertPowerManagementStatusFailed(AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST));
         }
+    }
+
+    private void handleError(VDSReturnValue returnValue) {
+        String msg = ((FenceStatusReturnValue) returnValue.getReturnValue()).getMessage();
+        getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
+        AlertPowerManagementStatusFailed(msg);
 
     }
 }
