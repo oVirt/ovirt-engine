@@ -105,7 +105,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
         // The predicted CPU is actually the CPU that the VM will take considering how many cores it has and now many
         // cores the host has. This is why we take both parameters into consideration.
-        int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / vds.getcpu_cores();
+        int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / VdsSelector.getEffectiveCpuCores(vds);
         boolean result = vds.getusage_cpu_percent() + predictedVmCpu <= vds.gethigh_utilization();
         if (log.isDebugEnabled()) {
             log.debugFormat("Host {0} has {1}% CPU load; VM {2} is predicted to have {3}% CPU load; " +

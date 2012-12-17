@@ -40,7 +40,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() > vmCountTemp * p.getcpu_cores();
+                return p.getvm_count() > vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         Collections.sort(vdses, new Comparator<VDS>() {
@@ -86,7 +86,7 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() < vmCountTemp * p.getcpu_cores();
+                return p.getvm_count() < vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         Collections.sort(vdses, new Comparator<VDS>() {
@@ -132,8 +132,8 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() < highVdsCountTemp * p.getcpu_cores()
-                        && p.getvm_count() >= lowVdsCountTemp * p.getcpu_cores();
+                return p.getvm_count() < highVdsCountTemp * VdsSelector.getEffectiveCpuCores(p)
+                        && p.getvm_count() >= lowVdsCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         setReadyToMigrationServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {

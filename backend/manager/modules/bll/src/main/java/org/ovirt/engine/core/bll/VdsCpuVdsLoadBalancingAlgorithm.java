@@ -172,7 +172,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         }
 
         private int calculateCpuUsage(VDS o1) {
-            return o1.getusage_cpu_percent() * o1.getcpu_cores() / o1.getvds_strength();
+            return o1.getusage_cpu_percent() * VdsSelector.getEffectiveCpuCores(o1) / o1.getvds_strength();
         }
     }
 

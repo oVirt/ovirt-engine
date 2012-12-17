@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -228,6 +229,18 @@ public class VdsSelector {
         VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate);
     }
 
+    public static Integer getEffectiveCpuCores(VDS vds) {
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getvds_group_id());
+
+        if (vds.getCpuThreads() != null
+                && vdsGroup != null
+                && Boolean.TRUE.equals(vdsGroup.getCountThreadsAsCores())) {
+            return vds.getCpuThreads();
+        } else {
+            return vds.getcpu_cores();
+        }
+    }
+
     @SuppressWarnings("serial")
     final List<HostValidator> hostValidators = Collections.unmodifiableList(new ArrayList<HostValidator>(){
         {
@@ -283,8 +296,9 @@ public class VdsSelector {
             add(new HostValidator() {
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if (vds.getcpu_cores() != null && getVm().getNumOfCpus() > vds.getcpu_cores()) {
-                        sb.append("has less cores(").append(vds.getcpu_cores()).append(") than ").append(getVm().getNumOfCpus());
+                    Integer cores = getEffectiveCpuCores(vds);
+                    if (cores != null && getVm().getNumOfCpus() > cores) {
+                        sb.append("has less cores(").append(cores).append(") than ").append(getVm().getNumOfCpus());
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
                     }
                     return null;
