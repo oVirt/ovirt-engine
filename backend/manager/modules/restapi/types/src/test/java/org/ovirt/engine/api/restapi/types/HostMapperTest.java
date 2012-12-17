@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.math.BigDecimal;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -143,5 +144,38 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(host.getPowerManagement().getPmProxies().getPmProxy().size(), 2);
         assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(0).getType().equalsIgnoreCase("cluster"));
         assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(1).getType().equalsIgnoreCase("dc"));
+    }
+
+    public void testPowerManagementAgents() {
+        String[] ip = { "1.1.1.111", "1.1.1.112" };
+        int agents = 0;
+        int i = 0;
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setpm_enabled(true);
+        vds.setManagmentIp(ip[0]);
+        vds.setpm_type("apc");
+        vds.setpm_user("user");
+        vds.setpm_options("secure=true");
+        vds.setPmSecondaryConcurrent(true);
+        vds.setPmSecondaryIp(ip[1]);
+        vds.setPmSecondaryType("apc");
+        vds.setPmSecondaryUser("user");
+        vds.setPmSecondaryOptions("secure=true");
+        Host host = HostMapper.map(vds, (Host) null);
+        agents = host.getPowerManagement().getAgents().getAgents().size();
+        assertEquals(agents, 2);
+        for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
+            assertEquals(host.getPowerManagement().isEnabled(), true);
+            assertEquals(agent.getAddress(), ip[i]);
+            assertEquals(agent.getType(), "apc");
+            assertEquals(agent.getUsername(), "user");
+            assertEquals(agent.getOptions().getOptions().get(0).getName(), "secure");
+            assertEquals(agent.getOptions().getOptions().get(0).getValue(), "true");
+            if (i > 0) {
+                assertEquals(agent.isConcurrent(), true);
+            }
+            i++;
+        }
     }
 }

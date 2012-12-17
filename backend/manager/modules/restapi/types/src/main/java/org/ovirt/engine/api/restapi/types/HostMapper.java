@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Agent;
+import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
@@ -112,6 +114,54 @@ public class HostMapper {
                 delim = ",";
             }
             entity.setPmProxyPreferences(builder.toString());
+        }
+        if (model.isSetAgents()) {
+            // Currently only Primary/Secondary agents are supported
+            int order = 1;
+            for (Agent agent : model.getAgents().getAgents()) {
+
+                if (agent.isSetOrder()) {
+                    order = agent.getOrder();
+                }
+                if (order == 1) { // Primary
+                    order++; // in case that order is not defined, secondary will still be defined correctly.
+                    if (agent.isSetType()) {
+                        entity.setpm_type(agent.getType());
+                    }
+                    if (agent.isSetAddress()) {
+                        entity.setManagmentIp(agent.getAddress());
+                    }
+                    if (agent.isSetUsername()) {
+                        entity.setpm_user(agent.getUsername());
+                    }
+                    if (agent.isSetPassword()) {
+                        entity.setpm_password(agent.getPassword());
+                    }
+                    if (agent.isSetOptions()) {
+                        entity.setpm_options(map(agent.getOptions(), null));
+                    }
+                }
+                else if (order == 2) { // Secondary
+                    if (agent.isSetType()) {
+                        entity.setPmSecondaryType(agent.getType());
+                    }
+                    if (agent.isSetAddress()) {
+                        entity.setPmSecondaryIp(agent.getAddress());
+                    }
+                    if (agent.isSetUsername()) {
+                        entity.setPmSecondaryUser(agent.getUsername());
+                    }
+                    if (agent.isSetPassword()) {
+                        entity.setPmSecondaryPassword(agent.getPassword());
+                    }
+                    if (agent.isSetOptions()) {
+                        entity.setPmSecondaryOptions(map(agent.getOptions(), null));
+                    }
+                    if (agent.isSetConcurrent()) {
+                        entity.setPmSecondaryConcurrent(agent.isConcurrent());
+                    }
+                }
+            }
         }
         return entity;
     }
@@ -284,6 +334,35 @@ public class HostMapper {
                         pmProxies.getPmProxy().add(pmProxy);
                 }
             model.setPmProxies(pmProxies);
+        }
+        if (entity.getpm_enabled()) {
+            // Set Primary Agent
+            Agent agent = new Agent();
+            if (!StringUtils.isEmpty(entity.getManagmentIp())) {
+                agent.setType(entity.getpm_type());
+                agent.setAddress(entity.getManagmentIp());
+                agent.setUsername(entity.getpm_user());
+                if (entity.getPmOptionsMap() != null) {
+                    agent.setOptions(map(entity.getPmOptionsMap(), null));
+                }
+                agent.setOrder(1);
+                model.setAgents(new Agents());
+                model.getAgents().getAgents().add(agent);
+
+            }
+            // Set Secondary Agent
+            if (!StringUtils.isEmpty(entity.getPmSecondaryIp())) {
+                agent = new Agent();
+                agent.setType(entity.getPmSecondaryType());
+                agent.setAddress(entity.getPmSecondaryIp());
+                agent.setUsername(entity.getPmSecondaryuser());
+                if (entity.getPmOptionsMap() != null) {
+                    agent.setOptions(map(entity.getPmSecondaryOptionsMap(), null));
+                }
+                agent.setOrder(2);
+                agent.setConcurrent(entity.isPmSecondaryConcurrent());
+                model.getAgents().getAgents().add(agent);
+            }
         }
         return model;
     }

@@ -21,7 +21,7 @@
   </xs:complexType>
 
   <xs:element name="linkCapabilities" type="LinkCapabilities"/>
-  
+
   <xs:complexType name="LinkCapabilities">
 	<xs:sequence>
 	  <xs:element name="searchable" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
@@ -78,9 +78,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:element name="special_objects" type="SpecialObjects"/>
-  
+
   <xs:complexType name="SpecialObjects">
     <xs:complexContent>
       <xs:extension base="BaseResource">
@@ -290,7 +290,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <!-- Statictics -->
@@ -520,7 +520,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="ErrorHandling">
     <xs:sequence>
       <xs:element name="on_error" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -556,7 +556,7 @@
           <xs:element ref="nic_interfaces" minOccurs="0"/>
           <xs:element ref="os_types" minOccurs="0"/>
           <xs:element ref="disk_formats" minOccurs="0"/>
-          <xs:element ref="disk_interfaces" minOccurs="0"/>          
+          <xs:element ref="disk_interfaces" minOccurs="0"/>
           <xs:element ref="vm_affinities" minOccurs="0"/>
           <xs:element ref="custom_properties" minOccurs="0"/>
           <xs:element ref="boot_protocols" minOccurs="0"/>
@@ -740,7 +740,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="os_types" type="OsTypes"/>
 
   <xs:complexType name="OsTypes">
@@ -782,7 +782,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="vm_affinities" type="VmAffinities"/>
 
   <xs:complexType name="VmAffinities">
@@ -796,7 +796,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="boot_protocols" type="BootProtocols"/>
 
   <xs:complexType name="BootProtocols">
@@ -809,7 +809,7 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
-  </xs:complexType>  
+  </xs:complexType>
 
     <xs:element name="error_handling" type="ErrorHandlingOptions"/>
 
@@ -902,7 +902,7 @@
   </xs:complexType>
 
   <xs:element name="options" type="Options"/>
- 
+
   <xs:complexType name="Options">
     <xs:sequence>
       <xs:element name="option" type="Option" minOccurs="0" maxOccurs="unbounded">
@@ -962,7 +962,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <!-- Clusters -->
@@ -1010,7 +1010,7 @@
             <jaxb:property generateIsSetMethod="false"/>
           </xs:appinfo>
         </xs:annotation>
-    </xs:attribute> 
+    </xs:attribute>
     <xs:attribute name="duration" type="xs:int">
             <xs:annotation>
           <xs:appinfo>
@@ -1037,7 +1037,7 @@
           <xs:element name="scheduling_policy" type="SchedulingPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
           <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0"/>
-          <xs:element name="error_handling" type="ErrorHandling" minOccurs="0" maxOccurs="1"/>          
+          <xs:element name="error_handling" type="ErrorHandling" minOccurs="0" maxOccurs="1"/>
           <xs:element name="virt_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="threads_as_cores" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
@@ -1063,6 +1063,33 @@
   </xs:complexType>
 
   <!-- Hosts -->
+  <xs:element name="agent" type="Agent"/>
+  <xs:complexType name="Agent">
+    <xs:sequence>
+      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="options" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="concurrent" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="order" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="agents" type="Agents"/>
+
+  <xs:complexType name="Agents">
+    <xs:sequence>
+      <xs:element name="agent" type="Agent" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Agents"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:element name="power_management" type="PowerManagement"/>
 
   <xs:complexType name="PowerManagement">
@@ -1074,6 +1101,7 @@
       <xs:element name="options" type="Options" minOccurs="0"/>
       <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="pm_proxies" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="agents" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="type" type="xs:string"/>
   </xs:complexType>
@@ -1212,7 +1240,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="host_non_operational_details" type="HostNonOperationalDetails"/>
@@ -1226,7 +1254,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="VmSummary">
@@ -1649,7 +1677,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="Networks">
@@ -1796,7 +1824,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="StorageDomains">
@@ -1872,7 +1900,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <!-- Virtual Machines -->
@@ -1957,7 +1985,7 @@
   </xs:complexType>
 
   <xs:element name="payload_file" type="PayloadFile"/>
-  
+
   <xs:complexType name="PayloadFile">
     <xs:sequence>
       <xs:element name="content" type="xs:string" />
@@ -2315,7 +2343,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="port_mirroring" type="PortMirroring"/>
@@ -2408,7 +2436,7 @@
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element ref="ip" minOccurs="0"/>
           <xs:element ref="vlan" minOccurs="0"/>
-          <xs:element ref="bonding" minOccurs="0" maxOccurs="1"/>                    
+          <xs:element ref="bonding" minOccurs="0" maxOccurs="1"/>
           <xs:element name="boot_protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="check_connectivity" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
@@ -2451,7 +2479,7 @@
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>  
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="slaves" type="Slaves"/>
@@ -2587,7 +2615,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="body" type="Body"/>
 
   <xs:complexType name="Body">
@@ -2675,7 +2703,7 @@
             <jaxb:property generateIsSetMethod="false"/>
           </xs:appinfo>
         </xs:annotation>
-       </xs:attribute>    
+       </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
