@@ -18,7 +18,7 @@ public class CustomPropertiesParser {
         List<CustomProperty> ret = new ArrayList<CustomProperty>();
         if (str != null) {
             for (String envStr : str.split(";", -1)) {
-                String[] parts = envStr.split("=", -1);
+                String[] parts = getKeyValue(envStr);
                 if (parts.length == 2) {
                     CustomProperty env = new CustomProperty();
                     env.setName(parts[0]);
@@ -32,6 +32,18 @@ public class CustomPropertiesParser {
             }
         }
         return ret;
+    }
+
+    private static String[] getKeyValue(String str) {
+        List<String> keyValue = new ArrayList<String>();
+        int index = str.indexOf("=");
+        if (index != -1) {
+            String key = str.substring(0,index);
+            String value = str.substring(index+1);
+            keyValue.add(key);
+            keyValue.add(value);
+        }
+        return keyValue.toArray(new String[keyValue.size()]);
     }
 
     /**
