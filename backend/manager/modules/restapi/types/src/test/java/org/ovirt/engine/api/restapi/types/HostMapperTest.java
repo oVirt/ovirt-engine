@@ -54,12 +54,14 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setId(Guid.Empty);
         vds.setcpu_cores(6);
         vds.setcpu_sockets(3);
+        vds.setCpuThreads(12);
         vds.setcpu_model("some cpu model");
         vds.setcpu_speed_mh(5.5);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getCpu());
         assertEquals(new Integer(host.getCpu().getTopology().getCores()), new Integer(2));
         assertEquals(new Integer(host.getCpu().getTopology().getSockets()), new Integer(3));
+        assertEquals(new Integer(host.getCpu().getTopology().getThreads()), new Integer(2));
         assertEquals(host.getCpu().getName(), "some cpu model");
         assertEquals(host.getCpu().getSpeed(), new BigDecimal(5.5));
     }

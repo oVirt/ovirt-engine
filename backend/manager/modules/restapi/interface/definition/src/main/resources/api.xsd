@@ -401,6 +401,13 @@
           </xs:appinfo>
         </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="threads" type="xs:int" use="optional">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property generateIsSetMethod="false"/>
+          </xs:appinfo>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:element name="vcpu_pin" type="VCpuPin"/>
@@ -1033,6 +1040,7 @@
           <xs:element name="error_handling" type="ErrorHandling" minOccurs="0" maxOccurs="1"/>          
           <xs:element name="virt_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="threads_as_cores" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>

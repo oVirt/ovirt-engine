@@ -64,6 +64,9 @@ public class ClusterMapper {
         if(model.isSetGlusterService()) {
             entity.setGlusterService(model.isGlusterService());
         }
+        if (model.isSetThreadsAsCores()) {
+            entity.setCountThreadsAsCores(model.isThreadsAsCores());
+        }
         return entity;
     }
 
@@ -93,6 +96,7 @@ public class ClusterMapper {
         model.setErrorHandling(map(entity.getMigrateOnError(), (ErrorHandling)null));
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
+        model.setThreadsAsCores(entity.getCountThreadsAsCores());
         return model;
     }
 

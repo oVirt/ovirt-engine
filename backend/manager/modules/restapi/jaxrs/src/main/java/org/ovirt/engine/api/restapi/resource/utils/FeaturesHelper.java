@@ -37,7 +37,7 @@ public class FeaturesHelper {
             addFeaturePortMirroring(features);
             addFeatureServerTime(features);
             addFeatureHostMemory(features);
-            addFeatureHostSockets(features);
+            addFeatureHostSockets(features, version);
             addFeatureIgnoreCase(features);
             addFeatureMaxResults(features);
             addFeatureJSONContentType(features);
@@ -168,7 +168,7 @@ public class FeaturesHelper {
         features.getFeature().add(feature);
     }
 
-    private void addFeatureHostSockets(Features features) {
+    private void addFeatureHostSockets(Features features, Version version) {
         Feature feature = new Feature();
         feature.setHost(new Host());
         feature.setName("Display Host Sockets");
@@ -176,6 +176,9 @@ public class FeaturesHelper {
         feature.getHost().setCpu(new CPU());
         feature.getHost().getCpu().setTopology(new CpuTopology());
         feature.getHost().getCpu().getTopology().setSockets(4);
+        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_2)) {
+            feature.getHost().getCpu().getTopology().setThreads(2);
+        }
         features.getFeature().add(feature);
     }
 
