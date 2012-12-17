@@ -1756,7 +1756,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
-        if (item.getEntity() != null) {
+        if (item.getEntity() != null && item.getDefaultConsole() != null) {
             // Adjust item's default console for userportal 'Extended View'
             item.getDefaultConsole().setForceVmStatusUp(false);
         }
