@@ -186,7 +186,11 @@ public class HostGeneralModel extends EntityModel
     }
 
     public void setLibvirtVersion(String value) {
-        if (!libvirtVersion.equals(value)) {
+        if (libvirtVersion == null && value == null) {
+            return;
+        }
+
+        if(libvirtVersion == null || !libvirtVersion.equals(value)) {
             libvirtVersion = value;
             OnPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
         }
