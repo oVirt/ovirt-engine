@@ -199,6 +199,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Approve operation")
     String approveOperation();
 
+    @DefaultStringValue("Force Remove")
+    String forceRemove();
+
     // General
     @DefaultStringValue("Yes")
     String yes();

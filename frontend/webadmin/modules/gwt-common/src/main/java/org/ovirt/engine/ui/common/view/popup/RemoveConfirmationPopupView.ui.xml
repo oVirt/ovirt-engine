@@ -27,6 +27,7 @@
 				<g:HTML ui:field="messageHTML" />
 				<g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
 				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false" />
+				<e:EntityModelCheckBoxEditor ui:field="force" visible="false" />
 				<g:HTML ui:field="noteHTML" addStyleNames="{style.noteHTML}"/>
 			</g:FlowPanel>
 		</d:content>

@@ -53,6 +53,11 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
     @WithElementId
     protected EntityModelCheckBoxEditor latch;
 
+    @UiField(provided = true)
+    @Path(value = "force.entity")
+    @WithElementId
+    protected EntityModelCheckBoxEditor force;
+
     @UiField
     @Ignore
     protected HTML noteHTML;
@@ -66,6 +71,8 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         super(eventBus, resources);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());
+        force = new EntityModelCheckBoxEditor(Align.RIGHT);
+        force.setLabel(constants.forceRemove());
         this.constants= constants;
         this.messages = messages;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

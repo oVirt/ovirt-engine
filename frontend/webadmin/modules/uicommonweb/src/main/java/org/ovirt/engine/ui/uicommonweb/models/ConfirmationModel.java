@@ -20,6 +20,18 @@ public class ConfirmationModel extends ListModel
         privateLatch = value;
     }
 
+    private EntityModel force;
+
+    public EntityModel getForce()
+    {
+        return force;
+    }
+
+    public void setForce(EntityModel value)
+    {
+        force = value;
+    }
+
     private String note;
 
     public String getNote()
@@ -41,6 +53,10 @@ public class ConfirmationModel extends ListModel
         setLatch(new EntityModel());
         getLatch().setEntity(false);
         getLatch().setIsAvailable(false);
+
+        setForce(new EntityModel());
+        getForce().setEntity(false);
+        getForce().setIsAvailable(false);
     }
 
     public boolean Validate()

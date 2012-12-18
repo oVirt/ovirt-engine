@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -899,18 +901,37 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        ConfirmationModel model = new ConfirmationModel();
+        final ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeHostsTitle());
         model.setHashName("remove_host"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().hostsMsg());
 
+        Set<Guid> clusters = new HashSet<Guid>();
         ArrayList<String> list = new ArrayList<String>();
         for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
         {
             list.add(item.getvds_name());
+            clusters.add(item.getvds_group_id());
         }
         model.setItems(list);
+
+        // Remove Force option will be shown only if
+        // - All the selected hosts belongs to same cluster
+        // - the cluster should be a gluster only cluster
+        if (clusters.size() == 1) {
+            model.StartProgress(null);
+            AsyncDataProvider.GetClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object target, Object returnValue) {
+                    VDSGroup cluster = (VDSGroup) returnValue;
+                    if (cluster != null && cluster.supportsGlusterService() && !cluster.supportsVirtService()) {
+                        model.getForce().setIsAvailable(true);
+                    }
+                    model.StopProgress();
+                }
+            }), clusters.iterator().next());
+        }
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -931,11 +952,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
+        boolean force = (Boolean) model.getForce().getEntity();
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new RemoveVdsParameters(vds.getId()));
+            list.add(new RemoveVdsParameters(vds.getId(), force));
         }
 
         model.StartProgress(null);
