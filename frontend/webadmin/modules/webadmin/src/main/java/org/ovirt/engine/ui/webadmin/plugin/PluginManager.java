@@ -430,7 +430,7 @@ public class PluginManager {
             },
             loginUserName: function() {
                 if (canDoPluginAction(this.pluginName)) {
-                    return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getUserName()();
+                    return user.@org.ovirt.engine.ui.common.auth.CurrentUser::getFullUserName()();
                 }
             },
             loginUserId: function() {

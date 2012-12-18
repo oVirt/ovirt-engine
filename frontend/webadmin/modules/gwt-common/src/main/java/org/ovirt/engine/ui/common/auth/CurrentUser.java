@@ -23,8 +23,7 @@ public class CurrentUser implements HasHandlers {
     private final EventBus eventBus;
 
     private boolean loggedIn = false;
-    private String userName;
-    private String userId;
+    private VdcUser loggedUser;
 
     // Indicates that the user should be logged in automatically
     private boolean autoLogin = false;
@@ -47,30 +46,47 @@ public class CurrentUser implements HasHandlers {
         this.loggedIn = loggedIn;
     }
 
+    void setLoggedUser(VdcUser loggedUser) {
+        this.loggedUser = loggedUser;
+    }
+
     /**
      * Returns the user name if the user is currently logged in, {@code null} otherwise.
      */
     public String getUserName() {
-        return userName;
+        return isLoggedIn() ? loggedUser.getUserName() : null;
     }
 
-    void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public boolean isAutoLogin() {
-        return autoLogin;
+    /**
+     * Returns the user authentication domain if the user is currently logged in, {@code null} otherwise.
+     */
+    public String getDomain() {
+        return isLoggedIn() ? loggedUser.getDomainControler() : null;
     }
 
     /**
      * Returns the user ID if the user is currently logged in, {@code null} otherwise.
      */
     public String getUserId() {
-        return userId;
+        return isLoggedIn() ? loggedUser.getUserId().toString() : null;
     }
 
-    void setUserId(String userId) {
-        this.userId = userId;
+    /**
+     * Returns full user name ({@code user@domain}) if the user is currently logged in, {@code null} otherwise.
+     */
+    public String getFullUserName() {
+        String userName = getUserName();
+        String domain = getDomain();
+
+        if (userName != null && !userName.contains("@") && domain != null) { //$NON-NLS-1$
+            return userName + "@" + domain; //$NON-NLS-1$
+        }
+
+        return userName;
+    }
+
+    public boolean isAutoLogin() {
+        return autoLogin;
     }
 
     public void setAutoLogin(boolean autoLogin) {
@@ -96,8 +112,7 @@ public class CurrentUser implements HasHandlers {
      * User login callback, called after successful user authentication.
      */
     public void onUserLogin(VdcUser loggedUser) {
-        setUserName(loggedUser.getUserName());
-        setUserId(loggedUser.getUserId().toString());
+        setLoggedUser(loggedUser);
         setLoggedIn(true);
         fireLoginChangeEvent();
     }
@@ -106,8 +121,7 @@ public class CurrentUser implements HasHandlers {
      * User logout callback, called after the user has successfully signed out.
      */
     public void onUserLogout() {
-        setUserName(null);
-        setUserId(null);
+        setLoggedUser(null);
         setLoggedIn(false);
         fireLoginChangeEvent();
     }
