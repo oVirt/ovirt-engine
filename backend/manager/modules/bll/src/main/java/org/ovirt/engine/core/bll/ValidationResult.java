@@ -53,4 +53,36 @@ public final class ValidationResult {
     public VdcBllMessages getMessage() {
         return message;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getMessage() == null) ? 0 : getMessage().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof ValidationResult))
+            return false;
+        ValidationResult other = (ValidationResult) obj;
+        if (getMessage() != other.getMessage())
+            return false;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ValidationResult [message=")
+                .append(getMessage())
+                .append("]");
+        return builder.toString();
+    }
+
 }
