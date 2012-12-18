@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -328,10 +329,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = false;
         }
 
-        // check cpuPinning
-        if (returnValue && !isCpuPinningValid(getParameters().getVm().getCpuPinning())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+        // check cpuPinning if the check haven't failed yet
+        if (returnValue) {
+            VM vmFromParams = getParameters().getVm();
+            returnValue = isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData());
         }
 
         if (getParameters().getVm().isUseHostCpuFlags()

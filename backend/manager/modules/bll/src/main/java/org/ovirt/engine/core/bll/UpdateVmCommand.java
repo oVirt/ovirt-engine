@@ -276,8 +276,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // check cpuPinning
-        if (!isCpuPinningValid(vmFromParams.getCpuPinning())) {
-            addCanDoActionMessage(VdcBllMessages.VM_PINNING_FORMAT_INVALID);
+        if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
             return false;
         }
 

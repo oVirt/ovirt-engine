@@ -380,6 +380,19 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("CPU pinning format invalid.")
     String VM_PINNING_FORMAT_INVALID();
 
+    @DefaultStringValue("CPU pinning validation failed - virtual CPU does not exist in vm.")
+    String VM_PINNING_VCPU_DOES_NOT_EXIST();
+
+    @DefaultStringValue("CPU pinning validation failed - CPU does not exist in host.")
+    String VM_PINNING_PCPU_DOES_NOT_EXIST();
+
+
+    @DefaultStringValue("Cannot configure CPU pinning twice to the same vCPU.")
+    String VM_PINNING_DUPLICATE_DEFINITION();
+
+    @DefaultStringValue("Cannot pin a vCPU to no pCPU.")
+    String VM_PINNING_PINNED_TO_NO_CPU();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM doesn't exist.")
     String ACTION_TYPE_FAILED_VM_NOT_EXIST();
 

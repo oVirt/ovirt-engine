@@ -1,56 +1,120 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
 
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.VdcBllMessages;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+
+
 public class VmManagementCommandBaseTest {
+
+
     @Test
     public void isCpuPinningValid() {
-        Assert.assertTrue("null value must be accepted", VmManagementCommandBase.isCpuPinningValid(null));
+        VmManagementCommandBase<VmManagementParametersBase> test =
+                spy(new VmManagementCommandBase<VmManagementParametersBase>(Guid.Empty));
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setnum_of_sockets(6);
+        vmStatic.setcpu_per_socket(2);
+        vmStatic.setdedicated_vm_for_vds(Guid.Empty);
+        final VDS dedicatedVds = new VDS();
+        dedicatedVds.setCpuThreads(16);
+        dedicatedVds.setvds_group_compatibility_version(Version.v3_2);
 
-        Assert.assertTrue("empty string must be accepted", VmManagementCommandBase.isCpuPinningValid(""));
+        doReturn(dedicatedVds).when(test).getVds(Guid.Empty);
 
-        Assert.assertFalse(VmManagementCommandBase.isCpuPinningValid("intentionally invalid"));
 
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#0"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-4"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#^3"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#^3,^2"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-8,^6"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-8,^6,^7"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-8,^6,^7"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-8,^5,^6,^7"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1,2,3"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#^1,^2,^3"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-4,6-8"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-4,6-8,9-12"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-4,^3,9-12,^10"));
 
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#0_1#1"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1-2_1#1-2"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1,2,3_1#2,3"));
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("0#1,2,3_1#1-4,^3"));
+        Assert.assertTrue("null value must be accepted",
+                test.isCpuPinningValid(null, vmStatic));
+
+        Assert.assertTrue("empty string must be accepted",
+                test.isCpuPinningValid("", vmStatic));
+
+        Assert.assertFalse(test.isCpuPinningValid("intentionally invalid", vmStatic));
+
+        Assert.assertTrue(test.isCpuPinningValid("0#0", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-4", vmStatic));
+        Assert.assertFalse(test.isCpuPinningValid("0#^3", vmStatic));
+        Assert.assertFalse(test.isCpuPinningValid("0#^3,^2", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-8,^6", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-8,^6,^7", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-8,^6,^7", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-8,^5,^6,^7", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1,2,3", vmStatic));
+        Assert.assertFalse(test.isCpuPinningValid("0#^1,^2,^3", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-4,6-8", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-4,6-8,9-12", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-4,^3,9-12,^10", vmStatic));
+
+        Assert.assertTrue(test.isCpuPinningValid("0#0_1#1", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1-2_1#1-2", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1,2,3_1#2,3", vmStatic));
+        Assert.assertTrue(test.isCpuPinningValid("0#1,2,3_1#1-4,^3", vmStatic));
         //validate vcpus over 9
-        Assert.assertTrue(VmManagementCommandBase.isCpuPinningValid("10#1,2,3_11#1-4,^3"));
+        Assert.assertTrue(test.isCpuPinningValid("10#1,2,3_11#1-4,^3", vmStatic));
 
         //negative tests
 
         Assert.assertFalse("random wrong text",
-                VmManagementCommandBase.isCpuPinningValid("lorem ipsum"));
+                test.isCpuPinningValid("lorem ipsum", vmStatic));
         Assert.assertFalse("no cpu id specified, should not pass",
-                VmManagementCommandBase.isCpuPinningValid("0"));
+                test.isCpuPinningValid("0", vmStatic));
         Assert.assertFalse("letter instead of vcpu ID",
-                VmManagementCommandBase.isCpuPinningValid("A#1"));
+                test.isCpuPinningValid("A#1", vmStatic));
         Assert.assertFalse("letter instead of cpu ID",
-                VmManagementCommandBase.isCpuPinningValid("0#B"));
+                test.isCpuPinningValid("0#B", vmStatic));
         Assert.assertFalse("A separating _ while only one vcpu pinning",
-                VmManagementCommandBase.isCpuPinningValid("0#1_"));
+                test.isCpuPinningValid("0#1_", vmStatic));
         Assert.assertFalse("Trailing _",
-                VmManagementCommandBase.isCpuPinningValid("0#1_1#2_"));
+                test.isCpuPinningValid("0#1_1#2_", vmStatic));
         Assert.assertFalse("Too many separators",
-                VmManagementCommandBase.isCpuPinningValid("0#1__1#2"));
+                test.isCpuPinningValid("0#1__1#2", vmStatic));
         Assert.assertFalse("trailing junk",
-                VmManagementCommandBase.isCpuPinningValid("0#1_1#2..."));
+                test.isCpuPinningValid("0#1_1#2...", vmStatic));
+
+
+        // negative logical validation
+        ArrayList<String> canDoActionMessages = test.getReturnValue().getCanDoActionMessages();
+        canDoActionMessages.clear();
+        Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_10#1-4,^3", vmStatic));
+        Assert.assertTrue(canDoActionMessages.size() > 0);
+        if (canDoActionMessages.size() > 0) {
+            Assert.assertEquals(VdcBllMessages.VM_PINNING_DUPLICATE_DEFINITION.toString(), canDoActionMessages.get(0));
+        }
+        canDoActionMessages.clear();
+        Assert.assertFalse(test.isCpuPinningValid("10#1,2,^1,^2", vmStatic));
+        Assert.assertTrue(canDoActionMessages.size() > 0);
+        if (canDoActionMessages.size() > 0) {
+            Assert.assertEquals(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU.toString(), canDoActionMessages.get(0));
+        }
+        canDoActionMessages.clear();
+        Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_20#1-4,^3", vmStatic));
+        Assert.assertTrue(canDoActionMessages.size() > 0);
+        if (canDoActionMessages.size() > 0) {
+            Assert.assertEquals(VdcBllMessages.VM_PINNING_VCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
+        }
+        canDoActionMessages.clear();
+        Assert.assertFalse(test.isCpuPinningValid("10#1,2,3_11#1-20,^3", vmStatic));
+        Assert.assertTrue(canDoActionMessages.size() > 0);
+        if (canDoActionMessages.size() > 0) {
+            Assert.assertEquals(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
+        }
+
+        // making sure cluster < 3.2 does not get validated on pCPU as we cant tell the number for sure
+        dedicatedVds.setvds_group_compatibility_version(Version.v3_1);
+        Assert.assertTrue(test.isCpuPinningValid("10#1,2,3_11#1-20,^3", vmStatic));
+
     }
 }
