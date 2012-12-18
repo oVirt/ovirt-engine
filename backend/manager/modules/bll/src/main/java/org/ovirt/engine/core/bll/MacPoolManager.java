@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -46,13 +45,9 @@ public class MacPoolManager {
                 }
             }
 
-            List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
-            for (VM vm : vms) {
-                List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-                for (VmNetworkInterface iface : interfaces) {
-                    AddMac(iface.getMacAddress());
-                }
+            List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAll();
+            for (VmNetworkInterface iface: interfaces) {
+                AddMac(iface.getMacAddress());
             }
             mInitialized = true;
         }
