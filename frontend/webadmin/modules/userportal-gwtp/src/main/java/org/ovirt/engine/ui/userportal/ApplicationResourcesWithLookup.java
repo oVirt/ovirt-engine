@@ -7,7 +7,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     // OS large types
     @Source("images/os/large/Other.png")
-    ImageResource otherOsLargeImage();
+    ImageResource OtherOsLargeImage();
 
     @Source("images/os/large/OtherLinux.png")
     ImageResource OtherLinuxLargeImage();

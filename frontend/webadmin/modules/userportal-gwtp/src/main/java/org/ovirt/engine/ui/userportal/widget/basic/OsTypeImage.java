@@ -27,7 +27,7 @@ public class OsTypeImage extends AbstractDynamicImage<VmOsType, ApplicationResou
 
     @Override
     protected String defaultImageName(VmOsType value) {
-        return "otherOs" + nameUniquePart + IMAGE; //$NON-NLS-1$
+        return "OtherOs" + nameUniquePart + IMAGE; //$NON-NLS-1$
     }
 
 }
