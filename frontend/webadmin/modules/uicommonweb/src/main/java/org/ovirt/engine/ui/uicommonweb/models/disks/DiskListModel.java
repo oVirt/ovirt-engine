@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmDiskOperatinParameterBase;
+import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -352,7 +352,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         disk.setPropagateErrors(PropagateErrors.Off);
 
         VdcActionType actionType;
-        VmDiskOperatinParameterBase parameters;
+        VmDiskOperationParameterBase parameters;
         if (model.getIsNew())
         {
             actionType = VdcActionType.AddDisk;

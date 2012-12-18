@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class HotPlugDiskToVmParameters extends VmDiskOperatinParameterBase {
+public class HotPlugDiskToVmParameters extends VmDiskOperationParameterBase {
 
     private static final long serialVersionUID = -1003552157459962546L;
 

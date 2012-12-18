@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class AttachDettachVmDiskParameters extends VmDiskOperatinParameterBase {
+public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase {
 
     private static final long serialVersionUID = 5640716432695539552L;
     private boolean isPlugUnPlug;

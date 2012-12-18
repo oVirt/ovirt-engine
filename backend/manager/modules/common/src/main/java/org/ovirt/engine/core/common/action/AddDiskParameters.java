@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddDiskParameters extends VmDiskOperatinParameterBase {
+public class AddDiskParameters extends VmDiskOperationParameterBase {
     private static final long serialVersionUID = -7832310521101821905L;
     private Guid vmSnapshotId = null;
     private Guid storageDomainId = Guid.Empty;
