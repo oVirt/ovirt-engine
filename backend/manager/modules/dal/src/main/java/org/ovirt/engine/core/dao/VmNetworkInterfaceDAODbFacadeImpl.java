@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.InterfaceComparerByMAC;
 import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -125,7 +124,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
 
     @Override
     public List<VmNetworkInterface> getAll() {
-        throw new NotImplementedException();
+        return getCallsHandler().executeReadList("GetAllFromvm_interface", mapper, getCustomMapSqlParameterSource());
     }
 
     @Override

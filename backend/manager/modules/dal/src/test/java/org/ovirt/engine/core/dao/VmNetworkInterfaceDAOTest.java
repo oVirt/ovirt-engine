@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -248,9 +247,11 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test
     public void testGetAll() throws Exception {
-        dao.getAll();
+        List<VmNetworkInterface> interfaces = dao.getAll();
+        assertNotNull(interfaces);
+        assertEquals(FixturesTool.NUMBER_OF_VM_INTERFACES, interfaces.size());
     }
 
     @Test

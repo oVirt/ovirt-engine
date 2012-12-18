@@ -270,4 +270,6 @@ public class FixturesTool {
      * </ul>
      */
     protected static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
+
+    public static final int NUMBER_OF_VM_INTERFACES = 1;
 }

@@ -477,11 +477,11 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromvm_interface() RETURNS SETOF vm_interface
+Create or replace FUNCTION GetAllFromvm_interface() RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
-   FROM vm_interface;
+   FROM vm_interface_view;
 
 END; $procedure$
 LANGUAGE plpgsql;
