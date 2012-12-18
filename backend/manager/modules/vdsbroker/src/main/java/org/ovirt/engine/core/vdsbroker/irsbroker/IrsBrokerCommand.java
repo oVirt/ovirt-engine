@@ -594,6 +594,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // Stores origin host id in case and will be needed to disconnect from storage pool
                 Guid selectedVdsId = selectedVds.getId();
                 Integer selectedVdsSpmId = selectedVds.getvds_spm_id();
+                mTriedVdssList.add(selectedVdsId);
 
                 VDSReturnValue returnValueFromVds = ResourceManager.getInstance().runVdsCommand(
                         VDSCommandType.SpmStatus,
