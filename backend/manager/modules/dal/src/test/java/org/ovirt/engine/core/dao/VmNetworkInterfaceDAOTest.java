@@ -45,6 +45,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         newVmInterface.setId(Guid.NewGuid());
         newVmInterface.setName("eth77");
         newVmInterface.setNetworkName("enginet");
+        newVmInterface.setLinked(true);
         newVmInterface.setSpeed(1000);
         newVmInterface.setType(3);
         newVmInterface.setMacAddress("01:C0:81:21:71:17");

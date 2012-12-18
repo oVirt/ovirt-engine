@@ -30,12 +30,18 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private NGuid vmTemplateId;
     /* status of the nic. Active nic is one that is plugged to its VM */
     private boolean active = true;
+
+    /**
+     * Link State of the Nic. <BR>
+     * <code>true</code> if UP and <code>false</code> if DOWN.
+     */
+    private boolean linked = true;
     private boolean portMirroring;
 
     private static final ArrayList<String> _changeablePropertiesList =
             new ArrayList<String>(Arrays.asList(new String[] {
                     "Id", "Name", "MacAddress", "NetworkName", "Type", "Speed", "Statistics", "VmId", "VmName",
-                    "VmTemplateId", "PortMirroring"
+                    "VmTemplateId", "PortMirroring", "Linked"
             }));
 
     public VmNetworkInterface() {
@@ -118,6 +124,14 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         this.active = active;
     }
 
+    public boolean isLinked() {
+        return linked;
+    }
+
+    public void setLinked(boolean linked) {
+        this.linked = linked;
+    }
+
     @NotNull(message = VmNetworkInterface.VALIDATION_MESSAGE_NAME_NOT_NULL, groups = { CreateEntity.class,
             UpdateEntity.class })
     @Override
@@ -156,6 +170,8 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                 .append(getMacAddress())
                 .append(", active=")
                 .append(isActive())
+                .append(", linked=")
+                .append(isLinked())
                 .append(", portMirroring=")
                 .append(isPortMirroring())
                 .append(", vmId=")
@@ -173,6 +189,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + (active ? 1231 : 1237);
+        result = prime * result + (linked ? 1231 : 1237);
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmName == null) ? 0 : vmName.hashCode());
         result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
@@ -192,6 +209,9 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
         if (active != other.active) {
+            return false;
+        }
+        if (linked != other.linked) {
             return false;
         }
         if (vmId == null) {

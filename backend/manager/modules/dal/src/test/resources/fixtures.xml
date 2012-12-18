@@ -2636,6 +2636,7 @@
         <column>type</column>
         <column>_create_date</column>
         <column>_update_date</column>
+        <column>linked</column>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
             <value>engine</value>
@@ -2647,6 +2648,7 @@
             <value>3</value>
             <value>2010-11-18 11:14:08</value>
             <null />
+            <value>true</value>
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
@@ -2659,6 +2661,7 @@
             <value>3</value>
             <value>2010-11-18 11:14:09</value>
             <null />
+            <value>false</value>
         </row>
     </table>
 

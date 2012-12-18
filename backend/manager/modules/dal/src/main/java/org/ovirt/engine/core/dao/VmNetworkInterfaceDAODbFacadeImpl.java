@@ -41,6 +41,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                     entity.setSpeed((Integer) rs.getObject("speed"));
                     entity.setActive(rs.getBoolean("is_plugged"));
                     entity.setPortMirroring(rs.getBoolean("port_mirroring"));
+                    entity.setLinked(rs.getBoolean("linked"));
                     return entity;
                 }
             };
@@ -91,7 +92,8 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                 .addValue("vm_guid", stats.getVmId())
                 .addValue("vmt_guid", stats.getVmTemplateId())
                 .addValue("type", stats.getType())
-                .addValue("port_mirroring", stats.isPortMirroring());
+                .addValue("port_mirroring", stats.isPortMirroring())
+                .addValue("linked", stats.isLinked());
 
         getCallsHandler().executeModification("Insertvm_interface", parameterSource);
     }
@@ -107,7 +109,8 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                 .addValue("vm_guid", iface.getVmId())
                 .addValue("vmt_guid", iface.getVmTemplateId())
                 .addValue("type", iface.getType())
-                .addValue("port_mirroring", iface.isPortMirroring());
+                .addValue("port_mirroring", iface.isPortMirroring())
+                .addValue("linked", iface.isLinked());
 
         getCallsHandler().executeModification("Updatevm_interface", parameterSource);
     }
