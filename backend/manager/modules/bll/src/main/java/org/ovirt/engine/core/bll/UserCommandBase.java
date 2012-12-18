@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -71,7 +71,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
     public static DbUser initUser(VdcUser vdcUser, String sessionId) {
         DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(vdcUser.getUserId());
         if (dbUser == null) {
-            AdUser adUser = (AdUser) LdapFactory
+            LdapUser adUser = (LdapUser) LdapFactory
                     .getInstance(vdcUser.getDomainControler())
                     .RunAdAction(AdActionType.GetAdUserByUserId,
                             new LdapSearchByIdParameters(sessionId, vdcUser.getDomainControler(), vdcUser.getUserId()))
@@ -88,13 +88,13 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
     /**
      * Check if the authenticated user exist in the DB. Add it if its missing.
      *
-     * @param adUser
+     * @param ldapUser
      * @return newly create
      */
-    public static DbUser persistAuthenticatedUser(AdUser adUser) {
-        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(adUser.getUserId());
+    public static DbUser persistAuthenticatedUser(LdapUser ldapUser) {
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(ldapUser.getUserId());
         boolean newUser = dbUser == null;
-        dbUser = new DbUser(adUser);
+        dbUser = new DbUser(ldapUser);
         if (newUser) {
             DbFacade.getInstance().getDbUserDao().save(dbUser);
         } else {

@@ -10,7 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-public class AdUser extends IVdcQueryable implements Serializable {
+public class LdapUser extends IVdcQueryable implements Serializable {
     // TODO - LocalAdministrative permissions ??? up to Miki to decide what it
     // is
     // TODO - Note ??? (Miki)
@@ -31,12 +31,12 @@ public class AdUser extends IVdcQueryable implements Serializable {
 
     private Map<String, ad_groups> mGroups;
 
-    public AdUser() {
+    public LdapUser() {
         mUserId = Guid.Empty;
         mGroups = new HashMap<String, ad_groups>();
     }
 
-    public AdUser(DbUser dbUser) {
+    public LdapUser(DbUser dbUser) {
         setUserId(dbUser.getuser_id());
         setUserName(dbUser.getusername());
         setName(dbUser.getname());
@@ -47,7 +47,7 @@ public class AdUser extends IVdcQueryable implements Serializable {
         mGroups = new HashMap<String, ad_groups>();
     }
 
-    public AdUser(String userName, String password, Guid userId, String domainControler) {
+    public LdapUser(String userName, String password, Guid userId, String domainControler) {
         mUserName = userName;
         mPassword = password;
         mUserId = userId;

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.config.Config;
@@ -25,21 +25,21 @@ public class InternalBrokerUtils {
         return null;
     }
 
-    public static AdUser getUserByUserGuid(Guid userGuid) {
-        AdUser retVal = null;
+    public static LdapUser getUserByUserGuid(Guid userGuid) {
+        LdapUser retVal = null;
         DbUser dbUser = getDbUserDAO().get(userGuid);
         if (dbUser != null) {
-            retVal = new AdUser(dbUser);
+            retVal = new LdapUser(dbUser);
         }
 
         return retVal;
     }
 
-    public static AdUser getUserByUPN(String userName) {
-        AdUser retVal = null;
+    public static LdapUser getUserByUPN(String userName) {
+        LdapUser retVal = null;
         DbUser dbUser = getDbUserDAO().getByUsername(userName);
         if (dbUser != null) {
-            retVal = new AdUser(dbUser);
+            retVal = new LdapUser(dbUser);
         }
 
         return retVal;
@@ -49,9 +49,9 @@ public class InternalBrokerUtils {
         return new ArrayList<ad_groups>();
     }
 
-    public static List<AdUser> getAllUsers() {
-        List<AdUser> users = new ArrayList<AdUser>();
-        AdUser user = getUserByUserGuid(ADMIN_GUID);
+    public static List<LdapUser> getAllUsers() {
+        List<LdapUser> users = new ArrayList<LdapUser>();
+        LdapUser user = getUserByUserGuid(ADMIN_GUID);
         if (user != null) {
             users.add(user);
         }

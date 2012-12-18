@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand {
     protected LdapQueryData getLdapQueryData() {
@@ -16,13 +16,13 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
 
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
-        final List<AdUser> userList = new ArrayList<AdUser>();
+        final List<LdapUser> userList = new ArrayList<LdapUser>();
 
         @SuppressWarnings("unchecked")
-        final List<AdUser> usersList = (List<AdUser>) directorySearcher.FindAll(getLdapQueryData());
-        for (final AdUser searchResult : usersList) {
+        final List<LdapUser> usersList = (List<LdapUser>) directorySearcher.FindAll(getLdapQueryData());
+        for (final LdapUser searchResult : usersList) {
             {
-                AdUser user = populateUserData(searchResult, getLdapQueryData().getDomain());
+                LdapUser user = populateUserData(searchResult, getLdapQueryData().getDomain());
                 userList.add(user);
             }
         }

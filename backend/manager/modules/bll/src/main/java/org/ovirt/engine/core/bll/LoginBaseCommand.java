@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
@@ -75,7 +75,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 LdapReturnValueBase adExecResult = (LdapReturnValueBase) execResult;
                 tempVar = adExecResult.getReturnValue();
             }
-            AdUser user = (AdUser) ((tempVar instanceof AdUser) ? tempVar : null);
+            LdapUser user = (LdapUser) ((tempVar instanceof LdapUser) ? tempVar : null);
             if (user != null && user.getPasswordExpired()) {
                 // If the password is expired - report just the error to the user
                 errorMessages.clear();
@@ -98,13 +98,13 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     /**
      * Handles the user session.
      *
-     * @param adUser
-     *            The ad user.
+     * @param ldapUser
+     *            The LDAP user.
      */
-    protected void HandleUserSession(AdUser adUser) {
+    protected void HandleUserSession(LdapUser ldapUser) {
         if (!StringUtils.isEmpty(getParameters().getHttpSessionId())) {
             user_sessions user_sessions = new user_sessions("", "", new Date(), "", getParameters()
-                    .getHttpSessionId(), adUser.getUserId());
+                    .getHttpSessionId(), ldapUser.getUserId());
             DbFacade.getInstance().getDbUserDao().saveSession(user_sessions);
         }
     }
@@ -124,16 +124,16 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected abstract UserAuthenticationResult authenticateUser();
 
-    protected AdUser _adUser;
+    protected LdapUser ldapUser;
 
     @Override
     protected void executeCommand() {
         // add user session
         // todo : insert correct values of all arguments, separate
-        HandleUserSession(_adUser);
+        HandleUserSession(ldapUser);
         setActionReturnValue(getCurrentUser());
         // Persist the most updated version of the user
-        UserCommandBase.persistAuthenticatedUser(_adUser);
+        UserCommandBase.persistAuthenticatedUser(ldapUser);
         getReturnValue().setLoginResult(LoginResult.Autheticated);
         // Permissions for this user might been changed since last login so
         // update his isAdmin flag accordingly
@@ -178,10 +178,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             if (result == null) {
                 result = new UserAuthenticationResult(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             }
-            _adUser = result.getUser();
+            ldapUser = result.getUser();
             authenticated = result.isSuccessful();
 
-            if ((!authenticated || _adUser == null)) {
+            if ((!authenticated || ldapUser == null)) {
                 HandleAuthenticationError(result.getErrorMessages());
                 authenticated = false;
             }
@@ -195,7 +195,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
              * the system in order to perform this check. The user is indeed logged in when running every command
              * except the login command
              */
-            if (!checkUserAndGroupsAuthorization(_adUser.getUserId(), _adUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom)) {
+            if (!checkUserAndGroupsAuthorization(ldapUser.getUserId(), ldapUser.getGroupIds(), getActionType().getActionGroup(), MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID, VdcObjectType.Bottom)) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
                 return false;
             }
@@ -203,7 +203,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // Retrieve the MLA admin status of the user.
             // This may be redundant in some use-cases, but looking forward to Single Sign On,
             // we will want this info
-            VdcUser currentUser = new VdcUser(_adUser);
+            VdcUser currentUser = new VdcUser(ldapUser);
             boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(currentUser);
             log.infoFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
             currentUser.setAdmin(isAdmin);
@@ -230,7 +230,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                DbFacade.getInstance().updateLastAdminCheckStatus(_adUser.getUserId());
+                DbFacade.getInstance().updateLastAdminCheckStatus(ldapUser.getUserId());
             }
         });
     }

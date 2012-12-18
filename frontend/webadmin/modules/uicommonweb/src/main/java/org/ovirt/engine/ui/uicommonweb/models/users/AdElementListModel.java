@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -236,7 +236,7 @@ public class AdElementListModel extends SearchableListModel
                 setusers(new ArrayList<EntityModel>());
                 for (IVdcQueryable item : (ArrayList<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
                 {
-                    AdUser a = (AdUser) item;
+                    LdapUser a = (LdapUser) item;
                     if (!excludeUsers.contains(a.getUserId()))
                     {
                         DbUser tempVar = new DbUser();

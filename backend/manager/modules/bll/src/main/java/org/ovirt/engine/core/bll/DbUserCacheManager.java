@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserIdListParameters;
 import org.ovirt.engine.core.bll.adbroker.UsersDomainsCacheManagerService;
 import org.ovirt.engine.core.common.businessentities.AdRefStatus;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
@@ -80,14 +80,14 @@ public class DbUserCacheManager {
     /**
      * detect differences between current DB users and the directory server users/groups and persist them
      *
-     * @param dbUser
+     * @param DbUser
      *            DB user
-     * @param adUser
+     * @param LdapUser
      *            LDAP user
      * @param updatedUsers
      *            list of changed users.
      */
-    private void updateDBUserFromADUser(DbUser dbUser, AdUser adUser, HashSet<Guid> updatedUsers) {
+    private void updateDBUserFromADUser(DbUser dbUser, LdapUser adUser, HashSet<Guid> updatedUsers) {
         boolean succeded = false;
         // AdUser adUser =
         // LdapFactory.Instance.GetAdUserByUserIdAndDomain(dbUser.user_id,
@@ -183,8 +183,8 @@ public class DbUserCacheManager {
                  * refresh users in each domain separately
                  */
                 for (String domain : userByDomains.keySet()) {
-                    java.util.ArrayList<AdUser> adUsers =
-                            (java.util.ArrayList<AdUser>) LdapFactory.getInstance(domain)
+                    java.util.ArrayList<LdapUser> adUsers =
+                            (java.util.ArrayList<LdapUser>) LdapFactory.getInstance(domain)
                             .RunAdAction(
                                     AdActionType.GetAdUserByUserIdList,
                                     new LdapSearchByUserIdListParameters(domain, new java.util.ArrayList<Guid>(userByDomains
@@ -194,7 +194,7 @@ public class DbUserCacheManager {
                         log.warn("No users returned from directory server during refresh users");
                     } else {
                         LdapBrokerUtils.performGroupPopulationForUsers(adUsers,domain,updatedGroups);
-                        for (AdUser adUser : adUsers) {
+                        for (LdapUser adUser : adUsers) {
                             updateDBUserFromADUser(userByDomains.get(domain).get(adUser.getUserId()), adUser, updatedUsers);
                             userByDomains.get(domain).remove(adUser.getUserId());
                         }

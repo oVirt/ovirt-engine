@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 
 public class InternalAuthenticateUserCommand extends InternalBrokerCommandBase {
@@ -36,7 +36,7 @@ public class InternalAuthenticateUserCommand extends InternalBrokerCommandBase {
         setSucceeded(result.isSuccessful());
 
         if (result.isSuccessful()) {
-            AdUser user = InternalBrokerUtils.getUserByUPN(userUPN);
+            LdapUser user = InternalBrokerUtils.getUserByUPN(userUPN);
             UserAuthenticationResult authResult = new UserAuthenticationResult(user);
             setReturnValue(authResult);
         } else {

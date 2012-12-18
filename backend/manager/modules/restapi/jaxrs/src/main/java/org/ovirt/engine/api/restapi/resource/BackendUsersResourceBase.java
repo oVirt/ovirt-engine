@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -102,8 +102,8 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
          return sb.toString();
     }
 
-    protected List<AdUser> getUsersFromDomain() {
-        return asCollection(AdUser.class,
+    protected List<LdapUser> getUsersFromDomain() {
+        return asCollection(LdapUser.class,
                 getEntity(ArrayList.class,
                         SearchType.AdUser,
                         getSearchPattern("*", getCurrentDomain())));
@@ -132,9 +132,9 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
         return user;
     }
 
-    protected Users mapDomainUserCollection(List<AdUser> entities) {
+    protected Users mapDomainUserCollection(List<LdapUser> entities) {
         Users collection = new Users();
-        for (AdUser entity : entities) {
+        for (LdapUser entity : entities) {
             collection.getUsers().add(addLinks(modifyDomain(mapAdUser(entity)),
                                                true));
         }
@@ -147,12 +147,12 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
         return user;
     }
 
-    protected VdcUser map(AdUser adUser) {
-        return getMapper(AdUser.class, VdcUser.class).map(adUser, null);
+    protected VdcUser map(LdapUser adUser) {
+        return getMapper(LdapUser.class, VdcUser.class).map(adUser, null);
     }
 
-    protected User mapAdUser(AdUser adUser) {
-        return getMapper(AdUser.class, User.class).map(adUser, null);
+    protected User mapAdUser(LdapUser adUser) {
+        return getMapper(LdapUser.class, User.class).map(adUser, null);
     }
 
     public DbUser lookupUserById(Guid id) {

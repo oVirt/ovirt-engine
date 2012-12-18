@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 public class InternalGetAdUserByUserNameCommand extends InternalBrokerCommandBase {
     private String getUserName() {
@@ -13,7 +13,7 @@ public class InternalGetAdUserByUserNameCommand extends InternalBrokerCommandBas
 
     @Override
     protected void ExecuteQuery() {
-        AdUser user = InternalBrokerUtils.getUserByUPN(getUserName());
+        LdapUser user = InternalBrokerUtils.getUserByUPN(getUserName());
 
         if (user != null) {
             setSucceeded(true);

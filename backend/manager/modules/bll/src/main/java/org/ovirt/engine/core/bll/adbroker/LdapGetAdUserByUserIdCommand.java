@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 
 //
@@ -20,7 +20,7 @@ public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsC
 
     @Override
     protected void executeQuery(DirectorySearcher directorySearcher) {
-        AdUser user;
+        LdapUser user;
 
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setFilterParameters(new Object[] { getUserId() });
@@ -28,7 +28,7 @@ public class LdapGetAdUserByUserIdCommand extends LdapWithConfiguredCredentialsC
         queryData.setDomain(getDomain());
 
         Object searchResult = directorySearcher.FindOne(queryData);
-        user = populateUserData((AdUser) searchResult, getDomain());
+        user = populateUserData((LdapUser) searchResult, getDomain());
 
         if (user != null) {
             GroupsDNQueryGenerator generator = createGroupsGeneratorForUser(user);

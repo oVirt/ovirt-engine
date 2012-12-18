@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -19,9 +19,9 @@ public class InternalGetAdUserByUserIdListCommand extends InternalBrokerCommandB
 
     @Override
     protected void ExecuteQuery() {
-        List<AdUser> results = new ArrayList<AdUser>();
+        List<LdapUser> results = new ArrayList<LdapUser>();
         for (Guid guid : getUserIds()) {
-            AdUser user = InternalBrokerUtils.getUserByUserGuid(guid);
+            LdapUser user = InternalBrokerUtils.getUserByUserGuid(guid);
             if (user != null) {
                 results.add(user);
             }

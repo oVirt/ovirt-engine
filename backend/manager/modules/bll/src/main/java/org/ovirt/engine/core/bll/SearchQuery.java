@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -170,7 +170,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         });
     }
 
-    private List<AdUser> searchAdUsers() {
+    private List<LdapUser> searchAdUsers() {
         return adSearch(LdapQueryType.searchUsers, AdActionType.SearchUserByQuery);
     }
 

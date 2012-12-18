@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -39,8 +39,8 @@ public class UserMapper {
         return model;
     }
 
-    @Mapping(from = AdUser.class, to = VdcUser.class)
-    public static VdcUser map(AdUser adUser, VdcUser template) {
+    @Mapping(from = LdapUser.class, to = VdcUser.class)
+    public static VdcUser map(LdapUser adUser, VdcUser template) {
         VdcUser vdcUser = template != null ? template : new VdcUser();
         vdcUser.setUserId(adUser.getUserId());
         vdcUser.setUserName(adUser.getUserName());
@@ -49,8 +49,8 @@ public class UserMapper {
         return vdcUser;
     }
 
-    @Mapping(from = AdUser.class, to = User.class)
-    public static User map(AdUser entity, User template) {
+    @Mapping(from = LdapUser.class, to = User.class)
+    public static User map(LdapUser entity, User template) {
         User model = template != null ? template : new User();
         model.setName(entity.getName());
         model.setUserName(entity.getUserName());

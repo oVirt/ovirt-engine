@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.bll.adbroker.AdActionType;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.AdUsersSearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -30,8 +30,8 @@ public class LdapUserSearchQueryTest extends LdapSearchQueryTestBase {
     }
 
     @Override
-    protected AdUser getExpectedResult() {
-        return new AdUser(NAME_TO_SEARCH, "melon!", Guid.NewGuid(), DOMAIN);
+    protected LdapUser getExpectedResult() {
+        return new LdapUser(NAME_TO_SEARCH, "melon!", Guid.NewGuid(), DOMAIN);
     }
 
     @Override

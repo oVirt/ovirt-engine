@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.users;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -29,20 +29,20 @@ public class VdcUser implements IVdcUser, Serializable {
     private String mSurName;
     private boolean mIsAdmin = false;
 
-    public VdcUser(AdUser adUser) {
-        this(adUser, false);
+    public VdcUser(LdapUser ldapUser) {
+        this(ldapUser, false);
     }
 
-    public VdcUser(AdUser adUser, boolean isAdmin) {
-        mUserName = adUser.getUserName();
-        mUserId = adUser.getUserId();
-        mPassword = adUser.getPassword();
-        mDomainControler = adUser.getDomainControler();
-        mGroupNames = adUser.getGroup();
-        mFirstName = adUser.getName();
-        mSurName = adUser.getSurName();
+    public VdcUser(LdapUser ldapUser, boolean isAdmin) {
+        mUserName = ldapUser.getUserName();
+        mUserId = ldapUser.getUserId();
+        mPassword = ldapUser.getPassword();
+        mDomainControler = ldapUser.getDomainControler();
+        mGroupNames = ldapUser.getGroup();
+        mFirstName = ldapUser.getName();
+        mSurName = ldapUser.getSurName();
         mIsAdmin = isAdmin;
-        groupIds = adUser.getGroupIds();
+        groupIds = ldapUser.getGroupIds();
     }
 
     public VdcUser() {

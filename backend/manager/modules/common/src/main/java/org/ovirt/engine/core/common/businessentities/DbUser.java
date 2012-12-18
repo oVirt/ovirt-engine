@@ -371,17 +371,17 @@ public class DbUser extends DbUserBase implements Serializable {
         OnPropertyChanged(new PropertyChangedEventArgs("IsLogedin"));
     }
 
-    public DbUser(AdUser adUser) {
-        setuser_id(adUser.getUserId());
-        setusername(adUser.getUserName());
-        setname(adUser.getName());
-        setsurname(adUser.getSurName());
-        setdepartment(adUser.getDepartment());
-        setdomain(adUser.getDomainControler());
-        setemail(adUser.getEmail());
-        setgroups(adUser.getGroup());
+    public DbUser(LdapUser ldapUser) {
+        setuser_id(ldapUser.getUserId());
+        setusername(ldapUser.getUserName());
+        setname(ldapUser.getName());
+        setsurname(ldapUser.getSurName());
+        setdepartment(ldapUser.getDepartment());
+        setdomain(ldapUser.getDomainControler());
+        setemail(ldapUser.getEmail());
+        setgroups(ldapUser.getGroup());
         setstatus(AdRefStatus.Active.getValue());
-        setGroupIds(adUser.getGroupIds());
+        setGroupIds(ldapUser.getGroupIds());
     }
 
     public AdRefStatus getAdStatus() {

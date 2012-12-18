@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 //
 // JTODO - this needs testing -- Livnat
@@ -23,7 +23,7 @@ public class LdapGetAdUserByUserNameCommand extends LdapBrokerCommandBase {
         queryData.setLdapQueryType(LdapQueryType.getUserByName);
         Object searchResult = directorySearcher.FindOne(queryData);
 
-        setReturnValue(populateUserData((AdUser) searchResult, getDomain()));
+        setReturnValue(populateUserData((LdapUser) searchResult, getDomain()));
         // if user is not null then action succeeded
         setSucceeded((getReturnValue() != null));
     }

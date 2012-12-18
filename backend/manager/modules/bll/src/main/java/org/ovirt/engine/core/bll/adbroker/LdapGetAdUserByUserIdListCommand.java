@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.adbroker;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -36,9 +36,9 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
      */
     private void PopulateUsers() {
         List<LdapQueryData> queries = GenerateUsersQuery();
-        List<AdUser> results = new ArrayList<AdUser>();
+        List<LdapUser> results = new ArrayList<LdapUser>();
         for (LdapQueryData queryData : queries) {
-            java.util.ArrayList<AdUser> tempUsers = (java.util.ArrayList<AdUser>) LdapFactory
+            java.util.ArrayList<LdapUser> tempUsers = (java.util.ArrayList<LdapUser>) LdapFactory
                     .getInstance(getDomain())
                     .RunAdAction(AdActionType.SearchUserByQuery,
                             new LdapSearchByQueryParameters(getParameters().getSessionId(), getDomain(), queryData))
@@ -67,7 +67,7 @@ public class LdapGetAdUserByUserIdListCommand extends LdapBrokerCommandBase {
     private void PopulateGroups() {
         try {
             boolean performPopulate = true;
-            List<AdUser> users = (List<AdUser>) getReturnValue();
+            List<LdapUser> users = (List<LdapUser>) getReturnValue();
             if (getParameters() instanceof LdapSearchByUserIdListParameters) {
                 LdapSearchByUserIdListParameters params = (LdapSearchByUserIdListParameters) getParameters();
                 performPopulate = params.getPerformGroupsQueryInsideCmd();

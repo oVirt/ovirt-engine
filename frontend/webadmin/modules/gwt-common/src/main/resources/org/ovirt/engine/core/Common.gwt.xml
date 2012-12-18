@@ -13,7 +13,7 @@
 		<include name="common/businessentities/ad_groups.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
 		<include name="common/businessentities/AdRefStatus.java" />
-		<include name="common/businessentities/AdUser.java" />
+		<include name="common/businessentities/LdapUser.java" />
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/bookmarks.java" />
 		<include name="common/businessentities/BaseDisk.java" />

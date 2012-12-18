@@ -5,21 +5,21 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 
 /** A test case for the {@link VdcUser} class. */
 public class VdcUserTest {
 
-    /** The AdUser to create VdcUsers from */
-    private AdUser adUser;
+    /** The LdapUser to create VdcUsers from */
+    private LdapUser adUser;
 
     @Before
     public void setUp() {
-        adUser = new AdUser("UserName", "password", Guid.NewGuid(), "DomainController");
+        adUser = new LdapUser("UserName", "password", Guid.NewGuid(), "DomainController");
     }
 
-    /** Tests {@link VdcUser#VdcUser(AdUser)) */
+    /** Tests {@link VdcUser#VdcUser(LdapUser)) */
     @Test
     public void testAdUserConstrcutor() {
         VdcUser user = new VdcUser(adUser);
@@ -28,7 +28,7 @@ public class VdcUserTest {
         assertTrue("after being set as such, the user should be an admin", user.isAdmin());
     }
 
-    /** Tests {@link VdcUser#VdcUser(AdUser, boolean)) */
+    /** Tests {@link VdcUser#VdcUser(LdapUser, boolean)) */
     @Test
     public void testAdUserAndFalseBooleanConstrcutor() {
         VdcUser user = new VdcUser(adUser, false);
@@ -37,7 +37,7 @@ public class VdcUserTest {
         assertTrue("after being set as such, the user should be an admin", user.isAdmin());
     }
 
-    /** Tests {@link VdcUser#VdcUser(AdUser, boolean)) */
+    /** Tests {@link VdcUser#VdcUser(LdapUser, boolean)) */
     @Test
     public void testAdUserAndTrueBooleanConstrcutor() {
         VdcUser user = new VdcUser(adUser, true);

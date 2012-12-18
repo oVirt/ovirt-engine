@@ -21,7 +21,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
@@ -196,8 +196,8 @@ public class BackendUsersResourceTest
         return entity;
     }
 
-    protected AdUser getAdUser(int index) {
-        AdUser adUser = new AdUser();
+    protected LdapUser getAdUser(int index) {
+        LdapUser adUser = new LdapUser();
         adUser.setUserId(GUIDS[index]);
         adUser.setUserName(NAMES[index]);
         adUser.setDomainControler(DOMAIN);
@@ -219,7 +219,7 @@ public class BackendUsersResourceTest
         verifyLinks(model);
     }
 
-    public static AdUser setUpEntityExpectations(AdUser entity, int index) {
+    public static LdapUser setUpEntityExpectations(LdapUser entity, int index) {
         expect(entity.getUserId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getDomainControler()).andReturn(DOMAIN).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();

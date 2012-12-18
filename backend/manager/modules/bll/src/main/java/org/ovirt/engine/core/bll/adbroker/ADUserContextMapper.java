@@ -20,7 +20,7 @@ import javax.naming.directory.Attributes;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -47,8 +47,8 @@ public class ADUserContextMapper implements ContextMapper {
             return null;
         }
 
-        AdUser user;
-        user = new AdUser();
+        LdapUser user;
+        user = new LdapUser();
 
         try {
             Object adObjectGuid = attributes.get(objectguid.name()).get(0);

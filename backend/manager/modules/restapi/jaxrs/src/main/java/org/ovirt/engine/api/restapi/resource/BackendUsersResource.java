@@ -11,7 +11,7 @@ import org.ovirt.engine.api.resource.UsersResource;
 import org.ovirt.engine.api.restapi.resource.BackendUsersResourceBase.UserIdResolver;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
@@ -43,7 +43,7 @@ public class BackendUsersResource extends BackendUsersResourceBase implements Us
             validateParameters(user, "domain.id|name");
         }
         String domain = getDomain(user);
-        AdUser adUser = getEntity(AdUser.class,
+        LdapUser adUser = getEntity(LdapUser.class,
                                   SearchType.AdUser,
                                   getSearchPattern(user.getUserName(), domain));
         if (adUser == null) {

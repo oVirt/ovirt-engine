@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -34,7 +34,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             AddCustomValue("NewUserName", getParameters().getVdcUser().getUserName());
             userId = getParameters().getVdcUser().getUserId();
             domain = getParameters().getVdcUser().getDomainControler();
-            AdUser adUser = (AdUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
+            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
                     new LdapSearchByIdParameters(domain, userId)).getReturnValue();
             if (adUser == null) {
                 addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);

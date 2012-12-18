@@ -17,7 +17,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -46,8 +46,8 @@ public class RHDSUserContextMapper implements ContextMapper {
             return null;
         }
 
-        AdUser user;
-        user = new AdUser();
+        LdapUser user;
+        user = new LdapUser();
 
         // user's Guid
         String objectGuid;

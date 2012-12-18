@@ -6,7 +6,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -73,7 +73,7 @@ public class BackendDomainUserResourceTest
     }
 
     protected void setUpEntityQueryExpectations(int index) throws Exception {
-        AdUser user = BackendUsersResourceTest.setUpEntityExpectations(control.createMock(AdUser.class),index);
+        LdapUser user = BackendUsersResourceTest.setUpEntityExpectations(control.createMock(LdapUser.class),index);
         setUpGetEntityExpectations("ADUSER@"+DOMAIN+": allnames=*",
                 SearchType.AdUser,
                 user);

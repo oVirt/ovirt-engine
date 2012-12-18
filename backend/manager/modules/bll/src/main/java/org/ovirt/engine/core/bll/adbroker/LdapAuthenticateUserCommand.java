@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
@@ -18,7 +18,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         log.debug("Executing LdapAuthenticateUserCommand");
 
         directorySearcher.setExplicitAuth(true);
-        AdUser user = null;
+        LdapUser user = null;
         UserAuthenticationResult authResult = null;
         LdapQueryData queryData = new LdapQueryDataImpl();
 
@@ -52,7 +52,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
             Exception ex = directorySearcher.getException();
             authResult = handleDirectorySearcherException(ex);
         } else {
-            user = populateUserData((AdUser) searchResult, getAuthenticationDomain());
+            user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
             if (user != null) {
                 user.setPassword(getPassword());
                 user.setUserName(getLoginName());

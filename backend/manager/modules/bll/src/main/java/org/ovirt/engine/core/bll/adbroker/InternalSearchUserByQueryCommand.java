@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 
 public class InternalSearchUserByQueryCommand extends InternalBrokerCommandBase {
 
@@ -12,7 +12,7 @@ public class InternalSearchUserByQueryCommand extends InternalBrokerCommandBase 
 
     @Override
     protected void ExecuteQuery() {
-        List<AdUser> userList = InternalBrokerUtils.getAllUsers();
+        List<LdapUser> userList = InternalBrokerUtils.getAllUsers();
         setReturnValue(userList);
         setSucceeded(true);
     }

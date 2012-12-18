@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -82,7 +82,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected abstract void executeQuery(DirectorySearcher directorySearcher);
 
-    protected AdUser populateUserData(AdUser user, String domain) {
+    protected LdapUser populateUserData(LdapUser user, String domain) {
         if (user == null) {
             return null;
         }
@@ -151,7 +151,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         }
     }
 
-    protected GroupsDNQueryGenerator createGroupsGeneratorForUser(AdUser user) {
+    protected GroupsDNQueryGenerator createGroupsGeneratorForUser(LdapUser user) {
         List<String> dnsList = new ArrayList<String>();
         for (ad_groups adGroup : user.getGroups().values()) {
             dnsList.add(adGroup.getDistinguishedName());

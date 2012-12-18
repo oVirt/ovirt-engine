@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -15,9 +15,9 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class UserAuthenticationResult {
     private List<VdcBllMessages> errorMessages = new ArrayList<VdcBllMessages>();
-    private AdUser user;
+    private LdapUser user;
 
-    public AdUser getUser() {
+    public LdapUser getUser() {
         return user;
     }
 
@@ -25,7 +25,7 @@ public class UserAuthenticationResult {
         errorMessages.addAll(Arrays.asList(messages));
     }
 
-    public UserAuthenticationResult(AdUser user,VdcBllMessages... messages) {
+    public UserAuthenticationResult(LdapUser user,VdcBllMessages... messages) {
         this(messages);
         this.user = user;
     }

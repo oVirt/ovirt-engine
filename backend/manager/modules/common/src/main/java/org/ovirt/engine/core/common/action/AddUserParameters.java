@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.businessentities.AdUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.ad_groups;
 import org.ovirt.engine.core.common.users.VdcUser;
 
@@ -13,7 +13,7 @@ public class AddUserParameters extends VdcActionParametersBase implements Serial
 
     private ad_groups adGroup;
 
-    private AdUser adUser;
+    private LdapUser ldapUser;
 
     public void setVdcUser(VdcUser vdcUser) {
         this.vdcUser = vdcUser;
@@ -31,12 +31,12 @@ public class AddUserParameters extends VdcActionParametersBase implements Serial
         return adGroup;
     }
 
-    public void setAdUser(AdUser adUser) {
-        this.adUser = adUser;
+    public void setAdUser(LdapUser ldapUser) {
+        this.ldapUser = ldapUser;
     }
 
-    public AdUser getAdUser() {
-        return adUser;
+    public LdapUser getAdUser() {
+        return ldapUser;
     }
 
 }
