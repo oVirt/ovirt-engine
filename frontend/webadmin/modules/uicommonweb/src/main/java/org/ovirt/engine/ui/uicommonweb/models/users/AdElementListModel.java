@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -29,6 +29,16 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class AdElementListModel extends SearchableListModel
 {
+
+    private EntityModel searchInProgress;
+
+    public EntityModel getSearchInProgress() {
+        return searchInProgress;
+    }
+
+    public void setSearchInProgress(EntityModel searchInProgress) {
+        this.searchInProgress = searchInProgress;
+    }
 
     private Iterable privateExcludeItems;
 
@@ -154,6 +164,9 @@ public class AdElementListModel extends SearchableListModel
         setIsEveryoneSelectionHidden(new EntityModel());
         getIsEveryoneSelectionHidden().setEntity(false);
 
+        setSearchInProgress(new EntityModel());
+        getSearchInProgress().setEntity(false);
+
         setIsTimerDisabled(true);
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -211,6 +224,12 @@ public class AdElementListModel extends SearchableListModel
     @Override
     protected void SyncSearch()
     {
+        // allow only a single user lookup at a time
+        if ((Boolean) getSearchInProgress().getEntity()) {
+            return;
+        }
+        getSearchInProgress().setEntity(true);
+
         super.SyncSearch();
         // var exclude = ExcludeItems != null ? ExcludeItems.Cast<DbUser>() : new List<DbUser>();
 
@@ -319,6 +338,8 @@ public class AdElementListModel extends SearchableListModel
     {
         if (adElementListModel.getusers() != null && adElementListModel.getgroups() != null)
         {
+            getSearchInProgress().setEntity(false);
+
             ArrayList<EntityModel> items = new ArrayList<EntityModel>();
             items.addAll(getusers());
             items.addAll(getgroups());

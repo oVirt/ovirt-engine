@@ -71,6 +71,15 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             }
         }));
 
+        model.getSearchInProgress().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getView().getSearchButton()
+                        .getCommand()
+                        .setIsExecutionAllowed(!(Boolean) model.getSearchInProgress().getEntity());
+            }
+        });
+
         registerHandler(getView().getKeyPressSearchInputBox().addKeyPressHandler(new KeyPressHandler() {
             @Override
             public void onKeyPress(KeyPressEvent event) {
