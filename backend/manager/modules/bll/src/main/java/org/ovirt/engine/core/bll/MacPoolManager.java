@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -31,11 +32,12 @@ public class MacPoolManager {
     private final Set<String> mAvailableMacs = new HashSet<String>();
     private final Set<String> mAllocatedMacs = new HashSet<String>();
     private final Set<String> mAllocatedCustomMacs = new HashSet<String>();
-    private final Object mLocObj = new Object();
+    private final ReentrantReadWriteLock mLocObj = new ReentrantReadWriteLock();
     private boolean mInitialized = false;
 
     public void initialize() {
-        synchronized (mLocObj) {
+        mLocObj.writeLock().lock();
+        try {
             String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
             if (!"".equals(ranges)) {
                 try {
@@ -50,6 +52,8 @@ public class MacPoolManager {
                 AddMac(iface.getMacAddress());
             }
             mInitialized = true;
+        } finally {
+            mLocObj.writeLock().unlock();
         }
     }
 
@@ -127,7 +131,8 @@ public class MacPoolManager {
     public String allocateNewMac() {
         String mac = null;
         log.info("MacPoolManager::allocateNewMac entered");
-        synchronized (mLocObj) {
+        mLocObj.writeLock().lock();
+        try {
             if (!mInitialized) {
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
             }
@@ -137,6 +142,8 @@ public class MacPoolManager {
             Iterator<String> my = mAvailableMacs.iterator();
             mac = my.next();
             CommitNewMac(mac);
+        } finally {
+            mLocObj.writeLock().unlock();
         }
         log.infoFormat("MacPoolManager::allocateNewMac allocated mac = '{0}", mac);
         return mac;
@@ -159,16 +166,23 @@ public class MacPoolManager {
 
     public void freeMac(String mac) {
         log.infoFormat("MacPoolManager::freeMac(mac = '{0}') - entered", mac);
-        synchronized (mLocObj) {
+        mLocObj.writeLock().lock();
+        try {
             if (!mInitialized) {
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
             }
-            if (mAllocatedCustomMacs.contains(mac)) {
-                mAllocatedCustomMacs.remove(mac);
-            } else if (mAllocatedMacs.contains(mac)) {
-                mAllocatedMacs.remove(mac);
-                mAvailableMacs.add(mac);
-            }
+            internalFreeMac(mac);
+        } finally {
+            mLocObj.writeLock().unlock();
+        }
+    }
+
+    private void internalFreeMac(String mac) {
+        if (mAllocatedCustomMacs.contains(mac)) {
+            mAllocatedCustomMacs.remove(mac);
+        } else if (mAllocatedMacs.contains(mac)) {
+            mAllocatedMacs.remove(mac);
+            mAvailableMacs.add(mac);
         }
     }
 
@@ -180,7 +194,8 @@ public class MacPoolManager {
      */
     public boolean AddMac(String mac) {
         boolean retVal = true;
-        synchronized (mLocObj) {
+        mLocObj.writeLock().lock();
+        try {
             if (mAllocatedMacs.contains(mac)) {
                 retVal = false;
             } else {
@@ -192,19 +207,34 @@ public class MacPoolManager {
                     mAllocatedCustomMacs.add(mac);
                 }
             }
+        } finally {
+            mLocObj.writeLock().unlock();
         }
         return retVal;
     }
 
     public boolean IsMacInUse(String mac) {
-        synchronized (mLocObj) {
+        mLocObj.readLock().lock();
+        try {
             return mAllocatedMacs.contains(mac) || mAllocatedCustomMacs.contains(mac);
+        } finally {
+            mLocObj.readLock().unlock();
         }
     }
 
     public void freeMacs(List<String> macs) {
-        for (String mac : macs) {
-            freeMac(mac);
+        log.info("MacPoolManager::freeMacs - entered");
+        mLocObj.writeLock().lock();
+        try {
+            if (!mInitialized) {
+                throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
+            }
+            for (String mac : macs) {
+                internalFreeMac(mac);
+            }
+
+        } finally {
+            mLocObj.writeLock().unlock();
         }
     }
 
