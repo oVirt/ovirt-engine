@@ -27,7 +27,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters> extends StorageDomainCommandBase<T> {
     public RemoveStorageDomainCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     @Override

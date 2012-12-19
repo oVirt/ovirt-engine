@@ -16,7 +16,6 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
         ConnectHostToStoragePooServerCommandBase<T> {
     public DisconnectHostFromStoragePoolServersCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     @Override

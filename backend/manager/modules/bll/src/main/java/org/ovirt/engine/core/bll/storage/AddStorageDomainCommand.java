@@ -36,7 +36,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageDomainManagementCommandBase<T> {
     public AddStorageDomainCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     /**

@@ -25,7 +25,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
     public ForceRemoveStorageDomainCommand(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     @Override

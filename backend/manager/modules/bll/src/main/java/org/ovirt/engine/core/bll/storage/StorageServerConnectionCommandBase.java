@@ -13,7 +13,6 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         StorageHandlingCommandBase<T> {
     public StorageServerConnectionCommandBase(T parameters) {
         super(parameters);
-        setVdsId(parameters.getVdsId());
     }
 
     protected StorageServerConnections getConnection() {
