@@ -427,7 +427,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
 
     @UiField
     @Ignore
-    KeyValueWidget customPropertiesSheetEditor;
+    protected KeyValueWidget customPropertiesSheetEditor;
 
     CommonApplicationConstants constants;
 

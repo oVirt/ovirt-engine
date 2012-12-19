@@ -68,6 +68,22 @@ public class UnitVmModel extends Model {
         privateIsNew = value;
     }
 
+    private boolean vmAttachedToPool;
+
+    public boolean isVmAttachedToPool() {
+        return vmAttachedToPool;
+    }
+
+    public void setVmAttachedToPool(boolean value) {
+        if (vmAttachedToPool != value) {
+            if (value) {
+                getNumOfSockets().setIsChangable(false);
+                getCoresPerSocket().setIsChangable(false);
+            }
+            vmAttachedToPool = value;
+        }
+    }
+
     private VmType privateVmType = getVmType().values()[0];
 
     public VmType getVmType()
@@ -1029,10 +1045,22 @@ public class UnitVmModel extends Model {
         setTotalCPUCores(new EntityModel());
         getTotalCPUCores().getEntityChangedEvent().addListener(this);
 
-        setNumOfSockets(new ListModel());
+        setNumOfSockets(new ListModel() {
+            @Override
+            public void setIsChangable(boolean value) {
+                if (!isVmAttachedToPool())
+                    super.setIsChangable(value);
+            }
+        });
         getNumOfSockets().getSelectedItemChangedEvent().addListener(this);
 
-        setCoresPerSocket(new ListModel());
+        setCoresPerSocket(new ListModel() {
+            @Override
+            public void setIsChangable(boolean value) {
+                if (!isVmAttachedToPool())
+                    super.setIsChangable(value);
+            }
+        });
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
 
         setRunVMOnSpecificHost(new EntityModel());

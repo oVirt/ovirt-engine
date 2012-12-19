@@ -34,6 +34,7 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
     VerticalPanel panel;
 
     private ArrayList<KeyValueLineWidget> widgetList = new ArrayList<KeyValueLineWidget>();
+    private boolean enabled = true;
 
     KeyValueWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -64,6 +65,7 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
             widgetList.add(keyValueLineWidget);
             panel.add(keyValueLineWidget);
             keyValueLineWidget.edit(keyValueLineModel);
+            keyValueLineWidget.setEnabled(enabled);
         }
     }
 
@@ -101,4 +103,10 @@ public class KeyValueWidget extends Composite implements HasEditorDriver<KeyValu
         throw new NotImplementedException();
     }
 
+    public void setEnabled(boolean value) {
+        enabled = value;
+        for (KeyValueLineWidget widget : widgetList) {
+            widget.setEnabled(enabled);
+        }
+    }
 }

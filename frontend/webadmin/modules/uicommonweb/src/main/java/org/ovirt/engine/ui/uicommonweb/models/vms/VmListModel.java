@@ -844,6 +844,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
         model.setVmType(vm.getVmType());
+        model.setVmAttachedToPool(vm.getVmPoolId() != null);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
                 .getMessages()
@@ -2628,7 +2629,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     /**
-     * Return true if and only if one elemnt is selected, and this element is not a part of any pool.
+     * Return true if and only if one element is selected.
      */
     private boolean isEditCommandExecutionAllowed(List items) {
         if (items == null) {
@@ -2637,9 +2638,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (items.size() != 1) {
             return false;
         }
-
-        VM selectedItem = (VM) items.get(0);
-        return selectedItem.getVmPoolId() == null;
+        return true;
     }
 
     @Override
