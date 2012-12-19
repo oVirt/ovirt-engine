@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -21,7 +22,7 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
 
     private static List<String> getVersionsList() {
         List<String> versions = new ArrayList<String>();
-        versions.add(Config.DefaultConfigurationVersion);
+        versions.add(ConfigCommon.defaultConfigurationVersion);
         for (Version version : Version.ALL) {
             versions.add(version.toString());
         }

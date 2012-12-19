@@ -4,8 +4,6 @@ package org.ovirt.engine.core.common.config;
  * Config Class
  */
 public final class Config {
-    public static final String DefaultConfigurationVersion = "general";
-
     private static IConfigUtilsInterface _configUtils;
 
     public static IConfigUtilsInterface getConfigUtils() {
@@ -17,7 +15,7 @@ public final class Config {
     }
 
     public static <T> T GetValue(ConfigValues value) {
-        return Config.<T> GetValue(value, Config.DefaultConfigurationVersion);
+        return Config.<T> GetValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
     public static <T> T GetValue(ConfigValues value, String version) {

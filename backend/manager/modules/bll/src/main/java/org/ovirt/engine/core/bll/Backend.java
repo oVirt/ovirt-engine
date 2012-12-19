@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
@@ -307,7 +308,7 @@ public class Backend implements BackendInternal {
     private VdcReturnValueBase notAllowToRunAction(VdcActionType actionType) {
         // Since reload of configuration values is not fully supported, we have to get this value from DB
         // and can not use the cached configuration.
-        String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),Config.DefaultConfigurationVersion)).getoption_value();
+        String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),ConfigCommon.defaultConfigurationVersion)).getoption_value();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
         }
@@ -400,7 +401,7 @@ public class Backend implements BackendInternal {
                 CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
             String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion
-                    (ConfigValues.EngineMode.name(),Config.DefaultConfigurationVersion)).getoption_value();
+                    (ConfigValues.EngineMode.name(),ConfigCommon.defaultConfigurationVersion)).getoption_value();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }

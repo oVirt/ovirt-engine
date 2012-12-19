@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetDefaultConfigurationVersionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -10,6 +10,6 @@ public class GetDefaultConfigurationVersionQuery<P extends VdcQueryParametersBas
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(Config.DefaultConfigurationVersion);
+        getQueryReturnValue().setReturnValue(ConfigCommon.defaultConfigurationVersion);
     }
 }

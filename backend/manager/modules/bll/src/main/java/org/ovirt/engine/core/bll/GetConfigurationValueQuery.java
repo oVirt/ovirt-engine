@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 
@@ -19,8 +20,8 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
                 String version = params.getVersion();
                 if (version == null) {
                     log.warnFormat("calling {0} ({2}) with null version, using default {1} for version",
-                            GetConfigurationValueQuery.class.getSimpleName(), Config.DefaultConfigurationVersion, value);
-                    version = Config.DefaultConfigurationVersion;
+                            GetConfigurationValueQuery.class.getSimpleName(), ConfigCommon.defaultConfigurationVersion, value);
+                    version = ConfigCommon.defaultConfigurationVersion;
                 }
                 returnValue = Config.<Object> GetValue(value, version);
             } catch (Exception e) {

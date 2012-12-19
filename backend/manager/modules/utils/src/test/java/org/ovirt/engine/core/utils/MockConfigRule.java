@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 
@@ -73,11 +74,11 @@ public class MockConfigRule extends TestWatcher {
 
     /** Mock the default version configuration of a single value - this can be given as an argument to the rule's constructor */
     public static <T> MockConfigDescriptor<T> mockConfig(ConfigValues value, T returnValue) {
-        return new MockConfigDescriptor<T>(value, Config.DefaultConfigurationVersion, returnValue);
+        return new MockConfigDescriptor<T>(value, ConfigCommon.defaultConfigurationVersion, returnValue);
     }
 
     public <T> void mockConfigValue(ConfigValues value, T returnValue) {
-        mockConfigValue(value, Config.DefaultConfigurationVersion, returnValue);
+        mockConfigValue(value, ConfigCommon.defaultConfigurationVersion, returnValue);
     }
 
     public <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {

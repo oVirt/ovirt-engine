@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 
@@ -38,7 +39,7 @@ public class SyntaxCheckerFactoryTest {
     @Before
     public void setup() {
         final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Mockito.when(configUtils.GetValue(ConfigValues.SearchResultsLimit, Config.DefaultConfigurationVersion))
+        Mockito.when(configUtils.GetValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn(100);
         Config.setConfigUtils(configUtils);
     }

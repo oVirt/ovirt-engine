@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
@@ -123,13 +123,13 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     // get the config that this value depends on
                     if ((values = _vdcOptionCache.get(optionBehaviour.dependentOn().toString())) != null) {
                         // its value is this value's prefix
-                        String prefix = (String) values.get(Config.DefaultConfigurationVersion);
+                        String prefix = (String) values.get(ConfigCommon.defaultConfigurationVersion);
                         // combine the prefix with the 'real value'
                         if ((values = _vdcOptionCache
                                 .get(String.format("%1$s%2$s", prefix, optionBehaviour.realValue()))) != null) {
                             // get value of the wanted config - assuming
                             // default!!
-                            result = values.get(Config.DefaultConfigurationVersion);
+                            result = values.get(ConfigCommon.defaultConfigurationVersion);
                         }
                     }
                     break;
@@ -198,11 +198,11 @@ public class DBConfigUtils extends ConfigUtilsBase {
         String returnValue = null;
         Map<String, Object> values = null;
         if ((values = _vdcOptionCache.get(name.toString())) != null
-                && values.containsKey(Config.DefaultConfigurationVersion)) {
-            returnValue = (String) values.get(Config.DefaultConfigurationVersion);
+                && values.containsKey(ConfigCommon.defaultConfigurationVersion)) {
+            returnValue = (String) values.get(ConfigCommon.defaultConfigurationVersion);
         } else {
             VdcOption option = DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(name.name(),
-                    Config.DefaultConfigurationVersion);
+                    ConfigCommon.defaultConfigurationVersion);
             if (option != null) {
                 returnValue = option.getoption_value();
             }
@@ -217,7 +217,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
         // maybe all the method) in a future refactoring.
         log.warnFormat("Using old GetValue for {0}.", name);
         ConfigValues value = ConfigValues.valueOf(name);
-        return GetValue(value, Config.DefaultConfigurationVersion);
+        return GetValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
     @SuppressWarnings("unchecked")

@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.notifier.utils.NotificationConfigurator;
@@ -478,7 +479,7 @@ public class EngineMonitorService implements Runnable {
         ResultSet rs = null;
 
         if (StringUtils.isEmpty(propertyVersion)) {
-            propertyVersion = Config.DefaultConfigurationVersion;
+            propertyVersion = ConfigCommon.defaultConfigurationVersion;
         }
 
         try {
@@ -490,10 +491,10 @@ public class EngineMonitorService implements Runnable {
             if (rs.next()) {
                 propertyValue = rs.getString(1);
             }
-            if (propertyValue == null && !Config.DefaultConfigurationVersion.equals(propertyVersion)) {
+            if (propertyValue == null && !ConfigCommon.defaultConfigurationVersion.equals(propertyVersion)) {
                 rs.close();
                 pStmt.setString(1, propertyName);
-                pStmt.setString(2, Config.DefaultConfigurationVersion);
+                pStmt.setString(2, ConfigCommon.defaultConfigurationVersion);
                 rs = pStmt.executeQuery();
                 if (rs.next()) {
                     propertyValue = rs.getString(1);

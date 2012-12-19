@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
@@ -33,8 +34,8 @@ public class DbFacadeUtils {
             return password;
         }
         String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
+        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, ConfigCommon.defaultConfigurationVersion);
+        String alias = Config.<String> GetValue(ConfigValues.CertAlias, ConfigCommon.defaultConfigurationVersion);
         try {
             return EncryptionUtils.encrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {
@@ -47,8 +48,8 @@ public class DbFacadeUtils {
             return password;
         }
         String keyFile = Config.resolveKeyStorePath();
-        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, Config.DefaultConfigurationVersion);
-        String alias = Config.<String> GetValue(ConfigValues.CertAlias, Config.DefaultConfigurationVersion);
+        String passwd = Config.<String> GetValue(ConfigValues.keystorePass, ConfigCommon.defaultConfigurationVersion);
+        String alias = Config.<String> GetValue(ConfigValues.CertAlias, ConfigCommon.defaultConfigurationVersion);
         try {
             return EncryptionUtils.decrypt(password, keyFile, passwd, alias);
         } catch (Exception e) {

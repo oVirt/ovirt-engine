@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.OptionBehaviour;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
@@ -49,7 +49,7 @@ public class DBConfigUtilsTest {
                     + " annotation: " + curConfig.name(), typeAttr);
             Class<?> c = typeAttr.value();
 
-            Object obj = config.GetValue(curConfig, Config.DefaultConfigurationVersion);
+            Object obj = config.GetValue(curConfig, ConfigCommon.defaultConfigurationVersion);
 
             Assert.assertTrue("null return for " + curConfig.name(), obj != null);
             Assert.assertTrue(

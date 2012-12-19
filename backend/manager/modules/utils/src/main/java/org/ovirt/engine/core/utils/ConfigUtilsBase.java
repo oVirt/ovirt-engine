@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.DataType;
 import org.ovirt.engine.core.common.config.DefaultValueAttribute;
@@ -69,7 +69,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
 
     @Override
     public final void SetStringValue(String name, String value) {
-        SetValue(name, value, Config.DefaultConfigurationVersion);
+        SetValue(name, value, ConfigCommon.defaultConfigurationVersion);
     }
 
 

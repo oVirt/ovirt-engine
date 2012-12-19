@@ -4,6 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 
@@ -15,12 +16,12 @@ public class ConfiguredRangeValidator implements ConstraintValidator<ConfiguredR
     @Override
     public void initialize(ConfiguredRange constraintAnnotation) {
         if (constraintAnnotation.minConfigValue() != ConfigValues.Invalid) {
-            min = Config.<Integer> GetValue(constraintAnnotation.minConfigValue(), Config.DefaultConfigurationVersion);
+            min = Config.<Integer> GetValue(constraintAnnotation.minConfigValue(), ConfigCommon.defaultConfigurationVersion);
         } else {
             min = constraintAnnotation.min();
         }
 
-        max = Config.<Integer> GetValue(constraintAnnotation.maxConfigValue(), Config.DefaultConfigurationVersion);
+        max = Config.<Integer> GetValue(constraintAnnotation.maxConfigValue(), ConfigCommon.defaultConfigurationVersion);
     }
 
     @Override

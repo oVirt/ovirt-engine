@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
@@ -29,8 +30,8 @@ public class MTUValidatorTest {
         validator = ValidationUtils.getValidator();
 
         IConfigUtilsInterface confUtils = mock(IConfigUtilsInterface.class);
-        when(confUtils.GetValue(ConfigValues.MaxMTU, Config.DefaultConfigurationVersion)).thenReturn(TEST_MAX_MTU);
-        when(confUtils.GetValue(ConfigValues.ManagementNetwork, Config.DefaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
+        when(confUtils.GetValue(ConfigValues.MaxMTU, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_MTU);
+        when(confUtils.GetValue(ConfigValues.ManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
         Config.setConfigUtils(confUtils);
     }
 
