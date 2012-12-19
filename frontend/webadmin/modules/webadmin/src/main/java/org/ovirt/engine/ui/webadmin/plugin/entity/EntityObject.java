@@ -18,7 +18,7 @@ import com.google.gwt.core.client.JsArray;
 /**
  * Overlay type representing an entity passed through the plugin API as native JS object.
  */
-public class EntityObject extends JavaScriptObject {
+public final class EntityObject extends JavaScriptObject {
 
     protected EntityObject() {
     }
