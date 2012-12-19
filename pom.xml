@@ -302,24 +302,9 @@
       </releases>
     </repository>
     <repository>
-      <id>smartgwt</id>
-      <name>SmartGWT Releases</name>
-      <url>http://www.smartclient.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>codehaus</id>
       <name>Codehaus Releases</name>
       <url>http://repository.codehaus.org/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>gwt-crypto repo</id>
-      <url>http://gwt-crypto.googlecode.com/svn/trunk/repo/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
