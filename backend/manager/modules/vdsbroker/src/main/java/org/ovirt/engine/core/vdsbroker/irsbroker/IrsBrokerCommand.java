@@ -1300,7 +1300,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                      // we assume the problem is with the
                      // Domain.
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
-                    log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. Moving the Domain to NonOperational.",
+                    log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Moving the domain to NonOperational.",
                             domainIdTuple);
                     ResourceManager.getInstance()
                             .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
@@ -1312,7 +1312,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         duringReconstructMaster.set(false);
                     }
                 } else {
-                    log.warnFormat("domain {0} was reported by all hosts in status UP as problematic. But not moving the Domain to NonOperational. Because of is reconstract now",
+                    log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Not moving the domain to NonOperational because it is being reconstructed now.",
                             domainIdTuple);
                     return;
                 }
@@ -1329,8 +1329,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          *
          * @param domainId
          *            - the domain to clean the timer for
-         * @param clearDomain
-         *            - if set to true we remove this domain from the problematic domains list
          */
         private void ClearTimer(Guid domainId) {
             String jobId = _timers.remove(domainId);
