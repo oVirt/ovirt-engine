@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.smartcard.SmartcardSpecParams;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -81,7 +82,42 @@ public class VmDeviceUtils {
             updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
 
             updateAudioDevice(oldVm, entity);
+            updateSmartcardDevice(oldVm, entity);
         }
+    }
+
+    private static void updateSmartcardDevice(VM oldVm, VmBase newVm) {
+        if (newVm.isSmartcardEnabled() == oldVm.isSmartcardEnabled()) {
+            // the smartcard device did not changed, do nothing
+            return;
+        }
+
+        updateSmartcardDevice(newVm.getId(), newVm.isSmartcardEnabled());
+    }
+
+    public static void updateSmartcardDevice(Guid vmId, boolean smartcardEnabled) {
+        if (!smartcardEnabled) {
+            List<VmDevice> vmDevices =
+                    DbFacade.getInstance()
+                            .getVmDeviceDao()
+                            .getVmDeviceByVmIdTypeAndDevice(vmId,
+                                    VmDeviceType.SMARTCARD.getName(),
+                                    VmDeviceType.SMARTCARD.getName());
+            for (VmDevice device : vmDevices) {
+                dao.remove(device.getId());
+            }
+        } else {
+            addSmartcardDevice(vmId);
+        }
+    }
+
+    public static void addSmartcardDevice(Guid vmId) {
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
+                VmDeviceType.SMARTCARD,
+                VmDeviceType.SMARTCARD,
+                new SmartcardSpecParams(),
+                true,
+                false);
     }
 
     /**
@@ -209,6 +245,8 @@ public class VmDeviceUtils {
             }
             else if (VmDeviceType.BALLOON.getName().equals(device.getType())){
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+            } else if (VmDeviceType.SMARTCARD.getName().equals(device.getType())) {
+                specParams = new SmartcardSpecParams();
             }
             device.setId(new VmDeviceId(id, dstId));
             device.setSpecParams(specParams);

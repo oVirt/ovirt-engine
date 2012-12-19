@@ -17,6 +17,7 @@ public enum VmDeviceType {
     ICH6("ich6"),
     AC97("ac97"),
     MEMBALLOON("memballoon"),
+    SMARTCARD("smartcard"),
     BALLOON("balloon"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");

@@ -587,6 +587,23 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmUsbDevices() {
         buildVmUsbControllers();
         buildVmUsbSlots();
+        buildSmartcardDevice();
+    }
+
+    private void buildSmartcardDevice() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceType.SMARTCARD.getName(),
+                                VmDeviceType.SMARTCARD.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            XmlRpcStruct struct = new XmlRpcStruct();
+            struct.add(VdsProperties.Type, vmDevice.getType());
+            struct.add(VdsProperties.Device, vmDevice.getType());
+            addDevice(struct, vmDevice, null);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -99,6 +100,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     private void UpdateVmTemplate() {
         DbFacade.getInstance().getVmTemplateDao().update(getVmTemplate());
+        // also update the smartcard device
+        VmDeviceUtils.updateSmartcardDevice(getVmTemplateId(), getParameters().getVmTemplateData().isSmartcardEnabled());
     }
 
     @Override

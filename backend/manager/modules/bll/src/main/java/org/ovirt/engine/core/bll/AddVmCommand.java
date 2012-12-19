@@ -14,13 +14,13 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -496,6 +496,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 copyVmDevices();
                 addDiskPermissions(newDiskImages);
                 addVmPayload();
+                // if vm smartcard settings is different from template's
+                // add or remove the smartcard according to user request
+                if (getVm().isSmartcardEnabled() != getVmTemplate().isSmartcardEnabled())
+                {
+                    VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
+                }
                 setActionReturnValue(getVm().getId());
                 setSucceeded(true);
             }
@@ -760,6 +766,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return null;
     }
 
+    @Override
     protected VmDynamicDAO getVmDynamicDao() {
         return DbFacade.getInstance().getVmDynamicDao();
     }
