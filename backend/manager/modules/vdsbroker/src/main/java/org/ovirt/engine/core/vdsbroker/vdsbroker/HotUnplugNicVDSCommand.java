@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 
-public class HotUnplugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extends HotPlugNicVDSCommand<P> {
+public class HotUnplugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends HotPlugNicVDSCommand<P> {
 
     public HotUnplugNicVDSCommand(P parameters) {
         super(parameters);

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.InterfaceDAO;
@@ -78,7 +78,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
-                    new HotPlugUnplgNicVDSParameters(getVdsId(),
+                    new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
                             getVmNetworkInterfaceDao().get(getParameters().getNicId()),
                             vmDevice));

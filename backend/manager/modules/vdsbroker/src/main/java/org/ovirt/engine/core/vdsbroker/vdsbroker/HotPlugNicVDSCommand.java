@@ -9,11 +9,11 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.vdscommands.HotPlugUnplgNicVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 
-public class HotPlugNicVDSCommand<P extends HotPlugUnplgNicVDSParameters> extends VdsBrokerCommand<P> {
+public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
 
     protected XmlRpcStruct struct = new XmlRpcStruct();
 

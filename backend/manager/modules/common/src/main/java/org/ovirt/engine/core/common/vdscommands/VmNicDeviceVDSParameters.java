@@ -5,13 +5,13 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HotPlugUnplgNicVDSParameters extends VdsIdVDSCommandParametersBase {
+public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
 
     private final VM vm;
     private final VmNetworkInterface nic;
     private final VmDevice vmDevice;
 
-    public HotPlugUnplgNicVDSParameters(Guid vdsId, VM vm, VmNetworkInterface nic, VmDevice vmDevice) {
+    public VmNicDeviceVDSParameters(Guid vdsId, VM vm, VmNetworkInterface nic, VmDevice vmDevice) {
         super(vdsId);
         this.vm = vm;
         this.nic = nic;
