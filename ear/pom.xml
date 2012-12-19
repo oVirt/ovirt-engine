@@ -304,12 +304,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>remoteServer</id>
-      <properties>
-        <jbossServer>/var/autofs/suzuki</jbossServer>
-      </properties>
-    </profile>
 
     <profile>
       <id>dep</id>
