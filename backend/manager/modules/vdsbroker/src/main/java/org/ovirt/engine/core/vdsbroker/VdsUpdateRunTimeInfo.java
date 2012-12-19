@@ -1666,6 +1666,8 @@ public class VdsUpdateRunTimeInfo {
             props.remove("hibernation_vol_handle");
             props.remove("exitMessage");
             props.remove("lastStartTime");
+            props.remove("consoleUserId");
+            props.remove("console_cur_user_name");
             if (vmNewDynamicData.getstatus() != VMStatus.Up) {
                 props.remove("app_list");
                 vmNewDynamicData.setapp_list(vmToUpdate.argvalue.getAppList());

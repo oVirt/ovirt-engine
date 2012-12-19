@@ -12,9 +12,9 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -24,7 +24,6 @@ public class VncConsoleModel extends ConsoleModel
 {
     private final IVnc vnc;
     String otp64 = null;
-    private Model model;
     private static final int seconds = 120;
 
     public VncConsoleModel()
@@ -37,16 +36,23 @@ public class VncConsoleModel extends ConsoleModel
     @Override
     protected void Connect()
     {
-        if (getEntity() != null)
-        {
-            getLogger().Debug("VNC console info..."); //$NON-NLS-1$
+        if (getEntity() == null || getEntity().getRunOnVds() == null) {
+            return;
+        }
+        getLogger().Debug("VNC console info..."); //$NON-NLS-1$
 
-            // Don't connect if there VM is not running on any host.
-            if (getEntity().getRunOnVds() == null)
-            {
-                return;
+        UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand uiCommand) {
+                setVmTicket();
             }
-            Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
+        });
+
+        executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
+    }
+
+    private void setVmTicket() {
+        Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
                     seconds), new IFrontendActionAsyncCallback() {
 
@@ -81,7 +87,6 @@ public class VncConsoleModel extends ConsoleModel
                     }
                 }
             });
-        }
     }
 
     protected void postGetHost(String hostName) {
@@ -94,10 +99,10 @@ public class VncConsoleModel extends ConsoleModel
                         (getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()),
                         otp64,
                         seconds));
-        infoModel.setCloseCommand(new UICommand("closeVncInfo", model)); //$NON-NLS-1$
+        infoModel.setCloseCommand(new UICommand("closeVncInfo", parentModel)); //$NON-NLS-1$
         infoModel.getCloseCommand().setTitle(ConstantsManager.getInstance().getConstants().close());
         infoModel.getCommands().add(infoModel.getCloseCommand());
-        model.setWindow(infoModel);
+        parentModel.setWindow(infoModel);
     }
 
     @Override
@@ -111,9 +116,5 @@ public class VncConsoleModel extends ConsoleModel
                 && (getEntity().getStatus() == VMStatus.PoweringUp || getEntity().getStatus() == VMStatus.Up
                         || getEntity().getStatus() == VMStatus.RebootInProgress
                         || getEntity().getStatus() == VMStatus.PoweringDown || getEntity().getStatus() == VMStatus.Paused));
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
     }
 }

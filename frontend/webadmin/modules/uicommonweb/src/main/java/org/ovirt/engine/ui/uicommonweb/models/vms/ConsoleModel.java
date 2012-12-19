@@ -2,14 +2,23 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public abstract class ConsoleModel extends EntityModel
-{
+public abstract class ConsoleModel extends EntityModel {
     public static final String EjectLabel = "[Eject]"; //$NON-NLS-1$
 
     public static EventDefinition ErrorEventDefinition;
@@ -103,6 +112,16 @@ public abstract class ConsoleModel extends EntityModel
         super.setEntity(value);
     }
 
+    /**
+     * This attribute is a workaround for displaying popup dialogs
+     * in console models.
+     */
+    protected Model parentModel;
+
+    public void setParentModel(Model parentModel) {
+        this.parentModel = parentModel;
+    }
+
     static
     {
         ErrorEventDefinition = new EventDefinition("Error", ConsoleModel.class); //$NON-NLS-1$
@@ -176,4 +195,70 @@ public abstract class ConsoleModel extends EntityModel
             return false;
         }
     }
+
+    /**
+     * Executes given command. The confirmation dialog is displayed when it's
+     * not safe to take over the console.
+     *
+     * @param command
+     */
+    protected void executeCommandWithConsoleSafenessWarning(final UICommand command) {
+        VM vm = getEntity();
+        if (vm.getAllowConsoleReconnect() || vm.getConsoleCurentUserName() == null ||
+                Frontend.getLoggedInUser().getUserId().equals(vm.getConsoleUserId())) {
+            command.Execute();
+            return;
+        }
+
+        //now we ask if the currently connected user has permission to reconnect (async)
+        HasAdElementReconnectPermissionParameters params =
+                new HasAdElementReconnectPermissionParameters(vm.getConsoleUserId().getValue(),
+                        vm.getId().getValue());
+
+        AsyncQuery query = new AsyncQuery();
+        query.setModel(this);
+        query.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                boolean returnValue = ((Boolean) ((VdcQueryReturnValue)result).getReturnValue());
+                if (returnValue) {
+                    command.Execute();
+                } else {
+                    displayConsoleConnectConfirmPopup(command);
+                }
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, params, query);
+    }
+
+    private void displayConsoleConnectConfirmPopup(final UICommand onConfirmCommand) {
+        ConfirmationModel model = new ConfirmationModel();
+        parentModel.setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().confirmConsoleConnect());
+        model.setHashName("confirm_console_connect"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().confirmConsoleConnectMessage());
+
+        UICommand confirmAndCloseCommand = new UICommand("Confirm", new BaseCommandTarget() { //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand uiCommand) {
+                onConfirmCommand.Execute();
+                parentModel.setWindow(null);
+            }
+        });
+        confirmAndCloseCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        confirmAndCloseCommand.setIsDefault(true);
+        model.getCommands().add(confirmAndCloseCommand);
+
+        UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand uiCommand) {
+                parentModel.setWindow(null);
+            }
+        });
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
 }

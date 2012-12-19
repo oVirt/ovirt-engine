@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.*;
-import org.ovirt.engine.core.utils.*;
+import org.ovirt.engine.core.common.queries.CanUpdateFieldGenericParameters;
+import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class CanUpdateFieldGenericQuery<P extends CanUpdateFieldGenericParameters> extends QueriesCommandBase<P> {
     public CanUpdateFieldGenericQuery(P parameters) {

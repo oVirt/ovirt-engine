@@ -724,10 +724,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             if (!cachedConsoleModels.containsKey(vm.getId()))
             {
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
+                spiceConsoleModel.setParentModel(this);
                 spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
-                vncConsoleModel.setModel(this);
-
+                vncConsoleModel.setParentModel(this);
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
                 rdpConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
 

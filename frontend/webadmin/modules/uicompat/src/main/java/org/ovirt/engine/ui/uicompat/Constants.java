@@ -1693,7 +1693,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String detachGlusterHostsTitle();
 
     // Vnic
-
     @DefaultStringValue("In order to change 'Type' please Unplug and then Plug again")
     String hotTypeUpdateNotPossible();
 
@@ -1708,4 +1707,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Updating 'Port Mirroring' on a running virtual machine while the NIC is plugged is not supported")
     String hotPortMirroringUpdateNotSupported();
+
+    @DefaultStringValue("Console connect")
+    String confirmConsoleConnect();
+
+    @DefaultStringValue("There may be users connected to the console who will not be able to reconnect. Do you want to proceed?")
+    String confirmConsoleConnectMessage();
 }

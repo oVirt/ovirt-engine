@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
-import org.ovirt.engine.core.common.action.UpdateVmConsoleDataParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -43,7 +42,6 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -62,7 +60,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private SpiceMenu menu;
     private ISpice privatespice;
-    private Model model;
 
     public ISpice getspice() {
         return privatespice;
@@ -125,7 +122,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 getspice().setIsWanOptionsEnabled(false);
             }
 
-            SendVmTicket();
+            UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
+                @Override
+                public void ExecuteCommand(UICommand uiCommand) {
+                    setVmTicket();
+                }
+            });
+            executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
+
         }
     }
 
@@ -195,16 +199,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (e.getErrorCode() > 100) {
             getErrorEvent().raise(this, e);
         }
-
-        //save console flag
-        Frontend.RunAction(VdcActionType.UpdateVmConsoleData, new UpdateVmConsoleDataParameters(getEntity().getId(), null),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void Executed(FrontendActionAsyncResult result) {
-                    // Ignore result, this tries to update vm console data
-                    // nothing to do with result
-                }
-        });
     }
 
     private void Spice_Connected(Object sender) {
@@ -519,7 +513,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 _asyncQuery);
     }
 
-    private void SendVmTicket() {
+    private void setVmTicket() {
         // Create ticket for single sign on.
         Frontend.RunAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, 120),
                 new IFrontendActionAsyncCallback() {
@@ -569,14 +563,14 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                                                             logonCommandReturnValue.getDescription()
                                                                             : ""); //$NON-NLS-1$
                                                             spiceConsoleModel.ExecuteQuery(getEntity());
-                                                            model.setWindow(null);
+                                                            parentModel.setWindow(null);
                                                         }
                                                     });
 
                                     UICommand cancelCommand = new UICommand("SpiceWithoutAgentCancel", new BaseCommandTarget() { //$NON-NLS-1$
                                         @Override
                                         public void ExecuteCommand(UICommand uiCommand) {
-                                            model.setWindow(null);
+                                            parentModel.setWindow(null);
                                         }
                                     });
 
@@ -615,7 +609,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         cancelCommand.setIsCancel(true);
         spiceWithoutAgentModel.getCommands().add(cancelCommand);
 
-        model.setWindow(spiceWithoutAgentModel);
+        parentModel.setWindow(spiceWithoutAgentModel);
     }
 
     private void logSsoOnDesktopFailedAgentNonResp(ILogger logger, String vmName) {
@@ -635,10 +629,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         } catch (RuntimeException ex) {
             getLogger().Error("Exception on Spice connect", ex); //$NON-NLS-1$
         }
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
     }
 
     private static final String CommandStop = "Stop"; //$NON-NLS-1$
