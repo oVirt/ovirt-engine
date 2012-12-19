@@ -134,6 +134,7 @@ public class MacPoolManager {
         mLocObj.writeLock().lock();
         try {
             if (!mInitialized) {
+                logInitializationError("Failed to allocate new Mac address.");
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
             }
             if (mAvailableMacs.isEmpty()) {
@@ -169,12 +170,20 @@ public class MacPoolManager {
         mLocObj.writeLock().lock();
         try {
             if (!mInitialized) {
-                throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
+                logInitializationError("Failed to free mac address " + mac + " .");
+            } else {
+                internalFreeMac(mac);
             }
-            internalFreeMac(mac);
         } finally {
             mLocObj.writeLock().unlock();
         }
+    }
+
+    private void logInitializationError(String message) {
+        log.error("The MAC addresses pool is not initialized");
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.AddCustomValue("Message",message);
+        AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESSES_POOL_NOT_INITIALIZED);
     }
 
     private void internalFreeMac(String mac) {
@@ -227,7 +236,7 @@ public class MacPoolManager {
         mLocObj.writeLock().lock();
         try {
             if (!mInitialized) {
-                throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
+                logInitializationError("Failed to free MAC addresses.");
             }
             for (String mac : macs) {
                 internalFreeMac(mac);
