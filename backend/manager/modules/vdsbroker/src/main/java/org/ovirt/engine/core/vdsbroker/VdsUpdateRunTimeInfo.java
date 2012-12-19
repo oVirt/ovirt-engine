@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -88,6 +89,8 @@ public class VdsUpdateRunTimeInfo {
     private final List<VmDevice> newVmDevices = new ArrayList<VmDevice>();
     private final List<VmDeviceId> removedDeviceIds = new ArrayList<VmDeviceId>();
     private final Map<VM, VmDynamic> _vmsClientIpChanged = new HashMap<VM, VmDynamic>();
+    private final Map<Guid, List<VmGuestAgentInterface>> vmGuestAgentNics =
+            new HashMap<Guid, List<VmGuestAgentInterface>>();
     private final List<VmDynamic> _poweringUpVms = new ArrayList<VmDynamic>();
     private final List<Guid> _vmsToRerun = new ArrayList<Guid>();
     private final List<Guid> _autoVmsToRun = new ArrayList<Guid>();
@@ -146,6 +149,30 @@ public class VdsUpdateRunTimeInfo {
         updateAllInTransaction(allVmInterfaceStatistics, getDbFacade().getVmNetworkStatisticsDao());
         updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDao());
         saveVmDevicesToDb();
+        saveVmGuestAgentNetworkDevices();
+    }
+
+    private void saveVmGuestAgentNetworkDevices() {
+        if (!vmGuestAgentNics.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            for (Guid vmId : vmGuestAgentNics.keySet()) {
+                                getDbFacade().getVmGuestAgentInterfaceDao().removeAllForVm(vmId);
+                            }
+
+                            for (List<VmGuestAgentInterface> nics : vmGuestAgentNics.values()) {
+                                if (nics != null) {
+                                    for (VmGuestAgentInterface nic : nics) {
+                                        getDbFacade().getVmGuestAgentInterfaceDao().save(nic);
+                                    }
+                                }
+                            }
+                            return null;
+                        }
+                    });
+        }
     }
 
     private void saveVmDevicesToDb() {
@@ -828,6 +855,9 @@ public class VdsUpdateRunTimeInfo {
             if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getvds_group_compatibility_version())) {
                 handleVmDeviceChange();
             }
+
+            prepareGuestAgentNetworkDevicesForUpdate();
+
         } else if (command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSErrorException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
@@ -843,6 +873,58 @@ public class VdsUpdateRunTimeInfo {
         } else {
             log.errorFormat("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
         }
+    }
+
+    /**
+     * Prepare the VM Guest Agent network devices for update. <br>
+     * The evaluation of the network devices for update is done by comparing the calculated hash of the network devices
+     * from VDSM to the latest hash kept on engine side.
+     */
+    private void prepareGuestAgentNetworkDevicesForUpdate() {
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VmDynamic vmDynamic = vmInternalData.getVmDynamic();
+            if (vmDynamic != null) {
+                VM vm = _vmDict.get(vmDynamic.getId());
+                if (vm != null) {
+                    List<VmGuestAgentInterface> vmGuestAgentInterfaces = vmInternalData.getVmGuestAgentInterfaces();
+                    int guestAgentNicHash = vmGuestAgentInterfaces == null ? 0 : vmGuestAgentInterfaces.hashCode();
+                    if (guestAgentNicHash != vmDynamic.getGuestAgentNicsHash()) {
+                        vmGuestAgentNics.put(vmDynamic.getId(), vmGuestAgentInterfaces);
+
+                        // update new hash value
+                        if (_vmDynamicToSave.containsKey(vm.getId())) {
+                            updateGuestAgentInterfacesChanges(_vmDynamicToSave.get(vm.getId()),
+                                    vmGuestAgentInterfaces,
+                                    guestAgentNicHash);
+                        } else {
+                            updateGuestAgentInterfacesChanges(vmDynamic, vmGuestAgentInterfaces, guestAgentNicHash);
+                            AddVmDynamicToList(vmDynamic);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateGuestAgentInterfacesChanges(VmDynamic vmDynamic,
+            List<VmGuestAgentInterface> vmGuestAgentInterfaces,
+            int guestAgentNicHash) {
+        vmDynamic.setGuestAgentNicsHash(guestAgentNicHash);
+        vmDynamic.setvm_ip(extractVmIpsFromGuestAgentInterfaces(vmGuestAgentInterfaces));
+    }
+
+    private String extractVmIpsFromGuestAgentInterfaces(List<VmGuestAgentInterface> nics) {
+        if (nics == null || nics.isEmpty()) {
+            return null;
+        }
+
+        List<String> ips = new ArrayList<String>();
+        for (VmGuestAgentInterface nic : nics) {
+            if (nic.getIpv4Addresses() != null) {
+                ips.addAll(nic.getIpv4Addresses());
+            }
+        }
+        return ips.isEmpty() ? null : StringUtils.join(ips, " ");
     }
 
     /**
