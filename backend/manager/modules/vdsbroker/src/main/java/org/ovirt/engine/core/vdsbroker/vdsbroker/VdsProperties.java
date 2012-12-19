@@ -126,6 +126,10 @@ public final class VdsProperties {
     public static final String NETWORK_BRIDGES = "bridges";
     public static final String network_lastclientinterface = "lastClientIface";
     public static final String NETWORK_INTERFACE = "iface";
+    public static final String VM_NETWORK_INTERFACES = "netIfaces";
+    public static final String VM_IPV4_ADDRESSES = "inet";
+    public static final String VM_IPV6_ADDRESSES = "inet6";
+    public static final String VM_INTERFACE_MAC_ADDRESS = "hw";
 
     // Disks usage configuration
     public static final String VM_DISKS_USAGE = "disksUsage";

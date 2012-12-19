@@ -1297,9 +1297,50 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(XmlRpcStruct xmlRpcStruct) {
-        // TODO: implement
-        return null;
+    /**
+     * Creates a list of {@link VmGuestAgentInterface} from the {@link VdsProperties.GuestNetworkInterfaces}
+     *
+     * @param vmId
+     *            the Vm's ID which contains the interfaces
+     *
+     * @param xmlRpcStruct
+     *            the xml structure that describes the VM as reported by VDSM
+     * @return a list of {@link VmGuestAgentInterface} or null if no guest vNics were reported
+     */
+    public static List<VmGuestAgentInterface> buildVmGuestAgentInterfacesData(Guid vmId, XmlRpcStruct xmlRpcStruct) {
+        if (!xmlRpcStruct.contains(VdsProperties.VM_NETWORK_INTERFACES)) {
+            return null;
+        }
+
+        List<VmGuestAgentInterface> interfaces = new ArrayList<VmGuestAgentInterface>();
+        for (Object ifaceStruct : (Object[]) xmlRpcStruct.getItem(VdsProperties.VM_NETWORK_INTERFACES)) {
+            VmGuestAgentInterface nic = new VmGuestAgentInterface();
+            XmlRpcStruct ifaceMap = new XmlRpcStruct((Map) ifaceStruct);
+            nic.setInterfaceName(AssignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
+            nic.setMacAddress(AssignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_MAC_ADDRESS));
+            nic.setIpv4Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES));
+            nic.setIpv6Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES));
+            nic.setVmId(vmId);
+            interfaces.add(nic);
+        }
+        return interfaces;
+    }
+
+    private static List<String> extracStringtList(XmlRpcStruct xmlRpcStruct, String propertyName) {
+        if (!xmlRpcStruct.contains(propertyName)){
+            return null;
+        }
+
+        Object[] items = (Object[]) xmlRpcStruct.getItem(propertyName);
+        if (items.length == 0) {
+            return null;
+        }
+
+        List<String> list = new ArrayList<String>();
+        for (Object item : items) {
+            list.add((String) item);
+        }
+        return list;
     }
 
     private static final Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
