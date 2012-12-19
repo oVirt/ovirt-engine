@@ -134,4 +134,20 @@ public class VmGuestAgentInterface extends IVdcQueryable {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getInterfaceName())
+                .append(" {vmId=")
+                .append(getVmId())
+                .append(", macAddress=")
+                .append(getMacAddress())
+                .append(", ipv4=")
+                .append(getIpv4Addresses())
+                .append(", ipv6=")
+                .append(getIpv6Addresses())
+                .append("}");
+        return builder.toString();
+    }
 }
