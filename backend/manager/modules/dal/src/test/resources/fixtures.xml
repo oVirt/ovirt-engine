@@ -1565,6 +1565,7 @@
         <column>exit_status</column>
         <column>pause_status</column>
         <column>exit_message</column>
+        <column>guest_agent_nics_hash</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -1597,6 +1598,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null/>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1630,6 +1632,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -1663,6 +1666,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <value>3452354</value>
         </row>
     </table>
 

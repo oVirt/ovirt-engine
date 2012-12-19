@@ -223,7 +223,8 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                         vm.getUserDefinedProperties())
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
                 .addValue("cpu_pinning", vm.getCpuPinning())
-                .addValue("host_cpu_flags", vm.isUseHostCpuFlags()));
+                .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
+                .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash()));
     }
 
     @Override
@@ -350,6 +351,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setHash(rs.getString("hash"));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
+            entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
             return entity;
         }
     }

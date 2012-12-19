@@ -717,6 +717,14 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         vmDynamic.setHash(hash);
     }
 
+    public int getGuestAgentNicsHash() {
+        return vmDynamic.getGuestAgentNicsHash();
+    }
+
+    public void setGuestAgentNicsHash(int guestAgentNicsHash) {
+        vmDynamic.setGuestAgentNicsHash(guestAgentNicsHash);
+    }
+
     public Double getCpuUser() {
         return this.vmStatistics.getcpu_user();
     }

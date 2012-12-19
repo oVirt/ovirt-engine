@@ -127,6 +127,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     @Column(name = "hash")
     private String hash;
 
+    private int guestAgentNicsHash;
+
     @Column(name = "exit_message")
     private String mExitMessage;
 
@@ -434,6 +436,15 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     public void setHash(String hash) {
         this.hash = hash;
     }
+
+    public int getGuestAgentNicsHash() {
+        return guestAgentNicsHash;
+    }
+
+    public void setGuestAgentNicsHash(int guestAgentNicsHash) {
+        this.guestAgentNicsHash = guestAgentNicsHash;
+    }
+
     public boolean getWin2kHackEnable() {
         return mWin2kHackEnable;
     }

@@ -531,7 +531,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_templates.description as vmt_description, vm_dynamic.status as status, vm_dynamic.vm_ip as vm_ip, vm_dynamic.vm_host as vm_host,
                       vm_dynamic.vm_pid as vm_pid, vm_dynamic.last_start_time as last_start_time, vm_dynamic.guest_cur_user_name as guest_cur_user_name,
                       vm_dynamic.guest_last_login_time as guest_last_login_time, vm_dynamic.guest_cur_user_id as guest_cur_user_id, vm_dynamic.guest_last_logout_time as guest_last_logout_time, vm_dynamic.guest_os as guest_os,
-                      vm_dynamic.console_user_id as console_user_id,
+                      vm_dynamic.console_user_id as console_user_id, vm_dynamic.guest_agent_nics_hash as guest_agent_nics_hash,
                       vm_dynamic.run_on_vds as run_on_vds, vm_dynamic.migrating_to_vds as migrating_to_vds, vm_dynamic.app_list as app_list, vm_dynamic.display as display, vm_dynamic.hibernation_vol_handle as hibernation_vol_handle,
                       vm_pool_map_view.vm_pool_name as vm_pool_name, vm_pool_map_view.vm_pool_id as vm_pool_id, vm_static.vm_guid as vm_guid, vm_static.num_of_monitors as num_of_monitors, vm_static.allow_console_reconnect as allow_console_reconnect, vm_static.is_initialized as is_initialized,
                       vm_static.is_auto_suspend as is_auto_suspend, vm_static.num_of_sockets as num_of_sockets, vm_static.cpu_per_socket as cpu_per_socket, vm_static.usb_policy as usb_policy, vm_dynamic.acpi_enable as acpi_enable, vm_dynamic.session as session,
