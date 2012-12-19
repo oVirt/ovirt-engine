@@ -265,9 +265,9 @@ public class VdsBrokerObjectsBuilder {
                 VmNetworkInterface stats = new VmNetworkInterface();
                 vm.getInterfaceStatistics().add(stats);
 
-                if (nic.containsKey(VdsProperties.if_name)) {
-                    stats.setName((String) ((nic.getItem(VdsProperties.if_name) instanceof String) ? nic
-                            .getItem(VdsProperties.if_name) : null));
+                if (nic.containsKey(VdsProperties.VM_INTERFACE_NAME)) {
+                    stats.setName((String) ((nic.getItem(VdsProperties.VM_INTERFACE_NAME) instanceof String) ? nic
+                            .getItem(VdsProperties.VM_INTERFACE_NAME) : null));
                 }
                 Double rx_rate = AssignDoubleValue(nic, VdsProperties.rx_rate);
                 Double rx_dropped = AssignDoubleValue(nic, VdsProperties.rx_dropped);

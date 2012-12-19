@@ -110,7 +110,7 @@ public final class VdsProperties {
     public static final String transparent_huge_pages = "transparentHugePages";
 
     public static final String vm_network = "network";
-    public static final String if_name = "name";
+    public static final String VM_INTERFACE_NAME = "name";
     public static final String if_speed = "speed";
     public static final String exit_code = "exitCode";
     public static final String exit_message = "exitMessage";
