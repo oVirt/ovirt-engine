@@ -242,6 +242,11 @@ public class AddVmCommandTest {
                     protected void initStoragePoolId() {
                         // Stub for testing
                     }
+
+                    @Override
+                    public VmTemplate getVmTemplate() {
+                        return createVmTemplate();
+                    }
                 };
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
@@ -268,6 +273,11 @@ public class AddVmCommandTest {
                     @Override
                     protected void initStoragePoolId() {
                         // Stub for testing
+                    }
+
+                    @Override
+                    public VmTemplate getVmTemplate() {
+                        return createVmTemplate();
                     }
                 };
         cmd = spy(cmd);
@@ -500,6 +510,11 @@ public class AddVmCommandTest {
             @Override
             protected int getNeededDiskSize(Guid domainId) {
                 return getBlockSparseInitSizeInGb() * getVmTemplate().getDiskTemplateMap().size();
+            }
+
+            @Override
+            public VmTemplate getVmTemplate() {
+                return createVmTemplate();
             }
         };
         cmd = spy(cmd);

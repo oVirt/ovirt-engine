@@ -40,6 +40,8 @@ public enum ActionGroup {
      */
     EDIT_ADMIN_VM_PROPERTIES(15, RoleType.ADMIN, VdcObjectType.VM, true, ApplicationMode.VirtOnly),
 
+    CREATE_INSTANCE(16, RoleType.USER, VdcObjectType.VM, false, ApplicationMode.VirtOnly),
+
     // host (vds) actions groups
     CREATE_HOST(100, RoleType.ADMIN, VdcObjectType.VDS, true),
     EDIT_HOST_CONFIGURATION(101, RoleType.ADMIN, VdcObjectType.VDS, true),

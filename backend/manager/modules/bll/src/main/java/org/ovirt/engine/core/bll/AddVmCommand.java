@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -32,6 +33,8 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -44,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -81,6 +85,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;
+    protected Guid instanceTypeId;
+    protected InstanceType instanceType;
+    protected Guid imageTypeId;
+    protected ImageType imageType;
+    private Guid vmInterfacesSourceId;
+    private VmTemplate vmDisksSource;
+    private Guid vmDevicesSourceId;
 
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
@@ -103,15 +114,27 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             if (parameters.isConsoleEnabled() == null) {
                 parameters.setConsoleEnabled(false);
             }
+
+            instanceTypeId = parameters.getVmStaticData().getInstanceTypeId();
+            vmDevicesSourceId = (instanceTypeId != null) ?
+                    instanceTypeId : parameters.getVmStaticData().getVmtGuid();
+            imageTypeId = parameters.getVmStaticData().getImageTypeId();
+            vmInterfacesSourceId = parameters.getVmStaticData().getVmtGuid();
+            vmDisksSource = getVmTemplate();
         }
 
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+
+        // override values here for canDoACtion to run with correct values, has to come before init-disks
+        updateVmObject();
+
         initTemplateDisks();
         initStoragePoolId();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
         }
+
     }
 
     protected AddVmCommand(Guid commandId) {
@@ -144,6 +167,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         return cachedDiskSharedLockMessage;
     }
+    protected InstanceType getInstanceType() {
+        if (instanceType == null && instanceTypeId != null) {
+            instanceType = getVmTemplateDAO().getInstanceType(instanceTypeId);
+        }
+        return instanceType;
+    }
+
+    protected ImageType getImageType() {
+        if (imageType == null && imageTypeId != null) {
+            imageType = getVmTemplateDAO().getImageType(imageTypeId);
+        }
+        return imageType;
+    }
 
     protected void initStoragePoolId() {
         if (getVdsGroup() != null) {
@@ -153,8 +189,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void initTemplateDisks() {
-        if (getVmTemplate() != null) {
-            VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
+        if (vmDisksSource != null) {
+            VmTemplateHandler.UpdateDisksFromDb(vmDisksSource);
         }
     }
 
@@ -168,7 +204,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected List<VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
-            List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(getVmTemplate().getId());
+            List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(vmInterfacesSourceId);
             _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<VmNic>() : vmNetworkInterfaces;
         }
         return _vmInterfaces;
@@ -181,7 +217,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             _vmDisks =
                     DbFacade.getInstance()
                             .getDiskDao()
-                            .getAllForVm(getVmTemplateId());
+                            .getAllForVm(vmDisksSource.getId());
         }
 
         return _vmDisks;
@@ -232,7 +268,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {
-        return getVmTemplate().getStoragePoolId();
+        return vmDisksSource.getStoragePoolId();
     }
 
     protected int getNeededDiskSize(Guid domainId) {
@@ -388,6 +424,16 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
+        if (instanceTypeId != null && getInstanceType() == null) {
+            // invalid instance type
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);
+        }
+
+        if (imageTypeId != null && getImageType() == null) {
+            // invalid image type
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_TYPE_DOES_NOT_EXIST);
+        }
+
         if (!checkCpuSockets()){
             return false;
         }
@@ -410,7 +456,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         for (StorageDomain storage : destStorages.values()) {
-            if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
+            if (!VmTemplateCommand.isVmTemplateImagesReady(vmDisksSource, storage.getId(),
                     reasons, false, false, true, true,
                     storageToDisksMap.get(storage.getId()))) {
                 return false;
@@ -433,8 +479,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             retValue = validateProvidedDestinations();
         }
         if (retValue && getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
-            log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
-                    getVmTemplate().getId());
+            log.errorFormat("Can not find any default active domain for one of the disks of template with id : {0}",
+                    vmDisksSource.getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             retValue = false;
         }
@@ -443,7 +489,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
-        return getVmTemplate().getDiskTemplateMap().values();
+        return vmDisksSource.getDiskTemplateMap().values();
     }
 
     private boolean validateProvidedDestinations() {
@@ -481,8 +527,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void fillImagesMapBasedOnTemplate() {
-        ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getStoragePoolId()),
+        ImagesHandler.fillImagesMapBasedOnTemplate(vmDisksSource,
+                getStorageDomainDAO().getAllForStoragePool(vmDisksSource.getStoragePoolId()),
                 diskInfoDestinationMap,
                 destStorages, false);
     }
@@ -561,9 +607,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     public Void runInTransaction() {
                         copyVmDevices();
                         addDiskPermissions();
-                        addVmPayload();
-                        updateSmartCardDevices();
-                        addVmWatchdog();
+                        if (getInstanceType() == null) {
+                            addVmPayload();
+                            updateSmartCardDevices();
+                            addVmWatchdog();
+                        }
                         setActionReturnValue(getVm().getId());
                         setSucceeded(true);
                         return null;
@@ -609,7 +657,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void copyVmDevices() {
-        VmDeviceUtils.copyVmDevices(getVmTemplateId(),
+        VmDeviceUtils.copyVmDevices(vmDevicesSourceId,
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
@@ -711,7 +759,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean addVmImages() {
-        if (getVmTemplate().getDiskTemplateMap().size() > 0) {
+        if (vmDisksSource.getDiskTemplateMap().size() > 0) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
@@ -803,12 +851,46 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 }
             }
         }
+        // if using instance type, need create instance
+        if (getInstanceType() != null) {
+            permissionList.add(new PermissionSubject(instanceTypeId, VdcObjectType.VmTemplate, ActionGroup.CREATE_INSTANCE));
+        }
+        // if using image type, need create instance
+        if (getImageType() != null) {
+            permissionList.add(new PermissionSubject(imageTypeId, VdcObjectType.VmTemplate, ActionGroup.CREATE_INSTANCE));
+        }
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
 
+    /**
+     * user need permission on each object used: template, instance type, image type..
+     * for cluster: if instance type is used, create_instance is enough
+     * but if user has create_template he can choose to use instance type or template
+     */
+    @Override
+    protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
+        for (PermissionSubject permSubject : permSubjects) {
+            // if user is using instance type, then create_instance on the cluster is enough
+            if (permSubject.getObjectType() == VdcObjectType.VdsGroups && instanceTypeId != null) {
+                permSubject.setActionGroup(ActionGroup.CREATE_INSTANCE);
+                if (checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
+                    continue;
+                }
+
+                // create_vm is overriding in case no create_instance, try again with it
+                permSubject.setActionGroup(getActionType().getActionGroup());
+            }
+
+            if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected void addPermissionSubjectForAdminLevelProperties(List<PermissionSubject> permissionList) {
-        final VmStatic vmFromParams = getParameters().getVmStaticData();
+        VmStatic vmFromParams = getParameters().getVmStaticData();
 
         if (vmFromParams != null) {
             // user needs specific permission to change custom properties
@@ -954,5 +1036,42 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean isVirtioScsiControllerAttached(Guid vmId) {
         return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+    }
+
+    /**
+     * This method override vm values with the instance type values
+     * in case instance type is selected for this vm
+     */
+    private void updateVmObject() {
+        InstanceType instanceType = getInstanceType();
+        VmStatic vmStatic = getParameters().getVmStaticData();
+        if (instanceType != null) {
+            vmStatic.setMemSizeMb(instanceType.getMemSizeMb());
+            vmStatic.setNumOfSockets(instanceType.getNumOfSockets());
+            vmStatic.setCpuPerSocket(instanceType.getCpuPerSocket());
+            vmStatic.setDefaultBootSequence(instanceType.getDefaultBootSequence());
+            vmStatic.setDefaultDisplayType(instanceType.getDefaultDisplayType());
+            vmStatic.setPriority(instanceType.getPriority());
+            vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
+            vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
+
+            // use sound card only if instance type has it
+            getParameters().setSoundDeviceEnabled(!getVmDeviceDao()
+                    .getVmDeviceByVmIdAndType(instanceType.getId(), VmDeviceGeneralType.SOUND).isEmpty());
+
+            // set vm interface source id to be the instance type, vm interface are taken from it
+            vmInterfacesSourceId = instanceType.getId();
+        }
+
+        ImageType imageType = getImageType();
+        if (imageType != null) {
+            vmStatic.setOsId(imageType.getOsId());
+            vmStatic.setIsoPath(imageType.getIsoPath());
+            vmStatic.setInitrdUrl(imageType.getInitrdUrl());
+            vmStatic.setKernelUrl(imageType.getKernelUrl());
+            vmStatic.setKernelParams(imageType.getKernelParams());
+            // set vm disks source to be the image type, vm disks are taken from it
+            vmDisksSource = (VmTemplate)imageType;
+        }
     }
 }

@@ -70,6 +70,8 @@ public class PermitMapper {
             return PermitType.CHANGE_VM_CUSTOM_PROPERTIES;
         case EDIT_ADMIN_VM_PROPERTIES:
             return PermitType.EDIT_ADMIN_VM_PROPERTIES;
+        case CREATE_INSTANCE:
+            return PermitType.CREATE_INSTANCE;
         case CREATE_HOST:
             return PermitType.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:
@@ -216,6 +218,8 @@ public class PermitMapper {
             return ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES;
         case EDIT_ADMIN_VM_PROPERTIES:
             return ActionGroup.EDIT_ADMIN_VM_PROPERTIES;
+        case CREATE_INSTANCE:
+            return ActionGroup.CREATE_INSTANCE;
         case CREATE_HOST:
             return ActionGroup.CREATE_HOST;
         case EDIT_HOST_CONFIGURATION:

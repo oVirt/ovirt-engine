@@ -32,6 +32,7 @@ public enum PermitType {
     RECONNECT_TO_VM,
     CHANGE_VM_CUSTOM_PROPERTIES,
     EDIT_ADMIN_VM_PROPERTIES,
+    CREATE_INSTANCE,
     // host (vds) actions groups
     CREATE_HOST,
     EDIT_HOST_CONFIGURATION,
