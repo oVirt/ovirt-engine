@@ -25,6 +25,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<BrickAdvancedDetailsModel> implements BrickAdvancedDetailsPopupPresenterWidget.ViewDef {
@@ -169,6 +170,10 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel> memoryPoolsTable;
+
+    @UiField
+    @Ignore
+    Label messageLabel;
 
     @Inject
     public BrickAdvancedDetailsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
@@ -342,6 +347,12 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @Override
     public BrickAdvancedDetailsModel flush() {
         return Driver.driver.flush();
+    }
+
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        messageLabel.setText(message);
     }
 
     interface WidgetStyle extends CssResource {

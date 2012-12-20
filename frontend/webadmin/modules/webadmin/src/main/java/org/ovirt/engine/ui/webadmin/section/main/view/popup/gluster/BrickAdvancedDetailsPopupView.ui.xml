@@ -11,14 +11,24 @@
 			width: 615px;
 			border: 1px solid #CED8DF;
 		}
+
 		.memStatLabel{
 			width: 150px;
 		}
+
 		.memStatValue{
 			width: 150px;
 		}
+
 		.generalValue{
 			width: 300px;
+		}
+
+		.messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-top: 50px;
+			padding-left: 5px;
 		}
 	</ui:style>
 
@@ -39,6 +49,7 @@
 								<e:EntityModelLabelEditor ui:field="blockSizeEditor" />
 								<e:EntityModelTextAreaLabelEditor ui:field="mountOptionsEditor" />
 								<e:EntityModelLabelEditor ui:field="fileSystemEditor" />
+								<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

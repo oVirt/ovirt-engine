@@ -1098,13 +1098,6 @@ public final class AsyncDataProvider {
     }
 
     public static void GetGlusterVolumeBrickDetails(AsyncQuery aQuery, Guid clusterId, String volume, String brick) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source;
-            }
-        };
         GlusterVolumeAdvancedDetailsParameters parameters =
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, volume, brick, true);
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeAdvancedDetails,
