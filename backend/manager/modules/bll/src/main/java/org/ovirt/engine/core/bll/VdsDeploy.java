@@ -70,7 +70,6 @@ import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
  */
 public class VdsDeploy implements SSHDialog.Sink {
 
-    private static final int BUFFER_SIZE = 10 * 1024;
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String IPTABLES_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
@@ -784,11 +783,6 @@ public class VdsDeploy implements SSHDialog.Sink {
         );
 
         if (s_deployPackage == null) {
-            String cachedir = System.getenv("ENGINE_CACHE");
-            if (cachedir == null) {
-                log.warn("ENGINE_CACHE environment not found using tmpdir");
-                cachedir = System.getProperty("java.io.tmpdir");
-            }
             s_deployPackage = new CachedTar(
                 new File(
                     LocalConfig.getInstance().getCacheDir(),
