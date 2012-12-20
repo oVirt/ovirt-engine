@@ -18,9 +18,9 @@ public class CommandAssertUtils {
 
     public static void checkMessages(CommandBase<?> cmd, VdcBllMessages... expected) {
         List<String> returned = cmd.getReturnValue().getCanDoActionMessages();
-        assertEquals(expected.length, returned.size());
+        assertEquals("Wrong number of messages", expected.length, returned.size());
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i].toString(), returned.get(i));
+            assertEquals("Wrong message", expected[i].toString(), returned.get(i));
         }
     }
 

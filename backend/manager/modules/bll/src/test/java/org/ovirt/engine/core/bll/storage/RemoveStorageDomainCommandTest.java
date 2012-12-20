@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-
-import java.util.List;
+import static org.ovirt.engine.core.bll.CommandAssertUtils.checkMessages;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -51,13 +49,15 @@ public class RemoveStorageDomainCommandTest {
         // All the mock DAOs return nulls (which mocks the objects do not exist)
         // canDoAction should return false, not crash with NullPointerExcpetion
         assertFalse("canDoActtion shouldn't be possible for a non-existant storage domain", command.canDoAction());
-        List<String> messages = command.getReturnValue().getCanDoActionMessages();
-        assertEquals("Wrong number of messages", 2, messages.size());
-        assertEquals("Wrong message",
-                VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN.name(),
-                messages.get(0));
-        assertEquals("Wrong message",
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.name(),
-                messages.get(1));
+        checkMessages(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+    }
+
+    @Test
+    public void testSetActionMessageParameters() {
+        command.setActionMessageParameters();
+        checkMessages(command,
+                VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN,
+                VdcBllMessages.VAR__ACTION__REMOVE);
     }
 }

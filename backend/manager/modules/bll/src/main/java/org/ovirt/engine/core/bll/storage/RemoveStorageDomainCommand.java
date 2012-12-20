@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
 import java.util.Map;
+
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -75,6 +76,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+    }
+
+    @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
             return false;
@@ -89,8 +96,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         VDS vds = getVds();
         boolean format = getParameters().getDoFormat();
         boolean localFs = isLocalFs(dom);
-
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
 
         if (!checkStorageDomain() || !checkStorageDomainSharedStatusNotLocked(dom)) {
             return false;
