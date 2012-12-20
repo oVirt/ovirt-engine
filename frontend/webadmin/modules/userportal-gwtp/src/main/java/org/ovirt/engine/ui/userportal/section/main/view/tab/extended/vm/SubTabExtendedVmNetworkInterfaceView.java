@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
@@ -26,8 +27,8 @@ public class SubTabExtendedVmNetworkInterfaceView extends AbstractSubTabTableWid
 
     @Inject
     public SubTabExtendedVmNetworkInterfaceView(VmInterfaceListModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationTemplates templates, ApplicationConstants constants) {
-        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage, templates));
+            EventBus eventBus, ClientStorage clientStorage, ApplicationMessages messages, ApplicationTemplates templates, ApplicationConstants constants) {
+        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage, constants, messages, templates));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getModelBoundTableWidget());

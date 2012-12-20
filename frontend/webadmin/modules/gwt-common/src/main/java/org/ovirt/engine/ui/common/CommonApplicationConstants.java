@@ -163,6 +163,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disks")
     String disksLabel();
 
+    @DefaultStringValue("Statistics")
+    String statistics();
+
+    @DefaultStringValue("Guest Agent Data")
+    String guestAgentData();
+
     @DefaultStringValue("Network Interfaces")
     String nicsLabel();
 
@@ -1096,5 +1102,18 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Hide Quota Distribution")
     String hideQuotaDistribution();
+
+    // Vm Guest Agent
+    @DefaultStringValue("Name")
+    String nameVmGuestAgent();
+
+    @DefaultStringValue("IPv4")
+    String ipv4VmGuestAgent();
+
+    @DefaultStringValue("IPv6")
+    String ipv6VmGuestAgent();
+
+    @DefaultStringValue("MAC")
+    String macVmGuestAgent();
 
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -42,6 +44,10 @@ public class VmInterfaceListModel extends SearchableListModel
     private boolean isHotPlugSupported;
 
     private UICommand privateNewCommand;
+
+    private List<VmGuestAgentInterface> guestAgentData;
+
+    private List<VmGuestAgentInterface> selectionGuestAgentData;
 
     public UICommand getNewCommand()
     {
@@ -101,6 +107,22 @@ public class VmInterfaceListModel extends SearchableListModel
         privateDactivateCommand = value;
     }
 
+    public List<VmGuestAgentInterface> getGuestAgentData() {
+        return guestAgentData;
+    }
+
+    public void setGuestAgentData(List<VmGuestAgentInterface> guestAgentData) {
+        this.guestAgentData = guestAgentData;
+    }
+
+    public List<VmGuestAgentInterface> getSelectionGuestAgentData() {
+        return selectionGuestAgentData;
+    }
+
+    public void setSelectionGuestAgentData(List<VmGuestAgentInterface> selectedGuestAgentData) {
+        this.selectionGuestAgentData = selectedGuestAgentData;
+    }
+
     public VmInterfaceListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -112,6 +134,7 @@ public class VmInterfaceListModel extends SearchableListModel
         setActivateCommand(new UICommand("Activate", this)); //$NON-NLS-1$
         setDeactivateCommand(new UICommand("Deactivate", this)); //$NON-NLS-1$
 
+        initSelectionGeustAgentData(getSelectedItem());
         UpdateActionAvailability();
     }
 
@@ -135,8 +158,19 @@ public class VmInterfaceListModel extends SearchableListModel
         {
             return;
         }
-        VM vm = (VM) getEntity();
-        super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()));
+        final VM vm = (VM) getEntity();
+
+        // Initialize guest agent data
+        AsyncQuery getVmGuestAgentInterfacesByVmIdQuery = new AsyncQuery();
+        getVmGuestAgentInterfacesByVmIdQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object result)
+            {
+                setGuestAgentData((List<VmGuestAgentInterface>) result);
+                VmInterfaceListModel.super.SyncSearch(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(vm.getId()));
+            }
+        };
+        AsyncDataProvider.getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
     }
 
     @Override
@@ -559,6 +593,29 @@ public class VmInterfaceListModel extends SearchableListModel
     @Override
     protected String getListName() {
         return "VmInterfaceListModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    protected void OnSelectedItemChanging(Object newValue, Object oldValue) {
+        initSelectionGeustAgentData(newValue);
+        super.OnSelectedItemChanging(newValue, oldValue);
+    }
+
+    private void initSelectionGeustAgentData(Object selectedItem) {
+        if (selectedItem == null || getGuestAgentData() == null){
+            setSelectionGuestAgentData(null);
+            return;
+        }
+        List<VmGuestAgentInterface> selectionInterfaces = new ArrayList<VmGuestAgentInterface>();
+
+        for (VmGuestAgentInterface guestInterface : getGuestAgentData()) {
+            if (StringHelper.stringsEqual(guestInterface.getMacAddress(),
+                    ((VmNetworkInterface) selectedItem).getMacAddress())) {
+                selectionInterfaces.add(guestInterface);
+            }
+        }
+
+        setSelectionGuestAgentData(selectionInterfaces);
     }
 
     @Override

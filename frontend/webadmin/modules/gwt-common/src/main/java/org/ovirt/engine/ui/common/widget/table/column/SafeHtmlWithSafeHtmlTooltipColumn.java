@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
+package org.ovirt.engine.ui.common.widget.table.column;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell.Context;

@@ -60,4 +60,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Free: {0} vCPU")
     String quotaFreeCpus(int numOfVCPU);
+
+    @DefaultMessage("{0} addresses")
+    String addressesVmGuestAgent(int numOfAddresses);
 }

@@ -22,6 +22,7 @@ package org.ovirt.engine.ui.uicompat.external;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 //import org.apache.commons.codec.CharEncoding;
 
@@ -287,13 +288,13 @@ public class StringUtils {
      * @param delimiter the separator string to use
      * @return
      */
-    public static String join(ArrayList<String> array, String delimiter) {
-        if (array == null) {
+    public static String join(List<String> list, String delimiter) {
+        if (list == null) {
             return "";
         }
 
         StringBuilder builder = new StringBuilder();
-        Iterator<String> iter = array.iterator();
+        Iterator<String> iter = list.iterator();
         while (iter.hasNext()) {
             builder.append(iter.next());
             if (!iter.hasNext()) {
