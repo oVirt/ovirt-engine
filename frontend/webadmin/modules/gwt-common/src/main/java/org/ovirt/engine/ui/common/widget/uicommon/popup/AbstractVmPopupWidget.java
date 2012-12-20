@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -43,6 +45,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -436,6 +440,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     protected KeyValueWidget customPropertiesSheetEditor;
 
     CommonApplicationConstants constants;
+    CommonApplicationMessages messages;
 
     @UiField
     @Ignore
@@ -458,6 +463,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             CommonApplicationResources resources,
             final CommonApplicationMessages messages) {
         this.constants = constants;
+        this.messages = messages;
 
         initListBoxEditors();
         // Contains a special parser/renderer
@@ -907,14 +913,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
                     storageAllocationPanel.setVisible(isProvisioningAvailable || isDisksAvailable);
 
-                    if (vm.getDisks() != null) {
-                        for (DiskModel diskModel : vm.getDisks()) {
-                            if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
-                                    ((DiskImage) diskModel.getDisk()).getimageStatus() == ImageStatus.ILLEGAL) {
-                                generalWarningMessage.setText(constants.illegalDisksInVm());
-                                return;
-                            }
-                        }
+                    if (isDisksAvailable) {
+                        // Update warning message by disks status
+                        updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.ILLEGAL);
+                        updateDisksWarningByImageStatus(vm.getDisks(), ImageStatus.LOCKED);
+                    }
+                    else {
+                        // Clear warning message
+                        generalWarningMessage.setText(""); //$NON-NLS-1$
                     }
                 }
             }
@@ -974,6 +980,36 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
             }
         });
 
+    }
+
+    private void updateDisksWarningByImageStatus(List<DiskModel> disks, ImageStatus imageStatus) {
+        ArrayList<String> disksAliases =
+                getDisksAliasesByImageStatus(disks, imageStatus);
+
+        if (!disksAliases.isEmpty()) {
+            generalWarningMessage.setText(messages.disksStatusWarning(
+                    EnumTranslator.createAndTranslate(imageStatus),
+                    (StringUtils.join(disksAliases, ", ")))); //$NON-NLS-1$
+        }
+    }
+
+    private ArrayList<String> getDisksAliasesByImageStatus(List<DiskModel> disks, ImageStatus status) {
+        ArrayList<String> disksAliases = new ArrayList<String>();
+
+        if (disks == null) {
+            return disksAliases;
+        }
+
+        for (DiskModel diskModel : disks) {
+            Disk disk = diskModel.getDisk();
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                    ((DiskImage) disk).getimageStatus() == status) {
+
+                disksAliases.add(disk.getDiskAlias());
+            }
+        }
+
+        return disksAliases;
     }
 
     @Override

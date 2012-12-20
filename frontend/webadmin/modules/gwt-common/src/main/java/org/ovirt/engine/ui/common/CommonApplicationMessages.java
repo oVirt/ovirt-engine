@@ -63,4 +63,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0} addresses")
     String addressesVmGuestAgent(int numOfAddresses);
+
+    @DefaultMessage("The following disks are in status {0}: {1}")
+    String disksStatusWarning(String status, String disksAliases);
 }
