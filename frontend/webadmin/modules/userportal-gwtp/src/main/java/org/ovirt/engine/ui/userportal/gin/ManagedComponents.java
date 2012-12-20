@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmMonitorPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSessionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSnapshotPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolDiskListModelProvider;
@@ -40,6 +41,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSessionsModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
 import com.google.gwt.inject.client.AsyncProvider;
@@ -117,6 +119,8 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabExtendedVmMonitorPresenter> getSubTabExtendedVmMonitorPresenter();
 
+    AsyncProvider<SubTabExtendedVmSessionsPresenter> getSubTabExtendedVmSessionsPresenter();
+
     VmSnapshotListModelProvider getVmSnapshotListModelProvider();
 
     VmEventListModelProvider getVmEventListModelProvider();
@@ -136,6 +140,8 @@ public interface ManagedComponents {
     PoolDiskListModelProvider getPoolDiskListModelProvider();
 
     AsyncProvider<SubTabExtendedPoolGeneralPresenter> getSubTabExtendedPoolGeneralPresenter();
+
+    VmSessionsModelProvider getVmSessionsModelProvider();
 
     // Template
 

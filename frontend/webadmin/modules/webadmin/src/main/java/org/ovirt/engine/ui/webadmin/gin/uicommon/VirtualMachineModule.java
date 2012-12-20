@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -150,6 +151,15 @@ public class VirtualMachineModule extends AbstractGinModule {
                 VmListModel.class,
                 VmGeneralModel.class);
     }
+
+    @Provides
+    @Singleton
+    public DetailModelProvider<VmListModel, VmSessionsModel> getVmSessionsProvider(ClientGinjector ginjector) {
+        return new DetailTabModelProvider<VmListModel, VmSessionsModel>(ginjector,
+                VmListModel.class,
+                VmSessionsModel.class);
+    }
+
 
     // Searchable Detail Models
     @Provides

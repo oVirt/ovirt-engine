@@ -12,10 +12,10 @@ import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralMod
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmAppListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmEventListModelProvider;
@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSessionsModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
 
 import com.google.inject.Singleton;
@@ -55,6 +56,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmAppListModelProvider.class).asEagerSingleton();
         bind(VmMonitorModelProvider.class).asEagerSingleton();
         bind(PoolInterfaceListModelProvider.class).asEagerSingleton();
+        bind(VmSessionsModelProvider.class).asEagerSingleton();
 
         // Extended tab: Template
         bind(UserPortalTemplateListProvider.class).asEagerSingleton();

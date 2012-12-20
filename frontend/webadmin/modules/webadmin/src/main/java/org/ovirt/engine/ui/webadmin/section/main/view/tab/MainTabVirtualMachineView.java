@@ -149,17 +149,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "80px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
-            @Override
-            public String getValue(VM object) {
-                if (object.getGuestCurUserName() == null) {
-                    return ""; //$NON-NLS-1$
-                }
-                return String.valueOf(object.getGuestCurUserName());
-            }
-        };
-        getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "100px"); //$NON-NLS-1$
-
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newServerVm()) {
             @Override
             protected UICommand resolveCommand() {

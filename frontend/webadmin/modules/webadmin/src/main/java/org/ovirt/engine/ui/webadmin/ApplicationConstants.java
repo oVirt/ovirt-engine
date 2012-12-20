@@ -328,6 +328,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String virtualMachinePermissionSubTabLabel();
 
+    @DefaultStringValue("Sessions")
+    String virtualMachineSessionsSubTabLabel();
+
     @DefaultStringValue("Events")
     String virtualMachineEventSubTabLabel();
 
@@ -1241,9 +1244,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Uptime")
     String uptimeVm();
-
-    @DefaultStringValue("Logged-in User")
-    String loggedInUserVm();
 
     @DefaultStringValue("New Server")
     String newServerVm();

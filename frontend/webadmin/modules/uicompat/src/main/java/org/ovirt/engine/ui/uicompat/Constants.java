@@ -503,6 +503,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Monitor")
     String monitorTitle();
 
+    @DefaultStringValue("Sessions")
+    String sessionsTitle();
+
     @DefaultStringValue("RDP")
     String RDPTitle();
 

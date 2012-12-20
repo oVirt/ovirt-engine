@@ -78,6 +78,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -197,6 +198,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     }
 
     private EntityModel vmGeneralModel;
+    private EntityModel vmSessionsModel;
     private ListModel vmSnapshotListModel;
     private EntityModel vmMonitorModel;
     private ListModel vmDiskListModel;
@@ -389,6 +391,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         vmGeneralModel = new VmGeneralModel();
         vmGeneralModel.setIsAvailable(false);
 
+        vmSessionsModel = new VmSessionsModel();
+        vmSessionsModel.setIsAvailable(false);
+
         vmSnapshotListModel = new UserPortalVmSnapshotListModel();
         vmSnapshotListModel.setIsAvailable(false);
 
@@ -431,12 +436,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         list.add(vmEventListModel);
         list.add(vmAppListModel);
         list.add(vmMonitorModel);
+        list.add(vmSessionsModel);
 
         setDetailModels(list);
 
         permissionListModel.setIsAvailable(true);
         vmEventListModel.setIsAvailable(true);
         vmAppListModel.setIsAvailable(true);
+        vmSessionsModel.setIsAvailable(true);
     }
 
     @Override

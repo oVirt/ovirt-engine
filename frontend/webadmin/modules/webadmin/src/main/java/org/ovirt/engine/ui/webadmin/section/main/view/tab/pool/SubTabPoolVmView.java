@@ -74,10 +74,18 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<vm_pools, VM, Pool
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm());
 
+        TextColumnWithTooltip<VM> consoleConnectedUserColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getConsoleCurentUserName();
+            }
+        };
+        getTable().addColumn(consoleConnectedUserColumn, constants.consoleConnectedUserVm());
+
         TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getGuestCurUserName();
+                return object.getGuestCurentUserName();
             }
         };
         getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm());

@@ -691,6 +691,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         list.add(new VmEventListModel());
         list.add(new VmAppListModel());
         list.add(new PermissionListModel());
+        list.add(new VmSessionsModel());
         setDetailModels(list);
     }
 

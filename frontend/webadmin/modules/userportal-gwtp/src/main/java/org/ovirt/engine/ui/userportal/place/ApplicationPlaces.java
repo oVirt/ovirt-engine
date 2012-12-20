@@ -64,6 +64,9 @@ public class ApplicationPlaces {
     public static final String extendedVirtualMachineMonitorSubTabPlace = extendedVirtualMachineSideTabPlace
             + SUB_TAB_PREFIX + "monitor"; //$NON-NLS-1$
 
+    public static final String extendedVirtualMachineSessionsSubTabPlace = extendedVirtualMachineSideTabPlace
+            + SUB_TAB_PREFIX + "sessions"; //$NON-NLS-1$
+
     // Templates
 
     public static final String extendedTempplateGeneralSubTabPlace = extendedTemplateSideTabPlace

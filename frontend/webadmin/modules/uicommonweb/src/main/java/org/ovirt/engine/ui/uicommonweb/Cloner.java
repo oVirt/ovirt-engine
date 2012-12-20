@@ -120,8 +120,8 @@ public final class Cloner
         vm.setExitMessage(instance.getExitMessage());
         vm.setExitStatus(instance.getExitStatus());
         vm.setFailBack(instance.isFailBack());
-        vm.setGuestCurUserId(instance.getGuestCurUserId());
-        vm.setGuestCurUserName(instance.getGuestCurUserName());
+        vm.setConsoleCurrentUserName(instance.getConsoleCurentUserName());
+        vm.setGuestCurrentUserName(instance.getGuestCurentUserName());
         vm.setConsoleUserId(instance.getConsoleUserId());
         vm.setGuestLastLoginTime(instance.getGuestLastLoginTime());
         vm.setGuestLastLogoutTime(instance.getGuestLastLogoutTime());

@@ -134,6 +134,9 @@ public class ApplicationPlaces {
     public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 
+    public static final String virtualMachineSessionsSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "sessions"; //$NON-NLS-1$
+
     public static final String virtualMachineEventSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
     // Host

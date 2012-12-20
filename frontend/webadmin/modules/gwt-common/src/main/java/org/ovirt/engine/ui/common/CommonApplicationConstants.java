@@ -288,6 +288,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Installed Applications")
     String installedAppsVm();
 
+    @DefaultStringValue("Console User")
+    String consoleConnectedUserVm();
+
+    @DefaultStringValue("Logged-in User")
+    String loggedInUserVm();
+
     // VM popup
     @DefaultStringValue("High Availability")
     String highAvailVmPopup();
