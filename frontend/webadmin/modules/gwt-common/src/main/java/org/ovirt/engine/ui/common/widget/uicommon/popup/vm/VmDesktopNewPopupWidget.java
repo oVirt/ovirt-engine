@@ -25,18 +25,18 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
     }
 
     @Override
-    public void edit(UnitVmModel object) {
-        super.edit(object);
-        initTabAvailabilityListeners(object);
+    public void edit(UnitVmModel unitVmModel) {
+        super.edit(unitVmModel);
+        initTabAvailabilityListeners();
 
-        if (object.isVmAttachedToPool()) {
+        if (unitVmModel.isVmAttachedToPool()) {
             specificHost.setEnabled(false);
             specificHostLabel.setStyleName(style.labelDisabled(), true);
             customPropertiesSheetEditor.setEnabled(false);
         }
     }
 
-    private void initTabAvailabilityListeners(final UnitVmModel vm) {
+    private void initTabAvailabilityListeners() {
         // High Availability only avail in server mode
         highAvailabilityTab.setVisible(false);
 
