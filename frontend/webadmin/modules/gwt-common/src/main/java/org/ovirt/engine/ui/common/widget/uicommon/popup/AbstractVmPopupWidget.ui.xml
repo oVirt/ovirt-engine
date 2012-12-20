@@ -106,6 +106,10 @@
 			width: 350px;
 		}
 
+        .labelDisabled {
+            color: gray;
+        }
+
 		.runHostPanel {
 
 		}
@@ -327,7 +331,7 @@
 								addStyleNames="{style.radioButton}" />
                             <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
-                                <g:Label text="{constants.specificVmPopup}" />
+                                <g:Label ui:field="specificHostLabel" text="{constants.specificVmPopup}" />
                                 <e:ListModelListBoxEditor ui:field="defaultHostEditor" />
                             </g:HorizontalPanel>
 						</g:VerticalPanel>

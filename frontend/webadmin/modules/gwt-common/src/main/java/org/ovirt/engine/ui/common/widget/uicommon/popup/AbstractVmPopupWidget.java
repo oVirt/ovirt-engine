@@ -86,6 +86,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         String cdAttachedLabelWidth();
 
         String assignedVmsLabel();
+
+        String labelDisabled();
     }
 
     interface PrestartedVmsContextHelp extends SafeHtmlTemplates {
@@ -303,6 +305,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("specificHost")
     public RadioButton specificHost;
 
+    @UiField
+    @Ignore
+    public Label specificHostLabel;
+
     @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
     @WithElementId("defaultHost")
@@ -454,7 +460,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         this.constants = constants;
 
         initListBoxEditors();
-
         // Contains a special parser/renderer
         memSizeEditor = new EntityModelTextBoxEditor(
                 new MemorySizeRenderer(constants), new MemorySizeParser());

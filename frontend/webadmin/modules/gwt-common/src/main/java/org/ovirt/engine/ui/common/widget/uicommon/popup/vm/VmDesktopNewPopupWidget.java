@@ -31,6 +31,7 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
 
         if (object.isVmAttachedToPool()) {
             specificHost.setEnabled(false);
+            specificHostLabel.setStyleName(style.labelDisabled(), true);
             customPropertiesSheetEditor.setEnabled(false);
         }
     }
