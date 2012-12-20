@@ -29,8 +29,10 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
         super.edit(object);
         initTabAvailabilityListeners(object);
 
-        if (object.isVmAttachedToPool())
-            disableAllWidgetsExceptNameEditor();
+        if (object.isVmAttachedToPool()) {
+            specificHost.setEnabled(false);
+            customPropertiesSheetEditor.setEnabled(false);
+        }
     }
 
     private void initTabAvailabilityListeners(final UnitVmModel vm) {
@@ -42,66 +44,5 @@ public class VmDesktopNewPopupWidget extends AbstractVmPopupWidget {
         numOfMonitorsEditor.setVisible(true);
         allowConsoleReconnectEditor.setVisible(true);
         expander.setVisible(true);
-    }
-
-    private void disableAllWidgetsExceptNameEditor() {
-        // ==General Tab==
-        dataCenterEditor.setEnabled(false);
-        clusterEditor.setEnabled(false);
-        quotaEditor.setEnabled(false);
-        descriptionEditor.setEnabled(false);
-
-        numOfVmsEditor.setEnabled(false);
-        prestartedVmsEditor.setEnabled(false);
-        editPrestartedVmsEditor.setEnabled(false);
-
-        templateEditor.setEnabled(false);
-        memSizeEditor.setEnabled(false);
-        totalvCPUsEditor.setEnabled(false);
-
-        corePerSocketEditor.setEnabled(false);
-        numOfSocketsEditor.setEnabled(false);
-
-        oSTypeEditor.setEnabled(false);
-        isStatelessEditor.setEnabled(false);
-        isDeleteProtectedEditor.setEnabled(false);
-
-        // ==Initial run Tab==
-        timeZoneEditor.setEnabled(false);
-        domainEditor.setEnabled(false);
-
-        // ==Console Tab==
-        displayProtocolEditor.setEnabled(false);
-        usbSupportEditor.setEnabled(false);
-        numOfMonitorsEditor.setEnabled(false);
-        isSmartcardEnabledEditor.setEnabled(false);
-        allowConsoleReconnectEditor.setEnabled(false);
-
-        // ==Host Tab==
-        isAutoAssignEditor.setEnabled(false);
-        specificHost.setEnabled(false);
-        defaultHostEditor.setEnabled(false);
-        runVMOnSpecificHostEditor.setEnabled(false);
-        dontMigrateVMEditor.setEnabled(false);
-        cpuPinning.setEnabled(false);
-
-        // ==Resource Allocation Tab==
-        minAllocatedMemoryEditor.setEnabled(false);
-        provisioningEditor.setEnabled(false);
-        provisioningThinEditor.setEnabled(false);
-        provisioningCloneEditor.setEnabled(false);
-        disksAllocationView.setEnabled(false);
-
-        // ==Boot Options Tab==
-        firstBootDeviceEditor.setEnabled(false);
-        secondBootDeviceEditor.setEnabled(false);
-        cdAttachedEditor.setEnabled(false);
-        cdImageEditor.setEnabled(false);
-        kernel_pathEditor.setEnabled(false);
-        initrd_pathEditor.setEnabled(false);
-        kernel_parametersEditor.setEnabled(false);
-
-        // ==Custom Properties Tab==
-        customPropertiesSheetEditor.setEnabled(false);
     }
 }

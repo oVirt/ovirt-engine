@@ -74,13 +74,72 @@ public class UnitVmModel extends Model {
         return vmAttachedToPool;
     }
 
+    /**
+     * Note: We assume that this method is called only once, on the creation stage
+     * of the model. if this assumption is changed (i.e the VM can attached/detached
+     * from a pool after the model is created), this method should be modified
+     */
     public void setVmAttachedToPool(boolean value) {
-        if (vmAttachedToPool != value) {
-            if (value) {
-                getNumOfSockets().setIsChangable(false);
-                getCoresPerSocket().setIsChangable(false);
-            }
-            vmAttachedToPool = value;
+        if (value) {
+            // ==General Tab==
+            getDataCenter().setIsChangable(false);
+            getCluster().setIsChangable(!value);
+            getQuota().setIsChangable(false);
+            getDescription().setIsChangable(false);
+
+            getNumOfDesktops().setIsChangable(false);
+            getPrestartedVms().setIsChangable(false);
+
+            getTemplate().setIsChangable(false);
+            getMemSize().setIsChangable(false);
+            getTotalCPUCores().setIsChangable(false);
+
+            getCoresPerSocket().setIsChangable(false);
+            getNumOfSockets().setIsChangable(false);
+
+            getOSType().setIsChangable(false);
+            getIsStateless().setIsChangable(false);
+            getIsDeleteProtected().setIsChangable(false);
+
+            // ==Initial run Tab==
+            getTimeZone().setIsChangable(false);
+            getDomain().setIsChangable(false);
+
+            // ==Console Tab==
+            getDisplayProtocol().setIsChangable(false);
+            getUsbPolicy().setIsChangable(false);
+            getNumOfMonitors().setIsChangable(false);
+            getIsSmartcardEnabled().setIsChangable(false);
+            getAllowConsoleReconnect().setIsChangable(false);
+
+            // ==Host Tab==
+            getIsAutoAssign().setIsChangable(false);
+            getDefaultHost().setIsChangable(false);
+            getRunVMOnSpecificHost().setIsChangable(false);
+            getHostCpu().setIsChangable(false);
+            getDontMigrateVM().setIsChangable(false);
+            getCpuPinning().setIsChangable(false);
+
+            // ==Resource Allocation Tab==
+            getMinAllocatedMemory().setIsChangable(false);
+            getProvisioning().setIsChangable(false);
+            getProvisioningThin_IsSelected().setIsChangable(false);
+            getProvisioningClone_IsSelected().setIsChangable(false);
+            getDisksAllocationModel().setIsChangable(false);
+
+            // ==Boot Options Tab==
+            getFirstBootDevice().setIsChangable(false);
+            getSecondBootDevice().setIsChangable(false);
+            getCdAttached().setIsChangable(false);
+            getCdImage().setIsChangable(false);
+            getKernel_path().setIsChangable(false);
+            getInitrd_path().setIsChangable(false);
+            getKernel_parameters().setIsChangable(false);
+
+            // ==Custom Properties Tab==
+            getCustomProperties().setIsChangable(false);
+
+            vmAttachedToPool = true;
         }
     }
 
@@ -300,38 +359,38 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private ListModel privateDataCenter;
+    private NotChangableForVmInPoolListModel privateDataCenter;
 
     public ListModel getDataCenter()
     {
         return privateDataCenter;
     }
 
-    private void setDataCenter(ListModel value)
+    private void setDataCenter(NotChangableForVmInPoolListModel value)
     {
         privateDataCenter = value;
     }
 
-    private ListModel privateStorageDomain;
+    private NotChangableForVmInPoolListModel privateStorageDomain;
 
     public ListModel getStorageDomain()
     {
         return privateStorageDomain;
     }
 
-    private void setStorageDomain(ListModel value)
+    private void setStorageDomain(NotChangableForVmInPoolListModel value)
     {
         privateStorageDomain = value;
     }
 
-    private ListModel privateTemplate;
+    private NotChangableForVmInPoolListModel privateTemplate;
 
     public ListModel getTemplate()
     {
         return privateTemplate;
     }
 
-    private void setTemplate(ListModel value)
+    private void setTemplate(NotChangableForVmInPoolListModel value)
     {
         privateTemplate = value;
     }
@@ -348,393 +407,393 @@ public class UnitVmModel extends Model {
         privateName = value;
     }
 
-    private ListModel privateOSType;
+    private NotChangableForVmInPoolListModel privateOSType;
 
     public ListModel getOSType()
     {
         return privateOSType;
     }
 
-    private void setOSType(ListModel value)
+    private void setOSType(NotChangableForVmInPoolListModel value)
     {
         privateOSType = value;
     }
 
-    private ListModel privateNumOfMonitors;
+    private NotChangableForVmInPoolListModel privateNumOfMonitors;
 
     public ListModel getNumOfMonitors()
     {
         return privateNumOfMonitors;
     }
 
-    private void setNumOfMonitors(ListModel value)
+    private void setNumOfMonitors(NotChangableForVmInPoolListModel value)
     {
         privateNumOfMonitors = value;
     }
 
-    private EntityModel privateAllowConsoleReconnect;
+    private NotChangableForVmInPoolEntityModel privateAllowConsoleReconnect;
 
     public EntityModel getAllowConsoleReconnect()
     {
         return privateAllowConsoleReconnect;
     }
 
-    private void setAllowConsoleReconnect(EntityModel value)
+    private void setAllowConsoleReconnect(NotChangableForVmInPoolEntityModel value)
     {
         privateAllowConsoleReconnect = value;
     }
 
-    private EntityModel privateDescription;
+    private NotChangableForVmInPoolEntityModel privateDescription;
 
     public EntityModel getDescription()
     {
         return privateDescription;
     }
 
-    private void setDescription(EntityModel value)
+    private void setDescription(NotChangableForVmInPoolEntityModel value)
     {
         privateDescription = value;
     }
 
-    private ListModel privateDomain;
+    private NotChangableForVmInPoolListModel privateDomain;
 
     public ListModel getDomain()
     {
         return privateDomain;
     }
 
-    private void setDomain(ListModel value)
+    private void setDomain(NotChangableForVmInPoolListModel value)
     {
         privateDomain = value;
     }
 
-    private EntityModel privateMemSize;
+    private NotChangableForVmInPoolEntityModel privateMemSize;
 
     public EntityModel getMemSize()
     {
         return privateMemSize;
     }
 
-    private void setMemSize(EntityModel value)
+    private void setMemSize(NotChangableForVmInPoolEntityModel value)
     {
         privateMemSize = value;
     }
 
-    private EntityModel privateMinAllocatedMemory;
+    private NotChangableForVmInPoolEntityModel privateMinAllocatedMemory;
 
     public EntityModel getMinAllocatedMemory()
     {
         return privateMinAllocatedMemory;
     }
 
-    private void setMinAllocatedMemory(EntityModel value)
+    private void setMinAllocatedMemory(NotChangableForVmInPoolEntityModel value)
     {
         privateMinAllocatedMemory = value;
     }
 
-    private ListModel privateQuota;
+    private NotChangableForVmInPoolListModel privateQuota;
 
     public ListModel getQuota()
     {
         return privateQuota;
     }
 
-    private void setQuota(ListModel value)
+    private void setQuota(NotChangableForVmInPoolListModel value)
     {
         privateQuota = value;
     }
 
-    private ListModel privateCluster;
+    private NotChangableForVmInPoolListModel privateCluster;
 
     public ListModel getCluster()
     {
         return privateCluster;
     }
 
-    private void setCluster(ListModel value)
+    private void setCluster(NotChangableForVmInPoolListModel value)
     {
         privateCluster = value;
     }
 
-    private ListModel privateUsbPolicy;
+    private NotChangableForVmInPoolListModel privateUsbPolicy;
 
     public ListModel getUsbPolicy()
     {
         return privateUsbPolicy;
     }
 
-    private void setUsbPolicy(ListModel value)
+    private void setUsbPolicy(NotChangableForVmInPoolListModel value)
     {
         privateUsbPolicy = value;
     }
 
-    private ListModel privateTimeZone;
+    private NotChangableForVmInPoolListModel privateTimeZone;
 
     public ListModel getTimeZone()
     {
         return privateTimeZone;
     }
 
-    private void setTimeZone(ListModel value)
+    private void setTimeZone(NotChangableForVmInPoolListModel value)
     {
         privateTimeZone = value;
     }
 
-    private ListModel privateNumOfSockets;
+    private NotChangableForVmInPoolListModel privateNumOfSockets;
 
     public ListModel getNumOfSockets()
     {
         return privateNumOfSockets;
     }
 
-    private void setNumOfSockets(ListModel value)
+    private void setNumOfSockets(NotChangableForVmInPoolListModel value)
     {
         privateNumOfSockets = value;
     }
 
-    private EntityModel privateTotalCPUCores;
+    private NotChangableForVmInPoolEntityModel privateTotalCPUCores;
 
     public EntityModel getTotalCPUCores()
     {
         return privateTotalCPUCores;
     }
 
-    private void setTotalCPUCores(EntityModel value)
+    private void setTotalCPUCores(NotChangableForVmInPoolEntityModel value)
     {
         privateTotalCPUCores = value;
     }
 
-    private ListModel privateCoresPerSocket;
+    private NotChangableForVmInPoolListModel privateCoresPerSocket;
 
     public ListModel getCoresPerSocket()
     {
         return privateCoresPerSocket;
     }
 
-    private void setCoresPerSocket(ListModel value)
+    private void setCoresPerSocket(NotChangableForVmInPoolListModel value)
     {
         privateCoresPerSocket = value;
     }
 
-    private ListModel privateDefaultHost;
+    private NotChangableForVmInPoolListModel privateDefaultHost;
 
     public ListModel getDefaultHost()
     {
         return privateDefaultHost;
     }
 
-    private void setDefaultHost(ListModel value)
+    private void setDefaultHost(NotChangableForVmInPoolListModel value)
     {
         privateDefaultHost = value;
     }
 
-    private EntityModel privateisSmartcardEnabled;
+    private NotChangableForVmInPoolEntityModel privateisSmartcardEnabled;
 
     public EntityModel getIsSmartcardEnabled()
     {
         return privateisSmartcardEnabled;
     }
 
-    private void setIsSmartcardEnabled(EntityModel value)
+    private void setIsSmartcardEnabled(NotChangableForVmInPoolEntityModel value)
     {
         privateisSmartcardEnabled = value;
     }
 
-    private EntityModel privateIsStateless;
+    private NotChangableForVmInPoolEntityModel privateIsStateless;
 
     public EntityModel getIsStateless()
     {
         return privateIsStateless;
     }
 
-    private void setIsStateless(EntityModel value)
+    private void setIsStateless(NotChangableForVmInPoolEntityModel value)
     {
         privateIsStateless = value;
     }
 
-    private EntityModel privateIsDeleteProtected;
+    private NotChangableForVmInPoolEntityModel privateIsDeleteProtected;
 
     public EntityModel getIsDeleteProtected() {
         return privateIsDeleteProtected;
     }
 
-    public void setIsDeleteProtected(EntityModel deleteProtected) {
+    public void setIsDeleteProtected(NotChangableForVmInPoolEntityModel deleteProtected) {
         this.privateIsDeleteProtected = deleteProtected;
     }
 
-    private ListModel privateDisplayProtocol;
+    private NotChangableForVmInPoolListModel privateDisplayProtocol;
 
     public ListModel getDisplayProtocol()
     {
         return privateDisplayProtocol;
     }
 
-    private void setDisplayProtocol(ListModel value)
+    private void setDisplayProtocol(NotChangableForVmInPoolListModel value)
     {
         privateDisplayProtocol = value;
     }
 
-    private EntityModel privateProvisioning;
+    private NotChangableForVmInPoolEntityModel privateProvisioning;
 
     public EntityModel getProvisioning()
     {
         return privateProvisioning;
     }
 
-    private void setProvisioning(EntityModel value)
+    private void setProvisioning(NotChangableForVmInPoolEntityModel value)
     {
         privateProvisioning = value;
     }
 
-    private EntityModel privateProvisioningThin_IsSelected;
+    private NotChangableForVmInPoolEntityModel privateProvisioningThin_IsSelected;
 
     public EntityModel getProvisioningThin_IsSelected()
     {
         return privateProvisioningThin_IsSelected;
     }
 
-    public void setProvisioningThin_IsSelected(EntityModel value)
+    public void setProvisioningThin_IsSelected(NotChangableForVmInPoolEntityModel value)
     {
         privateProvisioningThin_IsSelected = value;
     }
 
-    private EntityModel privateProvisioningClone_IsSelected;
+    private NotChangableForVmInPoolEntityModel privateProvisioningClone_IsSelected;
 
     public EntityModel getProvisioningClone_IsSelected()
     {
         return privateProvisioningClone_IsSelected;
     }
 
-    public void setProvisioningClone_IsSelected(EntityModel value)
+    public void setProvisioningClone_IsSelected(NotChangableForVmInPoolEntityModel value)
     {
         privateProvisioningClone_IsSelected = value;
     }
 
-    private ListModel privatePriority;
+    private NotChangableForVmInPoolListModel privatePriority;
 
     public ListModel getPriority()
     {
         return privatePriority;
     }
 
-    private void setPriority(ListModel value)
+    private void setPriority(NotChangableForVmInPoolListModel value)
     {
         privatePriority = value;
     }
 
-    private EntityModel privateIsHighlyAvailable;
+    private NotChangableForVmInPoolEntityModel privateIsHighlyAvailable;
 
     public EntityModel getIsHighlyAvailable()
     {
         return privateIsHighlyAvailable;
     }
 
-    private void setIsHighlyAvailable(EntityModel value)
+    private void setIsHighlyAvailable(NotChangableForVmInPoolEntityModel value)
     {
         privateIsHighlyAvailable = value;
     }
 
-    private ListModel privateFirstBootDevice;
+    private NotChangableForVmInPoolListModel privateFirstBootDevice;
 
     public ListModel getFirstBootDevice()
     {
         return privateFirstBootDevice;
     }
 
-    private void setFirstBootDevice(ListModel value)
+    private void setFirstBootDevice(NotChangableForVmInPoolListModel value)
     {
         privateFirstBootDevice = value;
     }
 
-    private ListModel privateSecondBootDevice;
+    private NotChangableForVmInPoolListModel privateSecondBootDevice;
 
     public ListModel getSecondBootDevice()
     {
         return privateSecondBootDevice;
     }
 
-    private void setSecondBootDevice(ListModel value)
+    private void setSecondBootDevice(NotChangableForVmInPoolListModel value)
     {
         privateSecondBootDevice = value;
     }
 
-    private ListModel privateCdImage;
+    private NotChangableForVmInPoolListModel privateCdImage;
 
     public ListModel getCdImage()
     {
         return privateCdImage;
     }
 
-    private void setCdImage(ListModel value)
+    private void setCdImage(NotChangableForVmInPoolListModel value)
     {
         privateCdImage = value;
     }
 
-    private EntityModel cdAttached;
+    private NotChangableForVmInPoolEntityModel cdAttached;
 
     public EntityModel getCdAttached() {
         return cdAttached;
     }
 
-    public void setCdAttached(EntityModel value) {
+    public void setCdAttached(NotChangableForVmInPoolEntityModel value) {
         cdAttached = value;
     }
 
-    private EntityModel privateInitrd_path;
+    private NotChangableForVmInPoolEntityModel privateInitrd_path;
 
     public EntityModel getInitrd_path()
     {
         return privateInitrd_path;
     }
 
-    private void setInitrd_path(EntityModel value)
+    private void setInitrd_path(NotChangableForVmInPoolEntityModel value)
     {
         privateInitrd_path = value;
     }
 
-    private EntityModel privateKernel_path;
+    private NotChangableForVmInPoolEntityModel privateKernel_path;
 
     public EntityModel getKernel_path()
     {
         return privateKernel_path;
     }
 
-    private void setKernel_path(EntityModel value)
+    private void setKernel_path(NotChangableForVmInPoolEntityModel value)
     {
         privateKernel_path = value;
     }
 
-    private EntityModel privateKernel_parameters;
+    private NotChangableForVmInPoolEntityModel privateKernel_parameters;
 
     public EntityModel getKernel_parameters()
     {
         return privateKernel_parameters;
     }
 
-    private void setKernel_parameters(EntityModel value)
+    private void setKernel_parameters(NotChangableForVmInPoolEntityModel value)
     {
         privateKernel_parameters = value;
     }
 
-    private EntityModel privateCustomProperties;
+    private NotChangableForVmInPoolEntityModel privateCustomProperties;
 
     public EntityModel getCustomProperties()
     {
         return privateCustomProperties;
     }
 
-    private void setCustomProperties(EntityModel value)
+    private void setCustomProperties(NotChangableForVmInPoolEntityModel value)
     {
         privateCustomProperties = value;
     }
 
-    private KeyValueModel customPropertySheet;
+    private NotChangableForVmInPoolKeyValueModel customPropertySheet;
 
     public KeyValueModel getCustomPropertySheet() {
         return customPropertySheet;
     }
 
-    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
+    public void setCustomPropertySheet(NotChangableForVmInPoolKeyValueModel customPropertySheet) {
         this.customPropertySheet = customPropertySheet;
     }
 
@@ -750,60 +809,60 @@ public class UnitVmModel extends Model {
         privateCustomPropertiesKeysList = value;
     }
 
-    private EntityModel privateIsAutoAssign;
+    private NotChangableForVmInPoolEntityModel privateIsAutoAssign;
 
     public EntityModel getIsAutoAssign()
     {
         return privateIsAutoAssign;
     }
 
-    public void setIsAutoAssign(EntityModel value)
+    public void setIsAutoAssign(NotChangableForVmInPoolEntityModel value)
     {
         privateIsAutoAssign = value;
     }
 
-    private EntityModel privateRunVMOnSpecificHost;
+    private NotChangableForVmInPoolEntityModel privateRunVMOnSpecificHost;
 
     public EntityModel getRunVMOnSpecificHost()
     {
         return privateRunVMOnSpecificHost;
     }
 
-    public void setRunVMOnSpecificHost(EntityModel value)
+    public void setRunVMOnSpecificHost(NotChangableForVmInPoolEntityModel value)
     {
         privateRunVMOnSpecificHost = value;
     }
 
-    private EntityModel hostCpu;
+    private NotChangableForVmInPoolEntityModel hostCpu;
 
     public EntityModel getHostCpu() {
         return hostCpu;
     }
 
-    public void setHostCpu(EntityModel hostCpu) {
+    public void setHostCpu(NotChangableForVmInPoolEntityModel hostCpu) {
         this.hostCpu = hostCpu;
     }
 
-    private EntityModel privateDontMigrateVM;
+    private NotChangableForVmInPoolEntityModel privateDontMigrateVM;
 
     public EntityModel getDontMigrateVM()
     {
         return privateDontMigrateVM;
     }
 
-    public void setDontMigrateVM(EntityModel value)
+    public void setDontMigrateVM(NotChangableForVmInPoolEntityModel value)
     {
         privateDontMigrateVM = value;
     }
 
-    private EntityModel privateIsTemplatePublic;
+    private NotChangableForVmInPoolEntityModel privateIsTemplatePublic;
 
     public EntityModel getIsTemplatePublic()
     {
         return privateIsTemplatePublic;
     }
 
-    private void setIsTemplatePublic(EntityModel value)
+    private void setIsTemplatePublic(NotChangableForVmInPoolEntityModel value)
     {
         privateIsTemplatePublic = value;
     }
@@ -945,13 +1004,13 @@ public class UnitVmModel extends Model {
         _maxMemSize64 = value;
     }
 
-    private EntityModel cpuPinning;
+    private NotChangableForVmInPoolEntityModel cpuPinning;
 
     public EntityModel getCpuPinning() {
         return cpuPinning;
     }
 
-    public void setCpuPinning(EntityModel cpuPinning) {
+    public void setCpuPinning(NotChangableForVmInPoolEntityModel cpuPinning) {
         this.cpuPinning = cpuPinning;
     }
 
@@ -975,22 +1034,22 @@ public class UnitVmModel extends Model {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
-        setStorageDomain(new ListModel());
-        setName(new EntityModel());
-        setNumOfMonitors(new ListModel());
-        setAllowConsoleReconnect(new EntityModel());
-        setDescription(new EntityModel());
-        setDomain(new ListModel());
-        setMinAllocatedMemory(new EntityModel());
-        setUsbPolicy(new ListModel());
-        setIsStateless(new EntityModel());
-        setIsSmartcardEnabled(new EntityModel());
-        setIsDeleteProtected(new EntityModel());
+        setStorageDomain(new NotChangableForVmInPoolListModel());
+        setName(new NotChangableForVmInPoolEntityModel());
+        setNumOfMonitors(new NotChangableForVmInPoolListModel());
+        setAllowConsoleReconnect(new NotChangableForVmInPoolEntityModel());
+        setDescription(new NotChangableForVmInPoolEntityModel());
+        setDomain(new NotChangableForVmInPoolListModel());
+        setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel());
+        setUsbPolicy(new NotChangableForVmInPoolListModel());
+        setIsStateless(new NotChangableForVmInPoolEntityModel());
+        setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
+        setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
 
-        setCdImage(new ListModel());
+        setCdImage(new NotChangableForVmInPoolListModel());
         getCdImage().setIsChangable(false);
 
-        setCdAttached(new EntityModel());
+        setCdAttached(new NotChangableForVmInPoolEntityModel());
         getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -1000,82 +1059,70 @@ public class UnitVmModel extends Model {
         });
         getCdAttached().setEntity(false);
 
-        setIsHighlyAvailable(new EntityModel());
-        setDontMigrateVM(new EntityModel());
-        setIsTemplatePublic(new EntityModel());
-        setKernel_parameters(new EntityModel());
-        setKernel_path(new EntityModel());
-        setInitrd_path(new EntityModel());
-        setCustomProperties(new EntityModel());
-        setCustomPropertySheet(new KeyValueModel());
-        setDisplayProtocol(new ListModel());
-        setSecondBootDevice(new ListModel());
-        setPriority(new ListModel());
+        setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel());
+        setDontMigrateVM(new NotChangableForVmInPoolEntityModel());
+        setIsTemplatePublic(new NotChangableForVmInPoolEntityModel());
+        setKernel_parameters(new NotChangableForVmInPoolEntityModel());
+        setKernel_path(new NotChangableForVmInPoolEntityModel());
+        setInitrd_path(new NotChangableForVmInPoolEntityModel());
+        setCustomProperties(new NotChangableForVmInPoolEntityModel());
+        setCustomPropertySheet(new NotChangableForVmInPoolKeyValueModel());
+        setDisplayProtocol(new NotChangableForVmInPoolListModel());
+        setSecondBootDevice(new NotChangableForVmInPoolListModel());
+        setPriority(new NotChangableForVmInPoolListModel());
 
-        setDataCenter(new ListModel());
+        setDataCenter(new NotChangableForVmInPoolListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
 
-        setTemplate(new ListModel());
+        setTemplate(new NotChangableForVmInPoolListModel());
         getTemplate().getSelectedItemChangedEvent().addListener(this);
 
-        setQuota(new ListModel());
+        setQuota(new NotChangableForVmInPoolListModel());
         getQuota().setIsAvailable(false);
 
-        setCluster(new ListModel());
+        setCluster(new NotChangableForVmInPoolListModel());
         getCluster().getSelectedItemChangedEvent().addListener(this);
 
-        setTimeZone(new ListModel());
+        setTimeZone(new NotChangableForVmInPoolListModel());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
 
-        setDefaultHost(new ListModel());
+        setDefaultHost(new NotChangableForVmInPoolListModel());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
 
-        setOSType(new ListModel());
+        setOSType(new NotChangableForVmInPoolListModel());
         getOSType().getSelectedItemChangedEvent().addListener(this);
 
-        setFirstBootDevice(new ListModel());
+        setFirstBootDevice(new NotChangableForVmInPoolListModel());
         getFirstBootDevice().getSelectedItemChangedEvent().addListener(this);
 
-        setProvisioning(new EntityModel());
+        setProvisioning(new NotChangableForVmInPoolEntityModel());
         getProvisioning().getEntityChangedEvent().addListener(this);
 
-        setMemSize(new EntityModel());
+        setMemSize(new NotChangableForVmInPoolEntityModel());
         getMemSize().getEntityChangedEvent().addListener(this);
 
-        setTotalCPUCores(new EntityModel());
+        setTotalCPUCores(new NotChangableForVmInPoolEntityModel());
         getTotalCPUCores().getEntityChangedEvent().addListener(this);
 
-        setNumOfSockets(new ListModel() {
-            @Override
-            public void setIsChangable(boolean value) {
-                if (!isVmAttachedToPool())
-                    super.setIsChangable(value);
-            }
-        });
+        setNumOfSockets(new NotChangableForVmInPoolListModel());
         getNumOfSockets().getSelectedItemChangedEvent().addListener(this);
 
-        setCoresPerSocket(new ListModel() {
-            @Override
-            public void setIsChangable(boolean value) {
-                if (!isVmAttachedToPool())
-                    super.setIsChangable(value);
-            }
-        });
+        setCoresPerSocket(new NotChangableForVmInPoolListModel());
         getCoresPerSocket().getSelectedItemChangedEvent().addListener(this);
 
-        setRunVMOnSpecificHost(new EntityModel());
+        setRunVMOnSpecificHost(new NotChangableForVmInPoolEntityModel());
         getRunVMOnSpecificHost().getEntityChangedEvent().addListener(this);
 
-        setHostCpu(new EntityModel());
+        setHostCpu(new NotChangableForVmInPoolEntityModel());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
-        setDontMigrateVM(new EntityModel());
+        setDontMigrateVM(new NotChangableForVmInPoolEntityModel());
         getDontMigrateVM().getEntityChangedEvent().addListener(this);
 
-        setIsAutoAssign(new EntityModel());
+        setIsAutoAssign(new NotChangableForVmInPoolEntityModel());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
 
-        setIsTemplatePublic(new EntityModel());
+        setIsTemplatePublic(new NotChangableForVmInPoolEntityModel());
         getIsTemplatePublic().getEntityChangedEvent().addListener(this);
 
         setIsHostTabValid(true);
@@ -1088,31 +1135,31 @@ public class UnitVmModel extends Model {
 
         // NOTE: This is because currently the auto generated view code tries to register events of pooltype for
         // VM/Template views as this model is shared across VM/Template/Pool models
-        setPoolType(new ListModel());
+        setPoolType(new NotChangableForVmInPoolListModel());
 
-        setNumOfDesktops(new EntityModel());
+        setNumOfDesktops(new NotChangableForVmInPoolEntityModel());
         getNumOfDesktops().setEntity(0);
         getNumOfDesktops().setIsAvailable(false);
 
-        setAssignedVms(new EntityModel());
+        setAssignedVms(new NotChangableForVmInPoolEntityModel());
         getAssignedVms().setEntity(0);
         getAssignedVms().setIsAvailable(false);
         // Assigned VMs count is always read-only.
         getAssignedVms().setIsChangable(false);
 
-        setPrestartedVms(new EntityModel());
+        setPrestartedVms(new NotChangableForVmInPoolEntityModel());
         getPrestartedVms().setEntity(0);
         getPrestartedVms().setIsAvailable(false);
 
         setDisksAllocationModel(new DisksAllocationModel());
 
-        setProvisioningClone_IsSelected(new EntityModel());
+        setProvisioningClone_IsSelected(new NotChangableForVmInPoolEntityModel());
         getProvisioningClone_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setProvisioningThin_IsSelected(new EntityModel());
+        setProvisioningThin_IsSelected(new NotChangableForVmInPoolEntityModel());
         getProvisioningThin_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setCpuPinning(new EntityModel());
+        setCpuPinning(new NotChangableForVmInPoolEntityModel());
         getCpuPinning().setEntity("");
         getCpuPinning().setIsAvailable(false);
 
@@ -2104,38 +2151,38 @@ public class UnitVmModel extends Model {
         model.setIsValid(isValid);
     }
 
-    private ListModel poolType;
+    private NotChangableForVmInPoolListModel poolType;
 
     public ListModel getPoolType()
     {
         return poolType;
     }
 
-    protected void setPoolType(ListModel value)
+    protected void setPoolType(NotChangableForVmInPoolListModel value)
     {
         poolType = value;
     }
 
-    private EntityModel numOfDesktops;
+    private NotChangableForVmInPoolEntityModel numOfDesktops;
 
     public EntityModel getNumOfDesktops()
     {
         return numOfDesktops;
     }
 
-    protected void setNumOfDesktops(EntityModel value)
+    protected void setNumOfDesktops(NotChangableForVmInPoolEntityModel value)
     {
         numOfDesktops = value;
     }
 
-    private EntityModel assignedVms;
+    private NotChangableForVmInPoolEntityModel assignedVms;
 
     public EntityModel getAssignedVms()
     {
         return assignedVms;
     }
 
-    public void setAssignedVms(EntityModel value)
+    public void setAssignedVms(NotChangableForVmInPoolEntityModel value)
     {
         assignedVms = value;
     }
@@ -2156,13 +2203,13 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private EntityModel prestartedVms;
+    private NotChangableForVmInPoolEntityModel prestartedVms;
 
     public EntityModel getPrestartedVms() {
         return prestartedVms;
     }
 
-    protected void setPrestartedVms(EntityModel value) {
+    protected void setPrestartedVms(NotChangableForVmInPoolEntityModel value) {
         prestartedVms = value;
     }
 
@@ -2176,6 +2223,30 @@ public class UnitVmModel extends Model {
         if (prestartedVmsHint != value) {
             prestartedVmsHint = value;
             OnPropertyChanged(new PropertyChangedEventArgs("PrestartedVmsHint")); //$NON-NLS-1$
+        }
+    }
+
+    private class NotChangableForVmInPoolListModel extends ListModel {
+        @Override
+        public void setIsChangable(boolean value) {
+            if (!isVmAttachedToPool())
+                super.setIsChangable(value);
+        }
+    }
+
+    private class NotChangableForVmInPoolEntityModel extends EntityModel {
+        @Override
+        public void setIsChangable(boolean value) {
+            if (!isVmAttachedToPool())
+                super.setIsChangable(value);
+        }
+    }
+
+    private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
+        @Override
+        public void setIsChangable(boolean value) {
+            if (!isVmAttachedToPool())
+                super.setIsChangable(value);
         }
     }
 }
