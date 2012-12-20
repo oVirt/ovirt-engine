@@ -9,6 +9,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -27,6 +29,24 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     @Override
     public VmTemplate get(Guid id) {
         return get(id, null, false);
+    }
+
+    @Override
+    public InstanceType getInstanceType(Guid id) {
+        VmTemplate result = get(id);
+        if (result != null && result.getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            result = null;
+        }
+        return result;
+    }
+
+    @Override
+    public ImageType getImageType(Guid id) {
+        VmTemplate result = get(id);
+        if (result != null && result.getTemplateType() != VmEntityType.IMAGE_TYPE) {
+            result = null;
+        }
+        return result;
     }
 
     @Override

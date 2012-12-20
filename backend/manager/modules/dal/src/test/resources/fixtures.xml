@@ -1695,6 +1695,102 @@
             <null />
             <null />
         </row>
+         <row>
+            <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
+            <value>INSTANCE_TYPE</value>
+            <value>1</value>
+            <value>512</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2013-10-10 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <null />
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <null />
+            <value>256</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+        </row>
+         <row>
+            <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
+            <value>IMAGE_TYPE</value>
+            <value>1</value>
+            <value>512</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>1</value>
+            <null />
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
+            <value></value>
+            <value>2013-10-10 16:39:27</value>
+            <value>0</value>
+            <value>1</value>
+            <value>false</value> <!-- allow_console_reconnect -->
+            <null />
+            <value>1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>1</value>
+            <value>GMT standard time</value>
+            <value>0</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>12</value>
+            <value>0</value>
+            <value>0</value>
+            <value></value>
+            <value>0</value>
+            <value></value>
+            <value></value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <value>1</value>
+            <null />
+            <value>256</value>
+            <value>false</value>
+            <null />
+            <null />
+            <null />
+        </row>
 
         <!-- VMS -->
         <row>

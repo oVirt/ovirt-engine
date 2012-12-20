@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -134,4 +136,20 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the list of VmTemplates
      */
     List<VmTemplate> getAllForVnicProfile(Guid vnicProfileId);
+
+    /**
+     * Retrieve the instance type with the given id
+     * @param id
+     *            the instance type id
+     * @return the instance type
+     */
+    InstanceType getInstanceType(Guid id);
+
+    /**
+     * Retrieve the image type with the given id
+     * @param id
+     *            the image type id
+     * @return the image type
+     */
+    ImageType getImageType(Guid id);
 }
