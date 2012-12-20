@@ -47,11 +47,13 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         getCallsHandler().executeModification("UpdateVmDynamicStatus", parameterSource);
     }
 
+    @Override
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())
                 .addValue("console_user_id", vm.getConsoleUserId())
-                .addValue("guest_cur_user_name", vm.getguest_cur_user_name());
+                .addValue("guest_cur_user_name", vm.getguest_cur_user_name())
+                .addValue("console_cur_user_name", vm.getConsole_current_user_name());
 
         Map<String, Object> results = getCallsHandler().executeModification("UpdateConsoleUserWithOptimisticLocking", parameterSource);
 
@@ -72,8 +74,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     protected MapSqlParameterSource createFullParametersMapper(VmDynamic vm) {
         return createIdParameterMapper(vm.getId())
                 .addValue("app_list", vm.getapp_list())
-                .addValue("guest_cur_user_id", vm.getguest_cur_user_id())
                 .addValue("guest_cur_user_name", vm.getguest_cur_user_name())
+                .addValue("console_cur_user_name", vm.getConsole_current_user_name())
                 .addValue("console_user_id", vm.getConsoleUserId())
                 .addValue("guest_last_login_time",
                         vm.getguest_last_login_time())
@@ -117,10 +119,10 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                     throws SQLException {
                 VmDynamic entity = new VmDynamic();
                 entity.setapp_list(rs.getString("app_list"));
-                entity.setguest_cur_user_id(NGuid.createGuidFromString(rs
-                        .getString("guest_cur_user_id")));
                 entity.setguest_cur_user_name(rs
                         .getString("guest_cur_user_name"));
+                entity.setConsole_current_user_name(rs
+                        .getString("console_cur_user_name"));
                 entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
                 entity.setguest_last_login_time(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_login_time")));

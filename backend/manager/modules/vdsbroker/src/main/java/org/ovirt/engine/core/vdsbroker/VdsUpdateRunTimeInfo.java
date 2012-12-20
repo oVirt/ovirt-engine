@@ -100,10 +100,10 @@ public class VdsUpdateRunTimeInfo {
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
-    private VdsManager _vdsManager;
-    private MonitoringStrategy monitoringStrategy;
-    private VDS _vds;
-    private Map<Guid, VM> _vmDict;
+    private final VdsManager _vdsManager;
+    private final MonitoringStrategy monitoringStrategy;
+    private final VDS _vds;
+    private final Map<Guid, VM> _vmDict;
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
@@ -1582,7 +1582,6 @@ public class VdsUpdateRunTimeInfo {
                     vmToUpdate.argvalue.getDynamicData(), vmNewDynamicData);
             // dont check fields:
             props.remove("vm_host");
-            props.remove("guest_cur_user_name");
             props.remove("run_on_vds");
             props.remove("disks");
             props.remove("boot_sequence");

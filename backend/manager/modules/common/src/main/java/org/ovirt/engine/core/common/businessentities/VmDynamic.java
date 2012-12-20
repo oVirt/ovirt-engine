@@ -50,9 +50,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     @Column(name = "guest_cur_user_name")
     private String guest_cur_user_name;
 
-    @Column(name = "guest_cur_user_id")
-    @Type(type = "guid")
-    private NGuid guest_cur_user_id;
+    @Column(name = "console_cur_user_name")
+    private String console_cur_user_name;
 
     @Column(name = "console_user_id")
     @Type(type = "guid")
@@ -165,8 +164,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
                 + display_type.hashCode() * prime;
         result = prime
                 * result
-                + ((guest_cur_user_id == null) ? 0
-                        : guest_cur_user_id.hashCode());
+                + ((console_cur_user_name == null) ? 0
+                        : console_cur_user_name.hashCode());
         result = prime
                 * result
                 + ((guest_cur_user_name == null) ? 0
@@ -282,10 +281,10 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
             return false;
         if (display_type != other.display_type)
             return false;
-        if (guest_cur_user_id == null) {
-            if (other.guest_cur_user_id != null)
+        if (console_cur_user_name == null) {
+            if (other.console_cur_user_name != null)
                 return false;
-        } else if (!guest_cur_user_id.equals(other.guest_cur_user_id))
+        } else if (!console_cur_user_name.equals(other.console_cur_user_name))
             return false;
         if (guest_cur_user_name == null) {
             if (other.guest_cur_user_name != null)
@@ -473,7 +472,6 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         mWin2kHackEnable = false;
 
         this.appList = app_list;
-        this.guest_cur_user_id = guest_cur_user_id;
         this.guest_cur_user_name = guest_cur_user_name;
         this.guest_last_login_time = guest_last_login_time;
         this.guest_last_logout_time = guest_last_logout_time;
@@ -509,12 +507,12 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.appList = value;
     }
 
-    public NGuid getguest_cur_user_id() {
-        return this.guest_cur_user_id;
+    public String getConsole_current_user_name() {
+        return console_cur_user_name;
     }
 
-    public void setguest_cur_user_id(NGuid value) {
-        this.guest_cur_user_id = value;
+    public void setConsole_current_user_name(String console_cur_user_name) {
+        this.console_cur_user_name = console_cur_user_name;
     }
 
     public String getguest_cur_user_name() {
@@ -581,10 +579,12 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.status = value;
     }
 
+    @Override
     public Guid getId() {
         return this.id;
     }
 
+    @Override
     public void setId(Guid value) {
         this.id = value;
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.*;
+import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 
 public class UpdateVmDynamicDataVDSCommand<P extends UpdateVmDynamicDataVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
     public UpdateVmDynamicDataVDSCommand(P parameters) {

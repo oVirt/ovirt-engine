@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
@@ -17,6 +16,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         super(parameters);
     }
 
+    @Override
     protected void setActionMessageParameters () {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__LOGON);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
@@ -51,15 +51,6 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
                         VDSCommandType.VmLogon,
                         new VmLogonVDSCommandParameters(getVdsId(), vm.getId(), domainController,
                                 getUserName(), password)).getSucceeded();
-
-        // If the command was sent to the virtual machine successfully update the
-        // database to reflect that the user is logged on:
-        if (sentToVM && currentUser != null) {
-            vm.setGuestCurUserName(currentUser.getUserName());
-            vm.setGuestCurUserId(currentUser.getUserId());
-            DbFacade.getInstance().getVmDynamicDao().update(vm.getDynamicData());
-        }
-
         // Done:
         setSucceeded(sentToVM);
     }

@@ -267,8 +267,8 @@ public class ResourceManager {
         vm.setUsageMemPercent(0);
         vm.setMigratingToVds(null);
         vm.setRunOnVdsName("");
-        vm.setGuestCurUserName(null);
-        vm.setGuestCurUserId(null);
+        vm.setGuestCurrentUserName(null);
+        vm.setConsoleCurrentUserName(null);
         vm.setConsoleUserId(null);
         vm.setGuestOs(null);
         vm.setVmIp(null);

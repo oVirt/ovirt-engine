@@ -88,8 +88,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
             int vmt_num_of_cpus, int vmt_num_of_sockets, int vmt_cpu_per_socket, String vmt_description, int status,
             String vm_ip, String vm_host, Integer vm_pid, Date vm_last_up_time,
             Date vm_last_boot_time, String guest_cur_user_name, Date guest_last_login_time,
-            NGuid guest_cur_user_id, Date guest_last_logout_time, String guest_os,
-            Double cpu_user, Double cpu_sys, Integer vm_if_id_1, String vm_if_name_1,
+            Date guest_last_logout_time, String guest_os, Double cpu_user, Double cpu_sys, Integer vm_if_id_1, String vm_if_name_1,
             Integer vm_line_rate_1, java.math.BigDecimal rx_dropped_1, java.math.BigDecimal rx_rate_1,
             java.math.BigDecimal tx_dropped_1, java.math.BigDecimal tx_rate_1, Integer vm_if_id_2, String vm_if_name_2,
             Integer vm_line_rate_2, java.math.BigDecimal rx_dropped_2, java.math.BigDecimal rx_rate_2,
@@ -136,9 +135,8 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.setVmHost(vm_host);
         this.setVmPid(vm_pid);
         this.setLastStartTime(vm_last_boot_time);
-        this.setGuestCurUserName(guest_cur_user_name);
+        this.setGuestCurrentUserName(guest_cur_user_name);
         this.setGuestLastLoginTime(guest_last_login_time);
-        this.setGuestCurUserId(guest_cur_user_id);
         this.setGuestLastLogoutTime(guest_last_logout_time);
         this.setGuestOs(guest_os);
         this.setCpuUser(cpu_user);
@@ -525,11 +523,19 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         this.vmDynamic.setLastStartTime(value);
     }
 
-    public String getGuestCurUserName() {
+    public String getConsoleCurentUserName() {
+        return this.vmDynamic.getConsole_current_user_name();
+    }
+
+    public void setConsoleCurrentUserName(String value) {
+        this.vmDynamic.setConsole_current_user_name(value);
+    }
+
+    public String getGuestCurentUserName() {
         return this.vmDynamic.getguest_cur_user_name();
     }
 
-    public void setGuestCurUserName(String value) {
+    public void setGuestCurrentUserName(String value) {
         this.vmDynamic.setguest_cur_user_name(value);
     }
 
@@ -539,14 +545,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
 
     public void setGuestLastLoginTime(Date value) {
         this.vmDynamic.setguest_last_login_time(value);
-    }
-
-    public NGuid getGuestCurUserId() {
-        return this.vmDynamic.getguest_cur_user_id();
-    }
-
-    public void setGuestCurUserId(NGuid value) {
-        this.vmDynamic.setguest_cur_user_id(value);
     }
 
     public NGuid getConsoleUserId() {
@@ -1276,6 +1274,7 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
         setDisplayIp(vm.getdisplay_ip());
         setKvmEnable(vm.getkvm_enable());
         setAcpiEnable(vm.getacpi_enable());
+        setGuestCurrentUserName(vm.getguest_cur_user_name());
         setWin2kHackEnable(vm.getWin2kHackEnable());
         setUtcDiff(vm.getutc_diff());
         setExitStatus(vm.getExitStatus());
@@ -1424,7 +1423,9 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
             Arrays.asList(new String[] { "vm_name", "status", "usage_cpu_percent",
                     "usage_mem_percent", "usage_network_percent", "run_on_vds", "run_on_vds_name",
                     "vm_description", "vds_group_id", "vds_group_name", "vm_ip",
-                    "guest_cur_user_name", "DiskSize", "vm_os", "num_of_monitors", "roundedElapsedTime",
+                    "guest_cur_user_name",
+                    "console_cur_user_name",
+                    "DiskSize", "vm_os", "num_of_monitors", "roundedElapsedTime",
                     "vm_mem_size_mb", "vm_domain", "dedicated_vm_for_vds",
                     "guest_requested_memory", "is_stateless", "is_initialized", "display",
                     "display_type", "default_display_type", "run_on_vds", "app_list", "time_zone",

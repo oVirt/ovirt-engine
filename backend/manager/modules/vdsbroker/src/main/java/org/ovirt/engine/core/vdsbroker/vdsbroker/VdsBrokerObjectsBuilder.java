@@ -199,6 +199,9 @@ public class VdsBrokerObjectsBuilder {
         vm.setguest_last_login_time(AssignDateTImeFromEpoch(xmlRpcStruct, VdsProperties.guest_last_login_time));
         vm.setvm_host(AssignStringValue(xmlRpcStruct, VdsProperties.vm_host));
 
+        String guestUserName = AssignStringValue(xmlRpcStruct, VdsProperties.guest_cur_user_name);
+        vm.setguest_cur_user_name(guestUserName);
+
         initAppsList(xmlRpcStruct, vm);
         vm.setguest_os(AssignStringValue(xmlRpcStruct, VdsProperties.guest_os));
         vm.setvm_ip(AssignStringValue(xmlRpcStruct, VdsProperties.vm_ip));

@@ -1541,10 +1541,10 @@
         <column>vm_pid</column>
         <column>last_start_time</column>
         <column>guest_cur_user_name</column>
-        <column>guest_cur_user_id</column>
         <column>guest_last_login_time</column>
         <column>guest_last_logout_time</column>
         <column>console_user_id</column>
+        <column>console_cur_user_name</column>
         <column>guest_os</column>
         <column>run_on_vds</column>
         <column>migrating_to_vds</column>
@@ -1576,8 +1576,8 @@
             <null />
             <null />
             <null />
-            <null />
             <null /> <!-- console_user_id -->
+            <null />
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
@@ -1610,8 +1610,8 @@
             <null />
             <null />
             <null />
-            <null />
             <value>9bf7c640-b620-456f-a550-0348f366544a</value> <!-- console_user_id -->
+            <null />
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
@@ -1644,8 +1644,8 @@
             <null />
             <null />
             <null />
-            <null />
             <null /> <!-- console_user_id -->
+            <null />
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />

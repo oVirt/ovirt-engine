@@ -218,8 +218,7 @@ public class VdsEventListener implements IVdsEventListener {
         // in case of empty clientIp we clear the logged in user.
         // (this happened when user close the console to spice/vnc)
         else {
-            vmDynamic.setguest_cur_user_id(null);
-            vmDynamic.setguest_cur_user_name(null);
+            vmDynamic.setConsole_current_user_name(null);
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
         }
     }
