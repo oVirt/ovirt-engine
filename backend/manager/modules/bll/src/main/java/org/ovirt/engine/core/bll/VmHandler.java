@@ -165,8 +165,6 @@ public class VmHandler {
     /**
      * Lock VM after check its status, If VM status is locked, we throw an exception.
      *
-     * @param status
-     *            - The status of the VM
      * @param vmId
      *            - The ID of the VM.
      */
@@ -179,8 +177,6 @@ public class VmHandler {
     /**
      * Lock VM with compensation, after checking its status, If VM status is locked, we throw an exception.
      *
-     * @param status
-     *            - The status of the VM
      * @param vmId
      *            - The ID of the VM, which we want to lock.
      * @param compensationContext
@@ -375,7 +371,7 @@ public class VmHandler {
      *     Display type : Spice or Vnc
      * @param numOfMonitors
      *     Number of monitors
-     * @param messages
+     * @param reasons
      *     Messages for CanDoAction().
      * @return
      */
@@ -415,10 +411,11 @@ public class VmHandler {
     /**
      * Checks that the USB policy is legal for the VM. If it is ENABLED_NATIVE then it is legal only
      * in case the cluster level is >= 3.1. If it is ENABLED_LEGACY then it is not legal on Linux VMs.
-     * @param vm
-     *     The VM object
-     * @param messages
-     *     Messages for CanDoAction().
+     *
+     * @param usbPolicy
+     * @param osType
+     * @param vdsGroup
+     * @param messages - Messages for CanDoAction()
      * @return
      */
     public static boolean isUsbPolicyLegal(UsbPolicy usbPolicy,
