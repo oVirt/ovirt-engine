@@ -44,13 +44,13 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.action_version_map;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -1477,6 +1477,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean validate(ValidationResult validationResult) {
         if (!validationResult.isValid()) {
             addCanDoActionMessage(validationResult.getMessage());
+            if (validationResult.getVariableReplacements() != null) {
+                for (String variableReplacement : validationResult.getVariableReplacements()) {
+                    addCanDoActionMessage(variableReplacement);
+                }
+            }
         }
 
         return validationResult.isValid();

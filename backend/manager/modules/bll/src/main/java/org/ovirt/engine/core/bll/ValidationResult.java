@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -18,6 +22,11 @@ public final class ValidationResult {
      * In case the validation succeeded it is <code>null</code>, otherwise it contains the validation failure message.
      */
     private final VdcBllMessages message;
+
+    /**
+     * If there are any replacements for variables in the message, they can be set here.
+     */
+    private List<String> variableReplacements;
 
     /**
      * Default validation result is success with no message.
@@ -41,6 +50,20 @@ public final class ValidationResult {
     }
 
     /**
+     * Validation result for failure with a given message.
+     *
+     * @param message
+     *            The validation failure message.
+     * @param variableReplacements
+     *            Replacements for variables that appear in the message, in syntax: "$var text" where $var is the
+     *            variable to be replaced, and the text is the replacement.
+     */
+    public ValidationResult(VdcBllMessages message, String... variableReplacements) {
+        this(message);
+        this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
+    }
+
+    /**
      * @return Did the validation succeed or not?
      */
     public boolean isValid() {
@@ -52,6 +75,14 @@ public final class ValidationResult {
      */
     public VdcBllMessages getMessage() {
         return message;
+    }
+
+    /**
+     * @return <code>null</code> in case there are no replacements, otherwise a list of the replacements for message
+     *         variables.
+     */
+    public List<String> getVariableReplacements() {
+        return variableReplacements;
     }
 
     @Override
