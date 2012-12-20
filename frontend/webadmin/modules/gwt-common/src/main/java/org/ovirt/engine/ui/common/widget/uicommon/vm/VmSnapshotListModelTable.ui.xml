@@ -12,16 +12,6 @@
 			right: 0px;
 		}
 
-		.snapshotInfoContainer {
-			margin-right: 4px;
-			margin-bottom: 4px;
-			margin-top: 2px;
-		}
-
-		.snapshotsTableContainer {
-			margin-right: 6px;
-		}
-
 		@external .gwt-TabLayoutPanel;
 		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
 		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab;
@@ -51,10 +41,10 @@
 
 	<g:SplitLayoutPanel addStyleNames="{style.container}">
 		<g:center>
-			<g:SimplePanel ui:field="snapshotsTableContainer" addStyleNames="{style.snapshotsTableContainer}"/>
+			<g:SimplePanel ui:field="snapshotsTableContainer"/>
 		</g:center>
 		<g:east size="600">
-			<g:SimplePanel ui:field="snapshotInfoContainer" addStyleNames="{style.snapshotInfoContainer}"/>
+			<g:SimplePanel ui:field="snapshotInfoContainer"/>
 		</g:east>
 	</g:SplitLayoutPanel>
 
