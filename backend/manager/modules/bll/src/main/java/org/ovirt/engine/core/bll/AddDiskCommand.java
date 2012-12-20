@@ -276,20 +276,33 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
      * @return The ID of the storage domain where the VM's disks reside.
      */
     private Guid getDisksStorageDomainId() {
-        return ((DiskImage) getVm().getDiskMap().values().iterator().next()).getstorage_ids().get(0);
+        for (Disk disk : getVm().getDiskMap().values()) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                return ((DiskImage) disk).getstorage_ids().get(0);
+            }
+        }
+        return Guid.Empty;
     }
 
     @Override
     public NGuid getStorageDomainId() {
-        Guid storageDomainId = getParameters().getStorageDomainId();
-        if (Guid.Empty.equals(storageDomainId) &&
-                getVm() != null &&
-                getVm().getDiskMap() != null &&
-                !getVm().getDiskMap().isEmpty()) {
-            return getDisksStorageDomainId();
-        }
+        if (super.getStorageDomainId() == null) {
+            Guid storageDomainId = getParameters().getStorageDomainId();
+            if (Guid.Empty.equals(storageDomainId) &&
+                    getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE &&
+                    getVm() != null) {
 
-        return storageDomainId == null ? Guid.Empty : storageDomainId;
+                updateDisksFromDb();
+                storageDomainId = getDisksStorageDomainId();
+                getParameters().setStorageDomainId(storageDomainId);
+            } else if (storageDomainId == null) {
+                storageDomainId = Guid.Empty;
+                getParameters().setStorageDomainId(storageDomainId);
+            }
+            setStorageDomainId(storageDomainId);
+            return storageDomainId;
+        }
+        return super.getStorageDomainId();
     }
 
     @Override
