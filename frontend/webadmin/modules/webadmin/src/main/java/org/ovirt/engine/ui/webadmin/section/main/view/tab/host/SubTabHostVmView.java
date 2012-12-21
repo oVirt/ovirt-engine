@@ -7,15 +7,19 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
@@ -31,14 +35,15 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     @Inject
-    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider,
+        ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable(resources, constants);
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable(ApplicationResources resources, ApplicationConstants constants) {
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
@@ -107,24 +112,52 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(hostColumn, constants.uptimeVm());
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.suspendVm()) {
+        // add action buttons
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
+                resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.shutDownVm()) {
+
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
+                resources.stopVmImage(), resources.stopVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getShutdownCommand();
             }
         });
-        // getTable().addActionButton(new WebAdminButtonDefinition<VM>(getListModel().getStopCommand(), "Stop"));
+
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getStopCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
+                resources.consoleImage(), resources.consoleDisabledImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                ConsoleModel defaultConsoleModel = getDetailModel().getDefaultConsoleModel();
+                return defaultConsoleModel != null ? defaultConsoleModel.getConnectCommand() : null;
+            }
+        });
+
         // TODO: separator
+
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMigrateCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getCancelMigrateCommand();
             }
         });
     }
