@@ -1358,6 +1358,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Edit Option")
     String editOptionVolume();
 
+    @DefaultStringValue("Error in fetching volume option list, please try again.")
+    String errorInFetchingVolumeOptionList();
+
     @DefaultStringValue("Reset Option")
     String resetOptionVolumeTitle();
 

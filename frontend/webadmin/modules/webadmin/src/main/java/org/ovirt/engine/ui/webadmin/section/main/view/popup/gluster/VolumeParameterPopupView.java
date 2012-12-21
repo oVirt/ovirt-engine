@@ -20,6 +20,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class VolumeParameterPopupView extends AbstractModelBoundPopupView<VolumeParameterModel> implements VolumeParameterPopupPresenterWidget.ViewDef {
@@ -61,6 +62,10 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
     @UiField
     @Path(value = "value.entity")
     EntityModelTextBoxEditor valueEditor;
+
+    @UiField
+    @Ignore
+    Label messageLabel;
 
     @Inject
     public VolumeParameterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
@@ -105,4 +110,9 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
         return Driver.driver.flush();
     }
 
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        messageLabel.setText(message);
+    }
 }

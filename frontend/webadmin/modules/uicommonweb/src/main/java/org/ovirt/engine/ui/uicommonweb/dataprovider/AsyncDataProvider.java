@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
@@ -51,7 +50,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -1041,24 +1039,6 @@ public final class AsyncDataProvider {
     }
 
     public static void GetGlusterVolumeOptionInfoList(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source != null)
-                {
-                    ArrayList<GlusterVolumeOptionInfo> list =
-                            new ArrayList<GlusterVolumeOptionInfo>((Set<GlusterVolumeOptionInfo>) source);
-                    // user.cifs option will be present in the list by default, so adding it now
-                    GlusterVolumeOptionInfo cifsOption = new GlusterVolumeOptionInfo();
-                    cifsOption.setKey("user.cifs"); //$NON-NLS-1$
-                    list.add(cifsOption);
-                    return list;
-                }
-
-                return new ArrayList<GlusterVolumeOptionInfo>();
-            }
-        };
         Frontend.RunQuery(VdcQueryType.GetGlusterVolumeOptionsInfo, new GlusterParameters(clusterId), aQuery);
     }
 
