@@ -317,6 +317,13 @@ class MYum():
         self._miniyum.update([basedefs.ENGINE_RPM_NAME])
         self.emptyTransaction = not self._miniyum.buildTransaction()
 
+        logging.debug('Transaction Summary:')
+        for p in self._miniyum.queryTransaction():
+            logging.debug('    %s - %s' % (
+                p['operation'],
+                p['display_name']
+            ))
+
     def update(self):
         self._rpmChange = True
         self._miniyum.processTransaction()
