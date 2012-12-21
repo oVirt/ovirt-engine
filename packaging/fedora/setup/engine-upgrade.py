@@ -295,7 +295,16 @@ class MYum():
         return MYum._transaction(self, self._miniyum.transaction())
 
     def begin(self):
-        self._miniyum.update([basedefs.ENGINE_RPM_NAME])
+        useGroups = False
+        for group in self._miniyum.queryGroups():
+            if group['name'] == basedefs.ENGINE_YUM_GROUP:
+                useGroups = True
+
+        if useGroups:
+            self._miniyum.updateGroup(group=basedefs.ENGINE_YUM_GROUP)
+        else:
+            self._miniyum.update(packages=(basedefs.ENGINE_RPM_NAME,))
+
         self.emptyTransaction = not self._miniyum.buildTransaction()
 
         logging.debug('Transaction Summary:')
