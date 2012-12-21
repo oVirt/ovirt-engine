@@ -346,6 +346,9 @@ class MiniYumSink(object):
             os.dup2(save[i], i)
         return ret
 
+    def reexec(self):
+        pass
+
 def getXmlNode(xml, xpath):
     nodes = xml.xpathEval(xpath)
     if len(nodes) != 1:
