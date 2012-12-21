@@ -192,17 +192,17 @@ COLORS = (RED, GREEN, BLUE, YELLOW, NO_COLOR)
 SPACE_LEN=70
 
 RPM_LOCK_LIST = """
-ovirt-engine
-ovirt-engine-backend
-ovirt-engine-config
-ovirt-engine-dbscripts
-ovirt-engine-genericapi
-ovirt-engine-notification-service
-ovirt-engine-restapi
-ovirt-engine-tools-common
-ovirt-engine-userportal
-ovirt-engine-webadmin-portal
-"""
+{name}
+{name}-backend
+{name}-config
+{name}-dbscripts
+{name}-genericapi
+{name}-notification-service
+{name}-restapi
+{name}-tools-common
+{name}-userportal
+{name}-webadmin-portal
+""".format(name=ENGINE_RPM_NAME)
 
 # The list of directories where JVMs will be searched for:
 JAVA_DIRS = [
