@@ -71,7 +71,7 @@
     <ovirt-host-deploy.version>1.0.0</ovirt-host-deploy.version>
     <slf4j-jdk14.version>1.5.11</slf4j-jdk14.version>
     <gwt.version>2.3.0</gwt.version>
-    <findbugs.version>2.5.1</findbugs.version>
+    <findbugs.version>2.5.2</findbugs.version>
     <test-jar.plugin.version>2.2</test-jar.plugin.version>
     <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
