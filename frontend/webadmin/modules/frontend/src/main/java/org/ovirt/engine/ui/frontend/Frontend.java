@@ -215,9 +215,6 @@ public class Frontend {
                         // getEventsHandler().runQueryFailed(failedResult);
                         String errorMessage = result.getExceptionString();
                         handleNotLoggedInEvent(errorMessage);
-                        if (callback.isHandleFailure()) {
-                            callback.getDel().OnSuccess(callback.getModel(), result);
-                        }
                     }
                     if (callback.isHandleFailure()) {
                         callback.getDel().OnSuccess(callback.getModel(), result);
