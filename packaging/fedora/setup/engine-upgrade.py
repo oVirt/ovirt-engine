@@ -24,25 +24,6 @@ MAINTENANCE_TASKS_WAIT_PERIOD  = 180
 MAINTENANCE_TASKS_WAIT_PERIOD_MINUTES = MAINTENANCE_TASKS_WAIT_PERIOD / 60
 MAINTENANCE_TASKS_CYCLES = 20
 
-#TODO: Work with a real list here
-RPM_LIST = """
-ovirt-engine
-ovirt-engine-backend
-ovirt-engine-config
-ovirt-engine-dbscripts
-ovirt-engine-genericapi
-ovirt-engine-notification-service
-ovirt-engine-restapi
-ovirt-engine-setup
-ovirt-engine-tools-common
-ovirt-engine-userportal
-ovirt-engine-webadmin-portal
-ovirt-image-uploader
-ovirt-iso-uploader
-ovirt-log-collector
-vdsm-bootstrap
-"""
-
 RPM_BACKEND = "ovirt-engine-backend"
 RPM_DBSCRIPTS = "ovirt-engine-dbscripts"
 RPM_SETUP = "ovirt-engine-setup"
@@ -334,26 +315,14 @@ class MYum():
     def rollbackAvailable(self, packages):
         logging.debug("Yum rollback-avail started")
 
-        # Get All available packages in yum
-        rpms = RPM_LIST.split()
-        pkgs = [
-            x['display_name'] for x in
-            self._miniyum.queryLocalCachePackages(patterns=rpms)
-        ]
-        logging.debug("%s Packages available in yum:"%(len(pkgs)))
-        logging.debug(pkgs)
-
         # Verify all installed packages available in yum
-        # self.ipackages is populated in updateAvailable
-        name_packages = [p['name'] for p in packages]
-        for installed in [
-            x['display_name'] for x in
-            self._miniyum.queryPackages(patterns=rpms)
-            if x['operation'] == 'installed'
-        ]:
-            if installed in name_packages and not installed not in pkgs:
-                logging.debug("%s not available in yum"%(installed))
-                return False
+        for package in packages:
+            for query in self._miniyum.queryPackages(patterns=[package['name']]):
+                if query['operation'] == 'installed':
+                    logging.debug("Checking package %s", query['display_name'])
+                    if not self._miniyum.queryLocalCachePackages(patterns=[query['display_name']]):
+                        logging.debug("package %s not available in cache" % query['display_name'])
+                        return False
 
         logging.debug("Yum rollback-avail completed successfully")
         return True
