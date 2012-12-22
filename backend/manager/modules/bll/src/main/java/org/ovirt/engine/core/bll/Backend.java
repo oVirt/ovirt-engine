@@ -339,6 +339,8 @@ public class Backend implements BackendInternal {
                     parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
             returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
             if (returnValue != null) {
+                log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
+                        StringUtils.join(returnValue.getCanDoActionMessages(), ','));
                 return returnValue;
             }
 
