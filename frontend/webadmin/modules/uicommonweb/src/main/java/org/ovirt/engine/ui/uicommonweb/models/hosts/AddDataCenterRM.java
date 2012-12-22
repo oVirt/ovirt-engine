@@ -98,7 +98,9 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 dataCenter.setstorage_pool_type((StorageType) dataCenterModel.getStorageTypeList().getSelectedItem());
                 dataCenter.setcompatibility_version((Version) dataCenterModel.getVersion().getSelectedItem());
 
-                Frontend.RunAction(VdcActionType.AddEmptyStoragePool, new StoragePoolManagementParameter(dataCenter),
+                StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
+                parameters.setCorrelationId(getCorrelationId());
+                Frontend.RunAction(VdcActionType.AddEmptyStoragePool, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void Executed(FrontendActionAsyncResult result) {
