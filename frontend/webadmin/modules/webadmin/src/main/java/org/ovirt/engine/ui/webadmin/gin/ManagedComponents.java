@@ -82,6 +82,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
@@ -194,6 +195,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
@@ -383,6 +385,10 @@ public interface ManagedComponents {
     AsyncProvider<SubTabStorageIsoPresenter> getSubTabStorageIsoPresenter();
 
     SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> getSubTabStorageIsoModelProvider();
+
+    AsyncProvider<SubTabStorageDiskPresenter> getSubTabStorageDiskPresenter();
+
+    SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getSubTabStorageDiskModelProvider();
 
     AsyncProvider<SubTabStoragePermissionPresenter> getSubTabStoragePermissionPresenter();
 

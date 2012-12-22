@@ -189,6 +189,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private ListModel vmListModel;
     private ListModel templateListModel;
     private ListModel isoListModel;
+    private ListModel diskListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -221,6 +222,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         isoListModel = new StorageIsoListModel();
         isoListModel.setIsAvailable(false);
 
+        diskListModel = new StorageDiskListModel();
+        diskListModel.setIsAvailable(false);
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new StorageGeneralModel());
         list.add(new StorageDataCenterListModel());
@@ -229,6 +233,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         list.add(vmListModel);
         list.add(templateListModel);
         list.add(isoListModel);
+        list.add(diskListModel);
         list.add(new StorageEventListModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
@@ -1017,6 +1022,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             vmListModel.setIsAvailable(isDataStorage);
             templateListModel.setIsAvailable(isDataStorage);
+            diskListModel.setIsAvailable(isDataStorage);
 
             isoListModel.setIsAvailable(isIsoStorage);
         }

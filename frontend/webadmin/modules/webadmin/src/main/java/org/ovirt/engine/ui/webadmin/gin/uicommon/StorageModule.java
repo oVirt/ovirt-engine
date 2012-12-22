@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
@@ -42,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -184,6 +187,25 @@ public class StorageModule extends AbstractGinModule {
         return new SearchableDetailTabModelProvider<EntityModel, StorageListModel, StorageIsoListModel>(ginjector,
                 StorageListModel.class,
                 StorageIsoListModel.class);
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getStorageDiskListProvider(ClientGinjector ginjector,
+            final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(ginjector,
+                StorageListModel.class,
+                StorageDiskListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDiskListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides

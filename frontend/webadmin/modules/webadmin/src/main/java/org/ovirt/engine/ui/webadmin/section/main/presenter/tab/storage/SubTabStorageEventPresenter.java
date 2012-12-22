@@ -36,7 +36,7 @@ public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<storage
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().storageEventSubTabLabel(), 8,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().storageEventSubTabLabel(), 9,
                 ginjector.getSubTabStorageEventModelProvider(), Align.RIGHT);
     }
 

@@ -153,6 +153,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
@@ -335,6 +336,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaUserV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.StorageSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDataCenterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageIsoView;
@@ -542,6 +544,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageIsoPresenter.ViewDef.class,
                 SubTabStorageIsoView.class,
                 SubTabStorageIsoPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageDiskPresenter.class,
+                SubTabStorageDiskPresenter.ViewDef.class,
+                SubTabStorageDiskView.class,
+                SubTabStorageDiskPresenter.ProxyDef.class);
         bindPresenter(SubTabStoragePermissionPresenter.class,
                 SubTabStoragePermissionPresenter.ViewDef.class,
                 SubTabStoragePermissionView.class,

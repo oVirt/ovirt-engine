@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<storage_domains, StorageListModel, PermissionListModel, SubTabStoragePermissionPresenter.ViewDef, SubTabStoragePermissionPresenter.ProxyDef> {
+public class SubTabStorageDiskPresenter extends AbstractSubTabPresenter<storage_domains, StorageListModel, StorageDiskListModel, SubTabStorageDiskPresenter.ViewDef, SubTabStorageDiskPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.storagePermissionSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabStoragePermissionPresenter> {
+    @NameToken(ApplicationPlaces.storageDiskSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabStorageDiskPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<storage_domains> {
@@ -35,14 +35,14 @@ public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<st
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().storagePermissionSubTabLabel(), 8,
-                ginjector.getSubTabStoragePermissionModelProvider());
+        return new ModelBoundTabData(ginjector.getApplicationConstants().disksLabel(), 7,
+                ginjector.getSubTabStorageDiskModelProvider());
     }
 
     @Inject
-    public SubTabStoragePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabStorageDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, StorageListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
