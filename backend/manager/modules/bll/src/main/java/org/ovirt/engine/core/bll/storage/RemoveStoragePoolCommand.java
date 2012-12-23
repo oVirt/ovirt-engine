@@ -186,15 +186,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
                         .DisconnectStorageFromDomainByVdsId(masterDomain, vds.getId());
             }
-            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    DbFacade.getInstance()
-                            .getStoragePoolIsoMapDao()
-                            .remove(masterDomain.getStoragePoolIsoMapData().getId());
-                    return null;
-                }
-            });
         } else {
             try {
                 Backend
