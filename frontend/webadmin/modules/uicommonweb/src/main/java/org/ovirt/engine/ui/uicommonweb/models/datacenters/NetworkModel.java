@@ -110,7 +110,6 @@ public abstract class NetworkModel extends Model
                 onIsEnableChange();
             }
         });
-        init();
     }
 
     public EntityModel getName()
@@ -468,8 +467,6 @@ public abstract class NetworkModel extends Model
         sourceListModel.setWindow(null);
         sourceListModel.setConfirmWindow(null);
     }
-
-    protected abstract void init();
 
     public void onSave()
     {

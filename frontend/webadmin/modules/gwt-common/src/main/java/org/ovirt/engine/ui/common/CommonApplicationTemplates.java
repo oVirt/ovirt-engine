@@ -55,4 +55,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             + "<span style='position: relative; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
     SafeHtml imageTextCardStatus(SafeHtml image, String text);
 
+    @Template("Card Status: {0}")
+    SafeHtml cardStatus(String status);
+
+    @Template("Link State: {0}")
+    SafeHtml linkState(String state);
+
 }

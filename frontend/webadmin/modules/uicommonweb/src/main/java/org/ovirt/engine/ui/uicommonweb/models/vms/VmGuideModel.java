@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -13,20 +12,15 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -58,10 +52,8 @@ public class VmGuideModel extends GuideModel
 
     private ArrayList<VmNetworkInterface> nics;
     private ArrayList<Disk> disks;
-    private ArrayList<Network> networks;
     private storage_domains storage;
     private VDSGroup cluster;
-    private boolean isHotPlugSupported;
 
     @Override
     public VM getEntity()
@@ -69,25 +61,9 @@ public class VmGuideModel extends GuideModel
         return (VM) super.getEntity();
     }
 
-    protected void updateIsHotPlugAvailable()
-    {
-        if (getEntity() == null)
-        {
-            return;
-        }
-        VM vm = getEntity();
-        Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion() != null
-                ? vm.getVdsGroupCompatibilityVersion() : new Version();
-
-        isHotPlugSupported =
-                (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
-                        clusterCompatibilityVersion.toString());
-    }
-
     @Override
     public void setEntity(Object value) {
         super.setEntity(value);
-        updateIsHotPlugAvailable();
     }
 
     @Override
@@ -185,17 +161,15 @@ public class VmGuideModel extends GuideModel
         }
     }
 
-    private void ResetData() {
+    public void ResetData() {
         nics = null;
         disks = null;
-        networks = null;
         storage = null;
         cluster = null;
     }
 
     private void AddNetworkUpdateData() {
         nics = null;
-        networks = null;
         AsyncDataProvider.GetVmNicList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -207,65 +181,19 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.AddNetworkPostData();
                     }
                 }), getEntity().getId());
-
-        AsyncDataProvider.GetClusterNetworkList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        ArrayList<Network> networks = (ArrayList<Network>) returnValue;
-                        vmGuideModel.networks = networks;
-                        vmGuideModel.AddNetworkPostData();
-                    }
-                }), getEntity().getVdsGroupId());
     }
 
     private void AddNetworkPostData() {
-        if (nics == null || networks == null) {
+        if (nics == null) {
             return;
         }
 
-        int nicCount = nics.size();
-        String newNicName = AsyncDataProvider.GetNewNicName(nics);
-
-        ArrayList<Network> operationalNetworks = new ArrayList<Network>();
-        for (Network a : networks)
-        {
-            if (a.getCluster().getstatus() == NetworkStatus.Operational && a.isVmNetwork())
-            {
-                operationalNetworks.add(a);
-            }
-        }
-
-        VmInterfaceModel model = new VmInterfaceModel();
+        VmInterfaceModel model =
+                NewVmInterfaceModel.createInstance(getEntity().getStaticData(),
+                        getEntity().getVdsGroupCompatibilityVersion(),
+                        nics,
+                        this);
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
-        model.setHashName("new_network_interface_vms_guide"); //$NON-NLS-1$
-        model.setIsNew(true);
-        model.getNetwork().setItems(operationalNetworks);
-        model.getNetwork().setSelectedItem(operationalNetworks.size() > 0 ? operationalNetworks.get(0) : null);
-        model.getNicType().setItems(AsyncDataProvider.GetNicTypeList(getEntity().getVmOs(), false));
-        model.getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(getEntity().getVmOs()));
-        model.getName().setEntity(newNicName);
-        model.getMAC().setIsChangable(false);
-
-        model.getPlugged().setIsChangable(isHotPlugSupported);
-        model.getPlugged().setEntity(true);
-
-        Version v31 = new Version(3, 1);
-        boolean isLessThan31 = getEntity().getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
-
-        model.getPortMirroring().setIsChangable(!isLessThan31);
-        model.getPortMirroring().setEntity(false);
-
-        UICommand tempVar = new UICommand("OnAddNetwork", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
 
         StopProgress();
     }
@@ -277,72 +205,6 @@ public class VmGuideModel extends GuideModel
             StartProgress(null);
 
             AddNetworkUpdateData();
-        }
-    }
-
-    private void OnAddNetwork()
-    {
-        if (getEntity() != null)
-        {
-            VmInterfaceModel model = (VmInterfaceModel) getWindow();
-
-            if (model.getProgress() != null)
-            {
-                return;
-            }
-
-            if (!model.Validate())
-            {
-                return;
-            }
-
-            // Save changes.
-            Integer _type;
-            if (model.getNicType().getSelectedItem() == null)
-            {
-                _type = null;
-            }
-            else
-            {
-                _type = ((VmInterfaceType) model.getNicType().getSelectedItem()).getValue();
-            }
-
-            VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
-            vmNetworkInterface.setName((String) model.getName().getEntity());
-            vmNetworkInterface.setNetworkName(((Network) model.getNetwork().getSelectedItem()).getname());
-            vmNetworkInterface.setType(_type);
-            vmNetworkInterface.setMacAddress(model.getMAC().getIsChangable() ? (model.getMAC().getEntity() == null ? null
-                    : ((String) (model.getMAC().getEntity())).toLowerCase())
-                    : ""); //$NON-NLS-1$
-
-            vmNetworkInterface.setActive((Boolean) model.getPlugged().getEntity());
-            vmNetworkInterface.setPortMirroring((Boolean) model.getPortMirroring().getEntity());
-
-            AddVmInterfaceParameters parameters =
-                    new AddVmInterfaceParameters(getEntity().getId(), vmNetworkInterface);
-
-            model.StartProgress(null);
-
-            Frontend.RunAction(VdcActionType.AddVmInterface, parameters,
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                            VmGuideModel vmGuideModel = (VmGuideModel) result.getState();
-                            vmGuideModel.getWindow().StopProgress();
-                            VdcReturnValueBase returnValueBase = result.getReturnValue();
-                            if (returnValueBase != null && returnValueBase.getSucceeded())
-                            {
-                                vmGuideModel.Cancel();
-                                vmGuideModel.PostAction();
-                            }
-
-                        }
-                    }, this);
-        }
-        else
-        {
-            Cancel();
         }
     }
 
@@ -562,10 +424,6 @@ public class VmGuideModel extends GuideModel
         if (StringHelper.stringsEqual(command.getName(), "AddDisk")) //$NON-NLS-1$
         {
             AddDisk();
-        }
-        if (StringHelper.stringsEqual(command.getName(), "OnAddNetwork")) //$NON-NLS-1$
-        {
-            OnAddNetwork();
         }
         if (StringHelper.stringsEqual(command.getName(), "OnAddDisk")) //$NON-NLS-1$
         {

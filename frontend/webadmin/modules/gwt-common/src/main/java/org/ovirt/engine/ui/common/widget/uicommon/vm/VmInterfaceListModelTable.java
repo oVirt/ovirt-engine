@@ -154,22 +154,6 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.activateInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getActivateCommand();
-            }
-        });
-
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.deactivateInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getDeactivateCommand();
-            }
-        });
-
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override

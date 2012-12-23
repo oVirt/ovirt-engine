@@ -37,6 +37,7 @@ public class EditNetworkModel extends NetworkModel {
     public EditNetworkModel(Network network, ListModel sourceListModel) {
         super(network, sourceListModel);
         getDataCenters().setIsChangable(false);
+        init();
     }
 
     private UICommand privateApplyCommand;
@@ -51,8 +52,7 @@ public class EditNetworkModel extends NetworkModel {
         privateApplyCommand = value;
     }
 
-    @Override
-    protected void init() {
+    private void init() {
         setApplyCommand(new UICommand(APPLY_COMMAND_NAME, getSourceListModel()));
         setTitle(ConstantsManager.getInstance().getConstants().editLogicalNetworkTitle());
         setHashName("edit_logical_network"); //$NON-NLS-1$

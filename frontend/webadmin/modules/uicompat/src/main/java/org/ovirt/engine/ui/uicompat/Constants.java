@@ -1642,4 +1642,21 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Detach Gluster Hosts")
     String detachGlusterHostsTitle();
+
+    // Vnic
+
+    @DefaultStringValue("In order to change 'Type' please Unplug and then Plug again")
+    String hotTypeUpdateNotPossible();
+
+    @DefaultStringValue("In order to change 'MAC' please Unplug and then Plug again")
+    String hotMacUpdateNotPossible();
+
+    @DefaultStringValue("Updating 'Network' on a running virtual machine while the NIC is plugged is not supported when 'Port Mirroring' is set on the virtual machine interface")
+    String hotNetworkUpdateNotSupportedWithPortMirroring();
+
+    @DefaultStringValue("Updating 'Link State' on a running virtual machine while the NIC is plugged is not supported when 'Port Mirroring' is set on the virtual machine interface")
+    String hotLinkStateUpdateNotSupportedWithPortMirroring();
+
+    @DefaultStringValue("Updating 'Port Mirroring' on a running virtual machine while the NIC is plugged is not supported")
+    String hotPortMirroringUpdateNotSupported();
 }

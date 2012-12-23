@@ -522,6 +522,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Plugged")
     String plugged();
 
+    @DefaultStringValue("Unplugged")
+    String unplugged();
+
     @DefaultStringValue("Enabled")
     String portMirroringEnabled();
 
@@ -749,13 +752,22 @@ public interface CommonApplicationConstants extends Constants {
     String specipyCustMacNetworkIntefacePopup();
 
     @DefaultStringValue("Card Status")
-    String cardStatusNetworkIntefacePopup();
+    String cardStatusNetworkInteface();
 
     @DefaultStringValue("Plugged")
-    String pluggedNetworkIntefacePopup();
+    String pluggedNetworkInteface();
 
     @DefaultStringValue("Unplugged")
-    String unpluggedNetworkIntefacePopup();
+    String unpluggedNetworkInteface();
+
+    @DefaultStringValue("Link State")
+    String linkStateNetworkInteface();
+
+    @DefaultStringValue("Up")
+    String linkedNetworkInteface();
+
+    @DefaultStringValue("Down")
+    String unlinkedNetworkInteface();
 
     // Pool popup
     @DefaultStringValue("Do not migrate VM")

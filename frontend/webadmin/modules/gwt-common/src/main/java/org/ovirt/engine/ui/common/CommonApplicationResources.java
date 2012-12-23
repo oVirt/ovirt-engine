@@ -206,4 +206,10 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/network/icn_un_plugged.png")
     ImageResource unpluggedNetworkImage();
 
+    @Source("images/network/icn_network_linked.png")
+    ImageResource linkedNetworkImage();
+
+    @Source("images/network/icn_network_unlinked.png")
+    ImageResource unlinkedNetworkImage();
+
 }

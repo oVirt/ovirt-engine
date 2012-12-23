@@ -1,14 +1,12 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
@@ -21,15 +19,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -53,6 +48,14 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         String cardStatusEditorContent();
 
         String cardStatusRadioContent();
+
+        String linkStateEditorContent();
+
+        String linkStateRadioContent();
+
+        String checkBox();
+
+        String portMirroringEditor();
     }
 
     @UiField
@@ -78,14 +81,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
 
-    @UiField
-    @Ignore
+    @UiField(provided = true)
+    @Path("enableMac.entity")
     @WithElementId("enableManualMac")
-    CheckBox enableManualMacCheckbox;
-
-    @UiField
-    @Ignore
-    Label enableManualMacCheckboxLabel;
+    EntityModelCheckBoxEditor enableManualMacCheckbox;
 
     @UiField
     @Path("MAC.entity")
@@ -100,7 +99,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     protected HorizontalPanel cardStatusSelectionPanel;
 
     @UiField
-    @Ignore
+    @Path(value = "plugged.entity")
     public ListModelListBoxEditor<Object> cardStatusEditor;
 
     @UiField(provided = true)
@@ -110,6 +109,21 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @UiField(provided = true)
     @Path(value = "unplugged_IsSelected.entity")
     public EntityModelRadioButtonEditor unpluggedEditor;
+
+    @UiField
+    protected HorizontalPanel linkStateSelectionPanel;
+
+    @UiField
+    @Path(value = "linked.entity")
+    public ListModelListBoxEditor<Object> linkStateEditor;
+
+    @UiField(provided = true)
+    @Path(value = "linked_IsSelected.entity")
+    public EntityModelRadioButtonEditor linkedEditor;
+
+    @UiField(provided = true)
+    @Path(value = "unlinked_IsSelected.entity")
+    public EntityModelRadioButtonEditor unlinkedEditor;
 
     public static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
     public static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
@@ -136,18 +150,28 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         nameEditor.setLabel(constants.nameNetworkIntefacePopup());
         networkEditor.setLabel(constants.networkNetworkIntefacePopup());
         nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
-        enableManualMacCheckboxLabel.setText(constants.specipyCustMacNetworkIntefacePopup());
+        enableManualMacCheckbox.setLabel(constants.specipyCustMacNetworkIntefacePopup());
         portMirroringEditor.setLabel(constants.portMirroringNetworkIntefacePopup());
 
-        cardStatusEditor.setLabel(constants.cardStatusNetworkIntefacePopup());
+        cardStatusEditor.setLabel(constants.cardStatusNetworkInteface());
         pluggedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.pluggedNetworkImage())
                         .getHTML()),
-                        constants.pluggedNetworkIntefacePopup()));
+                        constants.pluggedNetworkInteface()));
         unpluggedEditor.asRadioButton()
                 .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.unpluggedNetworkImage())
                         .getHTML()),
-                        constants.unpluggedNetworkIntefacePopup()));
+                        constants.unpluggedNetworkInteface()));
+
+        linkStateEditor.setLabel(constants.linkStateNetworkInteface());
+        linkedEditor.asRadioButton()
+                .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.linkedNetworkImage())
+                        .getHTML()),
+                        constants.linkedNetworkInteface()));
+        unlinkedEditor.asRadioButton()
+                .setHTML(templates.imageTextCardStatus(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.unlinkedNetworkImage())
+                        .getHTML()),
+                        constants.unlinkedNetworkInteface()));
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -163,6 +187,11 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
         pluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$
         unpluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$
+
+        linkedEditor = new EntityModelRadioButtonEditor("linkState"); //$NON-NLS-1$
+        unlinkedEditor = new EntityModelRadioButtonEditor("linkState"); //$NON-NLS-1$
+
+        enableManualMacCheckbox = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     @Override
@@ -173,32 +202,13 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Override
     public void edit(final VmInterfaceModel iface) {
         Driver.driver.edit(iface);
-        enableManualMacCheckbox.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                iface.getMAC().setIsChangable(enableManualMacCheckbox.getValue());
-            }
-        });
 
         hideMacWhenNotEnabled(iface);
-
-        iface.getPlugged().getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isCardStatusChangable = iface.getPlugged().getIsChangable();
-                pluggedEditor.setEnabled(isCardStatusChangable);
-                unpluggedEditor.setEnabled(isCardStatusChangable);
-
-                boolean isCardStatusAvailable = iface.getPlugged().getIsAvailable();
-                cardStatusSelectionPanel.setVisible(isCardStatusAvailable);
-            }
-        });
     }
 
     private void hideMacWhenNotEnabled(VmInterfaceModel iface) {
         if (!iface.getMAC().getIsAvailable()) {
             enableManualMacCheckbox.setVisible(false);
-            enableManualMacCheckboxLabel.setVisible(false);
             MACEditor.setVisible(false);
             macExample.setVisible(false);
         }
@@ -213,5 +223,13 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         cardStatusEditor.addContentWidgetStyleName(style.cardStatusEditorContent());
         pluggedEditor.addContentWidgetStyleName(style.cardStatusRadioContent());
         unpluggedEditor.addContentWidgetStyleName(style.cardStatusRadioContent());
+
+        linkStateEditor.addContentWidgetStyleName(style.linkStateEditorContent());
+        linkedEditor.addContentWidgetStyleName(style.linkStateRadioContent());
+        unlinkedEditor.addContentWidgetStyleName(style.linkStateRadioContent());
+
+        enableManualMacCheckbox.addContentWidgetStyleName(style.checkBox());
+
+        portMirroringEditor.addContentWidgetStyleName(style.portMirroringEditor());
     }
 }

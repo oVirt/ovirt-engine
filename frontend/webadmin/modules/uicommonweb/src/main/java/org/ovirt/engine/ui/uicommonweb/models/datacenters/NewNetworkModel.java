@@ -19,10 +19,10 @@ public class NewNetworkModel extends NetworkModel {
 
     public NewNetworkModel(ListModel sourceListModel) {
         super(sourceListModel);
+        init();
     }
 
-    @Override
-    protected void init() {
+    private void init() {
         setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         setHashName("new_logical_network"); //$NON-NLS-1$
     }

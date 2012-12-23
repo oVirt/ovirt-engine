@@ -7,13 +7,18 @@
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface.NetworkInterfacePopupWidget.Style">
+
+	@external .gwt-CheckBox;
+
 		.macExample {
 			color: gray;
-			float: right;
+			float: left;
 		}
 
-		.cardStatusEditor {
-			padding-right: 14px;
+		.macExamplePanel {
+			float: right;
+    		width: 230px;
+    		padding: 0 5px;
 		}
 
 		.cardStatusEditorContent  {
@@ -23,37 +28,89 @@
 		.cardStatusRadioContent  {
 			padding-top: 3px;
 			width: 100%;
+			float: right !important;
 		}
 
-        .expanderContent {
-            padding-left: 10px;
-			float: left;
+		.linkStateEditorContent  {
+			display: none;
+		}
+
+		.linkStateRadioContent  {
+			padding-top: 3px;
+			width: 100%;
+			float: right !important;
+		}
+
+        .expandedPanel {
+			float: right;
+			width: 96%;
         }
 
         .expander {
             margin-top:15px;
         }
 
+        .checkBox .gwt-CheckBox{
+			padding: 0px !important;
+			border-width: 0px !important;
+		}
+
+		.checkBox {
+			padding: 0px;
+		}
+
+		.contentWidget {
+			float: right;
+			line-height: 30px;
+			padding: 0 5px;
+			width: 230px;
+		}
+
+		.portMirroringEditor .gwt-CheckBox {
+			padding: 0px !important;
+			border-width: 0px !important;
+		}
+
+		.portMirroringEditor {
+			width: 235px;
+		}
+
+
 	</ui:style>
 
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 		<e:ListModelListBoxEditor ui:field="networkEditor" />
+		<g:HorizontalPanel ui:field="linkStateSelectionPanel" width="100%">
+				<e:ListModelListBoxEditor ui:field="linkStateEditor" />
+				<g:SimplePanel addStyleNames="{style.contentWidget}">
+					<g:HorizontalPanel>
+						<e:EntityModelRadioButtonEditor ui:field="linkedEditor"/>
+						<e:EntityModelRadioButtonEditor ui:field="unlinkedEditor"/>
+					</g:HorizontalPanel>
+				</g:SimplePanel>
+			</g:HorizontalPanel>
 		<e:ListModelListBoxEditor ui:field="nicTypeEditor" />
-		<g:HorizontalPanel>
-			<g:CheckBox ui:field="enableManualMacCheckbox"
-				addStyleNames="isTemplatePrivateEditor" />
-			<g:Label ui:field="enableManualMacCheckboxLabel" />
+		<g:HorizontalPanel width="100%">
+			<e:EntityModelCheckBoxEditor ui:field="enableManualMacCheckbox" />
+			<e:EntityModelTextBoxEditor ui:field="MACEditor" />
 		</g:HorizontalPanel>
-		<e:EntityModelTextBoxEditor ui:field="MACEditor" />
-		<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
+		<g:SimplePanel addStyleNames="{style.macExamplePanel}">
+			<g:Label ui:field="macExample" addStyleNames="{style.macExample}" text="{constants.exampleInterfacePopup} 00:14:4a:23:67:55" />
+		</g:SimplePanel>
 		<d:AdvancedParametersExpander ui:field="expander" addStyleNames="{style.expander}"/>
-		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expanderContent}">
-			<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
-			<g:HorizontalPanel ui:field="cardStatusSelectionPanel">
-				<e:ListModelListBoxEditor ui:field="cardStatusEditor" addStyleNames="{style.cardStatusEditor}" />
-				<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
-				<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
+		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expandedPanel}">
+			<g:SimplePanel width="100%">
+				<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
+			</g:SimplePanel>
+			<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
+				<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
+				<g:SimplePanel addStyleNames="{style.contentWidget}">
+					<g:HorizontalPanel>
+						<e:EntityModelRadioButtonEditor ui:field="pluggedEditor"/>
+						<e:EntityModelRadioButtonEditor ui:field="unpluggedEditor"/>
+					</g:HorizontalPanel>
+				</g:SimplePanel>
 			</g:HorizontalPanel>
 		</g:FlowPanel>
 	</g:FlowPanel>
