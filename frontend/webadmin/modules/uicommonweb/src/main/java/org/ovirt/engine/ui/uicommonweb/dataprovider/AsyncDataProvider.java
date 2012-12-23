@@ -104,6 +104,7 @@ import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameter
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -119,6 +120,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
@@ -128,12 +130,49 @@ import org.ovirt.engine.ui.uicompat.SpiceConstantsManager;
 
 public final class AsyncDataProvider {
 
+    private static final String GENERAL = "general"; //$NON-NLS-1$
+
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
     private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
 
     private static HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValuesPreConvert =
             new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
+
+    private static String _defaultConfigurationVersion = null;
+    public static String getDefaultConfigurationVersion() {
+        return _defaultConfigurationVersion;
+    }
+
+    private static void getDefaultConfigurationVersion(Object target) {
+        AsyncQuery callback = new AsyncQuery(target, new INewAsyncCallback() {
+
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+                if (returnValue != null) {
+                    _defaultConfigurationVersion =
+                            (String) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                } else {
+                    _defaultConfigurationVersion = GENERAL;
+                }
+                LoginModel loginModel = (LoginModel) model;
+                loginModel.getLoggedInEvent().raise(loginModel, EventArgs.Empty);
+            }
+        });
+        callback.setHandleFailure(true);
+        Frontend.RunQuery(VdcQueryType.GetDefaultConfigurationVersion,
+                new VdcQueryParametersBase(),
+                callback);
+    }
+
+    public static void initCache(LoginModel loginModel) {
+        AsyncDataProvider.CacheConfigValues(new AsyncQuery(loginModel, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                getDefaultConfigurationVersion(target);
+            }
+        }));
+    }
 
     public static void GetDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
         aQuery.converterCallback = new IAsyncConverter() {
@@ -358,7 +397,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.VMMinMemorySizeInMB,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -371,7 +411,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -383,7 +424,7 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.WANColorDepth, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.WANColorDepth, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -416,7 +457,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -443,7 +485,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.VM32BitMaxMemorySizeInMB,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -456,7 +499,7 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -639,7 +682,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -690,7 +734,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -834,7 +879,7 @@ public final class AsyncDataProvider {
         };
         GetConfigFromCache(
                 new GetConfigurationValueParameters(is64 ? ConfigurationValues.VM64BitMaxMemorySizeInMB
-                        : ConfigurationValues.VM32BitMaxMemorySizeInMB, Config.DefaultConfigurationVersion),
+                        : ConfigurationValues.VM32BitMaxMemorySizeInMB, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1091,7 +1136,8 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1104,7 +1150,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1117,7 +1164,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1252,7 +1300,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1314,7 +1363,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1327,7 +1377,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1340,7 +1391,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1354,7 +1406,7 @@ public final class AsyncDataProvider {
         };
         GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.AllowClusterWithVirtGlusterEnabled,
-                        Config.DefaultConfigurationVersion),
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1387,7 +1439,7 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigurationValueParameters tempVar = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
-        tempVar.setVersion(version != null ? version.toString() : Config.DefaultConfigurationVersion);
+        tempVar.setVersion(version != null ? version.toString() : getDefaultConfigurationVersion());
         GetConfigFromCache(tempVar, aQuery);
     }
 
@@ -1539,7 +1591,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.RhevhLocalFSPath,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1552,7 +1605,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1583,7 +1637,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForEvenlyDistribute,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1596,7 +1651,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.LowUtilizationForPowerSave,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1609,7 +1665,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1623,7 +1680,7 @@ public final class AsyncDataProvider {
         };
         GetConfigFromCache(
                 new GetConfigurationValueParameters(ConfigurationValues.NetworkConnectivityCheckTimeoutInSeconds,
-                        Config.DefaultConfigurationVersion),
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1636,7 +1693,7 @@ public final class AsyncDataProvider {
         };
 
         // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, Config.DefaultConfigurationVersion),
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
         // aQuery);
 
         aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 10);
@@ -1651,7 +1708,7 @@ public final class AsyncDataProvider {
         };
 
         // GetConfigFromCache(
-        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, Config.DefaultConfigurationVersion),
+        // new GetConfigurationValueParameters(ConfigurationValues.HighUtilizationForPowerSave, getDefaultConfigurationVersion()),
         // aQuery);
 
         aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 5);
@@ -1842,7 +1899,8 @@ public final class AsyncDataProvider {
         };
 
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -1976,7 +2034,7 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.DocsURL, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.DocsURL, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -2081,7 +2139,8 @@ public final class AsyncDataProvider {
             }
         };
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.RedirectServletReportsPage, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.RedirectServletReportsPage,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -2137,14 +2196,16 @@ public final class AsyncDataProvider {
      */
     public static void GetManagementNetworkName(AsyncQuery aQuery) {
         GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.ManagementNetwork, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.ManagementNetwork,
+                        getDefaultConfigurationVersion()),
                 aQuery);
     }
 
     /**
      * Cache configuration values [raw (not converted) values from vdc_options table].
      */
-    public static void CacheConfigValues(AsyncQuery aQuery) {
+    private static void CacheConfigValues(AsyncQuery aQuery) {
+        getDefaultConfigurationVersion();
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object returnValue, AsyncQuery _asyncQuery)
@@ -2155,7 +2216,6 @@ public final class AsyncDataProvider {
                 return cachedConfigValuesPreConvert;
             }
         };
-
         Frontend.RunQuery(VdcQueryType.GetConfigurationValues, new VdcQueryParametersBase(), aQuery);
     }
 
@@ -2179,7 +2239,7 @@ public final class AsyncDataProvider {
      */
     public static Object GetConfigValuePreConverted(ConfigurationValues configValue) {
         KeyValuePairCompat<ConfigurationValues, String> key =
-                new KeyValuePairCompat<ConfigurationValues, String>(configValue, Config.DefaultConfigurationVersion);
+                new KeyValuePairCompat<ConfigurationValues, String>(configValue, getDefaultConfigurationVersion());
 
         return cachedConfigValuesPreConvert.get(key);
     }
@@ -2841,7 +2901,7 @@ public final class AsyncDataProvider {
     public static int GetMaxVmPriority()
     {
         return (Integer) GetConfigValuePreConverted(ConfigurationValues.VmPriorityMaxValue,
-                Config.DefaultConfigurationVersion);
+                getDefaultConfigurationVersion());
     }
 
     public static int RoundPriority(int priority)
@@ -2881,4 +2941,5 @@ public final class AsyncDataProvider {
         };
         Frontend.RunQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
     }
+
 }

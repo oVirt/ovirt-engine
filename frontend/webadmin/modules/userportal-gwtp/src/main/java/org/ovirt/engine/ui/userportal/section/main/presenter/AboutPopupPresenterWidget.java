@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -36,7 +35,7 @@ public class AboutPopupPresenterWidget extends AbstractPopupPresenterWidget<Abou
         AsyncQuery aQuery = new AsyncQuery();
 
         Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.VdcVersion, Config.DefaultConfigurationVersion),
+                new GetConfigurationValueParameters(ConfigurationValues.VdcVersion, AsyncDataProvider.getDefaultConfigurationVersion()),
                 aQuery);
 
         AsyncQuery _asyncQuery = new AsyncQuery();

@@ -310,13 +310,7 @@ public class LoginModel extends Model
 
     protected void raiseLoggedInEvent() {
         // Cache all configurations values before logging-in
-        AsyncDataProvider.CacheConfigValues(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object target, Object returnValue) {
-                LoginModel loginModel = (LoginModel) target;
-                loginModel.getLoggedInEvent().raise(this, EventArgs.Empty);
-            }
-        }));
+        AsyncDataProvider.initCache(this);
     }
 
     public void AutoLogin(VdcUser user)

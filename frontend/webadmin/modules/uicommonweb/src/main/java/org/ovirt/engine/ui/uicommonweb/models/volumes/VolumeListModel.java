@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -466,17 +465,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                         };
 
                         AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
-                                Config.DefaultConfigurationVersion),
+                                AsyncDataProvider.getDefaultConfigurationVersion()),
                                 aQueryInner1);
                     }
                 };
                 AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
-                        Config.DefaultConfigurationVersion),
+                        AsyncDataProvider.getDefaultConfigurationVersion()),
                         aQueryInner);
             }
         };
         AsyncDataProvider.GetConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
-                Config.DefaultConfigurationVersion),
+                AsyncDataProvider.getDefaultConfigurationVersion()),
                 aQuery);
     }
 

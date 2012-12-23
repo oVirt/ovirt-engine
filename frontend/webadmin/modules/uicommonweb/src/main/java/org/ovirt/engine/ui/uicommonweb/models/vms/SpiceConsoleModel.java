@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -262,15 +261,16 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
                 ArrayList<VdcQueryParametersBase> parametersList =
                         new ArrayList<VdcQueryParametersBase>();
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, Config.DefaultConfigurationVersion));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, AsyncDataProvider.getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, AsyncDataProvider.getDefaultConfigurationVersion()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
                         thisVm.getVdsGroupCompatibilityVersion().toString()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getDefaultConfigurationVersion()));
                 parametersList.add(new GetVmByVmIdParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, Config.DefaultConfigurationVersion));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys, Config.DefaultConfigurationVersion));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceToggleFullScreenKeys, AsyncDataProvider.getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceReleaseCursorKeys,
+                        AsyncDataProvider.getDefaultConfigurationVersion()));
 
                 if (isoDomain != null) {
                     queryTypeList.add(VdcQueryType.GetAllIsoImagesListByStoragePoolId);
