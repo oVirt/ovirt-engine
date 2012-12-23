@@ -518,7 +518,7 @@ COMMIT
 ','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
-select fn_db_update_config_value('MinimalETLVersion','3.1.0','general');
+select fn_db_update_config_value('MinimalETLVersion','3.2.0','general');
 select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5','general');
 select fn_db_update_config_value('OvirtIsoPrefix','ovirt-node','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso','general');
