@@ -12,16 +12,6 @@
 			right: 0px;
 		}
 
-		.interfaceInfoContainer {
-			margin-right: 4px;
-			margin-bottom: 4px;
-			margin-top: 2px;
-		}
-
-		.interfaceTableContainer {
-			margin-right: 6px;
-		}
-
 		@external .gwt-TabLayoutPanel;
 		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
 		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab;
@@ -51,10 +41,10 @@
 
 	<g:SplitLayoutPanel addStyleNames="{style.container}">
 		<g:center>
-			<g:SimplePanel ui:field="interfaceTableContainer" addStyleNames="{style.interfaceTableContainer}"/>
+			<g:SimplePanel ui:field="interfaceTableContainer"/>
 		</g:center>
 		<g:east size="600">
-			<g:SimplePanel ui:field="interfaceInfoContainer" addStyleNames="{style.interfaceInfoContainer}"/>
+			<g:SimplePanel ui:field="interfaceInfoContainer"/>
 		</g:east>
 	</g:SplitLayoutPanel>
 
