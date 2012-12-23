@@ -11,6 +11,8 @@ import com.google.gwt.user.cellview.client.Column;
 
 public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
+    private boolean isCentralized = false;
+
     static class EnabledDisabledCheckboxCell extends CheckboxCell {
 
         public EnabledDisabledCheckboxCell() {
@@ -43,6 +45,11 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
         super(new EnabledDisabledCheckboxCell());
     }
 
+    public CheckboxColumn(boolean isCentralized) {
+        super(new EnabledDisabledCheckboxCell());
+        this.isCentralized = isCentralized;
+    }
+
     public CheckboxColumn(FieldUpdater<T, Boolean> fieldUpdater) {
         this();
         setFieldUpdater(fieldUpdater);
@@ -52,7 +59,15 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
     public void render(Context context, T object, SafeHtmlBuilder sb) {
         Cell<Boolean> cell = getCell();
         if (cell instanceof EnabledDisabledCheckboxCell) {
+            if (isCentralized) {
+                sb.appendHtmlConstant("<div style='text-align: center'>"); //$NON-NLS-1$
+            }
+
             ((EnabledDisabledCheckboxCell) cell).renderEditable(context, getValue(object), canEdit(object), sb);
+
+            if (isCentralized) {
+                sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
+            }
         } else {
             super.render(context, object, sb);
         }

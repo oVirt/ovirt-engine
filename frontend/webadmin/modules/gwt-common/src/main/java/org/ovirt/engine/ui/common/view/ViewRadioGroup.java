@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.view;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,19 +18,17 @@ public class ViewRadioGroup<K> extends Composite {
     private final List<? extends ViewFilter<K>> items;
     private final Map<K, RadioButton> buttons = new HashMap<K, RadioButton>();
 
-
     public ViewRadioGroup(List<? extends ViewFilter<K>> items) {
         this.items = items;
         initWidget(getRadioGroupPanel());
     }
-
 
     private Widget getRadioGroupPanel() {
         FlowPanel buttonsPanel = new FlowPanel();
         buttonsPanel.getElement().getStyle().setProperty("marginLeft", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
         buttonsPanel.getElement().getStyle().setProperty("marginRight", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        for (ViewFilter<K> item : items){
+        for (ViewFilter<K> item : items) {
             RadioButton radioButton = new RadioButton("viewRadioGroup", item.toString()); //$NON-NLS-1$
             radioButton.getElement().getStyle().setMarginRight(20, Unit.PX);
             radioButton.setText(item.getText());
@@ -45,7 +42,7 @@ public class ViewRadioGroup<K> extends Composite {
     }
 
     public void addClickHandler(ClickHandler clickHandler) {
-        for (RadioButton button : buttons.values()){
+        for (RadioButton button : buttons.values()) {
             button.addClickHandler(clickHandler);
         }
     }
@@ -55,8 +52,8 @@ public class ViewRadioGroup<K> extends Composite {
     }
 
     public K getSelectedValue() {
-        for (Map.Entry<K, RadioButton> buttonEntry : buttons.entrySet()){
-            if (buttonEntry.getValue().getValue()){
+        for (Map.Entry<K, RadioButton> buttonEntry : buttons.entrySet()) {
+            if (buttonEntry.getValue().getValue()) {
                 return buttonEntry.getKey();
             }
         }
@@ -66,8 +63,13 @@ public class ViewRadioGroup<K> extends Composite {
     public void setSelectedValue(K value) {
         RadioButton button = buttons.get(value);
 
-        if (button != null)
-        {
+        if (button != null) {
+            // Reset old selected radio
+            if (buttons.get(getSelectedValue()) != null) {
+                buttons.get(getSelectedValue()).setValue(false);
+            }
+
+            // Initialize new selected radio
             button.setValue(true);
         }
     }

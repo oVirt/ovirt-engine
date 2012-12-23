@@ -949,13 +949,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameCluster();
 
-    @DefaultStringValue("Network Attached")
+    @DefaultStringValue("Attached Network")
     String attachedNetworkCluster();
 
     @DefaultStringValue("Compatibility Version")
     String comptVersCluster();
 
-    @DefaultStringValue("Network Required")
+    @DefaultStringValue("Required Network")
     String requiredNetCluster();
 
     @DefaultStringValue("Network Role")

@@ -1080,16 +1080,19 @@ public interface CommonApplicationConstants extends Constants {
     String refreshRate();
 
     // Network Host
-    @DefaultStringValue("Nic Status")
+    @DefaultStringValue("Network Device Status")
     String statusNetworkHost();
 
-    @DefaultStringValue("Nic")
+    @DefaultStringValue("Network Device")
     String nicNetworkHost();
 
-    @DefaultStringValue("Nic Rx")
+    @DefaultStringValue("Network Device Speed")
+    String speedNetworkHost();
+
+    @DefaultStringValue("Network Device Rx")
     String rxNetworkHost();
 
-    @DefaultStringValue("Nic Tx")
+    @DefaultStringValue("Network Device Tx")
     String txNetworkHost();
 
     // Network VM

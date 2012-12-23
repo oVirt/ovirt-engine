@@ -62,7 +62,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         };
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "130px"); //$NON-NLS-1$
 
-        CheckboxColumn<PairQueryable<VDSGroup, network_cluster>> attachedColumn = new CheckboxColumn<PairQueryable<VDSGroup, network_cluster>>() {
+        CheckboxColumn<PairQueryable<VDSGroup, network_cluster>> attachedColumn =
+                new CheckboxColumn<PairQueryable<VDSGroup, network_cluster>>(true) {
             @Override
             public Boolean getValue(PairQueryable<VDSGroup, network_cluster> object) {
                 return object.getSecond() != null;
@@ -78,7 +79,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
         getTable().addColumn(new NetworkClusterStatusColumn(), constants.networkStatus(), "120px"); //$NON-NLS-1$
 
-        CheckboxColumn<PairQueryable<VDSGroup, network_cluster>> netRequiredColumn = new CheckboxColumn<PairQueryable<VDSGroup, network_cluster>>() {
+        CheckboxColumn<PairQueryable<VDSGroup, network_cluster>> netRequiredColumn =
+                new CheckboxColumn<PairQueryable<VDSGroup, network_cluster>>(true) {
             @Override
             public Boolean getValue(PairQueryable<VDSGroup, network_cluster> object) {
                 if (object.getSecond() != null)

@@ -43,6 +43,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         this.constants = constants;
         this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkHostFilter>(Arrays.asList(NetworkHostFilter.values()));
+        viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
         initTable();
         initWidget(getTable());
     }
@@ -106,6 +107,17 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
+    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
+            new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+                @Override
+                public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    if (object.getFirst() != null && object.getFirst().getSpeed() != null) {
+                        return String.valueOf(object.getFirst().getSpeed());
+                    }
+                    return null;
+                }
+            };
+
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicRxColumn = new RxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         protected Double getRate(PairQueryable<VdsNetworkInterface, VDS> object) {
@@ -156,8 +168,9 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().ensureColumnPresent(nameColumn, constants.nameHost(), all || attached || unattached);
         getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), all || attached || unattached);
         getTable().ensureColumnPresent(dcColumn, constants.dcHost(), all || attached || unattached);
-        getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "70px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached);
+        getTable().ensureColumnPresent(speedColumn, constants.speedNetworkHost(), attached);
         getTable().ensureColumnPresent(nicRxColumn, templates.sub(constants.rxNetworkHost(), constants.mbps()).asString(), attached);
         getTable().ensureColumnPresent(nicTxColumn, templates.sub(constants.txNetworkHost(), constants.mbps()).asString(), attached);
     }
