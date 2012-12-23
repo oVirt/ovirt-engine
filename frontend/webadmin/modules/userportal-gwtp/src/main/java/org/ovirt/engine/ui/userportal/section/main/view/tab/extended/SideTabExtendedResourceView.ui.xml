@@ -19,7 +19,7 @@
 			margin-right: 20px;
 			height: 100%;
 			overflow-x: hidden;
-			overflow-y: scroll;
+			overflow-y: visible;
 			width: 98%;
 		}
 
@@ -215,7 +215,7 @@
 
 	</ui:style>
 	<g:ScrollPanel>
-		<g:VerticalPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
+		<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
 			<g:FlowPanel ui:field="infoContainer" addStyleNames="{style.infoContainerContainer}">
 				<g:FlowPanel addStyleNames="{style.infoContainerLeft}">
 					<g:FlowPanel ui:field="infoBoxLeft" addStyleNames="{style.infoBoxLeft}">
@@ -253,7 +253,7 @@
 							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
 								<g:Image resource='{resources.cpuIcon}'/>
 							</g:FlowPanel>
-							<g:VerticalPanel addStyleNames="{style.infoBoxDetails}">
+							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
 
 
 								<g:Label text="{constants.vcpusExtResource}:"
@@ -277,7 +277,7 @@
 									</g:ScrollPanel>
 								</g:FlowPanel>
 
-							</g:VerticalPanel>
+							</g:FlowPanel>
 
 						</g:FlowPanel>
 					</g:FlowPanel>
@@ -379,7 +379,7 @@
 					<r:VmTable ui:field="vmTable"/>
 				</g:center>
 			</g:DockLayoutPanel>
-		</g:VerticalPanel>
+		</g:FlowPanel>
 	</g:ScrollPanel>
 
 </ui:UiBinder>

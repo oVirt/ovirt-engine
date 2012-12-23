@@ -309,13 +309,13 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     }
 
     private void addQuotaRow(VerticalPanel list, String quotaName, QuotaProgressBar progressBar) {
-        VerticalPanel verticalPanel = new VerticalPanel();
+        FlowPanel flowPanel = new FlowPanel();
         Label quotaNameLabel = new Label();
         quotaNameLabel.setText(quotaName);
-        verticalPanel.add(quotaNameLabel);
-        verticalPanel.add(progressBar);
-        verticalPanel.setWidth("100%"); //$NON-NLS-1$
-        list.add(verticalPanel);
+        flowPanel.add(quotaNameLabel);
+        flowPanel.add(progressBar);
+        flowPanel.setWidth("100%"); //$NON-NLS-1$
+        list.add(flowPanel);
     }
 
     private void addQuotaToMemoryQuotaList(QuotaUsagePerUser quotaPerUserUsageEntity) {
