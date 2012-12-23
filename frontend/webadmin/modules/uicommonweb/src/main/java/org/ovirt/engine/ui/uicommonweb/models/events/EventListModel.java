@@ -146,35 +146,30 @@ public class EventListModel extends SearchableListModel
 
     protected void refreshModel()
     {
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
+            public void OnSuccess(Object model, Object returnValue) {
                 EventListModel eventListModel = (EventListModel) model;
-                ArrayList<AuditLog> list =
-                        (ArrayList<AuditLog>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<AuditLog> list = (ArrayList<AuditLog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 requestingData = false;
                 for (AuditLog auditLog : list) {
                     // in case the corr_id is created in client,
                     // remove unnecessary data (leave only the corr_id).
                     if (auditLog.getCorrelationId() != null
-                            && auditLog.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
+                        && auditLog.getCorrelationId().startsWith(TaskListModel._WEBADMIN_)) {
                         auditLog.setCorrelationId(auditLog.getCorrelationId().split("_")[2]); //$NON-NLS-1$
                     }
                 }
                 eventListModel.UpdateItems(list);
             }
-        };
+        });
 
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.AuditLog);
-        tempVar.setMaxCount(getSearchPageSize());
-        tempVar.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
-        tempVar.setRefresh(false);
-        SearchParameters searchParameters = tempVar;
+        SearchParameters params = new SearchParameters(getSearchString(), SearchType.AuditLog);
+        params.setMaxCount(getSearchPageSize());
+        params.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
+        params.setRefresh(false);
 
-        Frontend.RunQuery(VdcQueryType.Search, searchParameters, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.Search, params, query);
     }
 
     @Override

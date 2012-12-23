@@ -550,6 +550,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Correlation Id")
     String correltaionIdEvent();
 
+    @DefaultStringValue("Origin")
+    String originEvent();
+
+    @DefaultStringValue("Custom Event Id")
+    String customEventIdEvent();
+
     @DefaultStringValue("Until")
     String untilEndTime();
 

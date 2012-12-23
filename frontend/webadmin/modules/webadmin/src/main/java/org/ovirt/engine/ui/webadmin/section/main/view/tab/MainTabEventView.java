@@ -94,6 +94,12 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         getTable().ensureColumnPresent(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(AdvancedViewColumns.originColumn, constants.eventOrigin(),
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
+                advancedViewEnabled,
+                "100px"); //$NON-NLS-1$
     }
 
     void initTable() {
@@ -192,4 +198,19 @@ class AdvancedViewColumns {
         }
     };
 
+    public static final TextColumnWithTooltip<AuditLog> originColumn = new TextColumnWithTooltip<AuditLog>() {
+        @Override
+        public String getValue(AuditLog object) {
+            return object.getOrigin();
+        }
+    };
+
+    public static final TextColumnWithTooltip<AuditLog> customEventIdColumn = new TextColumnWithTooltip<AuditLog>() {
+        @Override
+        public String getValue(AuditLog object) {
+
+            int id = object.getCustomEventId();
+            return id >= 0 ? String.valueOf(id) : "";   //$NON-NLS-1$
+        }
+    };
 }
