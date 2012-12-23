@@ -182,7 +182,6 @@
 		<include name="common/AuditLogTimeInterval.java" />
 		<include name="common/AuditLogSeverity.java" />
 		<include name="common/users/VdcUser.java" />
-		<include name="common/utils/ObjectDescriptor.java" />
 		<include name="common/utils/EnumUtils.java" />
 		<include name="common/utils/ListUtils.java" />
 		<include name="common/utils/StringUtil.java"/>
@@ -283,7 +282,6 @@
 			<include name="searchbackend/PostgresSqlInjectionChecker.java" />alidation 
 			framework -->
 		<include name="common/utils/EnumUtils.java" />
-		<include name="common/utils/IObjectDescriptorContainer.java" />
 		<include name="common/validation/annotation/HostnameOrIp.java" />
 		<include name="common/validation/group/**" />
 
