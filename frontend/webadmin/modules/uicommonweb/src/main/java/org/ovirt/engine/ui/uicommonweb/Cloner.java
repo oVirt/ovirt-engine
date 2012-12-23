@@ -204,13 +204,22 @@ public final class Cloner
         VDS obj = new VDS();
 
         obj.sethost_name(instance.gethost_name());
+
         obj.setManagmentIp(instance.getManagmentIp());
-        obj.setpm_enabled(instance.getpm_enabled());
-        obj.setPmOptionsMap(instance.getPmOptionsMap());
-        obj.setpm_password(instance.getpm_password());
-        obj.setpm_port(instance.getpm_port());
-        obj.setpm_type(instance.getpm_type());
         obj.setpm_user(instance.getpm_user());
+        obj.setpm_password(instance.getpm_password());
+        obj.setpm_type(instance.getpm_type());
+        obj.setPmOptionsMap(instance.getPmOptionsMap());
+
+        obj.setPmSecondaryIp(instance.getManagmentIp());
+        obj.setPmSecondaryUser(instance.getpm_user());
+        obj.setPmSecondaryPassword(instance.getpm_password());
+        obj.setPmSecondaryType(instance.getpm_type());
+        obj.setPmSecondaryOptionsMap(instance.getPmOptionsMap());
+
+        obj.setpm_enabled(instance.getpm_enabled());
+        obj.setPmSecondaryConcurrent(instance.isPmSecondaryConcurrent());
+
         obj.setport(instance.getport());
         obj.setserver_SSL_enabled(instance.getserver_SSL_enabled());
         obj.setvds_group_id(instance.getvds_group_id());

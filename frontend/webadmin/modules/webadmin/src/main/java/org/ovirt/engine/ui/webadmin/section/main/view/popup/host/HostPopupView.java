@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.FlowPanel;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -25,9 +26,11 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -114,6 +117,19 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @WithElementId("isPm")
     EntityModelCheckBoxEditor pmEnabledEditor;
 
+    @UiField(provided = true)
+    @Path(value = "pmVariants.selectedItem")
+    @WithElementId("pmVariants")
+    ListModelListBoxOnlyEditor<Object> pmVariantsEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryConcurrent.entity")
+    @WithElementId("pmSecondaryConcurrent")
+    EntityModelCheckBoxEditor pmSecondaryConcurrentEditor;
+
+    @UiField
+    FlowPanel pmPrimaryPanel;
+
     @UiField
     @Path(value = "managementIp.entity")
     @WithElementId("managementIp")
@@ -157,6 +173,53 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Path(value = "pmSecure.entity")
     @WithElementId("pmSecure")
     EntityModelCheckBoxEditor pmSecureEditor;
+
+    @UiField
+    FlowPanel pmSecondaryPanel;
+
+    @UiField
+    @Path(value = "pmSecondaryIp.entity")
+    @WithElementId("pmSecondaryIp")
+    EntityModelTextBoxEditor pmSecondaryAddressEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryUserName.entity")
+    @WithElementId("pmSecondaryUserName")
+    EntityModelTextBoxEditor pmSecondaryUserNameEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryPassword.entity")
+    @WithElementId("pmSecondaryPassword")
+    EntityModelPasswordBoxEditor pmSecondaryPasswordEditor;
+
+    @UiField(provided = true)
+    @Path(value = "pmSecondaryType.selectedItem")
+    @WithElementId("pmSecondaryType")
+    ListModelListBoxEditor<Object> pmSecondaryTypeEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryPort.entity")
+    @WithElementId("pmSecondaryPort")
+    EntityModelTextBoxEditor pmSecondaryPortEditor;
+
+    @UiField
+    @Path(value = "pmSecondarySlot.entity")
+    @WithElementId("pmSecondarySlot")
+    EntityModelTextBoxEditor pmSecondarySlotEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryOptions.entity")
+    @WithElementId("pmSecondaryOptions")
+    EntityModelTextBoxEditor pmSecondaryOptionsEditor;
+
+    @UiField
+    @Ignore
+    Label pmSecondaryOptionsExplanationLabel;
+
+    @UiField
+    @Path(value = "pmSecondarySecure.entity")
+    @WithElementId("pmSecondarySecure")
+    EntityModelCheckBoxEditor pmSecondarySecureEditor;
 
     @UiField
     UiCommandButton testButton;
@@ -219,7 +282,21 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             }
         });
 
+        pmVariantsEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            protected String renderNullSafe(Object object) {
+                return (String) object;
+            }
+        });
+
         pmTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            protected String renderNullSafe(Object object) {
+                return (String) object;
+            }
+        });
+
+        pmSecondaryTypeEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             protected String renderNullSafe(Object object) {
                 return (String) object;
@@ -228,7 +305,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
     }
 
     void localize(ApplicationConstants constants) {
@@ -244,6 +320,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
         pmEnabledEditor.setLabel(constants.hostPopupPmEnabledLabel());
+        pmSecondaryConcurrentEditor.setLabel(constants.hostPopupPmConcurrent());
+        testButton.setLabel(constants.hostPopupTestButtonLabel());
+        upButton.setLabel(constants.hostPopupUpButtonLabel());
+        downButton.setLabel(constants.hostPopupDownButtonLabel());
+        sourceLabel.setText(constants.hostPopupSourceText());
+
+        // Primary
         pmAddressEditor.setLabel(constants.hostPopupPmAddressLabel());
         pmUserNameEditor.setLabel(constants.hostPopupPmUserNameLabel());
         pmPasswordEditor.setLabel(constants.hostPopupPmPasswordLabel());
@@ -253,10 +336,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
         pmOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecureEditor.setLabel(constants.hostPopupPmSecureLabel());
-        testButton.setLabel(constants.hostPopupTestButtonLabel());
-        upButton.setLabel(constants.hostPopupUpButtonLabel());
-        downButton.setLabel(constants.hostPopupDownButtonLabel());
-        sourceLabel.setText(constants.hostPopupSourceText());
+
+        // Secondary
+        pmSecondaryAddressEditor.setLabel(constants.hostPopupPmAddressLabel());
+        pmSecondaryUserNameEditor.setLabel(constants.hostPopupPmUserNameLabel());
+        pmSecondaryPasswordEditor.setLabel(constants.hostPopupPmPasswordLabel());
+        pmSecondaryTypeEditor.setLabel(constants.hostPopupPmTypeLabel());
+        pmSecondaryPortEditor.setLabel(constants.hostPopupPmPortLabel());
+        pmSecondarySlotEditor.setLabel(constants.hostPopupPmSlotLabel());
+        pmSecondaryOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
+        pmSecondaryOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
+        pmSecondarySecureEditor.setLabel(constants.hostPopupPmSecureLabel());
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());
@@ -380,6 +470,28 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         object.getSpmPriority().getSelectedItemChangedEvent().addListener(spmListener);
 
         createSpmControls(object);
+
+
+        // Wire events on power management related controls.
+        object.getPmVariants().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                ListModel model = (ListModel) sender;
+                List items = (List) model.getItems();
+                Object selectedItem = model.getSelectedItem();
+
+                updatePmPanelsVisibility(items.indexOf(selectedItem) == 0);
+            }
+        });
+
+        updatePmPanelsVisibility(true);
+    }
+
+    private void updatePmPanelsVisibility(boolean primary) {
+
+        pmPrimaryPanel.setVisible(primary);
+        pmSecondaryPanel.setVisible(!primary);
     }
 
     private void createSpmControls(final HostModel object) {

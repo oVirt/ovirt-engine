@@ -526,7 +526,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         hostModel.setHashName("new_host"); //$NON-NLS-1$
         hostModel.getPort().setEntity(54321);
-        hostModel.getPmType().setSelectedItem(null);
         hostModel.getOverrideIpTables().setIsAvailable(false);
         hostModel.setSpmPriorityValue(null);
 
@@ -792,19 +791,33 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         // Save changes.
         host.setvds_name((String) model.getName().getEntity());
         host.sethost_name((String) model.getHost().getEntity());
-        host.setManagmentIp((String) model.getManagementIp().getEntity());
         host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
+        host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         Guid oldClusterId = host.getvds_group_id();
         Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
         host.setvds_group_id(newClusterId);
-        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
+        host.setVdsSpmPriority(model.getSpmPriorityValue());
+        host.setPmProxyPreferences(model.getPmProxyPreferences());
+
+        // Save primary PM parameters.
+        host.setManagmentIp((String) model.getManagementIp().getEntity());
         host.setpm_user((String) model.getPmUserName().getEntity());
         host.setpm_password((String) model.getPmPassword().getEntity());
         host.setpm_type((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
-        host.setVdsSpmPriority(model.getSpmPriorityValue());
-        host.setPmProxyPreferences(model.getPmProxyPreferences());
+
+        // Save secondary PM parameters.
+        host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
+        host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
+        host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
+        host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
+        host.setPmSecondaryOptionsMap(new ValueObjectMap(model.getPmSecondaryOptionsMap(), false));
+
+        // Save other PM parameters.
+        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
+        host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
+
 
         CancelConfirm();
         model.StartProgress(null);
@@ -1129,13 +1142,27 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getName().setEntity(vds.getvds_name());
         model.getHost().setEntity(vds.gethost_name());
         model.getPort().setEntity(vds.getport());
-        model.setPmOptionsMap((HashMap)VdsStatic.PmOptionsStringToMap(vds.getpm_options()).asMap());
 
         if (vds.getstatus() != VDSStatus.InstallFailed)
         {
             model.getHost().setIsChangable(false);
         }
 
+        // Set primary PM parameters.
+        model.getManagementIp().setEntity(vds.getManagmentIp());
+        model.getPmUserName().setEntity(vds.getpm_user());
+        model.getPmPassword().setEntity(vds.getpm_password());
+        model.getPmType().setSelectedItem(vds.getpm_type());
+        model.setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getpm_options()).asMap());
+
+        // Set secondary PM parameters.
+        model.getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
+        model.getPmSecondaryUserName().setEntity(vds.getPmSecondaryuser());
+        model.getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
+        model.getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
+        model.setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap().asMap());
+
+        // Set other PM parameters.
         if (isEditWithPMemphasis) {
             model.setIsPowerManagementTabSelected(true);
             model.getIsPm().setEntity(true);
@@ -1143,10 +1170,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         } else {
             model.getIsPm().setEntity(vds.getpm_enabled());
         }
-        model.getManagementIp().setEntity(vds.getManagmentIp());
-        model.getPmType().setSelectedItem(vds.getpm_type());
-        model.getPmUserName().setEntity(vds.getpm_user());
-        model.getPmPassword().setEntity(vds.getpm_password());
+
+        model.getPmSecondaryConcurrent().setEntity(vds.isPmSecondaryConcurrent());
+
 
         if (dataCenters != null)
         {

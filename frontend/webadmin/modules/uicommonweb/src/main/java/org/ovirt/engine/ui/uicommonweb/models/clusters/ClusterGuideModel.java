@@ -438,15 +438,28 @@ public class ClusterGuideModel extends GuideModel
         VDS host = new VDS();
         host.setvds_name((String) model.getName().getEntity());
         host.sethost_name((String) model.getHost().getEntity());
-        host.setManagmentIp((String) model.getManagementIp().getEntity());
         host.setport((Integer) model.getPort().getEntity());
         host.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
-        host.setpm_user((Boolean) model.getIsPm().getEntity() ? (String) model.getPmUserName().getEntity() : null);
-        host.setpm_password((Boolean) model.getIsPm().getEntity() ? (String) model.getPmPassword().getEntity() : null);
-        host.setpm_type((Boolean) model.getIsPm().getEntity() ? (String) model.getPmType().getSelectedItem() : null);
-        host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
         host.setVdsSpmPriority(model.getSpmPriorityValue());
+
+        // Save primary PM parameters.
+        host.setManagmentIp((String) model.getManagementIp().getEntity());
+        host.setpm_user((String) model.getPmUserName().getEntity());
+        host.setpm_password((String) model.getPmPassword().getEntity());
+        host.setpm_type((String) model.getPmType().getSelectedItem());
+        host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
+
+        // Save secondary PM parameters.
+        host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
+        host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
+        host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
+        host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
+        host.setPmSecondaryOptionsMap(new ValueObjectMap(model.getPmSecondaryOptionsMap(), false));
+
+        // Save other PM parameters.
+        host.setpm_enabled((Boolean) model.getIsPm().getEntity());
+        host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
+
 
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);

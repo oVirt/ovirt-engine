@@ -101,16 +101,31 @@
                         <t:content>
                             <g:FlowPanel>
                                 <e:EntityModelCheckBoxEditor ui:field="pmEnabledEditor"/>
+                                <e:ListModelListBoxOnlyEditor ui:field="pmVariantsEditor"/>
+                                <e:EntityModelCheckBoxEditor ui:field="pmSecondaryConcurrentEditor"/>
                                 <g:FlowPanel addStyleNames="{style.powerManagementTabInputDecorator}">
-                                    <e:EntityModelTextBoxEditor ui:field="pmAddressEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
-                                    <e:EntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
-                                    <e:ListModelListBoxEditor ui:field="pmTypeEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="pmPortEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="pmSlotEditor"/>
-                                    <e:EntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
-                                    <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
-                                    <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
+                                    <g:FlowPanel ui:field="pmPrimaryPanel">
+                                        <e:EntityModelTextBoxEditor ui:field="pmAddressEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmUserNameEditor"/>
+                                        <e:EntityModelPasswordBoxEditor ui:field="pmPasswordEditor"/>
+                                        <e:ListModelListBoxEditor ui:field="pmTypeEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmPortEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmSlotEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
+                                        <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+                                        <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
+                                    </g:FlowPanel>
+                                    <g:FlowPanel ui:field="pmSecondaryPanel">
+                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryAddressEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryUserNameEditor"/>
+                                        <e:EntityModelPasswordBoxEditor ui:field="pmSecondaryPasswordEditor"/>
+                                        <e:ListModelListBoxEditor ui:field="pmSecondaryTypeEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryPortEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmSecondarySlotEditor"/>
+                                        <e:EntityModelTextBoxEditor ui:field="pmSecondaryOptionsEditor"/>
+                                        <g:Label ui:field="pmSecondaryOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+                                        <e:EntityModelCheckBoxEditor ui:field="pmSecondarySecureEditor"/>
+                                    </g:FlowPanel>
                                     <g:HTMLPanel addStyleNames="{style.testPanel}">
                                         <div style="display:table-cell; vertical-align: top">
                                             <g:Label ui:field="sourceLabel" addStyleNames="{style.sourceLabel}"/>

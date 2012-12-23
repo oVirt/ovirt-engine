@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -286,6 +287,126 @@ public class HostModel extends Model
         privatePmOptions = value;
     }
 
+    private EntityModel pmSecondaryIp;
+
+    public EntityModel getPmSecondaryIp() {
+        return pmSecondaryIp;
+    }
+
+    private void setPmSecondaryIp(EntityModel value) {
+        pmSecondaryIp = value;
+    }
+
+    private EntityModel pmSecondaryPort;
+
+    public EntityModel getPmSecondaryPort() {
+        return pmSecondaryPort;
+    }
+
+    private void setPmSecondaryPort(EntityModel value) {
+        pmSecondaryPort = value;
+    }
+
+    private EntityModel pmSecondaryUserName;
+
+    public EntityModel getPmSecondaryUserName() {
+        return pmSecondaryUserName;
+    }
+
+    private void setPmSecondaryUserName(EntityModel value) {
+        pmSecondaryUserName = value;
+    }
+
+    private EntityModel pmSecondaryPassword;
+
+    public EntityModel getPmSecondaryPassword() {
+        return pmSecondaryPassword;
+    }
+
+    private void setPmSecondaryPassword(EntityModel value) {
+        pmSecondaryPassword = value;
+    }
+
+    private ListModel pmSecondaryType;
+
+    public ListModel getPmSecondaryType() {
+        return pmSecondaryType;
+    }
+
+    private void setPmSecondaryType(ListModel value) {
+        pmSecondaryType = value;
+    }
+
+    private EntityModel pmSecondaryOptions;
+
+    public EntityModel getPmSecondaryOptions() {
+        return pmSecondaryOptions;
+    }
+
+    private void setPmSecondaryOptions(EntityModel value) {
+        pmSecondaryOptions = value;
+    }
+
+    private EntityModel pmSecondarySecure;
+
+    public EntityModel getPmSecondarySecure() {
+        return pmSecondarySecure;
+    }
+
+    private void setPmSecondarySecure(EntityModel value) {
+        pmSecondarySecure = value;
+    }
+
+    public Map<String, String> getPmSecondaryOptionsMap() {
+
+        // For secondary map determine (workarround) if it's was specified
+        // by checking secondary PM fields.
+        if (!isEntityModelEmpty(getPmSecondaryIp())
+            || !isEntityModelEmpty(getPmSecondaryUserName())
+            || !isEntityModelEmpty(getPmSecondaryPassword())) {
+
+            return getPmOptionsMapInternal(getPmSecondaryPort(), getPmSecondarySlot(), getPmSecondarySecure(), getPmSecondaryOptions());
+        }
+
+        return new HashMap<String, String>();
+    }
+
+    public void setPmSecondaryOptionsMap(Map<String, String> value) {
+        setPmOptionsMapInternal(value, getPmSecondaryPort(), getPmSecondarySlot(), getPmSecondarySecure(), getPmSecondaryOptions());
+    }
+
+    private EntityModel pmSecondarySlot;
+
+    public EntityModel getPmSecondarySlot() {
+        return pmSecondarySlot;
+    }
+
+    private void setPmSecondarySlot(EntityModel value) {
+        pmSecondarySlot = value;
+    }
+
+
+    private EntityModel pmSecondaryConcurrent;
+
+    public EntityModel getPmSecondaryConcurrent() {
+        return pmSecondaryConcurrent;
+    }
+
+    private void setPmSecondaryConcurrent(EntityModel value) {
+        pmSecondaryConcurrent = value;
+    }
+
+    private ListModel pmVariants;
+
+    public ListModel getPmVariants() {
+        return pmVariants;
+    }
+
+    private void setPmVariants(ListModel value) {
+        pmVariants = value;
+    }
+
+
     private boolean isGeneralTabValid;
 
     public boolean getIsGeneralTabValid()
@@ -334,88 +455,12 @@ public class HostModel extends Model
         }
     }
 
-    public HashMap<String, String> getPmOptionsMap()
-    {
-        HashMap<String, String> dict = new HashMap<String, String>();
-
-        // Add well known pm options.
-        if (getPmPort().getIsAvailable())
-        {
-            dict.put(PmPortKey, getPmPort().getEntity() == null ? "" : (String) getPmPort().getEntity()); //$NON-NLS-1$
-        }
-        if (getPmSlot().getIsAvailable())
-        {
-            dict.put(PmSlotKey, getPmSlot().getEntity() == null ? "" : (String) getPmSlot().getEntity()); //$NON-NLS-1$
-        }
-        if (getPmSecure().getIsAvailable())
-        {
-            dict.put(PmSecureKey, getPmSecure().getEntity().toString());
-        }
-
-        // Add unknown pm options.
-        // Assume Validate method was called before this getter.
-        String pmOptions = (String) getPmOptions().getEntity();
-        if (!StringHelper.isNullOrEmpty(pmOptions))
-        {
-            for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
-            {
-                String[] array = pair.split("[=]", -1); //$NON-NLS-1$
-                if (array.length == 2)
-                {
-                    dict.put(array[0], array[1]);
-                }
-                else if (array.length == 1)
-                {
-                    dict.put(array[0], ""); //$NON-NLS-1$
-                }
-            }
-        }
-
-        return dict;
+    public Map<String, String> getPmOptionsMap() {
+        return getPmOptionsMapInternal(getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
 
-    public void setPmOptionsMap(HashMap<String, String> value)
-    {
-        String pmOptions = ""; //$NON-NLS-1$
-
-        for (Map.Entry<String, String> pair : value.entrySet())
-        {
-            String k = pair.getKey();
-            String v = pair.getValue();
-
-            if (StringHelper.stringsEqual(k, PmPortKey))
-            {
-                getPmPort().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
-
-            }
-            else if (StringHelper.stringsEqual(k, PmSlotKey))
-            {
-                getPmSlot().setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
-
-            }
-            else if (StringHelper.stringsEqual(k, PmSecureKey))
-            {
-                getPmSecure().setEntity(Boolean.parseBoolean(value.get(k)));
-
-            }
-            else
-            {
-                // Compose custom string from unknown pm options.
-                if (StringHelper.isNullOrEmpty(v))
-                {
-                    pmOptions += StringFormat.format("%1$s,", k); //$NON-NLS-1$
-                }
-                else
-                {
-                    pmOptions += StringFormat.format("%1$s=%2$s,", k, v); //$NON-NLS-1$
-                }
-            }
-        }
-
-        if (!StringHelper.isNullOrEmpty(pmOptions))
-        {
-            getPmOptions().setEntity(pmOptions.substring(0, pmOptions.length() - 1));
-        }
+    public void setPmOptionsMap(Map<String, String> value) {
+        setPmOptionsMapInternal(value, getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
 
     public String getPmProxyPreferences() {
@@ -552,7 +597,6 @@ public class HostModel extends Model
 
         setName(new EntityModel());
         setHost(new EntityModel());
-        setManagementIp(new EntityModel());
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
@@ -560,33 +604,70 @@ public class HostModel extends Model
         getCluster().getSelectedItemChangedEvent().addListener(this);
         setPort(new EntityModel());
         setRootPassword(new EntityModel());
-        EntityModel tempVar = new EntityModel();
-        tempVar.setEntity(false);
-        setOverrideIpTables(tempVar);
+        setOverrideIpTables(new EntityModel());
+        getOverrideIpTables().setEntity(false);
+
+
+        IEventListener pmListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                UpdatePmModels();
+            }
+        };
+
+        // Initialize primary PM fields.
+        setManagementIp(new EntityModel());
         setPmUserName(new EntityModel());
         setPmPassword(new EntityModel());
         setPmType(new ListModel());
-        getPmType().getSelectedItemChangedEvent().addListener(this);
-        setPmSecure(new EntityModel());
-        getPmSecure().setIsAvailable(false);
-        getPmSecure().setEntity(false);
+        getPmType().getSelectedItemChangedEvent().addListener(pmListener);
         setPmPort(new EntityModel());
         getPmPort().setIsAvailable(false);
         setPmSlot(new EntityModel());
         getPmSlot().setIsAvailable(false);
         setPmOptions(new EntityModel());
+        setPmSecure(new EntityModel());
+        getPmSecure().setIsAvailable(false);
+        getPmSecure().setEntity(false);
+
+        // Initialize secondary PM fields.
+        setPmSecondaryIp(new EntityModel());
+        setPmSecondaryUserName(new EntityModel());
+        setPmSecondaryPassword(new EntityModel());
+        setPmSecondaryType(new ListModel());
+        getPmSecondaryType().getSelectedItemChangedEvent().addListener(pmListener);
+        setPmSecondaryPort(new EntityModel());
+        getPmSecondaryPort().setIsAvailable(false);
+        setPmSecondarySlot(new EntityModel());
+        getPmSecondarySlot().setIsAvailable(false);
+        setPmSecondaryOptions(new EntityModel());
+        setPmSecondarySecure(new EntityModel());
+        getPmSecondarySecure().setIsAvailable(false);
+        getPmSecondarySecure().setEntity(false);
+
+        // Initialize other PM fields.
+        setPmSecondaryConcurrent(new EntityModel());
+        getPmSecondaryConcurrent().setEntity(false);
+
+        setPmVariants(new ListModel());
+        List<String> pmVariants = new ArrayList<String>();
+        pmVariants.add("Primary");      //$NON-NLS-1$
+        pmVariants.add("Secondary");    //$NON-NLS-1$
+        getPmVariants().setItems(pmVariants);
+        getPmVariants().setSelectedItem(pmVariants.get(0));
 
         setPmProxyPreferencesList(new ListModel());
         getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                UpdatePmCommandAvailability();
+               UpdatePmModels();
             }
         });
 
         setIsPm(new EntityModel());
-        getIsPm().getEntityChangedEvent().addListener(this);
+        getIsPm().getEntityChangedEvent().addListener(pmListener);
         getIsPm().setEntity(false);
+
 
         setIsPowerManagementTabValid(true);
         setIsGeneralTabValid(getIsPowerManagementTabValid());
@@ -734,19 +815,6 @@ public class HostModel extends Model
         {
             Cluster_SelectedItemChanged();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getPmType())
-        {
-            PmType_SelectedItemChanged();
-        }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getIsPm())
-        {
-            IsPm_EntityChanged();
-        }
-    }
-
-    private void IsPm_EntityChanged()
-    {
-        UpdatePmModels();
     }
 
     private void DataCenter_SelectedItemChanged()
@@ -803,106 +871,214 @@ public class HostModel extends Model
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
         if (cluster != null)
         {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            AsyncDataProvider.GetPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
-                public void OnSuccess(Object model, Object result)
-                {
-                    HostModel hostModel = (HostModel) model;
-                    ArrayList<String> pmTypeList = (ArrayList<String>) result;
-                    String pmType = (String) hostModel.getPmType().getSelectedItem();
+                public void OnSuccess(Object model, Object returnValue) {
 
-                    hostModel.getPmType().setItems(pmTypeList);
-                    if (pmTypeList.contains(pmType))
-                    {
-                        hostModel.getPmType().setSelectedItem(pmType);
-                    }
-                    else
-                    {
-                        hostModel.getPmType().setSelectedItem(null);
-                    }
+                    ArrayList<String> pmTypes = (ArrayList<String>) returnValue;
+                    updatePmTypeList(pmTypes, getPmType());
+                    updatePmTypeList(pmTypes, getPmSecondaryType());
                 }
-            };
-            AsyncDataProvider.GetPmTypeList(_asyncQuery, cluster.getcompatibility_version());
+            }), cluster.getcompatibility_version());
         }
     }
 
-    private void PmType_SelectedItemChanged()
-    {
-        UpdatePmModels();
+    private void updatePmTypeList(List<String> pmTypes, ListModel model) {
+
+        String pmType = (String) model.getSelectedItem();
+
+        model.setItems(pmTypes);
+
+        if (pmTypes.contains(pmType)) {
+            model.setSelectedItem(pmType);
+        }
+    }
+
+    private void setPmOptionsMapInternal(Map<String,String> value, EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+
+        String pmOptions = ""; //$NON-NLS-1$
+
+        for (Map.Entry<String, String> pair : value.entrySet()) {
+            String k = pair.getKey();
+            String v = pair.getValue();
+
+            if (StringHelper.stringsEqual(k, PmPortKey)) {
+                port.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
+
+            } else if (StringHelper.stringsEqual(k, PmSlotKey)) {
+                slot.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
+
+            } else if (StringHelper.stringsEqual(k, PmSecureKey)) {
+                secure.setEntity(Boolean.parseBoolean(value.get(k)));
+
+            } else {
+                // Compose custom string from unknown pm options.
+                if (StringHelper.isNullOrEmpty(v)) {
+                    pmOptions += StringFormat.format("%1$s,", k); //$NON-NLS-1$
+                } else {
+                    pmOptions += StringFormat.format("%1$s=%2$s,", k, v); //$NON-NLS-1$
+                }
+            }
+        }
+
+        if (!StringHelper.isNullOrEmpty(pmOptions)) {
+            options.setEntity(pmOptions.substring(0, pmOptions.length() - 1));
+        }
+    }
+
+    private Map<String,String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+
+        Map<String, String> dict = new HashMap<String, String>();
+
+        if ((Boolean) getIsPm().getEntity()) {
+            // Add well known pm options.
+            if (port.getIsAvailable() && port.getEntity() != null) {
+                dict.put(PmPortKey, (String) port.getEntity());
+            }
+            if (slot.getIsAvailable() && slot.getEntity() != null) {
+                dict.put(PmSlotKey, (String) slot.getEntity());
+            }
+            if (secure.getIsAvailable()) {
+                dict.put(PmSecureKey, secure.getEntity().toString());
+            }
+
+            // Add unknown pm options.
+            // Assume Validate method was called before this getter.
+            String pmOptions = (String) options.getEntity();
+            if (!StringHelper.isNullOrEmpty(pmOptions)) {
+                for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
+                {
+                    String[] array = pair.split("[=]", -1); //$NON-NLS-1$
+                    if (array.length == 2) {
+                        dict.put(array[0], array[1]);
+                    } else if (array.length == 1) {
+                        dict.put(array[0], ""); //$NON-NLS-1$
+                    }
+                }
+            }
+        }
+
+        return dict;
     }
 
     private void UpdatePmModels()
     {
-        String pmType = (String) getPmType().getSelectedItem();
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                HostModel hostModel = (HostModel) model;
-                hostModel.postGetPmOptions((ArrayList<String>) result);
-
-            }
-        };
-        if (!StringHelper.isNullOrEmpty(pmType))
-        {
-            AsyncDataProvider.GetPmOptions(_asyncQuery, pmType);
-        }
-        else
-        {
-            postGetPmOptions(new ArrayList<String>());
-        }
-    }
-
-    public void postGetPmOptions(ArrayList<String> pmOptions)
-    {
-        getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
-        getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
-        getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
-
-        getManagementIp().setIsChangable((Boolean) getIsPm().getEntity());
-        getManagementIp().setIsValid(true);
-        getPmUserName().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmUserName().setIsValid(true);
-        getPmPassword().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmPassword().setIsValid(true);
-        getPmType().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmType().setIsValid(true);
-        getPmOptions().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmSecure().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmPort().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmPort().setIsValid(true);
-        getPmSlot().setIsChangable((Boolean) getIsPm().getEntity());
-        getPmProxyPreferencesList().setIsChangable((Boolean) getIsPm().getEntity());
-
-        UpdatePmCommandAvailability();
-    }
-
-    private void UpdatePmCommandAvailability() {
         boolean isPm = (Boolean) getIsPm().getEntity();
-        Object proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
 
+        // Update primary PM fields.
+        getManagementIp().setIsChangable(isPm);
+        getManagementIp().setIsValid(true);
+        getPmUserName().setIsChangable(isPm);
+        getPmUserName().setIsValid(true);
+        getPmPassword().setIsChangable(isPm);
+        getPmPassword().setIsValid(true);
+        getPmType().setIsChangable(isPm);
+        getPmType().setIsValid(true);
+        getPmPort().setIsChangable(isPm);
+        getPmPort().setIsValid(true);
+        getPmProxyPreferencesList().setIsChangable((Boolean) getIsPm().getEntity());
+        Object proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
         getTestCommand().setIsExecutionAllowed(isPm);
         getProxyUpCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
         getProxyDownCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
-    }
+        getPmSlot().setIsChangable(isPm);
+        getPmOptions().setIsChangable(isPm);
+        getPmOptions().setIsValid(true);
+        getPmSecure().setIsChangable(isPm);
 
-    public void Test()
-    {
-        // Validate user input.
-        if ((Boolean) getIsPm().getEntity())
-        {
-            getCluster().setIsValid(true);
-            getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-            ValidatePmModels();
+        String pmType = (String) getPmType().getSelectedItem();
+        if (!StringHelper.isNullOrEmpty(pmType)) {
+            AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+
+                    List<String> pmOptions = (ArrayList<String>) returnValue;
+
+                    getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
+                    getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
+                    getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                }
+            }), pmType);
+        } else {
+            getPmPort().setIsAvailable(false);
+            getPmSlot().setIsAvailable(false);
+            getPmSecure().setIsAvailable(false);
         }
 
-        if (!getManagementIp().getIsValid() || !getPmUserName().getIsValid() || !getPmPassword().getIsValid()
-                || !getPmType().getIsValid() || !getPmPort().getIsValid() || !getPmOptions().getIsValid())
+
+        // Update secondary PM fields.
+        getPmSecondaryIp().setIsChangable(isPm);
+        getPmSecondaryIp().setIsValid(true);
+        getPmSecondaryUserName().setIsChangable(isPm);
+        getPmSecondaryUserName().setIsValid(true);
+        getPmSecondaryPassword().setIsChangable(isPm);
+        getPmSecondaryPassword().setIsValid(true);
+        getPmSecondaryType().setIsChangable(isPm);
+        getPmSecondaryType().setIsValid(true);
+        getPmSecondaryPort().setIsChangable(isPm);
+        getPmSecondaryPort().setIsValid(true);
+        getPmSecondarySlot().setIsChangable(isPm);
+        getPmSecondaryOptions().setIsChangable(isPm);
+        getPmSecondaryOptions().setIsValid(true);
+        getPmSecondarySecure().setIsChangable(isPm);
+
+        String pmSecondaryType = (String) getPmSecondaryType().getSelectedItem();
+        if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
+            AsyncDataProvider.GetPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+
+                    List<String> pmOptions = (ArrayList<String>) returnValue;
+
+                    getPmSecondaryPort().setIsAvailable(pmOptions.contains(PmPortKey));
+                    getPmSecondarySlot().setIsAvailable(pmOptions.contains(PmSlotKey));
+                    getPmSecondarySecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                }
+            }), pmSecondaryType);
+        } else {
+            getPmSecondaryPort().setIsAvailable(false);
+            getPmSecondarySlot().setIsAvailable(false);
+            getPmSecondarySecure().setIsAvailable(false);
+        }
+
+
+        // Update other PM fields.
+        getPmVariants().setIsChangable(isPm);
+        getPmSecondaryConcurrent().setIsChangable(isPm);
+        getTestCommand().setIsExecutionAllowed(isPm);
+    }
+
+    private boolean isPmPrimarySelected() {
+
+        List items = (List) getPmVariants().getItems();
+        Object selectedItem = getPmVariants().getSelectedItem();
+
+        return items.indexOf(selectedItem) == 0;
+    }
+
+        // Validate user input.
+    public void Test()
         {
+        Boolean isPmEnabled = (Boolean) getIsPm().getEntity();
+        boolean isPrimary = isPmPrimarySelected();
+            getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+            ValidatePmModels(isPrimary);
+
+        if (isPrimary && (!getManagementIp().getIsValid()
+            || !getPmUserName().getIsValid()
+            || !getPmPassword().getIsValid()
+            || !getPmType().getIsValid()
+            || !getPmPort().getIsValid()
+            || !getPmOptions().getIsValid())) {
+            return;
+        }
+
+        if (!isPrimary && (!getPmSecondaryIp().getIsValid()
+            || !getPmSecondaryUserName().getIsValid()
+            || !getPmSecondaryPassword().getIsValid()
+            || !getPmSecondaryType().getIsValid()
+            || !getPmSecondaryPort().getIsValid()
+            || !getPmSecondaryOptions().getIsValid())) {
             return;
         }
 
@@ -916,13 +1092,14 @@ public class HostModel extends Model
         {
             param.setVdsId(getHostId().getValue());
         }
-        param.setManagementIp((String) getManagementIp().getEntity());
-        param.setPmType((String) getPmType().getSelectedItem());
-        param.setUser((String) getPmUserName().getEntity());
-        param.setPassword((String) getPmPassword().getEntity());
+        param.setOrder(isPrimary ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
+        param.setManagementIp(isPrimary ? (String) getManagementIp().getEntity() : (String) getPmSecondaryIp().getEntity());
+        param.setPmType(isPrimary ? (String) getPmType().getSelectedItem() : (String) getPmSecondaryType().getSelectedItem());
+        param.setUser(isPrimary ? (String) getPmUserName().getEntity() : (String) getPmSecondaryUserName().getEntity());
+        param.setPassword(isPrimary ? (String) getPmPassword().getEntity() : (String) getPmSecondaryPassword().getEntity());
         param.setStoragePoolId(cluster.getStoragePoolId().getValue() != null ? cluster.getStoragePoolId()
-                .getValue()
-                .getValue() : NGuid.Empty);
+            .getValue()
+            .getValue() : NGuid.Empty);
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
         param.setPmProxyPreferences(getPmProxyPreferences());
 
@@ -958,17 +1135,21 @@ public class HostModel extends Model
                 , true));
     }
 
-    private void ValidatePmModels()
+    private void ValidatePmModels(boolean primary)
     {
-        getManagementIp().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new HostAddressValidation() });
-        getPmUserName().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        getPmPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        getPmType().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        IntegerValidation tempVar = new IntegerValidation();
-        tempVar.setMinimum(1);
-        tempVar.setMaximum(65535);
-        getPmPort().ValidateEntity(new IValidation[] { tempVar });
-        getPmOptions().ValidateEntity(new IValidation[] { new KeyValuePairValidation(true) });
+        EntityModel ip = primary ? getManagementIp() : getPmSecondaryIp();
+        EntityModel userName = primary ? getPmUserName() : getPmSecondaryUserName();
+        EntityModel password = primary ? getPmPassword() : getPmSecondaryPassword();
+        ListModel type = primary ? getPmType() : getPmSecondaryType();
+        EntityModel port = primary ? getPmPort() : getPmSecondaryPort();
+        EntityModel options = primary ? getPmOptions() : getPmSecondaryOptions();
+
+        ip.ValidateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
+        userName.ValidateEntity(new IValidation[] {new NotEmptyValidation()});
+        password.ValidateEntity(new IValidation[] {new NotEmptyValidation()});
+        type.ValidateSelectedItem(new IValidation[] {new NotEmptyValidation()});
+        port.ValidateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
+        options.ValidateEntity(new IValidation[] {new KeyValuePairValidation(true)});
     }
 
     public boolean Validate()
@@ -991,10 +1172,7 @@ public class HostModel extends Model
                 new LengthValidation(255),
                 new HostAddressValidation() });
 
-        IntegerValidation tempVar4 = new IntegerValidation();
-        tempVar4.setMinimum(1);
-        tempVar4.setMaximum(65535);
-        getPort().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
+        getPort().ValidateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getCluster().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -1011,7 +1189,27 @@ public class HostModel extends Model
 
         if ((Boolean) getIsPm().getEntity())
         {
-            ValidatePmModels();
+            // If PM enabled primary fencing options must be specified, ensure that.
+            ValidatePmModels(true);
+
+            // Secondary fencing options aren't mandatory, only ensure there was set
+            // if one of the related fields was filled.
+            if (!isEntityModelEmpty(getPmSecondaryIp())
+                || !isEntityModelEmpty(getPmSecondaryUserName())
+                || !isEntityModelEmpty(getPmSecondaryPassword())
+                || !isEntityModelEmpty(getPmSecondaryPort())
+                || !isEntityModelEmpty(getPmSecondarySlot())
+                || !isEntityModelEmpty(getPmSecondaryOptions())) {
+
+                getPmSecondaryIp().setIsValid(true);
+                getPmSecondaryUserName().setIsValid(true);
+                getPmSecondaryPassword().setIsValid(true);
+                getPmSecondaryPort().setIsValid(true);
+                getPmSecondarySlot().setIsValid(true);
+                getPmSecondaryOptions().setIsValid(true);
+
+                ValidatePmModels(false);
+            }
         }
 
         setIsGeneralTabValid(getName().getIsValid()
@@ -1024,17 +1222,20 @@ public class HostModel extends Model
                 && getPmPassword().getIsValid()
                 && getPmType().getIsValid()
                 && getPmPort().getIsValid()
-                && getPmOptions().getIsValid());
+                && getPmOptions().getIsValid()
 
-        return getName().getIsValid()
-                && getHost().getIsValid()
-                && getPort().getIsValid()
-                && getCluster().getIsValid()
-                && getManagementIp().getIsValid()
-                && getPmUserName().getIsValid()
-                && getPmPassword().getIsValid()
-                && getPmType().getIsValid()
-                && getPmPort().getIsValid()
-                && getPmOptions().getIsValid();
+                && getPmSecondaryIp().getIsValid()
+                && getPmSecondaryUserName().getIsValid()
+                && getPmSecondaryPassword().getIsValid()
+                && getPmSecondaryType().getIsValid()
+                && getPmSecondaryPort().getIsValid()
+                && getPmSecondaryOptions().getIsValid());
+
+        return getIsGeneralTabValid()
+            && getIsPowerManagementTabValid();
+    }
+
+    private boolean isEntityModelEmpty(EntityModel model) {
+        return !(model.getEntity() != null && model.getEntity() != "");
     }
 }

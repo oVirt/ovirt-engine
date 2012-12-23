@@ -388,6 +388,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable Power Management")
     String hostPopupPmEnabledLabel();
 
+    @DefaultStringValue("Concurrent")
+    String hostPopupPmConcurrent();
+
     @DefaultStringValue("Address")
     String hostPopupPmAddressLabel();
 
