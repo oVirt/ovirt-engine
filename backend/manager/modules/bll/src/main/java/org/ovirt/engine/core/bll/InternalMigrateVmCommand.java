@@ -6,10 +6,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @InternalCommandAttribute
-public class InternalMigrateVmCommand<T extends MigrateVmParameters> extends MigrateVmCommand<T> {
+public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> extends MigrateVmCommand<MigrateVmParameters> {
 
     public InternalMigrateVmCommand(T parameters) {
-        super(parameters);
+        super(convertInternalMigrateParamsToMigrateParams(parameters));
     }
 
     @Override
@@ -36,5 +36,15 @@ public class InternalMigrateVmCommand<T extends MigrateVmParameters> extends Mig
         else {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
         }
+    }
+
+    private static MigrateVmParameters convertInternalMigrateParamsToMigrateParams(InternalMigrateVmParameters internalMigrateVmParameters) {
+        MigrateVmParameters migrateVmParameters = new MigrateVmParameters();
+
+        migrateVmParameters.setVmId(internalMigrateVmParameters.getVmId());
+        migrateVmParameters.setForceMigrationForNonMigratableVM(false);
+        migrateVmParameters.setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
+
+        return migrateVmParameters;
     }
 }

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintananceVdsParameters;
-import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -85,16 +84,12 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         boolean succeeded = true;
 
         for (VM vm : vms) {
-            // if HAOnly is true check that vm is HA (auto_startup should be
-            // true)
+            // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
-                MigrateVmParameters tempVar = new MigrateVmParameters(false, vm.getId());
-                tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                ExecutionContext ctx = createMigrateVmContext(parentContext, vm);
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
-                                tempVar,
-                                new CommandContext(ctx));
+                                new InternalMigrateVmParameters(vm.getId()),
+                                new CommandContext(createMigrateVmContext(parentContext, vm)));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
                     AppendCustomValue("failedVms", vm.getVmName(), ",");
