@@ -2,39 +2,38 @@ package org.ovirt.engine.core.common.errors;
 
 public class VDSError {
 
+    private String message;
+    private VdcBllErrors code = VdcBllErrors.forValue(0);
+    private java.util.ArrayList<Object> args;
+
     public VDSError(VdcBllErrors code, String message) {
-        this.privateCode = code;
-        this.privateMessage = message;
+        this.code = code;
+        this.message = message;
     }
 
-    private String privateMessage;
-
     public String getMessage() {
-        return privateMessage;
+        return message;
     }
 
     public void setMessage(String value) {
-        privateMessage = value;
+        message = value;
     }
 
-    private VdcBllErrors privateCode = VdcBllErrors.forValue(0);
 
     public VdcBllErrors getCode() {
-        return privateCode;
+        return code;
     }
 
     public void setCode(VdcBllErrors value) {
-        privateCode = value;
+        code = value;
     }
 
-    private java.util.ArrayList<Object> privateArgs;
-
     public java.util.ArrayList<Object> getArgs() {
-        return privateArgs;
+        return args;
     }
 
     public void setArgs(java.util.ArrayList<Object> value) {
-        privateArgs = value;
+        args = value;
     }
 
     public VDSError() {
