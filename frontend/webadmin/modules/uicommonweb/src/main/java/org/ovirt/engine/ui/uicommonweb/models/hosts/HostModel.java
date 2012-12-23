@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -417,6 +419,72 @@ public class HostModel extends Model
         }
     }
 
+    public String getPmProxyPreferences() {
+        // Return null if power management is not enabled.
+        if (!(Boolean) getIsPm().getEntity()) {
+            return null;
+        }
+
+        // Pack back proxy items to the comma delimited string.
+        StringBuilder builder = new StringBuilder();
+
+        if (getPmProxyPreferencesList().getItems() != null) {
+            List items = (List) getPmProxyPreferencesList().getItems();
+            for (Object item : items) {
+
+                builder.append(item);
+
+                if (items.indexOf(item) < items.size() - 1) {
+                    builder.append(",");    //$NON-NLS-1$
+                }
+            }
+        }
+
+        return builder.toString();
+    }
+
+    public void setPmProxyPreferences(String value) {
+        // Create list from the provided comma delimited string.
+        String[] array = value.split(",");    //$NON-NLS-1$
+        List<String> list = new ArrayList<String>();
+
+        for (String item : array) {
+            list.add(item);
+        }
+
+        getPmProxyPreferencesList().setItems(list);
+    }
+
+    private ListModel pmProxyPreferencesList;
+
+    public ListModel getPmProxyPreferencesList() {
+        return pmProxyPreferencesList;
+    }
+
+    private void setPmProxyPreferencesList(ListModel value) {
+        pmProxyPreferencesList = value;
+    }
+
+    private UICommand proxyUpCommand;
+
+    public UICommand getProxyUpCommand() {
+        return proxyUpCommand;
+    }
+
+    private void setProxyUpCommand(UICommand value) {
+        proxyUpCommand = value;
+    }
+
+    private UICommand proxyDownCommand;
+
+    public UICommand getProxyDownCommand() {
+        return proxyDownCommand;
+    }
+
+    private void setProxyDownCommand(UICommand value) {
+        proxyDownCommand = value;
+    }
+
     private Integer postponedSpmPriority;
 
     public void setSpmPriorityValue(Integer value) {
@@ -449,7 +517,39 @@ public class HostModel extends Model
 
     public HostModel()
     {
-        setTestCommand(new UICommand("Test", this)); //$NON-NLS-1$
+        setTestCommand(new UICommand("Test", new ICommandTarget() { //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand command) {
+                Test();
+            }
+
+            @Override
+            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+                Test();
+            }
+        }));
+        setProxyUpCommand(new UICommand("Up", new ICommandTarget() {    //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand command) {
+                ProxyUp();
+            }
+
+            @Override
+            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+                ProxyUp();
+            }
+        }));
+        setProxyDownCommand(new UICommand("Down", new ICommandTarget() {    //$NON-NLS-1$
+            @Override
+            public void ExecuteCommand(UICommand command) {
+                ProxyDown();
+            }
+
+            @Override
+            public void ExecuteCommand(UICommand uiCommand, Object... parameters) {
+                ProxyDown();
+            }
+        }));
 
         setName(new EntityModel());
         setHost(new EntityModel());
@@ -477,6 +577,14 @@ public class HostModel extends Model
         getPmSlot().setIsAvailable(false);
         setPmOptions(new EntityModel());
 
+        setPmProxyPreferencesList(new ListModel());
+        getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                UpdatePmCommandAvailability();
+            }
+        });
+
         setIsPm(new EntityModel());
         getIsPm().getEntityChangedEvent().addListener(this);
         getIsPm().setEntity(false);
@@ -487,6 +595,44 @@ public class HostModel extends Model
         setSpmPriority(new ListModel());
 
         InitSpmPriorities();
+    }
+
+    private void ProxyUp() {
+        if (getPmProxyPreferencesList().getItems() == null) {
+            return;
+        }
+
+        List list = new ArrayList((List) getPmProxyPreferencesList().getItems());
+        Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
+        int selectedItemIndex = list.indexOf(selectedItem);
+
+        // Check whether the selected item is first in the list.
+        if (selectedItemIndex > 0) {
+            list.remove(selectedItemIndex);
+            list.add(selectedItemIndex - 1, selectedItem);
+
+            getPmProxyPreferencesList().setItems(list);
+            getPmProxyPreferencesList().setSelectedItem(selectedItem);
+        }
+    }
+
+    private void ProxyDown() {
+        if (getPmProxyPreferencesList().getItems() == null) {
+            return;
+        }
+
+        List list = new ArrayList((List) getPmProxyPreferencesList().getItems());
+        Object selectedItem = getPmProxyPreferencesList().getSelectedItem();
+        int selectedItemIndex = list.indexOf(selectedItem);
+
+        // Check whether the selected item is first in the list.
+        if (selectedItemIndex < list.size()) {
+            list.remove(selectedItemIndex);
+            list.add(selectedItemIndex + 1, selectedItem);
+
+            getPmProxyPreferencesList().setItems(list);
+            getPmProxyPreferencesList().setSelectedItem(selectedItem);
+        }
     }
 
     boolean spmInitialized;
@@ -718,10 +864,6 @@ public class HostModel extends Model
         getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
         getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
 
-        boolean isPm = (Boolean) getIsPm().getEntity();
-
-        getTestCommand().setIsExecutionAllowed(isPm);
-
         getManagementIp().setIsChangable((Boolean) getIsPm().getEntity());
         getManagementIp().setIsValid(true);
         getPmUserName().setIsChangable((Boolean) getIsPm().getEntity());
@@ -735,6 +877,18 @@ public class HostModel extends Model
         getPmPort().setIsChangable((Boolean) getIsPm().getEntity());
         getPmPort().setIsValid(true);
         getPmSlot().setIsChangable((Boolean) getIsPm().getEntity());
+        getPmProxyPreferencesList().setIsChangable((Boolean) getIsPm().getEntity());
+
+        UpdatePmCommandAvailability();
+    }
+
+    private void UpdatePmCommandAvailability() {
+        boolean isPm = (Boolean) getIsPm().getEntity();
+        Object proxySelectedItem = getPmProxyPreferencesList().getSelectedItem();
+
+        getTestCommand().setIsExecutionAllowed(isPm);
+        getProxyUpCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
+        getProxyDownCommand().setIsExecutionAllowed(isPm && proxySelectedItem != null);
     }
 
     public void Test()
@@ -771,6 +925,7 @@ public class HostModel extends Model
                 .getValue()
                 .getValue() : NGuid.Empty);
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
+        param.setPmProxyPreferences(getPmProxyPreferences());
 
         Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new IFrontendQueryAsyncCallback() {
 
@@ -882,16 +1037,5 @@ public class HostModel extends Model
                 && getPmType().getIsValid()
                 && getPmPort().getIsValid()
                 && getPmOptions().getIsValid();
-    }
-
-    @Override
-    public void ExecuteCommand(UICommand command)
-    {
-        super.ExecuteCommand(command);
-
-        if (command == getTestCommand())
-        {
-            Test();
-        }
     }
 }

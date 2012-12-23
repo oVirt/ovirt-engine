@@ -33,13 +33,39 @@
             margin-bottom: 10px;
         }
 
+        .sourceLabel {
+            font-size: 13px;
+            font-family: Verdana,sans-serif;
+            padding: 0 5px;
+        }
+
         .testPanel {
             margin-top: 20px;
         }
 
-        .testMessagePanel {
-            margin-left: 70px;
-            height: 100px;
+        .testButton {
+            margin-top: 40px;
+            margin-right: 10px;
+            padding: 0 5px;
+        }
+
+        .proxyListBox {
+            width: 300px;
+            border: 1px solid gray;
+        }
+
+        .upButton {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .downButton {
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .testMessage {
+            margin-top: 10px;
         }
 
         .radioButton {
@@ -86,11 +112,18 @@
                                     <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
                                     <e:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
                                     <g:HTMLPanel addStyleNames="{style.testPanel}">
-                                        <w:UiCommandButton ui:field="testButton"/>
-                                        <g:ScrollPanel addStyleNames="{style.testMessagePanel}">
-                                            <g:Label ui:field="testMessage"/>
-                                        </g:ScrollPanel>
-                                        <div style="clear: both;"/>
+                                        <div style="display:table-cell; vertical-align: top">
+                                            <g:Label ui:field="sourceLabel" addStyleNames="{style.sourceLabel}"/>
+                                            <w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}"/>
+                                        </div>
+                                        <div style="display:table-cell">
+                                            <g:ListBox ui:field="proxyListBox" visibleItemCount="4" addStyleNames="{style.proxyListBox}"/>
+                                        </div>
+                                        <div style="display:table-cell; vertical-align: top">
+                                            <w:UiCommandButton ui:field="upButton" addStyleNames="{style.upButton}"/>
+                                            <w:UiCommandButton ui:field="downButton" addStyleNames="{style.downButton}"/>
+                                        </div>
+                                        <g:Label ui:field="testMessage" addStyleNames="{style.testMessage}"/>
                                     </g:HTMLPanel>
                                 </g:FlowPanel>
                             </g:FlowPanel>

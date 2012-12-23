@@ -1674,6 +1674,13 @@ public final class AsyncDataProvider {
         aQuery.asyncCallback.OnSuccess(aQuery.getModel(), 5);
     }
 
+    public static void GetDefaultPmProxyPreferences(AsyncQuery query) {
+        GetConfigFromCache(
+            new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
+                Config.DefaultConfigurationVersion),
+            query);
+    }
+
     public static void GetRootTag(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

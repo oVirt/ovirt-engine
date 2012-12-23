@@ -415,6 +415,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Test")
     String hostPopupTestButtonLabel();
 
+    @DefaultStringValue("Up")
+    String hostPopupUpButtonLabel();
+
+    @DefaultStringValue("Down")
+    String hostPopupDownButtonLabel();
+
+    @DefaultStringValue("Source")
+    String hostPopupSourceText();
+
     @DefaultStringValue("SPM")
     String spmTestButtonLabel();
 

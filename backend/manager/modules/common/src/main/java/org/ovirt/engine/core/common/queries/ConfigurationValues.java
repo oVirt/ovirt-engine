@@ -37,6 +37,7 @@ public enum ConfigurationValues {
     AsyncTaskPollingRate,
     VdsFenceType,
     VdsFenceOptionMapping,
+    FenceProxyDefaultPreferences,
     VcpuConsumptionPercentage(ConfigAuthType.User),
     SearchResultsLimit(ConfigAuthType.User),
     MaxBlockDiskSize(ConfigAuthType.User),

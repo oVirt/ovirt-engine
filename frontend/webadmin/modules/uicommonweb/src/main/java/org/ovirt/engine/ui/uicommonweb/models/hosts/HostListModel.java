@@ -531,6 +531,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getOverrideIpTables().setIsAvailable(false);
         hostModel.setSpmPriorityValue(null);
 
+        AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue) {
+
+                hostModel.setPmProxyPreferences((String) returnValue);
+            }
+        }));
+
         // Make sure not to set override IP tables flag back true when it was set false once.
         hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
@@ -661,21 +669,37 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             {
                 HostListModel hostListModel = (HostListModel) model;
                 ArrayList<storage_pool> dataCenters = (ArrayList<storage_pool>) result;
-                HostModel hostModel = new HostModel();
-                hostListModel.setWindow(hostModel);
                 VDS host = (VDS) hostListModel.getSelectedItem();
+
+                final HostModel hostModel = new HostModel();
+                hostListModel.setWindow(hostModel);
                 PrepareModelForApproveEdit(host, hostModel, dataCenters, isEditWithPMemphasis);
                 hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
                 hostModel.setHashName("edit_host"); //$NON-NLS-1$
 
-                UICommand tempVar = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
-                hostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
-                hostModel.getCommands().add(tempVar2);
+                if (host.getPmProxyPreferences() != null) {
+                    hostModel.setPmProxyPreferences(host.getPmProxyPreferences());
+                } else {
+                    AsyncDataProvider.GetDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object model, Object returnValue) {
+
+                            hostModel.setPmProxyPreferences((String) returnValue);
+                        }
+                    }));
+                }
+
+
+                UICommand command;
+                command = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                hostModel.getCommands().add(command);
+
+                command = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                command.setIsCancel(true);
+                hostModel.getCommands().add(command);
             }
         };
         AsyncDataProvider.GetDataCenterList(_asyncQuery);
@@ -781,6 +805,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setpm_type((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
         host.setVdsSpmPriority(model.getSpmPriorityValue());
+        host.setPmProxyPreferences(model.getPmProxyPreferences());
 
         CancelConfirm();
         model.StartProgress(null);

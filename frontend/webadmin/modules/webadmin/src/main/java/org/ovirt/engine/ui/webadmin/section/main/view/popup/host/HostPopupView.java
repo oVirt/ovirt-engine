@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.ListBox;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -40,6 +45,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
+
+import java.util.List;
 
 public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implements HostPopupPresenterWidget.ViewDef {
 
@@ -155,8 +162,21 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     UiCommandButton testButton;
 
     @UiField
+    UiCommandButton upButton;
+
+    @UiField
+    UiCommandButton downButton;
+
+    @UiField
     @Ignore
     Label testMessage;
+
+    @UiField
+    @Ignore
+    Label sourceLabel;
+
+    @UiField
+    ListBox proxyListBox;
 
     @UiField
     @Ignore
@@ -234,6 +254,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecureEditor.setLabel(constants.hostPopupPmSecureLabel());
         testButton.setLabel(constants.hostPopupTestButtonLabel());
+        upButton.setLabel(constants.hostPopupUpButtonLabel());
+        downButton.setLabel(constants.hostPopupDownButtonLabel());
+        sourceLabel.setText(constants.hostPopupSourceText());
 
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());
@@ -279,6 +302,70 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         testButton.setCommand(object.getTestCommand());
+
+        // Bind proxy commands.
+        upButton.setCommand(object.getProxyUpCommand());
+        upButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                object.getProxyUpCommand().Execute();
+            }
+        });
+
+        downButton.setCommand(object.getProxyDownCommand());
+        downButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                object.getProxyDownCommand().Execute();
+            }
+        });
+
+        // Bind proxy list.
+        object.getPmProxyPreferencesList().getItemsChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                proxyListBox.clear();
+
+                for (Object item : object.getPmProxyPreferencesList().getItems()) {
+                    proxyListBox.addItem((String) item);
+                }
+            }
+        });
+
+        object.getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+
+                List items = (List) object.getPmProxyPreferencesList().getItems();
+                int selectedItemIndex = items.indexOf(object.getPmProxyPreferencesList().getSelectedItem());
+
+                proxyListBox.setSelectedIndex(selectedItemIndex);
+            }
+        });
+
+        object.getPmProxyPreferencesList().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
+                if (e.PropertyName == "IsChangable") {  //$NON-NLS-1$
+                    proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
+                }
+            }
+        });
+        proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
+
+        proxyListBox.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                List items = (List) object.getPmProxyPreferencesList().getItems();
+
+                Object selectedItem = proxyListBox.getSelectedIndex() >= 0
+                    ? items.get(proxyListBox.getSelectedIndex())
+                    : null;
+
+                object.getPmProxyPreferencesList().setSelectedItem(selectedItem);
+            }
+        });
 
         // Create SPM related controls.
         IEventListener spmListener = new IEventListener() {
