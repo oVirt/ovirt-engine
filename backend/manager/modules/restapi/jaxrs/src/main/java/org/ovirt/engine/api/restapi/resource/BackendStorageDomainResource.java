@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
@@ -108,7 +109,7 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized String[] getLinksToExclude(StorageDomain storageDomain) {
-        return isIsoDomain(storageDomain) ? new String[]{"templates", "vms"}
+        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks" }
                                             :
                                             isExportDomain(storageDomain) ? new String[]{"files"}
                                                                             :
@@ -260,5 +261,10 @@ public class BackendStorageDomainResource extends
     @Override
     public RemovableStorageDomainContentsResource<VMs, VM> getStorageDomainVmsResource() {
         return inject(new BackendStorageDomainVmsResource(guid));
+    }
+
+    @Override
+    public DisksResource getDisksResource() {
+        return inject(new BackendStorageDomainDisksResource(guid));
     }
 }

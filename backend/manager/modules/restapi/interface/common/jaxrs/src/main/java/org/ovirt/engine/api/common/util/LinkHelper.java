@@ -206,6 +206,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(DiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, VM.class);
         map.add(TemplateDiskResource.class, TemplateDisksResource.class, Template.class);
+        map.add(DiskResource.class, DisksResource.class, StorageDomain.class);
         TYPES.put(Disk.class, map);
 
         map = new ParentToCollectionMap(HostResource.class, HostsResource.class);

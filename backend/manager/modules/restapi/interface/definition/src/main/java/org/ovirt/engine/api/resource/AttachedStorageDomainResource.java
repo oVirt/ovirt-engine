@@ -52,4 +52,7 @@ public interface AttachedStorageDomainResource {
     @Actionable
     @Path("deactivate")
     public Response deactivate(Action action);
+
+    @Path("disks")
+    public DisksResource getDisksResource();
 }

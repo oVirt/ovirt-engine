@@ -2370,6 +2370,8 @@
           <!-- name is deprecated, use alias instead. -->
           <xs:element name="alias" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="image_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <!-- storage_domain element requiered for back-linking -->
+          <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
           <xs:element name="size" type="xs:long" minOccurs="0"/> <!-- Deprecated, replaced by 'provisioned_size' -->
           <xs:element name="type" type="xs:string" minOccurs="0"/> <!-- Deprecated, will be removed at 4.0 -->

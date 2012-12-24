@@ -97,13 +97,13 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
 
     @Override
     protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(Guid.createGuidFromString(id)));
+        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(asGuid(id)));
     }
 
     protected Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.Disk> entities) {
         Disks collection = new Disks();
         for (org.ovirt.engine.core.common.businessentities.Disk disk : entities) {
-            collection.getDisks().add(addLinks(map(disk)));
+            collection.getDisks().add(addLinks(populate(map(disk), disk)));
         }
         return collection;
     }

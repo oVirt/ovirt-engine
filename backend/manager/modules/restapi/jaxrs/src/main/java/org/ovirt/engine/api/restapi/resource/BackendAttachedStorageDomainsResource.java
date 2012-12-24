@@ -19,9 +19,13 @@ import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.isIsoDomain;
+
 public class BackendAttachedStorageDomainsResource
     extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements AttachedStorageDomainsResource {
+
+    static final String[] SUB_COLLECTIONS = { "disks" };
 
     protected Guid dataCenterId;
 
@@ -37,7 +41,7 @@ public class BackendAttachedStorageDomainsResource
         for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                                            VdcQueryType.GetStorageDomainsByStoragePoolId,
                                                            new StoragePoolQueryParametersBase(dataCenterId))) {
-            storageDomains.getStorageDomains().add(addLinks(map(entity)));
+            storageDomains.getStorageDomains().add(addLinks(map(entity), getLinksToExclude(entity)));
         }
 
         return storageDomains;
@@ -46,7 +50,7 @@ public class BackendAttachedStorageDomainsResource
     @Override
     @SingleEntityResource
     public AttachedStorageDomainResource getAttachedStorageDomainSubResource(String id) {
-        return inject(new BackendAttachedStorageDomainResource(id, dataCenterId));
+        return inject(new BackendAttachedStorageDomainResource(id, dataCenterId, SUB_COLLECTIONS));
     }
 
     @Override
@@ -123,5 +127,12 @@ public class BackendAttachedStorageDomainsResource
     @Override
     protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
+    }
+
+    @Override
+    public String[] getLinksToExclude(storage_domains storageDomain) {
+        return isIsoDomain(storageDomain) ? new String[] { "disks" }
+                                            :
+                                            new String[] {};
     }
 }

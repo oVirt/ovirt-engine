@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
+import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
@@ -67,5 +68,10 @@ public class BackendAttachedStorageDomainResource
     @Override
     protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
+    } 
+
+    @Override
+    public DisksResource getDisksResource() {
+        return inject(new BackendStorageDomainDisksResource(asGuid(id), subCollections));
     }
 }
