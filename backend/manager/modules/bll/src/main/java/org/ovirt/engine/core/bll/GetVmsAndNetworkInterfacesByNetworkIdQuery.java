@@ -32,8 +32,10 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
         List<PairQueryable<VmNetworkInterface, VM>> vmInterfaceVmPairs =
                 new ArrayList<PairQueryable<VmNetworkInterface, VM>>();
         for (VmNetworkInterface vmNetworkInterface : vmNetworkInterfaceList) {
-            vmInterfaceVmPairs.add(new PairQueryable<VmNetworkInterface, VM>(vmNetworkInterface,
-                    vmsById.get(vmNetworkInterface.getVmId())));
+            VM vm = vmsById.get(vmNetworkInterface.getVmId());
+            if (getParameters().getRunningVms() == null || getParameters().getRunningVms().equals(vm.isStatusUp())) {
+                vmInterfaceVmPairs.add(new PairQueryable<VmNetworkInterface, VM>(vmNetworkInterface, vm));
+            }
         }
 
         getQueryReturnValue().setReturnValue(vmInterfaceVmPairs);
