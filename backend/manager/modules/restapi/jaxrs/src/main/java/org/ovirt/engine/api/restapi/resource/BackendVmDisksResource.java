@@ -17,6 +17,9 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
@@ -27,10 +30,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
-import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 
 public class BackendVmDisksResource
         extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
@@ -181,12 +180,9 @@ public class BackendVmDisksResource
     }
 
     private Response attachDiskToVm(Disk disk) {
-        AttachDettachVmDiskParameters params;
-        if (disk.isSetActive()) {
-            params = new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(disk.getId()), disk.isActive());
-        } else {
-            params = new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(disk.getId()));
-        }
+        boolean isDiskActive = disk.isSetActive() ? disk.isActive() : false;
+        AttachDettachVmDiskParameters params =
+                new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(disk.getId()), isDiskActive);
         return performAction(VdcActionType.AttachDiskToVm, params);
     }
 
