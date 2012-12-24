@@ -319,14 +319,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
                     getVm().getVmName(), getVm().getId());
-            CreateAllSnapshotsFromVmParameters tempVar = new CreateAllSnapshotsFromVmParameters(getVm().getId(),
-                    "stateless snapshot");
-            tempVar.setShouldBeLogged(false);
-            tempVar.setParentCommand(getActionType());
-            tempVar.setParentParameters(getParameters());
-            tempVar.setEntityId(getParameters().getEntityId());
-            CreateAllSnapshotsFromVmParameters p = tempVar;
-            p.setSnapshotType(SnapshotType.STATELESS);
+            CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters =
+                    new CreateAllSnapshotsFromVmParameters(getVm().getId(), "stateless snapshot");
+            createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
+            createAllSnapshotsFromVmParameters.setParentCommand(getActionType());
+            createAllSnapshotsFromVmParameters.setParentParameters(getParameters());
+            createAllSnapshotsFromVmParameters.setEntityId(getParameters().getEntityId());
+            createAllSnapshotsFromVmParameters.setSnapshotType(SnapshotType.STATELESS);
 
             Map<String, String> values = getVmValuesForMsgResolving();
 
@@ -340,7 +339,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             createSnapshotsCtx.setStep(createSnapshotsStep);
             VdcReturnValueBase vdcReturnValue =
                     getBackend().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
-                            p,
+                            createAllSnapshotsFromVmParameters,
                             new CommandContext(createSnapshotsCtx, getCompensationContext(), getLock()));
 
             // setting lock to null in order not to release lock twice
@@ -348,7 +347,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             setSucceeded(vdcReturnValue.getSucceeded());
 
             if (vdcReturnValue.getSucceeded()) {
-                getParameters().getImagesParameters().add(p);
+                getParameters().getImagesParameters().add(createAllSnapshotsFromVmParameters);
 
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 // save RunVmParams so we'll know how to run
