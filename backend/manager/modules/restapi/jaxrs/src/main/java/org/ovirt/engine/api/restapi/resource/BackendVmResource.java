@@ -30,6 +30,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmResource;
@@ -426,5 +427,10 @@ public class BackendVmResource extends
             model.getDisplay().setCertificate(new Certificate());
             model.getDisplay().getCertificate().setSubject(result.getReturnValue().toString());
         }
+    }
+
+    @Override
+    public VmReportedDevicesResource getVmReportedDevicesResource() {
+        return inject(new BackendVmReportedDevicesResource(guid));
     }
 }

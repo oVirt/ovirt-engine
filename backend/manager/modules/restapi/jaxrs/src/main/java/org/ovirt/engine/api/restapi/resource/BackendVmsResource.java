@@ -55,7 +55,8 @@ public class BackendVmsResource extends
         AbstractBackendCollectionResource<VM, org.ovirt.engine.core.common.businessentities.VM>
         implements VmsResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "snapshots", "tags", "permissions", "statistics" };
+    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "snapshots", "tags", "permissions",
+            "statistics", "reporteddevices" };
 
     public BackendVmsResource() {
         super(VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);

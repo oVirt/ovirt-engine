@@ -586,6 +586,8 @@
           <xs:element ref="transport_types" minOccurs="0"/>
           <xs:element ref="gluster_volume_states" minOccurs="0"/>
           <xs:element ref="brick_states" minOccurs="0"/>
+          <xs:element ref="reported_device_types" minOccurs="0"/>
+          <xs:element ref="ip_versions" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -852,6 +854,35 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:element name="reported_device_types" type="ReportedDeviceTypes"/>
+
+  <xs:complexType name="ReportedDeviceTypes">
+    <xs:sequence>
+      <xs:element name="reported_device_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ReportedDeviceTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="ip_versions" type="IpVersions"/>
+
+  <xs:complexType name="IpVersions">
+    <xs:sequence>
+      <xs:element name="ip_version" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="IpVersions"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
 
   <!-- Common to all resources -->
 
@@ -1606,6 +1637,7 @@
     <xs:attribute name="address" type="xs:string"/>
     <xs:attribute name="netmask" type="xs:string"/>
     <xs:attribute name="gateway" type="xs:string"/>
+    <xs:attribute name="version" type="xs:string"/>
   </xs:complexType>
 
   <xs:element name="ips" type="IPs"/>
@@ -2084,6 +2116,8 @@
           <!-- also rel="cdroms/disks/nics" links, see Devices below -->
           <!-- also rel="snapshots" links, see Snapshots below -->
           <!-- also rel="users" links, see Users above -->
+
+          <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2104,7 +2138,35 @@
     </xs:complexContent>
   </xs:complexType>
 
-<xs:element name="preview_vms" type="PreviewVMs"/>
+  <xs:element name="reported_devices" type="ReportedDevices"/>
+
+  <xs:complexType name="ReportedDevices">
+    <xs:sequence>
+      <xs:annotation>
+        <xs:appinfo>
+          <jaxb:property name="ReportedDevices"/>
+            </xs:appinfo>
+        </xs:annotation>
+      <xs:element ref="device" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="device" type="Device"/>
+
+  <xs:complexType name="Device">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="mac" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="preview_vms" type="PreviewVMs"/>
 
   <xs:complexType name="PreviewVMs">
     <xs:complexContent>

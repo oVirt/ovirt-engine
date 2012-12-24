@@ -36,14 +36,15 @@ import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
 import org.ovirt.engine.api.model.HostStatus;
+import org.ovirt.engine.api.model.IpVersions;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.NetworkStates;
 import org.ovirt.engine.api.model.NetworkStatus;
+import org.ovirt.engine.api.model.NfsVersion;
+import org.ovirt.engine.api.model.NfsVersions;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.NicInterfaces;
 import org.ovirt.engine.api.model.NicStatus;
-import org.ovirt.engine.api.model.NfsVersion;
-import org.ovirt.engine.api.model.NfsVersions;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.OsTypes;
 import org.ovirt.engine.api.model.Permit;
@@ -55,6 +56,8 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
+import org.ovirt.engine.api.model.ReportedDeviceType;
+import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.StorageDomainStates;
@@ -84,6 +87,7 @@ import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
+import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
@@ -196,6 +200,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSchedulingPolicies(version, SchedulingPolicyType.values());
         addNetworkUsages(version, NetworkUsage.values());
         addPmProxyTypes(version, PmProxyType.values());
+        addReportedDeviceTypes(version, ReportedDeviceType.values());
+        addIpVersions(version, IpVersion.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -209,6 +215,24 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
 
         return version;
+    }
+
+    private void addReportedDeviceTypes(VersionCaps version, ReportedDeviceType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
+            version.setReportedDeviceTypes(new ReportedDeviceTypes());
+            for (ReportedDeviceType reportedDeviceType : values) {
+                version.getReportedDeviceTypes().getReportedDeviceTypes().add(reportedDeviceType.value());
+            }
+        }
+    }
+
+    private void addIpVersions(VersionCaps version, IpVersion[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
+            version.setIpVersions(new IpVersions());
+            for (IpVersion ipVersion : values) {
+                version.getIpVersions().getIpVersions().add(ipVersion.value());
+            }
+        }
     }
 
     public String generateId(Version v) {

@@ -124,4 +124,7 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
+
+    @Path("reporteddevices")
+    public VmReportedDevicesResource getVmReportedDevicesResource();
 }
