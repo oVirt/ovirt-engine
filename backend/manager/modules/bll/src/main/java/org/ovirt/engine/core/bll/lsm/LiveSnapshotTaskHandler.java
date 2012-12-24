@@ -47,7 +47,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         endCreateAllSnapshots();
 
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
-            updateDestinitationImageId(parameters);
+            updateDestinationImageId(parameters);
             ImagesHandler.updateImageStatus(parameters.getDestinationImageId(), ImageStatus.LOCKED);
         }
 
@@ -55,7 +55,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         enclosingCommand.setExecutionContext(null);
     }
 
-    private void updateDestinitationImageId(LiveMigrateDiskParameters parameters) {
+    private void updateDestinationImageId(LiveMigrateDiskParameters parameters) {
         Image oldLeaf =
                 DbFacade.getInstance().getImageDao().get(parameters.getImageId());
         List<DiskImage> allImages =
@@ -78,7 +78,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
     @Override
     public void endWithFailure() {
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
-            updateDestinitationImageId(parameters);
+            updateDestinationImageId(parameters);
         }
         endCreateAllSnapshots();
 
