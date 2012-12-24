@@ -1239,6 +1239,7 @@
           <xs:element name="reboot_after_installation" type="xs:boolean" minOccurs="0"/>
           <xs:element name="os" type="OperatingSystem" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="hooks" minOccurs="0"/>
+          <xs:element name="libvirt_version" type="Version" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

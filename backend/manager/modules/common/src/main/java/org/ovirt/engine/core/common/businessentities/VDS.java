@@ -1110,11 +1110,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsDynamic.setkvm_version(value);
     }
 
-    public String getlibvirt_version() {
+    public RpmVersion getlibvirt_version() {
         return this.mVdsDynamic.getlibvirt_version();
     }
 
-    public void setlibvirt_version(String value) {
+    public void setlibvirt_version(RpmVersion value) {
         this.mVdsDynamic.setlibvirt_version(value);
     }
 

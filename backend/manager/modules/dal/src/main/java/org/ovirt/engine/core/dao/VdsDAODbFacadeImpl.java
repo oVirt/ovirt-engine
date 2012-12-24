@@ -306,7 +306,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                     .getString("vds_group_compatibility_version")));
             entity.sethost_os(rs.getString("host_os"));
             entity.setkvm_version(rs.getString("kvm_version"));
-            entity.setlibvirt_version(rs.getString("libvirt_version"));
+            entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
             entity.setspice_version(rs.getString("spice_version"));
             entity.setkernel_version(rs.getString("kernel_version"));
             entity.setIScsiInitiatorName(rs

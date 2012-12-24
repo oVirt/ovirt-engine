@@ -267,6 +267,17 @@ public class HostMapper {
         model.setMemory(Long.valueOf(entity.getphysical_mem_mb() == null ? 0 : entity.getphysical_mem_mb()
                 * BYTES_IN_MEGABYTE));
         model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
+
+        if (entity.getlibvirt_version() != null) {
+            Version version = new Version();
+            version.setMajor(entity.getlibvirt_version().getMajor());
+            version.setMinor(entity.getlibvirt_version().getMinor());
+            version.setRevision(entity.getlibvirt_version().getRevision());
+            version.setBuild(entity.getlibvirt_version().getBuild());
+            version.setFullVersion(entity.getlibvirt_version().getRpmName());
+            model.setLibvirtVersion(version);
+        }
+
         return model;
     }
 

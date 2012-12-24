@@ -117,8 +117,8 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "kvm_version")
     private String kvm_version;
 
-    @Column(name = "libvirt_version")
-    private String libvirt_version;
+    @Transient
+    private RpmVersion libvirt_version;
 
     @Column(name = "spice_version")
     private String spice_version;
@@ -186,6 +186,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
+        libvirt_version = new RpmVersion();
         mem_commited = 0;
         reserved_mem = 1024;
         pending_vcpus_count = 0;
@@ -201,6 +202,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       Integer pending_vmem_sizeField, Boolean net_config_dirty, String hwManufacturer,
                       String hwProductName, String hwVersion, String hwSerialNumber,
                       String hwUUID, String hwFamily) {
+        libvirt_version = new RpmVersion();
         rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
         this.cpuThreads = cpuThreads;
@@ -555,11 +557,11 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.kvm_version = value;
     }
 
-    public String getlibvirt_version() {
+    public RpmVersion getlibvirt_version() {
         return this.libvirt_version;
     }
 
-    public void setlibvirt_version(String value) {
+    public void setlibvirt_version(RpmVersion value) {
         this.libvirt_version = value;
     }
 

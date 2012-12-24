@@ -51,7 +51,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel kvmVersion = new TextBoxLabel();
-    TextBoxLabel libvirtVersion = new TextBoxLabel();
+    VersionLabel libvirtVersion = new VersionLabel();
     TextBoxLabel spiceVersion = new TextBoxLabel();
     TextBoxLabel kernelVersion = new TextBoxLabel();
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();

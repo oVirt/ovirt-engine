@@ -146,6 +146,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertTrue(host.getPowerManagement().getPmProxies().getPmProxy().get(1).getType().equalsIgnoreCase("dc"));
     }
 
+    @Test
     public void testPowerManagementAgents() {
         String[] ip = { "1.1.1.111", "1.1.1.112" };
         int agents = 0;
@@ -177,5 +178,19 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
             }
             i++;
         }
+    }
+
+    @Test
+    public void testLibvirtVersion() {
+        VDS vds = new VDS();
+        vds.setId(Guid.Empty);
+        vds.setlibvirt_version(new RpmVersion("libvirt-0.9.10-21.el6_3.4", "libvirt-", true));
+        Host host = HostMapper.map(vds, (Host) null);
+        assertNotNull(host.getLibvirtVersion());
+        assertEquals(new Long(host.getLibvirtVersion().getMajor()), new Long(0));
+        assertEquals(new Long(host.getLibvirtVersion().getMinor()), new Long(9));
+        assertEquals(new Long(host.getLibvirtVersion().getRevision()), new Long(0));
+        assertEquals(new Long(host.getLibvirtVersion().getBuild()), new Long(10));
+        assertEquals(host.getLibvirtVersion().getFullVersion(), "libvirt-0.9.10-21.el6_3.4");
     }
 }

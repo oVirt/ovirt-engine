@@ -181,18 +181,14 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    private String libvirtVersion;
+    private RpmVersion libvirtVersion;
 
-    public String getLibvirtVersion() {
+    public RpmVersion getLibvirtVersion() {
         return libvirtVersion;
     }
 
-    public void setLibvirtVersion(String value) {
-        if (libvirtVersion == null && value == null) {
-            return;
-        }
-
-        if(libvirtVersion == null || !libvirtVersion.equals(value)) {
+    public void setLibvirtVersion(RpmVersion value) {
+        if (Version.OpInequality(libvirtVersion, value)) {
             libvirtVersion = value;
             OnPropertyChanged(new PropertyChangedEventArgs("LibvirtVersion")); //$NON-NLS-1$
         }
