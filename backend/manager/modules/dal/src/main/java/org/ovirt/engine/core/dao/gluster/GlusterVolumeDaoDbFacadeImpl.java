@@ -94,6 +94,40 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public List<GlusterVolumeEntity> getVolumesByStatusTypesAndOption(Guid clusterId,
+            GlusterStatus status,
+            List<GlusterVolumeType> volumeTypes,
+            String optionKey,
+            String optionValue) {
+        List<GlusterVolumeEntity> volumes =
+                getCallsHandler().executeReadList("GetGlusterVolumesByStatusTypesAndOption",
+                        volumeRowMapper,
+                        getCustomMapSqlParameterSource()
+                                .addValue("cluster_id", clusterId)
+                                .addValue("status", EnumUtils.nameOrNull(status))
+                                .addValue("vol_types", StringUtils.join(volumeTypes, ','))
+                                .addValue("option_key", optionKey)
+                                .addValue("option_val", optionValue));
+        fetchRelatedEntities(volumes);
+        return volumes;
+    }
+
+    @Override
+    public List<GlusterVolumeEntity> getVolumesByStatusAndTypes(Guid clusterId,
+            GlusterStatus status,
+            List<GlusterVolumeType> volumeTypes) {
+        List<GlusterVolumeEntity> volumes =
+                getCallsHandler().executeReadList("GetGlusterVolumesByStatusAndTypes",
+                        volumeRowMapper,
+                        getCustomMapSqlParameterSource()
+                                .addValue("cluster_id", clusterId)
+                                .addValue("status", EnumUtils.nameOrNull(status))
+                                .addValue("vol_types", StringUtils.join(volumeTypes, ',')));
+        fetchRelatedEntities(volumes);
+        return volumes;
+    }
+
+    @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query) {
         List<GlusterVolumeEntity> volumes = new SimpleJdbcTemplate(jdbcTemplate).query(query, volumeRowMapper);
         fetchRelatedEntities(volumes);

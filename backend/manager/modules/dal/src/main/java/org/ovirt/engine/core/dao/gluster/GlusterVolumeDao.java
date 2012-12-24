@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
@@ -29,6 +30,16 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
             GlusterStatus status,
             String optionKey,
             String optionValue);
+
+    public List<GlusterVolumeEntity> getVolumesByStatusTypesAndOption(Guid clusterId,
+            GlusterStatus status,
+            List<GlusterVolumeType> volumeTypes,
+            String optionKey,
+            String optionValue);
+
+    public List<GlusterVolumeEntity> getVolumesByStatusAndTypes(Guid clusterId,
+            GlusterStatus status,
+            List<GlusterVolumeType> volumeTypes);
 
     @Override
     public List<GlusterVolumeEntity> getAllWithQuery(String query);

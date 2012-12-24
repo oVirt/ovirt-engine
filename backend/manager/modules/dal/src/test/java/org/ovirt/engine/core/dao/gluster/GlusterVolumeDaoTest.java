@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
     private static final String EXISTING_VOL_REPL_NAME = "test-vol-replicate-1";
     private static final String NEW_VOL_NAME = "test-new-vol-1";
+    private static final String OPTION_KEY_NFS_DISABLE = "nfs.disable";
+    private static final String OPTION_VALUE_OFF = "off";
     private GlusterVolumeDao dao;
     private VdsStatic server;
     private GlusterVolumeEntity existingDistVol;
@@ -303,11 +306,41 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetVolumesByOption() {
-        List<GlusterVolumeEntity> volumes = dao.getVolumesByOption(CLUSTER_ID, GlusterStatus.UP, "nfs.disable", "off");
+        List<GlusterVolumeEntity> volumes = dao.getVolumesByOption(CLUSTER_ID, GlusterStatus.UP, OPTION_KEY_NFS_DISABLE, OPTION_VALUE_OFF);
 
         assertTrue(volumes != null);
         assertTrue(volumes.contains(existingReplVol));
         assertTrue(volumes.get(0).isNfsEnabled());
+    }
+
+    @Test
+    public void testGetVolumesByStatusTypesAndOption() {
+        List<GlusterVolumeEntity> volumes =
+                dao.getVolumesByStatusTypesAndOption(CLUSTER_ID,
+                        GlusterStatus.UP,
+                        Collections.singletonList(GlusterVolumeType.DISTRIBUTED_REPLICATE),
+                        OPTION_KEY_NFS_DISABLE,
+                        OPTION_VALUE_OFF);
+
+        assertTrue(volumes != null);
+        assertTrue(volumes.contains(existingReplVol));
+        for (GlusterVolumeEntity volume : volumes) {
+            assertTrue(volume.isNfsEnabled() && volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE);
+        }
+    }
+
+    @Test
+    public void testGetVolumesByStatusAndTypes() {
+        List<GlusterVolumeEntity> volumes =
+                dao.getVolumesByStatusAndTypes(CLUSTER_ID,
+                        GlusterStatus.UP,
+                        Collections.singletonList(GlusterVolumeType.DISTRIBUTE));
+
+        assertTrue(volumes != null);
+        assertTrue(volumes.contains(existingDistVol));
+        for (GlusterVolumeEntity volume : volumes) {
+            assertTrue(volume.getVolumeType() == GlusterVolumeType.DISTRIBUTE);
+        }
     }
 
     @Test

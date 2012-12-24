@@ -98,6 +98,38 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetGlusterVolumesByStatusTypesAndOption(v_cluster_id UUID,
+                                                                  v_status VARCHAR(32),
+                                                                  v_vol_types text,
+                                                                  v_option_key VARCHAR(8192),
+                                                                  v_option_val VARCHAR(8192))
+RETURNS SETOF gluster_volumes
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volumes
+    WHERE cluster_id = v_cluster_id AND status = v_status
+    AND vol_type IN (SELECT ID FROM fnSplitter(v_vol_types))
+    AND id IN (SELECT volume_id FROM gluster_volume_options
+    WHERE option_key=v_option_key AND option_val=v_option_val);
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetGlusterVolumesByStatusAndTypes(v_cluster_id UUID,
+                                                         v_status VARCHAR(32),
+                                                         v_vol_types text)
+RETURNS SETOF gluster_volumes
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volumes
+    WHERE cluster_id = v_cluster_id AND status = v_status
+    AND vol_type IN (SELECT ID FROM fnSplitter(v_vol_types));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetGlusterVolumeById(v_volume_id UUID)
     RETURNS SETOF gluster_volumes
     AS $procedure$
