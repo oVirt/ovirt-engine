@@ -273,7 +273,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     /**
-     * @return The ID of the storage domain where the VM's disks reside.
+     * @return The id of the storage domain where the first encountered VM image disk reside, if the vm doesn't have no
+     *         image disks then Guid.Empty will be returned.
      */
     private Guid getDisksStorageDomainId() {
         for (Disk disk : getVm().getDiskMap().values()) {
@@ -294,9 +295,15 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
                 updateDisksFromDb();
                 storageDomainId = getDisksStorageDomainId();
+
+                // this set is done so that in case we will execute an async task
+                // the correct storage domain id will be set during the call to the end methods
                 getParameters().setStorageDomainId(storageDomainId);
             } else if (storageDomainId == null) {
                 storageDomainId = Guid.Empty;
+
+                // this set is done so that in case we will execute an async task
+                // the correct storage domain id will be set during the call to the end methods
                 getParameters().setStorageDomainId(storageDomainId);
             }
             setStorageDomainId(storageDomainId);
