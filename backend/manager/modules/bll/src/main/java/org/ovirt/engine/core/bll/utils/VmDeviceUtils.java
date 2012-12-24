@@ -158,19 +158,6 @@ public class VmDeviceUtils {
         }
     }
 
-    /**
-     * Update the vm devices according to changes made in vm static for new VM
-     */
-
-    public static <T extends VmBase> void updateVmDevices(T entity, Guid newId) {
-        if (entity != null) {
-            updateCdInVmDevice(entity);
-            updateBootOrderInVmDeviceAndStoreToDB(entity);
-            updateNumOfMonitorsInVmDevice(null, entity);
-            updateUSBSlots(null, entity);
-            updateMemoryBalloon(null, entity, true);
-        }
-    }
 
     /**
      * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
@@ -322,10 +309,10 @@ public class VmDeviceUtils {
      * @param type
      * @param device
      * @param specParams
-     * @param is_plugged
-     * @param isReadOnly
+     * @param plugged
+     * @param readOnly
      * @param address
-     * @return New created VmDevice instance
+     * @return newly created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
             VmDeviceType type,
@@ -513,8 +500,8 @@ public class VmDeviceUtils {
     /**
      * Updates new/existing VM USB slots in vm device
      * Currently assuming the number of slots is between 0 and SLOTS_PER_CONTROLLER, i.e., no more than one controller
-     * @param oldVmBase
-     * @param newStatic
+     * @param oldVm
+     * @param newVm
      */
     private static void updateUSBSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
