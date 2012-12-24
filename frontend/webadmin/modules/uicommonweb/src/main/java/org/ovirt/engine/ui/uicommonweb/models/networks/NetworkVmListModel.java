@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -102,10 +102,11 @@ public class NetworkVmListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
-        networkIdParams.setRefresh(getIsQueryFirstTime());
+        GetVmsAndNetworkInterfacesByNetworkIdParameters params =
+                new GetVmsAndNetworkInterfacesByNetworkIdParameters(getEntity().getId());
+        params.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, params, asyncQuery);
     }
 
     @Override

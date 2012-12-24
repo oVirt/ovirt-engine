@@ -7,14 +7,15 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * A query to retrieve all VM-Network Interface pairs that the given Network is attached to.
  */
-public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParameters> extends QueriesCommandBase<P> {
+public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetworkInterfacesByNetworkIdParameters>
+        extends QueriesCommandBase<P> {
     public GetVmsAndNetworkInterfacesByNetworkIdQuery(P parameters) {
         super(parameters);
     }

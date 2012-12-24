@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -21,8 +21,8 @@ import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
  * delegates properly to the DAO}). The internal workings of the DAO are not tested.
  */
 public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
-        extends AbstractQueryTest<NetworkIdParameters,
-        GetVmsAndNetworkInterfacesByNetworkIdQuery<NetworkIdParameters>> {
+        extends AbstractQueryTest<GetVmsAndNetworkInterfacesByNetworkIdParameters,
+        GetVmsAndNetworkInterfacesByNetworkIdQuery<GetVmsAndNetworkInterfacesByNetworkIdParameters>> {
 
     private Guid networkId = Guid.NewGuid();
     private Guid vmId = Guid.NewGuid();
