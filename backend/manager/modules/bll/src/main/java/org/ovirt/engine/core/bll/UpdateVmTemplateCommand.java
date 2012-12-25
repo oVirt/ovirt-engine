@@ -81,14 +81,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     @Override
     protected void executeCommand() {
         if (getVmTemplate() != null) {
+            getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
             UpdateVmTemplate();
-            if (getVmTemplate().getstorage_pool_id() != null
-                    && !VmTemplateHandler.BlankVmTemplateId.equals(getVmTemplate().getId())) {
-                UpdateTemplateInSpm(
-                        getVmTemplate().getstorage_pool_id().getValue(),
-                        new java.util.ArrayList<VmTemplate>(java.util.Arrays
-                                .asList(new VmTemplate[] { getVmTemplate() })));
-            }
             setSucceeded(true);
         }
     }

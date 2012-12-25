@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -159,9 +158,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             revertToActiveSnapshot(createdSnapshotId);
         }
 
-        endActionOnDisks();
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
 
-        updateVmInSpm(getVm().getStoragePoolId(), Arrays.asList(new VM[] { getVm() }));
+        endActionOnDisks();
 
         setSucceeded(getParameters().getTaskGroupSuccess());
         getReturnValue().setEndActionTryAgain(false);

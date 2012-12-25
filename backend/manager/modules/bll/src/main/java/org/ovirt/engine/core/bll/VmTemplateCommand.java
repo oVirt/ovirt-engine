@@ -19,21 +19,13 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.linq.Function;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.ovf.OvfManager;
 
 @SuppressWarnings("serial")
 public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> extends CommandBase<T> {
@@ -181,68 +173,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     @Override
     protected String getDescription() {
         return getVmTemplateName();
-    }
-
-    /**
-     * This method create OVF for each template in list and call updateVm in SPM
-     *
-     * @param storagePoolId
-     * @param templatesList
-     * @return Returns true if updateVm succeeded.
-     */
-    public static boolean UpdateTemplateInSpm(Guid storagePoolId, List<VmTemplate> templatesList) {
-        return UpdateTemplateInSpm(storagePoolId, templatesList, Guid.Empty, null);
-    }
-
-    public static boolean UpdateTemplateInSpm(Guid storagePoolId, List<VmTemplate> templatesList,
-            Guid storageDomainId, List<DiskImage> images) {
-        java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> templatesAndMetaDictionary =
-                new java.util.HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(
-                        templatesList.size());
-        OvfManager ovfManager = new OvfManager();
-        for (VmTemplate template : templatesList) {
-            List<DiskImage> allTemplateImages = images;
-            if (allTemplateImages == null) {
-                allTemplateImages = (List) Backend
-                        .getInstance()
-                        .runInternalQuery(VdcQueryType.GetVmTemplatesDisks,
-                                new GetVmTemplatesDisksParameters(template.getId())).getReturnValue();
-            }
-
-            // TODO remove this when the API changes
-            template.getInterfaces().clear();
-            for (VmNetworkInterface iface : DbFacade.getInstance().getVmNetworkInterfaceDao()
-                    .getAllForTemplate(template.getId())) {
-                template.getInterfaces().add(iface);
-            }
-
-            String templateMeta = ovfManager.ExportTemplate(template, allTemplateImages);
-            templatesAndMetaDictionary.put(template.getId(), new KeyValuePairCompat<String, List<Guid>>(
-                    templateMeta, LinqUtils.foreach(allTemplateImages, new Function<DiskImage, Guid>() {
-                        @Override
-                        public Guid eval(DiskImage diskImage) {
-                            return diskImage.getimage_group_id().getValue();
-                        }
-                    })));
-        }
-        UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId,
-                templatesAndMetaDictionary);
-        tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
-                .getSucceeded();
-    }
-
-    protected static boolean RemoveTemplateInSpm(Guid storagePoolId, Guid templateId) {
-        return Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.RemoveVM, new RemoveVMVDSCommandParameters(storagePoolId, templateId))
-                .getSucceeded();
-    }
-
-    protected static boolean RemoveTemplateInSpm(Guid storagePoolId, Guid templateId, Guid storageDomainId) {
-        RemoveVMVDSCommandParameters tempVar = new RemoveVMVDSCommandParameters(storagePoolId, templateId);
-        tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveVM, tempVar)
-                .getSucceeded();
     }
 
     protected void RemoveNetwork() {

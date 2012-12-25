@@ -107,6 +107,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected void executeVmCommand() {
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
         final VmDevice vmDevice = createVmDevice();
         getVmDeviceDao().save(vmDevice);
         // update cached image

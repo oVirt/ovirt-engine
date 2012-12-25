@@ -964,19 +964,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setVm(null);
         if (getVm() != null) {
             VmHandler.UnLockVm(getVm());
-
-            updateVmInSpm();
         }
 
         else {
             setCommandShouldBeLogged(false);
             log.warn("ImportVmCommand::EndImportCommand: Vm is null - not performing full EndAction");
         }
-    }
-
-    protected boolean updateVmInSpm() {
-        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
-                new ArrayList<VM>(Arrays.asList(new VM[] { getVm() })));
     }
 
     @Override

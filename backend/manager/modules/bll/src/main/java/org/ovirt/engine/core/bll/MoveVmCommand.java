@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,9 +177,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     }
 
-    protected boolean updateVmImSpm() {
-        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
-                Arrays.asList(getVm()));
+    @Override
+    protected void incrementDbGeneration() {
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
     }
 
     @Override
@@ -202,13 +201,17 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     protected void endMoveVmCommand() {
+        boolean vmExists = (getVm() != null);
+        if (vmExists) {
+            incrementDbGeneration();
+        }
+
         endActionOnAllImageGroups();
 
-        if (getVm() != null) {
+        if (vmExists) {
             VmHandler.UnLockVm(getVm());
 
             VmHandler.updateDisksFromDb(getVm());
-            updateVmImSpm();
         }
 
         else {

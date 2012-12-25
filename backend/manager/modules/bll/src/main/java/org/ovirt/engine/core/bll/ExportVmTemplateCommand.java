@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -130,11 +132,16 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     @Override
-    protected void updateTemplateInSpm() {
+    protected void incrementDbGeneration() {
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
+                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        OvfDataUpdater.getInstance().loadTemplateData(getVmTemplate());
+        VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
         // update the target (export) domain
-        VmTemplateCommand.UpdateTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(),
-                Arrays.asList(getVmTemplate()),
-                getParameters().getStorageDomainId(), null);
+        OvfDataUpdater.getInstance().buildMetadataDictionaryForTemplate(getVmTemplate(), metaDictionary);
+        OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVmTemplate().getstorage_pool_id().getValue(),
+                metaDictionary,
+                getParameters().getStorageDomainId());
     }
 
     @Override

@@ -89,7 +89,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-
+                getVmStaticDAO().incrementDbGeneration(getVm().getId());
                 getVmDeviceDao().updateAll("UpdateVmDeviceForHotPlugDisk", devices);
                 VmHandler.updateDisksFromDb(getVm());
                 return null;

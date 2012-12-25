@@ -313,8 +313,10 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private void endCommand() {
         List<VM> listVms = getVmsForDiskId();
+        for (VM vm : listVms) {
+            getVmStaticDAO().incrementDbGeneration(vm.getId());
+        }
         Backend.getInstance().EndAction(VdcActionType.RemoveImage, getParameters().getImagesParameters().get(0));
-        VmCommand.updateVmInSpm(getStoragePoolId().getValue(), listVms);
         setSucceeded(true);
     }
 

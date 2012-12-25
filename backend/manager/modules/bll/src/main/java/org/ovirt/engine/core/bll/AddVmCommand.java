@@ -691,9 +691,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected void endWithFailure() {
         super.endActionOnDisks();
-        if (getVm() != null) {
-            removeVmInSpm(getVm().getStoragePoolId(), getVmId());
-        }
         removeVmRelatedEntitiesFromDb();
         setSucceeded(true);
     }

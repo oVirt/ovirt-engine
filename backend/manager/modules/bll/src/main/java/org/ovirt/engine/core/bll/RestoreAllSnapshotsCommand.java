@@ -107,7 +107,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         if (!getTaskIdList().isEmpty()) {
             deleteOrphanedImages();
         } else {
-            endActionOnVmConfiguration();
+            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+            unlockVm();
         }
 
         setSucceeded(succeeded);

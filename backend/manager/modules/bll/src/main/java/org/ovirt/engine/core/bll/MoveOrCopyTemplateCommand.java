@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,10 +14,10 @@ import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
@@ -249,9 +247,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     private void endVmTemplateRelatedOps() {
         if (getVmTemplate() != null) {
+            incrementDbGeneration();
             VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());
             VmDeviceUtils.setVmDevices(getVmTemplate());
-            updateTemplateInSpm();
         }
         else {
             setCommandShouldBeLogged(false);
@@ -259,10 +257,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
     }
 
-    protected void updateTemplateInSpm() {
-        VmTemplate vmt = getVmTemplate();
-        VmTemplateCommand.UpdateTemplateInSpm(vmt.getstorage_pool_id().getValue(),
-                Arrays.asList(vmt));
+    protected void incrementDbGeneration() {
+        getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
     }
 
     @Override

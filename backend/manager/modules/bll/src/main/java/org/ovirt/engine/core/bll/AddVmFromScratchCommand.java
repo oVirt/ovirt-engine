@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -116,7 +115,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             VmHandler.LockVm(getParameters().getVmStaticData().getId());
         } else {
             // if no disks send update vm here
-            updateVmInSpm(getVm().getStoragePoolId(), Arrays.asList(getVm()));
+            getVmStaticDao().incrementDbGeneration(getVm().getId());
         }
 
         return ret;

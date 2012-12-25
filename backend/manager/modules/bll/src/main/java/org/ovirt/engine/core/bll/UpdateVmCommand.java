@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -72,6 +71,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Override
     protected void executeVmCommand() {
         VM oldVm = getVm();
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
         VmStatic newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setcreation_date(oldVm.getStaticData().getcreation_date());
         if (newVmStatic.getcreation_date().equals(DateTime.getMinValue())) {
@@ -81,16 +81,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         getVmStaticDAO().update(newVmStatic);
         updateVmPayload();
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
-
-        // Set the VM to null, to fetch it again from the DB ,instead from the cache.
-        // We want to get the VM current data that was updated to the DB.
-        setVm(null);
-        try {
-            updateVmInSpm(getVm().getStoragePoolId(),
-                    Arrays.asList(getVm()));
-        } catch (Exception e) {
-            // DO nothing
-        }
         setSucceeded(true);
     }
 

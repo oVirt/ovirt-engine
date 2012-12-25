@@ -399,9 +399,13 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     protected boolean updateVmImSpm() {
-        return VmCommand.updateVmInSpm(getVm().getStoragePoolId(),
-                Arrays.asList(getVm()),
-                getParameters().getStorageDomainId());
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
+                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        OvfDataUpdater.getInstance().loadVmData(getVm());
+        VmHandler.updateDisksFromDb(getVm());
+        OvfDataUpdater.getInstance().buildMetadataDictionaryForVm(getVm(), metaDictionary);
+        return OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
+                metaDictionary, getParameters().getStorageDomainId());
     }
 
     @Override

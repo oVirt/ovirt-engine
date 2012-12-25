@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -82,6 +81,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected void endSuccessfully() {
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
         endActionOnDisks();
 
         if (getVm() != null) {
@@ -106,8 +106,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getSnapshotDao().get(getParameters().getDstSnapshotId()),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
                 getCompensationContext());
-        updateVmInSpm(getVm().getStoragePoolId(),
-                Arrays.asList(getVm()));
     }
 
     @Override
@@ -137,6 +135,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 if (!images.isEmpty()) {
                     getCompensationContext().stateChanged();
                 } else {
+                    getVmStaticDAO().incrementDbGeneration(getVm().getId());
                     restoreVmConfigFromSnapshot();
                 }
                 return null;

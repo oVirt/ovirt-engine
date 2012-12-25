@@ -369,6 +369,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void endSuccessfully() {
         setVmTemplateId(getParameters().getVmTemplateId());
         setVmId(getVmIdFromImageParameters());
+        getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
         }
@@ -386,14 +387,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void endDefaultOperations() {
-        endTemplateRelatedOperations();
         endUnlockOps();
-    }
-
-    private void endTemplateRelatedOperations() {
-        VmTemplate template = this.reloadVmTemplateFromDB();
-        UpdateTemplateInSpm(template.getstorage_pool_id().getValue(), new java.util.ArrayList<VmTemplate>(
-                java.util.Arrays.asList(new VmTemplate[] { template })));
     }
 
     private void endUnlockOps() {
@@ -421,7 +415,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // if template exist in db remove it
         if (getVmTemplate() != null) {
-            RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId());
             DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
             RemoveNetwork();
         }

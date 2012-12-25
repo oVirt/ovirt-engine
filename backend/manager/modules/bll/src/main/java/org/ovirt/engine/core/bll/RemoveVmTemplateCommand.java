@@ -187,21 +187,19 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         freeLock();
         // if for some reason template doesn't have images, remove it now and not in end action
         final boolean hasImages = imageTemplates.size() > 0;
-        if (RemoveTemplateInSpm(getVmTemplate().getstorage_pool_id().getValue(), getVmTemplateId())) {
-            if (hasImages) {
-                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+        if (hasImages) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-                    @Override
-                    public Void runInTransaction() {
-                        if (RemoveVmTemplateImages()) {
-                            setSucceeded(true);
-                        }
-                        return null;
+                @Override
+                public Void runInTransaction() {
+                    if (RemoveVmTemplateImages()) {
+                        setSucceeded(true);
                     }
-                });
-            } else {
-                HandleEndAction();
-            }
+                    return null;
+                }
+            });
+        } else {
+            HandleEndAction();
         }
     }
 

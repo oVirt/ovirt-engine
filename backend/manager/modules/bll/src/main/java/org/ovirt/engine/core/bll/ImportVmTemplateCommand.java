@@ -396,8 +396,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         endActionOnAllImageGroups();
 
-        updateTemplateInSpm();
-
         setSucceeded(true);
     }
 
@@ -426,13 +424,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
         setSucceeded(true);
-    }
-
-    @Override
-    protected void updateTemplateInSpm() {
-        VmTemplateCommand.UpdateTemplateInSpm(getParameters().getStoragePoolId(), new java.util.ArrayList<VmTemplate>(
-                java.util.Arrays.asList(new VmTemplate[] { getParameters().getVmTemplate() })), Guid.Empty,
-                getParameters().getImages());
     }
 
     @Override

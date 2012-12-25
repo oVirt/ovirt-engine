@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,6 +221,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
+                getVmStaticDAO().incrementDbGeneration(getVm().getId());
                 clearAddressOnInterfaceChange();
                 oldDisk.setBoot(newDisk.isBoot());
                 oldDisk.setDiskInterface(newDisk.getDiskInterface());
@@ -241,8 +241,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 // update vm device boot order
                 VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
 
-                setSucceeded(updateVmInSpm(getVm().getStoragePoolId(),
-                        Arrays.asList(getVm())));
+                setSucceeded(true);
                 return null;
             }
 

@@ -70,8 +70,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         Guid vmId = getVmId();
         hasImages = vm.getDiskList().size() > 0;
 
-        removeVmInSpm(vm.getStoragePoolId(), vmId);
-
         if (getParameters().isRemoveDisks() && hasImages) {
             if (!removeVmImages(null)) {
                 return false;

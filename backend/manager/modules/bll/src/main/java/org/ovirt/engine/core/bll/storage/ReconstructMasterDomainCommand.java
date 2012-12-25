@@ -1,25 +1,19 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MarkPoolInReconstructModeVDSCommandParameters;
@@ -141,17 +135,10 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             connectAndRefreshAllUpHosts(reconstructOpSucceeded);
 
             if (!_isLastMaster && reconstructOpSucceeded) {
-                SearchParameters p = new SearchParameters(
-                    MessageFormat.format(DesktopsInStoragePoolQuery,
-                        getStoragePool().getname()), SearchType.VM);
-
-                p.setMaxCount(Integer.MAX_VALUE);
-
-                @SuppressWarnings("unchecked")
-                List<VM> vmsInPool = (List<VM>) Backend.getInstance()
-                     .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
-
-                VmCommand.updateVmInSpm(getStoragePool().getId(), vmsInPool);
+                // all vms/templates metadata should be copied to the new master domain, so we need
+                // to perform increment of the db version for all the vms in the storage pool.
+                // currently this method is used for both templates and vms.
+                getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
             }
 
             setSucceeded(reconstructOpSucceeded);

@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -23,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.config.Config;
@@ -31,24 +27,19 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationError;
 
@@ -158,62 +149,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return result;
     }
 
-    /**
-     * This method create OVF for each vm in list and call updateVm in SPM
-     *
-     * @param storagePoolId
-     * @param vmsList
-     * @return Returns true if updateVm succeeded.
-     */
-    public static boolean updateVmInSpm(Guid storagePoolId, List<VM> vmsList) {
-        return updateVmInSpm(storagePoolId, vmsList, Guid.Empty);
-    }
-
-    public static boolean updateVmInSpm(Guid storagePoolId,
-            List<VM> vmsList,
-            Guid storageDomainId) {
-        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>(vmsList.size());
-        OvfManager ovfManager = new OvfManager();
-        for (VM vm : vmsList) {
-            ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
-            VmHandler.updateDisksFromDb(vm);
-            if (vm.getInterfaces() == null || vm.getInterfaces().isEmpty()) {
-                vm.setInterfaces(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
-            }
-            for (Disk disk : vm.getDiskMap().values()) {
-                if (disk.isAllowSnapshot()) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    AllVmImages.addAll(ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                            diskImage.getit_guid()));
-                }
-            }
-            if (StringUtils.isEmpty(vm.getVmtName())) {
-                VmTemplate t = DbFacade.getInstance().getVmTemplateDao().get(vm.getVmtGuid());
-                vm.setVmtName(t.getname());
-            }
-            String vmMeta = ovfManager.ExportVm(vm, AllVmImages);
-
-            vmsAndMetaDictionary.put(
-                    vm.getId(),
-                    new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
-                            new Function<Disk, Guid>() {
-                                @Override
-                                public Guid eval(Disk a) {
-                                    return a.getId();
-                                }
-                            })));
-        }
-        UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
-        tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
-                .getSucceeded();
-    }
-
-    protected boolean removeVmInSpm(Guid storagePoolId, Guid vmID) {
-        return removeVmInSpm(storagePoolId, vmID, Guid.Empty);
-    }
-
     protected boolean removeVmInSpm(Guid storagePoolId, Guid vmID, Guid storageDomainId) {
         return runVdsCommand(VDSCommandType.RemoveVM,
                 new RemoveVMVDSCommandParameters(storagePoolId, vmID, storageDomainId)).getSucceeded();
@@ -248,8 +183,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void endVmCommand() {
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
         endActionOnDisks();
-        endActionOnVmConfiguration();
+        unlockVm();
         setSucceeded(true);
     }
 
@@ -264,12 +200,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected void endActionOnVmConfiguration() {
+    protected void unlockVm() {
         if (getVm() != null) {
             if (getVm().getStatus() == VMStatus.ImageLocked) {
                 VmHandler.unlockVm(getVm(), getCompensationContext());
             }
-            updateVmInSpm(getVm().getStoragePoolId(), Arrays.asList(getVm()));
         } else {
             setCommandShouldBeLogged(false);
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
