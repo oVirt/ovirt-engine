@@ -348,7 +348,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
                     "0" : //$NON-NLS-1$
                     diskSizeRenderer.render(quotaPerUserUsageEntity.getFreeStorage());
             storageQuotaProgressBar.setTitle(constants.freeStorage() + freeStorage);
-            if (quotaPerUserUsageEntity.getMemoryTotalUsage() == 0) {
+            if (quotaPerUserUsageEntity.getStorageTotalUsage() == 0) {
                 storageQuotaProgressBar.setZeroValue();
             }
         }

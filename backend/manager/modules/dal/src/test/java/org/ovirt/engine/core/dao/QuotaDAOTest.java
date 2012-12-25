@@ -399,7 +399,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetQuotaByAdElementId() throws Exception {
         List<Quota> quotaByAdElementIdList =
-                dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS);
+                dao.getQuotaByAdElementId(FixturesTool.USER_EXISTING_ID, FixturesTool.STORAGE_POOL_NFS, false);
 
         // Check if quota general has been fetched.
         assertEquals(quotaByAdElementIdList.get(0).getQuotaName(), "Quota General");

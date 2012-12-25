@@ -114,7 +114,7 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      *            - The storage pool Id to search the quotas in (If null search all over the setup).
      * @return All quotas for user.
      */
-    public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId);
+    public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId, boolean recursive);
 
     /**
      * Get all quota storages which belong to quota with quotaId.

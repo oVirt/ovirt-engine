@@ -3,13 +3,18 @@ package org.ovirt.engine.ui.uicommonweb.models.resources;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.GetQuotasConsumptionForCurrentUserQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -217,7 +222,7 @@ public class ResourcesModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 ResourcesModel resourcesModel = (ResourcesModel) model;
-                ArrayList<VM> list =
+                final ArrayList<VM> list =
                         (ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 // TODO: Insert dummy data regarding disks and snapshots.
                 for (VM vm : list)
@@ -302,21 +307,57 @@ public class ResourcesModel extends SearchableListModel
                 Collections.sort(list, COMPARATOR);
                 resourcesModel.setItems(list);
 
+                // async Query for quota
+                AsyncQuery _asyncQueryForQuota = new AsyncQuery();
+                _asyncQueryForQuota.setModel(this);
+                VdcQueryParametersBase parameters =
+                        new VdcQueryParametersBase();
+                parameters.setRefresh(getIsQueryFirstTime());
+                Frontend.RunQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void OnSuccess(Object model, Object ReturnValue) {
+                                Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap =
+                                        (HashMap<Guid, QuotaUsagePerUser>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+
+                                //calculate personal consumption
+                                for (VM vm : list) {
+                                    // if vm is running and have a quota
+                                    if (vm.getStatus() != VMStatus.Down
+                                            && vm.getStatus() != VMStatus.Suspended
+                                            && vm.getStatus() != VMStatus.ImageIllegal
+                                            && vm.getStatus() != VMStatus.ImageLocked
+                                            && vm.getStatus() != VMStatus.PoweringDown
+                                            && vm.getQuotaId() != null) {
+                                        QuotaUsagePerUser quotaUsagePerUser =
+                                                quotaPerUserUsageEntityMap.get(vm.getQuotaId());
+                                        // add the vm cpu and mem to the user quota consumption
+                                        if (quotaUsagePerUser != null) {
+                                            quotaUsagePerUser.setMemoryUsageForUser(quotaUsagePerUser.getMemoryUsageForUser()
+                                                    + vm.getMemSizeMb());
+                                            quotaUsagePerUser.setVcpuUsageForUser(quotaUsagePerUser.getVcpuUsageForUser()
+                                                    + vm.getCpuPerSocket() * vm.getNumOfSockets());
+                                        }
+                                    }
+                                    // for each image of each disk of the vm - if it has a quota
+                                    for (DiskImage image : vm.getDiskList()) {
+                                        QuotaUsagePerUser quotaUsagePerUser =
+                                                quotaPerUserUsageEntityMap.get(image.getQuotaId());
+                                        double imageSize =
+                                                image.getImage().isActive() ? image.getSizeInGigabytes()
+                                                        : image.getActualSize();
+                                        // add the disk size to the user storage consumption
+                                        if (quotaUsagePerUser != null) {
+                                            quotaUsagePerUser.setStorageUsageForUser(quotaUsagePerUser.getStorageUsageForUser()
+                                                    + imageSize);
+                                        }
+                                    }
+                                }
+                                getUsedQuotaPercentage().setEntity(new ArrayList<QuotaUsagePerUser>(quotaPerUserUsageEntityMap.values()));
+                            }
+                        }));
             }
         };
-
-        // async Query for quota
-        AsyncQuery _asyncQueryForQuota = new AsyncQuery();
-        _asyncQueryForQuota.setModel(this);
-        GetQuotasConsumptionForCurrentUserQueryParameters parameters = new GetQuotasConsumptionForCurrentUserQueryParameters();
-        parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
-                getUsedQuotaPercentage().setEntity(((VdcQueryReturnValue) ReturnValue).getReturnValue());
-            }
-        }));
 
         // Items property will contain list of VMs.
         GetUserVmsByUserIdAndGroupsParameters getUserVmsByUserIdAndGroupsParameters =

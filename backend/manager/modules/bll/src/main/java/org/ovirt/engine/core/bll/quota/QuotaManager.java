@@ -8,14 +8,12 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -630,9 +628,9 @@ public class QuotaManager {
         if(param.getQuotaGuid() == null || Guid.Empty.equals(param.getQuotaGuid())) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
             auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
-                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE:
+                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
-            log.errorFormat("No Quota id passed from command: {0}",parameters.getAuditLogable().getClass().getName());
+            log.errorFormat("No Quota id passed from command: {0}", parameters.getAuditLogable().getClass().getName());
             corruptedParameters.add(param);
             return false;
         }
@@ -644,7 +642,7 @@ public class QuotaManager {
                     parameters.getAuditLogable()
                     .getVmName()));
             auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
-                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE:
+                    AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
             log.errorFormat("The quota id {0} is not found in backend and DB.", param.getQuotaGuid().toString());
             corruptedParameters.add(param);
@@ -848,13 +846,12 @@ public class QuotaManager {
     /**
      * Return a list of QuotaUsagePerUser representing the status of all the quotas available for a specific user
      *
+     *
      * @param quotaIdsList
      *            - quotas available for user
-     * @param vms
-     *            - vm available for user
      * @return - list of QuotaUsagePerUser
      */
-    public List<QuotaUsagePerUser> generatePerUserUsageReport(List<Quota> quotaIdsList, List<VM> vms) {
+    public Map<Guid, QuotaUsagePerUser> generatePerUserUsageReport(List<Quota> quotaIdsList) {
         Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = new HashMap<Guid, QuotaUsagePerUser>();
         List<Quota> needToCache = new ArrayList<Quota>();
 
@@ -903,42 +900,8 @@ public class QuotaManager {
                 }
             }
         }
-        countPersonalUsage(vms, quotaPerUserUsageEntityMap);
 
-        return new ArrayList<QuotaUsagePerUser>(quotaPerUserUsageEntityMap.values());
-    }
-
-    private void countPersonalUsage(List<VM> vms, Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap) {
-        if (vms != null) {
-            for (VM vm : vms) {
-                // if vm is running and have a quota
-                if (vm.getStatus() != VMStatus.Down
-                        && vm.getStatus() != VMStatus.Suspended
-                        && vm.getStatus() != VMStatus.ImageIllegal
-                        && vm.getStatus() != VMStatus.ImageLocked
-                        && vm.getStatus() != VMStatus.PoweringDown
-                        && vm.getQuotaId() != null) {
-                    QuotaUsagePerUser quotaUsagePerUser = quotaPerUserUsageEntityMap.get(vm.getQuotaId());
-                    // add the vm cpu and mem to the user quota consumption
-                    if (quotaUsagePerUser != null) {
-                        quotaUsagePerUser.setMemoryUsageForUser(quotaUsagePerUser.getMemoryUsageForUser()
-                                + vm.getMemSizeMb());
-                        quotaUsagePerUser.setVcpuUsageForUser(quotaUsagePerUser.getVcpuUsageForUser()
-                                + vm.getCpuPerSocket() * vm.getNumOfSockets());
-                    }
-                }
-                // for each image of each disk of the vm - if it has a quota
-                for (DiskImage image : vm.getDiskList()) {
-                    QuotaUsagePerUser quotaUsagePerUser = quotaPerUserUsageEntityMap.get(image.getQuotaId());
-                    double imageSize = image.getImage().isActive() ? image.getSizeInGigabytes() : image.getActualSize();
-                    // add the disk size to the user storage consumption
-                    if (quotaUsagePerUser != null) {
-                        quotaUsagePerUser.setStorageUsageForUser(quotaUsagePerUser.getStorageUsageForUser()
-                                + imageSize);
-                    }
-                }
-            }
-        }
+        return quotaPerUserUsageEntityMap;
     }
 
     private QuotaUsagePerUser addQuotaEntry(Quota quota) {

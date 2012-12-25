@@ -47,6 +47,6 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
         returnedQuotas = new ArrayList<Quota>();
         when(getQueryParameters().getAdElementId()).thenReturn(adElementId);
         when(getQueryParameters().getStoragePoolId()).thenReturn(storagePoolId);
-        Mockito.when(quotaDAO.getQuotaByAdElementId(adElementId, storagePoolId)).thenReturn(returnedQuotas);
+        Mockito.when(quotaDAO.getQuotaByAdElementId(adElementId, storagePoolId, false)).thenReturn(returnedQuotas);
     }
 }

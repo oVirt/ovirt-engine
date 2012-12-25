@@ -55,13 +55,16 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
      *            - The user ID or group ID.
      * @param storagePoolId
      *            - The storage pool Id to search the quotas in (If null search all over the setup).
+     *            @param recursive
+     *            - Find by
      * @return All quotas for user.
      */
     @Override
-    public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId) {
+    public List<Quota> getQuotaByAdElementId(Guid adElementId, Guid storagePoolId, boolean recursive) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
         quotaParameterSource.addValue("ad_element_id", adElementId);
         quotaParameterSource.addValue("storage_pool_id", storagePoolId);
+        quotaParameterSource.addValue("recursive", recursive);
         List<Quota> quotaEntityList =
                 getCallsHandler().executeReadList("GetQuotaByAdElementId",
                         getQuotaMetaDataFromResultSet(),
