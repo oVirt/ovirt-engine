@@ -123,7 +123,9 @@ public class VmMapper {
             staticVm.setvds_group_id(new Guid(vm.getCluster().getId()));
         }
         if (vm.isSetCpu()) {
-            staticVm.setUseHostCpuFlags(CpuMode.fromValue(vm.getCpu().getMode()) == CpuMode.HOST_PASSTHROUGH);
+            if (vm.getCpu().isSetMode()) {
+                staticVm.setUseHostCpuFlags(CpuMode.fromValue(vm.getCpu().getMode()) == CpuMode.HOST_PASSTHROUGH);
+            }
             if (vm.getCpu().isSetTopology()) {
                 if (vm.getCpu().getTopology().getCores()!=null) {
                     staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
