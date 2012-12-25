@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -87,10 +86,6 @@ public class NetworkHostListModel extends SearchableListModel
             Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, asyncQuery);
         } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
             Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
-        } else if (NetworkHostFilter.all.equals(getViewFilterType())) {
-            Frontend.RunQuery(VdcQueryType.GetAllVdsByStoragePool,
-                    new GetAllVdsByStoragePoolParameters(getEntity().getstorage_pool_id().getValue()),
-                    asyncQuery);
         }
 
         setIsQueryFirstTime(false);

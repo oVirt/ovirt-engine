@@ -160,14 +160,12 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void handleRadioButtonClick(ClickEvent event) {
         getDetailModel().setViewFilterType((viewRadioGroup.getSelectedValue()));
 
-        boolean all = viewRadioGroup.getSelectedValue() == NetworkHostFilter.all;
         boolean attached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.attached;
-        boolean unattached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.unattached;
 
-        getTable().ensureColumnPresent(hostStatus, constants.empty(), all || attached || unattached, "30px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nameColumn, constants.nameHost(), all || attached || unattached);
-        getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), all || attached || unattached);
-        getTable().ensureColumnPresent(dcColumn, constants.dcHost(), all || attached || unattached);
+        getTable().ensureColumnPresent(hostStatus, constants.empty(), true, "30px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nameColumn, constants.nameHost(), true);
+        getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true);
+        getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true);
         getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached);
         getTable().ensureColumnPresent(speedColumn, constants.speedNetworkHost(), attached);

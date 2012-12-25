@@ -1624,9 +1624,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Attached")
     String attachedHost();
 
-    @DefaultStringValue("All")
-    String allHost();
-
     @DefaultStringValue("Unattached")
     String unattachedHost();
 

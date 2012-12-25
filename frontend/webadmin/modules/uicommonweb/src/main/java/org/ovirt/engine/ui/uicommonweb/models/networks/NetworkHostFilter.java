@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.uicommonweb.ViewFilter;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public enum NetworkHostFilter implements ViewFilter<NetworkHostFilter>{
-    all(ConstantsManager.getInstance().getConstants().allHost()),
     attached(ConstantsManager.getInstance().getConstants().attachedHost()),
     unattached(ConstantsManager.getInstance().getConstants().unattachedHost());
 
