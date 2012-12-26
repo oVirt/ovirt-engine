@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;

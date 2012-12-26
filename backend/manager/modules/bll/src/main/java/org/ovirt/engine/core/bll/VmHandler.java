@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;

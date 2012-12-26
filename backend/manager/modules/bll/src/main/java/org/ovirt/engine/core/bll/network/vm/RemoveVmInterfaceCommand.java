@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;

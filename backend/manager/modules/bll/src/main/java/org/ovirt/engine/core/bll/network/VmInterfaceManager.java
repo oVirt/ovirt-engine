@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;

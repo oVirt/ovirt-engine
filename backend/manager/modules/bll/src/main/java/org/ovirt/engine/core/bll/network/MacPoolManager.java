@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network;
 
 import java.util.HashSet;
 import java.util.Iterator;

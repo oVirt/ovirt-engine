@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network;
 
 import org.ovirt.engine.core.compat.*;
 

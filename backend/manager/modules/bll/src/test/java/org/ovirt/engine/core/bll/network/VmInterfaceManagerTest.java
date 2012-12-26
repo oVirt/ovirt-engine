@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.verification.VerificationMode;
-import org.ovirt.engine.core.bll.MacPoolManager;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Network;

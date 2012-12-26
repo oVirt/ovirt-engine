@@ -8,6 +8,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import org.ovirt.engine.core.bll.gluster.GlusterManager;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
