@@ -1,8 +1,10 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.template;
 
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
