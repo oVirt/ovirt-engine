@@ -1,5 +1,6 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.host;
 
+import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;

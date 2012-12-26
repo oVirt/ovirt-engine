@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.host;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
