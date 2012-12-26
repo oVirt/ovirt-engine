@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -24,11 +24,11 @@ public interface ActionGroupDAO extends DAO {
 
     // TODO APIs to be removed when Hibernate migration is completed
 
-    action_version_map getActionVersionMapByActionType(VdcActionType action_type);
+    ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type);
 
-    void addActionVersionMap(action_version_map action_version_map);
+    void addActionVersionMap(ActionVersionMap actionVersionMap);
 
     void removeActionVersionMap(VdcActionType action_type);
 
-    List<action_version_map> getAllActionVersionMap();
+    List<ActionVersionMap> getAllActionVersionMap();
 }

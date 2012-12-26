@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -50,7 +51,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.action_version_map;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -710,7 +710,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected boolean isBackwardsCompatible() {
         boolean result = true;
-        action_version_map actionVersionMap = DbFacade.getInstance()
+        ActionVersionMap actionVersionMap = DbFacade.getInstance()
                 .getActionGroupDao().getActionVersionMapByActionType(getActionType());
         // if actionVersionMap not null check cluster level
         // cluster level ok check storage_pool level

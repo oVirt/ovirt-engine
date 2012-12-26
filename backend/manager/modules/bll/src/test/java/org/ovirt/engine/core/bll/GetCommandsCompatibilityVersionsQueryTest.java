@@ -11,7 +11,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -37,9 +37,9 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
     @Test
     public void testExecuteQueryCommand() {
         GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase> queryToRun = getQuery();
-        List<action_version_map> entriesFromDb =
-                Arrays.asList(new action_version_map(VdcActionType.RunVm, RUN_VM_VERSION, RUN_VM_VERSION),
-                        new action_version_map(VdcActionType.AddVmFromSnapshot,
+        List<ActionVersionMap> entriesFromDb =
+                Arrays.asList(new ActionVersionMap(VdcActionType.RunVm, RUN_VM_VERSION, RUN_VM_VERSION),
+                        new ActionVersionMap(VdcActionType.AddVmFromSnapshot,
                                 ADD_VM_FROM_SNAPSHOT_VERSION,
                                 ADD_VM_FROM_SNAPSHOT_VERSION));
         doReturn(entriesFromDb).when(actionGroupDaoMock).getAllActionVersionMap();

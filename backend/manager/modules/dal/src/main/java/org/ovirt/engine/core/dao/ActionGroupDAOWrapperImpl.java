@@ -7,7 +7,7 @@ import org.hibernate.Session;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.actiongroup.ActionVersionMapDAOHibernateImpl;
 import org.ovirt.engine.core.dao.actiongroup.RoleGroupMapDAOHibernateImpl;
@@ -29,12 +29,12 @@ public class ActionGroupDAOWrapperImpl extends BaseDAOWrapperImpl implements Act
     }
 
     @Override
-    public action_version_map getActionVersionMapByActionType(VdcActionType action_type) {
+    public ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type) {
         return actionVersionMapDAO.get(action_type.getValue());
     }
 
     @Override
-    public void addActionVersionMap(action_version_map map) {
+    public void addActionVersionMap(ActionVersionMap map) {
         actionVersionMapDAO.save(map);
     }
 
@@ -44,7 +44,7 @@ public class ActionGroupDAOWrapperImpl extends BaseDAOWrapperImpl implements Act
     }
 
     @Override
-    public List<action_version_map> getAllActionVersionMap() {
+    public List<ActionVersionMap> getAllActionVersionMap() {
         throw new NotImplementedException();
     }
 }

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.HashMap;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.action_version_map;
+import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
@@ -17,7 +17,7 @@ public class GetCommandsCompatibilityVersionsQuery<P extends VdcQueryParametersB
     protected void executeQueryCommand() {
         HashMap<VdcActionType, CommandVersionsInfo> resultMap =
                 new HashMap<VdcActionType, CommandVersionsInfo>();
-        for (action_version_map actionVersionMap : getActionGroupDao().getAllActionVersionMap()) {
+        for (ActionVersionMap actionVersionMap : getActionGroupDao().getAllActionVersionMap()) {
             CommandVersionsInfo info =
                     new CommandVersionsInfo(actionVersionMap.getstorage_pool_minimal_version(),
                             actionVersionMap.getcluster_minimal_version());

@@ -16,19 +16,19 @@ import org.ovirt.engine.core.compat.Version;
 @Entity
 @Table(name = "action_version_map")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class action_version_map implements Serializable {
+public class ActionVersionMap implements Serializable {
     private static final long serialVersionUID = -212222175662336097L;
 
-    public action_version_map() {
+    public ActionVersionMap() {
     }
 
-    public action_version_map(VdcActionType actionType, String clusterMinimalVersion, String storagePoolMinimalVersion) {
+    public ActionVersionMap(VdcActionType actionType, String clusterMinimalVersion, String storagePoolMinimalVersion) {
         setaction_type(actionType);
         setcluster_minimal_version(clusterMinimalVersion);
         setstorage_pool_minimal_version(storagePoolMinimalVersion);
     }
 
-    public action_version_map(VdcActionType actionType, Version clusterMinimalVersion, Version storagePoolMinimalVersion) {
+    public ActionVersionMap(VdcActionType actionType, Version clusterMinimalVersion, Version storagePoolMinimalVersion) {
         this(actionType, clusterMinimalVersion.toString(), storagePoolMinimalVersion.toString());
     }
 
@@ -90,7 +90,7 @@ public class action_version_map implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        action_version_map other = (action_version_map) obj;
+        ActionVersionMap other = (ActionVersionMap) obj;
         if (actionType != other.actionType)
             return false;
         if (clusterMinimalVersion == null) {
