@@ -118,6 +118,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
     @Column(name = "pm_enabled")
     private boolean pmEnabled;
 
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     @Column(name = "pm_proxy_preferences")
     private String pmProxyPreferences;
 
