@@ -68,7 +68,6 @@ public class TemplateMapperTest
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
         assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
-        assertEquals(model.getUsb().isEnabled(), transform.getUsb().isEnabled());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
     }

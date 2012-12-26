@@ -106,7 +106,6 @@ public class VmMapperTest extends
         assertTrue(Math.abs(model.getMemoryPolicy().getGuaranteed() - transform.getMemoryPolicy().getGuaranteed()) <= (1024 * 1024));
         assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
-        assertEquals(model.getUsb().isEnabled(), transform.getUsb().isEnabled());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
     }
