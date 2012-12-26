@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class NetworkVmListModel extends SearchableListModel
 {
     private UICommand removeCommand;
+    private NetworkVmFilter viewFilterType;
 
     public NetworkVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -37,6 +38,15 @@ public class NetworkVmListModel extends SearchableListModel
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
+    }
+
+    public NetworkVmFilter getViewFilterType() {
+        return viewFilterType;
+    }
+
+    public void setViewFilterType(NetworkVmFilter viewFilterType) {
+        this.viewFilterType = viewFilterType;
+        Search();
     }
 
     @Override
@@ -93,20 +103,24 @@ public class NetworkVmListModel extends SearchableListModel
         }
 
         AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
+        asyncQuery.setModel(getViewFilterType());
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object ReturnValue)
             {
-                NetworkVmListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                if (model.equals(getViewFilterType())) {
+                    NetworkVmListModel.this.setItems((List<PairQueryable<VmNetworkInterface, VM>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                }
             }
         };
 
         GetVmsAndNetworkInterfacesByNetworkIdParameters params =
-                new GetVmsAndNetworkInterfacesByNetworkIdParameters(getEntity().getId());
+                new GetVmsAndNetworkInterfacesByNetworkIdParameters(getEntity().getId(),
+                        NetworkVmFilter.running.equals(getViewFilterType()));
         params.setRefresh(getIsQueryFirstTime());
-
-        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId, params, asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId,
+                params,
+                asyncQuery);
     }
 
     @Override

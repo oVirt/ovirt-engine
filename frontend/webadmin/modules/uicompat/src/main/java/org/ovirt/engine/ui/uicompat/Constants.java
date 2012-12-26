@@ -1630,6 +1630,13 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Unattached")
     String unattachedHost();
 
+    // Network - Vm
+    @DefaultStringValue("Running")
+    String runningVm();
+
+    @DefaultStringValue("Not Running")
+    String notRunningVm();
+
     // Network
     @DefaultStringValue("VM")
     String vmNetworkRole();
