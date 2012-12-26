@@ -229,6 +229,7 @@ ERR_YUM_LOCK="Internal Error: Can't edit versionlock "
 ERR_RPM_QUERY="Internal Error: Can't query rpm versions"
 
 #_DB Errors
+ERR_POSTGRESQL = "Error: failed to find PostgreSQL version."
 ERR_DB_CREATE_FAILED="Database creation failed"
 ERR_DB_UPGRADE_FAILED="Database upgrade failed. Previous database has been restored"
 ERR_DB_BACKUP="Database backup failed"

@@ -1049,8 +1049,28 @@ def clearDbConnections(dbName):
     execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK, envDict=getPgPassEnv())
 
     # Disconnect active connections
+    # First, check postgresql version, as this would work differently for 9.2
+    logging.info("Checking PostgreSQL version")
+    pid = "procpid"
+    version_query = "SELECT version();"
+    cmd = [
+            basedefs.EXEC_PSQL,
+            "-P", "tuples_only=on",
+            "-P", "format=unaligned",
+            "-h", getDbHostName(),
+            "-p", getDbPort(),
+            "-U", getDbAdminUser(),
+            "-d", basedefs.DB_TEMPLATE,
+            "-c", version_query,
+        ]
+    out, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_POSTGRESQL, envDict=getPgPassEnv())
+    version = out.split()[1]
+    if getVersionNumber(version) >= getVersionNumber("9.2"):
+        logging.info("Detected PostgreSQL version >= 9.2")
+        pid = "pid"
+
     logging.info("Disconnect active connections from DB '%s'" % dbName)
-    query = "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % dbName
+    query = "SELECT pg_terminate_backend(%s) FROM pg_stat_activity WHERE datname = '%s'" % (pid, dbName)
     cmd = [
         basedefs.EXEC_PSQL,
         "-U", getDbAdminUser(),
@@ -1563,3 +1583,9 @@ def generatePassword(length):
     chars = string.ascii_letters + string.digits + '!@#$%^&()'
     randomizer = random.SystemRandom()
     return ''.join(randomizer.choice(chars) for char in xrange(length))
+
+def getVersionNumber(version_string):
+    def _prefixNum(s):
+        return int(re.match("\d*", s).group(0))
+    version_num = version_string.split('.')
+    return 1000*_prefixNum(version_num[0]) + _prefixNum(version_num[1])
