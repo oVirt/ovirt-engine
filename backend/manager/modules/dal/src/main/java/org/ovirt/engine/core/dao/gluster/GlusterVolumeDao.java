@@ -35,6 +35,8 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
 
     public void remove(Guid id);
 
+    public void removeByClusterId(Guid clusterId);
+
     public void removeByName(Guid clusterId, String volName);
 
     public void updateVolumeStatus(Guid volumeId, GlusterStatus status);

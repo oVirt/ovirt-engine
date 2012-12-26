@@ -121,6 +121,13 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testRemoveByClusterId() {
+        dao.removeByClusterId(CLUSTER_ID);
+        List<GlusterVolumeEntity> volumes = dao.getByClusterId(CLUSTER_ID);
+        assertTrue(volumes.isEmpty());
+    }
+
+    @Test
     public void testUpdateVolumeStatus() {
         assertTrue(existingDistVol.isOnline());
 

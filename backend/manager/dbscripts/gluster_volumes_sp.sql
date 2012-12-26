@@ -229,6 +229,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION DeleteGlusterVolumesByClusterId(v_cluster_id UUID)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+DELETE FROM gluster_volumes
+WHERE cluster_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION DeleteGlusterVolumeBrick(v_id UUID)
     RETURNS VOID
     AS $procedure$

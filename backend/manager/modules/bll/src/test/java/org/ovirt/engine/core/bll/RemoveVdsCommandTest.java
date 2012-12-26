@@ -67,11 +67,10 @@ public class RemoveVdsCommandTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        command =
-                spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
         clusterUtils = mock(ClusterUtils.class);
+    }
 
+    private void prepareMocks(RemoveVdsCommand<RemoveVdsParameters> command) {
         doReturn(vdsDAO).when(command).getVdsDAO();
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
@@ -95,6 +94,8 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionSucceeds() throws Exception {
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        prepareMocks(command);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
@@ -106,6 +107,8 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        prepareMocks(command);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
@@ -119,7 +122,22 @@ public class RemoveVdsCommandTest {
     }
 
     @Test
+    public void canDoActionSucceedsWithForceOption() throws Exception {
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), true)));
+        prepareMocks(command);
+        mockVdsWithStatus(VDSStatus.Maintenance);
+        mockVdsDynamic();
+        mockVmsPinnedToHost(Collections.<String> emptyList());
+
+        mockIsGlusterEnabled(true);
+        mockHasVolumeOnServer(true);
+        runAndAssertCanDoActionSuccess();
+    }
+
+    @Test
     public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        prepareMocks(command);
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
 

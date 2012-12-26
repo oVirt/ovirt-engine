@@ -121,6 +121,13 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public void removeByClusterId(Guid clusterId) {
+        getCallsHandler().executeModification("DeleteGlusterVolumesByClusterId",
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public void updateVolumeStatus(Guid volumeId, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatus",
                 createVolumeIdParams(volumeId).addValue("status", EnumUtils.nameOrNull(status)));

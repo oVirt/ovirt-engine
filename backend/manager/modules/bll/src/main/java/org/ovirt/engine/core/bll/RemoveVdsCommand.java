@@ -40,7 +40,22 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     @Override
     protected void executeCommand() {
         if (getVdsIdRef() != null && CanBeRemoved(getVdsId())) {
-            glusterHostRemove();
+            /**
+             * If upserver is null and force action is true, then don't try for gluster host remove, simply remove the
+             * host entry from database.
+             */
+            if (isGlusterEnabled() && upServer != null) {
+                glusterHostRemove();
+            }
+
+            /**
+             * If the removing server is the last server in the cluster and the force action is true, then clear the
+             * gluster volumes from the database
+             */
+            if (!clusterHasMultipleHosts() && getParameters().isForceAction()) {
+                removeGlusterVolumesFromDb();
+            }
+
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
@@ -68,8 +83,9 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
             }
         }
 
-        if (isGlusterEnabled()) {
-            if (hasVolumeOnServer()) {
+        // Perform volume bricks on server and up server null check only when force action is false
+        if (isGlusterEnabled() && !getParameters().isForceAction()) {
+            if (hasVolumeBricksOnServer()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 returnValue = false;
             }
@@ -177,7 +193,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         return getDbFacade().getGlusterBrickDao();
     }
 
-    private boolean hasVolumeOnServer() {
+    private boolean hasVolumeBricksOnServer() {
         if (getGlusterBrickDao().getGlusterVolumeBricksByServerId(getVdsId()).size() > 0) {
             return true;
         } else {
@@ -185,12 +201,16 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         }
     }
 
+    private void removeGlusterVolumesFromDb() {
+        getGlusterVolumeDao().removeByClusterId(getVdsGroupId());
+    }
+
     public ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
     }
 
     private void glusterHostRemove() {
-        if (isGlusterEnabled() && clusterHasMultipleHosts() && !hasVolumeOnServer()) {
+        if (isGlusterEnabled() && clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
             VDSReturnValue returnValue =
                     runVdsCommand(
                             VDSCommandType.RemoveGlusterServer,
