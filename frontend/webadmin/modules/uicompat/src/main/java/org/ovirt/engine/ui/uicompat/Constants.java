@@ -1418,6 +1418,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure want to remove the following Brick(s)?")
     String removeBricksMessage();
 
+    @DefaultStringValue("NOTE:\n -Removing brick(s) can result in data loss.")
+    String removeBricksWarning();
+
     @DefaultStringValue("Brick with the same details already exist")
     String duplicateBrickMsg();
 

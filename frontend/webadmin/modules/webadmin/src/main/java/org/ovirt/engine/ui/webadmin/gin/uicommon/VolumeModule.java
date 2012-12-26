@@ -80,6 +80,7 @@ public class VolumeModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getVolumeBrickListProvider(ClientGinjector ginjector,
             final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
             final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(ginjector,
@@ -97,6 +98,16 @@ public class VolumeModule extends AbstractGinModule {
                     return brickDetailsPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VolumeBrickListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveBricksCommand()) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
 
