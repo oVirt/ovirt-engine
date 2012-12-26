@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -51,7 +52,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
         }
 
-        AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVdsGroupId(), getNetwork());
+        NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
         setSucceeded(true);
     }
 

@@ -3,33 +3,21 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
@@ -59,51 +47,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         if (getNetwork().getCluster().getis_display()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
         }
-        SetNetworkStatus(getVdsGroupId(), getNetwork());
+        NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
         setSucceeded(true);
-    }
-
-    public static void SetNetworkStatus(Guid vdsGroupId, final Network net) {
-        NetworkStatus status = NetworkStatus.Operational;
-        NetworkCluster networkCluster =
-                DbFacade.getInstance().getNetworkClusterDao().get(new NetworkClusterId(vdsGroupId, net.getId()));
-
-        if (networkCluster != null) {
-            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vdsGroupId);
-
-            // Search all vds in cluster that have the specify network, if not the
-            // network is not active
-            SearchParameters searchParams = new SearchParameters("hosts: cluster = "
-                    + vdsGroup.getname(), SearchType.VDS);
-            searchParams.setMaxCount(Integer.MAX_VALUE);
-            List<VDS> vdsList = (List) Backend.getInstance()
-                    .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
-
-            if (networkCluster.isRequired()) {
-                for (VDS vds : vdsList) {
-                    if (vds.getstatus() != VDSStatus.Up) {
-                        continue;
-                    }
-                    List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
-                            .getInstance()
-                            .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                                    new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
-                    VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
-                        @Override
-                        public boolean eval(VdsNetworkInterface i) {
-                            return StringUtils.equals(i.getNetworkName(), net.getname());
-                        }
-                    });
-                    if (iface == null) {
-                        status = NetworkStatus.NonOperational;
-                        break;
-                    }
-                }
-            }
-
-            networkCluster.setstatus(status);
-            DbFacade.getInstance().getNetworkClusterDao().updateStatus(networkCluster);
-        }
     }
 
     @Override

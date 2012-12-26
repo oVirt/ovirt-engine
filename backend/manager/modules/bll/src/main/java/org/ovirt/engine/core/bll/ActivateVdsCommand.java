@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -75,7 +76,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     List<Network> networks = DbFacade.getInstance().getNetworkDao()
                             .getAllForCluster(vds.getvds_group_id());
                     for (Network net : networks) {
-                        AttachNetworkToVdsGroupCommand.SetNetworkStatus(vds.getvds_group_id(), net);
+                        NetworkClusterHelper.setStatus(vds.getvds_group_id(), net);
                     }
                     return null;
                 }

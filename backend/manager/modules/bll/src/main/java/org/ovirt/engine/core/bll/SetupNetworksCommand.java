@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -165,7 +166,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
                 // Update cluster networks (i.e. check if need to activate each new network)
                 for (Network net : getNetworks()) {
-                    AttachNetworkToVdsGroupCommand.SetNetworkStatus(getVdsGroupId(), net);
+                    NetworkClusterHelper.setStatus(getVdsGroupId(), net);
                 }
                 return Boolean.TRUE;
             }

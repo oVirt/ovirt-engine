@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintananceNumberOfVdssParameters;
@@ -108,7 +109,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         for (Guid id : _vdsGroupIds) {
             List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(id);
             for (Network net : networks) {
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(id, net);
+                NetworkClusterHelper.setStatus(id, net);
             }
         }
         setSucceeded(true);

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -161,7 +162,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             for (NetworkCluster item : networkClusters) {
                 for (Network net : networks) {
                     if (net.getId().equals(item.getnetwork_id())) {
-                        AttachNetworkToVdsGroupCommand.SetNetworkStatus(_oldVds.getvds_group_id(), net);
+                        NetworkClusterHelper.setStatus(_oldVds.getvds_group_id(), net);
                     }
                 }
             }

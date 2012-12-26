@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -79,7 +80,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
             if (retVal.getSucceeded()) {
                 Guid groupId = DbFacade.getInstance().getVdsDao().get(params.getVdsId()).getvds_group_id();
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(groupId, params.getNetwork());
+                NetworkClusterHelper.setStatus(groupId, params.getNetwork());
                 setSucceeded(true);
             }
         }

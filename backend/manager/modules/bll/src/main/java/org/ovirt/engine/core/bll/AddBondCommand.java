@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
@@ -63,7 +64,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 // set network status (this can change the network status to
                 // operational)
                 VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDao().get(params.getVdsId());
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(vdsStatic.getvds_group_id(), params
+                NetworkClusterHelper.setStatus(vdsStatic.getvds_group_id(), params
                         .getNetwork());
                 setSucceeded(true);
             }

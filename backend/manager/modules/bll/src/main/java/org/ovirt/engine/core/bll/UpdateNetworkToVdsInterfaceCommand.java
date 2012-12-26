@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
@@ -92,7 +93,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
             if (retVal.getSucceeded()) {
                 Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getvds_group_id();
-                AttachNetworkToVdsGroupCommand.SetNetworkStatus(groupId, getParameters().getNetwork());
+                NetworkClusterHelper.setStatus(groupId, getParameters().getNetwork());
                 setSucceeded(true);
             }
         }

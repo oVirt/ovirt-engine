@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.AttachNetworkToVdsGroupCommand;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
@@ -28,7 +28,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         DbFacade.getInstance().getNetworkDao().update(getParameters().getNetwork());
 
         for (VDSGroup cluster : _clusters) {
-            AttachNetworkToVdsGroupCommand.SetNetworkStatus(cluster.getId(), getParameters().getNetwork());
+            NetworkClusterHelper.setStatus(cluster.getId(), getParameters().getNetwork());
         }
         setSucceeded(true);
     }
