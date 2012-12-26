@@ -17,15 +17,15 @@
 package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Actionable;
+import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.VM;

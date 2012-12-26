@@ -7,6 +7,15 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.ovirt.engine.api.common.util.DetailHelper;
+import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.model.Statistics;
+import org.ovirt.engine.api.resource.VmNicResource;
+import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -17,20 +26,9 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 
-import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.model.Fault;
-import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.api.model.Statistics;
-import org.ovirt.engine.api.resource.VmNicResource;
-import org.ovirt.engine.api.resource.VmNicsResource;
+public class BackendVmNicsResource extends BackendNicsResource implements VmNicsResource {
 
-public class BackendVmNicsResource
-             extends BackendNicsResource
-        implements VmNicsResource {
 
     public BackendVmNicsResource(Guid parentId) {
         super(parentId,
