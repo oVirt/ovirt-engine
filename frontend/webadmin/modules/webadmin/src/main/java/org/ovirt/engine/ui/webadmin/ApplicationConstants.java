@@ -1004,8 +1004,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Status")
     String statusHost();
 
-    @DefaultStringValue("Load")
-    String loadHost();
+    @DefaultStringValue("Running VMs")
+    String runningVms();
 
     @DefaultStringValue("Memory")
     String memoryHost();

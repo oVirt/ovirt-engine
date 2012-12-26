@@ -29,8 +29,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -135,19 +133,13 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            ProgressBarColumn<VDS> loadColumn = new ProgressBarColumn<VDS>() {
+            TextColumnWithTooltip<VDS> vmCountColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
-                protected String getProgressText(VDS object) {
-                    int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
-                    return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
-                }
-
-                @Override
-                protected Integer getProgressValue(VDS object) {
-                    return object.getvm_active() != null ? Math.min(object.getvm_active(), 100) : 0;
+                public String getValue(VDS object) {
+                    return object.getvm_active() != null ? object.getvm_active().toString() : "0";//$NON-NLS-1$
                 }
             };
-            getTable().addColumn(loadColumn, constants.loadHost(), "80px"); //$NON-NLS-1$
+            getTable().addColumn(vmCountColumn, constants.runningVms(), "80px"); //$NON-NLS-1$
         }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
