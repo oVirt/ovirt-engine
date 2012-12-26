@@ -482,7 +482,7 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
-select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
+select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
 -- Gluster refresh rates (in seconds)
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
@@ -492,7 +492,7 @@ select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 --                  Update with override section
 ------------------------------------------------------------------------------------
 
-select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"false\",\"hosts\":\"true\"}','general');
+select fn_db_update_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
 select fn_db_update_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_update_config_value('CertAlias','1','general');
 select fn_db_update_config_value('DBEngine','Postgres','general');

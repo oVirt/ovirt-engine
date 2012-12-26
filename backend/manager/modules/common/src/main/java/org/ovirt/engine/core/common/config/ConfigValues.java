@@ -1139,7 +1139,7 @@ public enum ConfigValues {
 
     @Reloadable
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"storage domains\":\"false\",\"hosts\":\"false\"}")
+    @DefaultValueAttribute("{\"storage domains\":\"true\",\"hosts\":\"true\"}")
     AutoRecoveryAllowedTypes(371),
 
     /*
