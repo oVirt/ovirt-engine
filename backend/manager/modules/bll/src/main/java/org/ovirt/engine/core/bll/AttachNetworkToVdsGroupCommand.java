@@ -133,8 +133,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private boolean networkExists() {
         List<NetworkCluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
-        for (NetworkCluster network_cluster : networks) {
-            if (network_cluster.getnetwork_id().equals(
+        for (NetworkCluster networkCluster : networks) {
+            if (networkCluster.getnetwork_id().equals(
                     getNetworkCluster().getnetwork_id())) {
                 return true;
             }
