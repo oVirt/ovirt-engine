@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
+import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,6 +54,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
             model.setPortMirroring(portMirroring);
         }
+        parent.addReportedDevices(model, entity);
         return parent.addStatistics(model, entity, uriInfo, httpHeaders);
     }
 
@@ -184,5 +186,10 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     @Override
     public NIC get() {
         return super.get();//explicit call solves REST-Easy confusion
+    }
+
+    @Override
+    public VmReportedDevicesResource getVmReportedDevicesResource() {
+        return inject(new BackendVmReportedDevicesResource(guid));
     }
 }

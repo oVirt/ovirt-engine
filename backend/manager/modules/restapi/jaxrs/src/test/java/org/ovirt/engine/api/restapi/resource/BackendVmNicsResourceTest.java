@@ -34,6 +34,7 @@ public class BackendVmNicsResourceTest
             setUriInfo(setUpUriExpectations(null));
             setGetVmQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
+            setGetGuestAgentQueryExpectations(3);
             setUpQueryExpectations("");
 
             List<NIC> nics = getCollection();
@@ -49,6 +50,7 @@ public class BackendVmNicsResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
                                            RemoveVmInterfaceParameters.class,
                                            new String[] { "VmId", "InterfaceId" },
@@ -72,6 +74,7 @@ public class BackendVmNicsResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
                                            RemoveVmInterfaceParameters.class,
                                            new String[] { "VmId", "InterfaceId" },
@@ -91,6 +94,7 @@ public class BackendVmNicsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
+        setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(VdcActionType.AddVmInterface,
                                   AddVmInterfaceParameters.class,
                                   new String[] { "VmId" },
@@ -179,6 +183,7 @@ public class BackendVmNicsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());

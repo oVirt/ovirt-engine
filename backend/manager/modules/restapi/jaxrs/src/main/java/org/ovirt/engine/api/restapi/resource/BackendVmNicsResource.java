@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -7,23 +8,29 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
+import org.ovirt.engine.api.model.Device;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.api.restapi.types.ReportedDeviceMapper;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -115,6 +122,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
 
     @Override
     protected NIC populate(NIC model, VmNetworkInterface entity) {
+        addReportedDevices(model, entity);
         return addStatistics(model, entity, uriInfo, httpHeaders);
     }
 
@@ -129,6 +137,31 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
             model.getStatistics().getStatistics().addAll(statistics);
         }
         return model;
+    }
+
+    void addReportedDevices(NIC model, VmNetworkInterface entity) {
+        List<Device> devices = getDevices(entity.getVmId().getValue(), entity.getMacAddress());
+        if (!devices.isEmpty()) {
+            ReportedDevices reportedDevices = new ReportedDevices();
+            reportedDevices.getReportedDevices().addAll(devices);
+            model.setReportedDevices(reportedDevices);
+        }
+    }
+
+    public List<Device> getDevices(Guid vmId, String mac) {
+        List<Device> devices = new ArrayList<Device>();
+        for (VmGuestAgentInterface iface : getDevicesCollection(vmId)) {
+            if (StringUtils.equals(iface.getMacAddress(), mac)) {
+                devices.add(LinkHelper.addLinks(getUriInfo(), ReportedDeviceMapper.map(iface, new Device())));
+            }
+        }
+        return devices;
+    }
+
+    private List<VmGuestAgentInterface> getDevicesCollection(Guid vmId) {
+        return getBackendCollection(VmGuestAgentInterface.class,
+                VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+                new IdQueryParameters(asGuid(vmId)));
     }
 
     @Override

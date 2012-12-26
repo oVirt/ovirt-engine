@@ -7,13 +7,14 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
@@ -163,4 +164,23 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
                         networks);
             }
         }
+
+    protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { PARENT_ID },
+                    getListOfVmGuestAgentInterfaces());
+        }
+    }
+
+    @SuppressWarnings("serial")
+    private Object getListOfVmGuestAgentInterfaces() {
+        VmGuestAgentInterface iface = new VmGuestAgentInterface();
+        iface.setMacAddress(ADDRESSES[2]);
+        List<VmGuestAgentInterface> list = new ArrayList<VmGuestAgentInterface>();
+        list.add(iface);
+        return list;
+    }
 }

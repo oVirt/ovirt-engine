@@ -36,6 +36,7 @@ public class BackendNicsResourceTest
             setUriInfo(setUpUriExpectations(null));
             setGetVmQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
+            setGetGuestAgentQueryExpectations(3);
             setUpQueryExpectations("");
 
             List<NIC> nics = getCollection();
@@ -51,6 +52,7 @@ public class BackendNicsResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
                                            RemoveVmInterfaceParameters.class,
                                            new String[] { "VmId", "InterfaceId" },
@@ -91,6 +93,7 @@ public class BackendNicsResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmInterface,
                                            RemoveVmInterfaceParameters.class,
                                            new String[] { "VmId", "InterfaceId" },
@@ -110,6 +113,7 @@ public class BackendNicsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
+        setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(VdcActionType.AddVmInterface,
                                   AddVmInterfaceParameters.class,
                                   new String[] { "VmId" },
@@ -198,6 +202,7 @@ public class BackendNicsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());

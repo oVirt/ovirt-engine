@@ -30,9 +30,11 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,6 +43,7 @@ public class BackendVmNicResourceTest
         extends AbstractBackendSubResourceTest<NIC, VmNetworkInterface, BackendDeviceResource<NIC, Nics, VmNetworkInterface>> {
 
     protected static final Guid NIC_ID = GUIDS[1];
+    protected static final String ADDRESS = "10.11.12.13";
 
     protected static BackendVmNicsResource collection;
 
@@ -81,6 +84,7 @@ public class BackendVmNicResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1);
+        setGetGuestAgentQueryExpectations(1);
         control.replay();
 
         NIC nic = resource.get();
@@ -94,6 +98,7 @@ public class BackendVmNicResourceTest
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
         setGetNetworksQueryExpectations(1, Collections.<org.ovirt.engine.core.common.businessentities.Network> emptyList());
+        setGetGuestAgentQueryExpectations(1);
         control.replay();
 
         NIC nic = resource.get();
@@ -111,6 +116,7 @@ public class BackendVmNicResourceTest
             setUpEntityQueryExpectations(1);
             setGetVmQueryExpectations(1);
             setGetNetworksQueryExpectations(1);
+            setGetGuestAgentQueryExpectations(1);
             control.replay();
 
             NIC nic = resource.get();
@@ -144,6 +150,7 @@ public class BackendVmNicResourceTest
         setUpGetEntityExpectations(3);
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
+        setGetGuestAgentQueryExpectations(2);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                                            AddVmInterfaceParameters.class,
                                            new String[] { "VmId", "Interface.Id" },
@@ -201,6 +208,7 @@ public class BackendVmNicResourceTest
         setUpGetEntityExpectations(2);
         setGetVmQueryExpectations(2);
         setGetNetworksQueryExpectations(2);
+        setGetGuestAgentQueryExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                                            AddVmInterfaceParameters.class,
                                            new String[] { "VmId", "Interface.Id" },
@@ -410,5 +418,24 @@ public class BackendVmNicResourceTest
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
+    }
+
+    protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { PARENT_ID },
+                    getListOfVmGuestAgentInterfaces());
+        }
+    }
+
+    @SuppressWarnings("serial")
+    private Object getListOfVmGuestAgentInterfaces() {
+        VmGuestAgentInterface iface = new VmGuestAgentInterface();
+        iface.setMacAddress(ADDRESS);
+        List<VmGuestAgentInterface> list = new ArrayList<VmGuestAgentInterface>();
+        list.add(iface);
+        return list;
     }
 }

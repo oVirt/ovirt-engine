@@ -49,4 +49,7 @@ public interface VmNicResource extends NicResource {
     @Formatted
     @Override
     public NIC get();
+
+    @Path("reporteddevices")
+    public VmReportedDevicesResource getVmReportedDevicesResource();
 }
