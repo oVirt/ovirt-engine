@@ -1,9 +1,9 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
