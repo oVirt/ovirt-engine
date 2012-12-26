@@ -125,6 +125,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
@@ -304,6 +305,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePa
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
@@ -586,6 +588,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostGeneralPresenter.ViewDef.class,
                 SubTabHostGeneralView.class,
                 SubTabHostGeneralPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostHardwarePresenter.class,
+                SubTabHostHardwarePresenter.ViewDef.class,
+                SubTabHostHardwareView.class,
+                SubTabHostHardwarePresenter.ProxyDef.class);
         bindPresenter(SubTabHostVmPresenter.class,
                 SubTabHostVmPresenter.ViewDef.class,
                 SubTabHostVmView.class,

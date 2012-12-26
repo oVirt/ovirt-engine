@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
@@ -128,6 +129,14 @@ public class HostModule extends AbstractGinModule {
                 }
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public DetailModelProvider<HostListModel, HostHardwareGeneralModel> getHostHardwareProvider(ClientGinjector ginjector) {
+        return new DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>(ginjector,
+                HostListModel.class,
+                HostHardwareGeneralModel.class);
     }
 
     // Searchable Detail Models

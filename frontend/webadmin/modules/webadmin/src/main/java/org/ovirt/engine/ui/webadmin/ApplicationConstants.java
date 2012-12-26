@@ -337,6 +337,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String hostGeneralSubTabLabel();
 
+    @DefaultStringValue("Hardware Information")
+    String hostHardwareSubTabLabel();
+
     @DefaultStringValue("Virtual Machines")
     String hostVmSubTabLabel();
 
@@ -1073,6 +1076,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     // host- general
     @DefaultStringValue("OS Version")
     String osVersionHostGeneral();
+
+    @DefaultStringValue("Manufacturer")
+    String hardwareManufacturerGeneral();
+
+    @DefaultStringValue("Product Name")
+    String hardwareProductNameGeneral();
+
+    @DefaultStringValue("Version")
+    String hardwareVersionGeneral();
+
+    @DefaultStringValue("Serial Number")
+    String hardwareSerialNumberGeneral();
+
+    @DefaultStringValue("UUID")
+    String hardwareUUIDGeneral();
+
+    @DefaultStringValue("Family")
+    String hardwareFamilyGeneral();
 
     @DefaultStringValue("Kernel Version")
     String kernelVersionHostGeneral();

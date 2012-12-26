@@ -55,6 +55,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
@@ -165,6 +166,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
@@ -461,6 +463,10 @@ public interface ManagedComponents {
     AsyncProvider<SubTabHostGeneralPresenter> getSubTabHostGeneralPresenter();
 
     DetailModelProvider<HostListModel, HostGeneralModel> getSubTabHostGeneralModelProvider();
+
+    AsyncProvider<SubTabHostHardwarePresenter> getSubTabHostHardwarePresenter();
+
+    DetailModelProvider<HostListModel, HostHardwareGeneralModel> getSubTabHostHardwareModelProvider();
 
     AsyncProvider<SubTabHostVmPresenter> getSubTabHostVmPresenter();
 

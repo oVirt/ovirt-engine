@@ -1092,7 +1092,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="hw_information" type="HardwareInformation"/>
+  <xs:element name="hardware_information" type="HardwareInformation"/>
 
   <xs:complexType name="HardwareInformation">
     <xs:sequence>
@@ -1162,7 +1162,7 @@
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <xs:element name="storage_manager" type="StorageManager" minOccurs="0"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
-          <xs:element ref="hw_information" minOccurs="0"/>
+          <xs:element ref="hardware_information" minOccurs="0"/>
           <xs:element ref="power_management" minOccurs="0"/>
           <xs:element ref="ksm" minOccurs="0"/>
           <xs:element ref="transparent_hugepages" minOccurs="0"/>

@@ -144,6 +144,9 @@ public class ApplicationPlaces {
     public static final String hostGeneralSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "general"; //$NON-NLS-1$
 
+    public static final String hostHardwareSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "hardware"; //$NON-NLS-1$
+
     public static final String hostVmSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$
 

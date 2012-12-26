@@ -1490,6 +1490,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
+        list.add(new HostHardwareGeneralModel());
         list.add(new HostVmListModel());
         list.add(new HostInterfaceListModel());
         setHostEventListModel(new HostEventListModel());
