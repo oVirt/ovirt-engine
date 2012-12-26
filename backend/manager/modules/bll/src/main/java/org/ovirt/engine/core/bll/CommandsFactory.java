@@ -25,7 +25,13 @@ public final class CommandsFactory {
             "Can't find constructor for type {0} with parameter types: {1}";
 
     private static final String[] COMMAND_PACKAGES = new String[] { "org.ovirt.engine.core.bll",
-            "org.ovirt.engine.core.bll.storage", "org.ovirt.engine.core.bll.lsm", "org.ovirt.engine.core.bll.gluster" };
+            "org.ovirt.engine.core.bll.storage", "org.ovirt.engine.core.bll.lsm", "org.ovirt.engine.core.bll.gluster",
+            "org.ovirt.engine.core.bll.network",
+            "org.ovirt.engine.core.bll.network.dc",
+            "org.ovirt.engine.core.bll.network.cluster",
+            "org.ovirt.engine.core.bll.network.host",
+            "org.ovirt.engine.core.bll.network.vm",
+            "org.ovirt.engine.core.bll.network.template" };
 
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
             new ConcurrentHashMap<String, Class<CommandBase<? extends VdcActionParametersBase>>>(VdcActionType.values().length);
