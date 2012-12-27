@@ -8,6 +8,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,7 +28,9 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class UserPortalLoginModel extends LoginModel
 {
@@ -353,32 +359,33 @@ public class UserPortalLoginModel extends LoginModel
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
     public void UpdateUserActionGroups(Object targetObject, ArrayList<Guid> roleIdList)
     {
-        for (Guid roleID : roleIdList)
-        {
-            AsyncDataProvider.GetRoleActionGroupsByRoleId(new AsyncQuery(targetObject,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void OnSuccess(Object target, Object returnValue) {
-
-                            UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
-                            ArrayList<ActionGroup> roleActionGroupList =
-                                    (ArrayList<ActionGroup>) returnValue;
-                            for (ActionGroup actionGroup : roleActionGroupList)
-                            {
-                                if (!loginModel.getLoggedUserActionGroupList().contains(actionGroup))
-                                {
-                                    loginModel.getLoggedUserActionGroupList().add(actionGroup);
-                                }
-                            }
-                            loginModel.setRolesCounter(loginModel.getRolesCounter() - 1);
-                            if (loginModel.getRolesCounter() == 0)
-                            {
-                                CheckIsENGINEUser(loginModel);
-                            }
-
-                        }
-                    }), roleID);
+        ArrayList<VdcQueryParametersBase> queryParamsList =
+                new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        for (Guid roleId : roleIdList) {
+            queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
+            queryParamsList.add(new MultilevelAdministrationByRoleIdParameters(roleId));
         }
+        Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
+
+            @Override
+            public void Executed(FrontendMultipleQueryAsyncResult result) {
+                for (int i = 0; i < result.getReturnValues().size(); i++) {
+                    VdcQueryReturnValue retVal = result.getReturnValues().get(i);
+                    ArrayList<ActionGroup> roleActionGroupList =
+                            (ArrayList<ActionGroup>) retVal.getReturnValue();
+                    for (ActionGroup actionGroup : roleActionGroupList) {
+                        if (!UserPortalLoginModel.this.getLoggedUserActionGroupList().contains(actionGroup)) {
+                            UserPortalLoginModel.this.getLoggedUserActionGroupList().add(actionGroup);
+                        }
+                    }
+                    UserPortalLoginModel.this.setRolesCounter(UserPortalLoginModel.this.getRolesCounter() - 1);
+                    if (UserPortalLoginModel.this.getRolesCounter() == 0) {
+                        CheckIsENGINEUser(UserPortalLoginModel.this);
+                    }
+                }
+            }
+        });
     }
 
     // If 'LoggedUserActionGroupList' contains an ActionGroup that doesn't exist in ENGINEUserActionGroupList
