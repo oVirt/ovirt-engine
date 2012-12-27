@@ -7,9 +7,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -88,19 +88,15 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     protected boolean canDoAction() {
-        boolean retVal = true;
-
         if (getVm() == null) {
-            retVal = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else if (getVm().isDeleteProtected()) {
-            retVal = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
-        } else {
-            retVal = super.canDoAction() && canRemoveVm();
-            setDescription(getVmName());
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
-        return retVal;
+
+        if (getVm().isDeleteProtected()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+        }
+
+        return (super.canDoAction() && canRemoveVm());
     }
 
     @Override
@@ -122,45 +118,47 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean canRemoveVm() {
-        boolean returnValue = true;
-        List<String> messages = getReturnValue().getCanDoActionMessages();
-        if (getVm() == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST.toString());
-            returnValue = false;
-        } else if (IsVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
-            returnValue = false;
-        } else if (getVm().getStatus() == VMStatus.Suspended) {
-            messages.add(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN.toString());
-            returnValue = false;
-        } else if (isVmInPool(getVmId())) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL.toString());
-            returnValue = false;
+        if (IsVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
+        if (getVm().getStatus() == VMStatus.Suspended) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
+        }
+        if (isVmInPool(getVmId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+        }
+
         // enable to remove vms without images
-        else {
-            ValidationResult vmDuringSnapshotResult =
-                    new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId());
-            if (!vmDuringSnapshotResult.isValid()) {
-                messages.add(vmDuringSnapshotResult.getMessage().name());
-                returnValue = false;
-            } else {
-                VmHandler.updateDisksFromDb(getVm());
-                if (!ImagesHandler.PerformImagesChecks(getVm(), messages, getVm().getStoragePoolId(), Guid.Empty,
-                                false, !getParameters().getForce(), false, false,
-                                getParameters().getForce(), false, !getVm().getDiskMap().values().isEmpty(),
-                                true, getVm().getDiskMap().values())) {
-                    returnValue = false;
-                }
-            }
+        ValidationResult vmDuringSnapshotResult =
+                new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId());
+        if (!vmDuringSnapshotResult.isValid()) {
+            return failCanDoAction(vmDuringSnapshotResult.getMessage());
         }
+
+        VmHandler.updateDisksFromDb(getVm());
+        if (!ImagesHandler.PerformImagesChecks(getVm(),
+                getReturnValue().getCanDoActionMessages(),
+                getVm().getStoragePoolId(),
+                Guid.Empty,
+                false,
+                !getParameters().getForce(),
+                false,
+                false,
+                getParameters().getForce(),
+                false,
+                !getVm().getDiskMap().values().isEmpty(),
+                true,
+                getVm().getDiskMap().values())) {
+            return false;
+        }
+
         // we cannot force remove if there is running task
-        if (returnValue && getParameters().getForce() && getVm().getStatus() == VMStatus.ImageLocked
+        if (getParameters().getForce() && getVm().getStatus() == VMStatus.ImageLocked
                 && AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
-            messages.add(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS.toString());
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
         }
-        return returnValue;
+
+        return true;
     }
 
     protected boolean removeVmImages(List<DiskImage> images) {
