@@ -441,9 +441,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_SIZE_EXCEEDED);
             addCanDoActionMessage(String.format("$size %1$s", lengthInKb.toString()));
             returnValue = false;
-        } else if (!StringUtils.isEmpty(isoPath) && payload.getType() == VmDeviceType.CDROM) {
-            addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_CDROM_EXCEEDED);
-            returnValue = false;
         }
         return returnValue;
     }

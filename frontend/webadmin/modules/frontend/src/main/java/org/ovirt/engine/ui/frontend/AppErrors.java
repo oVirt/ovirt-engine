@@ -2032,8 +2032,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VMPAYLOAD_SIZE_EXCEEDED();
 
-    String VMPAYLOAD_CDROM_EXCEEDED();
-
     String VMPAYLOAD_FLOPPY_EXCEEDED();
 
     // Gluster Messages

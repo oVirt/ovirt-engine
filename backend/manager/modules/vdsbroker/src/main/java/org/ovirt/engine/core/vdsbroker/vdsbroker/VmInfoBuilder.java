@@ -115,7 +115,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             addDevice(struct, vmDevice, "");
         }
         // check first if CD was given as a parameter
-        else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
+        if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                             VmDeviceType.DISK.getName(),
@@ -143,17 +143,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
-                // more then one device mean that we have payload and should use it
-                // instead of the blank cd
-                if (!VmPayload.isPayload(vmDevice.getSpecParams()) && vmDevices.size() > 1) {
-                    continue;
-                }
                 struct = new XmlRpcStruct();
                 String cdPath = vm.getCdPath();
                 addCdDetails(vmDevice, struct);
                 addAddress(vmDevice, struct);
                 addDevice(struct, vmDevice, cdPath == null ? "" : cdPath);
-                break; // currently only one is supported, may change in future releases
             }
         }
     }
@@ -514,10 +508,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void addDevice(XmlRpcStruct struct, VmDevice vmDevice, String path) {
+        boolean isPayload = (VmPayload.isPayload(vmDevice.getSpecParams()) &&
+                vmDevice.getDevice().equals(VmDeviceType.CDROM.getName()));
         Map<String, Object> specParams =
                 (vmDevice.getSpecParams() == null) ? Collections.<String, Object> emptyMap() : vmDevice.getSpecParams();
         if (path != null) {
-            struct.add(VdsProperties.Path, path);
+            struct.add(VdsProperties.Path, (isPayload) ? "" : path);
+        }
+        if (isPayload) {
+            // 3 is magic number for payload - we are using it as hdd
+            struct.add(VdsProperties.Index, "3");
         }
         struct.add(VdsProperties.SpecParams, specParams);
         struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
