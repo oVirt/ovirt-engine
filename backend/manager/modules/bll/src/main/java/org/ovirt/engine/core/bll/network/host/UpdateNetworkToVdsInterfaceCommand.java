@@ -79,9 +79,9 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         if (getParameters().getCheckConnectivity()) {
             ThreadPoolUtil.execute(new EditNetworkThread(parameters));
-            PollVds(getParameters().getVdsId());
+            pollVds(getParameters().getVdsId());
         } else {
-            EditNetworkThreadCompat(parameters);
+            editNetworkThreadCompat(parameters);
         }
 
         if (retVal != null && editNetworkDone) {
@@ -109,11 +109,11 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         @Override
         public void run() {
-            EditNetworkThreadCompat(parameters);
+            editNetworkThreadCompat(parameters);
         }
     }
 
-    private void EditNetworkThreadCompat(NetworkVdsmVDSCommandParameters parameters) {
+    private void editNetworkThreadCompat(NetworkVdsmVDSCommandParameters parameters) {
         try {
             retVal = Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.EditNetwork, parameters);
             editNetworkDone = true;
@@ -127,7 +127,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
     }
 
-    protected void PollVds(Guid vdsId) {
+    protected void pollVds(Guid vdsId) {
         int retries = 10;
         while (retries > 0 && retVal == null && !editNetworkThreadFinish) {
             retries--;

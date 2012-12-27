@@ -53,7 +53,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && VdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists();
+        return super.canDoAction() && vdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists();
     }
 
     private boolean logicalNetworkExists() {
@@ -88,7 +88,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return false;
     }
 
-    private boolean VdsGroupExists() {
+    private boolean vdsGroupExists() {
         if (!vdsGroupInDb()) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;

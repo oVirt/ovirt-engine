@@ -146,7 +146,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     public void rollback() {
         super.rollback();
         if (macAddressChanged) {
-            MacPoolManager.getInstance().AddMac(oldIface.getMacAddress());
+            MacPoolManager.getInstance().addMac(oldIface.getMacAddress());
             if (!Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses)) {
                 MacPoolManager.getInstance().freeMac(getMacAddress());
             }
@@ -236,7 +236,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
             // this must be the last check because it adds the mac address to the pool
-            if (!MacPoolManager.getInstance().AddMac(getMacAddress())
+            if (!MacPoolManager.getInstance().addMac(getMacAddress())
                     && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;

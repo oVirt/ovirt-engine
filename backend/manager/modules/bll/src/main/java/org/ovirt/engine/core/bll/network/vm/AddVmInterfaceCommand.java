@@ -175,7 +175,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
             // this must be the last check because it adds the mac address to the pool
-            if (!MacPoolManager.getInstance().AddMac(getMacAddress())
+            if (!MacPoolManager.getInstance().addMac(getMacAddress())
                     && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;

@@ -49,7 +49,7 @@ public class MacPoolManager {
 
             List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAll();
             for (VmNetworkInterface iface: interfaces) {
-                AddMac(iface.getMacAddress());
+                addMac(iface.getMacAddress());
             }
             initialized = true;
         } finally {
@@ -75,7 +75,7 @@ public class MacPoolManager {
         }
     }
 
-    private String ParseRangePart(String start) {
+    private String parseRangePart(String start) {
         StringBuilder builder = new StringBuilder();
         for (String part : start.split("[:]", -1)) {
             String tempPart = part.trim();
@@ -90,13 +90,13 @@ public class MacPoolManager {
     }
 
     private boolean initRange(String start, String end) {
-        String parsedRangeStart = ParseRangePart(start);
-        String parsedRangeEnd = ParseRangePart(end);
+        String parsedRangeStart = parseRangePart(start);
+        String parsedRangeEnd = parseRangePart(end);
         if (parsedRangeEnd == null || parsedRangeStart == null) {
             return false;
         }
-        long startNum = LongCompat.parseLong(ParseRangePart(start), NumberStyles.HexNumber);
-        long endNum = LongCompat.parseLong(ParseRangePart(end), NumberStyles.HexNumber);
+        long startNum = LongCompat.parseLong(parseRangePart(start), NumberStyles.HexNumber);
+        long endNum = LongCompat.parseLong(parseRangePart(end), NumberStyles.HexNumber);
         if (startNum > endNum) {
             // throw new
             // VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
@@ -142,7 +142,7 @@ public class MacPoolManager {
             }
             Iterator<String> my = availableMacs.iterator();
             mac = my.next();
-            CommitNewMac(mac);
+            commitNewMac(mac);
         } finally {
             lockObj.writeLock().unlock();
         }
@@ -150,7 +150,7 @@ public class MacPoolManager {
         return mac;
     }
 
-    private boolean CommitNewMac(String mac) {
+    private boolean commitNewMac(String mac) {
         availableMacs.remove(mac);
         allocatedMacs.add(mac);
         if (availableMacs.isEmpty()) {
@@ -201,7 +201,7 @@ public class MacPoolManager {
      * @param mac
      * @return
      */
-    public boolean AddMac(String mac) {
+    public boolean addMac(String mac) {
         boolean retVal = true;
         lockObj.writeLock().lock();
         try {
@@ -209,7 +209,7 @@ public class MacPoolManager {
                 retVal = false;
             } else {
                 if (availableMacs.contains(mac)) {
-                    retVal = CommitNewMac(mac);
+                    retVal = commitNewMac(mac);
                 } else if (allocatedCustomMacs.contains(mac)) {
                     retVal = false;
                 } else {
@@ -222,7 +222,7 @@ public class MacPoolManager {
         return retVal;
     }
 
-    public boolean IsMacInUse(String mac) {
+    public boolean isMacInUse(String mac) {
         lockObj.readLock().lock();
         try {
             return allocatedMacs.contains(mac) || allocatedCustomMacs.contains(mac);

@@ -42,7 +42,7 @@ public class VmInterfaceManager {
     public void add(final VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac) {
         if (allocateMac) {
             iface.setMacAddress(getMacPoolManager().allocateNewMac());
-        } else if (!getMacPoolManager().AddMac(iface.getMacAddress())) {
+        } else if (!getMacPoolManager().addMac(iface.getMacAddress())) {
             auditLogMacInUse(iface);
             log.errorFormat("VmInterfaceManager::Mac {0} is in use.", iface.getMacAddress());
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);

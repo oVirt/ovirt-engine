@@ -93,7 +93,7 @@ public class VmInterfaceManagerTest {
     protected void runAddAndVerify(VmNetworkInterface iface,
             boolean addMacResult,
             VerificationMode addMacVerification) {
-        when(macPoolManager.AddMac(iface.getMacAddress())).thenReturn(addMacResult);
+        when(macPoolManager.addMac(iface.getMacAddress())).thenReturn(addMacResult);
 
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), false);
         verifyAddDelegatedCorrectly(iface, addMacVerification);
@@ -182,10 +182,10 @@ public class VmInterfaceManagerTest {
      * @param iface
      *            The interface to check for.
      * @param addMacVerification
-     *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#AddMac(String)}.
+     *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#addMac(String)}.
      */
     protected void verifyAddDelegatedCorrectly(VmNetworkInterface iface, VerificationMode addMacVerification) {
-        verify(macPoolManager, addMacVerification).AddMac(iface.getMacAddress());
+        verify(macPoolManager, addMacVerification).addMac(iface.getMacAddress());
         verify(vmNetworkInterfaceDAO).save(iface);
         verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
     }
