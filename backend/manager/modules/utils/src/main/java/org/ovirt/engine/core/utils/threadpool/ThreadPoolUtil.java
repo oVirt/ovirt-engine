@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.threadpool;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
@@ -67,6 +69,32 @@ public class ThreadPoolUtil {
     }
 
     private static final ExecutorService es = new InternalThreadExecutor();
+
+    /**
+     * Creates a completion service to allow launching of tasks (callable objects)
+     * concurrently, and use a blocking queue like interface to get the tasks
+     * execution results
+     * @return
+     */
+    public static <V> ExecutorCompletionService<V> createCompletionService() {
+        return new ExecutorCompletionService<V>(es);
+     }
+
+    /**
+     * Creates a completion service to allow launching of tasks (callable objects)
+     * concurrently, and use a blocking queue like interface to get the tasks
+     * @param tasks collection of tasks (callable objects) to submit
+     * @return
+     */
+    public static <V> ExecutorCompletionService<V> createCompletionService(Iterable<Callable<V>> tasks) {
+         ExecutorCompletionService<V> ecs =  createCompletionService();
+         if (tasks != null) {
+             for (Callable<V> callable : tasks) {
+                 ecs.submit(callable);
+             }
+         }
+         return ecs;
+    }
 
     public static void execute(Runnable command) {
         try {
