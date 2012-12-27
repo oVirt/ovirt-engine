@@ -2442,7 +2442,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVlanParanet, new GetAllChildVlanInterfacesQueryParameters(vdsID,
+        Frontend.RunQuery(VdcQueryType.GetVlanParent, new GetAllChildVlanInterfacesQueryParameters(vdsID,
                 iface), aQuery);
     }
 

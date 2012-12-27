@@ -11,8 +11,8 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 /**
  * This query get vlan parent nic input: eth2.2 return: eth2
  */
-public class GetVlanParanetQuery<P extends GetAllChildVlanInterfacesQueryParameters> extends QueriesCommandBase<P> {
-    public GetVlanParanetQuery(P parameters) {
+public class GetVlanParentQuery<P extends GetAllChildVlanInterfacesQueryParameters> extends QueriesCommandBase<P> {
+    public GetVlanParentQuery(P parameters) {
         super(parameters);
     }
 
