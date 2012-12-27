@@ -69,14 +69,14 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     private String gateway;
 
     @Column(name = "vlan_id")
-    private Integer vlan_id;
+    private Integer vlanId;
 
     @Column(name = "stp")
     private boolean stp = false;
 
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
-    private NGuid storage_pool_id;
+    private NGuid storagePoolId;
 
     @ManyToOne
     @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
@@ -100,7 +100,7 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         this.subnet = subnet;
         this.gateway = gateway;
         this.type = type;
-        this.vlan_id = vlan_id;
+        this.vlanId = vlan_id;
         this.stp = stp;
         this.mtu = mtu;
         this.vmNetwork = vmNetwork;
@@ -177,11 +177,11 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     }
 
     public Integer getvlan_id() {
-        return this.vlan_id;
+        return this.vlanId;
     }
 
     public void setvlan_id(Integer value) {
-        this.vlan_id = value;
+        this.vlanId = value;
     }
 
     public boolean getstp() {
@@ -193,11 +193,11 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
     }
 
     public NGuid getstorage_pool_id() {
-        return this.storage_pool_id;
+        return this.storagePoolId;
     }
 
     public void setstorage_pool_id(NGuid value) {
-        this.storage_pool_id = value;
+        this.storagePoolId = value;
     }
 
     public void setCluster(NetworkCluster cluster) {
@@ -261,11 +261,11 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((storage_pool_id == null) ? 0 : storage_pool_id.hashCode());
+        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + (stp ? 1231 : 1237);
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((vlan_id == null) ? 0 : vlan_id.hashCode());
+        result = prime * result + ((vlanId == null) ? 0 : vlanId.hashCode());
         result = prime * result + (mtu);
         result = prime * result + ((vmNetwork) ? 11 : 13);
         return result;
@@ -313,10 +313,10 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (storage_pool_id == null) {
-            if (other.storage_pool_id != null)
+        if (storagePoolId == null) {
+            if (other.storagePoolId != null)
                 return false;
-        } else if (!storage_pool_id.equals(other.storage_pool_id))
+        } else if (!storagePoolId.equals(other.storagePoolId))
             return false;
         if (stp != other.stp)
             return false;
@@ -330,10 +330,10 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
                 return false;
         } else if (!type.equals(other.type))
             return false;
-        if (vlan_id == null) {
-            if (other.vlan_id != null)
+        if (vlanId == null) {
+            if (other.vlanId != null)
                 return false;
-        } else if (!vlan_id.equals(other.vlan_id))
+        } else if (!vlanId.equals(other.vlanId))
             return false;
         if (mtu != other.mtu)
             return false;
