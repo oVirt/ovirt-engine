@@ -541,7 +541,7 @@ select fn_db_update_config_value('SignLockFile','/var/lock/ovirt-engine/.openssl
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1');
-select fn_db_update_config_value('SupportedVDSMVersions','4.5,4.9,4.10','general');
+select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10','general');
 select fn_db_update_config_value('TruststoreUrl','.truststore','general');
 select fn_db_update_config_value('VdcVersion','3.2.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.2.0.0','general');
