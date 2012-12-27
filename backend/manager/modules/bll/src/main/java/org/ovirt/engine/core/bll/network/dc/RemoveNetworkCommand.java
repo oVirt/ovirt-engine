@@ -21,10 +21,13 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+    }
 
+    @Override
+    protected boolean canDoAction() {
         return CommonNetworkValidation(getParameters().getNetwork(), getReturnValue().getCanDoActionMessages());
     }
 

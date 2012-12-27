@@ -211,8 +211,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
      */
     @Override
     protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
     @Override

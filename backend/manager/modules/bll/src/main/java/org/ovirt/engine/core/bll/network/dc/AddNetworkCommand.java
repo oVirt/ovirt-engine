@@ -33,10 +33,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+    }
 
+    @Override
+    protected boolean canDoAction() {
         if (!validateVmNetwork()) {
             return false;
         }

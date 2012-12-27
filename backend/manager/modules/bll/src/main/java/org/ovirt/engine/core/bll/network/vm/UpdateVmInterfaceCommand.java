@@ -195,8 +195,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 allInterfaces,
                 allDisks,
                 getReturnValue().getCanDoActionMessages())) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
             return false;
         }
 
@@ -262,8 +260,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      */
     @Override
     protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
     @Override

@@ -34,11 +34,14 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+    }
+
+    @Override
     protected boolean canDoAction() {
         List<Network> networks = DbFacade.getInstance().getNetworkDao().getAll();
-
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
 
         if (getStoragePool() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);

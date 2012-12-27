@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @SuppressWarnings("serial")
 public abstract class AbstractVmInterfaceCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
@@ -24,6 +25,11 @@ public abstract class AbstractVmInterfaceCommand<T extends VmOperationParameterB
         }
 
         return returnValue.getSucceeded();
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
     private ActivateDeactivateVmNicParameters createActivateDeactivateParameters(Guid nicId,

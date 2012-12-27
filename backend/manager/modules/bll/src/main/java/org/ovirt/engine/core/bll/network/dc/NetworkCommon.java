@@ -30,6 +30,11 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
         return getParameters().getNetwork().getname();
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+    }
+
     protected boolean validateVmNetwork() {
         boolean retVal = true;
 
