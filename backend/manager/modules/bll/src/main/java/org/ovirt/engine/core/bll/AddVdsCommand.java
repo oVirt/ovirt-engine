@@ -76,6 +76,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+    }
+
+    @Override
     protected void executeCommand() {
         Guid oVirtId = getParameters().getVdsForUniqueId();
         if (oVirtId != null) {
@@ -324,11 +330,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     returnValue = false;
                 }
             }
-        }
-
-        if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         }
         return returnValue;
     }
