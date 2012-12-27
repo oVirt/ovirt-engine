@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.frontend;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +37,49 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 public class Frontend {
+    static class QueryWrapper {
+        private VdcQueryType queryType;
+        private VdcQueryParametersBase parameters;
+        private AsyncQuery callback;
+
+        private String queryKey;
+
+        public QueryWrapper(VdcQueryType queryType,
+                VdcQueryParametersBase parameters,
+                AsyncQuery callback) {
+            this.queryType = queryType;
+            this.parameters = parameters;
+            this.callback = callback;
+            String sender = callback.getModel() == null ? "" : callback.getModel().toString();
+
+            if (queryType == VdcQueryType.Search && parameters instanceof SearchParameters) {
+                queryKey = queryType.toString() + ((SearchParameters) parameters).getSearchPattern()
+                        + parameters.getClass().toString() +
+                        sender;
+            } else {
+                queryKey = queryType.toString() + parameters.getClass().toString() +
+                        sender;
+            }
+        }
+
+        public VdcQueryType getQueryType() {
+            return queryType;
+        }
+
+        public VdcQueryParametersBase getParameters() {
+            return parameters;
+        }
+
+        public AsyncQuery getCallback() {
+            return callback;
+        }
+
+        public String getKey() {
+            return queryKey;
+        }
+    }
+
+    private static final String RPC_TIMEOUT_EXCEPTION_STATUS_CODE_PREFIX = "120"; //$NON-NLS-1$
 
     private static Logger logger = Logger.getLogger(Frontend.class.getName());
     private static IFrontendEventsHandler eventsHandler;
@@ -44,6 +89,9 @@ public class Frontend {
             new ErrorTranslator((AppErrors) GWT.create(AppErrors.class));
     private static ErrorTranslator vdsmErrorsTranslator =
             new ErrorTranslator((VdsmErrors) GWT.create(VdsmErrors.class));
+
+    private static final Map<String, QueryWrapper> currentRequests = new HashMap<String, Frontend.QueryWrapper>();
+    private static final Map<String, QueryWrapper> pendingRequests = new HashMap<String, Frontend.QueryWrapper>();
 
     private static VdcQueryType[] subscribedQueryTypes;
 
@@ -136,58 +184,98 @@ public class Frontend {
     public static void RunQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
+        final QueryWrapper queryWrapper = new QueryWrapper(queryType, parameters, callback);
+        final boolean isHandleSequentialQueries = isHandleSequentialQueries(queryWrapper);
+        if (isHandleSequentialQueries) {
+            if (currentRequests.get(queryWrapper.getKey()) == null) {
+                currentRequests.put(queryWrapper.getKey(), queryWrapper);
+            } else {
+                pendingRequests.put(queryWrapper.getKey(), queryWrapper);
+                return;
+            }
+        }
+
         initQueryParamsFilter(parameters);
         dumpQueryDetails(queryType, parameters);
         logger.finer("Frontend: Invoking async runQuery."); //$NON-NLS-1$
         raiseQueryStartedEvent(queryType, callback.getContext());
-
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
         service.RunQuery(queryType, parameters, new AsyncCallback<VdcQueryReturnValue>() {
             @Override
             public void onFailure(Throwable caught) {
-                if (ignoreFailure(caught)) {
-                    return;
+                try {
+                    if (ignoreFailure(caught)) {
+                        return;
+                    }
+                    logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
+                    getEventsHandler().runQueryFailed(null);
+                    failureEventHandler(caught);
+                    if (callback.isHandleFailure()) {
+                        callback.asyncCallback.OnSuccess(callback.getModel(), null);
+                    }
+                    raiseQueryCompleteEvent(queryType, callback.getContext());
+                } finally {
+                    if (isHandleSequentialQueries) {
+                        handleSequentialQueries(queryWrapper.getKey());
+                    }
                 }
-                logger.log(Level.SEVERE, "Failed to execute RunQuery: " + caught, caught); //$NON-NLS-1$
-                getEventsHandler().runQueryFailed(null);
-                failureEventHandler(caught);
-                if (callback.isHandleFailure()) {
-                    callback.asyncCallback.OnSuccess(callback.getModel(), null);
-                }
-                raiseQueryCompleteEvent(queryType, callback.getContext());
             }
 
             @Override
             public void onSuccess(VdcQueryReturnValue result) {
-                logger.finer("Succesful returned result from RunQuery."); //$NON-NLS-1$
+                try {
+                    logger.finer("Succesful returned result from RunQuery."); //$NON-NLS-1$
 
-                if (!result.getSucceeded()) {
-                    logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
-                            + "]"); //$NON-NLS-1$
-                    if (getEventsHandler() != null) {
-                        ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
-                        failedResult.add(result);
-                        // getEventsHandler().runQueryFailed(failedResult);
-                        String errorMessage = result.getExceptionString();
-                        handleNotLoggedInEvent(errorMessage);
+                    if (!result.getSucceeded()) {
+                        logger.log(Level.WARNING, "Failure while invoking ReturnQuery [" + result.getExceptionString() //$NON-NLS-1$
+                                + "]"); //$NON-NLS-1$
+                        if (getEventsHandler() != null) {
+                            ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<VdcQueryReturnValue>();
+                            failedResult.add(result);
+                            // getEventsHandler().runQueryFailed(failedResult);
+                            String errorMessage = result.getExceptionString();
+                            handleNotLoggedInEvent(errorMessage);
+                        }
+                        if (callback.isHandleFailure()) {
+                            callback.getDel().OnSuccess(callback.getModel(), result);
+                        }
+                    } else {
+                        callback.setOriginalReturnValue(result);
+                        if (callback.getConverter() != null) {
+                            callback.getDel().OnSuccess(callback.getModel(),
+                                    callback.getConverter().Convert(result.getReturnValue(), callback));
+                        }
+                        else {
+                            callback.getDel().OnSuccess(callback.getModel(), result);
+                        }
                     }
-                    if (callback.isHandleFailure()) {
-                        callback.getDel().OnSuccess(callback.getModel(), result);
-                    }
-                } else {
-                    callback.setOriginalReturnValue(result);
-                    if (callback.getConverter() != null) {
-                        callback.getDel().OnSuccess(callback.getModel(),
-                                callback.getConverter().Convert(result.getReturnValue(), callback));
-                    }
-                    else {
-                        callback.getDel().OnSuccess(callback.getModel(), result);
+
+                    raiseQueryCompleteEvent(queryType, callback.getContext());
+                }
+                finally {
+                    if (isHandleSequentialQueries) {
+                        handleSequentialQueries(queryWrapper.getKey());
                     }
                 }
-
-                raiseQueryCompleteEvent(queryType, callback.getContext());
             }
+
+            private void handleSequentialQueries(String key) {
+                currentRequests.remove(queryWrapper.getKey());
+
+                QueryWrapper wrapper = pendingRequests.get(key);
+                if (wrapper != null) {
+                    pendingRequests.remove(queryWrapper.getKey());
+                    RunQuery(wrapper.getQueryType(), wrapper.getParameters(), wrapper.getCallback());
+                }
+            }
+
         });
+    }
+
+    private static boolean isHandleSequentialQueries(QueryWrapper queryWrapper) {
+        // currently we support only search, because we can id the search pattern and sender
+        return queryWrapper.getQueryType() == VdcQueryType.Search &&
+                queryWrapper.getParameters() instanceof SearchParameters;
     }
 
     public static VdcQueryReturnValue RunQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
