@@ -17,7 +17,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class GetAllAuditLogsByVMTemplateNameQueryTest
         extends AbstractUserQueryTest<GetAllAuditLogsByVMTemplateNameParameters, GetAllAuditLogsByVMTemplateNameQuery<? extends GetAllAuditLogsByVMTemplateNameParameters>> {
 
-    /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
     @Test
     public void testExecuteQueryCommand() {
         // Mock the Query Parameters
