@@ -3029,6 +3029,19 @@
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
             <value>engine</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <null/>
+            <value>00:1a:4a:16:87:d9</value>
+            <value>nic1</value>
+            <value>1000</value>
+            <value>3</value>
+            <value>2010-11-18 11:14:08</value>
+            <null />
+            <value>true</value>
+        </row>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c0000</value>
+            <value>engine</value>
+            <null/>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>00:1a:4a:16:87:d9</value>
             <value>nic1</value>
@@ -3073,6 +3086,15 @@
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fe</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+        </row>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c0000</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3925,6 +3947,19 @@
             <value>sample</value>
             <value>1</value>
             <value>{  "floppy" : [ "java.util.ArrayList", [ [ "java.util.LinkedHashMap", { "filename" : "content"  } ] ] ]}</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <value>alias</value>
+        </row>
+        <row>
+            <value>e2817b12-f873-4046-b0da-0098293c0000</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>interface</value>
+            <value>bridge</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>{}</value>
             <value>true</value>
             <value>false</value>
             <value>false</value>

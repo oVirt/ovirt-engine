@@ -27,6 +27,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     private VmNetworkStatisticsDAO StatsDao;
 
     private VmNetworkInterface existingVmInterface;
+    private VmNetworkInterface existingTemplateInterface;
     private VmNetworkInterface newVmInterface;
     private VmDevice newVmDevice = new VmDevice();
 
@@ -38,6 +39,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
         vmDevicesDao = prepareDAO(dbFacade.getVmDeviceDao());
         StatsDao = prepareDAO(dbFacade.getVmNetworkStatisticsDao());
         existingVmInterface = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
+        existingTemplateInterface = dao.get(FixturesTool.TEMPLATE_NETWORK_INTERFACE);
 
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
@@ -257,7 +259,7 @@ public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForTemplatesByNetwork() throws Exception {
         List<VmNetworkInterface> result = dao.getAllForTemplatesByNetwork(FixturesTool.NETWORK_ENGINE);
-        assertEquals(existingVmInterface, result.get(0));
+        assertEquals(existingTemplateInterface, result.get(0));
     }
 
     @Test

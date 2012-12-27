@@ -320,6 +320,17 @@ public class FixturesTool {
     protected static final Guid VM_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
 
     /**
+     * Predefined VmNetworkInterface with the following properties:
+     * <ul>
+     * <li>network_name: engine</li>
+     * <li>vmt_guid: 1b85420c-b84c-4f29-997e-0eb674b40b79</li>
+     * <li>mac_addr: 00:1a:4a:16:87:d9</li>
+     * <li>name: nic1</li>
+     * </ul>
+     */
+    protected static final Guid TEMPLATE_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c0000");
+
+    /**
      * Predefined VdsNetworkInterface with the following properties :
      * <ul>
      * <li>name: eth0</li>
@@ -330,5 +341,5 @@ public class FixturesTool {
      */
     protected static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
-    public static final int NUMBER_OF_VM_INTERFACES = 1;
+    public static final int NUMBER_OF_VM_INTERFACES = 2;
 }

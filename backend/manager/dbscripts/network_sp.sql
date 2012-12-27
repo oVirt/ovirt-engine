@@ -879,14 +879,13 @@ Create or replace FUNCTION GetVmInterfacesByNetworkId(v_network_id UUID) RETURNS
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*
    FROM vm_interface_view
-   INNER JOIN vms
-   ON vms.vm_guid = vm_interface_view.vm_guid
    INNER JOIN network_cluster
-   ON network_cluster.cluster_id = vms.vds_group_id
+   ON network_cluster.cluster_id = vm_interface_view.vds_group_id
    INNER JOIN network
    ON network.id = network_cluster.network_id
    AND network.name = vm_interface_view.network_name
-   WHERE network.id = v_network_id;
+   WHERE network.id = v_network_id
+   AND vm_interface_view.vm_entity_type = 'VM';
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -897,14 +896,13 @@ Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID)
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*
    FROM vm_interface_view
-   INNER JOIN vm_templates_view
-   ON vm_templates_view.vmt_guid = vm_interface_view.vmt_guid
    INNER JOIN network_cluster
-   ON network_cluster.cluster_id = vm_templates_view.vds_group_id
+   ON network_cluster.cluster_id = vm_interface_view.vds_group_id
    INNER JOIN network
    ON network.id = network_cluster.network_id
    AND network.name = vm_interface_view.network_name
-   WHERE network.id = v_network_id;
+   WHERE network.id = v_network_id
+   AND vm_interface_view.vm_entity_type = 'TEMPLATE';
 END; $procedure$
 LANGUAGE plpgsql;
 
