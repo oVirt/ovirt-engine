@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.ovirt.engine.core.compat.CompatException;
+import org.ovirt.engine.core.compat.Encoding;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,7 +101,7 @@ public class XmlDocument {
         InputStream is = null;
         try {
             is = new FileInputStream(filename);
-            BufferedReader r = new BufferedReader(new InputStreamReader(is));
+            BufferedReader r = new BufferedReader(new InputStreamReader(is, Encoding.UTF8.name()));
             StringBuffer buffer = new StringBuffer();
 
             String line;
