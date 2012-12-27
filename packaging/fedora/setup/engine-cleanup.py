@@ -430,7 +430,8 @@ def main(options):
     runFunc(stopEngine, MSG_INFO_STOP_ENGINE)
 
     # Backup DB, drop DB and clean .pgpass file (only if 'basedefs.DB_NAME' db exists)
-    if db.exists() and options.drop_db:
+    # If --dont-drop-db option was supplied, will skip checking the DB
+    if options.drop_db and db.exists():
         runFunc([db.backup, db.drop, cleanPgpass], MSG_INFO_REMOVE_DB)
 
     # Remove 00-ovirt.conf
