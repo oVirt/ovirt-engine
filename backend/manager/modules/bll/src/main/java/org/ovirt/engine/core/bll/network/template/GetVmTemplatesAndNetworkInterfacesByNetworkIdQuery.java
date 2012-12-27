@@ -1,9 +1,10 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.template;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
