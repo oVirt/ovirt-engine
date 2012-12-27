@@ -611,6 +611,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IMPORTEXPORT_REMOVE_VM, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.IMPORTEXPORT_REMOVE_VM_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.IMPORTEXPORT_REMOVE_TEMPLATE_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IMPORTEXPORT_EXPORT_TEMPLATE, AuditLogSeverity.NORMAL);

@@ -28,7 +28,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         StorageDomainStatic storage = DbFacade.getInstance().getStorageDomainStaticDao().get(
                 getParameters().getStorageDomainId());
         if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
-            VDSReturnValue retVal = executeVerb();
+            VDSReturnValue retVal = executeVerb(storage);
             buildOvfReturnValue(retVal.getReturnValue());
         } else {
             java.util.HashMap<VmTemplate, java.util.ArrayList<DiskImage>> templates =

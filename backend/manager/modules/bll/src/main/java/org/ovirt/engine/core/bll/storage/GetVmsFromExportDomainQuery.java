@@ -36,21 +36,29 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         StorageDomainStatic storage = DbFacade.getInstance().getStorageDomainStaticDao().get(
                 getParameters().getStorageDomainId());
         if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
-            VDSReturnValue retVal = executeVerb();
+            VDSReturnValue retVal = null;
+            retVal = executeVerb(storage);
             buildOvfReturnValue(retVal.getReturnValue());
         } else {
             getQueryReturnValue().setReturnValue(new java.util.ArrayList<VM>());
         }
     }
 
-    protected VDSReturnValue executeVerb() {
-        GetVmsInfoVDSCommandParameters tempVar = new GetVmsInfoVDSCommandParameters(
-                getParameters().getStoragePoolId());
-        tempVar.setStorageDomainId(getParameters().getStorageDomainId());
-        tempVar.setVmIdList(getParameters().getIds());
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.GetVmsInfo, tempVar);
-        return retVal;
+    protected VDSReturnValue executeVerb(StorageDomainStatic storage) {
+        try {
+            GetVmsInfoVDSCommandParameters tempVar = new GetVmsInfoVDSCommandParameters(
+                    getParameters().getStoragePoolId());
+            tempVar.setStorageDomainId(getParameters().getStorageDomainId());
+            tempVar.setVmIdList(getParameters().getIds());
+            VDSReturnValue retVal = Backend.getInstance().getResourceManager()
+                    .RunVdsCommand(VDSCommandType.GetVmsInfo, tempVar);
+            return retVal;
+        } catch (RuntimeException e) {
+            AuditLogableBase logable = new AuditLogableBase();
+            logable.AddCustomValue("StorageDomainName", storage.getstorage_name());
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
+            throw e;
+        }
     }
 
     protected boolean isValidExportDomain() {
