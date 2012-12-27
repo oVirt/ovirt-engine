@@ -177,14 +177,16 @@ public enum NetworkOperation {
                     NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
                     BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op2;
 
-                    assert nic.getItems().size() == 0 || bond.getItems().size() == 0;
+                    // Save the networks on the nic before they are detached
+                    List<LogicalNetworkModel> networksToReatach =
+                            nic.getItems() != null ? new ArrayList<LogicalNetworkModel>(nic.getItems())
+                                    : new ArrayList<LogicalNetworkModel>();
 
-                    // detach possible networks from the nic
+                    // Detach possible networks from the nic
                     clearNetworks(nic, allNics);
 
-                    // Attach previous networks to bond
-                    List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>(nic.getItems());
-                    attachNetworks(bond, networks, allNics);
+                    // Attach previous nic networks to bond
+                    attachNetworks(bond, networksToReatach, allNics);
 
                     nic.getEntity().setBondName(bond.getEntity().getName());
                 }
