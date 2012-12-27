@@ -108,6 +108,7 @@ public class GlusterManagerTest {
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    private static final Guid NEW_VOL_ID = new Guid("98918f1c-a3d7-4abe-ab25-563bbf0d4fd3");
     private static final String NEW_VOL_NAME = "test-new-vol";
 
     @Mock
@@ -290,6 +291,14 @@ public class GlusterManagerTest {
         // volumes are fetched from glusterfs
         inOrder.verify(glusterManager, times(1)).fetchVolumes(any(VDS.class));
 
+        // get volumes by cluster id to identify those that need to be removed
+        inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
+        // remove deleted volumes
+        inOrder.verify(volumeDao, times(1)).removeAll(argThat(areRemovedVolumes()));
+
+        // create new volume
+        inOrder.verify(volumeDao, times(1)).save(newVolume);
+
         // remove detached bricks
         inOrder.verify(brickDao, times(1)).removeAll(argThat(containsRemovedBricks()));
         // add new bricks
@@ -301,12 +310,6 @@ public class GlusterManagerTest {
         // delete removed options
         inOrder.verify(optionDao, times(1)).removeAll(argThat(areRemovedOptions()));
 
-        // create new volume
-        inOrder.verify(volumeDao, times(1)).save(newVolume);
-        // get volumes by cluster id to identify those that need to be removed
-        inOrder.verify(volumeDao, times(1)).getByClusterId(CLUSTER_ID);
-        // remove deleted volumes
-        inOrder.verify(volumeDao, times(1)).removeAll(argThat(areRemovedVolumes()));
         // release lock on the cluster
         inOrder.verify(glusterManager, times(1)).releaseLock(CLUSTER_ID);
     }
@@ -324,9 +327,9 @@ public class GlusterManagerTest {
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingServers).when(vdsDao).getAllForVdsGroup(CLUSTER_ID);
-        doReturn(existingDistVol).when(volumeDao).getByName(CLUSTER_ID, DIST_VOL_NAME);
-        doReturn(existingReplVol).when(volumeDao).getByName(CLUSTER_ID, REPL_VOL_NAME);
-        doReturn(null).when(volumeDao).getByName(CLUSTER_ID, NEW_VOL_NAME);
+        doReturn(existingDistVol).when(volumeDao).getById(EXISTING_VOL_DIST_ID);
+        doReturn(existingReplVol).when(volumeDao).getById(EXISTING_VOL_REPL_ID);
+        doReturn(null).when(volumeDao).getById(NEW_VOL_ID);
         doNothing().when(volumeDao).save(newVolume);
         doNothing().when(brickDao).removeAll(argThat(containsRemovedBricks()));
         doNothing().when(brickDao).save(argThat(isAddedBrick()));
@@ -456,8 +459,8 @@ public class GlusterManagerTest {
      * - value of option 'nfs.disable' changed from 'off' ot 'on' in existingReplVol<br>
      * - new volume test-new-vol fetched from gluster (means it was added from gluster cli, and should be added to db<br>
      */
-    private Map<String, GlusterVolumeEntity> getFetchedVolumesList() {
-        Map<String, GlusterVolumeEntity> volumes = new HashMap<String, GlusterVolumeEntity>();
+    private Map<Guid, GlusterVolumeEntity> getFetchedVolumesList() {
+        Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
 
         GlusterVolumeEntity fetchedReplVol = createReplVol();
         fetchedReplVol.removeOption(OPTION_AUTH_ALLOW); // option removed
@@ -480,11 +483,11 @@ public class GlusterManagerTest {
         replaceBrick(brickToReplace,
                 SERVER_ID_1,
                 REPL_BRICK_R2D1_NEW);
-        volumes.put(fetchedReplVol.getName(), fetchedReplVol);
+        volumes.put(fetchedReplVol.getId(), fetchedReplVol);
 
         // add a new volume
         newVolume = getNewVolume();
-        volumes.put(newVolume.getName(), newVolume);
+        volumes.put(newVolume.getId(), newVolume);
 
         return volumes;
     }
@@ -593,12 +596,10 @@ public class GlusterManagerTest {
     }
 
     private GlusterVolumeEntity getNewVolume() {
-        Guid volumeId = Guid.NewGuid();
-
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setName(NEW_VOL_NAME);
         volume.setClusterId(CLUSTER_ID);
-        volume.setId(volumeId);
+        volume.setId(NEW_VOL_ID);
         volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
         volume.addTransportType(TransportType.TCP);
         volume.setReplicaCount(0);
@@ -609,7 +610,7 @@ public class GlusterManagerTest {
         volume.addAccessProtocol(AccessProtocol.NFS);
 
         GlusterBrickEntity brick =
-                new GlusterBrickEntity(volumeId, existingServer1.getStaticData(), "/export/testVol1", GlusterStatus.UP);
+                new GlusterBrickEntity(NEW_VOL_ID, existingServer1.getStaticData(), "/export/testVol1", GlusterStatus.UP);
         brick.setBrickOrder(0);
         volume.addBrick(brick);
 

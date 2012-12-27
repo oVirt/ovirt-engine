@@ -38,7 +38,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String STRIPE_COUNT = "stripeCount";
 
     private Guid clusterId;
-    private Map<String, GlusterVolumeEntity> volumes = new HashMap<String, GlusterVolumeEntity>();
+    private Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
     private static Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
 
     @SuppressWarnings("unchecked")
@@ -55,7 +55,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         for (Entry<String, Object> entry : volumesMap.entrySet()) {
             log.debugFormat("received volume {0}", entry.getKey());
 
-            volumes.put(entry.getKey(), getVolume((Map<String, Object>)entry.getValue()));
+            GlusterVolumeEntity volume = getVolume((Map<String, Object>)entry.getValue());
+            volumes.put(volume.getId(), volume);
         }
     }
 
@@ -219,7 +220,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         return null;
     }
 
-    public Map<String, GlusterVolumeEntity> getVolumes() {
+    public Map<Guid, GlusterVolumeEntity> getVolumes() {
         return volumes;
     }
 }

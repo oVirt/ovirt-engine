@@ -408,15 +408,18 @@ public class GlusterManager {
         acquireLock(cluster.getId());
         try {
             // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
-            Map<String, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
+            Map<Guid, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
             if (volumesMap == null) {
                 log.errorFormat("gluster volume info command failed on all servers of the cluster {0}."
                         + "Can't refresh it's data at this point.", cluster.getname());
                 return;
             }
 
-            updateExistingAndNewVolumes(cluster.getId(), volumesMap);
+            // remove deleted volumes must happen before adding new ones,
+            // to handle cases where user deleted a volume and created a
+            // new one with same name in a very short time
             removeDeletedVolumes(cluster.getId(), volumesMap);
+            updateExistingAndNewVolumes(cluster.getId(), volumesMap);
         } finally {
             releaseLock(cluster.getId());
         }
@@ -431,8 +434,8 @@ public class GlusterManager {
      * @param existingServers
      * @return
      */
-    private Map<String, GlusterVolumeEntity> fetchVolumes(VDS upServer, List<VDS> existingServers) {
-        Map<String, GlusterVolumeEntity> fetchedVolumes = null;
+    private Map<Guid, GlusterVolumeEntity> fetchVolumes(VDS upServer, List<VDS> existingServers) {
+        Map<Guid, GlusterVolumeEntity> fetchedVolumes = null;
         while (fetchedVolumes == null && existingServers.size() > 0) {
             fetchedVolumes = fetchVolumes(upServer);
             if (fetchedVolumes == null) {
@@ -447,18 +450,18 @@ public class GlusterManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, GlusterVolumeEntity> fetchVolumes(VDS upServer) {
+    protected Map<Guid, GlusterVolumeEntity> fetchVolumes(VDS upServer) {
         VDSReturnValue result =
                 runVdsCommand(VDSCommandType.GlusterVolumesList, new GlusterVolumesListVDSParameters(upServer.getId(),
                         upServer.getvds_group_id()));
 
-        return result.getSucceeded() ? (Map<String, GlusterVolumeEntity>) result.getReturnValue() : null;
+        return result.getSucceeded() ? (Map<Guid, GlusterVolumeEntity>) result.getReturnValue() : null;
     }
 
-    private void removeDeletedVolumes(Guid clusterId, Map<String, GlusterVolumeEntity> volumesMap) {
+    private void removeDeletedVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
         List<Guid> idsToRemove = new ArrayList<Guid>();
         for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(clusterId)) {
-            if (!volumesMap.containsKey(volume.getName())) {
+            if (!volumesMap.containsKey(volume.getId())) {
                 idsToRemove.add(volume.getId());
                 log.debugFormat("Volume {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         volume.getName());
@@ -475,12 +478,12 @@ public class GlusterManager {
         }
     }
 
-    private void updateExistingAndNewVolumes(Guid clusterId, Map<String, GlusterVolumeEntity> volumesMap) {
-        for (Entry<String, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
+    private void updateExistingAndNewVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
+        for (Entry<Guid, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
             GlusterVolumeEntity volume = entry.getValue();
             log.debugFormat("Analyzing volume {0}", volume.getName());
 
-            GlusterVolumeEntity existingVolume = getVolumeDao().getByName(clusterId, volume.getName());
+            GlusterVolumeEntity existingVolume = getVolumeDao().getById(entry.getKey());
             if (existingVolume == null) {
                 try {
                     createVolume(volume);
