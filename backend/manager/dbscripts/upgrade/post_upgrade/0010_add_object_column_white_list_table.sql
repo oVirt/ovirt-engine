@@ -54,7 +54,8 @@ BEGIN
           'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
           'vds_group_compatibility_version', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
-          'non_operational_reason', 'recoverable', 'sshKeyFingerprint', 'count_threads_as_cores', 'cpu_threads'));
+          'non_operational_reason', 'recoverable', 'sshKeyFingerprint', 'count_threads_as_cores', 'cpu_threads',
+          'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family'));
 -- pm_options are missing
 END; $function$
 LANGUAGE plpgsql;

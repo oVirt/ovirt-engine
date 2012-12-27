@@ -637,7 +637,8 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       CASE WHEN storage_pool.spm_vds_id = vds_static.vds_id THEN CASE WHEN storage_pool.status = 5 THEN 1 ELSE 2 END ELSE 0 END as spm_status, vds_dynamic.supported_cluster_levels as supported_cluster_levels, vds_dynamic.supported_engines as supported_engines, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vds_dynamic.host_os as host_os, vds_dynamic.kvm_version as kvm_version, vds_dynamic.libvirt_version as libvirt_version, vds_dynamic.spice_version as spice_version, vds_dynamic.kernel_version as kernel_version, vds_dynamic.iscsi_initiator_name as iscsi_initiator_name,
                       vds_dynamic.transparent_hugepages_state as transparent_hugepages_state, vds_dynamic.anonymous_hugepages as anonymous_hugepages, vds_dynamic.non_operational_reason as non_operational_reason,
-			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint
+			vds_static.recoverable as recoverable, vds_static.sshKeyFingerprint as sshKeyFingerprint, vds_dynamic.hw_manufacturer as hw_manufacturer, vds_dynamic.hw_product_name as hw_product_name, vds_dynamic.hw_version as hw_version,
+                      vds_dynamic.hw_serial_number as hw_serial_number, vds_dynamic.hw_uuid as hw_uuid, vds_dynamic.hw_family as hw_family
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -653,6 +654,7 @@ SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_group
                       vds_groups.selection_algorithm, vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
                       vds_static.host_name, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
                       vds_static.pm_type, vds_static.pm_user, vds_static.pm_password, vds_static.pm_port,
+                      vds_dynamic.hw_product_name, vds_dynamic.hw_version, vds_dynamic.hw_serial_number, vds_dynamic.hw_uuid, vds_dynamic.hw_family,
                       vds_static.pm_options, vds_static.pm_enabled, vds_static.pm_proxy_preferences as pm_proxy_preferences,
                       vds_dynamic.hooks, vds_dynamic.status, vds_dynamic.cpu_cores,
                       vds_dynamic.cpu_threads, vds_dynamic.cpu_model, vds_dynamic.cpu_speed_mh, vds_dynamic.if_total_speed, vds_dynamic.kvm_enabled,

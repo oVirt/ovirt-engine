@@ -1316,6 +1316,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     MinimumPercentageToUpdateQuotaCache(409),
 
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    HardwareInfoEnabled(410),
+
     Invalid(65535);
 
     private int intValue;

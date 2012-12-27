@@ -121,6 +121,9 @@ select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','genera
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
 select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
+select fn_db_add_config_value('HardwareInfoEnabled','false','3.0');
+select fn_db_add_config_value('HardwareInfoEnabled','false','3.1');
+select fn_db_add_config_value('HardwareInfoEnabled','true','3.2');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
 select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
