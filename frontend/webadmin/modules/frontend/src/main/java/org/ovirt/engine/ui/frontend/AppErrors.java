@@ -2163,4 +2163,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}.Only Alerts can be removed.")
     String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION();
+
+    @DefaultStringValue("One or more servers are already part of an existing cluster")
+    String SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER();
 }
