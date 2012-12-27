@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.quota;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,9 +15,11 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 @RunWith(MockitoJUnitRunner.class)
 public class QuotaManagerTest {
@@ -70,6 +74,11 @@ public class QuotaManagerTest {
 
     @Mock
     private QuotaDAO quotaDAO;
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.MinimumPercentageToUpdateQuotaCache, 60)
+    );
 
     @Spy
     private QuotaManager quotaManager = QuotaManager.getInstance();

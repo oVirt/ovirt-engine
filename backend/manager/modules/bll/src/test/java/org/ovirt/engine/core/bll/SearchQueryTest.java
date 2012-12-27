@@ -44,7 +44,8 @@ public class SearchQueryTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.SearchResultsLimit, 100),
             mockConfig(ConfigValues.DBSearchTemplate,
-                    "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s")
+                    "SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s"),
+            mockConfig(ConfigValues.MinimumPercentageToUpdateQuotaCache, 60)
             );
 
     List<Disk> diskImageResultList = new ArrayList<Disk>();
