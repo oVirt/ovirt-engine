@@ -611,7 +611,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     return;
                 }
                 else if (!returnValue.getSucceeded()) {
-                    clusterModel.setMessage(returnValue.getExceptionString());
+                    clusterModel.setMessage(Frontend.getAppErrorsTranslator()
+                            .TranslateErrorTextSingle(returnValue.getExceptionString()));
                     return;
                 }
 

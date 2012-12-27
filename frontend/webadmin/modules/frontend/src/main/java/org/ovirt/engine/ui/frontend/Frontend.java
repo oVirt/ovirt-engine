@@ -129,6 +129,10 @@ public class Frontend {
         Frontend.loginHandler = loginHandler;
     }
 
+    public static ErrorTranslator getAppErrorsTranslator() {
+        return canDoActionErrorsTranslator;
+    }
+
     private static void translateErrors(List<VdcReturnValueBase> errors) {
         for (VdcReturnValueBase retVal : errors) {
             retVal.setCanDoActionMessages(canDoActionErrorsTranslator.translateErrorText(retVal.getCanDoActionMessages()));
