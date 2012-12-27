@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -344,37 +343,35 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     protected void SyncSearch()
     {
         super.SyncSearch();
+        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools,
+                new VdcQueryParametersBase(),
+                new AsyncQuery(this, new INewAsyncCallback() {
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                userPortalListModel.setvms((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                userPortalListModel.OnVmAndPoolLoad();
-            }
-        };
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        UserPortalListModel userPortalListModel = (UserPortalListModel) model;
+                        ArrayList<VM> vms = new ArrayList<VM>();
+                        ArrayList<vm_pools> pools = new ArrayList<vm_pools>();
 
-        Frontend.RunQuery(VdcQueryType.GetAllVms, new VdcQueryParametersBase(), _asyncQuery);
+                        VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
+                        if (retValue != null && retValue.getSucceeded()) {
+                            List<Object> list = (ArrayList<Object>) retValue.getReturnValue();
+                            if (list != null) {
+                                for (Object object : list) {
+                                    if (object instanceof VM) {
+                                        vms.add((VM) object);
+                                    } else if (object instanceof vm_pools) {
+                                        pools.add((vm_pools) object);
+                                    }
+                                }
+                            }
+                        }
 
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
-                UserPortalListModel userPortalListModel = (UserPortalListModel) model;
-                userPortalListModel.setpools((ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                userPortalListModel.OnVmAndPoolLoad();
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
-                new GetAllVmPoolsAttachedToUserParameters(Frontend.getLoggedInUser().getUserId()),
-                _asyncQuery1);
-
+                        userPortalListModel.setvms(vms);
+                        userPortalListModel.setpools(pools);
+                        userPortalListModel.OnVmAndPoolLoad();
+                    }
+                }));
     }
 
     @Override

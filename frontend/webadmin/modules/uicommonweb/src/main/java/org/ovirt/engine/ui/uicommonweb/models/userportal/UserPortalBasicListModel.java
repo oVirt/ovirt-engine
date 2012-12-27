@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -125,42 +124,35 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     protected void SyncSearch()
     {
         super.SyncSearch();
-
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
-                UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                userPortalBasicListModel.setvms((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                userPortalBasicListModel.OnVmAndPoolLoad();
-            }
-        };
-
-        Frontend.RunQuery(VdcQueryType.GetAllVms,
+        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools,
                 new VdcQueryParametersBase(),
-                _asyncQuery);
+                new AsyncQuery(this, new INewAsyncCallback() {
 
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object ReturnValue)
-            {
-                if (ReturnValue != null)
-                {
-                    UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
-                    userPortalBasicListModel.setpools((ArrayList<vm_pools>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                    userPortalBasicListModel.OnVmAndPoolLoad();
-                }
-            }
-        };
+                    @Override
+                    public void OnSuccess(Object model, Object returnValue) {
+                        UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
+                        ArrayList<VM> vms = new ArrayList<VM>();
+                        ArrayList<vm_pools> pools = new ArrayList<vm_pools>();
 
-        Frontend.RunQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
-                new GetAllVmPoolsAttachedToUserParameters(Frontend.getLoggedInUser().getUserId()),
-                _asyncQuery1);
+                        VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
+                        if (retValue != null && retValue.getSucceeded()) {
+                            List<Object> list = (ArrayList<Object>) retValue.getReturnValue();
+                            if (list != null) {
+                                for (Object object : list) {
+                                    if (object instanceof VM) {
+                                        vms.add((VM) object);
+                                    } else if (object instanceof vm_pools) {
+                                        pools.add((vm_pools) object);
+                                    }
+                                }
+                            }
+                        }
 
+                        userPortalBasicListModel.setvms(vms);
+                        userPortalBasicListModel.setpools(pools);
+                        userPortalBasicListModel.OnVmAndPoolLoad();
+                    }
+                }));
     }
 
     @Override
