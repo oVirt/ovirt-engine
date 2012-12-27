@@ -287,7 +287,7 @@
 					<g:FlowPanel ui:field="infoBoxRight" addStyleNames="{style.infoBoxRight}">
 						<g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-								<g:Image resource='{resources.vmIcon}'/>
+								<g:Image resource='{resources.memoryIcon}'/>
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
 								<g:Label text="{constants.memExtResource}:"
