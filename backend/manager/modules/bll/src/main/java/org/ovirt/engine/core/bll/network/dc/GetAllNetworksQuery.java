@@ -1,5 +1,6 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.dc;
 
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
