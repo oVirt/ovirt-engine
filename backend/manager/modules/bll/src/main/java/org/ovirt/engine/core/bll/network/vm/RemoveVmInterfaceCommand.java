@@ -18,14 +18,14 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
 
     private static final long serialVersionUID = 997624605993881039L;
-    private String _interfaceName = "";
+    private String interfaceName = "";
 
     public RemoveVmInterfaceCommand(T parameters) {
         super(parameters);
     }
 
     public String getInterfaceName() {
-        return _interfaceName;
+        return interfaceName;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
         if (iface != null) {
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());
-            _interfaceName = iface.getName();
+            interfaceName = iface.getName();
 
             // Get Interface type.
             String interType = VmInterfaceType.forValue(iface.getType()).getDescription();

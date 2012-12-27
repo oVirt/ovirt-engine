@@ -23,20 +23,20 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
-    private static final MacPoolManager _instance = new MacPoolManager();
+    private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     public static MacPoolManager getInstance() {
-        return _instance;
+        return INSTANCE;
     }
 
-    private final Set<String> mAvailableMacs = new HashSet<String>();
-    private final Set<String> mAllocatedMacs = new HashSet<String>();
-    private final Set<String> mAllocatedCustomMacs = new HashSet<String>();
-    private final ReentrantReadWriteLock mLocObj = new ReentrantReadWriteLock();
-    private boolean mInitialized = false;
+    private final Set<String> availableMacs = new HashSet<String>();
+    private final Set<String> allocatedMacs = new HashSet<String>();
+    private final Set<String> allocatedCustomMacs = new HashSet<String>();
+    private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
+    private boolean initialized = false;
 
     public void initialize() {
-        mLocObj.writeLock().lock();
+        lockObj.writeLock().lock();
         try {
             String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
             if (!"".equals(ranges)) {
@@ -51,9 +51,9 @@ public class MacPoolManager {
             for (VmNetworkInterface iface: interfaces) {
                 AddMac(iface.getMacAddress());
             }
-            mInitialized = true;
+            initialized = true;
         } finally {
-            mLocObj.writeLock().unlock();
+            lockObj.writeLock().unlock();
         }
     }
 
@@ -70,7 +70,7 @@ public class MacPoolManager {
 
             }
         }
-        if (mAvailableMacs.isEmpty()) {
+        if (availableMacs.isEmpty()) {
             throw new VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
         }
     }
@@ -118,10 +118,10 @@ public class MacPoolManager {
             }
             value = builder.toString();
             value = value.substring(0, value.length() - 1);
-            if (!mAvailableMacs.contains(value)) {
-                mAvailableMacs.add(value);
+            if (!availableMacs.contains(value)) {
+                availableMacs.add(value);
             }
-            if (mAvailableMacs.size() > Config.<Integer> GetValue(ConfigValues.MaxMacsCountInPool)) {
+            if (availableMacs.size() > Config.<Integer> GetValue(ConfigValues.MaxMacsCountInPool)) {
                 throw new MacPoolExceededMaxException();
             }
         }
@@ -131,29 +131,29 @@ public class MacPoolManager {
     public String allocateNewMac() {
         String mac = null;
         log.info("MacPoolManager::allocateNewMac entered");
-        mLocObj.writeLock().lock();
+        lockObj.writeLock().lock();
         try {
-            if (!mInitialized) {
+            if (!initialized) {
                 logInitializationError("Failed to allocate new Mac address.");
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
             }
-            if (mAvailableMacs.isEmpty()) {
+            if (availableMacs.isEmpty()) {
                 throw new VdcBLLException(VdcBllErrors.MAC_POOL_NO_MACS_LEFT);
             }
-            Iterator<String> my = mAvailableMacs.iterator();
+            Iterator<String> my = availableMacs.iterator();
             mac = my.next();
             CommitNewMac(mac);
         } finally {
-            mLocObj.writeLock().unlock();
+            lockObj.writeLock().unlock();
         }
         log.infoFormat("MacPoolManager::allocateNewMac allocated mac = '{0}", mac);
         return mac;
     }
 
     private boolean CommitNewMac(String mac) {
-        mAvailableMacs.remove(mac);
-        mAllocatedMacs.add(mac);
-        if (mAvailableMacs.isEmpty()) {
+        availableMacs.remove(mac);
+        allocatedMacs.add(mac);
+        if (availableMacs.isEmpty()) {
             AuditLogableBase logable = new AuditLogableBase();
             AuditLogDirector.log(logable, AuditLogType.MAC_POOL_EMPTY);
             return false;
@@ -162,20 +162,20 @@ public class MacPoolManager {
     }
 
     public int getavailableMacsCount() {
-        return mAvailableMacs.size();
+        return availableMacs.size();
     }
 
     public void freeMac(String mac) {
         log.infoFormat("MacPoolManager::freeMac(mac = '{0}') - entered", mac);
-        mLocObj.writeLock().lock();
+        lockObj.writeLock().lock();
         try {
-            if (!mInitialized) {
+            if (!initialized) {
                 logInitializationError("Failed to free mac address " + mac + " .");
             } else {
                 internalFreeMac(mac);
             }
         } finally {
-            mLocObj.writeLock().unlock();
+            lockObj.writeLock().unlock();
         }
     }
 
@@ -187,11 +187,11 @@ public class MacPoolManager {
     }
 
     private void internalFreeMac(String mac) {
-        if (mAllocatedCustomMacs.contains(mac)) {
-            mAllocatedCustomMacs.remove(mac);
-        } else if (mAllocatedMacs.contains(mac)) {
-            mAllocatedMacs.remove(mac);
-            mAvailableMacs.add(mac);
+        if (allocatedCustomMacs.contains(mac)) {
+            allocatedCustomMacs.remove(mac);
+        } else if (allocatedMacs.contains(mac)) {
+            allocatedMacs.remove(mac);
+            availableMacs.add(mac);
         }
     }
 
@@ -203,39 +203,39 @@ public class MacPoolManager {
      */
     public boolean AddMac(String mac) {
         boolean retVal = true;
-        mLocObj.writeLock().lock();
+        lockObj.writeLock().lock();
         try {
-            if (mAllocatedMacs.contains(mac)) {
+            if (allocatedMacs.contains(mac)) {
                 retVal = false;
             } else {
-                if (mAvailableMacs.contains(mac)) {
+                if (availableMacs.contains(mac)) {
                     retVal = CommitNewMac(mac);
-                } else if (mAllocatedCustomMacs.contains(mac)) {
+                } else if (allocatedCustomMacs.contains(mac)) {
                     retVal = false;
                 } else {
-                    mAllocatedCustomMacs.add(mac);
+                    allocatedCustomMacs.add(mac);
                 }
             }
         } finally {
-            mLocObj.writeLock().unlock();
+            lockObj.writeLock().unlock();
         }
         return retVal;
     }
 
     public boolean IsMacInUse(String mac) {
-        mLocObj.readLock().lock();
+        lockObj.readLock().lock();
         try {
-            return mAllocatedMacs.contains(mac) || mAllocatedCustomMacs.contains(mac);
+            return allocatedMacs.contains(mac) || allocatedCustomMacs.contains(mac);
         } finally {
-            mLocObj.readLock().unlock();
+            lockObj.readLock().unlock();
         }
     }
 
     public void freeMacs(List<String> macs) {
         log.info("MacPoolManager::freeMacs - entered");
-        mLocObj.writeLock().lock();
+        lockObj.writeLock().lock();
         try {
-            if (!mInitialized) {
+            if (!initialized) {
                 logInitializationError("Failed to free MAC addresses.");
             }
             for (String mac : macs) {
@@ -243,7 +243,7 @@ public class MacPoolManager {
             }
 
         } finally {
-            mLocObj.writeLock().unlock();
+            lockObj.writeLock().unlock();
         }
     }
 

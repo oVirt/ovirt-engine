@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
-    private List<VDSGroup> _clusters;
+    private List<VDSGroup> clusters;
 
     public UpdateNetworkCommand(T parameters) {
         super(parameters);
@@ -27,7 +27,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected void executeCommand() {
         DbFacade.getInstance().getNetworkDao().update(getParameters().getNetwork());
 
-        for (VDSGroup cluster : _clusters) {
+        for (VDSGroup cluster : clusters) {
             NetworkClusterHelper.setStatus(cluster.getId(), getParameters().getNetwork());
         }
         setSucceeded(true);
@@ -105,8 +105,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check if the network in use with running vm
-        _clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
-        for (VDSGroup cluster : _clusters) {
+        clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
+        for (VDSGroup cluster : clusters) {
             List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(cluster.getId(),
                     getParameters().getNetwork().getname());
             if (vms.size() > 0) {

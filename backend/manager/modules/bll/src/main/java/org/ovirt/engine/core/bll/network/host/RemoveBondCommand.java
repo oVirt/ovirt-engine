@@ -39,8 +39,8 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         super(parameters);
     }
 
-    private String _network;
-    private ArrayList<String> _interfaces;
+    private String network;
+    private ArrayList<String> interfaces;
 
     @Override
     protected void executeCommand() {
@@ -58,10 +58,10 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         if (bond != null) {
             NetworkVdsmVDSCommandParameters parameters =
                     new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                            _network,
+                            network,
                             NetworkUtils.GetVlanId(bond.getName()),
                             NetworkUtils.StripVlan(getParameters().getBondName()),
-                            _interfaces.toArray(new String[] {}),
+                            interfaces.toArray(new String[] {}),
                             null,
                             null,
                             null,
@@ -107,9 +107,9 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             return false;
         }
 
-        _network = bond.getNetworkName();
+        network = bond.getNetworkName();
 
-        if (StringUtils.isEmpty(_network)) {
+        if (StringUtils.isEmpty(network)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_HAVE_ATTACHED_VLANS);
             return false;
         }
@@ -120,9 +120,9 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 return NetworkUtils.interfaceBasedOn(bond.getName(), i.getBondName());
             }
         });
-        _interfaces = new ArrayList<String>();
+        interfaces = new ArrayList<String>();
         for (VdsNetworkInterface iface : vdsInterfaces) {
-            _interfaces.add(iface.getName());
+            interfaces.add(iface.getName());
         }
 
         VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
