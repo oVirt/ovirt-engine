@@ -1124,6 +1124,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove VM that its state is not down.\n-Please stop the VM first.")
     String VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN();
 
+    @DefaultStringValue("Cannot ${action} ${type} with detaching disks, snapshots exist.")
+    String VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type} with detaching disks, VM is based from template.")
+    String VM_CANNOT_REMOVE_WITH_DETACH_DISKS_BASED_ON_TEMPLATE();
+
     @DefaultStringValue("Failed to ${action} ${type} due to an error on the Data Center master Storage Domain.\n-Please activate the master Storage Domain first.")
     String ACTION_TYPE_FAILED_MASTER_STORAGE_DOMAIN_NOT_ACTIVE();
 

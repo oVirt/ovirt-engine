@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -70,11 +71,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         hasImages = vm.getDiskList().size() > 0;
 
         removeVmInSpm(vm.getStoragePoolId(), vmId);
-        if (hasImages && !removeVmImages(null)) {
-            return false;
-        }
 
-        if (!hasImages) {
+        if (getParameters().isRemoveDisks() && hasImages) {
+            if (!removeVmImages(null)) {
+                return false;
+            }
+        }
+        else {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
@@ -94,6 +97,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         if (getVm().isDeleteProtected()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
+        }
+
+        VmHandler.updateDisksFromDb(getVm());
+
+        if (!getParameters().isRemoveDisks() && !canRemoveVmWithDetachDisks()) {
+            return false;
         }
 
         return (super.canDoAction() && canRemoveVm());
@@ -135,7 +144,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return failCanDoAction(vmDuringSnapshotResult.getMessage());
         }
 
-        VmHandler.updateDisksFromDb(getVm());
         if (!ImagesHandler.PerformImagesChecks(getVm(),
                 getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
@@ -156,6 +164,28 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         if (getParameters().getForce() && getVm().getStatus() == VMStatus.ImageLocked
                 && AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
+        }
+
+        return true;
+    }
+
+    private boolean canRemoveVmWithDetachDisks() {
+        if (!Guid.Empty.equals(getVm().getVmtGuid())) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_BASED_ON_TEMPLATE);
+        }
+
+
+        boolean isSnapshotsPresent = false;
+        for (Disk disk : getVm().getDiskList()) {
+            List<DiskImage> diskImageList = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
+            if (diskImageList.size() > 1) {
+                isSnapshotsPresent = true;
+                break;
+            }
+        }
+
+        if (isSnapshotsPresent) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
         }
 
         return true;

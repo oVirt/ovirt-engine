@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmRunOncePop
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -76,6 +77,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmServerNewPopupPresenterWidget> newServerVmPopupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<VmRemovePopupPresenterWidget> vmRemoveConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
@@ -96,8 +98,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return migratePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
                     return movePopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getNewDesktopCommand()) {
                     return newDesktopVmPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getNewServerCommand()) {
@@ -122,8 +122,10 @@ public class VirtualMachineModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand() ||
-                        lastExecutedCommand == getModel().getStopCommand() ||
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                    return vmRemoveConfirmPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getStopCommand() ||
                         lastExecutedCommand == getModel().getShutdownCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {

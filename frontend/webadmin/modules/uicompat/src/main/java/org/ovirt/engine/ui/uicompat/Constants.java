@@ -1637,6 +1637,21 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not Running")
     String notRunningVm();
 
+    @DefaultStringValue("Remove VM Disk(s)")
+    String removeVmDisksMsg();
+
+    @DefaultStringValue("VM is created from template thus disks must be removed")
+    String removeVmDisksTemplateMsg();
+
+    @DefaultStringValue("VM has no disks")
+    String removeVmDisksNoDisksMsg();
+
+    @DefaultStringValue("Cannot remove VM with detaching disks - VM has snapshots")
+    String removeVmDisksSnapshotsMsg();
+
+    @DefaultStringValue("All VM disks are sharable and cannot be removed")
+    String removeVmDisksAllSharedMsg();
+
     // Network
     @DefaultStringValue("VM")
     String vmNetworkRole();

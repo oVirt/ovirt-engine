@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -29,6 +30,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -46,8 +49,10 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -82,8 +87,10 @@ import org.ovirt.engine.ui.uicompat.Assembly;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ResourceManager;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext
@@ -868,6 +875,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.getCommands().add(tempVar2);
     }
 
+    private Map<Guid, EntityModel> vmsRemoveMap;
+
     private void remove()
     {
         if (getWindow() != null)
@@ -875,29 +884,117 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachinesTitle());
-        model.setHashName("remove_virtual_machine"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().virtualMachinesMsg());
+        ConfirmationModel window = new ConfirmationModel();
+        setWindow(window);
+        window.setTitle(ConstantsManager.getInstance().getConstants().removeVirtualMachinesTitle());
+        window.setHashName("remove_virtual_machine"); //$NON-NLS-1$
+        window.setMessage(ConstantsManager.getInstance().getConstants().virtualMachinesMsg());
 
-        // model.Items = SelectedItems.Cast<VM>().Select(a => a.vm_name);
-        ArrayList<String> list = new ArrayList<String>();
+        vmsRemoveMap = new HashMap<Guid, EntityModel>();
+
         for (Object selectedItem : getSelectedItems())
         {
-            VM a = (VM) selectedItem;
-            list.add(a.getVmName());
+            VM vm = (VM) selectedItem;
+            EntityModel removeDisksCheckbox = new EntityModel(true);
+            removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
+            removeDisksCheckbox.setMessage(vm.getVmName());
+            if (!NGuid.Empty.equals(vm.getVmtGuid())) {
+                updateRemoveDisksCheckBox(removeDisksCheckbox, true, false, ConstantsManager.getInstance()
+                        .getConstants()
+                        .removeVmDisksTemplateMsg());
+            }
+            vmsRemoveMap.put(vm.getId(), removeDisksCheckbox);
         }
-        model.setItems(list);
+        window.setItems(vmsRemoveMap.entrySet());
+        initRemoveDisksCheckboxes(vmsRemoveMap);
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
+        window.getCommands().add(tempVar);
         UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
+        window.getCommands().add(tempVar2);
+    }
+
+    private void updateRemoveDisksCheckBox(EntityModel model,
+            boolean deleteDisks,
+            boolean isChangable,
+            String changeProhibitionReason) {
+
+        model.setEntity(deleteDisks);
+        if (!isChangable && changeProhibitionReason != null) {
+            model.getChangeProhibitionReasons().add(changeProhibitionReason);
+        }
+        model.setIsChangable(isChangable);
+    }
+
+    private void initRemoveDisksCheckboxes(final Map<Guid, EntityModel> vmsMap) {
+        ArrayList<VdcQueryParametersBase> params = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queries = new ArrayList<VdcQueryType>();
+
+        for (Entry<Guid, EntityModel> entry : vmsMap.entrySet()) {
+            if (entry.getValue().getIsChangable()) { // No point in fetching VM disks from ones that already determined
+                                                     // is unchangeable since they are already initialized
+                params.add(new GetAllDisksByVmIdParameters(entry.getKey()));
+                queries.add(VdcQueryType.GetAllDisksByVmId);
+            }
+        }
+
+        // TODO: There's no point in creating a VdcQueryType list when you wanna run the same query for all parameters,
+        // revise when refactoring org.ovirt.engine.ui.Frontend to support runMultipleQuery with a single query
+        if (!params.isEmpty()) {
+            Frontend.RunMultipleQueries(queries, params, new IFrontendMultipleQueryAsyncCallback() {
+                @Override
+                public void Executed(FrontendMultipleQueryAsyncResult result) {
+                    for (int i = 0; i < result.getReturnValues().size(); i++) {
+                        if (result.getReturnValues().get(i).getSucceeded()) {
+                            Guid vmId = ((GetAllDisksByVmIdParameters) result.getParameters().get(i)).getVmId();
+                            initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues().get(i).getReturnValue());
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void initRemoveDisksChecboxesPost(Guid vmId, List<Disk> disks) {
+        EntityModel model = vmsRemoveMap.get(vmId);
+        if (disks.isEmpty()) {
+            updateRemoveDisksCheckBox(model, false, false, ConstantsManager.getInstance()
+                    .getConstants()
+                    .removeVmDisksNoDisksMsg());
+            return;
+        }
+
+        boolean isOnlySharedDisks = true;
+        boolean isSnapshotExists = false;
+        for (Disk disk : disks) {
+            if (!disk.isShareable()) {
+                isOnlySharedDisks = false;
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    if (((DiskImage) disk).getSnapshots().size() > 1) {
+                        isSnapshotExists = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (isSnapshotExists) {
+            updateRemoveDisksCheckBox(model, true, false, ConstantsManager.getInstance()
+                    .getConstants()
+                    .removeVmDisksSnapshotsMsg());
+            return;
+        }
+
+        if (isOnlySharedDisks) {
+            updateRemoveDisksCheckBox(model, false, false, ConstantsManager.getInstance()
+                    .getConstants()
+                    .removeVmDisksAllSharedMsg());
+            return;
+        }
     }
 
     private void Move()
@@ -2019,10 +2116,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
+        for (Entry<Guid, EntityModel> entry : vmsRemoveMap.entrySet())
         {
-            VM a = (VM) item;
-            list.add(new RemoveVmParameters(a.getId(), false));
+            list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
 
         model.StartProgress(null);

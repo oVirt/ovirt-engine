@@ -260,6 +260,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
@@ -1028,6 +1030,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmExportPopupPresenterWidget.class,
                 VmExportPopupPresenterWidget.ViewDef.class,
                 VmExportPopupView.class);
+
+        // VM Remove
+        bindPresenterWidget(VmRemovePopupPresenterWidget.class,
+                VmRemovePopupPresenterWidget.ViewDef.class,
+                VmRemovePopupView.class);
 
         // VM VNC info
         bindPresenterWidget(VncInfoPopupPresenterWidget.class,
