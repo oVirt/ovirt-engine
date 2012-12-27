@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -11,13 +10,6 @@ import org.ovirt.engine.core.compat.NGuid;
 public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, IImage {
 
     private static final long serialVersionUID = 1533416252250153306L;
-
-    private static final ArrayList<String> _diskImageProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "active", "creation_date", "last_modified_date", "actual_size",
-                    "description", "internal_drive_mapping", "appList", "it_guid", "vm_guid", "ParentId",
-                    "imageStatus", "lastModified", "storage_id", "vm_snapshot_id", "storage_path", "image_group_id",
-                    "storage_pool_id", "boot", "volume_type", "volume_format", "disk_interface", "wipe_after_delete",
-                    "propagate_errors", "read_rate", "write_rate", "ActualSize", "QuotaId" }));
 
     private ArrayList<String> storagesNames;
     // TODO why do we have two fields like this?
@@ -362,11 +354,6 @@ public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, 
     @Override
     public Object getQueryableId() {
         return getImageId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _diskImageProperties;
     }
 
     public ArrayList<DiskImage> getSnapshots() {

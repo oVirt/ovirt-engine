@@ -302,11 +302,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
         return getaudit_log_id();
     }
 
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return new java.util.ArrayList<String>();
-    }
-
     public void setProcessed(boolean processed) {
         this.processed = processed;
     }

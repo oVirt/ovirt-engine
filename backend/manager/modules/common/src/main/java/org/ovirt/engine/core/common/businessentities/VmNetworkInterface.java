@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -37,12 +34,6 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
      */
     private boolean linked = true;
     private boolean portMirroring;
-
-    private static final ArrayList<String> _changeablePropertiesList =
-            new ArrayList<String>(Arrays.asList(new String[] {
-                    "Id", "Name", "MacAddress", "NetworkName", "Type", "Speed", "Statistics", "VmId", "VmName",
-                    "VmTemplateId", "PortMirroring", "Linked"
-            }));
 
     public VmNetworkInterface() {
         super(new VmNetworkStatistics(), VmInterfaceType.pv.getValue());
@@ -109,11 +100,6 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     @Override
     public Object getQueryableId() {
         return id;
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _changeablePropertiesList;
     }
 
     public boolean isActive() {

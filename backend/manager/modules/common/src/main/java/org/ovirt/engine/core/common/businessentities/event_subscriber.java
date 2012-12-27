@@ -11,7 +11,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
-
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
@@ -163,15 +162,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
     public Object getQueryableId() {
         return StringFormat.format("%1$s%2$s%3$s%4$s", id.eventUpName, id.methodId, id.subscriberId,
                 id.tagName == null ? "" : id.tagName);
-    }
-
-    private static final java.util.ArrayList<String> _event_subscriberProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "event_up_name", "method_id", "method_address", "subscriber_id",
-                    "tag_name" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _event_subscriberProperties;
     }
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {

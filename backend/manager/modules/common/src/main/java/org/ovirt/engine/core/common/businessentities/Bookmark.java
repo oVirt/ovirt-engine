@@ -116,14 +116,6 @@ public class Bookmark extends IVdcQueryable implements INotifyPropertyChanged, S
         return getbookmark_id();
     }
 
-    private static final java.util.ArrayList<String> _bookmarkProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "bookmark_name", "bookmark_value" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _bookmarkProperties;
-    }
-
     // public event PropertyChangedEventHandler PropertyChanged;
 
     protected void OnPropertyChanged(PropertyChangedEventArgs e) {

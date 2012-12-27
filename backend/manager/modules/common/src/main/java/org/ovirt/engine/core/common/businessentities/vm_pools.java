@@ -329,14 +329,4 @@ public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, S
     public Object getQueryableId() {
         return getvm_pool_id();
     }
-
-    private static final java.util.ArrayList<String> _poolProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "vm_pool_name", "vm_pool_description", "vm_pool_type",
-                    "vm_running_count", "vm_assigned_count", "vds_group_name", "prestarted_vms" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _poolProperties;
-    }
-
 }

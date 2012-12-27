@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,13 +34,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -522552511046744989L;
-
-    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "name", "domain", "child_count", "description",
-                    "default_display_type", "mem_size_mb", "vds_group_name", "status", "time_zone", "num_of_monitors",
-                    "vds_group_id", "usb_policy", "num_of_sockets", "cpu_per_socket", "os", "is_auto_suspend",
-                    "auto_startup", "priority", "default_boot_sequence", "is_stateless", "iso_path", "initrd_url",
-                    "kernel_url", "kernel_params", "smartcardEnabled", "deleteProtected" }));
 
     @Transient
     private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
@@ -211,11 +203,6 @@ public class VmTemplate extends VmBase {
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _vmProperties;
     }
 
     public double getActualDiskSize() {

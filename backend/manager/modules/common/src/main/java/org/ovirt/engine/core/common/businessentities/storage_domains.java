@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.persistence.Transient;
@@ -288,15 +286,6 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
 
     public void setLastTimeUsedAsMaster(long lastTimeUsedAsMaster) {
         _staticData.setLastTimeUsedAsMaster(lastTimeUsedAsMaster);
-    }
-
-    private static final ArrayList<String> _spProperties = new ArrayList<String>(
-            Arrays.asList("storage_name", "status", "used_disk_size", "available_disk_size",
-                    "committed_disk_size", "storage_domain_type", "storage_domain_shared_status", "storage"));
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _spProperties;
     }
 
     @Override

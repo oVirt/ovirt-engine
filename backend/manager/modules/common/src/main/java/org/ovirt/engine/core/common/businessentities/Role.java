@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,8 +24,6 @@ import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 @TypeDef(name = "guid", typeClass = GuidType.class)
 public class Role extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
     private static final long serialVersionUID = 1487620954798772886L;
-    private static final ArrayList<String> _event_subscriberProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "id", "name", "description", "is_readonly" }));
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -109,11 +104,6 @@ public class Role extends IVdcQueryable implements INotifyPropertyChanged, Busin
         if (type != other.type)
             return false;
         return true;
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _event_subscriberProperties;
     }
 
     public String getdescription() {

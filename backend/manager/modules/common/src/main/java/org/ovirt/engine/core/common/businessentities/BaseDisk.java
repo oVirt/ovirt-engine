@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -98,11 +96,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return null;
     }
 
     @Override

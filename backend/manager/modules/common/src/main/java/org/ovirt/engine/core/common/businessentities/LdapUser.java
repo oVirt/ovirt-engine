@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -159,11 +158,6 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     @Override
     public Object getQueryableId() {
         return getUserId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return null;
     }
 
     public String getGroupIds() {

@@ -89,11 +89,6 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         return getId();
     }
 
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return new java.util.ArrayList<String>();
-    }
-
     public Guid getad_element_id() {
         return this.adElementId;
     }

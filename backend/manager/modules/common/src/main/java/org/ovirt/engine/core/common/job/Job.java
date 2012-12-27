@@ -191,11 +191,6 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return new ArrayList<String>();
-    }
-
-    @Override
     public Object getQueryableId() {
         return id;
     }

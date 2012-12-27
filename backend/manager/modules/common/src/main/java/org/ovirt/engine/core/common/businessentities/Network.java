@@ -213,15 +213,6 @@ public class Network extends IVdcQueryable implements INotifyPropertyChanged, Se
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _networkProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "addr", "description", "name", "subnet", "type", "vlan_id",
-                    "Status", "stp", "storage_pool_id", "gateway", "is_display", "mtu" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _networkProperties;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

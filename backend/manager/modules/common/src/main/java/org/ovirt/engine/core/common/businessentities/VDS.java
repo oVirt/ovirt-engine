@@ -1270,29 +1270,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _vdsProperties =
-            new java.util.ArrayList<String>(
-                    java.util.Arrays.asList(new String[] { "vds_name", "status", "usage_cpu_percent",
-                            "usage_mem_percent",
-                            "usage_network_percent", "mem_commited", "vm_count", "vm_active", "host_name",
-                            "vds_group_name",
-                            "vds_type", "CpuName", "vds_group_id", "net_config_dirty", "spm_status",
-                            "pm_enabled", "ManagmentIp", "pm_user", "pm_password", "pm_type", "pm_port", "pm_options",
-                            "pmSecondaryConcurrent", "pmSecondaryIp", "pmSecondaryUser", "pmSecondaryPassword",
-                            "pmSecondaryType",
-                            "pmSecondaryPort", "pmSecondaryOptions", "PmOptionsMap", "PmSecondaryOptionsMap",
-                            "mem_shared", "vms_cores_count", "ksm_state", "Version", "vds_group_compatibility_version",
-                            "UniqueId",
-                            "TransparentHugePagesState", "swap_total", "swap_free", "mem_shared_percent",
-                            "supported_cluster_levels", "ContainingHooks", "NonOperationalReason",
-                            "host_os", "kernel_version", "spice_version", "kvm_version", "libvirt_version", "storage_pool_id",
-                            "physical_mem_mb" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _vdsProperties;
-    }
-
     private VdsSpmStatus _spm_status = VdsSpmStatus.forValue(0);
 
     public VdsSpmStatus getspm_status() {

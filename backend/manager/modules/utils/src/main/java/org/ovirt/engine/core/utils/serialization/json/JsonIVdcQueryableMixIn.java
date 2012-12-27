@@ -12,7 +12,4 @@ public abstract class JsonIVdcQueryableMixIn extends IVdcQueryable {
 
     @JsonIgnore
     public abstract Object getQueryableId();
-
-    @JsonIgnore
-    public abstract java.util.ArrayList<String> getChangeablePropertiesList();
 }

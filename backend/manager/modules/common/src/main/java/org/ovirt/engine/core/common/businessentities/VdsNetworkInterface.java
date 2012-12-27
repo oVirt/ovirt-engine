@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.validation.constraints.Pattern;
 
@@ -17,13 +15,6 @@ import org.ovirt.engine.core.compat.NGuid;
 @ValidNetworkConfiguration
 public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> {
     private static final long serialVersionUID = -6347816237220936283L;
-
-    private static final ArrayList<String> _changeablePropertiesList =
-            new ArrayList<String>(Arrays.asList(new String[] {
-                    "Id", "Name", "MacAddress", "NetworkName", "Type", "Speed", "Statistics", "VdsId", "VdsName",
-                    "BootProtocol", "Address", "Subnet", "Gateway", "VlanId", "Bonded", "BondName", "BondType",
-                    "BondOptions"
-            }));
 
     private NGuid vdsId;
     private String vdsName;
@@ -274,11 +265,6 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Override
     public Object getQueryableId() {
         return id;
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _changeablePropertiesList;
     }
 
     public int getMtu() {

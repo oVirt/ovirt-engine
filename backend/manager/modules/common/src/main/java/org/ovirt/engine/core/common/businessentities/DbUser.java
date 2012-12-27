@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -402,15 +400,6 @@ public class DbUser extends DbUserBase implements Serializable {
     @Override
     public Object getQueryableId() {
         return getuser_id();
-    }
-
-    private static final ArrayList<String> _vmProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "name", "surname", "username", "groups", "session_count", "IsLogedin",
-                    "LastAdminCheckStatus" }));
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return _vmProperties;
     }
 
     public void setLastAdminCheckStatus(boolean val) {

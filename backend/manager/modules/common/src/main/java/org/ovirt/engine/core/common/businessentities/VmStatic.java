@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -243,12 +241,6 @@ public class VmStatic extends VmBase {
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        // Actual implementation is TBD
-        return null;
     }
 
     public String getCpuPinning() {

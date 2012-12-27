@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -96,11 +95,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return null;
     }
 
     @Override

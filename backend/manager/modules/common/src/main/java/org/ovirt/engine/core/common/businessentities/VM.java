@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1425,28 +1424,6 @@ public class VM extends IVdcQueryable implements INotifyPropertyChanged, Seriali
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    private static final ArrayList<String> vmProperties = new ArrayList<String>(
-            Arrays.asList(new String[] { "vm_name", "status", "usage_cpu_percent",
-                    "usage_mem_percent", "usage_network_percent", "run_on_vds", "run_on_vds_name",
-                    "vm_description", "vds_group_id", "vds_group_name", "vm_ip",
-                    "guest_cur_user_name",
-                    "console_cur_user_name",
-                    "DiskSize", "vm_os", "num_of_monitors", "roundedElapsedTime",
-                    "vm_mem_size_mb", "vm_domain", "dedicated_vm_for_vds",
-                    "guest_requested_memory", "is_stateless", "is_initialized", "display",
-                    "display_type", "default_display_type", "run_on_vds", "app_list", "time_zone",
-                    "display_secure_port", "IsConfigured", "is_auto_suspend", "auto_startup",
-                    "display_ip", "priority", "default_boot_sequence", "iso_path", "VmPoolId",
-                    "num_of_sockets", "cpu_per_socket", "vds_group_compatibility_version",
-                    "usb_policy", "vmt_guid", "vmt_name", "initrd_url", "kernel_url",
-                    "kernel_params", "VmPauseStatus", "CustomProperties", "MigrationSupport", "num_of_cpus",
-                    "MinAllocatedMem", "smartcardEnabled" }));
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return vmProperties;
     }
 
     /**

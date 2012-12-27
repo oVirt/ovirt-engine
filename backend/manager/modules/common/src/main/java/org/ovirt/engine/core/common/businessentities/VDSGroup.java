@@ -243,17 +243,6 @@ public class VDSGroup extends IVdcQueryable implements INotifyPropertyChanged, S
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _vmProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "name", "description", "cpu_name",
-                    "cpu_over_commit_duration_minutes", "low_utilization", "high_utilization", "selection_algorithm",
-                    "max_vds_memory_over_commit", "storage_pool_id", "countThreadsAsCores", "compatibility_version",
-                    "TransparentHugepages", "MigrateOnError" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _vmProperties;
-    }
-
     public void setMigrateOnError(MigrateOnErrorOptions migrateOnError) {
         this.migrateOnError = migrateOnError;
     }

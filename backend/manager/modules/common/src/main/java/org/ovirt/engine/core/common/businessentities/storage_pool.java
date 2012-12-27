@@ -201,15 +201,6 @@ public class storage_pool extends IVdcQueryable implements INotifyPropertyChange
         return getId();
     }
 
-    private static final java.util.ArrayList<String> _spProperties = new java.util.ArrayList<String>(
-            java.util.Arrays.asList(new String[] { "name", "description", "status", "storage_pool_type",
-                    "compatibility_version" }));
-
-    @Override
-    public java.util.ArrayList<String> getChangeablePropertiesList() {
-        return _spProperties;
-    }
-
     public String getLVER() {
         return LVER;
     }

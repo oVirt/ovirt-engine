@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -100,11 +99,6 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     @Override
     public Object getQueryableId() {
         return getId();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        return null;
     }
 
     @Override

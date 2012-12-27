@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,7 +15,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 @Entity
 @Table(name = "ad_groups")
@@ -124,11 +122,6 @@ public class LdapGroup extends DbUserBase implements Serializable {
     @Override
     public Object getQueryableId() {
         return getid();
-    }
-
-    @Override
-    public ArrayList<String> getChangeablePropertiesList() {
-        throw new NotImplementedException();
     }
 
     public void setDistinguishedName(String distinguishedName) {
