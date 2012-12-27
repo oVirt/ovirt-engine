@@ -248,4 +248,8 @@ public class MacPoolManager {
     }
 
     private static Log log = LogFactory.getLog(MacPoolManager.class);
+
+    @SuppressWarnings("serial")
+    private class MacPoolExceededMaxException extends RuntimeException {
+    }
 }
