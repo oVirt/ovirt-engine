@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.dc;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
+import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -19,8 +18,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
-public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends StorageHandlingCommandBase<T> {
+public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     public NetworkCommon(T parameters) {
         super(parameters);
         this.setStoragePoolId(getParameters().getNetwork().getstorage_pool_id());
@@ -28,11 +28,6 @@ public class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends St
 
     public String getNetworkName() {
         return getParameters().getNetwork().getname();
-    }
-
-    @Override
-    protected void executeCommand() {
-        throw new NotImplementedException();
     }
 
     protected boolean validateVmNetwork() {
