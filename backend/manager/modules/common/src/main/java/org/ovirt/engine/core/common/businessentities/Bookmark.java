@@ -16,7 +16,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 @Entity
 @Table(name = "bookmarks")
@@ -52,15 +51,11 @@ public class Bookmark extends IVdcQueryable implements INotifyPropertyChanged, S
 
     public void setbookmark_value(String value) {
         this.value = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("bookmark_value"));
-
     }
 
 
     public void setbookmark_name(String name) {
         this.name = name;
-        OnPropertyChanged(new PropertyChangedEventArgs("bookmark_name"));
-
     }
 
 
@@ -114,14 +109,5 @@ public class Bookmark extends IVdcQueryable implements INotifyPropertyChanged, S
     @Override
     public Object getQueryableId() {
         return getbookmark_id();
-    }
-
-    // public event PropertyChangedEventHandler PropertyChanged;
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
     }
 }

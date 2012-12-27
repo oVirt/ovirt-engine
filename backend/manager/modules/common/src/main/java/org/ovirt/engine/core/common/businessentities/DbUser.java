@@ -15,7 +15,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 
 @Entity
@@ -278,7 +277,6 @@ public class DbUser extends DbUserBase implements Serializable {
 
     public void setgroups(String value) {
         this.groups = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("groups"));
     }
 
     public String getname() {
@@ -288,7 +286,6 @@ public class DbUser extends DbUserBase implements Serializable {
     public void setname(String value) {
         if (!StringHelper.EqOp(this.name, value)) {
             this.name = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("name"));
         }
     }
 
@@ -322,7 +319,6 @@ public class DbUser extends DbUserBase implements Serializable {
 
     public void setsurname(String value) {
         this.surname = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("surname"));
     }
 
     public String getuser_icon_path() {
@@ -347,7 +343,6 @@ public class DbUser extends DbUserBase implements Serializable {
 
     public void setusername(String value) {
         this.username = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("username"));
     }
 
     public int getsession_count() {
@@ -356,7 +351,6 @@ public class DbUser extends DbUserBase implements Serializable {
 
     public void setsession_count(int value) {
         sessionCount = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("session_count"));
         setIsLogedin((sessionCount > 0));
     }
 
@@ -366,7 +360,6 @@ public class DbUser extends DbUserBase implements Serializable {
 
     public void setIsLogedin(boolean value) {
         isLoggedIn = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("IsLogedin"));
     }
 
     public DbUser(LdapUser ldapUser) {

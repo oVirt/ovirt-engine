@@ -14,7 +14,6 @@ import org.hibernate.validator.constraints.Email;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringFormat;
 
 @Entity
@@ -113,7 +112,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
 
     public void setevent_up_name(String value) {
         this.id.eventUpName = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("event_up_name"));
     }
 
     public int getmethod_id() {
@@ -122,7 +120,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
 
     public void setmethod_id(int value) {
         this.id.methodId = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("method_id"));
     }
 
     @Column(name = "method_address", length = 255)
@@ -135,7 +132,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
 
     public void setmethod_address(String value) {
         this.methodAddress = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("method_address"));
     }
 
     public Guid getsubscriber_id() {
@@ -144,7 +140,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
 
     public void setsubscriber_id(Guid value) {
         this.id.subscriberId = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("subscriber_id"));
     }
 
     public String gettag_name() {
@@ -153,7 +148,6 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
 
     public void settag_name(String value) {
         this.id.tagName = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("tag_name"));
     }
 
     // if there will be subscribers edit we should add unique field to this
@@ -163,12 +157,4 @@ public class event_subscriber extends IVdcQueryable implements INotifyPropertyCh
         return StringFormat.format("%1$s%2$s%3$s%4$s", id.eventUpName, id.methodId, id.subscriberId,
                 id.tagName == null ? "" : id.tagName);
     }
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
-        /* if (PropertyChanged != null) */
-        {
-            /* PropertyChanged(this, e); */
-        }
-    }
-
 }

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 public class RunVmParams extends VmOperationParameterBase implements INotifyPropertyChanged {
     private static final long serialVersionUID = 3311307677963231320L;
@@ -151,7 +150,6 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
 
     public void setWin2kHackEnable(Boolean value) {
         _win2kHackEnable = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("Win2kHackEnable"));
     }
 
     public String getClientIp() {
@@ -184,9 +182,6 @@ public class RunVmParams extends VmOperationParameterBase implements INotifyProp
 
     public void setRunAsStateless(Boolean value) {
         privateRunAsStateless = value;
-    }
-
-    protected void OnPropertyChanged(PropertyChangedEventArgs e) {
     }
 
     public String getinitrd_url() {

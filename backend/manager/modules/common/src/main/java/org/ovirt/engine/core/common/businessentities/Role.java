@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 @Entity
 @Table(name = "roles")
@@ -125,17 +124,14 @@ public class Role extends IVdcQueryable implements INotifyPropertyChanged, Busin
 
     public void setdescription(String value) {
         this.description = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("description"));
     }
 
     public void setis_readonly(boolean value) {
         this.readOnly = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("is_readonly"));
     }
 
     public void setname(String value) {
         this.name = value;
-        OnPropertyChanged(new PropertyChangedEventArgs("name"));
     }
 
     public void setType(RoleType type) {
@@ -144,13 +140,6 @@ public class Role extends IVdcQueryable implements INotifyPropertyChanged, Busin
 
     public RoleType getType() {
         return type;
-    }
-
-    // TODO -This method and its reference code are being tested with the GWT
-    // UI.
-    // Remove this only when its surely not needed by them.
-    protected void OnPropertyChanged(@SuppressWarnings("unused") PropertyChangedEventArgs e) {
-        // purposely empty
     }
 
     @Override
