@@ -188,7 +188,6 @@ public enum VdcQueryType implements Serializable {
     GetPowerClient,
     AddPowerClient,
     GetDedicatedVm,
-    GetMACAddress,
     GetAllServerCpuList,
     GetAvailableClustersByServerCpu,
 
