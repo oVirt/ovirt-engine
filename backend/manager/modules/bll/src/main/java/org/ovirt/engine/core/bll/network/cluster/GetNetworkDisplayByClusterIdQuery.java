@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
