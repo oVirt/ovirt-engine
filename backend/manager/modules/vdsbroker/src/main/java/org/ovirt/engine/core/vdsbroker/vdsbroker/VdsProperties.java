@@ -26,6 +26,12 @@ public final class VdsProperties {
 
     public static final String SpiceSecureChannels = "spiceSecureChannels";
     public static final String cpuThreads = "cpuThreads";
+    public static final String hwManufacturer = "systemManufacturer";
+    public static final String hwProductName = "systemProductName";
+    public static final String hwVersion = "systemVersion";
+    public static final String hwSerialNumber = "systemSerialNumber";
+    public static final String hwUUID = "systemUUID";
+    public static final String hwFamily = "systemFamily";
     public static final String cpu_cores = "cpuCores";
     public static final String cpu_sockets = "cpuSockets";
     public static final String cpu_model = "cpuModel";

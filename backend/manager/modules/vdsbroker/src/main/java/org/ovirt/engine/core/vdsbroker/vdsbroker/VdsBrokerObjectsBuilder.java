@@ -463,6 +463,15 @@ public class VdsBrokerObjectsBuilder {
         return new RpmVersion(sb.toString());
     }
 
+    public static void UpdateHardwareSystemInformation(XmlRpcStruct hwInfo, VDS vds){
+        vds.setHardwareManufacturer(AssignStringValue(hwInfo, VdsProperties.hwManufacturer));
+        vds.setHardwareProductName(AssignStringValue(hwInfo, VdsProperties.hwProductName));
+        vds.setHardwareVersion(AssignStringValue(hwInfo, VdsProperties.hwVersion));
+        vds.setHardwareSerialNumber(AssignStringValue(hwInfo, VdsProperties.hwSerialNumber));
+        vds.setHardwareUUID(AssignStringValue(hwInfo, VdsProperties.hwUUID));
+        vds.setHardwareFamily(AssignStringValue(hwInfo, VdsProperties.hwFamily));
+    }
+
     private static String GetPackageVersionFormated(XmlRpcStruct hostPackage, boolean getName) {
         String packageName = AssignStringValue(hostPackage, VdsProperties.package_name);
         String packageVersion = AssignStringValue(hostPackage, VdsProperties.package_version);

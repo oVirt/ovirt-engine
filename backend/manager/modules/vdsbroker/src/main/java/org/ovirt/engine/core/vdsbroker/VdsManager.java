@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -510,6 +511,16 @@ public class VdsManager {
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
         vdsBrokerCommand.Execute();
         if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
+            // Verify version capabilities
+            if (Config.<Boolean> GetValue(ConfigValues.HardwareInfoEnabled, vds.getvds_group_compatibility_version()
+                    .getValue())) {
+                VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(VDSCommandType.GetHardwareInfo,
+                        new VdsIdAndVdsVDSCommandParametersBase(vds));
+                if (!ret.getSucceeded()) {
+                    AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                    AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+                }
+            }
 
             VDSStatus returnStatus = vds.getstatus();
             boolean isSetNonOperational = CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds);

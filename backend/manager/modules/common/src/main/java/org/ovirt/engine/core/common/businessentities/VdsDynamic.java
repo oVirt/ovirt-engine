@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -136,6 +137,29 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Column(name = "hooks")
     private String hooksStr;
 
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwManufacturer")
+    private String hwManufacturer;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwProductName")
+    private String hwProductName;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwVersion")
+    private String hwVersion;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwSerialNumber")
+    private String hwSerialNumber;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwUUID")
+    private String hwUUID;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    @Column(name = "hwFamily")
+    private String hwFamily;
 
     @Column(name = "non_operational_reason")
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
@@ -174,7 +198,9 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       Integer vm_active, int vm_count, Integer vm_migrating, Integer reserved_mem, Integer guest_overhead,
                       VDSStatus previous_status, String software_version, String version_name, String build_name,
                       Date cpu_over_commit_time_stamp, Integer pending_vcpus_count,
-                      Integer pending_vmem_sizeField, Boolean net_config_dirty) {
+                      Integer pending_vmem_sizeField, Boolean net_config_dirty, String hwManufacturer,
+                      String hwProductName, String hwVersion, String hwSerialNumber,
+                      String hwUUID, String hwFamily) {
         rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
         this.cpuThreads = cpuThreads;
@@ -199,6 +225,12 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.pending_vmem_size = pending_vmem_sizeField;
         this.net_config_dirty = net_config_dirty;
         this.transparentHugePagesState = VdsTransparentHugePagesState.Never;
+        this.hwUUID = hwUUID;
+        this.hwFamily = hwFamily;
+        this.hwSerialNumber = hwSerialNumber;
+        this.hwVersion = hwVersion;
+        this.hwProductName = hwProductName;
+        this.hwManufacturer = hwManufacturer;
     }
 
     public Integer getcpu_cores() {
@@ -433,6 +465,54 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         return _supportedENGINESVersionsSet;
     }
 
+    public String getHardwareUUID() {
+        return this.hwUUID;
+    }
+
+    public void setHardwareUUID(String value) {
+        this.hwUUID = value;
+    }
+
+    public String getHardwareFamily() {
+        return this.hwFamily;
+    }
+
+    public void setHardwareFamily(String value) {
+        this.hwFamily = value;
+    }
+
+    public String getHardwareSerialNumber() {
+        return this.hwSerialNumber;
+    }
+
+    public void setHardwareSerialNumber(String value) {
+        this.hwSerialNumber = value;
+    }
+
+    public String getHardwareVersion() {
+        return this.hwVersion;
+    }
+
+    public void setHardwareVersion(String value) {
+        this.hwVersion = value;
+    }
+
+    public String getHardwareProductName() {
+        return this.hwProductName;
+    }
+
+    public void setHardwareProductName(String value) {
+        this.hwProductName = value;
+    }
+
+    public String getHardwareManufacturer() {
+        return this.hwManufacturer;
+    }
+
+    public void setHardwareManufacturer(String value) {
+        this.hwManufacturer = value;
+    }
+
     /**
      * Used to parse a string containing concatenated list of versions, delimited by a comma.
      *
@@ -593,6 +673,12 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + vm_count;
         result = prime * result + ((vm_migrating == null) ? 0 : vm_migrating.hashCode());
         result = prime * result + ((vms_cores_count == null) ? 0 : vms_cores_count.hashCode());
+        result = prime * result + ((hwManufacturer == null) ? 0 : hwManufacturer.hashCode());
+        result = prime * result + ((hwProductName == null) ? 0 : hwProductName.hashCode());
+        result = prime * result + ((hwVersion == null) ? 0 : hwVersion.hashCode());
+        result = prime * result + ((hwSerialNumber == null) ? 0 : hwSerialNumber.hashCode());
+        result = prime * result + ((hwUUID == null) ? 0 : hwUUID.hashCode());
+        result = prime * result + ((hwFamily == null) ? 0 : hwFamily.hashCode());
         return result;
     }
 
@@ -791,6 +877,36 @@ public class VdsDynamic implements BusinessEntity<Guid> {
             if (other.vms_cores_count != null)
                 return false;
         } else if (!vms_cores_count.equals(other.vms_cores_count))
+            return false;
+        if (hwManufacturer == null) {
+            if (other.hwManufacturer != null)
+                return false;
+        } else if (!hwManufacturer.equals(other.hwManufacturer))
+            return false;
+        if (hwProductName == null) {
+            if (other.hwProductName != null)
+                return false;
+        } else if (!hwProductName.equals(other.hwProductName))
+            return false;
+        if (hwVersion == null) {
+            if (other.hwVersion != null)
+                return false;
+        } else if (!hwVersion.equals(other.hwVersion))
+            return false;
+        if (hwSerialNumber == null) {
+            if (other.hwSerialNumber != null)
+                return false;
+        } else if (!hwSerialNumber.equals(other.hwSerialNumber))
+            return false;
+        if (hwUUID == null) {
+            if (other.hwUUID != null)
+                return false;
+        } else if (!hwUUID.equals(other.hwUUID))
+            return false;
+        if (hwFamily == null) {
+            if (other.hwFamily != null)
+                return false;
+        } else if (!hwFamily.equals(other.hwFamily))
             return false;
         return true;
     }

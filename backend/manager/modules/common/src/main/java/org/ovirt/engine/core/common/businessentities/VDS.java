@@ -159,6 +159,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
             String ip, String host_name, int port, int status, Integer cpu_cores, Integer cpuThreads, String cpu_model,
+            String hwManufacturer, String hwProductName,
+            String hwVersion, String hwSerialNumber, String hwUUID, String hwFamily,
             Double cpu_speed_mh, String if_total_speed, Boolean kvm_enabled, Integer physical_mem_mb,
             Double cpu_idle, Double cpu_load, Double cpu_sys,
             Double cpu_user, Integer mem_commited, Integer vm_active, int vm_count,
@@ -183,6 +185,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.sethost_name(host_name);
         this.setport(port);
         this.setstatus(VDSStatus.forValue(status));
+        this.setHardwareManufacturer(hwManufacturer);
+        this.setHardwareProductName(hwProductName);
+        this.setHardwareVersion(hwVersion);
+        this.setHardwareSerialNumber(hwSerialNumber);
+        this.setHardwareUUID(hwUUID);
+        this.setHardwareFamily(hwFamily);
         this.setcpu_cores(cpu_cores);
         this.setCpuThreads(cpuThreads);
         this.setcpu_model(cpu_model);
@@ -241,6 +249,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getcpu_cores(),
                         getCpuThreads(),
                         getcpu_model(),
+                        getHardwareManufacturer(),
+                        getHardwareProductName(),
+                        getHardwareVersion(),
+                        getHardwareSerialNumber(),
+                        getHardwareUUID(),
+                        getHardwareFamily(),
                         getcpu_speed_mh(),
                         getif_total_speed(),
                         getkvm_enabled(),
@@ -446,6 +460,54 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setCpuThreads(Integer value) {
         this.mVdsDynamic.setCpuThreads(value);
+    }
+
+    public String getHardwareUUID() {
+        return this.mVdsDynamic.getHardwareUUID();
+    }
+
+    public String getHardwareManufacturer() {
+        return this.mVdsDynamic.getHardwareManufacturer();
+    }
+
+    public String getHardwareFamily() {
+        return this.mVdsDynamic.getHardwareFamily();
+    }
+
+    public String getHardwareSerialNumber() {
+        return this.mVdsDynamic.getHardwareSerialNumber();
+    }
+
+    public String getHardwareProductName() {
+        return this.mVdsDynamic.getHardwareProductName();
+    }
+
+    public String getHardwareVersion() {
+        return this.mVdsDynamic.getHardwareVersion();
+    }
+
+    public void setHardwareUUID(String value) {
+        this.mVdsDynamic.setHardwareUUID(value);
+    }
+
+    public void setHardwareFamily(String value) {
+        this.mVdsDynamic.setHardwareFamily(value);
+    }
+
+    public void setHardwareSerialNumber(String value) {
+        this.mVdsDynamic.setHardwareSerialNumber(value);
+    }
+
+    public void setHardwareVersion(String value) {
+        this.mVdsDynamic.setHardwareVersion(value);
+    }
+
+    public void setHardwareProductName(String value) {
+        this.mVdsDynamic.setHardwareProductName(value);
+    }
+
+    public void setHardwareManufacturer(String value) {
+        this.mVdsDynamic.setHardwareManufacturer(value);
     }
 
     public Integer getcpu_sockets() {

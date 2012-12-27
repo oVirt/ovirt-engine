@@ -1286,6 +1286,12 @@
         <column>hooks</column>
         <column>non_operational_reason</column>
         <column>cpu_threads</column>
+        <column>hw_manufacturer</column>
+        <column>hw_product_name</column>
+        <column>hw_version</column>
+        <column>hw_serial_number</column>
+        <column>hw_uuid</column>
+        <column>hw_family</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -1326,6 +1332,12 @@
             <value>{}</value>
             <value>0</value>
             <value>16</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -1367,6 +1379,12 @@
             <value>{}</value>
             <value>0</value>
             <value>16</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -1408,6 +1426,12 @@
             <value>{}</value>
             <value>0</value>
             <value>16</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -1449,6 +1473,12 @@
             <value>{}</value>
             <value>0</value>
             <value>16</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
         </row>
     </table>
 

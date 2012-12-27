@@ -84,6 +84,12 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 entity.setHooksStr(rs.getString("hooks"));
                 entity.setNonOperationalReason(NonOperationalReason.forValue(rs
                         .getInt("non_operational_reason")));
+                entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
+                entity.setHardwareProductName(rs.getString("hw_product_name"));
+                entity.setHardwareVersion(rs.getString("hw_version"));
+                entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
+                entity.setHardwareUUID(rs.getString("hw_uuid"));
+                entity.setHardwareFamily(rs.getString("hw_family"));
                 return entity;
             }
         };
@@ -136,7 +142,13 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("anonymous_hugepages", vds.getAnonymousHugePages())
                 .addValue("hooks", vds.getHooksStr())
                 .addValue("non_operational_reason",
-                        vds.getNonOperationalReason().getValue());
+                        vds.getNonOperationalReason().getValue())
+                .addValue("hw_manufacturer", vds.getHardwareManufacturer())
+                .addValue("hw_product_name", vds.getHardwareProductName())
+                .addValue("hw_version", vds.getHardwareVersion())
+                .addValue("hw_serial_number", vds.getHardwareSerialNumber())
+                .addValue("hw_uuid", vds.getHardwareUUID())
+                .addValue("hw_family", vds.getHardwareFamily());
 
         getCallsHandler().executeModification("InsertVdsDynamic", parameterSource);
     }
@@ -186,7 +198,13 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("anonymous_hugepages", vds.getAnonymousHugePages())
                 .addValue("hooks", vds.getHooksStr())
                 .addValue("non_operational_reason",
-                        vds.getNonOperationalReason().getValue());
+                        vds.getNonOperationalReason().getValue())
+                .addValue("hw_manufacturer", vds.getHardwareManufacturer())
+                .addValue("hw_product_name", vds.getHardwareProductName())
+                .addValue("hw_version", vds.getHardwareVersion())
+                .addValue("hw_serial_number", vds.getHardwareSerialNumber())
+                .addValue("hw_uuid", vds.getHardwareUUID())
+                .addValue("hw_family", vds.getHardwareFamily());
 
         getCallsHandler().executeModification("UpdateVdsDynamic", parameterSource);
     }

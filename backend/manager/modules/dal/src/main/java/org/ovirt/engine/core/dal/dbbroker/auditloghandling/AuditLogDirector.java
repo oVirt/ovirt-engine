@@ -266,6 +266,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_FENCE_STATUS_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_APPROVE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_APPROVE_FAILED, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_INITIALIZING, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_ADD_VM_TEMPLATE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_DETECTED, AuditLogSeverity.NORMAL);

@@ -175,6 +175,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public VDSInfoReturnForXmlRpc getHardwareInfo() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsHardwareInfo();
+            VDSInfoReturnForXmlRpc wrapper = new VDSInfoReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public VDSInfoReturnForXmlRpc getVdsStats() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getVdsStats();

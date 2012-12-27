@@ -28,6 +28,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getVdsCapabilities();
 
+    public Map<String, Object> getVdsHardwareInfo();
+
     public Map<String, Object> getVdsStats();
 
     public Map<String, Object> desktopLogin(String vmId, String domain, String user, String password);

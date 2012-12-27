@@ -40,6 +40,8 @@ public interface IVdsServer {
 
     VDSInfoReturnForXmlRpc getCapabilities();
 
+    VDSInfoReturnForXmlRpc getHardwareInfo();
+
     VDSInfoReturnForXmlRpc getVdsStats();
 
     StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password);

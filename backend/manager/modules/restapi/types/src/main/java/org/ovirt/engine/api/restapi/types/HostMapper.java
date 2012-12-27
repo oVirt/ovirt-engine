@@ -23,6 +23,7 @@ import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
+import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
@@ -181,7 +182,8 @@ public class HostMapper {
             model.setIscsi(new IscsiDetails());
             model.getIscsi().setInitiator(entity.getIScsiInitiatorName());
         }
-        model.setPowerManagement(map(entity, (PowerManagement) null));
+        model.setPowerManagement(map(entity, (PowerManagement)null));
+        model.setHardwareInformation(map(entity, (HardwareInformation)null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getcpu_sockets() != null) {
@@ -249,6 +251,18 @@ public class HostMapper {
             buf.append(hostOsInfo[i]);
         }
         return buf.toString();
+    }
+
+    @Mapping(from = VDS.class, to = HardwareInformation.class)
+    public static HardwareInformation map(VDS entity, HardwareInformation template) {
+        HardwareInformation model = template != null ? template : new HardwareInformation();
+        model.setManufacturer(entity.getHardwareManufacturer());
+        model.setFamily(entity.getHardwareFamily());
+        model.setProductName(entity.getHardwareProductName());
+        model.setSerialNumber(entity.getHardwareSerialNumber());
+        model.setUuid(entity.getHardwareUUID());
+        model.setVersion(entity.getHardwareVersion());
+        return model;
     }
 
     @Mapping(from = VDS.class, to = PowerManagement.class)
