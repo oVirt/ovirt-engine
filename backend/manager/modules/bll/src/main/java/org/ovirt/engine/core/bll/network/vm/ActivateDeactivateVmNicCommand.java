@@ -1,7 +1,9 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
