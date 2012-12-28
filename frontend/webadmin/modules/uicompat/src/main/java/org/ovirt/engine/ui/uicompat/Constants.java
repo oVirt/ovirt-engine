@@ -600,9 +600,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String asciiOrNoneValidationMsg();
 
     @DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set and UTF letters are allowed.")
-    String specialAsciiOrNoneValidationMsg();
+    String specialAsciiI18NOrNoneValidationMsg();
 
-    @DefaultStringValue("Name can contain only alphanumeric characters, '0-9', '_' or '-' characters.")
+    @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters.")
     String i18NNameValidationMsg();
 
     @DefaultStringValue("UTF characters are not allowed.")

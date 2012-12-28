@@ -14,10 +14,10 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 
 @SuppressWarnings("unused")
 public class SnapshotModel extends EntityModel
@@ -147,7 +147,9 @@ public class SnapshotModel extends EntityModel
 
     public boolean Validate()
     {
-        getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)});
+        getDescription().ValidateEntity(new IValidation[] { new NotEmptyValidation(),
+                new SpecialAsciiI18NOrNoneValidation(),
+                new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE) });
 
         return getDescription().getIsValid();
     }

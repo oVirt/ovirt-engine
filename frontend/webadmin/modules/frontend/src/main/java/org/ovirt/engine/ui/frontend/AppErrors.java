@@ -1541,7 +1541,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Disk type is required")
     String VALIDATION_DISK_TYPE_NOT_NULL();
 
-    @DefaultStringValue("Disk alias name must be formed of \"a-z0-9A-Z\" and \"-_.\"")
+    @DefaultStringValue("Disk alias name must be formed of alpha-numeric characters or \"-_.\"")
     String VALIDATION_DISK_ALIAS_INVALID();
 
     @DefaultStringValue("Volume format is required")
@@ -2024,7 +2024,11 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Non-VM networks are not supported in this Data-Center.")
     String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
 
-    String VALIDATION_DISK_IMAGE_DESCRIPTION_NOT_ASCII();
+    @DefaultStringValue("Disk description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
+    String VALIDATION_DISK_DESCRIPTION_INVALID();
+
+    @DefaultStringValue("Snapshot description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
+    String VALIDATION_DISK_IMAGE_DESCRIPTION_INVALID();
 
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 

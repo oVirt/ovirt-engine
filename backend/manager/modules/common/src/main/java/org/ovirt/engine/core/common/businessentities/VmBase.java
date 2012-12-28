@@ -10,7 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -18,8 +17,8 @@ import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
+import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -52,9 +51,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
     @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
-            message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-                    UpdateEntity.class })
+    @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
+            groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
     @Column(name = "mem_size_mb", nullable = false)

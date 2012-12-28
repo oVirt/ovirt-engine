@@ -16,13 +16,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -64,7 +65,9 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Column(name = "description")
-    @ValidDescription(message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
+            message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID",
+            groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
     @Column(name = "storage_pool_type")

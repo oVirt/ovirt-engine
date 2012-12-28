@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 
 @Target({ ANNOTATION_TYPE, METHOD, FIELD, CONSTRUCTOR, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE)
+@Pattern(regexp = ValidationUtils.ONLY_I18N_ASCII_OR_NONE)
 @Constraint(validatedBy = {})
 @ReportAsSingleViolation
 public @interface ValidDescription {

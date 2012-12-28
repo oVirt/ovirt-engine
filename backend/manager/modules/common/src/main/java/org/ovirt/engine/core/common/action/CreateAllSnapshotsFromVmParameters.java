@@ -14,7 +14,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
-    @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_ASCII", groups = { CreateEntity.class})
+    @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.INVALID", groups = { CreateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class},
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String _description;

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class AsciiOrNoneValidation extends SpecialAsciiOrNoneValidation {
+public class AsciiOrNoneValidation extends SpecialAsciiI18NOrNoneValidation {
 
     @Override
     protected String allUtfLetters() {

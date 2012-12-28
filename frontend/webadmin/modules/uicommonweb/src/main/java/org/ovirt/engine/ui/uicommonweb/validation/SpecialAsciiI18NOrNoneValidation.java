@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class SpecialAsciiOrNoneValidation extends BaseI18NValidation {
+public class SpecialAsciiI18NOrNoneValidation extends BaseI18NValidation {
 
     @Override
     protected String composeRegex() {
@@ -11,7 +11,7 @@ public class SpecialAsciiOrNoneValidation extends BaseI18NValidation {
 
     @Override
     protected String composeMessage() {
-        return ConstantsManager.getInstance().getConstants().specialAsciiOrNoneValidationMsg();
+        return ConstantsManager.getInstance().getConstants().specialAsciiI18NOrNoneValidationMsg();
     }
 
 }

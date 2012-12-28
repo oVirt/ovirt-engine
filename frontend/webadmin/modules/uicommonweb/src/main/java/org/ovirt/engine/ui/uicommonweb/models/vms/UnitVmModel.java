@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -48,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -1955,7 +1955,6 @@ public class UnitVmModel extends Model {
                 new IntegerValidation(1, behavior.maxCpus),
                 new TotalCpuCoresComposableValidation() });
 
-        getDescription().ValidateEntity(new IValidation[] { new AsciiOrNoneValidation() });
         if (getOSType().getIsValid())
         {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
@@ -1969,7 +1968,8 @@ public class UnitVmModel extends Model {
 
             getDescription().ValidateEntity(
                     new IValidation[] {
-                    new LengthValidation(255)
+                            new LengthValidation(255),
+                            new SpecialAsciiI18NOrNoneValidation()
                     });
 
             boolean is64OsType =
