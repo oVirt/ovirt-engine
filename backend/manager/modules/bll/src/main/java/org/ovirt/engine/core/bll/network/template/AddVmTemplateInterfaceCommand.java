@@ -28,6 +28,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("InterfaceName") })
 public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
     public AddVmTemplateInterfaceCommand(T parameters) {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -22,13 +23,13 @@ import org.ovirt.engine.core.common.queries.SearchReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
+@SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
         VdsGroupCommandBase<T> {
@@ -46,7 +47,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected boolean canDoAction() {
         // check that we are not removing the management network
-        if (StringHelper.EqOp(getParameters().getNetwork().getname(),
+        if (StringUtils.equals(getParameters().getNetwork().getname(),
                 Config.<String> GetValue(ConfigValues.ManagementNetwork))) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK);
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
@@ -85,6 +86,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         SearchReturnValue ret = (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar
                 : null);
         if (ret != null && ret.getSucceeded()) {
+            @SuppressWarnings("unchecked")
             List<IVdcQueryable> vmList = (List<IVdcQueryable>) ret.getReturnValue();
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;

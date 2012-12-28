@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
+@SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
 public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
     public UpdateVmTemplateInterfaceCommand(T parameters) {
@@ -71,7 +71,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        if (!StringHelper.EqOp(oldIface.getName(), getParameters().getInterface().getName())) {
+        if (!StringUtils.equals(oldIface.getName(), getParameters().getInterface().getName())) {
             if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
                             getParameters().getInterface().getName(),
                             getReturnValue().getCanDoActionMessages())) {

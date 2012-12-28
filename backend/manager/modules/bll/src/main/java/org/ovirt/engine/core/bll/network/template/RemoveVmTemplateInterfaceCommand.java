@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@SuppressWarnings("serial")
 public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
 
     public RemoveVmTemplateInterfaceCommand(T parameters) {

@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -27,9 +27,9 @@ public class GetAllSiblingVlanInterfacesQuery<P extends GetAllChildVlanInterface
                     .getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
                 if (vdsInterfaces.get(i).getVlanId() != null
-                        && !StringHelper.EqOp(getParameters().getInterface().getName(), vdsInterfaces.get(i)
+                        && !StringUtils.equals(getParameters().getInterface().getName(), vdsInterfaces.get(i)
                                 .getName())) {
-                    if (StringHelper.EqOp(NetworkUtils.StripVlan(getParameters().getInterface().getName()),
+                    if (StringUtils.equals(NetworkUtils.StripVlan(getParameters().getInterface().getName()),
                             NetworkUtils.StripVlan(vdsInterfaces.get(i).getName()))) {
                         retVal.add(vdsInterfaces.get(i));
                     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -27,7 +28,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -167,8 +167,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         if (!StringUtils.isEmpty(getMacAddress())) {
-            Regex re = new Regex(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS);
-            if (re.IsMatch(getMacAddress())) {
+            if (Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
                 return false;
             }

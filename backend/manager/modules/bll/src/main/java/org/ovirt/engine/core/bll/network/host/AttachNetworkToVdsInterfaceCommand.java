@@ -21,11 +21,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
+@SuppressWarnings("serial")
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
     private Network logicalNetwork;
 
@@ -53,7 +53,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     params.getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
-                if (StringHelper.EqOp(i.getBondName(), params.getInterface().getName())) {
+                if (StringUtils.equals(i.getBondName(), params.getInterface().getName())) {
                     nics.add(i.getName());
                 }
             }
@@ -149,6 +149,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     VdcQueryType.GetAllChildVlanInterfaces,
                     new GetAllChildVlanInterfacesQueryParameters(params.getVdsId(), params
                             .getInterface()));
+            @SuppressWarnings("unchecked")
             ArrayList<VdsNetworkInterface> vlanIfaces = (ArrayList<VdsNetworkInterface>) ret.getReturnValue();
             if (vlanIfaces.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_CONNECT_TO_VLAN);

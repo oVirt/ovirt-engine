@@ -149,6 +149,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         VdcQueryReturnValue tempVar = Backend.getInstance().runInternalQuery(VdcQueryType.Search, searchParams);
         SearchReturnValue ret = (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar : null);
         if (ret != null && ret.getSucceeded()) {
+            @SuppressWarnings("unchecked")
             Iterable<IVdcQueryable> vmList = (Iterable<IVdcQueryable>) ret.getReturnValue();
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;

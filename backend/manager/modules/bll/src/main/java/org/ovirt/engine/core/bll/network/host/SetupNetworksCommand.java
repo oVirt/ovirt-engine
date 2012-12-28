@@ -31,6 +31,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 

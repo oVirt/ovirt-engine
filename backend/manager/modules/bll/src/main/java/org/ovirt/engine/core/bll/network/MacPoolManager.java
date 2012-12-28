@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.compat.LongCompat;
-import org.ovirt.engine.core.compat.NumberStyles;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -23,6 +21,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MacPoolManager {
 
+    private static final int HEX_RADIX = 16;
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     public static MacPoolManager getInstance() {
@@ -95,8 +94,8 @@ public class MacPoolManager {
         if (parsedRangeEnd == null || parsedRangeStart == null) {
             return false;
         }
-        long startNum = LongCompat.parseLong(parseRangePart(start), NumberStyles.HexNumber);
-        long endNum = LongCompat.parseLong(parseRangePart(end), NumberStyles.HexNumber);
+        long startNum = Long.parseLong(parseRangePart(start), HEX_RADIX);
+        long endNum = Long.parseLong(parseRangePart(end), HEX_RADIX);
         if (startNum > endNum) {
             // throw new
             // VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
@@ -109,7 +108,7 @@ public class MacPoolManager {
                 // VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
                 return false;
             } else if (value.length() < 12) {
-                value = StringHelper.padLeft(value, 12, '0');
+                value = StringUtils.leftPad(value, 12, '0');
             }
             StringBuilder builder = new StringBuilder();
             for (int j = 0; j < value.length(); j += 2) {

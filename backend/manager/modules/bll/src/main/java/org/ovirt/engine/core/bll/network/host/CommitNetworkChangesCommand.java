@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@SuppressWarnings("serial")
 public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
     public CommitNetworkChangesCommand(T param) {
         super(param);

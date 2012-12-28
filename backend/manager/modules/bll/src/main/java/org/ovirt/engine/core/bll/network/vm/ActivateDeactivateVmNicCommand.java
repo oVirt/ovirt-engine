@@ -25,6 +25,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
  * update the device, if it is Up - HotPlug / HotUnPlug the virtual network interface
  */
+@SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
