@@ -30,6 +30,9 @@ public class I18NRegexpTest {
     public static CorrectString chineseText = new CorrectString("你好世界_-");
 
     @DataPoint
+    public static CorrectString dotSign = new CorrectString(".");
+
+    @DataPoint
     public static IncorrectString atSign = new IncorrectString("@");
 
     @DataPoint

@@ -42,12 +42,12 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ByteSizeValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -1959,33 +1959,12 @@ public class UnitVmModel extends Model {
         if (getOSType().getIsValid())
         {
             VmOsType osType = (VmOsType) getOSType().getSelectedItem();
-
-            String nameExpr = "^[-\\w\\.]{1,"; //$NON-NLS-1$
-            String nameMsg;
-            if (AsyncDataProvider.IsWindowsOsType(osType))
-            {
-                nameExpr += WINDOWS_VM_NAME_MAX_LIMIT;
-                nameMsg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameMustConataionOnlyAlphanumericChars(WINDOWS_VM_NAME_MAX_LIMIT);
-            }
-            else
-            {
-                nameExpr += NON_WINDOWS_VM_NAME_MAX_LIMIT;
-                nameMsg =
-                        ConstantsManager.getInstance()
-                                .getMessages()
-                                .nameMustConataionOnlyAlphanumericChars(NON_WINDOWS_VM_NAME_MAX_LIMIT);
-            }
-
-            nameExpr += "}$"; //$NON-NLS-1$
-
             getName().ValidateEntity(
                     new IValidation[] {
                             new NotEmptyValidation(),
-                            new LengthValidation(this.getBehavior() instanceof TemplateVmModelBehavior ? 40 : 64),
-                            new RegexValidation(nameExpr, nameMsg)
+                            new LengthValidation(this.getBehavior() instanceof TemplateVmModelBehavior ? 40 :
+                                AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
+                            new I18NNameValidation()
                     });
 
             getDescription().ValidateEntity(

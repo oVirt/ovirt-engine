@@ -28,7 +28,7 @@ public class I18NNameValidation extends BaseI18NValidation {
     }
 
     protected String specialCharacters() {
-        return "_-"; //$NON-NLS-1$
+        return "._-"; //$NON-NLS-1$
     }
 
     protected String end() {
