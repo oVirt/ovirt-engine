@@ -116,7 +116,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         }
 
-        return RemoveNetworkCommand.CommonNetworkValidation(oldNetwork, getReturnValue().getCanDoActionMessages());
+        return networkNotAttachedToCluster(oldNetwork);
     }
 
     @Override
