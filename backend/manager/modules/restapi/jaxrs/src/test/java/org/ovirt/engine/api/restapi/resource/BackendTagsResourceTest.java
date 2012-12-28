@@ -340,7 +340,7 @@ public class BackendTagsResourceTest
 
     @SuppressWarnings("unchecked")
     protected UriInfo setUpUriExpectationsWithMax(boolean badFormat) {
-        UriInfo uriInfo = control.createMock(UriInfo.class);;
+        UriInfo uriInfo = control.createMock(UriInfo.class);
         expect(uriInfo.getBaseUri()).andReturn(URI.create(URI_BASE)).anyTimes();
         List<PathSegment> psl = new ArrayList<PathSegment>();
 

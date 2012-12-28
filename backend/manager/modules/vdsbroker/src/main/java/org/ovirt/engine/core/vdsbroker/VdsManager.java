@@ -608,7 +608,7 @@ public class VdsManager {
     public void dispose() {
         log.info("vdsManager::disposing");
         SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
-        XmlRpcUtils.shutDownConnection(((VdsServerWrapper) _vdsProxy).getHttpClient());;
+        XmlRpcUtils.shutDownConnection(((VdsServerWrapper) _vdsProxy).getHttpClient());
     }
 
     /**

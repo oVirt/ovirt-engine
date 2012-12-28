@@ -17,7 +17,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
     private static final int SERVER_CONNECTION_COUNT = 9;
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk";
-    private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");;
+    private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     private StorageServerConnectionDAO dao;
     private StorageServerConnections newServerConnection;

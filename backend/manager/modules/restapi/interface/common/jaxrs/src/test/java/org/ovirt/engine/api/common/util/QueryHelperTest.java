@@ -198,7 +198,7 @@ public class QueryHelperTest extends Assert {
 
     private UriInfo setUpMatrixParamExpectations() {
 
-        UriInfo uriInfo = control.createMock(UriInfo.class);;
+        UriInfo uriInfo = control.createMock(UriInfo.class);
 
         List<PathSegment> psl = new ArrayList<PathSegment>();
 
@@ -227,7 +227,7 @@ public class QueryHelperTest extends Assert {
     }
 
     private UriInfo setUpGetMatrixConstraintsExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);;
+        UriInfo uriInfo = control.createMock(UriInfo.class);
         List<PathSegment> psl = new ArrayList<PathSegment>();
 
         PathSegment ps = control.createMock(PathSegment.class);

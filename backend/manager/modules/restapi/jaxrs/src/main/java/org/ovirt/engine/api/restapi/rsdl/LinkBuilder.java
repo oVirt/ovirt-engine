@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Response;
 
 public class LinkBuilder {
-    private DetailedLink detailedLink = new DetailedLink();;
+    private DetailedLink detailedLink = new DetailedLink();
     public LinkBuilder url(String url) {
         detailedLink.setHref(url);
         return this;

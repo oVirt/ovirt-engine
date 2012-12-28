@@ -161,7 +161,7 @@ public class BackendCdRomResourceTest
     }
 
     protected UriInfo setUpChangeCdUriMatrixExpectations() {
-        UriInfo uriInfo = control.createMock(UriInfo.class);;
+        UriInfo uriInfo = control.createMock(UriInfo.class);
 
         List<PathSegment> psl = new ArrayList<PathSegment>();
 

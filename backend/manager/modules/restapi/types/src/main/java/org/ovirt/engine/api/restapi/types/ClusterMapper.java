@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;;
+import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 public class ClusterMapper {
 

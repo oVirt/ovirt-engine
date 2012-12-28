@@ -139,7 +139,7 @@ public enum ActionGroup {
             boolean allowsViewingChildren,
             ApplicationMode applicationMode) {
         this(value, type, objectType, allowsViewingChildren);
-        this.applicationMode = applicationMode.getValue();;
+        this.applicationMode = applicationMode.getValue();
     }
 
     private static void initEntitiesMap() {

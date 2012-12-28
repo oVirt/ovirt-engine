@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class SubnetMaskValidation implements IValidation
 {
-    private final static IpAddressValidation IP_VALIDATOR = new IpAddressValidation();;
+    private final static IpAddressValidation IP_VALIDATOR = new IpAddressValidation();
     private final static Set<Integer> CORRECT_RANGE = new HashSet<Integer>();
     private final static List<String> reasons = new ArrayList<String>();
 

@@ -184,7 +184,7 @@ public class RsdlBuilder {
     }
 
     public class LinkBuilder {
-        private DetailedLink link = new DetailedLink();;
+        private DetailedLink link = new DetailedLink();
         public LinkBuilder url(String url) {
             link.setHref(url);
             return this;

@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmStatusCell extends AbstractCell<VM> {
 
-    ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();;
+    ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb) {
