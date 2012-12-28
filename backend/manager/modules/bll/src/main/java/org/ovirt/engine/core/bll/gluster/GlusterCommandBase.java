@@ -36,7 +36,10 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     @Override
     protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVdsGroupId().toString(), LockingGroup.GLUSTER.name());
+        if (!isInternalExecution()) {
+            return Collections.singletonMap(getVdsGroupId().toString(), LockingGroup.GLUSTER.name());
+        }
+        return super.getExclusiveLocks();
     }
 
     /*
