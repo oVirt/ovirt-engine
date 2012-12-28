@@ -24,15 +24,21 @@ public class MacPoolManager {
     private static final int HEX_RADIX = 16;
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
-    public static MacPoolManager getInstance() {
-        return INSTANCE;
-    }
+    private static Log log = LogFactory.getLog(MacPoolManager.class);
 
     private final Set<String> availableMacs = new HashSet<String>();
     private final Set<String> allocatedMacs = new HashSet<String>();
     private final Set<String> allocatedCustomMacs = new HashSet<String>();
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
-    private boolean initialized = false;
+    private boolean initialized;
+
+    private MacPoolManager() {
+        // Empty ctor since this is singleton.
+    }
+
+    public static MacPoolManager getInstance() {
+        return INSTANCE;
+    }
 
     public void initialize() {
         lockObj.writeLock().lock();
@@ -97,15 +103,11 @@ public class MacPoolManager {
         long startNum = Long.parseLong(parseRangePart(start), HEX_RADIX);
         long endNum = Long.parseLong(parseRangePart(end), HEX_RADIX);
         if (startNum > endNum) {
-            // throw new
-            // VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
             return false;
         }
         for (long i = startNum; i <= endNum; i++) {
             String value = String.format("%x", i);
             if (value.length() > 12) {
-                // throw new
-                // VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
                 return false;
             } else if (value.length() < 12) {
                 value = StringUtils.leftPad(value, 12, '0');
@@ -245,8 +247,6 @@ public class MacPoolManager {
             lockObj.writeLock().unlock();
         }
     }
-
-    private static Log log = LogFactory.getLog(MacPoolManager.class);
 
     @SuppressWarnings("serial")
     private class MacPoolExceededMaxException extends RuntimeException {
