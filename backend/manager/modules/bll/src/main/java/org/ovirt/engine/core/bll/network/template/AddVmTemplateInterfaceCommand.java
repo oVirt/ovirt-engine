@@ -55,8 +55,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        if (getVmTemplate() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        if (!validate(templateExists())) {
             return false;
         }
 

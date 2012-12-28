@@ -41,8 +41,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         List<VmNetworkInterface> interfaces =
                 getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
 
-        if (getVmTemplate() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        if (!validate(templateExists())) {
             return false;
         }
 

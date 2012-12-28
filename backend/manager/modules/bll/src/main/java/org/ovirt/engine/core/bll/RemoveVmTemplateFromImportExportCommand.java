@@ -45,11 +45,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
     @Override
     protected boolean canDoAction() {
-        boolean retVal = true;
-        if (getVmTemplate() == null) {
-            retVal = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-        }
+        boolean retVal = validate(templateExists());
         if (retVal) {
             DiskImageList images = templatesFromExport.get(LinqUtils.firstOrNull(templatesFromExport.keySet(),
                         new Predicate<VmTemplate>() {

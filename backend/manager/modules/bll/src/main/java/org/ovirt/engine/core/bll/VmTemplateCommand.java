@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -171,6 +171,11 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             reasons.add(String.format("$MaxValue %1$s", Config.<Integer> GetValue(ConfigValues.VmPriorityMaxValue)));
         }
         return res;
+    }
+
+    protected ValidationResult templateExists() {
+        return getVmTemplate() == null ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST)
+                : ValidationResult.VALID;
     }
 
     @Override
