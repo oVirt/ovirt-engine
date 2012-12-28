@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
-import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -23,25 +21,18 @@ import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("InterfaceName") })
-public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
+public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
+        extends VmTemplateInterfaceCommandBase<T> {
     public AddVmTemplateInterfaceCommand(T parameters) {
         super(parameters);
     }
 
-    public String getInterfaceName() {
-        return getParameters().getInterface().getName();
-    }
-
     @Override
     protected void executeCommand() {
-        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         getParameters().getInterface().setVmTemplateId(getParameters().getVmTemplateId());
         getParameters().getInterface().setId(Guid.NewGuid());
         getParameters().getInterface().setSpeed(
@@ -60,9 +51,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     protected boolean canDoAction() {
         List<VmNetworkInterface> interfaces =
                 getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
-        if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
-                getParameters().getInterface().getName(),
-                getReturnValue().getCanDoActionMessages())) {
+        if (!interfaceNameUnique(interfaces)) {
             return false;
         }
 
@@ -71,8 +60,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        if (getParameters().getInterface().getVmId() != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
+        if (!validate(linkedToTemplate())) {
             return false;
         }
 
@@ -119,10 +107,9 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
      * Set the parameters for bll messages, such as type and action,
      */
     @Override
-    protected void setActionMessageParameters()
-    {
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
     @Override
@@ -151,9 +138,5 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         }
 
         return subjects;
-    }
-
-    private String getNetworkName() {
-        return getParameters().getInterface().getNetworkName();
     }
 }

@@ -3,8 +3,6 @@ package org.ovirt.engine.core.bll.network.template;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.VmHandler;
-import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,7 +10,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -22,27 +19,22 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
-@CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
-public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
+@CustomLogFields({ @CustomLogField("NetworkName") })
+public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
+        extends VmTemplateInterfaceCommandBase<T> {
     public UpdateVmTemplateInterfaceCommand(T parameters) {
         super(parameters);
     }
 
-    public String getInterfaceName() {
-        return getParameters().getInterface().getName();
-    }
-
     @Override
     protected void executeCommand() {
-        AddCustomValue("InterfaceType", (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         getVmNetworkInterfaceDao().update(getParameters().getInterface());
         setSucceeded(true);
     }
 
     @Override
     protected boolean canDoAction() {
-        if (getParameters().getInterface().getVmId() != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_VM_CANNOT_BE_SET);
+        if (!validate(linkedToTemplate())) {
             return false;
         }
 
@@ -71,12 +63,8 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        if (!StringUtils.equals(oldIface.getName(), getParameters().getInterface().getName())) {
-            if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
-                            getParameters().getInterface().getName(),
-                            getReturnValue().getCanDoActionMessages())) {
-                return false;
-            }
+        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !interfaceNameUnique(interfaces)) {
+            return false;
         }
 
         return true;
@@ -92,10 +80,9 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
      * Set the parameters for bll messages, such as type and action,
      */
     @Override
-    protected void setActionMessageParameters()
-    {
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
     @Override
@@ -136,9 +123,5 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
     private boolean isNetworkChanged(VmNetworkInterface iface) {
         return !getNetworkName().equals(iface.getNetworkName());
-    }
-
-    private String getNetworkName() {
-        return getParameters().getInterface().getNetworkName();
     }
 }
