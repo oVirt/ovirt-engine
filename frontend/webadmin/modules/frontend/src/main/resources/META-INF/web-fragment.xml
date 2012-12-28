@@ -1,0 +1,56 @@
+<web-fragment xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd" version="3.0">
+
+	<display-name>Frontend Web Fragment for GWT UI Projects</display-name>
+
+	<filter>
+		<filter-name>GwtCachingFilter</filter-name>
+		<filter-class>org.ovirt.engine.ui.frontend.server.gwt.GwtCachingFilter</filter-class>
+
+		<!-- Resources intended to be cached forever on the client: -->
+		<!-- * module permutations: <md5>.cache.html -->
+		<!-- * ClientBundle composite images: <md5>.cache.png | <md5>.cache.gif -->
+		<!-- * split points: deferredjs/<md5>/<n>.cache.js -->
+		<init-param>
+			<param-name>cache</param-name>
+			<param-value>.*\.cache\.html|.*\.cache\.png|.*\.cache\.gif|.*\.cache\.js</param-value>
+		</init-param>
+
+		<!-- Resources which always need to be checked for changes: -->
+		<!-- * application host page: WebAdmin.html | UserPortal.html -->
+		<!-- * permutation selector script: <applicationName>.nocache.js -->
+		<!-- * UI plugin static resources: */plugin/* -->
+		<init-param>
+			<param-name>no-cache</param-name>
+			<param-value>.*WebAdmin\.html|UserPortal\.html|.*\.nocache\.js|.*\/plugin\/.*</param-value>
+		</init-param>
+
+		<!-- Resources not intended to be cached on the client at all: -->
+		<!-- * RPC calls to Generic API -->
+		<init-param>
+			<param-name>no-store</param-name>
+			<param-value>.*GenericApiGWTService</param-value>
+		</init-param>
+	</filter>
+
+	<servlet>
+		<servlet-name>UserPortalHostPageServlet</servlet-name>
+		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.UserPortalHostPageServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>WebAdminHostPageServlet</servlet-name>
+		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.WebAdminHostPageServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>GenericApiServlet</servlet-name>
+		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.GenericApiGWTServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>PluginResourceServlet</servlet-name>
+		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginResourceServlet</servlet-class>
+	</servlet>
+
+</web-fragment>

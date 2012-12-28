@@ -3,7 +3,7 @@
 <module>
 	<inherits name='com.google.gwt.core.Core' />
 	<inherits name='org.ovirt.engine.ui.UiCompat' />
-	
+
 	<source path="frontend">
 		<exclude name="server/**"/>
 	</source>

@@ -1,32 +1,22 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
 	<display-name>oVirt WebAdmin UI</display-name>
 
-	<servlet>
-		<servlet-name>org.ovirt.engine.ui.frontend.WebAdmin GenericApiGWTService</servlet-name>
-		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.GenericApiGWTServiceImpl</servlet-class>
-	</servlet>
+	<filter-mapping>
+		<filter-name>GwtCachingFilter</filter-name>
+		<url-pattern>/webadmin/*</url-pattern>
+	</filter-mapping>
 
 	<servlet-mapping>
-		<servlet-name>org.ovirt.engine.ui.frontend.WebAdmin GenericApiGWTService</servlet-name>
-		<url-pattern>/webadmin/GenericApiGWTService</url-pattern>
-	</servlet-mapping>
-
-	<servlet>
-		<servlet-name>WebAdminDynamicHosting</servlet-name>
-		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.WebadminDynamicHostingServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>WebAdminDynamicHosting</servlet-name>
+		<servlet-name>WebAdminHostPageServlet</servlet-name>
 		<url-pattern>/webadmin/WebAdmin.html</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>PluginResourceServlet</servlet-name>
-		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginResourceServlet</servlet-class>
-	</servlet>
+	<servlet-mapping>
+		<servlet-name>GenericApiServlet</servlet-name>
+		<url-pattern>/webadmin/GenericApiGWTService</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>PluginResourceServlet</servlet-name>
@@ -44,7 +34,7 @@
 		<location>/404.html</location>
 	</error-page>
 
-	<!-- confidentiality -->
+	<!-- Confidentiality -->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>everything</web-resource-name>

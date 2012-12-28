@@ -1,18 +1,20 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.ejb.EJB;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -22,19 +24,24 @@ import org.ovirt.engine.core.common.users.VdcUser;
 /**
  * Renders the HTML host page of a GWT application.
  * <p>
- * Allows to {@linkplain #writeAdditionalJsData include} additional data (JavaScript objects) into the host page. By
- * default, information about the currently logged-in user is included via {@code userInfo} object.
- * <p>
- * In order to prevent browsers from caching the GWT selector script, a dummy URL parameter with unique value is added
- * to the GWT selector script URL. This makes all GWT selector script requests unique from web resource point of view.
- * <p>
- * Note: this class resides in Frontend servlet package as it's already embedded in a JAR under WEB-INF/lib.
+ * Embeds additional data (JavaScript objects) into the host page. By default, information about the currently logged-in
+ * user is included via {@code userInfo} object.
  */
 public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     private static final long serialVersionUID = 3946034162721073929L;
 
+    protected static final String ATTR_SELECTOR_SCRIPT = "selectorScript"; //$NON-NLS-1$
+    protected static final String ATTR_USER_INFO = "userInfo"; //$NON-NLS-1$
+
+    protected static final String IF_NONE_MATCH_HEADER = "If-None-Match"; //$NON-NLS-1$
+    protected static final String ETAG_HEADER = "Etag"; //$NON-NLS-1$
+
+    private static final String HOST_JSP = "/GwtHostPage.jsp"; //$NON-NLS-1$
+    private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
+
     private BackendLocal backend;
+    private ObjectMapper mapper;
 
     @EJB(beanInterface = BackendLocal.class,
             mappedName = "java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal")
@@ -43,22 +50,39 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PrintWriter writer = response.getWriter();
-        response.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
-        response.setHeader("Cache-Control", "no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
+    public void init() {
+        this.mapper = new ObjectMapper();
+    }
 
-        writer.append("<!DOCTYPE html><html><head>"); //$NON-NLS-1$
-        writer.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"); //$NON-NLS-1$
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        // Set attribute for selector script
+        request.setAttribute(ATTR_SELECTOR_SCRIPT, getSelectorScriptName());
 
-        writer.append("<script type=\"text/javascript\">"); //$NON-NLS-1$
-        writeAdditionalJsData(request, writer);
-        writer.append("</script>"); //$NON-NLS-1$
+        // Set attribute for userInfo object
+        VdcUser loggedInUser = getLoggedInUser(request.getSession().getId());
+        if (loggedInUser != null) {
+            request.setAttribute(ATTR_USER_INFO, getUserInfoObject(loggedInUser));
+        }
 
-        writer.append("</head><body>"); //$NON-NLS-1$
-        writer.append("<iframe src=\"javascript:''\" id=\"__gwt_historyFrame\" tabIndex='-1' style=\"position:absolute;width:0;height:0;border:0\"></iframe>"); //$NON-NLS-1$
-        writer.append("<script type=\"text/javascript\" src=\"" + getSelectorScriptName() + "?nocache=" + new Date().getTime() + "\"></script>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        writer.append("</body></html>"); //$NON-NLS-1$
+        try {
+            // Calculate MD5 for use with If-None-Match request header
+            String md5sum = getMd5Sum(request);
+
+            if (request.getHeader(IF_NONE_MATCH_HEADER) != null
+                    && request.getHeader(IF_NONE_MATCH_HEADER).equals(md5sum)) {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            } else {
+                RequestDispatcher dispatcher = request.getRequestDispatcher(HOST_JSP);
+                response.setContentType(UTF_CONTENT_TYPE);
+                response.addHeader(ETAG_HEADER, md5sum);
+                if (dispatcher != null) {
+                    dispatcher.include(request, response);
+                }
+            }
+        } catch (NoSuchAlgorithmException ex) {
+            throw new ServletException(ex);
+        }
     }
 
     @Override
@@ -67,55 +91,19 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     /**
-     * Writes additional data (JavaScript objects) into the host page.
-     */
-    protected void writeAdditionalJsData(HttpServletRequest request, PrintWriter writer) {
-        VdcUser loggedUser = getLoggedInUser(request);
-
-        if (loggedUser != null) {
-            Map<String, String> userInfoData = new HashMap<String, String>();
-            userInfoData.put("id", loggedUser.getUserId().toString()); //$NON-NLS-1$
-            userInfoData.put("userName", loggedUser.getUserName()); //$NON-NLS-1$
-            userInfoData.put("domain", loggedUser.getDomainControler()); //$NON-NLS-1$
-            writeJsObject(writer, "userInfo", userInfoData); //$NON-NLS-1$
-        }
-    }
-
-    /**
      * @return Name of the GWT selector script, e.g. {@code myapp.nocache.js}.
      */
     protected abstract String getSelectorScriptName();
 
     /**
-     * Writes a string representing JavaScript object literal containing given attributes.
+     * @return {@code true} if all queries should be filtered according to user permissions, {@code false} otherwise.
      */
-    protected void writeJsObject(PrintWriter writer, String objectName, Map<String, String> attributes) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("var ").append(objectName).append(" = { "); //$NON-NLS-1$ //$NON-NLS-2$
+    protected abstract boolean filterQueries();
 
-        int countdown = attributes.size();
-        for (Entry<String, String> e : attributes.entrySet()) {
-            appendJsObjectAttribute(sb, e.getKey(), e.getValue(), true);
-
-            if (--countdown > 0) {
-                sb.append(", "); //$NON-NLS-1$
-            }
-        }
-
-        sb.append(" };"); //$NON-NLS-1$
-        writer.append(sb.toString());
-    }
-
-    protected void appendJsObjectAttribute(StringBuilder sb, String name, String value, boolean quoteValue) {
-        sb.append(name).append(": "); //$NON-NLS-1$
-        sb.append(quoteValue ? "\"" + value + "\"" : value); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
-    protected void initQueryParams(VdcQueryParametersBase queryParams, HttpServletRequest request) {
-        String sessionId = request.getSession().getId();
+    protected void initQueryParams(VdcQueryParametersBase queryParams, String sessionId) {
         queryParams.setSessionId(sessionId);
         queryParams.setHttpSessionId(sessionId);
-        queryParams.setFiltered(false);
+        queryParams.setFiltered(filterQueries());
     }
 
     /**
@@ -123,15 +111,10 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * <p>
      * Returns {@code null} otherwise.
      */
-    protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, HttpServletRequest request) {
-        initQueryParams(queryParams, request);
+    protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
+        initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.RunQuery(queryType, queryParams);
-
-        if (result.getSucceeded()) {
-            return result.getReturnValue();
-        } else {
-            return null;
-        }
+        return result.getSucceeded() ? result.getReturnValue() : null;
     }
 
     /**
@@ -140,20 +123,52 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * <p>
      * Returns {@code null} otherwise.
      */
-    protected Object runPublicQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams,
-            HttpServletRequest request) {
-        initQueryParams(queryParams, request);
+    protected Object runPublicQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
+        initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.RunPublicQuery(queryType, queryParams);
-
-        if (result.getSucceeded()) {
-            return result.getReturnValue();
-        } else {
-            return null;
-        }
+        return result.getSucceeded() ? result.getReturnValue() : null;
     }
 
-    private VdcUser getLoggedInUser(HttpServletRequest request) {
-        return (VdcUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), request);
+    protected ObjectNode createObjectNode() {
+        return mapper.createObjectNode();
+    }
+
+    protected ArrayNode createArrayNode() {
+        return mapper.createArrayNode();
+    }
+
+    protected VdcUser getLoggedInUser(String sessionId) {
+        return (VdcUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
+    }
+
+    protected ObjectNode getUserInfoObject(VdcUser loggedInUser) {
+        ObjectNode obj = createObjectNode();
+        obj.put("id", loggedInUser.getUserId().toString()); //$NON-NLS-1$
+        obj.put("userName", loggedInUser.getUserName()); //$NON-NLS-1$
+        obj.put("domain", loggedInUser.getDomainControler()); //$NON-NLS-1$
+        return obj;
+    }
+
+    protected String getMd5Sum(HttpServletRequest request) throws NoSuchAlgorithmException {
+        return (new HexBinaryAdapter()).marshal(getMd5Digest(request).digest());
+    }
+
+    protected MessageDigest getMd5Digest(HttpServletRequest request) throws NoSuchAlgorithmException {
+        MessageDigest digest = createMd5Digest();
+
+        // Update based on selector script
+        digest.update(request.getAttribute(ATTR_SELECTOR_SCRIPT).toString().getBytes());
+
+        // Update based on userInfo object
+        if (request.getAttribute(ATTR_USER_INFO) != null) {
+            digest.update(request.getAttribute(ATTR_USER_INFO).toString().getBytes());
+        }
+
+        return digest;
+    }
+
+    protected MessageDigest createMd5Digest() throws NoSuchAlgorithmException {
+        return MessageDigest.getInstance("MD5"); //$NON-NLS-1$
     }
 
 }

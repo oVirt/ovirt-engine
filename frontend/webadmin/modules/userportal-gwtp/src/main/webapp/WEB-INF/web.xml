@@ -1,26 +1,21 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
 	<display-name>oVirt UserPortal UI</display-name>
 
-	<servlet>
-		<servlet-name>org.ovirt.engine.ui.frontend.UserPortal GenericApiGWTService</servlet-name>
-		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.GenericApiGWTServiceImpl</servlet-class>
-	</servlet>
+	<filter-mapping>
+		<filter-name>GwtCachingFilter</filter-name>
+		<url-pattern>/UserPortal/*</url-pattern>
+	</filter-mapping>
 
 	<servlet-mapping>
-		<servlet-name>org.ovirt.engine.ui.frontend.UserPortal GenericApiGWTService</servlet-name>
-		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/GenericApiGWTService</url-pattern>
+		<servlet-name>UserPortalHostPageServlet</servlet-name>
+		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>UserPortalDynamicHosting</servlet-name>
-		<servlet-class>org.ovirt.engine.ui.frontend.server.gwt.UserportalDynamicHostingServlet</servlet-class>
-	</servlet>
-
 	<servlet-mapping>
-		<servlet-name>UserPortalDynamicHosting</servlet-name>
-		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</url-pattern>
+		<servlet-name>GenericApiServlet</servlet-name>
+		<url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/GenericApiGWTService</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->
@@ -34,7 +29,7 @@
 		<location>/404.html</location>
 	</error-page>
 
-	<!-- confidentiality -->
+	<!-- Confidentiality -->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>everything</web-resource-name>

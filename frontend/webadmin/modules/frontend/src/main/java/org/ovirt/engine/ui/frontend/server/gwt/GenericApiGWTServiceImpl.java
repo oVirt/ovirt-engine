@@ -21,7 +21,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 
-public class GenericApiGWTServiceImpl extends AbstractGWTServiceImpl implements GenericApiGWTService {
+import com.google.gwt.rpc.server.RpcServlet;
+
+public class GenericApiGWTServiceImpl extends RpcServlet implements GenericApiGWTService {
 
     private static final long serialVersionUID = 7395780289048030855L;
 

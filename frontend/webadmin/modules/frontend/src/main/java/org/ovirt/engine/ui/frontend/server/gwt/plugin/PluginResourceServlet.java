@@ -14,11 +14,12 @@ import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.ServletUtils;
 
 /**
- * Servlet that serves UI plugin static resources (files) from local file system, relative to
+ * Serves UI plugin static resources from local file system, relative to
  * {@linkplain PluginDataManager#resolvePluginDataPath UI plugin data path}.
  * <p>
- * Note that this servlet <b>does not</b> {@linkplain PluginDataManager#reloadData reload} UI plugin
- * descriptor/configuration data as part of its request handling.
+ * Note that this servlet <em>does not</em> {@linkplain PluginDataManager#reloadData reload} UI plugin
+ * descriptor/configuration data as part of its request handling. To reload such data, the user must reload WebAdmin
+ * application in web browser.
  */
 public class PluginResourceServlet extends HttpServlet {
 
