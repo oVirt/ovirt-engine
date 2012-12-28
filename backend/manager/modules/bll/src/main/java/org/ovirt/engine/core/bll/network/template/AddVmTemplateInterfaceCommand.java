@@ -51,15 +51,9 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     protected boolean canDoAction() {
         List<VmNetworkInterface> interfaces =
                 getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
-        if (!interfaceNameUnique(interfaces)) {
-            return false;
-        }
-
-        if (!validate(templateExists())) {
-            return false;
-        }
-
-        if (!validate(linkedToTemplate())) {
+        if (!interfaceNameUnique(interfaces)
+                || !validate(templateExists())
+                || !validate(linkedToTemplate())) {
             return false;
         }
 
