@@ -74,33 +74,23 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected boolean validateVlanId(List<Network> networks) {
-        if (getParameters().getNetwork().getvlan_id() != null) {
-            if (!isVlanInRange(getParameters().getNetwork().getvlan_id())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_OUT_OF_RANGE);
-                return false;
-            }
-
-            else if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network n) {
-                    if (n.getvlan_id() != null) {
-                        return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
-                                && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id())
-                                && !n.getId().equals(getParameters().getNetwork().getId());
+        if (getParameters().getNetwork().getvlan_id() != null
+                && null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+                    @Override
+                    public boolean eval(Network n) {
+                        if (n.getvlan_id() != null) {
+                            return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
+                                    && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id())
+                                    && !n.getId().equals(getParameters().getNetwork().getId());
+                        }
+                        return false;
                     }
-                    return false;
-                }
-            })) {
-                addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
-                addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
-                return false;
-            }
+                })) {
+            addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
+            addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
+            return false;
         }
         return true;
-    }
-
-    private boolean isVlanInRange(int vlanId) {
-        return (vlanId >= 0 && vlanId <= 4095);
     }
 
     protected boolean networkNotAttachedToCluster(final Network network) {
