@@ -58,6 +58,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Storage Domain cannot be accessed.\nPossible reasons:\nNo operational Host in Data Center or Data Center state is not Up.")
     String IMAGE_REPOSITORY_NOT_FOUND();
 
+    @DefaultStringValue("Template is currently locked (temporarily).")
+    String VM_TEMPLATE_IS_LOCKED();
+
     @DefaultStringValue("Template's Image is locked (temporarily).")
     String VM_TEMPLATE_IMAGE_IS_LOCKED();
 

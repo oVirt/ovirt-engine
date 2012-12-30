@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -11,6 +13,8 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -41,6 +45,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
         if (mOldTemplate != null) {
             VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
+            if (mOldTemplate.getstatus() == VmTemplateStatus.Locked) {
+                return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
+            }
             if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
@@ -109,6 +116,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
     }
 
     @Override
