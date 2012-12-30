@@ -1249,6 +1249,23 @@ class Service():
         ]
         return execCmd(cmdList=cmd, usePipeFiles=True)
 
+    def available(self):
+        logging.debug("checking if %s service is available", self.name)
+
+        # Checks if systemd service available
+        cmd = [
+            basedefs.EXEC_SYSTEMCTL,
+            "show",
+            self.name
+        ]
+        out, rc = execCmd(cmdList=cmd)
+        sysd = "LoadState=loaded" in out
+
+        # Checks if systemV service available
+        sysv = os.path.exists("/etc/init.d/%s" % self.name)
+
+        return (sysd or sysv)
+
 def chown(target,uid, gid):
     logging.debug("chown %s to %s:%s" % (target, uid, gid))
     os.chown(target, uid, gid)

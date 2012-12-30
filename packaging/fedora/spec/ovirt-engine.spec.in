@@ -695,6 +695,7 @@ fi
 # Python scripts:
 %{engine_data}/scripts/basedefs.py*
 %{engine_data}/scripts/engine_validators.py*
+%{engine_data}/scripts/engine_firewalld.py*
 %{engine_data}/scripts/setup_params.py*
 %{engine_data}/scripts/setup_sequences.py*
 %{engine_data}/scripts/setup_controller.py*
@@ -707,6 +708,9 @@ fi
 %{engine_data}/scripts/engine-upgrade.py*
 %{engine_data}/scripts/post_upgrade.py*
 %{engine_data}/scripts/add_fn_db_get_async_tasks_function.sql
+
+# Firewalld configuration
+%config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 # Man pages
 %{_mandir}/man8/engine-setup.*

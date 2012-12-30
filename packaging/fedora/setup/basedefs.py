@@ -85,6 +85,7 @@ FILE_SLIMMING_PROFILE_CONF="/usr/share/ovirt-engine/conf/slimming.conf"
 FILE_IPTABLES_DEFAULT="%s/ovirt-engine/conf/iptables.default" % DIR_USR_SHARE
 FILE_IPTABLES_EXAMPLE="/etc/ovirt-engine/iptables.example"
 FILE_IPTABLES_BACKUP="%s/ovirt-engine/backups/iptables.backup" % DIR_VAR_LIB
+FILE_FIREWALLD_SERVICE="/etc/firewalld/services/ovirt.xml"
 FILE_NFS_SYSCONFIG="%s/ovirt-engine/conf/nfs.sysconfig" % DIR_USR_SHARE
 FILE_NFS_BACKUP="%s/ovirt-engine/backups/nfs.backup" % DIR_VAR_LIB
 FILE_ETC_EXPORTS="/etc/exports"

@@ -42,7 +42,7 @@ INFO_UPD_CONF="Editing %s Configuration"
 INFO_CFG_NFS="Configuring the Default ISO Domain"
 INFO_START_ENGINE="Starting ovirt-engine Service"
 INFO_START_HTTPD="Starting HTTPD Service"
-INFO_CFG_IPTABLES="Configuring Firewall (iptables)"
+INFO_CFG_IPTABLES="Configuring Firewall"
 INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % basedefs.APP_NAME
 INFO_USE_PARAMS="Proceed with the configuration listed above"
 INFO_NEED_STOP_ENGINE="\nIn order to proceed the installer must stop the ovirt-engine service"
@@ -87,6 +87,7 @@ INFO_DB_RESTORED="Database upgrade failed. Previous database has been restored"
 
 #config ip tables
 INFO_IPTABLES_FILE="an example of the required configuration for iptables can be found at: %s"
+INFO_FIREWALLD_FILE="In order to configure firewalld, please execute the following command: firewall-cmd --add-service ovirt"
 # the last 2 ports are http & https entered by the user
 INFO_IPTABLES_PORTS=basedefs.APP_NAME + " requires the following TCP/IP Incoming ports to be opened on the firewall:\n\
 22, %s, %s "
@@ -100,9 +101,9 @@ INFO_CA_SSH_FINGERPRINT="SSH Public key fingerprint: %s"
 #conf params
 INFO_CONF_PARAMS_IPTABLES_USAGE="Should the installer configure the local firewall, overriding the current configuration"
 INFO_CONF_PARAMS_IPTABLES_PROMPT="Firewall ports need to be opened.\n\
-The installer can configure iptables automatically overriding the current configuration. The old configuration will be backed up.\n\
-Alternately you can configure the firewall later using an example iptables file found under %s\n\
-Configure iptables ?" % basedefs.FILE_IPTABLES_EXAMPLE
+The installer can configure firewall automatically overriding the current configuration. The old configuration will be backed up.\n\
+Alternately you can configure the firewall later using an example file. \n\
+Which firewall do you wish to configure?"
 
 
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"
@@ -298,9 +299,7 @@ ERR_EXP_ATTACH_SU_ROLE="Failed to configure Super User role for %s"
 ERR_EXP_FAILED_UPD_LOG4J="Failed to configure application logging (could not edit %s)"
 
 #config iptables
-ERR_EXP_FAILED_CFG_IPTABLES="Failed to configure firewall (iptables)"
-ERR_EXP_FAILED_IPTABLES_SERVICE="Failed to start the firewall (iptables) service"
-ERR_EXP_FAILED_IPTABLES_RULES="Malformed firewall configuration"
+ERR_EXP_FAILED_CFG_IPTABLES="Failed to configure firewall"
 
 #_create ca
 ERR_EXP_CREATE_CA="Failed to create certificate authority"

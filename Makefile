@@ -209,6 +209,7 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/cron.daily
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/security/limits.d
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
+	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/firewalld/services
 
 install_artifacts:
 	@echo "*** Deploying EAR to $(DESTDIR)"
@@ -244,6 +245,7 @@ install_setup:
 	# Configuration files:
 	install -m 644 packaging/fedora/setup/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/iptables.default $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/fedora/setup/firewalld.ovirt.xml $(DESTDIR)$(SYSCONF_DIR)/firewalld/services/ovirt.xml
 	install -m 644 packaging/fedora/setup/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/fedora/setup/ovirt-engine-proxy.conf.in $(DESTDIR)$(DATA_DIR)/conf
 
@@ -251,6 +253,7 @@ install_setup:
 	install -m 644 packaging/fedora/setup/nfsutils.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/basedefs.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/engine_validators.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/engine_firewalld.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/setup_params.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/setup_sequences.py $(DESTDIR)$(DATA_DIR)/scripts
 	install -m 644 packaging/fedora/setup/setup_controller.py $(DESTDIR)$(DATA_DIR)/scripts

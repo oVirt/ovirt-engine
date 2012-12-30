@@ -164,7 +164,7 @@ def initSequences():
                         'condition'       : [],
                         'condition_match' : [],
                         'steps'           : [ { 'title'     : output_messages.INFO_CFG_IPTABLES,
-                                                'functions' : [_configIptables] },
+                                                'functions' : [_configFirewall] },
                                               { 'title'     : output_messages.INFO_START_ENGINE,
                                                 'functions' : [_startEngine] } ]
                        },
@@ -201,15 +201,15 @@ def initConfig():
     """
     conf_params = {
          "IPTABLES" : [
-            {   "CMD_OPTION"      :"override-iptables",
+            {   "CMD_OPTION"      :"override-firewall",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_IPTABLES_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_IPTABLES_PROMPT,
-                "OPTION_LIST"     :["yes","no"],
+                "OPTION_LIST"     :getFirewalls(),
                 "VALIDATION_FUNC" :validate.validateOptions,
                 "DEFAULT_VALUE"   :"",
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "OVERRIDE_IPTABLES",
+                "CONF_NAME"       : "OVERRIDE_FIREWALL",
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False} ]
@@ -882,8 +882,84 @@ def _updateCaCrtTemplate():
         fileHandler.editParam("authorityInfoAccess", " caIssuers;URI:http://%s:%s/ca.crt" % (controller.CONF["HOST_FQDN"], controller.CONF["HTTP_PORT"]))
         fileHandler.close()
 
-def _configIptables():
-    logging.debug("configuring iptables")
+def getFirewalls():
+    firewalls = ["None"]
+    iptables = utils.Service("iptables")
+    fwd = utils.Service("firewalld")
+
+    # Add available services to list
+    if fwd.available():
+        firewalls.append("Firewalld")
+    if iptables.available():
+        firewalls.append("IPTables")
+
+    return firewalls
+
+def _configFirewall():
+    # Create Sample configuration files
+    _createIptablesConfig()
+    _createFirewalldConfig()
+
+    # Configure chosen firewall
+    if utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_FIREWALL"], "firewalld"):
+        _configureFirewalld()
+    elif utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_FIREWALL"], "iptables"):
+        _configureIptables()
+    else:
+        # Inform user how he can configure firewall
+        controller.MESSAGES.append(output_messages.INFO_IPTABLES_PORTS % (controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]))
+        controller.MESSAGES.append(output_messages.INFO_IPTABLES_FILE % (basedefs.FILE_IPTABLES_EXAMPLE))
+        controller.MESSAGES.append(output_messages.INFO_FIREWALLD_FILE % (basedefs.FILE_FIREWALLD_SERVICE))
+
+def _createFirewalldConfig():
+    logging.debug("Creating firewalld configuration")
+
+    # Open xml
+    servicexml = utils.XMLConfigFileHandler(basedefs.FILE_FIREWALLD_SERVICE)
+    servicexml.open()
+
+    # Remove all port entries
+    servicexml.removeNodes("/service/port")
+
+    # Add ports to service xml
+    ports = []
+    for port in [controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]]:
+        ports.append({
+            'port': port,
+            'protocol': ['tcp']
+        })
+
+    if utils.compareStrIgnoreCase(controller.CONF["CONFIG_NFS"], "yes"):
+        ports += NFS_IPTABLES_PORTS
+
+    for portCfg in ports:
+        for protocol in portCfg["protocol"]:
+             servicexml.addNodes("/service", "<port protocol=\"%s\" port=\"%s\"/>" % (protocol, portCfg["port"]))
+
+    # Save firewalld service configuration
+    servicexml.close()
+
+def _configureFirewalld():
+    logging.debug("configuring firewalld")
+
+    # Load firewalld module only when needed.
+    # This will fail if firewalld isn't available in the system.
+    import engine_firewalld as firewalld
+
+    # Always start firewalld, otherwise, we will get DBus exception
+    service = utils.Service("firewalld")
+    service.start(True)
+
+    for zone in firewalld.getActiveZones():
+        firewalld.addServiceToZone("ovirt", zone)
+
+    # Restart firewalld
+    service = utils.Service("firewalld")
+    service.stop(True)
+    service.start(True)
+
+def _createIptablesConfig():
+    logging.debug("creating iptables configuration")
     try:
         with open(basedefs.FILE_IPTABLES_DEFAULT, "r") as f:
             fileContent = f.read()
@@ -919,25 +995,26 @@ def _configIptables():
         with open(basedefs.FILE_IPTABLES_EXAMPLE, "w") as f:
             f.write(outputText)
 
-        if controller.CONF["OVERRIDE_IPTABLES"] == "yes":
-            if os.path.isfile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG)):
-                backupFile = "%s.%s_%s"%(basedefs.FILE_IPTABLES_BACKUP, time.strftime("%H%M%S-%m%d%Y"), os.getpid())
-                utils.copyFile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG), backupFile)
-                controller.MESSAGES.append(output_messages.INFO_IPTABLES_BACKUP_FILE%(backupFile))
+    except:
+        logging.error(traceback.format_exc())
+        raise Exception(output_messages.ERR_EXP_FAILED_CFG_IPTABLES)
 
-            utils.copyFile(basedefs.FILE_IPTABLES_EXAMPLE, "%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG))
+def _configureIptables():
+    logging.debug("configuring iptables")
+    try:
+        if os.path.isfile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG)):
+            backupFile = "%s.%s_%s"%(basedefs.FILE_IPTABLES_BACKUP, time.strftime("%H%M%S-%m%d%Y"), os.getpid())
+            utils.copyFile("%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG), backupFile)
+            controller.MESSAGES.append(output_messages.INFO_IPTABLES_BACKUP_FILE%(backupFile))
 
-            #stop the iptables explicitly, since we dont care about the status
-            #of the current rules we will ignore the return code
-            logging.debug("Restarting the iptables service")
-            iptables = utils.Service("iptables")
-            iptables.stop(True)
-            iptables.start(True)
+        utils.copyFile(basedefs.FILE_IPTABLES_EXAMPLE, "%s/iptables"%(basedefs.DIR_ETC_SYSCONFIG))
 
-        else:
-            controller.MESSAGES.append(output_messages.INFO_IPTABLES_PORTS%(controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]))
-            controller.MESSAGES.append(output_messages.INFO_IPTABLES_FILE%(basedefs.FILE_IPTABLES_EXAMPLE))
-
+        # stop the iptables explicitly, since we dont care about the status
+        # of the current rules we will ignore the return code
+        logging.debug("Restarting the iptables service")
+        iptables = utils.Service("iptables")
+        iptables.stop(True)
+        iptables.start(True)
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CFG_IPTABLES)
