@@ -281,7 +281,7 @@ install_setup:
 	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
 
 	# Backups folder
-	install -dm 755 $(DESTDIR)$(ENGINE_STATE)/backups
+	install -dm 750 $(DESTDIR)$(ENGINE_STATE)/backups
 
 	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 

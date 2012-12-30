@@ -779,7 +779,7 @@ fi
 %{engine_data}/scripts/plugins/example_plugin_000.py*
 
 # Backups directory
-%dir %{engine_state}/backups
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/backups
 
 %files setup-plugin-allinone
 %{engine_data}/scripts/plugins/all_in_one_100.py*
