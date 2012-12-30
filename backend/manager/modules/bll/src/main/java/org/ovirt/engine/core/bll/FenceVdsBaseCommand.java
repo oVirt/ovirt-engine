@@ -46,10 +46,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     protected FencingExecutor executor;
     protected List<VM> mVmList = null;
     private boolean privateFencingSucceeded;
-    private FencingExecutor primaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
-    private FencingExecutor secondaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
-    private FenceInvocationResult primaryResult = new FenceInvocationResult();
-    private FenceInvocationResult secondaryResult = new FenceInvocationResult();
+    private FencingExecutor primaryExecutor;
+    private FencingExecutor secondaryExecutor;
+    private FenceInvocationResult primaryResult;
+    private FenceInvocationResult secondaryResult;
 
 
     /**
@@ -243,6 +243,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void handleMultipleConcurrentAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
+        primaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
+        secondaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
+        primaryResult = new FenceInvocationResult();
+        secondaryResult = new FenceInvocationResult();
         List<Callable<FenceInvocationResult>> tasks = new ArrayList<Callable<FenceInvocationResult>>();
         Future<FenceInvocationResult> f1 = null;
         Future<FenceInvocationResult> f2 = null;
