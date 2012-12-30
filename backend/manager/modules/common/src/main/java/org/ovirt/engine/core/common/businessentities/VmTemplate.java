@@ -84,6 +84,8 @@ public class VmTemplate extends VmBase implements Nameable {
         diskTemplateMap = new HashMap<Guid, DiskImage>();
     }
 
+    private boolean disabled;
+
     public VmTemplate(int child_count, Date creation_date, String description, int mem_size_mb, String name,
             int num_of_sockets, int cpu_per_socket, VmOsType os, Guid vds_group_id, Guid vmt_guid, String domain,
             int num_of_monitors, int status, int usb_policy, String time_zone, boolean is_auto_suspend, int nice_level,
@@ -261,5 +263,13 @@ public class VmTemplate extends VmBase implements Nameable {
     @Override
     public String getName() {
         return getname();
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 }

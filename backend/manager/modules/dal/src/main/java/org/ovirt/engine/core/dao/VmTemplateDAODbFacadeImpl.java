@@ -161,6 +161,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("initrd_url", template.getInitrdUrl())
                 .addValue("kernel_url", template.getKernelUrl())
                 .addValue("kernel_params", template.getKernelParams())
+                .addValue("is_disabled", template.isDisabled())
                 .addValue("quota_id", template.getQuotaId())
                 .addValue("migration_support", template.getMigrationSupport().getValue())
                 .addValue("dedicated_vm_for_vds", template.getDedicatedVmForVds());
@@ -227,6 +228,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
             entity.setDedicatedVmForVds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDisabled(rs.getBoolean("is_disabled"));
             return entity;
         }
     }

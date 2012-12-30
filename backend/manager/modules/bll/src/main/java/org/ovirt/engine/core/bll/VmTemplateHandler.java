@@ -32,7 +32,7 @@ public class VmTemplateHandler {
         mUpdateVmTemplate.AddPermittedFields(new String[] { "name", "description", "domain", "os", "osType",
                 "autoSuspend", "interfaces", "memSizeMb", "numOfSockets", "cpuPerSocket",
                 "vdsGroupId", "numOfMonitors", "allowConsoleReconnect", "usbPolicy", "timeZone", "diskMap",
-                "defaultBootSequence",
+                "defaultBootSequence", "disabled",
                 "isoPath", "diskImageMap", "defaultDisplayType", "priority", "autoStartup", "stateless",
                 "initrdUrl", "kernelUrl", "kernelParams", "images", "interfaces", "quotaId", "quotaName",
                 "quotaEnforcementType", "migrationSupport", "dedicatedVmForVds", "smartcardEnabled","dbGeneration", "deleteProtected",

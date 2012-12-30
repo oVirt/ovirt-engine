@@ -289,6 +289,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             return false;
         }
+        if (getVmTemplate().isDisabled()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
+        }
         returnValue = buildAndCheckDestStorageDomains();
         if (returnValue) {
             storageToDisksMap =

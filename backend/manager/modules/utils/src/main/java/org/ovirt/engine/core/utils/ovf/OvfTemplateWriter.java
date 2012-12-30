@@ -34,6 +34,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("default_display_type");
         _writer.WriteRaw(String.valueOf(_vmTemplate.getDefaultDisplayType().getValue()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement("IsDisabled");
+        _writer.WriteRaw(String.valueOf(_vmTemplate.isDisabled()));
+        _writer.WriteEndElement();
     }
 
     @Override

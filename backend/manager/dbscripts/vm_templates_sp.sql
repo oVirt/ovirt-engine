@@ -34,6 +34,7 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_is_stateless BOOLEAN,
  v_is_smartcard_enabled BOOLEAN,
  v_is_delete_protected BOOLEAN,
+ v_is_disabled BOOLEAN,
  v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url    VARCHAR(4000) ,
@@ -82,6 +83,7 @@ INTO vm_static(
     entity_type,
     quota_id,
     migration_support,
+    is_disabled,
     dedicated_vm_for_vds,
     is_smartcard_enabled,
     is_delete_protected)
@@ -122,6 +124,7 @@ VALUES(
     'TEMPLATE',
     v_quota_id,
     v_migration_support,
+    v_is_disabled,
     v_dedicated_vm_for_vds,
     v_is_smartcard_enabled,
     v_is_delete_protected);
@@ -165,6 +168,7 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_is_stateless BOOLEAN,
  v_is_smartcard_enabled BOOLEAN,
  v_is_delete_protected BOOLEAN,
+ v_is_disabled BOOLEAN,
  v_iso_path VARCHAR(4000) ,
  v_origin INTEGER ,
  v_initrd_url VARCHAR(4000) ,
@@ -193,7 +197,7 @@ BEGIN
       iso_path = v_iso_path,origin = v_origin,initrd_url = v_initrd_url,
       kernel_url = v_kernel_url,kernel_params = v_kernel_params, _update_date = CURRENT_TIMESTAMP, quota_id = v_quota_id,
       migration_support = v_migration_support, dedicated_vm_for_vds = v_dedicated_vm_for_vds, is_smartcard_enabled = v_is_smartcard_enabled,
-      is_delete_protected = v_is_delete_protected
+      is_delete_protected = v_is_delete_protected, is_disabled = v_is_disabled
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = 'TEMPLATE';
 END; $procedure$

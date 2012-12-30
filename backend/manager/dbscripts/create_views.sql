@@ -371,7 +371,8 @@ vm_templates.vm_guid as vmt_guid,
        quota.quota_name as quota_name,
        vm_templates.db_generation as db_generation,
        vm_templates.migration_support,
-       vm_templates.dedicated_vm_for_vds
+       vm_templates.dedicated_vm_for_vds,
+       vm_templates.is_disabled
 FROM       vm_static AS vm_templates  INNER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -406,7 +407,7 @@ AS
 	                  vm_templates.default_boot_sequence, vm_templates.default_display_type, vm_templates.priority, vm_templates.auto_startup,
 	                  vm_templates.is_stateless, vm_templates.iso_path, vm_templates.origin, vm_templates.initrd_url, vm_templates.kernel_url,
 	                  vm_templates.kernel_params, image_storage_domain_map.storage_domain_id AS storage_id,
-                          quota.quota_name as quota_name
+                          quota.quota_name as quota_name, vm_templates.is_disabled
 FROM                  vm_static AS vm_templates INNER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
@@ -426,7 +427,7 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.priority, vm_templates_1.auto_startup, vm_templates_1.is_stateless, vm_templates_1.iso_path, vm_templates_1.origin,
                       vm_templates_1.initrd_url, vm_templates_1.kernel_url, vm_templates_1.kernel_params,
                       image_storage_domain_map.storage_domain_id AS storage_id,
-                      quota.quota_name as quota_name
+                      quota.quota_name as quota_name, vm_templates_1.is_disabled
 FROM                  vm_static AS vm_templates_1 INNER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN

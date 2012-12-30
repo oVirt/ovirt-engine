@@ -158,8 +158,14 @@ public class OvfTemplateReader extends OvfReader {
                 _vmTemplate.setId(new Guid(node.InnerText));
             }
         }
+
+        node = content.SelectSingleNode("IsDisabled");
+        if (node != null) {
+            _vmTemplate.setDisabled(Boolean.parseBoolean(node.InnerText));
+        }
     }
 
+    @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
         return "default_display_type";
     }
