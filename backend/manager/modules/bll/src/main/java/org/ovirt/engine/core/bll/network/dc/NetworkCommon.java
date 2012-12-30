@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -94,18 +93,11 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected boolean networkNotAttachedToCluster(final Network network) {
-        if (network.getstorage_pool_id() != null) {
-            List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(
-                    network.getstorage_pool_id().getValue());
-            for (VDSGroup cluster : clusters) {
-                Network attachedNetwork = getNetworkDAO().getByNameAndCluster(network.getName(), cluster.getId());
-
-                if (attachedNetwork != null) {
-                    addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
-                    return false;
-                }
-            }
+        if (!getNetworkClusterDAO().getAllForNetwork(network.getId()).isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
+            return false;
         }
+
         return true;
     }
 
