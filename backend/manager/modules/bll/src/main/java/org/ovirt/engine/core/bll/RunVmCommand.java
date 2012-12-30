@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.validator.VmNicValidator;
+import org.ovirt.engine.core.bll.validator.FeatureSupported;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -792,7 +792,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean isVmInterfacesConfigured() {
         for (VmNetworkInterface nic : getVm().getInterfaces()) {
             if (nic.getNetworkName() == null) {
-                if (!VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion())) {
+                if (!FeatureSupported.networkLinking(getVm().getVdsGroupCompatibilityVersion())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
                     return false;
                 } else {
@@ -815,7 +815,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         Set<String> result = new HashSet<String>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
-        if (VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion())) {
+        if (FeatureSupported.networkLinking(getVm().getVdsGroupCompatibilityVersion())) {
             result.remove(null);
         }
 

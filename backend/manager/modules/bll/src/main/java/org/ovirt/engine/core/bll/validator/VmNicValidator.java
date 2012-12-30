@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -25,7 +23,7 @@ public class VmNicValidator {
      * @return An error if unlinking is not supported and the interface is unlinked, otherwise it's OK.
      */
     public ValidationResult linkedCorrectly() {
-        return !networkLinkingSupported(version) && !nic.isLinked()
+        return !FeatureSupported.networkLinking(version) && !nic.isLinked()
                 ? new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
@@ -34,7 +32,7 @@ public class VmNicValidator {
      * @return An error if unlinking is not supported and the network is not set, otherwise it's OK.
      */
     public ValidationResult networkNameValid() {
-        return !networkLinkingSupported(version) && nic.getNetworkName() == null
+        return !FeatureSupported.networkLinking(version) && nic.getNetworkName() == null
                 ? new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED, clusterVersion())
                 : ValidationResult.VALID;
     }
@@ -46,10 +44,6 @@ public class VmNicValidator {
         return nic.getNetworkName() == null && nic.isPortMirroring()
                 ? new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK)
                 : ValidationResult.VALID;
-    }
-
-    public static boolean networkLinkingSupported(Version version) {
-        return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version.getValue());
     }
 
     protected String clusterVersion() {

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.FeatureSupported;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -328,7 +329,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
          */
         public ValidationResult hotUpdatePossible() {
             if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
-                if (!networkLinkingSupported(version)) {
+                if (!FeatureSupported.networkLinking(version)) {
                     return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
                 } else if (nic.isPortMirroring()) {
