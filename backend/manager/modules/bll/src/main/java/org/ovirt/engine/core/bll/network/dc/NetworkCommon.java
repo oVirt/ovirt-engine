@@ -23,11 +23,15 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     public NetworkCommon(T parameters) {
         super(parameters);
-        this.setStoragePoolId(getParameters().getNetwork().getstorage_pool_id());
+        this.setStoragePoolId(getNetwork().getstorage_pool_id());
+    }
+
+    protected Network getNetwork() {
+        return getParameters().getNetwork();
     }
 
     public String getNetworkName() {
-        return getParameters().getNetwork().getname();
+        return getNetwork().getname();
     }
 
     @Override
@@ -38,7 +42,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     protected boolean validateVmNetwork() {
         boolean retVal = true;
 
-        if (!getParameters().getNetwork().isVmNetwork()) {
+        if (!getNetwork().isVmNetwork()) {
             Version version = getStoragePool().getcompatibility_version();
             retVal = Config.<Boolean> GetValue(ConfigValues.NonVmNetworkSupported, version.getValue());
             if (!retVal) {
@@ -51,7 +55,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
 
     protected boolean validateStpProperty() {
         boolean stpIsAllowed = true;
-        if (!getParameters().getNetwork().isVmNetwork() && getParameters().getNetwork().getstp()) {
+        if (!getNetwork().isVmNetwork() && getNetwork().getstp()) {
             addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP);
             stpIsAllowed = false;
         }
@@ -61,7 +65,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     protected boolean validateMTUOverrideSupport() {
         boolean mtuSupported = true;
 
-        if (getParameters().getNetwork().getMtu() != 0) {
+        if (getNetwork().getMtu() != 0) {
             mtuSupported =
                     Config.<Boolean> GetValue(ConfigValues.MTUOverrideSupported,
                             getStoragePool().getcompatibility_version().getValue());
@@ -73,19 +77,19 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected boolean validateVlanId(List<Network> networks) {
-        if (getParameters().getNetwork().getvlan_id() != null
+        if (getNetwork().getvlan_id() != null
                 && null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
                     public boolean eval(Network n) {
                         if (n.getvlan_id() != null) {
-                            return n.getvlan_id().equals(getParameters().getNetwork().getvlan_id())
-                                    && n.getstorage_pool_id().equals(getParameters().getNetwork().getstorage_pool_id())
-                                    && !n.getId().equals(getParameters().getNetwork().getId());
+                            return n.getvlan_id().equals(getNetwork().getvlan_id())
+                                    && n.getstorage_pool_id().equals(getNetwork().getstorage_pool_id())
+                                    && !n.getId().equals(getNetwork().getId());
                         }
                         return false;
                     }
                 })) {
-            addCanDoActionMessage(String.format("$vlanId %d", getParameters().getNetwork().getvlan_id()));
+            addCanDoActionMessage(String.format("$vlanId %d", getNetwork().getvlan_id()));
             addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
             return false;
         }
@@ -103,7 +107,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        Network network = getParameters().getNetwork();
+        Network network = getNetwork();
         Guid networkId = network == null ? null : network.getId();
 
         return Collections.singletonList(new PermissionSubject(networkId,

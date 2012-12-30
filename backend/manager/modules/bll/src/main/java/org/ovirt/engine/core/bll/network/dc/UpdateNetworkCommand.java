@@ -26,10 +26,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkDao().update(getParameters().getNetwork());
+        DbFacade.getInstance().getNetworkDao().update(getNetwork());
 
         for (VDSGroup cluster : clusters) {
-            NetworkClusterHelper.setStatus(cluster.getId(), getParameters().getNetwork());
+            NetworkClusterHelper.setStatus(cluster.getId(), getNetwork());
         }
         setSucceeded(true);
     }
@@ -62,7 +62,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check that network name not start with 'bond'
-        if (getParameters().getNetwork().getname().toLowerCase().startsWith("bond")) {
+        if (getNetworkName().toLowerCase().startsWith("bond")) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME);
             return false;
         }
@@ -75,7 +75,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         Network oldNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network n) {
-                return n.getId().equals(getParameters().getNetwork().getId());
+                return n.getId().equals(getNetwork().getId());
             }
         });
         if (oldNetwork == null) {
@@ -86,7 +86,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         // check defalut network name is not renamed
         String defaultNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         if (oldNetwork.getname().equals(defaultNetwork) &&
-                !getParameters().getNetwork().getname().equals(defaultNetwork)) {
+                !getNetworkName().equals(defaultNetwork)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK);
             return false;
         }
@@ -95,9 +95,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             @Override
             public boolean eval(Network n) {
                 return n.getname().trim().toLowerCase()
-                        .equals(getParameters().getNetwork().getname().trim().toLowerCase())
-                        && !n.getId().equals(getParameters().getNetwork().getId())
-                        && getParameters().getNetwork().getstorage_pool_id().equals(n.getstorage_pool_id());
+                        .equals(getNetworkName().trim().toLowerCase())
+                        && !n.getId().equals(getNetwork().getId())
+                        && getNetwork().getstorage_pool_id().equals(n.getstorage_pool_id());
             }
         });
         if (net != null) {
@@ -109,7 +109,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
         for (VDSGroup cluster : clusters) {
             List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(cluster.getId(),
-                    getParameters().getNetwork().getname());
+                    getNetworkName());
             if (vms.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
                 return false;

@@ -13,7 +13,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        getNetworkDAO().remove(getParameters().getNetwork().getId());
+        getNetworkDAO().remove(getNetwork().getId());
         setSucceeded(true);
     }
 
@@ -25,7 +25,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        return networkNotAttachedToCluster(getParameters().getNetwork());
+        return networkNotAttachedToCluster(getNetwork());
     }
 
     @Override

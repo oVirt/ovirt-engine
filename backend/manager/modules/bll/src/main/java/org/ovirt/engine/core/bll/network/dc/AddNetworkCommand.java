@@ -26,10 +26,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected void executeCommand() {
-        getParameters().getNetwork().setId(Guid.NewGuid());
-        DbFacade.getInstance().getNetworkDao().save(getParameters().getNetwork());
+        getNetwork().setId(Guid.NewGuid());
+        DbFacade.getInstance().getNetworkDao().save(getNetwork());
         addPermissions();
-        getReturnValue().setActionReturnValue(getParameters().getNetwork().getId());
+        getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
     }
 
@@ -54,24 +54,24 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         }
 
         // check that network name not start with 'bond'
-        if (getParameters().getNetwork().getname().toLowerCase().startsWith("bond")) {
+        if (getNetworkName().toLowerCase().startsWith("bond")) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME);
             return false;
         }
 
         // we return ok only if the network not exists
         List<Network> all;
-        if (getParameters().getNetwork().getstorage_pool_id() != null
-                && !getParameters().getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
+        if (getNetwork().getstorage_pool_id() != null
+                && !getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
             all = DbFacade.getInstance().getNetworkDao().getAllForDataCenter(
-                    getParameters().getNetwork().getstorage_pool_id().getValue());
+                    getNetwork().getstorage_pool_id().getValue());
         } else {
             all = DbFacade.getInstance().getNetworkDao().getAll();
         }
         boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
             @Override
             public boolean eval(Network net) {
-                return net.getname().equals(getParameters().getNetwork().getname());
+                return net.getname().equals(getNetworkName());
             }
         });
         if (exists) {
@@ -118,7 +118,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         permissions perms = new permissions();
         perms.setad_element_id(userId);
         perms.setObjectType(VdcObjectType.Network);
-        perms.setObjectId(getParameters().getNetwork().getId());
+        perms.setObjectId(getNetwork().getId());
         perms.setrole_id(role.getId());
         MultiLevelAdministrationHandler.addPermission(perms);
     }
