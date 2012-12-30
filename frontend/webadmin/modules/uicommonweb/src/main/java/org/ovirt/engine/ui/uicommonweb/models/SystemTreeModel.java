@@ -299,32 +299,30 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                                         dcNetworkList = (List<Network>) returnValue.getReturnValue();
                                                         dcId = systemTreeModel.getDataCenters().get(i).getId();
                                                         systemTreeModel.getNetworkMap().put(dcId, dcNetworkList);
-
-
-                                                        // Storages
-                                                        ArrayList<VdcQueryType> queryTypeList =
-                                                                new ArrayList<VdcQueryType>();
-                                                        ArrayList<VdcQueryParametersBase> queryParamList =
-                                                                new ArrayList<VdcQueryParametersBase>();
-
-                                                        for (storage_pool dataCenter : systemTreeModel.getDataCenters())
-                                                        {
-                                                            queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
-                                                            queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
-                                                        }
-                                                        if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.VirtOnly.getValue()) == 0) {
-                                                            FrontendMultipleQueryAsyncResult dummyResult =
-                                                                    new FrontendMultipleQueryAsyncResult();
-                                                            VdcQueryReturnValue value = new VdcQueryReturnValue();
-                                                            value.setSucceeded(true);
-                                                            dummyResult.getReturnValues().add(value);
-                                                            SystemTreeModel.this.Executed(dummyResult);
-                                                        } else {
-                                                            Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
-                                                        }
                                                     }
                                                 }
 
+                                                // Storages
+                                                ArrayList<VdcQueryType> queryTypeList =
+                                                        new ArrayList<VdcQueryType>();
+                                                ArrayList<VdcQueryParametersBase> queryParamList =
+                                                        new ArrayList<VdcQueryParametersBase>();
+
+                                                for (storage_pool dataCenter : systemTreeModel.getDataCenters())
+                                                {
+                                                    queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
+                                                    queryParamList.add(new StoragePoolQueryParametersBase(dataCenter.getId()));
+                                                }
+                                                if ((ApplicationModeHelper.getUiMode().getValue() & ApplicationMode.VirtOnly.getValue()) == 0) {
+                                                    FrontendMultipleQueryAsyncResult dummyResult =
+                                                            new FrontendMultipleQueryAsyncResult();
+                                                    VdcQueryReturnValue value = new VdcQueryReturnValue();
+                                                    value.setSucceeded(true);
+                                                    dummyResult.getReturnValues().add(value);
+                                                    SystemTreeModel.this.Executed(dummyResult);
+                                                } else {
+                                                    Frontend.RunMultipleQueries(queryTypeList, queryParamList, systemTreeModel);
+                                                }
                                             }
                                         });
                                     }

@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -31,7 +32,6 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     private final SystemTreeModelProvider modelProvider;
 
     private CellTree display;
-    private boolean initialized;
 
     public SystemTree(SystemTreeModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -76,21 +76,16 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
 
     }
 
-    private void addModelListeners(SystemTreeModelProvider modelProvider) {
+    private void addModelListeners(final SystemTreeModelProvider modelProvider) {
         modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                // Reset selection in the model
+                SystemTreeItemModel lastSelectedItem = modelProvider.getSelectionModel().getSelectedObject();
+                modelProvider.getSelectionModel().setSelected(lastSelectedItem, false);
+
                 // Collapse tree on refresh
-                expandTree(display.getRootTreeNode(), false);
-
-                // Workaround for bug 856233. Force a root tree node to be opened.
-                // This won't cause visual changes, i.e. after refresh the tree
-                // will collapse as it should do.
-                if (initialized) {
-                    display.getRootTreeNode().setChildOpen(0, true);
-                }
-
-                initialized = true;
+                expandTree(display.getRootTreeNode(), false, 2);
             }
         });
     }
@@ -98,20 +93,29 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     @Override
     protected CellTree createDataDisplayWidget(SystemTreeModelProvider modelProvider) {
         SystemTreeResources res = GWT.create(SystemTreeResources.class);
-        display = new CellTree(modelProvider, null, res);
+        display = new CellTree(modelProvider, null, res) {
+            protected void onLoad() {
+                expandTree(display.getRootTreeNode(), false, 2);
+            }
+        };
         display.setAnimationEnabled(true);
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
         return display;
     }
 
-    private void expandTree(TreeNode node, boolean collapse) {
+    private void expandTree(TreeNode node, boolean expand) {
+        expandTree(node, expand, 0);
+    }
+
+    private void expandTree(TreeNode node, boolean expand, int expandFromLevel) {
         if (node == null) {
             return;
         }
 
         if (node.getChildCount() > 0) {
             for (int i = 0; i < node.getChildCount(); i++) {
-                expandTree(node.setChildOpen(i, collapse), collapse);
+                boolean expandNode = 0 < expandFromLevel ? !expand : expand;
+                expandTree(node.setChildOpen(i, expandNode), expand, expandFromLevel - 1);
             }
         }
     }
