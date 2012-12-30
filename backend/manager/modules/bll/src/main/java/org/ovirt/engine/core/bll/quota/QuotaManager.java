@@ -36,11 +36,6 @@ public class QuotaManager {
     private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
     private List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
 
-    // when (cache size/number of quota in DB) ratio is under this minimum threshold - the calls to
-    // updateQuotaCache() would result in cache update. otherwise update will be executed.
-    private static final double MINIMUM_CACHE_FACTOR =
-            Config.<Integer> GetValue(ConfigValues.MinimumPercentageToUpdateQuotaCache);
-
     public static QuotaManager getInstance() {
         return INSTANCE;
     }
@@ -1008,6 +1003,6 @@ public class QuotaManager {
             lock.readLock().unlock();
         }
 
-        return cacheCount < quotaCount * MINIMUM_CACHE_FACTOR/100;
+        return cacheCount < quotaCount * Config.<Integer> GetValue(ConfigValues.MinimumPercentageToUpdateQuotaCache)/100;
     }
 }
