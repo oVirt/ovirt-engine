@@ -67,7 +67,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        if (!validateVlanId(networks)) {
+        if (!vlanIsFree(networks)) {
             return false;
         }
 

@@ -15,8 +15,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
@@ -76,23 +74,20 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
         return mtuSupported;
     }
 
-    protected boolean validateVlanId(List<Network> networks) {
-        if (getNetwork().getvlan_id() != null
-                && null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                    @Override
-                    public boolean eval(Network n) {
-                        if (n.getvlan_id() != null) {
-                            return n.getvlan_id().equals(getNetwork().getvlan_id())
-                                    && n.getstorage_pool_id().equals(getNetwork().getstorage_pool_id())
-                                    && !n.getId().equals(getNetwork().getId());
-                        }
-                        return false;
-                    }
-                })) {
-            addCanDoActionMessage(String.format("$vlanId %d", getNetwork().getvlan_id()));
-            addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
-            return false;
+    protected boolean vlanIsFree(List<Network> networks) {
+        if (getNetwork().getvlan_id() != null) {
+            for (Network network : networks) {
+                if (network.getvlan_id() != null
+                        && network.getvlan_id().equals(getNetwork().getvlan_id())
+                        && network.getstorage_pool_id().equals(getNetwork().getstorage_pool_id())
+                        && !network.getId().equals(getNetwork().getId())) {
+                    addCanDoActionMessage(String.format("$vlanId %d", getNetwork().getvlan_id()));
+                    addCanDoActionMessage(VdcBllMessages.NETWORK_VLAN_IN_USE);
+                    return false;
+                }
+            }
         }
+
         return true;
     }
 

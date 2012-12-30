@@ -80,7 +80,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return false;
         }
 
-        if (!validateVlanId(all)) {
+        if (!vlanIsFree(all)) {
             return false;
         }
 
