@@ -10,6 +10,7 @@ public class ManageDomainsConfiguration {
     private static String KRB5_FILE_PROPERTY = "krb5confFile";
     private static String ENGINE_CONFIG_EXECUTABLE_PROPERTY = "engineConfigExecutable";
     private static String LOCAL_HOST_ENTRY = "localHostEntry";
+    private static String USE_DNS_LOOKUP = "useDnsLookup";
 
     ManageDomainsConfiguration(String confFilePath) throws ConfigurationException {
         manageDomainsConf = new PropertiesConfiguration(confFilePath);
@@ -29,6 +30,10 @@ public class ManageDomainsConfiguration {
 
     public String getLocalHostEntry() {
         return (String) manageDomainsConf.getProperty(LOCAL_HOST_ENTRY);
+    }
+
+    public boolean getUseDnsLookup() {
+        return manageDomainsConf.getBoolean(USE_DNS_LOOKUP);
     }
 
 }

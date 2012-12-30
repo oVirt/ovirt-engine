@@ -22,6 +22,8 @@ public class KrbConfCreator {
     protected static final String REALMS_SECTION = "#realms";
     protected static final String DOMAIN_REALM_SECTION = "#domain_realm";
     public static final String DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5 = "default_tkt_enctypes = arcfour-hmac-md5";
+    public static final String DNS_LOOKUP_REALM = "dns_lookup_realm";
+    public static final String DNS_LOOKUP_KDC = "dns_lookup_kdc";
     private static final String DEFAULT_REALM = "default_realm";
     public final static String seperator = System.getProperty("line.separator");
     protected InputStream sourceFile;
@@ -30,6 +32,7 @@ public class KrbConfCreator {
     private final String usage =
             " Usage: \n\t-domains=<comma seperated list>\n\t-destinationFile<file>" +
                     "\n\t-m mixed mode. Will add a flag to support AD in 2003/2008 mixed mode will be added";
+    private boolean useDnsLookup;
     private final static Logger log = Logger.getLogger(KrbConfCreator.class);
 
     public KrbConfCreator(String... args) throws Exception {
@@ -38,7 +41,8 @@ public class KrbConfCreator {
         extractRealmsFromDomains();
     }
 
-    public KrbConfCreator(String domains) throws Exception {
+    public KrbConfCreator(String domains, boolean useDnsLookup) throws Exception {
+        this.useDnsLookup = useDnsLookup;
         loadSourceFile();
         extractRealmsFromDomains(domains);
     }
@@ -89,6 +93,14 @@ public class KrbConfCreator {
                 line = DEFAULT_REALM + " = " + realms.get(0);
             }
 
+            if (line.matches("#" + DNS_LOOKUP_KDC + ".*")) {
+                line = DNS_LOOKUP_KDC + " = " + Boolean.toString(useDnsLookup);
+            }
+            if (line.matches("#" + DNS_LOOKUP_REALM + ".*")) {
+                line = DNS_LOOKUP_REALM + " = " + Boolean.toString(useDnsLookup);
+            }
+
+
             // Active directory in 2003 mode hack + IPA
             if (line.matches(".*" + DEFAULT_TKT_ENCTYPES_ARCFOUR_HMAC_MD5)) {
                 if (mixedMode != null && (mixedMode.equalsIgnoreCase("y") || mixedMode.equalsIgnoreCase("yes"))) {
@@ -98,13 +110,13 @@ public class KrbConfCreator {
             }
 
             // populate realms by domains
-            if (line.matches(REALMS_SECTION)) {
+            if (!useDnsLookup && line.matches(REALMS_SECTION)) {
                 line = appendRealms(realms);
                 log.debug("setting realms");
             }
 
             // populate domain realms by domains
-            if (line.matches(DOMAIN_REALM_SECTION)) {
+            if (!useDnsLookup && line.matches(DOMAIN_REALM_SECTION)) {
                 line = appendDomainRealms(realms);
                 log.debug("setting domain realm");
             }

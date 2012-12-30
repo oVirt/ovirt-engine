@@ -58,6 +58,8 @@ public class ManageDomains {
     private boolean reportAllErrors;
     private boolean addPermissions;
     private DnsSRVResult ldapDnsResult;
+    private boolean useDnsLookup;
+
     private final static Logger log = Logger.getLogger(ManageDomains.class);
 
     public enum Arguments {
@@ -606,7 +608,8 @@ public class ManageDomains {
             KrbConfCreator krbConfCreator;
             try {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
-                krbConfCreator = new KrbConfCreator(gssapiDomainsString);
+                useDnsLookup = utilityConfiguration.getUseDnsLookup();
+                krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup);
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
                 krbConfCreator.toFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX, buffer);
