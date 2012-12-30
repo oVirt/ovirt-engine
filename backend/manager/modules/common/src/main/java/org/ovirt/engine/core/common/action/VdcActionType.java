@@ -50,7 +50,7 @@ public enum VdcActionType {
     ImportVmTemplate(39, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ChangeVMCluster(40, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     CancelMigrateVm(41, ActionGroup.MIGRATE_VM, false, QuotaDependency.NONE),
-    ActivateDeactivateVmNic(42, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
+    ActivateDeactivateVmNic(42, QuotaDependency.NONE),
 
     // powerclient 4.2
     PowerClientMigrateOnConnectCheck(50, QuotaDependency.NONE),
