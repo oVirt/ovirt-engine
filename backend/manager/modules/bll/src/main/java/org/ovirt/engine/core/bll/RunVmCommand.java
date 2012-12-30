@@ -792,7 +792,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean isVmInterfacesConfigured() {
         for (VmNetworkInterface nic : getVm().getInterfaces()) {
             if (nic.getNetworkName() == null) {
-                if (!VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion().getValue())) {
+                if (!VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
                     return false;
                 } else {
@@ -815,7 +815,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         Set<String> result = new HashSet<String>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
-        if (VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion().getValue())) {
+        if (VmNicValidator.networkLinkingSupported(getVm().getVdsGroupCompatibilityVersion())) {
             result.remove(null);
         }
 

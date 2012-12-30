@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -55,7 +56,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         });
 
 
-        String clusterCompatibilityVersion = getVdsGroup().getcompatibility_version().getValue();
+        Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
 
         if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {

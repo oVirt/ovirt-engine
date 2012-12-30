@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -138,7 +139,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        String compatibilityVersion = getVm().getVdsGroupCompatibilityVersion().getValue();
+        Version compatibilityVersion = getVm().getVdsGroupCompatibilityVersion();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), compatibilityVersion);
 
         if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())

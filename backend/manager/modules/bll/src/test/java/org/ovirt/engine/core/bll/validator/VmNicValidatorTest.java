@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -28,7 +30,10 @@ public class VmNicValidatorTest {
 
     @Before
     public void setup() {
-        validator = new VmNicValidator(nic, null);
+        Version version = mock(Version.class);
+        when(version.getValue()).thenReturn(null);
+
+        validator = new VmNicValidator(nic, version);
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -204,7 +205,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         UpdateVmNicValidator nicValidator =
-                new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion().getValue());
+                new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion());
         if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.networkNameValid())
@@ -317,7 +318,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      */
     private class UpdateVmNicValidator extends VmNicValidator {
 
-        public UpdateVmNicValidator(VmNetworkInterface nic, String version) {
+        public UpdateVmNicValidator(VmNetworkInterface nic, Version version) {
             super(nic, version);
         }
 

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -56,7 +57,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
                 .getAllForVm(getParameters().getVmId());
 
-                String clusterCompatibilityVersion = targetCluster.getcompatibility_version().getValue();
+                Version clusterCompatibilityVersion = targetCluster.getcompatibility_version();
                 if (!validateDestinationClusterContainsNetworks(interfaces)
                         || !validateNicsLinkedCorrectly(interfaces, clusterCompatibilityVersion)) {
                     return false;
@@ -66,7 +67,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 boolean isCpuSocketsValid = AddVmCommand.CheckCpuSockets(
                                                                          vm.getStaticData().getnum_of_sockets(),
                                                                          vm.getStaticData().getcpu_per_socket(),
-                                                                         clusterCompatibilityVersion,
+                                                                         clusterCompatibilityVersion.getValue(),
                                                                          getReturnValue().getCanDoActionMessages());
                 if (!isCpuSocketsValid) {
                     return false;
@@ -95,7 +96,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
      * @return Whether the NICs are linked correctly (with regards to the destination cluster).
      */
     private boolean validateNicsLinkedCorrectly(List<VmNetworkInterface> interfaces,
-            String clusterCompatibilityVersion) {
+            Version clusterCompatibilityVersion) {
         for (VmNetworkInterface iface : interfaces) {
             VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
             if (!validate(nicValidator.linkedCorrectly())) {

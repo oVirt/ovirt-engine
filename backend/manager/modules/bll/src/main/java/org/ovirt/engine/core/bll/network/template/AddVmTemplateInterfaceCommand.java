@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -66,7 +67,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        String clusterCompatibilityVersion = getVdsGroup().getcompatibility_version().getValue();
+        Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
 
         if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {

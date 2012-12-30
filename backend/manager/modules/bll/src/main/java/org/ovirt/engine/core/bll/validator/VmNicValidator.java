@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -13,9 +14,9 @@ public class VmNicValidator {
 
     protected VmNetworkInterface nic;
 
-    protected String version;
+    protected Version version;
 
-    public VmNicValidator(VmNetworkInterface nic, String version) {
+    public VmNicValidator(VmNetworkInterface nic, Version version) {
         this.nic = nic;
         this.version = version;
     }
@@ -47,11 +48,11 @@ public class VmNicValidator {
                 : ValidationResult.VALID;
     }
 
-    public static boolean networkLinkingSupported(String version) {
-        return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version);
+    public static boolean networkLinkingSupported(Version version) {
+        return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version.getValue());
     }
 
     protected String clusterVersion() {
-        return String.format("$clusterVersion %s", version);
+        return String.format("$clusterVersion %s", version.getValue());
     }
 }
