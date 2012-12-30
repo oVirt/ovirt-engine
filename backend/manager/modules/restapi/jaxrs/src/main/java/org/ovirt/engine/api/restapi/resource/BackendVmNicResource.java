@@ -6,7 +6,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.Nics;
+import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
@@ -14,9 +17,6 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.model.Network;
-import org.ovirt.engine.api.model.Networks;
-import org.ovirt.engine.api.model.PortMirroring;
 
 public class BackendVmNicResource extends BackendNicResource implements VmNicResource {
 
@@ -52,26 +52,52 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
     @Override
     public NIC update(NIC device) {
+        validateEnums(NIC.class, device);
+        if (device.isSetPortMirroring() || device.isSetNetwork()) {
+            validatePortMirroring(device);
+        }
+
+        return super.update(device);
+    }
+
+    private void validatePortMirroring(NIC device) {
         //TODO: this is temporary mapping between engine boolean port mirroring parameter, and REST
         //      port mirroring network collection, next engine version will support the network collection
         //      in port mirroring
-        validateEnums(NIC.class, device);
+        NIC nic = null;
         boolean fault = false;
         String faultString = "The port mirroring network must match the Network set on the NIC";
-        boolean isPortMirroring = device.isSetPortMirroring() && device.getPortMirroring().isSetNetworks();
-        boolean isPortMirroringExceeded =
-                isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() > 1;
-        isPortMirroring = isPortMirroring && device.getPortMirroring().getNetworks().getNetworks().size() == 1;
-        if (isPortMirroringExceeded) {
-            fault = true;
-            faultString = "Cannot set more than one network in port mirroring mode";
+        Network pmNetwork = null;
+
+        boolean isPortMirroring = false;
+        if (device.isSetPortMirroring()) {
+            if (device.getPortMirroring().isSetNetworks()) {
+                boolean isPortMirroringExceeded =
+                        device.getPortMirroring().getNetworks().getNetworks().size() > 1;
+                if (isPortMirroringExceeded) {
+                    fault = true;
+                    faultString = "Cannot set more than one network in port mirroring mode";
+                }
+                if (device.getPortMirroring().getNetworks().getNetworks().size() == 1) {
+                    isPortMirroring = true;
+                    pmNetwork = device.getPortMirroring().getNetworks().getNetworks().get(0);
+                }
+            }
+        } else {
+            nic = get();
+            isPortMirroring =
+                    nic.isSetPortMirroring() && nic.getPortMirroring().isSetNetworks()
+                            && nic.getPortMirroring().getNetworks().isSetNetworks();
+            if (isPortMirroring) {
+                pmNetwork = nic.getPortMirroring().getNetworks().getNetworks().get(0);
+            }
         }
-        String networkId =
-                (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
-        String networkName =
-                (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
+
         if (!fault && isPortMirroring) {
-            Network pmNetwork = device.getPortMirroring().getNetworks().getNetworks().get(0);
+            String networkId =
+                    (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
+            String networkName =
+                    (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
             String pmNetworkId = (pmNetwork.isSetId() ? pmNetwork.getId() : null);
             String pmNetworkName = (pmNetwork.isSetName() ? pmNetwork.getName() : null);
             if (pmNetworkId != null) {
@@ -99,7 +125,6 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
             Response response = Response.status(Response.Status.BAD_REQUEST).entity(f).build();
             throw new WebApplicationException(response);
         }
-        return super.update(device);
     }
 
     private String getNetworkId(String networkName) {
