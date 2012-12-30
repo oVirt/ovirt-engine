@@ -25,7 +25,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        return networkNotAttachedToCluster(getNetwork());
+        return validate(networkNotAttachedToCluster(getNetwork()));
     }
 
     @Override

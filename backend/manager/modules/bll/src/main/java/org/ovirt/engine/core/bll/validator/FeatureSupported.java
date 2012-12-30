@@ -22,4 +22,22 @@ public class FeatureSupported {
     public static boolean networkLinking(Version version) {
         return supportedInConfig(ConfigValues.NetworkLinkingSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if MTU specification is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean mtuSpecification(Version version) {
+        return supportedInConfig(ConfigValues.MTUOverrideSupported, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if non-VM network is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean nonVmNetwork(Version version) {
+        return supportedInConfig(ConfigValues.NonVmNetworkSupported, version);
+    }
 }

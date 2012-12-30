@@ -41,15 +41,15 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean canDoAction() {
-        if (!validateVmNetwork()) {
+        if (!validate(vmNetworkSetCorrectly())) {
             return false;
         }
 
-        if (!validateStpProperty()) {
+        if (!validate(stpForVmNetworkOnly())) {
             return false;
         }
 
-        if (!validateMTUOverrideSupport()) {
+        if (!validate(mtuValid())) {
             return false;
         }
 
@@ -80,7 +80,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return false;
         }
 
-        if (!vlanIsFree(all)) {
+        if (!validate(vlanIsFree(all))) {
             return false;
         }
 

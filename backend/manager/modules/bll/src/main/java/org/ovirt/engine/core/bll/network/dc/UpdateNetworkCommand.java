@@ -49,15 +49,15 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        if (!validateVmNetwork()) {
+        if (!validate(vmNetworkSetCorrectly())) {
             return false;
         }
 
-        if (!validateStpProperty()) {
+        if (!validate(stpForVmNetworkOnly())) {
             return false;
         }
 
-        if (!validateMTUOverrideSupport()) {
+        if (!validate(mtuValid())) {
             return false;
         }
 
@@ -67,7 +67,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        if (!vlanIsFree(networks)) {
+        if (!validate(vlanIsFree(networks))) {
             return false;
         }
 
@@ -116,7 +116,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         }
 
-        return networkNotAttachedToCluster(oldNetwork);
+        return validate(networkNotAttachedToCluster(oldNetwork));
     }
 
     @Override
