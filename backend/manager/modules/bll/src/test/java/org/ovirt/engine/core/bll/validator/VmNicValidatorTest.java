@@ -71,6 +71,26 @@ public class VmNicValidatorTest {
         networkNameTest(ValidationResult.VALID, true, "net");
     }
 
+    @Test
+    public void validNetworkWhenPortMirroring() throws Exception {
+        portMirroringTest(ValidationResult.VALID, "net", true);
+    }
+
+    @Test
+    public void nullNetworkWhenPortMirroring() throws Exception {
+        portMirroringTest(new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK), null, true);
+    }
+
+    @Test
+    public void validNetworkWhenNoPortMirroring() throws Exception {
+        portMirroringTest(ValidationResult.VALID, "net", false);
+    }
+
+    @Test
+    public void nullNetworkWhenNoPortMirroring() throws Exception {
+        portMirroringTest(ValidationResult.VALID, null, false);
+    }
+
     private void unlinkingTest(ValidationResult expected, boolean networkLinkingSupported, boolean nicLinked) {
         mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, null, networkLinkingSupported);
         when(nic.isLinked()).thenReturn(nicLinked);
@@ -83,5 +103,12 @@ public class VmNicValidatorTest {
         when(nic.getNetworkName()).thenReturn(networkName);
 
         assertEquals(expected, validator.networkNameValid());
+    }
+
+    private void portMirroringTest(ValidationResult expected, String networkName, boolean portMirroring) {
+        when(nic.getNetworkName()).thenReturn(networkName);
+        when(nic.isPortMirroring()).thenReturn(portMirroring);
+
+        assertEquals(expected, validator.networkProvidedForPortMirroring());
     }
 }

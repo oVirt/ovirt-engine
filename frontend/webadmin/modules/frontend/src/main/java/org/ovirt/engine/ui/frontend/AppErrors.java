@@ -1922,6 +1922,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Update is not possible when 'Port Mirroring' is set on the interface of a running virtual machine.")
     String CANNOT_PERFOM_HOT_UPDATE_WITH_PORT_MIRRORING();
 
+    @DefaultStringValue("Cannot ${action} ${type}. 'Port Mirroring' setting requires a network.")
+    String PORT_MIRRORING_REQUIRES_NETWORK();
+
     @DefaultStringValue("Cannot ${action} ${type}. Guest OS version is not supported.")
     String ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED();
 

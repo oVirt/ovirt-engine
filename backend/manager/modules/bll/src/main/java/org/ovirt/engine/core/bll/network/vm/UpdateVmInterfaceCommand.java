@@ -208,7 +208,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.networkNameValid())
-                || !validate(nicValidator.hotUpdatePossible())) {
+                || !validate(nicValidator.hotUpdatePossible())
+                || !validate(nicValidator.networkProvidedForPortMirroring())) {
             return false;
         }
 

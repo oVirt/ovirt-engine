@@ -38,6 +38,15 @@ public class VmNicValidator {
                 : ValidationResult.VALID;
     }
 
+    /**
+     * @return An error if no network is set but port mirroring is set.
+     */
+    public ValidationResult networkProvidedForPortMirroring() {
+        return nic.getNetworkName() == null && nic.isPortMirroring()
+                ? new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK)
+                : ValidationResult.VALID;
+    }
+
     public static boolean networkLinkingSupported(String version) {
         return Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, version);
     }

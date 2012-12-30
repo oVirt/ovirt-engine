@@ -141,7 +141,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         String compatibilityVersion = getVm().getVdsGroupCompatibilityVersion().getValue();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), compatibilityVersion);
 
-        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())
+                || !validate(nicValidator.networkProvidedForPortMirroring())) {
             return false;
         }
 
