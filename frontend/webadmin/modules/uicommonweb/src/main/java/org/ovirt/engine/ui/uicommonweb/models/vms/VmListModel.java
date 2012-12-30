@@ -2338,6 +2338,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else if ((Boolean) model.getDontMigrateVM().getEntity())
         {
             getcurrentVm().setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+            getcurrentVm().setUseHostCpuFlags((Boolean) model.getHostCpu().getEntity());
         }
 
         if (model.getIsNew())
