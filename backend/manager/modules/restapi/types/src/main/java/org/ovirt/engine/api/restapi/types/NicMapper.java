@@ -42,11 +42,14 @@ public class NicMapper {
         if (model.isSetPlugged()) {
             entity.setActive(model.isPlugged());
         }
-        if (model.isSetPortMirroring() && model.getPortMirroring().isSetNetworks() &&
-                model.getPortMirroring().getNetworks().isSetNetworks()) {
-            entity.setPortMirroring(model.getPortMirroring().getNetworks().getNetworks().size() == 1);
-        } else {
-            entity.setPortMirroring(false);
+
+        if (model.isSetPortMirroring()) {
+            if (model.getPortMirroring().isSetNetworks() &&
+                    model.getPortMirroring().getNetworks().isSetNetworks()) {
+                entity.setPortMirroring(model.getPortMirroring().getNetworks().getNetworks().size() == 1);
+            } else {
+                entity.setPortMirroring(false);
+            }
         }
         return entity;
     }
