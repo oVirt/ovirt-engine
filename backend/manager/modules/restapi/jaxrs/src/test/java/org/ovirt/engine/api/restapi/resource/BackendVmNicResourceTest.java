@@ -372,4 +372,43 @@ public class BackendVmNicResourceTest
                                        entity);
         }
     }
+
+    @Test
+    public void testActivateNic() throws Exception {
+        BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
+        setUpGetEntityExpectations(4);
+        setGetVmQueryExpectations(4);
+        setGetNetworksQueryExpectations(4);
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+                AddVmInterfaceParameters.class,
+                new String[] { "VmId", "Interface.Id" },
+                new Object[] { PARENT_ID, GUIDS[1] }));
+
+        verifyActionResponse(backendVmNicResource.activate(new Action()));
+    }
+
+    @Test
+    public void testDeactivateNic() throws Exception {
+        BackendVmNicResource backendVmNicResource = (BackendVmNicResource) resource;
+        setUpGetEntityExpectations(4);
+        setGetVmQueryExpectations(4);
+        setGetNetworksQueryExpectations(4);
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+                AddVmInterfaceParameters.class,
+                new String[] { "VmId", "Interface.Id" },
+                new Object[] { PARENT_ID, GUIDS[1] }));
+
+        verifyActionResponse(backendVmNicResource.deactivate(new Action()));
+    }
+
+    private void verifyActionResponse(Response r) throws Exception {
+        verifyActionResponse(r, "vms/" + PARENT_GUID.toString() + "/nics/" + NIC_ID.toString(), false);
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values) {
+        return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
+    }
 }

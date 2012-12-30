@@ -14,12 +14,15 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.NIC;
 
+
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
 public interface VmNicResource extends NicResource {
 
     @Path("{action: (activate|deactivate)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
+    // TODO remove on 4.1
+    @Deprecated
     @POST
     @Formatted
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
@@ -27,6 +30,8 @@ public interface VmNicResource extends NicResource {
     @Path("activate")
     public Response activate(Action action);
 
+    // TODO remove on 4.1
+    @Deprecated
     @POST
     @Formatted
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })

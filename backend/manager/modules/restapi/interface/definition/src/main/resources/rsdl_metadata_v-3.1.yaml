@@ -394,7 +394,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/nics/{nic:id}/activate|rel=activate
+- name: /api/vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
   request:
     body:
       parameterType: Action
@@ -403,7 +403,7 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
-- name: /api/vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate
+- name: /api/vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
   request:
     body:
       parameterType: Action

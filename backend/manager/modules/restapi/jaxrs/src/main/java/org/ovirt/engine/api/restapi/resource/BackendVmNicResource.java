@@ -12,8 +12,6 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
-import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
-import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -169,17 +167,18 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
     @Override
     public Response activate(Action action) {
-        ActivateDeactivateVmNicParameters params = new ActivateDeactivateVmNicParameters(guid, PlugAction.PLUG);
-        BackendNicsResource parent = (BackendNicsResource) collection;
-        params.setVmId(parent.parentId);
-        return doAction(VdcActionType.ActivateDeactivateVmNic, params, action);
+        NIC nic = get();
+        nic.setPlugged(true);
+        update(nic);
+        return actionSuccess(action);
     }
 
     @Override
     public Response deactivate(Action action) {
-        ActivateDeactivateVmNicParameters params = new ActivateDeactivateVmNicParameters(guid, PlugAction.UNPLUG);
-        params.setVmId(((BackendNicsResource) collection).parentId);
-        return doAction(VdcActionType.ActivateDeactivateVmNic, params, action);
+        NIC nic = get();
+        nic.setPlugged(false);
+        update(nic);
+        return actionSuccess(action);
     }
 
     @Override
