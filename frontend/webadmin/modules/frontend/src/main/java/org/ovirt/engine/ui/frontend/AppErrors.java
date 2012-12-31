@@ -1379,7 +1379,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Minimum number of sockets cannot be less then 1")
     String ACTION_TYPE_FAILED_MIN_NUM_SOCKETS();
 
-    @DefaultStringValue("The specify domain is not export domain")
+    @DefaultStringValue("Cannot ${action} ${type}. The specified domain '${storageDomainName}' is not an export domain.")
     String ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN();
 
     @DefaultStringValue("Bad format of IP address")
