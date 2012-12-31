@@ -253,7 +253,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "network_view",
                             "network_view",
                             "id",
-                            "name ASC"));
+                            "storage_pool_name ASC, name ASC"));
                     put(SearchObjects.VDS_NETWORK_INTERFACE_OBJ_NAME, new EntitySearchInfo(null,
                             new NetworkInterfaceConditionFieldAutoCompleter(),
                             "vds_interface",

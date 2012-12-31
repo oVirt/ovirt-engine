@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Network;
@@ -245,27 +243,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private void OnSystemTreeSelectedItemChanged() {
         UpdateActionAvailability();
-    }
-
-    @Override
-    public void setItems(Iterable value) {
-        if (value != null) {
-            List<NetworkView> networksList = (List<NetworkView>) value;
-            Collections.sort(networksList, new Comparator<NetworkView>() {
-
-                @Override
-                public int compare(NetworkView paramT1, NetworkView paramT2) {
-                    int compareValue = paramT1.getStoragePoolName().compareTo(paramT2.getStoragePoolName());
-
-                    if (compareValue != 0) {
-                        return compareValue;
-                    }
-
-                    return paramT1.getName().compareTo(paramT2.getName());
-                }
-            });
-        }
-        super.setItems(value);
     }
 
     @Override
