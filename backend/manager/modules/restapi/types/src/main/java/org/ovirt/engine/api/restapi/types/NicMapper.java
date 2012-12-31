@@ -37,10 +37,10 @@ public class NicMapper {
             }
         }
         if (model.isSetActive()) {
-            entity.setActive(model.isActive());
+            entity.setPlugged(model.isActive());
         }
         if (model.isSetPlugged()) {
-            entity.setActive(model.isPlugged());
+            entity.setPlugged(model.isPlugged());
         }
 
         if (model.isSetPortMirroring()) {
@@ -79,8 +79,8 @@ public class NicMapper {
 
         model.setLinked(entity.isLinked());
         model.setInterface(map(entity.getType()));
-        model.setActive(entity.isActive());
-        model.setPlugged(entity.isActive());
+        model.setActive(entity.isPlugged());
+        model.setPlugged(entity.isPlugged());
         return model;
     }
 

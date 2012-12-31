@@ -396,7 +396,7 @@ public abstract class VmInterfaceModel extends Model
         }
         onSaveMAC(nic);
 
-        nic.setActive((Boolean) getPlugged().getEntity());
+        nic.setPlugged((Boolean) getPlugged().getEntity());
 
         StartProgress(null);
 

@@ -463,7 +463,7 @@ public class VdsSelector {
             Map<String, Network> networksByName,
             boolean onlyRequiredNetworks) {
         boolean networkRequiredOnVds = true;
-        if (!vmIface.isActive()) {
+        if (!vmIface.isPlugged()) {
             networkRequiredOnVds = false;
         } else if (onlyRequiredNetworks) {
             networkRequiredOnVds = networksByName.get(vmIface.getNetworkName()).getCluster().isRequired();

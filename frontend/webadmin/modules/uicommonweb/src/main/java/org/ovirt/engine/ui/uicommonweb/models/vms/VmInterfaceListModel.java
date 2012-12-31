@@ -240,7 +240,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
         for (VmNetworkInterface nic : nics)
         {
-            if (nic.isActive())
+            if (nic.isPlugged())
             {
                 return false;
             }

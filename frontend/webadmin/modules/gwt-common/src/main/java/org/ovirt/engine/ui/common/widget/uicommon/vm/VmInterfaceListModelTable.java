@@ -82,7 +82,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
             @Override
             public Boolean getValue(VmNetworkInterface object) {
-                return object.isActive();
+                return object.isPlugged();
             }
 
             @Override

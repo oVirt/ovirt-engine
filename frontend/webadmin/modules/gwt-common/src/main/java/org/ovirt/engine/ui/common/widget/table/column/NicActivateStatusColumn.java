@@ -26,7 +26,7 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         }
 
         if (vnic != null) {
-            return vnic.isActive() && vnic.isLinked() ?
+            return vnic.isPlugged() && vnic.isLinked() ?
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.upImage()).getHTML())
                     : SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.downImage()).getHTML());
         }
@@ -44,7 +44,7 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         }
 
         StringBuilder tooltip = new StringBuilder(""); //$NON-NLS-1$
-        if (vnic.isActive()) {
+        if (vnic.isPlugged()) {
             tooltip =
                     tooltip.append(templates.cardStatus(constants.pluggedNetworkInteface()).asString());
         } else {

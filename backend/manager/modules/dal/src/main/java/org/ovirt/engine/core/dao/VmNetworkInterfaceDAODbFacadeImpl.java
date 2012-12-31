@@ -38,7 +38,7 @@ public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implement
                     entity.setVmName(rs.getString("vm_name"));
                     entity.setId(Guid.createGuidFromString(rs.getString("id")));
                     entity.setSpeed((Integer) rs.getObject("speed"));
-                    entity.setActive(rs.getBoolean("is_plugged"));
+                    entity.setPlugged(rs.getBoolean("is_plugged"));
                     entity.setPortMirroring(rs.getBoolean("port_mirroring"));
                     entity.setLinked(rs.getBoolean("linked"));
                     return entity;

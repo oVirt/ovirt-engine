@@ -25,8 +25,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private NGuid vmId;
     private String vmName;
     private NGuid vmTemplateId;
-    /* status of the nic. Active nic is one that is plugged to its VM */
-    private boolean active = true;
+    private boolean plugged = true;
 
     /**
      * Link State of the Nic. <BR>
@@ -102,12 +101,12 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         return id;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isPlugged() {
+        return plugged;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setPlugged(boolean plugged) {
+        this.plugged = plugged;
     }
 
     public boolean isLinked() {
@@ -155,7 +154,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                 .append(", macAddress=")
                 .append(getMacAddress())
                 .append(", active=")
-                .append(isActive())
+                .append(isPlugged())
                 .append(", linked=")
                 .append(isLinked())
                 .append(", portMirroring=")
@@ -174,7 +173,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + (active ? 1231 : 1237);
+        result = prime * result + (plugged ? 1231 : 1237);
         result = prime * result + (linked ? 1231 : 1237);
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmName == null) ? 0 : vmName.hashCode());
@@ -194,7 +193,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
             return false;
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
-        if (active != other.active) {
+        if (plugged != other.plugged) {
             return false;
         }
         if (linked != other.linked) {

@@ -154,7 +154,7 @@ public class NetworkVmListModel extends SearchableListModel
 
             // If the vm is up and the vnic is active- remove enabled just if hotplug is enabled on the cluster's
             // version
-            if (!isActivateSupported && pair.getFirst().isActive()
+            if (!isActivateSupported && pair.getFirst().isPlugged()
                     && !VMStatus.Down.equals(pair.getSecond().getStatus()))
             {
                 return false;

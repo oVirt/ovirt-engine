@@ -78,7 +78,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         });
 
         boolean succeeded = true;
-        if (getParameters().getInterface().isActive()) {
+        if (getParameters().getInterface().isPlugged()) {
             succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
         }
         setSucceeded(succeeded);
@@ -87,7 +87,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
-                getParameters().getInterface().isActive());
+                getParameters().getInterface().isPlugged());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 
