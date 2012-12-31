@@ -7,8 +7,6 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -122,14 +120,6 @@ public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, S
     }
 
     public void setmessage(String value) {
-        final String INCOMPLETE_SIGN = "...";
-        int maxAuditLogMessageLength = Config.<Integer> GetValue(ConfigValues.MaxAuditLogMessageLength);
-        // truncate message if exceeds configured max length.
-        // truncated messages will be ended with "..." to indicate that message
-        // is incomplete due to size limits.
-        if (value.length() > maxAuditLogMessageLength) {
-            value = value.substring(0, maxAuditLogMessageLength - (INCOMPLETE_SIGN.length() + 1)) + INCOMPLETE_SIGN;
-        }
         this.message = value;
     }
 

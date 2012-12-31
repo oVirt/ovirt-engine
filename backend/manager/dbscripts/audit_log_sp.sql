@@ -86,8 +86,17 @@ Create or replace FUNCTION InsertExternalAuditLog(INOUT v_audit_log_id INTEGER ,
     v_event_flood_in_sec INTEGER,
     v_custom_data text)
 AS $procedure$
+DECLARE
+    v_max_message_length INTEGER;
 BEGIN
 
+   -- truncate message if exceeds configured max length. truncated messages will be ended
+   -- with "..." to indicate that message is incomplete due to size limits.
+
+   v_max_message_length := cast(option_value as int) FROM vdc_options WHERE option_name = 'MaxAuditLogMessageLength' and version = 'general';
+   IF (v_max_message_length IS NOT NULL and length(v_message) > v_max_message_length) THEN
+      v_message := substr(v_message, 1, v_max_message_length -3) || '...';
+   END IF;
    INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_id, USER_NAME, vds_id, VDS_NAME, vm_id, VM_NAME,vm_template_id,VM_TEMPLATE_NAME,storage_pool_id,STORAGE_POOL_NAME,storage_domain_id,STORAGE_DOMAIN_NAME,vds_group_id,vds_group_name, correlation_id, job_id, quota_id, quota_name, gluster_volume_id, gluster_volume_name,origin, custom_event_id, event_flood_in_sec, custom_data )
 		VALUES(v_log_time, v_log_type, v_log_type_name, v_severity, v_message, v_user_id, v_user_name, v_vds_id, v_vds_name, v_vm_id, v_vm_name,v_vm_template_id,v_vm_template_name,v_storage_pool_id,v_storage_pool_name,v_storage_domain_id,v_storage_domain_name,v_vds_group_id,v_vds_group_name, v_correlation_id, v_job_id, v_quota_id, v_quota_name, v_gluster_volume_id, v_gluster_volume_name,v_origin, v_custom_event_id, v_event_flood_in_sec, v_custom_data);
 
