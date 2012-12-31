@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -19,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 @Entity
 @Table(name = "ad_groups")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class LdapGroup extends DbUserBase implements Serializable {
+public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
     @Id

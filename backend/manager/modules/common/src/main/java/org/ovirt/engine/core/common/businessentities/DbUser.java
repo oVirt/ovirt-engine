@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +18,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 @Entity
 @Table(name = "users")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class DbUser extends DbUserBase implements Serializable {
+public class DbUser extends IVdcQueryable {
     private static final long serialVersionUID = 7052102138405696755L;
 
     @Id

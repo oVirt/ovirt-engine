@@ -32,7 +32,6 @@
 		<include name="common/businessentities/event_subscriber.java" />
 		<include name="common/businessentities/event_subscriber_id.java" />
 		<include name="common/businessentities/DbUser.java" />
-		<include name="common/businessentities/DbUserBase.java" />
 		<include name="common/businessentities/custom_actions.java" />
 		<include name="common/businessentities/BootSequence.java" />
 		<include name="common/businessentities/IImage.java" />
