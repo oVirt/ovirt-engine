@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @SuppressWarnings("serial")
 public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
@@ -24,7 +23,7 @@ public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends 
                         new VdsIdVDSCommandParametersBase(getParameters().getVdsId()));
 
         getVds().setnet_config_dirty(false);
-        DbFacade.getInstance().getVdsDynamicDao().update(getVds().getDynamicData());
+        getDbFacade().getVdsDynamicDao().update(getVds().getDynamicData());
         setSucceeded(retVal.getSucceeded());
     }
 

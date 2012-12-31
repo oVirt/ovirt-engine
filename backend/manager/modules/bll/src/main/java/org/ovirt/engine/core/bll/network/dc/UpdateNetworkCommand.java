@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -26,7 +25,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkDao().update(getNetwork());
+        getNetworkDAO().update(getNetwork());
 
         for (VDSGroup cluster : clusters) {
             NetworkClusterHelper.setStatus(cluster.getId(), getNetwork());
@@ -42,7 +41,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAll();
+        List<Network> networks = getNetworkDAO().getAll();
 
         if (getStoragePool() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
@@ -106,10 +105,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         // check if the network in use with running vm
-        clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(getStoragePool().getId());
+        clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
         for (VDSGroup cluster : clusters) {
-            List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(cluster.getId(),
-                    getNetworkName());
+            List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(cluster.getId(), getNetworkName());
             if (vms.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
                 return false;

@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @SuppressWarnings("serial")
 public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {
@@ -22,8 +21,8 @@ public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfac
             AddCustomValue("InterfaceName", iface.getName());
             AddCustomValue("InterfaceType", VmInterfaceType.forValue(iface.getType()).getDescription());
         }
-        DbFacade.getInstance().getVmDeviceDao().remove(
-                new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmTemplateId()));
+        getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),
+                getParameters().getVmTemplateId()));
         getVmNetworkInterfaceDao().remove(getParameters().getInterfaceId());
         setSucceeded(true);
     }

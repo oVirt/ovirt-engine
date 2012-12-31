@@ -21,8 +21,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDAO;
 import org.ovirt.engine.core.utils.IPAddress;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.dns.Dns;
@@ -144,7 +142,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     @Override
     protected boolean canDoAction() {
         String ifaceGateway = null;
-        interfaces = getInterfaceDAO().getAllInterfacesForVds(getParameters().getVdsId());
+        interfaces = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that interface exists
         for (final VdsNetworkInterface i : getParameters().getInterfaces()) {
@@ -245,9 +243,5 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS
                 : AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_FAILED;
-    }
-
-    protected InterfaceDAO getInterfaceDAO() {
-        return DbFacade.getInstance().getInterfaceDao();
     }
 }

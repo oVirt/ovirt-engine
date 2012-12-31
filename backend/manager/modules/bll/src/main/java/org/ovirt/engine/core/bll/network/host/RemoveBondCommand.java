@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -45,8 +44,8 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     @Override
     protected void executeCommand() {
         VdsNetworkInterface bond = null;
-        List<VdsNetworkInterface> all = DbFacade.getInstance().getInterfaceDao()
-                .getAllInterfacesForVds(getParameters().getVdsId());
+        List<VdsNetworkInterface> all =
+                getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
         for (VdsNetworkInterface iface : all) {
             if (StringUtils.equals(iface.getName(), getParameters().getBondName())) {
                 bond = iface;
@@ -88,7 +87,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
     @Override
     protected boolean canDoAction() {
         List<VdsNetworkInterface> vdsInterfaces =
-                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
+                getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
 
         // check that bond exists
         final VdsNetworkInterface bond = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {
@@ -125,11 +124,10 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             interfaces.add(iface.getName());
         }
 
-        VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
+        VDS vds = getVdsDAO().get(getParameters().getVdsId());
         // check if network in cluster and vds active
         if (vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing) {
-            List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                    .getAllForCluster(vds.getvds_group_id());
+            List<Network> networks = getNetworkDAO().getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network n) {
@@ -154,8 +152,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
                 if (vm.getStatus() != VMStatus.Down) {
-                    List<VmNetworkInterface> vmInterfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                            .getAllForVm(vm.getId());
+                    List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
                     VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
                         @Override
                         public boolean eval(VmNetworkInterface i) {

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 @SuppressWarnings("serial")
@@ -49,7 +48,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             nics.clear();
             bond = params.getInterface().getName();
 
-            List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
+            List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao().getAllInterfacesForVds(
                     params.getVdsId());
 
             for (VdsNetworkInterface i : interfaces) {
@@ -80,7 +79,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                             new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = DbFacade.getInstance().getVdsDao().get(params.getVdsId()).getvds_group_id();
+                Guid groupId = getVdsDAO().get(params.getVdsId()).getvds_group_id();
                 NetworkClusterHelper.setStatus(groupId, params.getNetwork());
                 setSucceeded(true);
             }
@@ -90,8 +89,8 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
     @Override
     protected boolean canDoAction() {
         T params = getParameters();
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao()
-                .getAllInterfacesForVds(params.getVdsId());
+        List<VdsNetworkInterface> interfaces =
+                getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
 
         // check that interface exists
         VdsNetworkInterface iface = Entities.entitiesByName(interfaces).get(params.getInterface().getName());
@@ -124,8 +123,8 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check that the network exists in current cluster
 
-        Map<String, Network> networksByName = Entities.entitiesByName(DbFacade.getInstance().getNetworkDao()
-                .getAllForCluster(getVds().getvds_group_id()));
+        Map<String, Network> networksByName =
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVds().getvds_group_id()));
 
         if (!networksByName.containsKey(params.getNetwork().getName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);

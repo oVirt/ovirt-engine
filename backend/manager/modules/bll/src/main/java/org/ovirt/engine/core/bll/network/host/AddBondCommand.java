@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -65,7 +64,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             if (retVal.getSucceeded()) {
                 // set network status (this can change the network status to
                 // operational)
-                VdsStatic vdsStatic = DbFacade.getInstance().getVdsStaticDao().get(params.getVdsId());
+                VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(params.getVdsId());
                 NetworkClusterHelper.setStatus(vdsStatic.getvds_group_id(), params
                         .getNetwork());
                 setSucceeded(true);
@@ -84,7 +83,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS);
         }
 
-        List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
+        List<VdsNetworkInterface> interfaces = getDbFacade().getInterfaceDao().getAllInterfacesForVds(
                 getParameters().getVdsId());
 
         // check that bond exists
@@ -137,7 +136,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(getVds().getvds_group_id());
+        List<Network> networks = getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {

@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -39,8 +38,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected void executeCommand() {
-        DbFacade.getInstance().getNetworkClusterDao().remove(getParameters().getVdsGroupId(),
-                getParameters().getNetwork().getId());
+        getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetwork().getId());
         setSucceeded(true);
     }
 
@@ -56,7 +54,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         // check that there is no vm running with this network
-        List<VmStatic> vms = DbFacade.getInstance().getVmStaticDao().getAllByGroupAndNetworkName(
+        List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(
                 getParameters().getVdsGroupId(), getParameters().getNetwork().getname());
         if (vms.size() > 0) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_VM);
@@ -66,11 +64,9 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         // check that no template is using this network
-        List<VmTemplate> templates = DbFacade.getInstance().getVmTemplateDao()
-                .getAllForVdsGroup(getParameters().getVdsGroupId());
+        List<VmTemplate> templates = getVmTemplateDAO().getAllForVdsGroup(getParameters().getVdsGroupId());
         for (VmTemplate tmpl : templates) {
-            List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDao().getAllForTemplate(tmpl.getId());
+            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForTemplate(tmpl.getId());
             if (networkUsedByAnInterface(interfaces)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE);
                 return false;
@@ -90,8 +86,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             List<IVdcQueryable> vmList = (List<IVdcQueryable>) ret.getReturnValue();
             for (IVdcQueryable vm_helper : vmList) {
                 VM vm = (VM) vm_helper;
-                List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                        .getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+                List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
                 if (networkUsedByAnInterface(interfaces)) {
                     addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
                     return false;

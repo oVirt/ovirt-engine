@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -27,7 +26,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void executeCommand() {
         getNetwork().setId(Guid.NewGuid());
-        DbFacade.getInstance().getNetworkDao().save(getNetwork());
+        getNetworkDAO().save(getNetwork());
         addPermissions();
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
@@ -63,10 +62,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         List<Network> all;
         if (getNetwork().getstorage_pool_id() != null
                 && !getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
-            all = DbFacade.getInstance().getNetworkDao().getAllForDataCenter(
-                    getNetwork().getstorage_pool_id().getValue());
+            all = getNetworkDAO().getAllForDataCenter(getNetwork().getstorage_pool_id().getValue());
         } else {
-            all = DbFacade.getInstance().getNetworkDao().getAll();
+            all = getNetworkDAO().getAll();
         }
         boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
             @Override

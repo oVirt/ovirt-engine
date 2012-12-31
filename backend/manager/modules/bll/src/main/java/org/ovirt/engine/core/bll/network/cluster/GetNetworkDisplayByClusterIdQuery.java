@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -19,7 +18,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
     @Override
     protected void executeQueryCommand() {
         Guid vdsgroupid = getParameters().getVdsGroupId();
-        List<NetworkCluster> all = DbFacade.getInstance().getNetworkClusterDao().getAllForCluster(vdsgroupid);
+        List<NetworkCluster> all = getDbFacade().getNetworkClusterDao().getAllForCluster(vdsgroupid);
         final NetworkCluster nc = LinqUtils.firstOrNull(all, new Predicate<NetworkCluster>() {
             @Override
             public boolean eval(NetworkCluster networkCluster) {
@@ -28,7 +27,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
         });
         if (nc != null) {
             getQueryReturnValue().setReturnValue(
-                    LinqUtils.firstOrNull(DbFacade.getInstance().getNetworkDao().getAllForCluster(vdsgroupid),
+                    LinqUtils.firstOrNull(getDbFacade().getNetworkDao().getAllForCluster(vdsgroupid),
                             new Predicate<Network>() {
                                 @Override
                                 public boolean eval(Network network) {
