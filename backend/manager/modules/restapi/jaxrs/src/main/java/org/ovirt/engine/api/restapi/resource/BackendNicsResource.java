@@ -6,9 +6,9 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.NIC;
-import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
+import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -51,12 +51,17 @@ public abstract class BackendNicsResource
              VdcQueryType.GetAllNetworksByClusterId,
              new VdsGroupQueryParamenters(clusterId));
         for (VmNetworkInterface entity : entities) {
-            org.ovirt.engine.core.common.businessentities.Network network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
+            org.ovirt.engine.core.common.businessentities.Network network = null;
+            if (entity.getNetworkName() != null) {
+                network = lookupClusterNetwork(clusterId, null, entity.getNetworkName(), networks);
+            }
+
             NIC nic = populate(map(entity), entity);
-            if (network!=null && network.getId()!=null) {
+            if (network != null && network.getId() != null) {
                 if (entity.isPortMirroring()) {
                     PortMirroring portMirroring = new PortMirroring();
                     Networks nets = new Networks();
+
                     Network net = new Network();
                     net.setId(network.getId().toString());
                     portMirroring.setNetworks(nets);
@@ -92,7 +97,7 @@ public abstract class BackendNicsResource
 
     @Override
     protected String[] getRequiredAddFields() {
-        return new String[] { "name", "network.name|id" };
+        return new String[] { "name" };
     }
 
     protected org.ovirt.engine.core.common.businessentities.Network lookupClusterNetwork(Guid clusterId, Guid id, String name, List<org.ovirt.engine.core.common.businessentities.Network> networks) {
@@ -142,7 +147,7 @@ public abstract class BackendNicsResource
     }
 
     protected void setNetworkId(NIC nic) {
-        if ( (nic.isSetNetwork()) && (!nic.getNetwork().isSetId())) {
+        if (nic.isSetNetwork() && !nic.getNetwork().isSetId() && nic.getNetwork().isSetName()) {
             Guid clusterId = getClusterId();
             org.ovirt.engine.core.common.businessentities.Network network = lookupClusterNetwork(clusterId, nic.getNetwork().getId()==null ? null : asGuid(nic.getNetwork().getId()), nic.getNetwork().getName());
             if (network!=null) {

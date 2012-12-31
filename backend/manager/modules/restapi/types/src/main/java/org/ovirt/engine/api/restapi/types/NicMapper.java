@@ -24,8 +24,11 @@ public class NicMapper {
         if (model.isSetMac() && model.getMac().isSetAddress()) {
             entity.setMacAddress(model.getMac().getAddress());
         }
-        if (model.isSetNetwork() && model.getNetwork().isSetName()) {
+        if (model.isSetNetwork()) {
             entity.setNetworkName(model.getNetwork().getName());
+        }
+        if (model.isSetLinked()) {
+            entity.setLinked(model.isLinked());
         }
         if (model.isSetInterface()) {
             NicInterface nicType = NicInterface.fromValue(model.getInterface());
@@ -35,6 +38,9 @@ public class NicMapper {
         }
         if (model.isSetActive()) {
             entity.setActive(model.isActive());
+        }
+        if (model.isSetPlugged()) {
+            entity.setActive(model.isPlugged());
         }
         if (model.isSetPortMirroring() && model.getPortMirroring().isSetNetworks() &&
                 model.getPortMirroring().getNetworks().isSetNetworks()) {
@@ -67,8 +73,11 @@ public class NicMapper {
             model.setNetwork(new Network());
             model.getNetwork().setName(entity.getNetworkName());
         }
+
+        model.setLinked(entity.isLinked());
         model.setInterface(map(entity.getType()));
         model.setActive(entity.isActive());
+        model.setPlugged(entity.isActive());
         return model;
     }
 

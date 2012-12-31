@@ -33,6 +33,8 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
         assertNotNull(transform.getMac());
         assertEquals(model.getMac().getAddress(), transform.getMac().getAddress());
         assertEquals(model.getInterface(), transform.getInterface());
+        assertEquals(model.isLinked(), transform.isLinked());
+        assertEquals(model.isPlugged(), transform.isPlugged());
     }
 
     @Test

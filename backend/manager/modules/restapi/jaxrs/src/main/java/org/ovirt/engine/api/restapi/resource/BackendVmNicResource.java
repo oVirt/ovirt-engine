@@ -21,30 +21,38 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendVmNicResource extends BackendNicResource implements VmNicResource {
 
     protected BackendVmNicResource(String id,
-                                   AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
-                                   VdcActionType updateType,
-                                   ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
-                                   String[] requiredUpdateFields,
-                                   String[] subCollections) {
+            AbstractBackendReadOnlyDevicesResource<NIC, Nics, VmNetworkInterface> collection,
+            VdcActionType updateType,
+            ParametersProvider<NIC, VmNetworkInterface> updateParametersProvider,
+            String[] requiredUpdateFields,
+            String[] subCollections) {
         super(id, collection, updateType, updateParametersProvider, requiredUpdateFields, subCollections);
     }
 
     @Override
     protected NIC populate(NIC model, VmNetworkInterface entity) {
-        BackendVmNicsResource parent = (BackendVmNicsResource)collection;
-        Guid clusterId = parent.getClusterId();
-        org.ovirt.engine.core.common.businessentities.Network network = parent.getClusterNetwork(clusterId, null, model.getNetwork().getName());
-        String networkId = network == null ? null : network.getId().toString();
-        model.getNetwork().setId(networkId);
-        model.getNetwork().setName(null);
+        BackendVmNicsResource parent = (BackendVmNicsResource) collection;
+        org.ovirt.engine.core.common.businessentities.Network network = null;
+        String networkId = null;
+        if (model.isSetNetwork() && model.getNetwork().isSetName()) {
+            Guid clusterId = parent.getClusterId();
+            network = parent.getClusterNetwork(clusterId, null, model.getNetwork().getName());
+            networkId = network == null ? null : network.getId().toString();
+            model.getNetwork().setId(networkId);
+            model.getNetwork().setName(null);
+        }
+
         if (entity.isPortMirroring()) {
             PortMirroring portMirroring = new PortMirroring();
             Networks networks = new Networks();
-            Network net = new Network();
-            net.setId(networkId);
-            net.setName(network.getname());
-            portMirroring.setNetworks(networks);
-            portMirroring.getNetworks().getNetworks().add(net);
+            if (network != null) {
+                Network net = new Network();
+                net.setId(networkId);
+                net.setName(network.getname());
+                portMirroring.setNetworks(networks);
+                portMirroring.getNetworks().getNetworks().add(net);
+            }
+
             model.setPortMirroring(portMirroring);
         }
         return parent.addStatistics(model, entity, uriInfo, httpHeaders);
@@ -98,25 +106,39 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
                     (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
             String networkName =
                     (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
-            String pmNetworkId = (pmNetwork.isSetId() ? pmNetwork.getId() : null);
-            String pmNetworkName = (pmNetwork.isSetName() ? pmNetwork.getName() : null);
-            if (pmNetworkId != null) {
-                if (networkId == null) {
-                    networkId = (networkName != null) ? getNetworkId(networkName) : get().getNetwork().getId();
-                }
-                fault = (!pmNetworkId.equals(networkId));
-            } else if (pmNetworkName != null) {
-                if (networkName == null) {
+            if (!(device.isSetNetwork() && device.getNetwork().getId() == null && device.getNetwork().getName() == null)) {
+                String pmNetworkId = (pmNetwork.isSetId() ? pmNetwork.getId() : null);
+                String pmNetworkName = (pmNetwork.isSetName() ? pmNetwork.getName() : null);
+                if (pmNetworkId != null) {
                     if (networkId == null) {
-                        networkId = get().getNetwork().getId();
+                        if (networkName != null) {
+                            networkId = getNetworkId(networkName);
+                        } else {
+                            nic = nic != null ? nic : get();
+                            networkId = nic.getNetwork().getId();
+                        }
                     }
-                    pmNetworkId = getNetworkId(pmNetworkName);
-                    fault = (!networkId.equals(pmNetworkId));
+                    if (networkId != null) {
+                        fault = (!networkId.equals(pmNetworkId));
+                    }
+                } else if (pmNetworkName != null) {
+                    if (networkName == null) {
+                        if (networkId == null) {
+                            nic = nic != null ? nic : get();
+                            networkId = nic.getNetwork().getId();
+                        }
+                        pmNetworkId = getNetworkId(pmNetworkName);
+                        if (networkId != null) {
+                            fault = (!networkId.equals(pmNetworkId));
+                        }
+                    }
+                    if (networkId != null || networkName != null) {
+                        fault = fault || (!pmNetworkName.equals(networkName));
+                    }
+                } else {
+                    fault = true;
+                    faultString = "Network must have name or id property for port mirroring";
                 }
-                fault = fault || (!pmNetworkName.equals(networkName));
-            } else {
-                fault = true;
-                faultString = "Network must have name or id property for port mirroring";
             }
         }
         if (fault) {
@@ -128,12 +150,14 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     }
 
     private String getNetworkId(String networkName) {
-        BackendVmNicsResource parent = (BackendVmNicsResource) collection;
-        Guid clusterId = parent.getClusterId();
-        org.ovirt.engine.core.common.businessentities.Network n =
-                parent.getClusterNetwork(clusterId, null, networkName);
-        if (n != null) {
-            return n.getId().toString();
+        if (networkName != null) {
+            BackendVmNicsResource parent = (BackendVmNicsResource) collection;
+            Guid clusterId = parent.getClusterId();
+            org.ovirt.engine.core.common.businessentities.Network n =
+                    parent.getClusterNetwork(clusterId, null, networkName);
+            if (n != null) {
+                return n.getId().toString();
+            }
         }
         return null;
     }

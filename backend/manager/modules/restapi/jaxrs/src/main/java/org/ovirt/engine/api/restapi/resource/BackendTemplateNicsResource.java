@@ -1,22 +1,21 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicsResource
             extends BackendNicsResource
@@ -67,12 +66,19 @@ public class BackendTemplateNicsResource
     @Override
     protected VmNetworkInterface setNetwork(NIC device, VmNetworkInterface ni) {
         if (device.isSetNetwork()) {
-            Guid clusterId = getEntity(VmTemplate.class,
-                                       VdcQueryType.GetVmTemplate,
-                                       new GetVmTemplateParameters(parentId), "id").getvds_group_id();
-            Network net = lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork().getId()) : null, device.getNetwork().getName());
-            if (net != null) {
-                ni.setNetworkName(net.getname());
+            if (device.isSetId() || device.isSetName()) {
+                Guid clusterId = getEntity(VmTemplate.class,
+                        VdcQueryType.GetVmTemplate,
+                        new GetVmTemplateParameters(parentId), "id").getvds_group_id();
+                Network net =
+                        lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork()
+                                .getId())
+                                : null, device.getNetwork().getName());
+                if (net != null) {
+                    ni.setNetworkName(net.getname());
+                }
+            } else {
+                ni.setNetworkName(null);
             }
         }
         return ni;

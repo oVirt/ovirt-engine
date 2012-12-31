@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.PARENT_ID;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendNicsResourceTest.verifyModelSpecific;
+import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,8 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
@@ -23,6 +27,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
@@ -163,6 +168,26 @@ public class BackendVmNicResourceTest
         assertNotNull(nic);
     }
 
+    @Test
+    public void testUpdateNoNetworkWithPortMirroringNetworkFail() throws Exception {
+        try {
+            VmNetworkInterface entity = getEntity(1, null);
+            setUpGetEntityExpectations(1, entity);
+            setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+                    AddVmInterfaceParameters.class,
+                    new String[] { "VmId", "Interface.Id" },
+                    new Object[] { PARENT_ID, GUIDS[1] },
+                    false,
+                    true));
+            NIC nic = getNic(false);
+            nic.setNetwork(new Network());
+            nic = resource.update(nic);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, CANT_DO);
+        }
+    }
+
     @Test(expected=WebFaultException.class)
     public void testUpdateWithNonExistingNetwork() throws Exception {
         control.replay();
@@ -184,6 +209,25 @@ public class BackendVmNicResourceTest
                                            true));
 
         NIC nic = resource.update(getNic(true));
+        assertNotNull(nic);
+    }
+
+    @Test
+    public void testUpdateWithNoNetwork() throws Exception {
+        VmNetworkInterface entity = getEntity(1, null);
+        setUpGetEntityExpectations(3, entity);
+
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
+                AddVmInterfaceParameters.class,
+                new String[] { "VmId", "Interface.Id" },
+                new Object[] { PARENT_ID, GUIDS[1] },
+                true,
+                true));
+
+        NIC nic = getNic(false);
+        nic.setNetwork(new Network());
+        nic.setPortMirroring(null);
+        nic = resource.update(nic);
         assertNotNull(nic);
     }
 
@@ -283,6 +327,12 @@ public class BackendVmNicResourceTest
         return nic;
     }
 
+    protected VmNetworkInterface getEntity(int index, String networkName) {
+        return setUpEntityExpectations(control.createMock(VmNetworkInterface.class),
+                control.createMock(VmNetworkStatistics.class),
+                index, networkName);
+    }
+
     @Override
     protected VmNetworkInterface getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VmNetworkInterface.class),
@@ -322,5 +372,4 @@ public class BackendVmNicResourceTest
                                        entity);
         }
     }
-
 }

@@ -78,18 +78,21 @@ public class BackendVmNicsResource
                     (device.isSetNetwork() && device.getNetwork().isSetId()) ? device.getNetwork().getId() : null;
             String networkName =
                     (device.isSetNetwork() && device.getNetwork().isSetName()) ? device.getNetwork().getName() : null;
-            if (pmNetworkId != null) {
-                networkId = (networkId == null) ? getNetworkId(networkName) : networkId;
-                fault = (!pmNetworkId.equals(networkId));
-            } else if (pmNetworkName != null) {
-                if (networkName == null && networkId != null) {
-                    pmNetworkId = getNetworkId(pmNetworkName);
-                    fault = (!pmNetworkId.equals(networkId));
+
+            if (networkName != null || networkId != null) {
+                if (pmNetworkId != null) {
+                    networkId = (networkId == null) ? getNetworkId(networkName) : networkId;
+                    fault = (!networkId.equals(pmNetworkId));
+                } else if (pmNetworkName != null) {
+                    if (networkName == null && networkId != null) {
+                        pmNetworkId = getNetworkId(pmNetworkName);
+                        fault = (!networkId.equals(pmNetworkId));
+                    }
+                    fault = fault || (!pmNetworkName.equals(networkName));
+                } else {
+                    fault = true;
+                    faultString = "Network must have name or id property for port mirroring";
                 }
-                fault = fault || (!pmNetworkName.equals(networkName));
-            } else {
-                fault = true;
-                faultString = "Network must have name or id property for port mirroring";
             }
         }
         if (fault) {
@@ -102,11 +105,12 @@ public class BackendVmNicsResource
     }
 
     private String getNetworkId(String networkName) {
-        Guid clusterId = getClusterId();
-        org.ovirt.engine.core.common.businessentities.Network n =
-                getClusterNetwork(clusterId, null, networkName);
-        if (n != null) {
-            return n.getId().toString();
+        if (networkName != null) {
+            Guid clusterId = getClusterId();
+            org.ovirt.engine.core.common.businessentities.Network n = getClusterNetwork(clusterId, null, networkName);
+            if (n != null) {
+                return n.getId().toString();
+            }
         }
         return null;
     }
@@ -153,10 +157,16 @@ public class BackendVmNicsResource
     @Override
     protected VmNetworkInterface setNetwork(NIC device, VmNetworkInterface ni) {
         if (device.isSetNetwork()) {
-            Guid clusterId = getClusterId();
-            Network net = lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork().getId()) : null, device.getNetwork().getName());
-            if (net != null) {
-                ni.setNetworkName(net.getname());
+            if (device.getNetwork().isSetId() || device.getNetwork().isSetName()) {
+                Guid clusterId = getClusterId();
+                Network net =
+                        lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork()
+                                .getId()) : null, device.getNetwork().getName());
+                if (net != null) {
+                    ni.setNetworkName(net.getname());
+                }
+            } else {
+                ni.setNetworkName(null);
             }
         }
         return ni;

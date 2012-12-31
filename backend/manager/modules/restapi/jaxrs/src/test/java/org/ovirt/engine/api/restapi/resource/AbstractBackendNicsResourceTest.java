@@ -90,10 +90,19 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
                                        index);
     }
 
-    static VmNetworkInterface setUpEntityExpectations(VmNetworkInterface entity, VmNetworkStatistics statistics, int index) {
+    static VmNetworkInterface setUpEntityExpectations(VmNetworkInterface entity,
+            VmNetworkStatistics statistics,
+            int index) {
+        return setUpEntityExpectations(entity, statistics, index, NAMES[2]);
+    }
+
+    static VmNetworkInterface setUpEntityExpectations(VmNetworkInterface entity,
+            VmNetworkStatistics statistics,
+            int index,
+            String networkName) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVmId()).andReturn(PARENT_ID).anyTimes();
-        expect(entity.getNetworkName()).andReturn(NAMES[2]).anyTimes();
+        expect(entity.getNetworkName()).andReturn(networkName).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getMacAddress()).andReturn(ADDRESSES[2]).anyTimes();
         expect(entity.getType()).andReturn(0).anyTimes();

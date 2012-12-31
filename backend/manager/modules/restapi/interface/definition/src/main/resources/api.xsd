@@ -2359,10 +2359,12 @@
       <xs:extension base="BaseDevice">
         <xs:sequence>
           <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="linked" type="xs:boolean" minOccurs="0"/>
           <xs:element name="interface" type="xs:string" minOccurs="0"/>
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="active" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="active" type="xs:boolean" minOccurs="0"/> <!-- Deprecated, replaced by 'plugged' -->
+          <xs:element name="plugged" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>

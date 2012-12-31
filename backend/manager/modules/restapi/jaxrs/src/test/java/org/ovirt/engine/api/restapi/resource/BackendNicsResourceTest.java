@@ -3,12 +3,11 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Test;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Test;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.NicResource;
@@ -163,7 +162,7 @@ public class BackendNicsResourceTest
     @Test
     public void testAddIncompleteParameters() throws Exception {
         NIC model = new NIC();
-        model.setName(NAMES[0]);
+        model.setName(null);
         model.setNetwork(new Network());
 
         setUriInfo(setUpBasicUriExpectations());
@@ -172,7 +171,7 @@ public class BackendNicsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "NIC", "add", "network.name|id");
+            verifyIncompleteException(wae, "NIC", "add", "name");
         }
     }
 
@@ -204,6 +203,7 @@ public class BackendNicsResourceTest
         verifyCollection(getCollection());
     }
 
+    @Override
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
