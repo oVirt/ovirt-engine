@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -41,6 +42,7 @@ public abstract class OvfReader implements IOvfBuilder {
     protected String name = EmptyName;
     private String version;
     private final VmBase vmBase;
+    private DisplayType defaultDisplayType;
 
     public OvfReader(XmlDocument document, ArrayList<DiskImage> images, ArrayList<VmNetworkInterface> interfaces, VmBase vmBase) {
         _images = images;
@@ -271,6 +273,15 @@ public abstract class OvfReader implements IOvfBuilder {
         return iface;
     }
 
+    /**
+     * This method should return the string representation of 'default display type'
+     * property in the ovf file. this representation is different for ovf file
+     * of VM and ovf file of template.
+     *
+     * @return the String representation of 'default display type' property in the ovf file
+     */
+    protected abstract String getDefaultDisplayTypeStringRepresentation();
+
     protected abstract void ReadOsSection(XmlNode section);
 
     protected abstract void ReadHardwareSection(XmlNode section);
@@ -348,6 +359,16 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setDbGeneration(Long.parseLong(node.InnerText));
         } else {
             vmBase.setDbGeneration(1L);
+        }
+
+        // Note: the fetching of 'default display type' should happen before reading
+        // the hardware section
+        node = content.SelectSingleNode(getDefaultDisplayTypeStringRepresentation());
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
+                defaultDisplayType = DisplayType.forValue(Integer.parseInt(node.InnerText));
+                vmBase.setdefault_display_type(defaultDisplayType);
+            }
         }
 
         XmlNodeList list = content.SelectNodes("Section");
@@ -477,19 +498,25 @@ public abstract class OvfReader implements IOvfBuilder {
         if (resourceSubType == -1) {
             // we need special handling for Monitor to define it as vnc or spice
             if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
-                // get number of monitors from VirtualQuantity in OVF
-                if (node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
-                        && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
-                                _xmlNS).InnerText)) {
-                    int virtualQuantity =
-                            Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).InnerText);
-                    if (virtualQuantity > 1) {
+                // if default display type is defined in the ovf, set the video device that is suitable for it
+                if (defaultDisplayType != null) {
+                    vmDevice.setDevice(defaultDisplayType.getVmDeviceType().getName());
+                }
+                else {
+                    // get number of monitors from VirtualQuantity in OVF
+                    if (node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
+                            && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY,
+                                    _xmlNS).InnerText)) {
+                        int virtualQuantity =
+                                Integer.valueOf(node.SelectSingleNode(OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).InnerText);
+                        if (virtualQuantity > 1) {
+                            vmDevice.setDevice(VmDeviceType.QXL.getName());
+                        } else {
+                            vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
+                        }
+                    } else { // default to spice if quantity not found
                         vmDevice.setDevice(VmDeviceType.QXL.getName());
-                    } else {
-                        vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
                     }
-                } else { // default to spice if quantity not found
-                    vmDevice.setDevice(VmDeviceType.QXL.getName());
                 }
             } else {
                 vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());

@@ -6,7 +6,6 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -159,11 +158,9 @@ public class OvfTemplateReader extends OvfReader {
                 _vmTemplate.setId(new Guid(node.InnerText));
             }
         }
-        node = content.SelectSingleNode("default_display_type");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vmTemplate.setdefault_display_type(DisplayType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
+    }
+
+    protected String getDefaultDisplayTypeStringRepresentation() {
+        return "default_display_type";
     }
 }

@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -209,20 +208,17 @@ public class OvfVmReader extends OvfReader {
             }
         }
 
-        node = content.SelectSingleNode("DefaultDisplayType");
-        if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(node.InnerText)));
-            }
-        }
-
         node = content.SelectSingleNode("MinAllocatedMem");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
                 _vm.setMinAllocatedMem(Integer.parseInt(node.InnerText));
             }
         }
+    }
 
+    @Override
+    protected String getDefaultDisplayTypeStringRepresentation() {
+        return "DefaultDisplayType";
     }
 
     // function returns the index of the image that has no parent
