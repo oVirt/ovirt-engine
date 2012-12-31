@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 @Entity
 @Table(name = "vds_static")
@@ -45,7 +44,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
                                 "(v.status in (5, 6, 11, 12)) and " +
                                 "(s.id != v.run_on_vds)")
         })
-public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class VdsStatic implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private final int HOST_DEFAULT_SPM_PRIORITY = 5;

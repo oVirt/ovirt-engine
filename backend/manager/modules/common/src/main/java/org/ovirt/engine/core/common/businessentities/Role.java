@@ -16,12 +16,11 @@ import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 @Entity
 @Table(name = "roles")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class Role extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 1487620954798772886L;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)

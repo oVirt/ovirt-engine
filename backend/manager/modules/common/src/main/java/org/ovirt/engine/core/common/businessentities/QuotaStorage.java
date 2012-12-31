@@ -5,13 +5,12 @@ import java.io.Serializable;
 import javax.validation.constraints.Min;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
  * <code>QuotaStorage</code> is a business entity that reflects storage limitation.
  */
 @SuppressWarnings("unused")
-public class QuotaStorage extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class QuotaStorage extends IVdcQueryable implements Serializable {
 
     public static final Long UNLIMITED = -1L;
     /**

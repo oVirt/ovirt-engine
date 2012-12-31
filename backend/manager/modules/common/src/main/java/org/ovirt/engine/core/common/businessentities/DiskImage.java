@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class DiskImage extends DiskImageBase implements INotifyPropertyChanged, IImage {
+public class DiskImage extends DiskImageBase implements IImage {
 
     private static final long serialVersionUID = 1533416252250153306L;
 

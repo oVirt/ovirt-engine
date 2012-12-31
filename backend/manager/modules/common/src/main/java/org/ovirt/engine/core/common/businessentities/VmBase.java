@@ -24,10 +24,9 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.DesktopVM;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class VmBase extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 1078548170257965614L;
     private ArrayList<DiskImage> images;
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();

@@ -12,12 +12,11 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
+public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic vmStatic;

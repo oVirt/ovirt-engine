@@ -15,12 +15,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 @Entity
 @Table(name = "bookmarks")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class Bookmark extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class Bookmark extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 8177640907822845847L;
 
     @Id

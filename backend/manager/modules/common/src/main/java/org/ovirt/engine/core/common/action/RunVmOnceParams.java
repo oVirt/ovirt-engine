@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
-public class RunVmOnceParams extends RunVmParams implements INotifyPropertyChanged {
+public class RunVmOnceParams extends RunVmParams {
 
     private static final long serialVersionUID = -4968552684343593622L;
 

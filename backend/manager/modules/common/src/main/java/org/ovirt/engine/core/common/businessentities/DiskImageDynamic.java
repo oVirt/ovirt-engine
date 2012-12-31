@@ -11,12 +11,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 @Entity
 @Table(name = "disk_image_dynamic")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class DiskImageDynamic implements INotifyPropertyChanged,BusinessEntity<Guid>,Comparable<DiskImageDynamic> {
+public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskImageDynamic> {
     private static final long serialVersionUID = 6357763045419255853L;
     private Guid id;
 

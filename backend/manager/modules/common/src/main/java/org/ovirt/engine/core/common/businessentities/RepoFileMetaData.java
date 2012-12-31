@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
  * An entity class for repository files meta data. Using for caching VDSM list fetching results.
  */
-public class RepoFileMetaData extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 566928138057530047L;
     private Guid storagePoolId = new Guid();
     private StoragePoolStatus storagePoolStatus;

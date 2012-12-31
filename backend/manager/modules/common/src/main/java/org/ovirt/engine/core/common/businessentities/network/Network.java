@@ -30,13 +30,12 @@ import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
 @Entity
 @Table(name = "network")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class Network extends IVdcQueryable implements INotifyPropertyChanged, Serializable, BusinessEntity<Guid>, Nameable {
+public class Network extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 7357288865938773402L;
 
     @Id

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -47,7 +46,7 @@ import org.ovirt.engine.core.compat.Version;
                         name = "all_storage_pools_for_vds_group",
                         query = "select p from storage_pool p, VDSGroup g where (g.id = :vds_group_id) and (g.storagePool = p.id)")
                         })
-public class storage_pool extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 8455998477522459262L;
 

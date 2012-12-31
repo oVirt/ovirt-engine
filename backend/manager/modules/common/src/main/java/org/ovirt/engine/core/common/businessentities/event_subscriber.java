@@ -13,13 +13,12 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.StringFormat;
 
 @Entity
 @Table(name = "event_subscriber")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class event_subscriber extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class event_subscriber extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 5899827011779820180L;
 
     @EmbeddedId

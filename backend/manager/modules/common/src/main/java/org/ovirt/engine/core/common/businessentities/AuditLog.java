@@ -7,11 +7,10 @@ import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;
 
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class AuditLog extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class AuditLog extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = -2808392095455280186L;
 
     private long auditLogId;

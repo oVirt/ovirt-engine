@@ -10,7 +10,6 @@
 		<include name="compat/Version.java" />
 		<include name="compat/RpmVersion.java" />
 		<!-- Required by common's entities -->
-		<include name="compat/INotifyPropertyChanged.java" />
 		<include name="compat/PropertyChangedEventArgs.java" />
 		<include name="compat/EventArgs.java" />
 		<include name="compat/StringHelper.java" />

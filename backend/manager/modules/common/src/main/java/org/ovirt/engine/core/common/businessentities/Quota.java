@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 
 /**
  * Quota business entity which reflects the <code>Quota</code> limitations for storage pool. <BR/>
@@ -26,7 +25,7 @@ import org.ovirt.engine.core.compat.INotifyPropertyChanged;
  * <BR/>
  * Take in notice there can not be general limitation and specific limitation on the same resource type.
  */
-public class Quota extends IVdcQueryable implements INotifyPropertyChanged, BusinessEntity<Guid> {
+public class Quota extends IVdcQueryable implements BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID.

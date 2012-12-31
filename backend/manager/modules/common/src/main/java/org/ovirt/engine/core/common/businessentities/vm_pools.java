@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
@@ -28,7 +27,7 @@ import org.ovirt.engine.core.compat.TimeSpan;
 @Entity
 @Table(name = "vm_pools")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class vm_pools extends IVdcQueryable implements INotifyPropertyChanged, Serializable {
+public class vm_pools extends IVdcQueryable implements Serializable {
 
     private static final long serialVersionUID = -2176168998321713354L;
     private final int DEFAULT_PRESTARTED_VMS = 0;
