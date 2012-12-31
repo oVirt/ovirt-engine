@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;

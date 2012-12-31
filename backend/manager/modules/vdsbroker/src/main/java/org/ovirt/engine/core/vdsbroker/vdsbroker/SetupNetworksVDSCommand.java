@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;

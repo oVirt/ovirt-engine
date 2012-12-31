@@ -12,6 +12,7 @@ import java.util.Set;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 public class EntitiesTest {

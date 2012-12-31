@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;

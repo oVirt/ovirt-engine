@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.template;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;

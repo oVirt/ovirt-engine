@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

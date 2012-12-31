@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;

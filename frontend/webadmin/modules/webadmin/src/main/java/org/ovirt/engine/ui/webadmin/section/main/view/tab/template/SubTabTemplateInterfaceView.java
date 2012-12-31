@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;

@@ -25,10 +25,10 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -112,7 +112,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     private String getNetworkId(String networkName) {
         if (networkName != null) {
             Guid clusterId = getClusterId();
-            org.ovirt.engine.core.common.businessentities.Network n = getClusterNetwork(clusterId, null, networkName);
+            org.ovirt.engine.core.common.businessentities.network.Network n = getClusterNetwork(clusterId, null, networkName);
             if (n != null) {
                 return n.getId().toString();
             }

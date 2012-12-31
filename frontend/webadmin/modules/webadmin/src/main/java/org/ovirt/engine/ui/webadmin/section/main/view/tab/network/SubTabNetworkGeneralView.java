@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;

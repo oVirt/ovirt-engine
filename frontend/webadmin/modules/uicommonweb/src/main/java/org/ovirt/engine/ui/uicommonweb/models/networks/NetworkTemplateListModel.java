@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;

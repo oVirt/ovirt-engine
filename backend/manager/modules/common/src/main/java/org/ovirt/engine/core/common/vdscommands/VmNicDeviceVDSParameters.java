@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {

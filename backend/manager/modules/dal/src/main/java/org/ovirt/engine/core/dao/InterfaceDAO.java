@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

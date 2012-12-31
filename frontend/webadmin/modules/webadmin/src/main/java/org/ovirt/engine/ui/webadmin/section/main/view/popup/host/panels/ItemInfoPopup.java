@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;

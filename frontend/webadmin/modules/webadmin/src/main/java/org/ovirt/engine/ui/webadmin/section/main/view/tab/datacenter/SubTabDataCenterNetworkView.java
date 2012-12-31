@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;

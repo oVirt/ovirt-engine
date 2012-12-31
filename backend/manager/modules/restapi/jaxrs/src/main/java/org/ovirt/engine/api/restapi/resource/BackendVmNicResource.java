@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResource extends BackendNicResource implements VmNicResource {
@@ -31,7 +31,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
     @Override
     protected NIC populate(NIC model, VmNetworkInterface entity) {
         BackendVmNicsResource parent = (BackendVmNicsResource) collection;
-        org.ovirt.engine.core.common.businessentities.Network network = null;
+        org.ovirt.engine.core.common.businessentities.network.Network network = null;
         String networkId = null;
         if (model.isSetNetwork() && model.getNetwork().isSetName()) {
             Guid clusterId = parent.getClusterId();
@@ -153,7 +153,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
         if (networkName != null) {
             BackendVmNicsResource parent = (BackendVmNicsResource) collection;
             Guid clusterId = parent.getClusterId();
-            org.ovirt.engine.core.common.businessentities.Network n =
+            org.ovirt.engine.core.common.businessentities.network.Network n =
                     parent.getClusterNetwork(clusterId, null, networkName);
             if (n != null) {
                 return n.getId().toString();

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.dao;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

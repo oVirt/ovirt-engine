@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;

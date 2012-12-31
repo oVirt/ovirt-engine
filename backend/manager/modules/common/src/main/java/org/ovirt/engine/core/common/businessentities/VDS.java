@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;

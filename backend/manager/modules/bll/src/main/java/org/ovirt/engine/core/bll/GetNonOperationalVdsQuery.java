@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkNonOperationalQueryParamenters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;

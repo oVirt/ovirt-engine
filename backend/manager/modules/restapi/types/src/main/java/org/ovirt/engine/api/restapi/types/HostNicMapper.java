@@ -10,9 +10,9 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 

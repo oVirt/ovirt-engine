@@ -15,18 +15,18 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public class GeneralDbDAOTest extends BaseDAOTestCase {

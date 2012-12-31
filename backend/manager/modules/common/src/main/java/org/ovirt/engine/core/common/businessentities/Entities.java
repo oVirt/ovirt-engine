@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+
 /**
  * General utility class for common entities functions
  */

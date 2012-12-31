@@ -10,8 +10,8 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkDAOTest extends BaseDAOTestCase {

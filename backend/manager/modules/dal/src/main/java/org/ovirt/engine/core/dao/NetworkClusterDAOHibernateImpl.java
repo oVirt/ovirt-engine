@@ -5,8 +5,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

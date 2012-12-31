@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;

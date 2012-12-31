@@ -4,8 +4,8 @@ import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;

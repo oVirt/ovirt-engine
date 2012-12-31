@@ -6,11 +6,11 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.HashMap;
 import java.util.Map;

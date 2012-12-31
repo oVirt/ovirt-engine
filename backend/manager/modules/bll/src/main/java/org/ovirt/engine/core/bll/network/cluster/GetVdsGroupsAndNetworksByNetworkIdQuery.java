@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 

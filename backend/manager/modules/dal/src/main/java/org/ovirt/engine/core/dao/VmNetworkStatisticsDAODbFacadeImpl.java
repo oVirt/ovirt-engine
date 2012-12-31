@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;

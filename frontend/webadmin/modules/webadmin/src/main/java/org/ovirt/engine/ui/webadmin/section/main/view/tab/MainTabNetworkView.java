@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;

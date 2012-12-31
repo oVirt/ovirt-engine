@@ -12,8 +12,8 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -152,8 +152,8 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
             while (times-- > 0) {
-                ArrayList<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
-                org.ovirt.engine.core.common.businessentities.Network network = new org.ovirt.engine.core.common.businessentities.Network();
+                ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+                org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
                 network.setId(GUIDS[0]);
                 network.setname("orcus");
                 networks.add(network);

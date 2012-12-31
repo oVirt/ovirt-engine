@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 /**
  * A Factory responsible for providing Setup Network Operations for Network Items.<BR>

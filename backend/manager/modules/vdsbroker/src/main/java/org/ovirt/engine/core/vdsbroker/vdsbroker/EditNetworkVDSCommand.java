@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 
 public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> extends VdsBrokerCommand<P> {

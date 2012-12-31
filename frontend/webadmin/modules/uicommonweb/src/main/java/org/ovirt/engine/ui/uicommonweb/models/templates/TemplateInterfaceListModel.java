@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

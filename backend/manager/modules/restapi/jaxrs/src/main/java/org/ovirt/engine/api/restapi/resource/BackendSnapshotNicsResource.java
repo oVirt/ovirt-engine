@@ -5,7 +5,7 @@ import org.ovirt.engine.api.resource.SnapshotNicResource;
 import org.ovirt.engine.api.resource.SnapshotNicsResource;
 import org.ovirt.engine.api.restapi.types.NicMapper;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 public class BackendSnapshotNicsResource extends BackendSnapshotElementsResource implements SnapshotNicsResource {
 

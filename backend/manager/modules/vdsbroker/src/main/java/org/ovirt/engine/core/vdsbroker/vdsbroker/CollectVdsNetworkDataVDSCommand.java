@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.ovirt.engine.core.common.businessentities.NetworkStatus.Operational;
 import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.Operational;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,13 +11,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;

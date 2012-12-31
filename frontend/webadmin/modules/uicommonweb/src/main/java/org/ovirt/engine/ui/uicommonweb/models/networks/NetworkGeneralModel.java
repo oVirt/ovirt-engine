@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;

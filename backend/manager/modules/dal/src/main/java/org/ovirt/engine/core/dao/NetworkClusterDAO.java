@@ -2,8 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

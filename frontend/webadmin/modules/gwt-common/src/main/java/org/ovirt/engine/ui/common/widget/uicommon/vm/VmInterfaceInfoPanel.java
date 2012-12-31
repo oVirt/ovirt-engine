@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;

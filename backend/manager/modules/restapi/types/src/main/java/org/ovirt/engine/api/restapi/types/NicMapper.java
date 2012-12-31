@@ -5,7 +5,7 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NicMapper {

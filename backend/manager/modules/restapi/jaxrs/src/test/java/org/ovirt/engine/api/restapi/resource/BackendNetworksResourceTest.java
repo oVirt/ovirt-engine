@@ -36,7 +36,7 @@ public class BackendNetworksResourceTest
                                      GetAllNetworkQueryParamenters.class,
                                      new String[] { "StoragePoolId" },
                                      new Object[] { Guid.Empty },
-                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
         try {
             collection.remove(GUIDS[0].toString());
@@ -64,7 +64,7 @@ public class BackendNetworksResourceTest
                 GetAllNetworkQueryParamenters.class,
                 new String[] { "StoragePoolId" },
                 new Object[] { Guid.Empty },
-                new LinkedList<org.ovirt.engine.core.common.businessentities.Network>(),
+                new LinkedList<org.ovirt.engine.core.common.businessentities.network.Network>(),
                 null);
         control.replay();
         try {

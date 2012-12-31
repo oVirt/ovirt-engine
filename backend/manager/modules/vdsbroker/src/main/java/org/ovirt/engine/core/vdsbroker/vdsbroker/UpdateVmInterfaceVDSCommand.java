@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStruct;
 

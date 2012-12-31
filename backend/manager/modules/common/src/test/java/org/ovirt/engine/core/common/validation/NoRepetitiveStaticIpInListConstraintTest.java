@@ -10,8 +10,8 @@ import javax.validation.Validator;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
 

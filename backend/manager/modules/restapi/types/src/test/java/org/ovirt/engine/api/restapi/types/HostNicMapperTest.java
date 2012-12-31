@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.HostNIC;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class HostNicMapperTest extends AbstractInvertibleMappingTest<HostNIC, VdsNetworkInterface, VdsNetworkInterface> {
 

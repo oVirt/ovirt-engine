@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 

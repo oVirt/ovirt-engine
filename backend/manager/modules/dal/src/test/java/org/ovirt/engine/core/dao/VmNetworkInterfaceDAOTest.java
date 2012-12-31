@@ -11,8 +11,8 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {

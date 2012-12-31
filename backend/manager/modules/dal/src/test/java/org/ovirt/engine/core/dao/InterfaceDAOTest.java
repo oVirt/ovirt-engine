@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 

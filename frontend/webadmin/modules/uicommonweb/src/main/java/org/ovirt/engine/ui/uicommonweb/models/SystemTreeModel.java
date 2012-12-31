@@ -6,12 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;

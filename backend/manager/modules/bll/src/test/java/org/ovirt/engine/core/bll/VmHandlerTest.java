@@ -60,8 +60,8 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /** A test case for the {@link VmHandler} class. */

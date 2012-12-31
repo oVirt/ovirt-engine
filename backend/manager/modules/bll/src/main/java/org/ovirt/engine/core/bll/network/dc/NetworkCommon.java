@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;

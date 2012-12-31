@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
 
 public class Vlan extends VdsNetworkInterface {
 

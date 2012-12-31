@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Statistic;
-import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, VdsNetworkInterface> {

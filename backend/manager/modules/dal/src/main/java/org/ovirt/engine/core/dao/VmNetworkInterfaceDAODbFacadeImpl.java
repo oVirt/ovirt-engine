@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.InterfaceComparerByMAC;
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

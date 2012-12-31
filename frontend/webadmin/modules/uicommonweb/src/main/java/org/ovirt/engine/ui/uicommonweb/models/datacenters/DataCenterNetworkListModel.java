@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DisplayNetworkToVdsGroupParameters;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;

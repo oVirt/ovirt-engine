@@ -4,17 +4,17 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Network;
 
 public class AbstractBackendNetworkResource
-    extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.Network> {
+    extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
 
     protected AbstractBackendNetworksResource parent;
 
     public AbstractBackendNetworkResource(String id, AbstractBackendNetworksResource parent) {
-        super(id, Network.class, org.ovirt.engine.core.common.businessentities.Network.class);
+        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
         this.parent = parent;
     }
 
     public Network get() {
-        org.ovirt.engine.core.common.businessentities.Network entity = parent.lookupNetwork(guid);
+        org.ovirt.engine.core.common.businessentities.network.Network entity = parent.lookupNetwork(guid);
         if (entity == null) {
             return notFound();
         }

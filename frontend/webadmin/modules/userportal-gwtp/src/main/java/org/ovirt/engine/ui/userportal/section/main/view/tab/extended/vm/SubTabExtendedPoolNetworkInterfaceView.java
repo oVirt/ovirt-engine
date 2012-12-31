@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;

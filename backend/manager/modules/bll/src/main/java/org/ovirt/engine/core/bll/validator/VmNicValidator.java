@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 

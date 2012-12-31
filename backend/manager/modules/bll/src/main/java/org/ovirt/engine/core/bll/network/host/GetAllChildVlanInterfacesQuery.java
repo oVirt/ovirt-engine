@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
 

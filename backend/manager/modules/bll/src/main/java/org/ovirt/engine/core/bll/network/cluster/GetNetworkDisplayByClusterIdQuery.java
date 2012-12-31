@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.LinqUtils;

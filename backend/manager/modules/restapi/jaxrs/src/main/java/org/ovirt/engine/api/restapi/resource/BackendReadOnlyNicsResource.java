@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;

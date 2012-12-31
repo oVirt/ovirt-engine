@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.NetworkDAODbFacadeImpl.NetworkRowMapperBase;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;

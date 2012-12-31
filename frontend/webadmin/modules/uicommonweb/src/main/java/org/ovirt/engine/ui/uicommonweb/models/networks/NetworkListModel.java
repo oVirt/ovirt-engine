@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.networks;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkView;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;

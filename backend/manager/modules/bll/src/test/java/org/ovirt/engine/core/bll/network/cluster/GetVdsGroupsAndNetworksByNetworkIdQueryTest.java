@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;

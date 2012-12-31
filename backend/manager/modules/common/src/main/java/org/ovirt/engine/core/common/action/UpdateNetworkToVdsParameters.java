@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class UpdateNetworkToVdsParameters extends AttachNetworkToVdsParameters {

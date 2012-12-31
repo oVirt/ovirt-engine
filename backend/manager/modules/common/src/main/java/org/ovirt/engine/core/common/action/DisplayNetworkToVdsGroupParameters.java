@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 
 public class DisplayNetworkToVdsGroupParameters extends VdsGroupOperationParameters {
     private static final long serialVersionUID = 6552130939864906665L;

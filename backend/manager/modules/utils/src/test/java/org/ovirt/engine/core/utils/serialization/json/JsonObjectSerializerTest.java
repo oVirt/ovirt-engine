@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 
 /**

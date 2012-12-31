@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.NetworkView;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;

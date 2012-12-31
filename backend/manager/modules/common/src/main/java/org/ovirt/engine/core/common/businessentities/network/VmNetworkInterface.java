@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 
 import com.google.gwt.user.cellview.client.Column;

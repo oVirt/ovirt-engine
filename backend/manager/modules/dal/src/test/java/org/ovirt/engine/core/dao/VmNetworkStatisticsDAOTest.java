@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNetworkStatisticsDAOTest extends BaseDAOTestCase {

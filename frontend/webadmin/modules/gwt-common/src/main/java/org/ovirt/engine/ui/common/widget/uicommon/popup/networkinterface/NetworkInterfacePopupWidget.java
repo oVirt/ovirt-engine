@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;

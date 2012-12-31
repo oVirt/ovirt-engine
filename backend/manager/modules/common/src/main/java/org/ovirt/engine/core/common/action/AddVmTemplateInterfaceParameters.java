@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmTemplateInterfaceParameters extends VmTemplateParametersBase {

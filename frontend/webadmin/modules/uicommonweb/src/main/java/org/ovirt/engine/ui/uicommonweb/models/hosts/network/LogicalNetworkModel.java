@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.DcNetworkParams;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;

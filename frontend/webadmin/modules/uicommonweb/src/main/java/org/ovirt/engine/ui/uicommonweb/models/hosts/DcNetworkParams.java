@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 
 public class DcNetworkParams {
 

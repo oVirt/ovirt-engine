@@ -4,8 +4,8 @@ import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 @SuppressWarnings("serial")
 public class RemoveVmTemplateInterfaceCommand<T extends RemoveVmTemplateInterfaceParameters> extends VmTemplateCommand<T> {

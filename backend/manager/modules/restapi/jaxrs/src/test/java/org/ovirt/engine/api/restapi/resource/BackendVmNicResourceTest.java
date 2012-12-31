@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -97,7 +97,7 @@ public class BackendVmNicResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         setGetVmQueryExpectations(1);
-        setGetNetworksQueryExpectations(1, Collections.<org.ovirt.engine.core.common.businessentities.Network> emptyList());
+        setGetNetworksQueryExpectations(1, Collections.<org.ovirt.engine.core.common.businessentities.network.Network> emptyList());
         setGetGuestAgentQueryExpectations(1);
         control.replay();
 
@@ -265,15 +265,15 @@ public class BackendVmNicResourceTest
     }
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
-        ArrayList<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
-        org.ovirt.engine.core.common.businessentities.Network network = new org.ovirt.engine.core.common.businessentities.Network();
+        ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+        org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
         network.setId(GUIDS[0]);
         network.setname("orcus");
         networks.add(network);
         setGetNetworksQueryExpectations(times, networks);
     }
 
-    protected void setGetNetworksQueryExpectations(int times, List<org.ovirt.engine.core.common.businessentities.Network> networks) throws Exception {
+    protected void setGetNetworksQueryExpectations(int times, List<org.ovirt.engine.core.common.businessentities.network.Network> networks) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
                     VdsGroupQueryParamenters.class,

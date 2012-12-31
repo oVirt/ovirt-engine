@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.common.validation;
 
-import static org.ovirt.engine.core.common.businessentities.NetworkBootProtocol.StaticIp;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.StaticIp;
 import static org.ovirt.engine.core.compat.StringHelper.isNullOrEmpty;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;

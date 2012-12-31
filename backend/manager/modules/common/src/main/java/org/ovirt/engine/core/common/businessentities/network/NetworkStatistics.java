@@ -1,5 +1,6 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

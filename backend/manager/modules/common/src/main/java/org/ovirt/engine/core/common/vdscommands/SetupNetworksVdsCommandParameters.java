@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {

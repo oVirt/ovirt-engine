@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;

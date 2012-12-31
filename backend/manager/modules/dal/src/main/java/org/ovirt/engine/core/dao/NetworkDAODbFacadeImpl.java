@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;

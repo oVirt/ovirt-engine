@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Network;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;

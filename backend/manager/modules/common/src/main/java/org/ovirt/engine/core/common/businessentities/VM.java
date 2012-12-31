@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.INotifyPropertyChanged;
 import org.ovirt.engine.core.compat.NGuid;

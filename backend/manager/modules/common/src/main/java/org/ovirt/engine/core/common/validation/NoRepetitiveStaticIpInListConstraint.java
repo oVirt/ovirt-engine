@@ -7,8 +7,8 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
 
 public class NoRepetitiveStaticIpInListConstraint implements ConstraintValidator<NoRepetitiveStaticIpInList, List<VdsNetworkInterface>> {

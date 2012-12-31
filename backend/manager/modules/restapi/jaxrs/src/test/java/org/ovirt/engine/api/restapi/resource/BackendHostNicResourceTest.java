@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
@@ -255,10 +255,10 @@ public class BackendHostNicResourceTest
         }
     }
 
-    private List<org.ovirt.engine.core.common.businessentities.Network> getNetworksModel() {
-        List<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
+    private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworksModel() {
+        List<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
         for(int i=0; i < 3; i++){
-            org.ovirt.engine.core.common.businessentities.Network net = new org.ovirt.engine.core.common.businessentities.Network();
+            org.ovirt.engine.core.common.businessentities.network.Network net = new org.ovirt.engine.core.common.businessentities.network.Network();
             net.setId(GUIDS[i]);
             net.setname(NAMES[i]);
             networks.add(net);
@@ -487,8 +487,8 @@ public class BackendHostNicResourceTest
 
     protected void setGetNetworksQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            ArrayList<org.ovirt.engine.core.common.businessentities.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.Network>();
-            org.ovirt.engine.core.common.businessentities.Network network = new org.ovirt.engine.core.common.businessentities.Network();
+            ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
+            org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
             network.setId(GUIDS[0]);
             network.setname("orcus");
             networks.add(network);

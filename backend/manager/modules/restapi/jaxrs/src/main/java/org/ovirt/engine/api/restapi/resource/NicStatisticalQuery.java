@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.businessentities.NetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 

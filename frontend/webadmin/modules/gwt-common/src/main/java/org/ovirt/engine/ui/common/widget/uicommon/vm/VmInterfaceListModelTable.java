@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import org.ovirt.engine.core.common.businessentities.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;

@@ -40,7 +40,7 @@ public class BackendClusterNetworksResource
         if (!network.isSetId()) {
             network.setId(getNetworkId(network.getName(), clusterId));
         }
-        org.ovirt.engine.core.common.businessentities.Network entity = map(network);
+        org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         return performCreation(addAction,
                                getActionParameters(network, entity),
                                new NetworkIdResolver(network.getName()));
@@ -53,7 +53,7 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    protected VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.Network entity) {
+    protected VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new AttachNetworkToVdsGroupParameter(getVDSGroup(), entity);
     }
 
@@ -84,8 +84,8 @@ public class BackendClusterNetworksResource
     private String getNetworkId(String networkName, String clusterId) {
             NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getStoragePoolId();
             GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
-            List<org.ovirt.engine.core.common.businessentities.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
-            for (org.ovirt.engine.core.common.businessentities.Network nw: networks) {
+            List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
+            for (org.ovirt.engine.core.common.businessentities.network.Network nw: networks) {
                 if (nw.getname().equals(networkName)) {
                     return nw.getId().toString();
                 }

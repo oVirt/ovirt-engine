@@ -33,7 +33,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                      VdsGroupQueryParamenters.class,
                                      new String[] { "VdsGroupId" },
                                      new Object[] { CLUSTER_ID },
-                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
         try {
             collection.remove(GUIDS[0].toString());

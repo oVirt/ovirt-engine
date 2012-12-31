@@ -28,7 +28,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     public Response add(Network network) {
         validateParameters(network, getRequiredAddFields());
         validateEnums(Network.class, network);
-        org.ovirt.engine.core.common.businessentities.Network entity = map(network);
+        org.ovirt.engine.core.common.businessentities.network.Network entity = map(network);
         AddNetworkStoragePoolParameters params = getActionParameters(network, entity);
         return performCreation(addAction,
                                params,
@@ -57,7 +57,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     }
 
     @Override
-    protected AddNetworkStoragePoolParameters getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.Network entity) {
+    protected AddNetworkStoragePoolParameters getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity) {
         if (namedDataCenter(network)) {
             entity.setstorage_pool_id(getDataCenterId(network));
         }

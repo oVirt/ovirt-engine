@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;

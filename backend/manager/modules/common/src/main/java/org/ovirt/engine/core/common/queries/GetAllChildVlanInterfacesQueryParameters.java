@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllChildVlanInterfacesQueryParameters extends VdcQueryParametersBase {

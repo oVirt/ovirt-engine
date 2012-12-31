@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendNetworksResource extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.Network>
+public abstract class AbstractBackendNetworksResource extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network>
 {
 
     protected VdcQueryType queryType;
@@ -23,7 +23,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
             VdcActionType addAction,
             VdcActionType removeAction,
             String... subCollections) {
-        super(Network.class, org.ovirt.engine.core.common.businessentities.Network.class, subCollections);
+        super(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class, subCollections);
         this.queryType = queryType;
         this.addAction = addAction;
         this.removeAction = removeAction;
@@ -31,7 +31,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
 
     protected abstract VdcQueryParametersBase getQueryParameters();
 
-    protected abstract VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.Network entity);
+    protected abstract VdcActionParametersBase getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity);
 
     public Networks list() {
         return mapCollection(getBackendCollection(queryType, getQueryParameters()));
@@ -39,7 +39,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
 
     @Override
     public Response performRemove(String id) {
-        org.ovirt.engine.core.common.businessentities.Network entity = lookupNetwork(asGuidOr404(id));
+        org.ovirt.engine.core.common.businessentities.network.Network entity = lookupNetwork(asGuidOr404(id));
         if (entity == null) {
             notFound();
             return null;
@@ -47,20 +47,20 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return performAction(removeAction, getActionParameters(null, entity));
     }
 
-    protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.Network> entities) {
+    protected Networks mapCollection(List<org.ovirt.engine.core.common.businessentities.network.Network> entities) {
         Networks collection = new Networks();
-        for (org.ovirt.engine.core.common.businessentities.Network entity : entities) {
+        for (org.ovirt.engine.core.common.businessentities.network.Network entity : entities) {
             collection.getNetworks().add(addLinks(map(entity)));
         }
         return collection;
     }
 
-    public org.ovirt.engine.core.common.businessentities.Network lookupNetwork(Guid id) {
+    public org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Guid id) {
         return lookupNetwork(id, null);
     }
 
-    public org.ovirt.engine.core.common.businessentities.Network lookupNetwork(Guid id, String name) {
-        for (org.ovirt.engine.core.common.businessentities.Network entity : getBackendCollection(queryType, getQueryParameters())) {
+    public org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Guid id, String name) {
+        for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
                 (name != null && name.equals(entity.getname()))) {
                 return entity;
@@ -69,8 +69,8 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         return null;
     }
 
-    public org.ovirt.engine.core.common.businessentities.Network lookupNetwork(Guid id, String name, String dataCenterId) {
-        for (org.ovirt.engine.core.common.businessentities.Network entity : getBackendCollection(queryType, getQueryParameters())) {
+    public org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Guid id, String name, String dataCenterId) {
+        for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
                 (name != null && name.equals(entity.getname()))
                 && (entity.getstorage_pool_id()!=null) && (entity.getstorage_pool_id().toString().equals(dataCenterId))) {
@@ -95,7 +95,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         }
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id)
+        public org.ovirt.engine.core.common.businessentities.network.Network lookupEntity(Guid id)
                 throws BackendFailureException {
             return lookupNetwork(id, name);
         }
@@ -111,7 +111,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         }
 
         @Override
-        public org.ovirt.engine.core.common.businessentities.Network lookupEntity(Guid id)
+        public org.ovirt.engine.core.common.businessentities.network.Network lookupEntity(Guid id)
                 throws BackendFailureException {
             return lookupNetwork(id, name, dataCenterId);
         }

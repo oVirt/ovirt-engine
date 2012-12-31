@@ -10,14 +10,14 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.Usages;
 import org.ovirt.engine.api.model.VLAN;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkMapper {
 
-    @Mapping(from = Network.class, to = org.ovirt.engine.core.common.businessentities.Network.class)
-    public static org.ovirt.engine.core.common.businessentities.Network map(Network model, org.ovirt.engine.core.common.businessentities.Network template) {
-        org.ovirt.engine.core.common.businessentities.Network entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.Network();
+    @Mapping(from = Network.class, to = org.ovirt.engine.core.common.businessentities.network.Network.class)
+    public static org.ovirt.engine.core.common.businessentities.network.Network map(Network model, org.ovirt.engine.core.common.businessentities.network.Network template) {
+        org.ovirt.engine.core.common.businessentities.network.Network entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.network.Network();
         entity.setCluster(template != null && template.getCluster() != null ? template.getCluster() : new NetworkCluster());
         if (model.isSetId()) {
             entity.setId(new Guid(model.getId()));
@@ -72,8 +72,8 @@ public class NetworkMapper {
         return entity;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Network.class, to = Network.class)
-    public static Network map(org.ovirt.engine.core.common.businessentities.Network entity, Network template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.network.Network.class, to = Network.class)
+    public static Network map(org.ovirt.engine.core.common.businessentities.network.Network entity, Network template) {
         Network model = template != null ? template : new Network();
         model.setId(entity.getId().toString());
         model.setName(entity.getname());
@@ -115,8 +115,8 @@ public class NetworkMapper {
         return model;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.NetworkStatus.class, to = NetworkStatus.class)
-    public static NetworkStatus map(org.ovirt.engine.core.common.businessentities.NetworkStatus entityStatus,
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.network.NetworkStatus.class, to = NetworkStatus.class)
+    public static NetworkStatus map(org.ovirt.engine.core.common.businessentities.network.NetworkStatus entityStatus,
                                     NetworkStatus template) {
         switch (entityStatus) {
         case NonOperational:
@@ -128,17 +128,17 @@ public class NetworkMapper {
         }
     }
 
-    @Mapping(from = NetworkStatus.class, to = org.ovirt.engine.core.common.businessentities.NetworkStatus.class)
-    public static org.ovirt.engine.core.common.businessentities.NetworkStatus map(NetworkStatus modelStatus,
-                                                                             org.ovirt.engine.core.common.businessentities.NetworkStatus template) {
+    @Mapping(from = NetworkStatus.class, to = org.ovirt.engine.core.common.businessentities.network.NetworkStatus.class)
+    public static org.ovirt.engine.core.common.businessentities.network.NetworkStatus map(NetworkStatus modelStatus,
+                                                                             org.ovirt.engine.core.common.businessentities.network.NetworkStatus template) {
         if (modelStatus==null) {
             return null;
         } else {
             switch (modelStatus) {
             case NON_OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.NetworkStatus.NonOperational;
+                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.NonOperational;
             case OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.NetworkStatus.Operational;
+                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.Operational;
             default:
                 return null;
             }

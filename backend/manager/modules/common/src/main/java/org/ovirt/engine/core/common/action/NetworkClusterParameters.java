@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import javax.validation.constraints.NotNull;
 
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 
 /**
  * Parameters which contain a {@link NetworkCluster} entity to work on.

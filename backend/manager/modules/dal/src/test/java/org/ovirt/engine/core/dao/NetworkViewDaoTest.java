@@ -6,7 +6,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 
 public class NetworkViewDaoTest extends BaseDAOTestCase {
     private NetworkViewDao dao;

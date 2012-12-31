@@ -12,8 +12,8 @@ import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 

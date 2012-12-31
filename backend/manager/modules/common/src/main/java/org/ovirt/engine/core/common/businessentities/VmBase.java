@@ -16,6 +16,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;

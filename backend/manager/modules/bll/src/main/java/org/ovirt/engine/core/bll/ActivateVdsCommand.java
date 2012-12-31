@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;

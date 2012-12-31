@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 
 /**

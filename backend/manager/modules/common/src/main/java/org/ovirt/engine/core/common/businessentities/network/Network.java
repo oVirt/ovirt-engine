@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
@@ -20,6 +20,10 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;

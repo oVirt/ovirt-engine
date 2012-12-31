@@ -19,7 +19,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
 
     @Override
     public Network get() {
-        org.ovirt.engine.core.common.businessentities.Network entity = parent.lookupNetwork(guid);
+        org.ovirt.engine.core.common.businessentities.network.Network entity = parent.lookupNetwork(guid);
         if (entity == null) {
             return notFound();
         }
@@ -37,10 +37,10 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
                              new UpdateParametersProvider());
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.Network> {
+    protected class UpdateParametersProvider implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
         @Override
-        public VdcActionParametersBase getParameters(Network incoming, org.ovirt.engine.core.common.businessentities.Network entity) {
-            org.ovirt.engine.core.common.businessentities.Network updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.Network.class).map(incoming, entity);
+        public VdcActionParametersBase getParameters(Network incoming, org.ovirt.engine.core.common.businessentities.network.Network entity) {
+            org.ovirt.engine.core.common.businessentities.network.Network updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.network.Network.class).map(incoming, entity);
             return new AddNetworkStoragePoolParameters(entity.getstorage_pool_id().getValue(), updated);
         }
     }

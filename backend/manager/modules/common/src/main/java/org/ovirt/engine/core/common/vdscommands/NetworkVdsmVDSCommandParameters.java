@@ -2,8 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBase {

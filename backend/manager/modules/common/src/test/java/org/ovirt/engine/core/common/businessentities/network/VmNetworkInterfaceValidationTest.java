@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
 import static org.junit.Assert.assertEquals;
 

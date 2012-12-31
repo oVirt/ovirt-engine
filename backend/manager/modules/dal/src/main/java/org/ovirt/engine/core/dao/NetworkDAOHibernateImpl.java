@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.criterion.Restrictions;
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

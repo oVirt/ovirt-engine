@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.NicResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 

@@ -2,10 +2,10 @@ package org.ovirt.engine.core.common.action;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.Network;
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 
 public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     private static final long serialVersionUID = -2874549285727269806L;

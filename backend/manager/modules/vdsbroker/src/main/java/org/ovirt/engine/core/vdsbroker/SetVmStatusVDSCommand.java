@@ -5,9 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 

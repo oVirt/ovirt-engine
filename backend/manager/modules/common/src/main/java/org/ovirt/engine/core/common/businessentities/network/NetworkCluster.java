@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.network;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.TypeDef;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 

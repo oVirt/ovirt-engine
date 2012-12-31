@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.businessentities.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;

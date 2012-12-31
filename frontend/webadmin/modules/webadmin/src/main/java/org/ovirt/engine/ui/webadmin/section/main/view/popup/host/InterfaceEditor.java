@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;

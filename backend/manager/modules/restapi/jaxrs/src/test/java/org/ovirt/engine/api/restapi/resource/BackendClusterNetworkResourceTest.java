@@ -44,7 +44,7 @@ public class BackendClusterNetworkResourceTest
                                      VdsGroupQueryParamenters.class,
                                      new String[] { "VdsGroupId" },
                                      new Object[] { CLUSTER_ID },
-                                     new ArrayList<org.ovirt.engine.core.common.businessentities.Network>());
+                                     new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
         try {
             resource.get();

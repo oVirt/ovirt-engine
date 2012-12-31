@@ -19,8 +19,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendResource.EntityIdRes
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -98,8 +98,8 @@ public class BackendHostNicResource
         validateEnums(HostNIC.class, nic);
         VdsNetworkInterface originalInter = parent.lookupInterface(id);
         final VdsNetworkInterface inter = map(nic, originalInter);
-        org.ovirt.engine.core.common.businessentities.Network oldNetwork = getOldNetwork(originalInter);
-        org.ovirt.engine.core.common.businessentities.Network newNetwork = getNewNetwork(nic);
+        org.ovirt.engine.core.common.businessentities.network.Network oldNetwork = getOldNetwork(originalInter);
+        org.ovirt.engine.core.common.businessentities.network.Network newNetwork = getNewNetwork(nic);
         UpdateNetworkToVdsParameters params =
             new UpdateNetworkToVdsParameters(Guid.createGuidFromString(parent.getHostId()),
                                              newNetwork!=null ? newNetwork : oldNetwork ,
@@ -139,15 +139,15 @@ public class BackendHostNicResource
         return parent.lookupNic(id);
     }
 
-    private org.ovirt.engine.core.common.businessentities.Network getNewNetwork(HostNIC nic) {
-        org.ovirt.engine.core.common.businessentities.Network newNetwork = null;
+    private org.ovirt.engine.core.common.businessentities.network.Network getNewNetwork(HostNIC nic) {
+        org.ovirt.engine.core.common.businessentities.network.Network newNetwork = null;
         if(nic.isSetNetwork()){
             newNetwork = map(nic.getNetwork(), parent.lookupClusterNetwork(nic.getNetwork()));
         }
         return newNetwork;
     }
 
-    private org.ovirt.engine.core.common.businessentities.Network getOldNetwork(VdsNetworkInterface originalInter) {
+    private org.ovirt.engine.core.common.businessentities.network.Network getOldNetwork(VdsNetworkInterface originalInter) {
         String oldNetworkName = originalInter.getNetworkName();
         if (!StringHelper.isNullOrEmpty(oldNetworkName)) {
             return lookupAtachedNetwork(originalInter.getNetworkName());
@@ -164,9 +164,9 @@ public class BackendHostNicResource
         }
     }
 
-    private org.ovirt.engine.core.common.businessentities.Network lookupAtachedNetwork(String networkName) {
+    private org.ovirt.engine.core.common.businessentities.network.Network lookupAtachedNetwork(String networkName) {
         if(!StringHelper.isNullOrEmpty(networkName)){
-            for(org.ovirt.engine.core.common.businessentities.Network nwk : parent.getClusterNetworks()){
+            for(org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()){
                 if(nwk.getname().equals(networkName)) return nwk;
             }
         }
@@ -185,7 +185,7 @@ public class BackendHostNicResource
         return getMapper(BootProtocol.class, NetworkBootProtocol.class).map(bootProtocol, template);
     }
 
-    private org.ovirt.engine.core.common.businessentities.Network map(Network network, org.ovirt.engine.core.common.businessentities.Network template) {
-        return getMapper(Network.class, org.ovirt.engine.core.common.businessentities.Network.class).map(network, template);
+    private org.ovirt.engine.core.common.businessentities.network.Network map(Network network, org.ovirt.engine.core.common.businessentities.network.Network template) {
+        return getMapper(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class).map(network, template);
     }
 }

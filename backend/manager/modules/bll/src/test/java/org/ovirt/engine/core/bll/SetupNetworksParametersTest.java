@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.common.businessentities.NetworkBootProtocol.StaticIp;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.StaticIp;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import javax.validation.Validator;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;

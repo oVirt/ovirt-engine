@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsClusterParameters extends VdsActionParameters {

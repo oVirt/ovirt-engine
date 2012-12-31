@@ -4,9 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.NetworkClusterId;
-import org.ovirt.engine.core.common.businessentities.NetworkStatus;
-import org.ovirt.engine.core.common.businessentities.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;

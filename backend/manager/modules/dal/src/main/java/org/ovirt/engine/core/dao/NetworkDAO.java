@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Network;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
