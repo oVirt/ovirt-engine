@@ -158,6 +158,8 @@ public class PermitMapper {
             return PermitType.PORT_MIRRORING;
         case LOGIN:
             return PermitType.LOGIN;
+        case INJECT_EXTERNAL_EVENTS:
+            return PermitType.INJECT_EXTERNAL_EVENTS;
         default:
             return null;
         }
@@ -278,6 +280,8 @@ public class PermitMapper {
             return ActionGroup.PORT_MIRRORING;
         case LOGIN:
             return ActionGroup.LOGIN;
+        case INJECT_EXTERNAL_EVENTS:
+            return ActionGroup.INJECT_EXTERNAL_EVENTS;
         default:
             return null;
         }

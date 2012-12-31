@@ -39,7 +39,7 @@ EventsResource {
     @Override
     @SingleEntityResource
     public EventResource getEventSubResource(String id) {
-        return new BackendEventResource(id, this);
+        return inject(new BackendEventResource(id, this));
     }
 
     private List<AuditLog> getBackendCollection() {

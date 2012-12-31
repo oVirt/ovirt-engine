@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.model;
 
-
 public enum PermitType {
     CREATE_VM,
     DELETE_VM,
@@ -96,7 +95,8 @@ public enum PermitType {
     PORT_MIRRORING,
 
     // Login action group
-    LOGIN;
+    LOGIN,
+    INJECT_EXTERNAL_EVENTS;
 
     public String value() {
         return name().toLowerCase();
