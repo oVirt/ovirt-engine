@@ -53,9 +53,10 @@ WHERE     (_create_date >
 
 CREATE OR REPLACE VIEW dwh_datacenter_storage_map_history_view
 AS
-SELECT     	storage_pool_id AS datacenter_id,
-			storage_id AS storage_domain_id
-FROM        storage_pool_iso_map;
+SELECT storage_pool_id AS datacenter_id,
+       storage_id AS storage_domain_id,
+       status as storage_domain_status
+FROM storage_pool_iso_map;
 
 CREATE OR REPLACE VIEW dwh_storage_domain_history_view
 AS
