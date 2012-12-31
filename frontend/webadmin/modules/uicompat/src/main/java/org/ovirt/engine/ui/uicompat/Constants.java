@@ -1496,6 +1496,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("At least one transport type should be selected.")
     String volumeTransportTypesValidationMsg();
 
+    @DefaultStringValue("No host found in 'UP' state in the cluster, please select another cluster.")
+    String volumeEmptyClusterValidationMsg();
+
     @DefaultStringValue("USB")
     String usb();
 

@@ -420,15 +420,31 @@ public class VolumeModel extends Model {
 
     private void clusterSelectedItemChanged()
     {
+        setBricks(new ListModel());
+        setMessage(null);
+
         if (getCluster().getSelectedItem() != null)
         {
-            getAddBricksCommand().setIsExecutionAllowed(true);
+            VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+            AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void OnSuccess(Object model, Object returnValue) {
+                    List<VDS> hostList = (List<VDS>) returnValue;
+                    for (VDS host : hostList) {
+                        if (host.getstatus() == VDSStatus.Up) {
+                            getAddBricksCommand().setIsExecutionAllowed(true);
+                            return;
+                        }
+                    }
+                    getAddBricksCommand().setIsExecutionAllowed(false);
+                    setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
+                }
+            }), cluster.getname());
         }
         else
         {
             getAddBricksCommand().setIsExecutionAllowed(false);
         }
-        setBricks(new ListModel());
     }
 
     private void dataCenter_SelectedItemChanged()

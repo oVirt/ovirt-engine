@@ -53,13 +53,13 @@
 		.messageLabel {
 			color: #FF0000;
 			left: 10px;
-			padding-top: 5px;
+			padding-top: 15px;
 			padding-left: 5px;
 		}
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="500px">
+	<d:SimpleDialogPanel width="450px" height="510px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
