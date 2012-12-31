@@ -184,6 +184,7 @@ public class VdsStatic implements INotifyPropertyChanged, BusinessEntity<Guid> {
         serverSslEnabled = false;
         vdsStrength = 100;
         this.setpm_options("");
+        this.setPmSecondaryOptions("");
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
