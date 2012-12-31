@@ -680,4 +680,29 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         return Driver.driver.flush();
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        attachEditor.setTabIndex(nextTabIndex++);
+
+        internalDiskRadioButton.setTabIndex(nextTabIndex++);
+        externalDiskRadioButton.setTabIndex(nextTabIndex++);
+
+        sizeEditor.setTabIndex(nextTabIndex++);
+        aliasEditor.setTabIndex(nextTabIndex++);
+        descriptionEditor.setTabIndex(nextTabIndex++);
+        interfaceEditor.setTabIndex(nextTabIndex++);
+        volumeTypeEditor.setTabIndex(nextTabIndex++);
+        datacenterEditor.setTabIndex(nextTabIndex++);
+        storageDomainEditor.setTabIndex(nextTabIndex++);
+        quotaEditor.setTabIndex(nextTabIndex++);
+        hostListEditor.setTabIndex(nextTabIndex++);
+        storageTypeEditor.setTabIndex(nextTabIndex++);
+        wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);
+        isBootableEditor.setTabIndex(nextTabIndex++);
+        isShareableEditor.setTabIndex(nextTabIndex++);
+
+        isPluggedEditor.setTabIndex(nextTabIndex++);
+
+        return nextTabIndex;
+    }
 }
