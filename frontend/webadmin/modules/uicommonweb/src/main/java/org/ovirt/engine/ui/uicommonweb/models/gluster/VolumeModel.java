@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -121,6 +122,8 @@ public class VolumeModel extends Model {
         getReplicaCount().setIsAvailable(false);
         getStripeCount().setIsAvailable(false);
 
+        setBricks(new ListModel());
+
         getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -141,14 +144,14 @@ public class VolumeModel extends Model {
                     getStripeCount().setIsAvailable(false);
                 }
 
-                if (!validateBrickCount() && getAddBricksCommand().getIsExecutionAllowed())
+                if (getBricks().getItems() != null && ((List) getBricks().getItems()).size() > 0
+                        && !validateBrickCount()
+                        && getAddBricksCommand().getIsExecutionAllowed())
                 {
                     getAddBricksCommand().Execute();
                 }
             }
         });
-
-        setBricks(new ListModel());
 
         setGluster_accecssProtocol(new EntityModel());
         getGluster_accecssProtocol().setEntity(true);
