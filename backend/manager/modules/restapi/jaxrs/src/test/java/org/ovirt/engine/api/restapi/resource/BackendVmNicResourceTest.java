@@ -224,6 +224,7 @@ public class BackendVmNicResourceTest
     public void testUpdateWithNoNetwork() throws Exception {
         VmNetworkInterface entity = getEntity(1, null);
         setUpGetEntityExpectations(3, entity);
+        setGetGuestAgentQueryExpectations(2);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
@@ -387,6 +388,7 @@ public class BackendVmNicResourceTest
         setUpGetEntityExpectations(4);
         setGetVmQueryExpectations(4);
         setGetNetworksQueryExpectations(4);
+        setGetGuestAgentQueryExpectations(3);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
@@ -401,6 +403,7 @@ public class BackendVmNicResourceTest
         setUpGetEntityExpectations(4);
         setGetVmQueryExpectations(4);
         setGetNetworksQueryExpectations(4);
+        setGetGuestAgentQueryExpectations(3);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
