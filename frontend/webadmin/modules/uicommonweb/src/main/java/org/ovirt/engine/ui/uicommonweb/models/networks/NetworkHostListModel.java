@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NetworkView;
@@ -89,6 +91,27 @@ public class NetworkHostListModel extends SearchableListModel
         }
 
         setIsQueryFirstTime(false);
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        Collections.sort((List<PairQueryable<VdsNetworkInterface, VDS>>) value,
+                new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+
+                    @Override
+                    public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
+                            PairQueryable<VdsNetworkInterface, VDS> arg1) {
+                        int compareValue =
+                                arg0.getSecond().getvds_group_name().compareTo(arg1.getSecond().getvds_group_name());
+
+                        if (compareValue != 0) {
+                            return compareValue;
+                        }
+
+                        return arg0.getSecond().getvds_name().compareTo(arg1.getSecond().getvds_name());
+                    }
+                });
+        super.setItems(value);
     }
 
     public void setupNetworks() {

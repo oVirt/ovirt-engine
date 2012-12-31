@@ -237,6 +237,20 @@ public class NetworkClusterListModel extends SearchableListModel
     }
 
     @Override
+    public void setItems(Iterable value) {
+        Collections.sort((List<PairQueryable<VDSGroup, NetworkCluster>>) value,
+                new Comparator<PairQueryable<VDSGroup, NetworkCluster>>() {
+
+                    @Override
+                    public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
+                            PairQueryable<VDSGroup, NetworkCluster> arg1) {
+                        return arg0.getFirst().getname().compareTo(arg1.getFirst().getname());
+                    }
+                });
+        super.setItems(value);
+    }
+
+    @Override
     protected void EntityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.EntityPropertyChanged(sender, e);
 
