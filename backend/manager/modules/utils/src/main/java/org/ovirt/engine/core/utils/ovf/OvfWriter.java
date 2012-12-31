@@ -71,7 +71,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     @Override
-    public void BuildReference() {
+    public void buildReference() {
         _writer.WriteStartElement("References");
         for (DiskImage image : _images) {
             _writer.WriteStartElement("File");
@@ -91,7 +91,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     @Override
-    public void BuildNetwork() {
+    public void buildNetwork() {
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":NetworkSection_Type");
         _writer.WriteStartElement("Info");
@@ -104,7 +104,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     @Override
-    public void BuildDisk() {
+    public void buildDisk() {
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":DiskSection_Type");
         _writer.WriteStartElement("Info");
@@ -167,7 +167,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     @Override
-    public void BuildVirtualSystem() {
+    public void buildVirtualSystem() {
         // General Vm
         _writer.WriteStartElement("Content");
         _writer.WriteAttributeString(OVF_URI, "id", "out");

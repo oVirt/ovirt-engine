@@ -79,22 +79,22 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     @Override
-    public void BuildReference() {
+    public void buildReference() {
         buildImageReference();
         buildNicReference();
     }
 
     @Override
-    public void BuildNetwork() {
+    public void buildNetwork() {
         // No implementation - networks aren't read from the OVF.
     }
 
-    protected long GigabyteToBytes(long gb) {
+    protected long convertGigabyteToBytes(long gb) {
         return gb * BYTES_IN_GB;
     }
 
     @Override
-    public void BuildDisk() {
+    public void buildDisk() {
         XmlNodeList list = _document.SelectNodes("//*/Section/Disk");
         for (XmlNode node : list) {
             final Guid guid = new Guid(node.Attributes.get("ovf:diskId").getValue());
@@ -111,10 +111,10 @@ public abstract class OvfReader implements IOvfBuilder {
             }
 
             if (!StringUtils.isEmpty(node.Attributes.get("ovf:size").getValue())) {
-                image.setsize(GigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
+                image.setsize(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
             }
             if (!StringUtils.isEmpty(node.Attributes.get("ovf:actual_size").getValue())) {
-                image.setactual_size(GigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
+                image.setactual_size(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
             }
             if (node.Attributes.get("ovf:volume-format") != null) {
                 if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-format").getValue())) {
@@ -171,7 +171,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     @Override
-    public void BuildVirtualSystem() {
+    public void buildVirtualSystem() {
         readGeneralData();
     }
 
@@ -282,9 +282,9 @@ public abstract class OvfReader implements IOvfBuilder {
      */
     protected abstract String getDefaultDisplayTypeStringRepresentation();
 
-    protected abstract void ReadOsSection(XmlNode section);
+    protected abstract void readOsSection(XmlNode section);
 
-    protected abstract void ReadHardwareSection(XmlNode section);
+    protected abstract void readHardwareSection(XmlNode section);
 
     protected void readGeneralData() {
         XmlNode content = _document.SelectSingleNode("//*/Content");
@@ -336,21 +336,21 @@ public abstract class OvfReader implements IOvfBuilder {
         node = content.SelectSingleNode("initrd_url");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setinitrd_url((node.InnerText));
+                vmBase.setinitrd_url(node.InnerText);
             }
         }
 
         node = content.SelectSingleNode("kernel_url");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setkernel_url((node.InnerText));
+                vmBase.setkernel_url(node.InnerText);
             }
         }
 
         node = content.SelectSingleNode("kernel_params");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setkernel_params((node.InnerText));
+                vmBase.setkernel_params(node.InnerText);
             }
         }
 
@@ -376,11 +376,11 @@ public abstract class OvfReader implements IOvfBuilder {
             String value = section.Attributes.get("xsi:type").getValue();
 
             if ("ovf:OperatingSystemSection_Type".equals(value)) {
-                ReadOsSection(section);
+                readOsSection(section);
 
             }
             else if ("ovf:VirtualHardwareSection_Type".equals(value)) {
-                ReadHardwareSection(section);
+                readHardwareSection(section);
             } else if ("ovf:SnapshotsSection_Type".equals(value)) {
                 readSnapshotsSection(section);
             }
@@ -525,7 +525,7 @@ public abstract class OvfReader implements IOvfBuilder {
             // handle interfaces with different sub types : we have 0-3 as the VmInterfaceType enum
             boolean isKnownType = false;
             for (VmInterfaceType vmInterfaceType : VmInterfaceType.values()) {
-                if ((Integer.valueOf(vmInterfaceType.getValue()) == resourceSubType)) {
+                if (Integer.valueOf(vmInterfaceType.getValue()) == resourceSubType) {
                     vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
                     isKnownType = true;
                     break;

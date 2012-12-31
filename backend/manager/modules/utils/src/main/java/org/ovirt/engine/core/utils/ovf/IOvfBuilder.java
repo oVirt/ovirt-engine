@@ -13,11 +13,11 @@ public interface IOvfBuilder {
     public final String VSSD_PREFIX = "vssd";
     public final String XSI_PREFIX = "xsi";
 
-    void BuildReference();
+    void buildReference();
 
-    void BuildNetwork();
+    void buildNetwork();
 
-    void BuildDisk();
+    void buildDisk();
 
-    void BuildVirtualSystem();
+    void buildVirtualSystem();
 }

@@ -87,9 +87,9 @@ public class OvfManager {
     }
 
     private void BuildOvf(IOvfBuilder builder) {
-        builder.BuildReference();
-        builder.BuildNetwork();
-        builder.BuildDisk();
-        builder.BuildVirtualSystem();
+        builder.buildReference();
+        builder.buildNetwork();
+        builder.buildDisk();
+        builder.buildVirtualSystem();
     }
 }

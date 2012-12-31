@@ -31,7 +31,7 @@ public class OvfTemplateReader extends OvfReader {
     }
 
     @Override
-    protected void ReadOsSection(XmlNode section) {
+    protected void readOsSection(XmlNode section) {
         _vmTemplate.setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
@@ -42,7 +42,7 @@ public class OvfTemplateReader extends OvfReader {
     }
 
     @Override
-    protected void ReadHardwareSection(XmlNode section) {
+    protected void readHardwareSection(XmlNode section) {
         XmlNodeList list = section.SelectNodes("Item");
         for (XmlNode node : list) {
             int resourceType = Integer.parseInt(node.SelectSingleNode("rasd:ResourceType", _xmlNS).InnerText);
