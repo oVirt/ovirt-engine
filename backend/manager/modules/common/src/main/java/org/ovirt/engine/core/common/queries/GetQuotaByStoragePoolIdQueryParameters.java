@@ -10,6 +10,12 @@ public class GetQuotaByStoragePoolIdQueryParameters extends VdcQueryParametersBa
     private static final long serialVersionUID = 766005677528376770L;
     private Guid storagePoolId;
 
+    public GetQuotaByStoragePoolIdQueryParameters() {}
+
+    public GetQuotaByStoragePoolIdQueryParameters(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
+    }
+
     public void setStoragePoolId(Guid storagePoolId) {
         this.storagePoolId = storagePoolId;
     }

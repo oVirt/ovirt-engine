@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -15,7 +16,9 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.GetQuotaByStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
@@ -28,6 +31,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -418,12 +422,10 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 windowModel.StopProgress();
                 List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
                 List<EntityModel> models = new ArrayList<EntityModel>();
-                for (storage_domains a : storageDomainList)
-                {
+                for (storage_domains a : storageDomainList) {
                     if (a.getstorage_domain_type() == StorageDomainType.Data
                             && a.getstorage_type() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
-                            && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached))
-                    {
+                            && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)) {
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(a);
                         models.add(tempVar);
@@ -431,17 +433,14 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 }
                 windowModel.setItems(models);
 
-                if (models.size() > 0)
-                {
+                if (models.size() > 0) {
                     EntityModel entityModel = models.size() != 0 ? models.get(0) : null;
-                    if (entityModel != null)
-                    {
+                    if (entityModel != null) {
                         entityModel.setIsSelected(true);
                     }
                 }
 
-                if (models.isEmpty())
-                {
+                if (models.isEmpty()) {
                     windowModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
@@ -451,9 +450,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     tempVar2.setIsDefault(true);
                     tempVar2.setIsCancel(true);
                     windowModel.getCommands().add(tempVar2);
-                }
-                else
-                {
+                } else {
                     UICommand tempVar3 = new UICommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
                     tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
                     tempVar3.setIsDefault(true);
@@ -611,8 +608,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
 
-        if (!model.getIsNew()
-                && !((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version()))
+        if ((model.getIsNew() || model.getEntity() == null)
+                && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED) {
+            promptNoQuotaInDCMessage();
+        }
+        else if (!((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version()))
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
@@ -633,10 +633,55 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
+        else if (((storage_pool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+                && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED)
+        {
+            checkForQuotaInDC(model.getEntity(), this);
+        }
         else
         {
             OnSaveInternal();
         }
+    }
+
+    private void checkForQuotaInDC(storage_pool storage_pool, final ICommandTarget commandTarget) {
+        GetQuotaByStoragePoolIdQueryParameters parameters = new GetQuotaByStoragePoolIdQueryParameters(storage_pool.getId());
+        Frontend.RunQuery(VdcQueryType.GetQuotaByStoragePoolId,
+                parameters,
+                new AsyncQuery(
+                        quotaListModel,
+                        new INewAsyncCallback() {
+
+                            @Override
+                            public void OnSuccess(Object model, Object returnValue) {
+                                if (((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() == 0) {
+                                    promptNoQuotaInDCMessage();
+                                } else {
+                                    OnSaveInternal();
+                                }
+                            }
+                        }));
+    }
+
+    private void promptNoQuotaInDCMessage() {
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        setConfirmWindow(confirmModel);
+        confirmModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .changeDCQuotaEnforcementModeTitle());
+        confirmModel.setHashName("change_data_center_quota_enforcement_mode"); //$NON-NLS-1$
+        confirmModel.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .youAreAboutChangeDCQuotaEnforcementMsg());
+
+        UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
+        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar.setIsDefault(true);
+        getConfirmWindow().getCommands().add(tempVar);
+        UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar2.setIsCancel(true);
+        getConfirmWindow().getCommands().add(tempVar2);
     }
 
     public void OnSaveInternal()

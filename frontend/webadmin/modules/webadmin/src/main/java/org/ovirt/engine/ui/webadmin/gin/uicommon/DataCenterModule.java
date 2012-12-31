@@ -41,6 +41,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 
 public class DataCenterModule extends AbstractGinModule {
 
@@ -178,10 +179,35 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getDataCenterQuotaListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getDataCenterQuotaListProvider(ClientGinjector ginjector,
+            final Provider<QuotaPopupPresenterWidget> quotaPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel>(ginjector,
                 DataCenterListModel.class,
-                DataCenterQuotaListModel.class);
+                DataCenterQuotaListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterQuotaListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand.equals(getModel().getCreateQuotaCommand())
+                        || lastExecutedCommand.equals(getModel().getEditQuotaCommand())
+                        || lastExecutedCommand.equals(getModel().getCloneQuotaCommand())) {
+                    return quotaPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterQuotaListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand.equals(getModel().getRemoveQuotaCommand())) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
     }
 
     @Provides
