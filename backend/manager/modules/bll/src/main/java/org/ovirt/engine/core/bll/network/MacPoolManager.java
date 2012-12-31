@@ -22,6 +22,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class MacPoolManager {
 
     private static final int HEX_RADIX = 16;
+    private static final String INIT_ERROR_MSG = "Error in initializing MAC Addresses pool manager. ";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     private static Log log = LogFactory.getLog(MacPoolManager.class);
@@ -57,6 +58,9 @@ public class MacPoolManager {
                 addMac(iface.getMacAddress());
             }
             initialized = true;
+        } catch (Exception ex) {
+            log.debug(INIT_ERROR_MSG, ex);
+            log.error(INIT_ERROR_MSG + "Exception message is: " + ex.getMessage());
         } finally {
             lockObj.writeLock().unlock();
         }
