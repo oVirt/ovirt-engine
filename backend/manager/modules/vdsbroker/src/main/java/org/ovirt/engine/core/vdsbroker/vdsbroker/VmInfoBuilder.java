@@ -58,39 +58,51 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmVideoCards() {
         createInfo.add(VdsProperties.display, vm.getDisplayType().toString());
-        // check if display type was changed in given parameters
+        // the requested display type might be different than the default display of
+        // the VM in Run Once scenario, in that case we need to add proper video device
         if (vm.getDisplayType() != vm.getDefaultDisplayType()) {
-            if (vm.getDisplayType() == DisplayType.vnc) { // check spice to vnc change
-                XmlRpcStruct struct = new XmlRpcStruct();
-                // create a monitor as an unmanaged device
-                struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
-                struct.add(VdsProperties.Device, VmDeviceType.CIRRUS.getName());
-                struct.add(VdsProperties.SpecParams, getNewMonitorSpecParams());
-                struct.add(VdsProperties.DeviceId, String.valueOf(Guid.NewGuid()));
-                devices.add(struct);
-            }
+            addVideoCardByDisplayType(vm.getDisplayType());
         }
         else {
-            // get vm device for Video Cards from DB
-            List<VmDevice> vmDevices =
-                    DbFacade.getInstance()
-                            .getVmDeviceDao()
-                            .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceType.VIDEO.getName());
-            for (VmDevice vmDevice : vmDevices) {
-                // skip unmanaged devices (handled separately)
-                if (!vmDevice.getIsManaged()) {
-                    continue;
-                }
+            addVideoCardsDefinedForVmInDB(vm.getId());
+        }
+    }
 
-                XmlRpcStruct struct = new XmlRpcStruct();
-                struct.add(VdsProperties.Type, vmDevice.getType());
-                struct.add(VdsProperties.Device, vmDevice.getDevice());
-                addAddress(vmDevice, struct);
-                struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
-                struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-                addToManagedDevices(vmDevice);
-                devices.add(struct);
+    /**
+     * Add video device according to the given display type
+     */
+    private void addVideoCardByDisplayType(DisplayType displayType) {
+        XmlRpcStruct struct = new XmlRpcStruct();
+        // create a monitor as an unmanaged device
+        struct.add(VdsProperties.Type, VmDeviceType.VIDEO.getName());
+        struct.add(VdsProperties.Device, displayType.getVmDeviceType().getName());
+        struct.add(VdsProperties.SpecParams, getNewMonitorSpecParams());
+        struct.add(VdsProperties.DeviceId, String.valueOf(Guid.NewGuid()));
+        devices.add(struct);
+    }
+
+    /**
+     * Add the video cards defined for the VM with the given id in the DB
+     */
+    private void addVideoCardsDefinedForVmInDB(Guid vmId) {
+        List<VmDevice> vmVideoDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vmId, VmDeviceType.VIDEO.getName());
+        for (VmDevice vmVideoDevice : vmVideoDevices) {
+            // skip unmanaged devices (handled separately)
+            if (!vmVideoDevice.getIsManaged()) {
+                continue;
             }
+
+            XmlRpcStruct struct = new XmlRpcStruct();
+            struct.add(VdsProperties.Type, vmVideoDevice.getType());
+            struct.add(VdsProperties.Device, vmVideoDevice.getDevice());
+            addAddress(vmVideoDevice, struct);
+            struct.add(VdsProperties.SpecParams, vmVideoDevice.getSpecParams());
+            struct.add(VdsProperties.DeviceId, String.valueOf(vmVideoDevice.getId().getDeviceId()));
+            addToManagedDevices(vmVideoDevice);
+            devices.add(struct);
         }
     }
 
