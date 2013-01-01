@@ -67,7 +67,6 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 }
             }
         }
-
         return ValidationResult.VALID;
     }
 
@@ -75,6 +74,12 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
         return getNetworkClusterDAO().getAllForNetwork(network.getId()).isEmpty()
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
+    }
+
+    protected ValidationResult networkPrefixValid() {
+        return getNetworkName().toLowerCase().startsWith("bond")
+                ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME)
+                : ValidationResult.VALID;
     }
 
     @Override

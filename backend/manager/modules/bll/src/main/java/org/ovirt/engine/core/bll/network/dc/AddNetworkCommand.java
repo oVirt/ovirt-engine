@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -52,29 +54,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
             return false;
         }
 
-        // check that network name not start with 'bond'
-        if (getNetworkName().toLowerCase().startsWith("bond")) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME);
+        if (!validate(networkPrefixValid())) {
             return false;
         }
 
-        // we return ok only if the network not exists
-        List<Network> all;
-        if (getNetwork().getDataCenterId() != null
-                && !getNetwork().getDataCenterId().getValue().equals(Guid.Empty)) {
-            all = getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId().getValue());
-        } else {
-            all = getNetworkDAO().getAll();
-        }
-        boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network net) {
-                return net.getName().equals(getNetworkName());
-            }
-        });
-        if (exists) {
-            getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.NETWORK_NAME_ALREADY_EXISTS.toString());
+        List<Network> all = getNetworks();
+
+        if (!validate(networkDoesNotExist(all))) {
             return false;
         }
 
@@ -119,5 +105,30 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         perms.setObjectId(getNetwork().getId());
         perms.setrole_id(role.getId());
         MultiLevelAdministrationHandler.addPermission(perms);
+    }
+
+    private List<Network> getNetworks() {
+        NGuid dataCenterId = getNetwork().getDataCenterId();
+        if (dataCenterId != null
+                && !dataCenterId.getValue().equals(Guid.Empty)) {
+            return getNetworkDAO().getAllForDataCenter(dataCenterId.getValue());
+        } else {
+            return getNetworkDAO().getAll();
+        }
+    }
+
+    private ValidationResult networkDoesNotExist(List<Network> networks) {
+        return getNetworkByName(networks) == null
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.NETWORK_NAME_ALREADY_EXISTS);
+    }
+
+    private Network getNetworkByName(List<Network> networks) {
+        return LinqUtils.firstOrNull(networks, new Predicate<Network>() {
+            @Override
+            public boolean eval(Network network) {
+                return network.getName().equals(getNetworkName());
+            }
+        });
     }
 }
