@@ -53,18 +53,21 @@ WHERE     (_create_date >
 
 CREATE OR REPLACE VIEW dwh_datacenter_storage_map_history_view
 AS
-SELECT storage_pool_id AS datacenter_id,
-       storage_id AS storage_domain_id,
-       status as storage_domain_status
+SELECT DISTINCT storage_pool_id AS datacenter_id,
+                storage_id AS storage_domain_id
 FROM storage_pool_iso_map;
 
 CREATE OR REPLACE VIEW dwh_storage_domain_history_view
 AS
-SELECT
-	id as storage_domain_id,
-	available_disk_size as available_disk_size_gb,
-	used_disk_size as used_disk_size_gb
-FROM storage_domain_dynamic;
+SELECT storage_domain_dynamic.id as storage_domain_id,
+       fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id, status_table.status, storage_domain_static.storage_type) AS storage_domain_status,
+       storage_domain_dynamic.available_disk_size as available_disk_size_gb,
+       storage_domain_dynamic.used_disk_size as used_disk_size_gb
+FROM storage_domain_dynamic
+         INNER JOIN storage_domain_static ON (storage_domain_dynamic.id = storage_domain_static.id)
+             LEFT OUTER JOIN (SELECT storage_id, max(status) AS status
+                              FROM storage_pool_iso_map
+                              GROUP BY storage_id) AS status_table ON storage_domain_static.id=status_table.storage_id;
 
 CREATE OR REPLACE VIEW dwh_cluster_configuration_history_view
 AS
