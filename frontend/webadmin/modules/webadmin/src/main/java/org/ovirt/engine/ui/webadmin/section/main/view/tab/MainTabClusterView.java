@@ -64,6 +64,14 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VDSGroup> cpuNameColumn = new TextColumnWithTooltip<VDSGroup>() {
+            @Override
+            public String getValue(VDSGroup object) {
+                return object.getcpu_name();
+            }
+        };
+        getTable().addColumn(cpuNameColumn, constants.cpuNameCluster(), "150px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {

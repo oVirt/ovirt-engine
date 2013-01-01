@@ -982,6 +982,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionCluster();
 
+    @DefaultStringValue("Cluster CPU Type")
+    String cpuNameCluster();
+
     @DefaultStringValue("New")
     String newCluster();
 
