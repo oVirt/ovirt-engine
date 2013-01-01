@@ -254,7 +254,7 @@ select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
 select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.0');
 select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.1');
 select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.2');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.0');
+select fn_db_add_config_value('MaxNumOfVmCpus','64','3.0');
 select fn_db_add_config_value('MaxNumOfVmCpus','160','3.1');
 select fn_db_add_config_value('MaxNumOfVmCpus','160','3.2');
 select fn_db_add_config_value('MaxNumOfVmSockets','16','3.0');
@@ -524,7 +524,7 @@ COMMIT
 ','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
-select fn_db_update_config_value('MaxNumOfVmCpus','160','3.0');
+select fn_db_update_config_value('MaxNumOfVmCpus','64','3.0');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.1');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.2');
 select fn_db_update_config_value('MinimalETLVersion','3.2.0','general');
