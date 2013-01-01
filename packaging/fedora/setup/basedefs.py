@@ -76,6 +76,7 @@ FILE_APACHE_CERT="%s/certs/apache.cer"%(DIR_OVIRT_PKI)
 FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (ENGINE_SERVICE_NAME, ENGINE_SERVICE_NAME)
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
+FILE_DB_BACKUP_SCRIPT="backup.sh"
 FILE_DB_ASYNC_TASKS="%s/scripts/add_fn_db_get_async_tasks_function.sql" % DIR_ENGINE
 FILE_ENGINE_CONFIG_BIN="/usr/bin/engine-config"
 FILE_ENGINE_CONFIG_PROPS="engine-config-install.properties"

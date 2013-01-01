@@ -257,27 +257,14 @@ class DB():
             os.remove(self.sqlfile)
 
     def backup(self):
-        """
-        Backup db using pg_dump
-        """
-        # pg_dump -C -E UTF8  --column-inserts --disable-dollar-quoting  --disable-triggers -U postgres --format=p -f $dir/$file  dbname
-        logging.debug("DB Backup started")
-
-        # .pgpass update
-        cmd = [
-            basedefs.EXEC_PGDUMP,
-            "-C", "-E", "UTF8",
-            "--disable-dollar-quoting",
-            "--disable-triggers",
-            "-U", DB_ADMIN,
-            "-h", DB_HOST,
-            "-p", DB_PORT,
-            "--format=p",
-            "-f", self.sqlfile,
-            basedefs.DB_NAME,
-        ]
-        utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=self.env)
-        logging.debug("DB Backup completed successfully")
+        utils.backupDB(
+            db=basedefs.DB_NAME,
+            backup_file=self.sqlfile,
+            env=self.env,
+            user=DB_ADMIN,
+            host=DB_HOST,
+            port=DB_PORT,
+        )
 
     def drop(self):
         """

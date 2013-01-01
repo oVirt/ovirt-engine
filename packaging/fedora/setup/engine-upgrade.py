@@ -353,23 +353,14 @@ class DB():
             print "* %s %s" % (MSG_INFO_DB_BACKUP_FILE, self.sqlfile)
 
     def backup(self):
-        logging.debug("DB Backup started")
-        #cmd = "%s -C -E UTF8 --column-inserts --disable-dollar-quoting  --disable-triggers -U %s -h %s -p %s --format=p -f %s %s"\
-            #%(basedefs.EXEC_PGDUMP, SERVER_ADMIN, SERVER_HOST, SERVER_PORT, self.sqlfile, basedefs.DB_NAME)
-        cmd = [
-            basedefs.EXEC_PGDUMP,
-            "-C", "-E", "UTF8",
-            "--disable-dollar-quoting",
-            "--disable-triggers",
-            "-U", SERVER_ADMIN,
-            "-h", SERVER_NAME,
-            "-p", SERVER_PORT,
-            "--format=p",
-            "-f", self.sqlfile,
-            basedefs.DB_NAME,
-        ]
-        output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_BACKUP_DB, envDict=utils.getPgPassEnv())
-        logging.debug("DB Backup completed successfully")
+        utils.backupDB(
+            db=basedefs.DB_NAME,
+            backup_file=self.sqlfile,
+            env=utils.getPgPassEnv(),
+            user=SERVER_ADMIN,
+            host=SERVER_NAME,
+            port=SERVER_PORT,
+        )
 
     def restore(self):
         # run psql -U engine -h host -p port -d template1 -f <backup directory>/<backup_file>

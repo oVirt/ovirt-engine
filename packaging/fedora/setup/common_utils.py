@@ -431,7 +431,8 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
 
     # We need to join cmd list into one string so we can look for passwords in it and mask them
     logCmd = _maskString((' '.join(cmd)), maskList)
-    logging.debug("Executing command --> '%s'"%(logCmd))
+
+    logging.debug("Executing command --> '%s' in working directory '%s'" % (logCmd, cwd or os.getcwd()))
 
     stdErrFD = subprocess.PIPE
     stdOutFD = subprocess.PIPE
@@ -814,32 +815,33 @@ def getDbConfig(param, user=None):
 
     return False
 
-def backupDB(db, user, backupFile, host="localhost", port="5432"):
+
+def backupDB(db, backup_file, env, user, host="localhost", port="5432"):
     """
     Backup postgres db
-    using pgdump
+    using backup.sh
     Args:  file - a target file to backup to
            db - db name to backup
            user - db user to use for backup
            host - db host where postgresql server runs
            port - db connection port
+
+    backup.sh -u user -f backup_file -d db -s host -p port
     """
-    logging.debug("%s DB Backup started"%(db))
+    logging.debug("%s DB Backup started", db)
+
+    # Run backup
     cmd = [
-        basedefs.EXEC_PGDUMP,
-        "-C", "-E",
-        "UTF8",
-        "--disable-dollar-quoting",
-        "--disable-triggers",
-        "--format=p",
-        "-f", backupFile,
-        "-U", user,
-        "-h", host,
+        os.path.join(".", basedefs.FILE_DB_BACKUP_SCRIPT),
+        "-u", user,
+        "-s", host,
         "-p", port,
-        db,
+        "-d", db,
+        "-f", backup_file,
     ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_BACKUP, envDict=getPgPassEnv())
-    logging.debug("%s DB Backup completed successfully"%(db))
+    execCmd(cmdList=cmd, cwd=basedefs.DIR_DB_SCRIPTS, failOnError=True, msg=output_messages.ERR_DB_BACKUP, envDict=env)
+    logging.debug("%s DB Backup completed successfully", db)
+
 
 def restoreDB(user, host, port, backupFile):
     """
