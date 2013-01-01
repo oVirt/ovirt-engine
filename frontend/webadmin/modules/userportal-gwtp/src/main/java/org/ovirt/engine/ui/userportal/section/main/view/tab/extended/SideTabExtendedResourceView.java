@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
+import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -166,15 +168,23 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Ignore
     HorizontalPanel bottomInfoBox;
 
+    @UiField(provided = true)
+    RefreshPanel refreshPanel;
+
+    private SimpleRefreshManager refreshManager;
+
     @Inject
     public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             SubTableResources headerResources, ApplicationResources resources, ApplicationConstants constans) {
         vmTable = new VmTable(modelProvider, headerResources, resources, constans);
+        refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
+        refreshPanel = refreshManager.getRefreshPanel();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Driver.driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
+
 
         modelProvider.getModel().getUsedQuotaPercentage().getEntityChangedEvent().addListener(new IEventListener() {
             @Override

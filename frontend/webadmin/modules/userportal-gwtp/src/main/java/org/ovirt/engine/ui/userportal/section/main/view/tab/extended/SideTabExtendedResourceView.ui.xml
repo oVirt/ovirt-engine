@@ -4,6 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget"
 	xmlns:r="urn:import:org.ovirt.engine.ui.userportal.widget.resources"
+	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.refresh"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	>
 
@@ -167,7 +168,6 @@
 		}
 
 		.expanderContent {
-			padding-left: 10px;
 			float: left;
 			width: 90%;
 			height: 100px;
@@ -213,7 +213,25 @@
 			margin-top: 8px;
 		}
 
+		.refreshPanel {
+			float: right;
+			cursor: hand;
+			cursor: pointer;
+			border: 1px solid transparent;
+			display: table-cell;
+			width: 30px;
+		}
+
+		.refreshPanelWrapper {
+			text-align: right;
+		}
+
 	</ui:style>
+
+	<g:FlowPanel>
+	<g:SimplePanel width="100%">
+		<f:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
+	</g:SimplePanel>
 	<g:ScrollPanel>
 		<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
 			<g:FlowPanel ui:field="infoContainer" addStyleNames="{style.infoContainerContainer}">
@@ -381,5 +399,6 @@
 			</g:DockLayoutPanel>
 		</g:FlowPanel>
 	</g:ScrollPanel>
+	</g:FlowPanel>
 
 </ui:UiBinder>
