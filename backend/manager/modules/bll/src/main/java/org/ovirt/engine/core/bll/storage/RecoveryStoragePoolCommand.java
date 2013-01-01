@@ -2,17 +2,15 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -27,10 +25,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
 
     /**
@@ -91,38 +87,49 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
         return returnValue;
     }
 
+    protected void executeReconstruct(){
+        super.executeCommand();
+    }
+
     @Override
     protected void executeCommand() {
-        TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<StoragePoolIsoMap>() {
-                    @Override
-                    public StoragePoolIsoMap runInTransaction() {
-                        StoragePoolIsoMap domainPoolMap =
-                                new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
-                                        .getNewMasterDomainId(),
-                                        getRecoveryStoragePoolParametersData().getStoragePoolId(),
-                                        StorageDomainStatus.Active);
-                        DbFacade.getInstance().getStoragePoolIsoMapDao().save(domainPoolMap);
-                        return domainPoolMap;
-                    }
-                });
-        getStoragePool().setstatus(StoragePoolStatus.Problematic);
         try {
             if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
                     .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
                 getRecoveryStoragePoolParametersData().setStorageDomainId(getStorageDomainId().getValue());
-                EventResult result =
-                        ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getRecoveryStoragePoolParametersData().getStoragePoolId(),
-                                _newMasterStorageDomainId, null, EventType.RECONSTRUCT),
-                                new Callable<EventResult>() {
-                                    @Override
-                                    public EventResult call() {
-                                        boolean isSucceeded = Backend.getInstance().runInternalAction(
-                                                VdcActionType.ReconstructMasterDomain, getParameters()).getSucceeded();
-                                        return new EventResult(isSucceeded, EventType.RECONSTRUCT);
-                                    }
-                                });
-                reconstructOpSucceeded = result != null ? result.isSuccess() : false;
+                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                        _newMasterStorageDomainId,
+                        null,
+                        EventType.RECOVERY),
+                        new Callable<EventResult>() {
+                            @Override
+                            public EventResult call() {
+                                // set those to null in order to reload them during canDoAction -
+                                // canDo checks should be performed on updated values and not staled ones.
+                                // canDoAction checks are needed here as Recovery operations aren't cleared from the event queue
+                                // after reconstruct, in order to provide the user ability to recover from the state of non working pool
+                                // without him to be in a race with automatic triggered reconstruct. because of that, we don't want to run
+                                // the recovery operation if it's unneeded so we need to re-check the canDoAction result. canDoAction() method was
+                                // as is in order to provide the user immediate response whether it's possible to initiate the command when
+                                // he attempts to run recovery.
+                                setStorageDomain(null);
+                                setStoragePool(null);
+                                if (canDoAction()) {
+                                    StoragePoolIsoMap domainPoolMap =
+                                            new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
+                                                    .getNewMasterDomainId(),
+                                                    getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                                                    StorageDomainStatus.Active);
+                                    DbFacade.getInstance()
+                                            .getStoragePoolIsoMapDao()
+                                            .save(domainPoolMap);
+
+                                    getStoragePool().setstatus(StoragePoolStatus.Problematic);
+                                    executeReconstruct();
+                                }
+                                return new EventResult(reconstructOpSucceeded, EventType.RECONSTRUCT);
+                            }
+                        });
             } else {
                 getReturnValue().setFault(new VdcFault(new VdcBLLException(VdcBllErrors.StorageServerConnectionError,
                         "Failed to connect storage"),

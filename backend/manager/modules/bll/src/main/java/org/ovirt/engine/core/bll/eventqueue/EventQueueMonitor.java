@@ -71,7 +71,7 @@ public class EventQueueMonitor implements EventQueue {
             if (currentEvent != null) {
                 switch (currentEvent.getEventType()) {
                 case RECONSTRUCT:
-                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL) {
+                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL || event.getEventType() == EventType.RECOVERY) {
                         task = addTaskToQueue(event, callable, storagePoolId);
                     } else {
                         log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
@@ -156,18 +156,19 @@ public class EventQueueMonitor implements EventQueue {
                     if (futureResult.get() == null) {
                         EventResult result = pair.getSecond().get();
                         if (result != null && result.getEventType() == EventType.RECONSTRUCT) {
-                            log.infoFormat("Finished reconstruct for pool {0}. Clearing all event queue", storagePoolId);
+                            log.infoFormat("Finished reconstruct for pool {0}. Clearing event queue", storagePoolId);
                             lock.lock();
                             try {
                                 Queue<Pair<Event, FutureTask<EventResult>>> queue =
                                         new LinkedList<Pair<Event, FutureTask<EventResult>>>();
                                 for (Pair<Event, FutureTask<EventResult>> task : poolsEventsMap.get(storagePoolId)) {
-                                    if (task.getFirst().getEventType() != EventType.VDSCONNECTTOPOOL) {
+                                    EventType eventType = task.getFirst().getEventType();
+                                    if (eventType == EventType.VDSCONNECTTOPOOL || eventType == EventType.RECOVERY) {
+                                        queue.add(task);
+                                    } else {
                                         log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",
                                                 task.getFirst());
                                         task.getSecond().cancel(true);
-                                    } else {
-                                        queue.add(task);
                                     }
                                 }
                                 if (queue.isEmpty()) {
