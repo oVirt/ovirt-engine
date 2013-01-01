@@ -34,13 +34,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected boolean canDoAction() {
+        if (VmTemplateHandler.BlankVmTemplateId.equals(getVmTemplate().getId())) {
+            return failCanDoAction(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE);
+        }
         boolean returnValue = false;
         mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
         VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
         if (mOldTemplate != null) {
-            if (VmTemplateHandler.BlankVmTemplateId.equals(mOldTemplate.getId())) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE.toString());
-            } else if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
+            if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
             } else {
