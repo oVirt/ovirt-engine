@@ -39,8 +39,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
         boolean returnValue = false;
         mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
-        VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
         if (mOldTemplate != null) {
+            VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
             if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
