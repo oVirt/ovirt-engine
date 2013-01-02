@@ -743,9 +743,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Network Interface(s)")
     String networkInterfacesMsg();
 
-    @DefaultStringValue("Name must contain alphanumeric characters only.")
-    String nameMustContainAlphanumericCharactersOnlyMsg();
-
     @DefaultStringValue("Virtual Machine(s)")
     String virtualMachinesMsg();
 

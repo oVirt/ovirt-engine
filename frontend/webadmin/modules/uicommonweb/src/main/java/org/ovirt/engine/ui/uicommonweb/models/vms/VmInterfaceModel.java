@@ -24,10 +24,10 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -348,10 +348,7 @@ public abstract class VmInterfaceModel extends Model
 
     public boolean Validate()
     {
-        RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^\\w+$"); //$NON-NLS-1$
-        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericCharactersOnlyMsg());
-        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        getName().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
 
         getNicType().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
