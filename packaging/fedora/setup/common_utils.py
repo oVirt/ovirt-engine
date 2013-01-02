@@ -23,6 +23,10 @@ import miniyum
 import string
 import random
 
+# Create a special Exception class, so that it could be caught.
+class RetryFailException(Exception):
+    pass
+
 """
 ENUM implementation for python (from the vdsm team)
 usage:
@@ -977,13 +981,12 @@ def askYesNo(question=None):
     else:
         return askYesNo(question)
 
-def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
+def retry(func, tries=None, timeout=None, sleep=1):
     """
     Retry a function. Wraps the retry logic so you don't have to
     implement it each time you need it.
 
     :param func: The callable to run.
-    :param expectedException: The exception you expect to receive when the function fails.
     :param tries: The number of time to try. None\0,-1 means infinite.
     :param timeout: The time you want to spend waiting. This **WILL NOT** stop the method.
                     It will just not run it if it ended after the timeout.
@@ -1001,7 +1004,11 @@ def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
         tries -= 1
         try:
             return func()
-        except expectedException:
+        except RetryFailException as e:
+            # That's the exception we do not want to ignore, so raise it
+            raise e
+        except Exception as e:
+
             if tries == 0:
                 raise
 

@@ -270,6 +270,7 @@ def createHost():
 
 def waitForHostUp():
     # We will wait for 10 minutes for host to start. We sample the status each 5 seconds.
+    # Also, if host is in Failed mode, fail immediately, don't cycle.
     utils.retry(isHostUp, tries=120, timeout=600, sleep=5)
 
 def isHostUp():
@@ -282,13 +283,14 @@ def isHostUp():
             return
 
         if "failed" in hostStatus:
-            raise Exception(ERROR_CREATE_HOST_FAILED)
+            raise utils.RetryFailException(ERROR_CREATE_HOST_FAILED)
 
         raise Exception(INFO_CREATE_HOST_WAITING_UP)
 
-    except:
+    except Exception as e:
         logging.debug(traceback.format_exc())
-        raise Exception(ERROR_CREATE_HOST_TIMEOUT)
+        # Raise the exception again
+        raise e
 
 def addStorageDomain():
     global controller
