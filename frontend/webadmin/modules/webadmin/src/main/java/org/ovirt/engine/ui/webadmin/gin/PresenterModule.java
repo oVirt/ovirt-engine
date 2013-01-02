@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmat
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
@@ -199,7 +198,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.NewClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
@@ -899,10 +897,6 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VolumePopupPresenterWidget.class,
                 VolumePopupPresenterWidget.ViewDef.class,
                 VolumePopupView.class);
-
-        bindPresenterWidget(ClusterPolicyPopupPresenterWidget.class,
-                ClusterPolicyPopupPresenterWidget.ViewDef.class,
-                ClusterPolicyPopupView.class);
 
         bindPresenterWidget(DetachGlusterHostsPopupPresenterWidget.class,
                 DetachGlusterHostsPopupPresenterWidget.ViewDef.class,

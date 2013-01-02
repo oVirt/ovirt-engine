@@ -22,15 +22,15 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterModel extends Model
+public class ClusterModel extends EntityModel
 {
+
     private int privateServerOverCommit;
 
     public int getServerOverCommit()
@@ -450,6 +450,16 @@ public class ClusterModel extends Model
         }
     }
 
+    private ClusterPolicyModel clusterPolicyModel;
+
+    public ClusterPolicyModel getClusterPolicyModel() {
+        return clusterPolicyModel;
+    }
+
+    public void setClusterPolicyModel(ClusterPolicyModel clusterPolicyModel) {
+        this.clusterPolicyModel = clusterPolicyModel;
+    }
+
     private MigrateOnErrorOptions migrateOnErrorOption = MigrateOnErrorOptions.values()[0];
 
     public MigrateOnErrorOptions getMigrateOnErrorOption()
@@ -570,6 +580,7 @@ public class ClusterModel extends Model
 
     public ClusterModel()
     {
+        super();
     }
 
     public void Init(final boolean isEdit)
@@ -577,6 +588,7 @@ public class ClusterModel extends Model
         setIsEdit(isEdit);
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setClusterPolicyModel(new ClusterPolicyModel());
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -1100,7 +1112,7 @@ public class ClusterModel extends Model
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true));
 
-        return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        return getClusterPolicyModel().Validate() && getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()

@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -70,7 +68,7 @@ public class ClusterGeneralModel extends EntityModel {
         return privateEditPolicyCommand;
     }
 
-    private void setEditPolicyCommand(UICommand value)
+    public void setEditPolicyCommand(UICommand value)
     {
         privateEditPolicyCommand = value;
     }
@@ -151,7 +149,6 @@ public class ClusterGeneralModel extends EntityModel {
         setNoOfVolumesUp(0);
         setNoOfVolumesDown(0);
 
-        setEditPolicyCommand(new UICommand("EditPolicy", this)); //$NON-NLS-1$
         setImportNewGlusterHostsCommand(new UICommand("ImportGlusterHosts", this)); //$NON-NLS-1$
         setDetachNewGlusterHostsCommand(new UICommand("DetachGlusterHosts", this)); //$NON-NLS-1$
 
@@ -209,68 +206,6 @@ public class ClusterGeneralModel extends EntityModel {
         }
 
         UpdateActionAvailability();
-    }
-
-    public void EditPolicy()
-    {
-        if (getWindow() != null)
-        {
-            return;
-        }
-
-        ClusterPolicyModel model = new ClusterPolicyModel();
-
-        model.setTitle(ConstantsManager.getInstance().getConstants().editPolicyTitle());
-        model.setHashName("edit_policy"); //$NON-NLS-1$
-
-        model.setSelectionAlgorithm(getEntity().getselection_algorithm());
-        model.getOverCommitTime().setEntity(getEntity().getcpu_over_commit_duration_minutes());
-        model.setOverCommitLowLevel(getEntity().getlow_utilization());
-        model.setOverCommitHighLevel(getEntity().gethigh_utilization());
-
-        model.SaveDefaultValues();
-
-        setWindow(model);
-
-        UICommand tempVar = new UICommand("OnSavePolicy", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        model.getCommands().add(tempVar2);
-    }
-
-    public void OnSavePolicy()
-    {
-        ClusterPolicyModel model = (ClusterPolicyModel) getWindow();
-
-        if (getEntity() == null)
-        {
-            Cancel();
-            return;
-        }
-
-        if (!model.Validate())
-        {
-            return;
-        }
-
-        VDSGroup cluster = (VDSGroup) Cloner.clone(getEntity());
-        cluster.setselection_algorithm(model.getSelectionAlgorithm());
-        if (model.getOverCommitTime().getIsAvailable())
-        {
-            cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getOverCommitTime()
-                    .getEntity()
-                    .toString()));
-        }
-        cluster.setlow_utilization(model.getOverCommitLowLevel());
-        cluster.sethigh_utilization(model.getOverCommitHighLevel());
-
-        Frontend.RunAction(VdcActionType.UpdateVdsGroup, new VdsGroupOperationParameters(cluster));
-
-        Cancel();
     }
 
     public void fetchAndImportNewGlusterHosts() {
@@ -540,15 +475,7 @@ public class ClusterGeneralModel extends EntityModel {
     {
         super.ExecuteCommand(command);
 
-        if (command == getEditPolicyCommand())
-        {
-            EditPolicy();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSavePolicy")) //$NON-NLS-1$
-        {
-            OnSavePolicy();
-        }
-        else if (command == getImportNewGlusterHostsCommand())
+        if (command == getImportNewGlusterHostsCommand())
         {
             fetchAndImportNewGlusterHosts();
         }

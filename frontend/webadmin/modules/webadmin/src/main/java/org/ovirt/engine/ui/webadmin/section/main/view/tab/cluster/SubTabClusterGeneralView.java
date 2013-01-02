@@ -178,7 +178,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         editPolicyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                getDetailModel().ExecuteCommand(getDetailModel().getEditPolicyCommand());
+                getDetailModel().getEditPolicyCommand().Execute(Boolean.TRUE);
             }
         });
     }

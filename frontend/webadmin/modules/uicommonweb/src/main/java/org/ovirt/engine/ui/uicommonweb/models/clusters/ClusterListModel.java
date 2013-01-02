@@ -52,6 +52,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 {
 
     private UICommand privateNewCommand;
+    private boolean clusterPolicyFirst;
+    private ClusterGeneralModel clusterGeneralModel;
 
     public UICommand getNewCommand()
     {
@@ -163,6 +165,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
+        clusterGeneralModel.setEditPolicyCommand(getEditCommand());
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
@@ -210,7 +213,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setClusterServiceModel(new ClusterServiceModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new ClusterGeneralModel());
+        clusterGeneralModel = new ClusterGeneralModel();
+        list.add(clusterGeneralModel);
         list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
         list.add(new ClusterVmListModel());
@@ -315,6 +319,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         final ClusterModel clusterModel = new ClusterModel();
         clusterModel.setEntity(cluster);
         clusterModel.Init(true);
+        clusterModel.getClusterPolicyModel().setEditClusterPolicyFirst(clusterPolicyFirst);
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
@@ -324,6 +329,13 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableOvirtService().setIsChangable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
         clusterModel.getEnableGlusterService().setIsChangable(true);
+        clusterModel.getClusterPolicyModel().setSelectionAlgorithm(cluster.getselection_algorithm());
+        clusterModel.getClusterPolicyModel().getOverCommitTime().setEntity(cluster.getcpu_over_commit_duration_minutes());
+        clusterModel.getClusterPolicyModel().setOverCommitLowLevel(cluster.getlow_utilization());
+        clusterModel.getClusterPolicyModel().setOverCommitHighLevel(cluster.gethigh_utilization());
+
+        clusterModel.getClusterPolicyModel().SaveDefaultValues();
+
 
         AsyncDataProvider.GetAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -566,12 +578,20 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals((Boolean) model.getVersionSupportsCpuThreads().getEntity())
-                                       && Boolean.TRUE.equals((Boolean) model.getCountThreadsAsCores().getEntity()));
+                && Boolean.TRUE.equals((Boolean) model.getCountThreadsAsCores().getEntity()));
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
+        cluster.setselection_algorithm(model.getClusterPolicyModel().getSelectionAlgorithm());
+        if (model.getClusterPolicyModel().getOverCommitTime().getIsAvailable())
+        {
+            cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getClusterPolicyModel().getOverCommitTime()
+                    .getEntity()
+                    .toString()));
+        }        cluster.setlow_utilization(model.getClusterPolicyModel().getOverCommitLowLevel());
+        cluster.sethigh_utilization(model.getClusterPolicyModel().getOverCommitHighLevel());
 
         model.StartProgress(null);
 
@@ -847,6 +867,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
+    }
+
+    @Override
+    public void ExecuteCommand(UICommand command, Object... parameters) {
+        if (command == getEditCommand() && parameters.length > 0 && Boolean.TRUE.equals(parameters[0]))
+        {
+            this.clusterPolicyFirst = true;
+            super.ExecuteCommand(command, parameters);
+            this.clusterPolicyFirst = false;
+        }
     }
 
     @Override

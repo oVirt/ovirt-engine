@@ -592,6 +592,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String clusterPopupResiliencePolicyTabLabel();
 
+    @DefaultStringValue("Cluster Policy")
+    String clusterPopupClusterPolicyTabLabel();
+
     @DefaultStringValue("Migrate Virtual Machines")
     String clusterPopupMigrateOnError_YesLabel();
 

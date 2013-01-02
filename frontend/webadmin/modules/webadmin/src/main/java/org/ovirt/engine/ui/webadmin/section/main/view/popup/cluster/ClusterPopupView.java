@@ -1,6 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Event;
@@ -14,15 +20,18 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -40,7 +49,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
-public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef {
+public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> implements ClusterPopupPresenterWidget.ViewDef, Slider.SliderValueChange {
+
+    private static final String RIGHT = "right"; //$NON-NLS-1$
+
+    private static final String LEFT = "left"; //$NON-NLS-1$
+
+    private static final String MAX_COLOR = "#4E9FDD"; //$NON-NLS-1$
+
+    private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     interface Driver extends SimpleBeanEditorDriver<ClusterModel, ClusterPopupView> {
         Driver driver = GWT.create(Driver.class);
@@ -53,6 +70,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     interface ViewIdHandler extends ElementIdHandler<ClusterPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    @UiField
+    DialogTabPanel tabsPanel;
 
     @UiField
     WidgetStyle style;
@@ -210,6 +230,60 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelRadioButtonEditor migrateOnErrorOption_NOEditor;
 
+    @UiField
+    @WithElementId
+    DialogTab clusterPolicyTab;
+
+    @UiField(provided = true)
+    Slider leftSlider;
+
+    @UiField(provided = true)
+    Slider rightSlider;
+
+    @UiField(provided = true)
+    @Ignore
+    Label maxServiceLevelLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    Label minServiceLevelLabel;
+
+    @UiField(provided = true)
+    @Ignore
+    SimplePanel leftDummySlider;
+
+    @UiField(provided = true)
+    @Ignore
+    SimplePanel rightDummySlider;
+
+    @UiField(provided = true)
+    @Ignore
+    RadioButton policyRadioButton_none;
+
+    @UiField(provided = true)
+    @Ignore
+    RadioButton policyRadioButton_evenDist;
+
+    @UiField(provided = true)
+    @Ignore
+    RadioButton policyRadioButton_powerSave;
+
+    @UiField(provided = true)
+    @Path(value = "clusterPolicyModel.overCommitTime.entity")
+    EntityModelTextBoxEditor overCommitTimeEditor;
+
+    @UiField
+    @Ignore
+    HorizontalPanel timeHorizontalPanel;
+
+    @UiField
+    @Ignore
+    Label forTimeLabel;
+
+    @UiField
+    @Ignore
+    Label minTimeLabel;
+
     private ApplicationMessages messages;
 
     @Inject
@@ -220,8 +294,15 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         initRadioButtonEditors();
         initCheckBoxEditors();
         initInfoIcons(resources, constants, templates);
+
+        initSliders();
+        initLabels();
+        initRadioButtons();
+        initDummyPanel();
+        initTextBox();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+
         addStyles();
         localize(constants);
         Driver.driver.initialize(this);
@@ -240,6 +321,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
 
         countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
+
+        overCommitTimeEditor.addContentWidgetStyleName(style.timeTextBoxEditorWidget());
     }
 
     private void localize(ApplicationConstants constants) {
@@ -275,6 +358,15 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         migrateOnErrorOption_HA_ONLYEditor.setLabel(constants.clusterPopupMigrateOnError_HaLabel());
         migrateOnErrorOption_NOEditor.setLabel(constants.clusterPopupMigrateOnError_NoLabel());
 
+        clusterPolicyTab.setLabel(constants.clusterPopupClusterPolicyTabLabel());
+
+        policyRadioButton_none.setText(constants.clusterPolicyNoneLabel());
+        policyRadioButton_evenDist.setText(constants.clusterPolicyEvenDistLabel());
+        policyRadioButton_powerSave.setText(constants.clusterPolicyPowSaveLabel());
+        maxServiceLevelLabel.setText(constants.clusterPolicyMaxServiceLevelLabel());
+        minServiceLevelLabel.setText(constants.clusterPolicyMinServiceLevelLabel());
+        forTimeLabel.setText(constants.clusterPolicyForTimeLabel());
+        minTimeLabel.setText(constants.clusterPolicyMinTimeLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -334,6 +426,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         {
             optimizationTab.setVisible(false);
             resiliencePolicyTab.setVisible(false);
+            clusterPolicyTab.setVisible(false);
             dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
         }
     }
@@ -346,6 +439,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Override
     public void edit(final ClusterModel object) {
         Driver.driver.edit(object);
+
+        if (object.getClusterPolicyModel().isEditClusterPolicyFirst()) {
+            tabsPanel.switchTab(clusterPolicyTab);
+        }
 
         servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
         servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
@@ -402,6 +499,23 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 cpuThreadsPanel.setVisible((Boolean) object.getVersionSupportsCpuThreads().getEntity());
             }
         });
+
+        object.getClusterPolicyModel().getOverCommitTime().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                setClusterPolicyModel(object.getClusterPolicyModel());
+                if (getClusterPolicyModel().getSelectionAlgorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
+                    policyRadioButton_powerSave.setValue(true);
+                } else if (getClusterPolicyModel().getSelectionAlgorithm()
+                        .equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
+                    policyRadioButton_evenDist.setValue(true);
+                } else {
+                    policyRadioButton_none.setValue(true);
+                }
+
+                setSelectionAlgorithm();
+            }
+        });
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {
@@ -454,5 +568,129 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         String editorContentWidget();
 
         String fullWidth();
+
+        String timeTextBoxEditorWidget();
+    }
+
+    private ClusterPolicyModel clusterPolicyModel;
+
+    public ClusterPolicyModel getClusterPolicyModel() {
+        return clusterPolicyModel;
+    }
+
+    public void setClusterPolicyModel(ClusterPolicyModel entity) {
+        this.clusterPolicyModel = entity;
+    }
+
+    private void initTextBox() {
+        overCommitTimeEditor = new EntityModelTextBoxEditor();
+    }
+
+    private void initRadioButtons() {
+        policyRadioButton_none = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        policyRadioButton_evenDist = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        policyRadioButton_powerSave = new RadioButton("policyRadioButtonGroup", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
+        policyRadioButton_none.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) {
+                    getClusterPolicyModel().setSelectionAlgorithm(VdsSelectionAlgorithm.None);
+                }
+                setSelectionAlgorithm();
+            }
+        });
+
+        policyRadioButton_evenDist.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) {
+                    getClusterPolicyModel().setSelectionAlgorithm(VdsSelectionAlgorithm.EvenlyDistribute);
+                }
+                setSelectionAlgorithm();
+            }
+        });
+
+        policyRadioButton_powerSave.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (event.getValue()) {
+                    getClusterPolicyModel().setSelectionAlgorithm(VdsSelectionAlgorithm.PowerSave);
+                }
+                setSelectionAlgorithm();
+            }
+        });
+
+    }
+
+    private void initDummyPanel() {
+        leftDummySlider = new SimplePanel();
+        leftDummySlider.setVisible(false);
+        rightDummySlider = new SimplePanel();
+        rightDummySlider.setVisible(false);
+    }
+
+    private void initLabels() {
+        maxServiceLevelLabel = new Label();
+        minServiceLevelLabel = new Label();
+    }
+
+    private void initSliders() {
+        leftSlider = new Slider(4, 10, 50, 20, MIN_COLOR);
+        leftSlider.setSliderValueChange(LEFT, this);
+        rightSlider = new Slider(4, 51, 90, 75, MAX_COLOR);
+        rightSlider.setSliderValueChange(RIGHT, this);
+    }
+
+    private void setVisibility(boolean b) {
+        rightSlider.setVisible(b);
+        leftSlider.setVisible(b);
+        leftDummySlider.setVisible(false);
+        rightDummySlider.setVisible(false);
+        timeHorizontalPanel.setVisible(b);
+    }
+
+    private void setSelectionAlgorithm() {
+        if (getClusterPolicyModel().getSelectionAlgorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
+            setVisibility(true);
+            leftSlider.setValue((getClusterPolicyModel().getOverCommitLowLevel() < 10 ? 20
+                    : getClusterPolicyModel().getOverCommitLowLevel()));
+            if (getClusterPolicyModel().getOverCommitHighLevel() <= 50
+                    || getClusterPolicyModel().getOverCommitHighLevel() > 90) {
+                rightSlider.setValue(75);
+            } else {
+                rightSlider.setValue(getClusterPolicyModel().getOverCommitHighLevel());
+            }
+            // timeTextBox.setText(getClusterPolicyModel().getOverCommitTime().getEntity() + "");
+        } else if (getClusterPolicyModel().getSelectionAlgorithm()
+                .equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
+            setVisibility(true);
+            leftSlider.setVisible(false);
+            leftDummySlider.setVisible(true);
+            if (getClusterPolicyModel().getOverCommitHighLevel() <= 50
+                    || getClusterPolicyModel().getOverCommitHighLevel() >= 90) {
+                rightSlider.setValue(75);
+            } else {
+                rightSlider.setValue(getClusterPolicyModel().getOverCommitHighLevel());
+            }
+            // timeTextBox.setText(getClusterPolicyModel().getOverCommitTime().getEntity() + "");
+        } else { // also for VdsSelectionAlgorithm.None
+
+            setVisibility(false);
+            leftDummySlider.setVisible(true);
+            rightDummySlider.setVisible(true);
+        }
+    }
+
+    @Override
+    public void onSliderValueChange(String name, int value) {
+        if (name.equals(RIGHT)) {
+            getClusterPolicyModel().setOverCommitHighLevel(value);
+        } else if (name.equals(LEFT)) {
+            getClusterPolicyModel().setOverCommitLowLevel(value);
+        }
     }
 }

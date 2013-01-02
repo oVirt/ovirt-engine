@@ -13,6 +13,7 @@ public class ClusterPolicyModel extends EntityModel
 
 
     private EntityModel privateOverCommitTime;
+    private boolean editClusterPolicyFirst;
 
     public EntityModel getOverCommitTime()
     {
@@ -173,5 +174,13 @@ public class ClusterPolicyModel extends EntityModel
                     : ClusterGeneralModel.highLimitPowerSaving));
             break;
         }
+    }
+
+    public boolean isEditClusterPolicyFirst() {
+        return editClusterPolicyFirst;
+    }
+
+    public void setEditClusterPolicyFirst(boolean editClusterPolicyFirst) {
+        this.editClusterPolicyFirst = editClusterPolicyFirst;
     }
 }
