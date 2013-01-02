@@ -23,8 +23,8 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
-import org.ovirt.engine.core.dao.NetworkClusterDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkClusterDao;
+import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
@@ -574,15 +574,15 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getAdGroupDao();
     }
 
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return getDbFacade().getVmNetworkInterfaceDao();
     }
 
-    protected NetworkClusterDAO getNetworkClusterDAO() {
+    protected NetworkClusterDao getNetworkClusterDAO() {
         return getDbFacade().getNetworkClusterDao();
     }
 
-    protected NetworkDAO getNetworkDAO() {
+    protected NetworkDao getNetworkDAO() {
         return getDbFacade().getNetworkDao();
     }
 

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>NetworkDAOHibernateImpl</code> provides an implementation of {@Link NetworkDAO} using Hibernate.
  *
  */
-public class NetworkDAOHibernateImpl extends BaseDAOHibernateImpl<Network, Guid> implements NetworkDAO {
+public class NetworkDAOHibernateImpl extends BaseDAOHibernateImpl<Network, Guid> implements NetworkDao {
     public NetworkDAOHibernateImpl() {
         super(Network.class);
     }

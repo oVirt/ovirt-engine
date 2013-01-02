@@ -43,7 +43,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -168,7 +168,7 @@ public class HotPlugDiskToVmCommandTest {
         command = spy(createCommand());
         mockVds();
         when(command.getActionType()).thenReturn(getCommandActionType());
-        doReturn(mock(VmNetworkInterfaceDAO.class)).when(command).getVmNetworkInterfaceDao();
+        doReturn(mock(VmNetworkInterfaceDao.class)).when(command).getVmNetworkInterfaceDao();
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));

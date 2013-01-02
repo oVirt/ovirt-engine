@@ -19,10 +19,10 @@ public class DaoFactoryTest extends Assert {
     @Test public void testDbUser()                  { testLoadClass(DbUserDAO.class); }
     @Test public void testDiskImage()               { testLoadClass(DiskImageDAO.class); }
     @Test public void testEvent()                   { testLoadClass(EventDAO.class); }
-    @Test public void testInterface()               { testLoadClass(InterfaceDAO.class); }
+    @Test public void testInterface()               { testLoadClass(InterfaceDao.class); }
     @Test public void testLun()                     { testLoadClass(LunDAO.class); }
-    @Test public void testNetwork()                 { testLoadClass(NetworkDAO.class); }
-    @Test public void testNetworkCluster()          { testLoadClass(NetworkClusterDAO.class); }
+    @Test public void testNetwork()                 { testLoadClass(NetworkDao.class); }
+    @Test public void testNetworkCluster()          { testLoadClass(NetworkClusterDao.class); }
     @Test public void testPermission()              { testLoadClass(PermissionDAO.class); }
     @Test public void testRole()                    { testLoadClass(RoleDAO.class); }
     @Test public void testRoleGroupMap()            { testLoadClass(RoleGroupMapDAO.class); }

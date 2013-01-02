@@ -12,12 +12,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
- * <code>VmNetworkStatisticsDAODbFacadeImpl</code> provides an implementation of {@link VmNetworkStatisticsDAO}.
+ * <code>VmNetworkStatisticsDAODbFacadeImpl</code> provides an implementation of {@link VmNetworkStatisticsDao}.
  */
-public class VmNetworkStatisticsDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmNetworkStatistics, Guid>
-        implements VmNetworkStatisticsDAO {
+public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmNetworkStatistics, Guid>
+        implements VmNetworkStatisticsDao {
 
-    public VmNetworkStatisticsDAODbFacadeImpl() {
+    public VmNetworkStatisticsDaoDbFacadeImpl() {
         super("vm_interface_statistics");
         setProcedureNameForGet("Getvm_interface_statisticsById");
     }

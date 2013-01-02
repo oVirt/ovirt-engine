@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkI
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 
 /**
  * A test for the {@link GetVmsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query
@@ -94,7 +94,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
     }
 
     private void setupVmNetworkInterfaceDao(List<VmNetworkInterface> expectedVmNetworkInterfaces) {
-        VmNetworkInterfaceDAO vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDAO.class);
+        VmNetworkInterfaceDao vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDao.class);
         when(vmNetworkInterfaceDaoMock.getAllForNetwork(networkId)).thenReturn(expectedVmNetworkInterfaces);
         when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDaoMock);
     }

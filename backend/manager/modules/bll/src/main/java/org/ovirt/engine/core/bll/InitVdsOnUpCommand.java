@@ -43,7 +43,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -322,7 +322,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         return false;
     }
 
-    public InterfaceDAO getInterfaceDAO() {
+    public InterfaceDao getInterfaceDAO() {
         return getDbFacade().getInterfaceDao();
     }
 

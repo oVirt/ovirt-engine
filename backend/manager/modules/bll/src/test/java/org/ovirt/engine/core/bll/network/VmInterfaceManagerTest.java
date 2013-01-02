@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VmInterfaceManagerTest {
@@ -44,10 +44,10 @@ public class VmInterfaceManagerTest {
     private MacPoolManager macPoolManager;
 
     @Mock
-    private VmNetworkStatisticsDAO vmNetworkStatisticsDAO;
+    private VmNetworkStatisticsDao vmNetworkStatisticsDAO;
 
     @Mock
-    private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
 
     @Mock
     private VmDAO vmDAO;
@@ -60,8 +60,8 @@ public class VmInterfaceManagerTest {
         MockitoAnnotations.initMocks(this);
 
         doReturn(macPoolManager).when(vmInterfaceManager).getMacPoolManager();
-        doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDAO();
-        doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDAO();
+        doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDao();
+        doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
         doNothing().when(vmInterfaceManager).auditLogMacInUse(any(VmNetworkInterface.class));
 

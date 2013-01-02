@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkDao;
 
 public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<VdsGroupQueryParamenters, GetAllNetworksByClusterIdQuery<? extends VdsGroupQueryParamenters>> {
 
@@ -24,7 +24,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Vd
 
         Network networkMock = mock(Network.class);
 
-        NetworkDAO networkDAOMock = mock(NetworkDAO.class);
+        NetworkDao networkDAOMock = mock(NetworkDao.class);
         when(networkDAOMock.getAllForCluster(clusterID, getUser().getUserId(), getQueryParameters().isFiltered())).thenReturn(Collections.singletonList(networkMock));
 
         DbFacade dbFacade = getDbFacadeMockInstance();

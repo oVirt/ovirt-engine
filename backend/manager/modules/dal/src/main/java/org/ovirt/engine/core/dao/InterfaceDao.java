@@ -8,11 +8,11 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>InterfaceDAO</code> defines a type for performing CRUD operations on instances of {@link Interface}.
+ * <code>InterfaceDao</code> defines a type for performing CRUD operations on instances of {@link Interface}.
  *
  *
  */
-public interface InterfaceDAO extends DAO {
+public interface InterfaceDao extends DAO {
     /**
      * Saves the specified statistics
      *

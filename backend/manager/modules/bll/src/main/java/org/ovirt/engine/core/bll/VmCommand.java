@@ -36,7 +36,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
@@ -410,7 +410,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     /** Overriding to allow spying from this package */
     @Override
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return super.getVmNetworkInterfaceDao();
     }
 

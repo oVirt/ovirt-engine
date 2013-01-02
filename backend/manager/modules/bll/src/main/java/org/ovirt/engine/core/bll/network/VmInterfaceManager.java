@@ -16,8 +16,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -48,8 +48,8 @@ public class VmInterfaceManager {
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
         }
 
-        getVmNetworkInterfaceDAO().save(iface);
-        getVmNetworkStatisticsDAO().save(iface.getStatistics());
+        getVmNetworkInterfaceDao().save(iface);
+        getVmNetworkStatisticsDao().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
         compensationContext.snapshotNewEntity(iface.getStatistics());
     }
@@ -75,12 +75,12 @@ public class VmInterfaceManager {
      *            The ID of the VM to remove from.
      */
     public void removeAll(Guid vmId) {
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDAO().getAllForVm(vmId);
+        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vmId);
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
                 getMacPoolManager().freeMac(iface.getMacAddress());
-                getVmNetworkInterfaceDAO().remove(iface.getId());
-                getVmNetworkStatisticsDAO().remove(iface.getId());
+                getVmNetworkInterfaceDao().remove(iface.getId());
+                getVmNetworkStatisticsDao().remove(iface.getId());
             }
         }
     }
@@ -110,7 +110,7 @@ public class VmInterfaceManager {
         List<VM> runningVms = getVmDAO().getAllRunningForVds(vdsId);
         List<String> vmNames = new ArrayList<String>();
         for (VM vm : runningVms) {
-            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDAO().getAllForVm(vm.getId());
+            List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
                 if (vmNic.getNetworkName() != null && networks.contains(vmNic.getNetworkName())) {
                     vmNames.add(vm.getVmName());
@@ -135,11 +135,11 @@ public class VmInterfaceManager {
         return MacPoolManager.getInstance();
     }
 
-    protected VmNetworkStatisticsDAO getVmNetworkStatisticsDAO() {
+    protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
         return DbFacade.getInstance().getVmNetworkStatisticsDao();
     }
 
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 

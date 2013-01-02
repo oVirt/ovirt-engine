@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dao.NetworkClusterDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkClusterDao;
+import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -37,13 +37,13 @@ public class AttachNetworkToVdsGroupCommandTest {
     private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
 
     @Mock
-    NetworkClusterDAO networkClusterDAO;
+    NetworkClusterDao networkClusterDAO;
 
     @Mock
     VdsGroupDAO vdsGroupDAO;
 
     @Mock
-    NetworkDAO networkDao;
+    NetworkDao networkDao;
 
     @Before
     public void setup() {
@@ -99,12 +99,12 @@ public class AttachNetworkToVdsGroupCommandTest {
             }
 
             @Override
-            protected NetworkClusterDAO getNetworkClusterDAO() {
+            protected NetworkClusterDao getNetworkClusterDAO() {
                 return networkClusterDAO;
             }
 
             @Override
-            protected NetworkDAO getNetworkDAO() {
+            protected NetworkDao getNetworkDAO() {
                 return networkDao;
             }
         };

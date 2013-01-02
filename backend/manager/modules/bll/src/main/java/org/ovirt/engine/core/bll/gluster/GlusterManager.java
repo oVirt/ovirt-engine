@@ -47,7 +47,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -908,7 +908,7 @@ public class GlusterManager {
         return DbFacade.getInstance().getVdsDynamicDao();
     }
 
-    protected InterfaceDAO getInterfaceDao() {
+    protected InterfaceDao getInterfaceDao() {
         return DbFacade.getInstance().getInterfaceDao();
     }
 

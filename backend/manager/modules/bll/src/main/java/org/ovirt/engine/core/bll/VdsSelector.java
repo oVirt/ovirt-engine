@@ -25,9 +25,9 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
+import org.ovirt.engine.core.dao.NetworkDao;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -455,7 +455,7 @@ public class VdsSelector {
         return true;
     }
 
-    private NetworkDAO getNetworkDAO() {
+    private NetworkDao getNetworkDAO() {
         return DbFacade.getInstance().getNetworkDao();
     }
 
@@ -471,11 +471,11 @@ public class VdsSelector {
         return networkRequiredOnVds;
     }
 
-    VmNetworkInterfaceDAO getVmNetworkInterfaceDAO() {
+    VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
-    InterfaceDAO getInterfaceDAO() {
+    InterfaceDao getInterfaceDAO() {
         return DbFacade.getInstance().getInterfaceDao();
     }
 
@@ -501,7 +501,7 @@ public class VdsSelector {
 
     private List<VmNetworkInterface> getVmNICs() {
         if (vmNICs == null) {
-            vmNICs = getVmNetworkInterfaceDAO().getAllForVm(getVm().getId());
+            vmNICs = getVmNetworkInterfaceDao().getAllForVm(getVm().getId());
         }
         return vmNICs;
     }

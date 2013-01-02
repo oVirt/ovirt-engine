@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkClusterDAOTest extends BaseDAOTestCase {
+public class NetworkClusterDaoTest extends BaseDAOTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 3;
-    private NetworkClusterDAO dao;
+    private NetworkClusterDao dao;
     private VDSGroup cluster;
     private Network network;
     private NetworkCluster newNetworkCluster;
@@ -35,7 +35,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
         cluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
         freeCluster = vdsGroupDAO.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
 
-        NetworkDAO networkDAO = prepareDAO(dbFacade.getNetworkDao());
+        NetworkDao networkDAO = prepareDAO(dbFacade.getNetworkDao());
 
         network = networkDAO.getByName("engine");
         networkNoCluster = networkDAO.getByName("engine3");

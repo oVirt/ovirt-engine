@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 
 /**
  * This class implements the logic of the query responsible for getting a VM configuration by snapshot.
@@ -115,7 +115,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         return getDbFacade().getSnapshotDao();
     }
 
-    protected VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
+    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return getDbFacade().getVmNetworkInterfaceDao();
     }
 

@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.NetworkClusterDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkClusterDao;
+import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 /**
@@ -62,7 +62,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
     }
 
     private void setupNetworkDao() {
-        NetworkDAO networkDaoMock = mock(NetworkDAO.class);
+        NetworkDao networkDaoMock = mock(NetworkDao.class);
         when(networkDaoMock.get(networkId)).thenReturn(network);
         when(getDbFacadeMockInstance().getNetworkDao()).thenReturn(networkDaoMock);
     }
@@ -76,7 +76,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
 
     private void setupVdsGroupDao() {
         List<NetworkCluster> expectedNetworkCluster = Collections.singletonList(networkCluster);
-        NetworkClusterDAO networkClusterDaoMock = mock(NetworkClusterDAO.class);
+        NetworkClusterDao networkClusterDaoMock = mock(NetworkClusterDao.class);
         when(networkClusterDaoMock.getAllForNetwork(networkId)).thenReturn(expectedNetworkCluster);
         when(getDbFacadeMockInstance().getNetworkClusterDao()).thenReturn(networkClusterDaoMock);
     }

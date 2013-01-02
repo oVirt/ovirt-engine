@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
- * <code>VmNetworkInterfaceDAODbFacadeImpl</code> provides an implementation of {@link VmNetworkInterfaceDAO}.
+ * <code>VmNetworkInterfaceDaoDbFacadeImpl</code> provides an implementation of {@link VmNetworkInterfaceDao}.
  */
-public class VmNetworkInterfaceDAODbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDAO {
+public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDao {
 
     protected final ParameterizedRowMapper<VmNetworkInterface> mapper =
             new ParameterizedRowMapper<VmNetworkInterface>() {

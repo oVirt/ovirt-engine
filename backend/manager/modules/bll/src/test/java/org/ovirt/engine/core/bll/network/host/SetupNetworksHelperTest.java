@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
+import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -38,13 +38,13 @@ public class SetupNetworksHelperTest {
     private static final String BOND_NAME = "bond0";
 
     @Mock
-    private NetworkDAO networkDAO;
+    private NetworkDao networkDAO;
 
     @Mock
     private VmInterfaceManager vmInterfaceManager;
 
     @Mock
-    private InterfaceDAO interfaceDAO;
+    private InterfaceDao interfaceDAO;
 
     /* --- Tests for networks functionality --- */
 

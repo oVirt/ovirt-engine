@@ -15,16 +15,16 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmNetworkInterfaceDAOTest extends BaseDAOTestCase {
+public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
     private static final Guid TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     protected static final Guid PRIVILEGED_USER_ID   = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
 
-    private VmNetworkInterfaceDAO dao;
+    private VmNetworkInterfaceDao dao;
     private VmDeviceDAO vmDevicesDao;
-    private VmNetworkStatisticsDAO StatsDao;
+    private VmNetworkStatisticsDao StatsDao;
 
     private VmNetworkInterface existingVmInterface;
     private VmNetworkInterface existingTemplateInterface;

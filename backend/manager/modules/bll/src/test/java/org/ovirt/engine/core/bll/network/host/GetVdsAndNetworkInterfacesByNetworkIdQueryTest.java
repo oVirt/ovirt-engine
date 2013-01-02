@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 
 /**
@@ -58,7 +58,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
 
     private void setupVdsNetworkInterfaceDao() {
         List<VdsNetworkInterface> expectedVdsNetworkInterface = Collections.singletonList(vdsNetworkInterface);
-        InterfaceDAO vdsNetworkInterfaceDaoMock = mock(InterfaceDAO.class);
+        InterfaceDao vdsNetworkInterfaceDaoMock = mock(InterfaceDao.class);
         when(vdsNetworkInterfaceDaoMock.getVdsInterfacesByNetworkId(networkId)).thenReturn(expectedVdsNetworkInterface);
         when(getDbFacadeMockInstance().getInterfaceDao()).thenReturn(vdsNetworkInterfaceDaoMock);
     }

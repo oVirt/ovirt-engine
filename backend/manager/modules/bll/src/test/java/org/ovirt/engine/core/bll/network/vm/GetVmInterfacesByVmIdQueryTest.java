@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 
 /** A test case for {@link GetVmInterfacesByVmIdQuery} */
 public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmInterfacesByVmIdQuery<GetVmByVmIdParameters> > {
@@ -19,7 +19,7 @@ public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmB
     public void testExectueQuery() {
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
 
-        VmNetworkInterfaceDAO daoMock = mock(VmNetworkInterfaceDAO.class);
+        VmNetworkInterfaceDao daoMock = mock(VmNetworkInterfaceDao.class);
         when(dbFacadeMock.getVmNetworkInterfaceDao()).thenReturn(daoMock);
 
         Guid guid   = new Guid();

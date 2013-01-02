@@ -53,7 +53,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -127,7 +127,7 @@ public class GlusterManagerTest {
     @Mock
     private VdsGroupDAO clusterDao;
     @Mock
-    private InterfaceDAO interfaceDao;
+    private InterfaceDao interfaceDao;
 
     private VDSGroup existingCluster;
     private VDS existingServer1;

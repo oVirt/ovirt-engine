@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface NetworkClusterDAO extends DAO {
+public interface NetworkClusterDao extends DAO {
 
     /**
      * Retrieves the entity with the given id.

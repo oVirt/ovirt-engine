@@ -15,12 +15,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
- * <code>NetworkDAODbFacadeImpl</code> provides a concrete implementation of {@link #NetworkDAO} based on code
+ * <code>NetworkDaoDbFacadeImpl</code> provides a concrete implementation of {@link #NetworkDao} based on code
  * refactored from {@link #DbFacade}.
  */
-public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDAO {
+public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDao {
 
-    public NetworkDAODbFacadeImpl() {
+    public NetworkDaoDbFacadeImpl() {
         super("network");
         setProcedureNameForGet("GetnetworkByid");
         setProcedureNameForGetAll("GetAllFromnetwork");

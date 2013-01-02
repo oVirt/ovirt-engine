@@ -45,7 +45,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -103,7 +103,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected VmTemplateDAO vmTemplateDAO;
 
     @Mock
-    protected VmNetworkInterfaceDAO vmNetworkInterfaceDao;
+    protected VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     @Mock
     protected StorageDomainDAO storageDomainDAO;

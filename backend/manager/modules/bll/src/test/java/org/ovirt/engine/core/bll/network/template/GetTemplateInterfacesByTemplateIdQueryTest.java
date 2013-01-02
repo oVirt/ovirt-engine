@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 
 /**
  * A test case for {@link GetTemplateInterfacesByTemplateIdQuery}.
@@ -27,7 +27,7 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
         GetVmTemplateParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(templateID);
 
-        VmNetworkInterfaceDAO vmNetworkInterfaceDAOMock = mock(VmNetworkInterfaceDAO.class);
+        VmNetworkInterfaceDao vmNetworkInterfaceDAOMock = mock(VmNetworkInterfaceDao.class);
         when(vmNetworkInterfaceDAOMock.getAllForTemplate(templateID, getUser().getUserId(), paramsMock.isFiltered())).thenReturn(expectedResult);
         when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDAOMock);
 

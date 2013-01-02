@@ -60,12 +60,12 @@ import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.LunDAO;
-import org.ovirt.engine.core.dao.NetworkClusterDAO;
-import org.ovirt.engine.core.dao.NetworkDAO;
+import org.ovirt.engine.core.dao.NetworkClusterDao;
+import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.NetworkViewDao;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.QuotaDAO;
@@ -94,8 +94,8 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmGuestAgentInterfaceDao;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
-import org.ovirt.engine.core.dao.VmNetworkStatisticsDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmStatisticsDAO;
@@ -138,9 +138,9 @@ public class DbFacade {
             put(BaseDisk.class, BaseDiskDao.class);
             put(DiskImage.class, BaseDiskDao.class);
             put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
-            put(VmNetworkInterface.class, VmNetworkInterfaceDAO.class);
-            put(VmNetworkStatistics.class, VmNetworkStatisticsDAO.class);
-            put(Network.class, NetworkDAO.class);
+            put(VmNetworkInterface.class, VmNetworkInterfaceDao.class);
+            put(VmNetworkStatistics.class, VmNetworkStatisticsDao.class);
+            put(Network.class, NetworkDao.class);
             put(Snapshot.class, SnapshotDao.class);
             put(VmDevice.class, VmDeviceDAO.class);
             put(image_storage_domain_map.class, ImageStorageDomainMapDao.class);
@@ -466,30 +466,30 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link InterfaceDAO}.
+     * Returns the singleton instance of {@link InterfaceDao}.
      *
      * @return the dao
      */
-    public InterfaceDAO getInterfaceDao() {
-        return getDao(InterfaceDAO.class);
+    public InterfaceDao getInterfaceDao() {
+        return getDao(InterfaceDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmNetworkInterfaceDAO}.
+     * Returns the singleton instance of {@link VmNetworkInterfaceDao}.
      *
      * @return the dao
      */
-    public VmNetworkInterfaceDAO getVmNetworkInterfaceDao() {
-        return getDao(VmNetworkInterfaceDAO.class);
+    public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
+        return getDao(VmNetworkInterfaceDao.class);
     }
 
     /**
-     * Returns the singleton instance of {@link VmNetworkInterfaceDAO}.
+     * Returns the singleton instance of {@link VmNetworkInterfaceDao}.
      *
      * @return the dao
      */
-    public VmNetworkStatisticsDAO getVmNetworkStatisticsDao() {
-        return getDao(VmNetworkStatisticsDAO.class);
+    public VmNetworkStatisticsDao getVmNetworkStatisticsDao() {
+        return getDao(VmNetworkStatisticsDao.class);
     }
 
     /**
@@ -637,12 +637,12 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link NetworkDAO}.
+     * Returns the singleton instance of {@link NetworkDao}.
      *
      * @return the dao
      */
-    public NetworkDAO getNetworkDao() {
-        return getDao(NetworkDAO.class);
+    public NetworkDao getNetworkDao() {
+        return getDao(NetworkDao.class);
     }
 
     /**
@@ -655,12 +655,12 @@ public class DbFacade {
     }
 
     /**
-     * Returns the singleton instance of {@link NetworkClusterDAO}.
+     * Returns the singleton instance of {@link NetworkClusterDao}.
      *
      * @return the dao
      */
-    public NetworkClusterDAO getNetworkClusterDao() {
-        return getDao(NetworkClusterDAO.class);
+    public NetworkClusterDao getNetworkClusterDao() {
+        return getDao(NetworkClusterDao.class);
     }
 
     /**

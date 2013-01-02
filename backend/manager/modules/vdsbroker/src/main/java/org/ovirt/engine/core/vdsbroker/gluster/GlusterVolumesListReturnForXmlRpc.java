@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDAO;
+import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -174,7 +174,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         return DbFacade.getInstance().getVdsDao();
     }
 
-    private InterfaceDAO getInterfaceDao() {
+    private InterfaceDao getInterfaceDao() {
         return DbFacade.getInstance().getInterfaceDao();
     }
 

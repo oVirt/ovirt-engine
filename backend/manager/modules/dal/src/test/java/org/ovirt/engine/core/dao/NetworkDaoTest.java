@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkDAOTest extends BaseDAOTestCase {
-    private NetworkDAO dao;
+public class NetworkDaoTest extends BaseDAOTestCase {
+    private NetworkDao dao;
     private Guid cluster;
     private Guid datacenter;
     private Network new_net;
@@ -181,7 +181,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Asserts the result of {@link NetworkDAO#getAllForCluster(Guid)} contains all the required networks
+     * Asserts the result of {@link NetworkDao#getAllForCluster(Guid)} contains all the required networks
      * @param result
      */
     private static void assertGetAllForClusterResult(List<Network> result) {

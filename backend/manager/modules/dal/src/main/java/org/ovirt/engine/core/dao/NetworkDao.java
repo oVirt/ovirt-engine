@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  *
  */
-public interface NetworkDAO extends GenericDao<Network, Guid> {
+public interface NetworkDao extends GenericDao<Network, Guid> {
 
     /**
      * Retrieves all networks.

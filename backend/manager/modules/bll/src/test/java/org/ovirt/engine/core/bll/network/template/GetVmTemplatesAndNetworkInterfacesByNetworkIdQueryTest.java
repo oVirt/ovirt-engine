@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
 /**
@@ -63,7 +63,7 @@ GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<NetworkIdParameters>> {
 
     private void setupVmNetworkInterfaceDao() {
         List<VmNetworkInterface> expectedVmNetworkInterface = Collections.singletonList(vmNetworkInterface);
-        VmNetworkInterfaceDAO vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDAO.class);
+        VmNetworkInterfaceDao vmNetworkInterfaceDaoMock = mock(VmNetworkInterfaceDao.class);
         when(vmNetworkInterfaceDaoMock.getAllForTemplatesByNetwork(networkId)).thenReturn(expectedVmNetworkInterface);
         when(getDbFacadeMockInstance().getVmNetworkInterfaceDao()).thenReturn(vmNetworkInterfaceDaoMock);
     }

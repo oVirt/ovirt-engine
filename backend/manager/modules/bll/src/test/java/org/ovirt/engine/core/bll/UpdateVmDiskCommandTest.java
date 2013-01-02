@@ -37,7 +37,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,7 +53,7 @@ public class UpdateVmDiskCommandTest {
     @Mock
     private DiskDao diskDao;
     @Mock
-    private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
     @Mock
     private SnapshotDao snapshotDao;
     @Mock

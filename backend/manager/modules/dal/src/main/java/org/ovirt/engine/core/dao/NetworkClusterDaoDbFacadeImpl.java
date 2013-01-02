@@ -12,10 +12,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
- * <code>NetworkClusterDAODbFacadeImpl</code> provides a concrete implementation of {@link NetworkClusterDAO} based on
+ * <code>NetworkClusterDaoDbFacadeImpl</code> provides a concrete implementation of {@link NetworkClusterDao} based on
  * {@link org.springframework.jdbc.core.JdbcTemplate}
  */
-public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDAO {
+public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDao {
 
     private static final ParameterizedRowMapper<NetworkCluster> mapper =
             new ParameterizedRowMapper<NetworkCluster>() {

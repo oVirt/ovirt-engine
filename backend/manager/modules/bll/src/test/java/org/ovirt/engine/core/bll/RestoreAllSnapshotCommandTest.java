@@ -40,7 +40,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDAO;
+import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,7 +74,7 @@ public class RestoreAllSnapshotCommandTest {
     private SnapshotDao snapshotDao;
 
     @Mock
-    private VmNetworkInterfaceDAO vmNetworkInterfaceDAO;
+    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
 
     private Guid vmId = Guid.NewGuid();
     private Guid diskImageId = Guid.NewGuid();

@@ -18,11 +18,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
- * <code>InterfaceDAODbFacadeImpl</code> provides an implementation of {@link InterfaceDAO}.
- *
- *
+ * <code>InterfaceDaoDbFacadeImpl</code> provides an implementation of {@link InterfaceDao}.
  */
-public class InterfaceDAODbFacadeImpl extends BaseDAODbFacade implements InterfaceDAO {
+public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements InterfaceDao {
 
     @Override
     public void saveStatisticsForVds(VdsNetworkStatistics stats) {
