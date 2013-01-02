@@ -143,8 +143,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost still has running VMs on it and is in Non-Responsive state.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS();
 
-    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost is Storage Pool Manager and is in Non-Responsive state.")
-    String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_SPM();
+    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost is Storage Pool Manager and is in Non-Responsive state.\n"
+            +
+            "- If power management is configured, engine will try to fence automatically.\n"
+            +
+            "- Otherwise, either bring the node back up, or release the SPM resource.\n"
+            +
+            "  To do so, verify that the node is really down by right clicking on the host and confirm that the node was shutdown manually.")
+    String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM();
 
     @DefaultStringValue("Cannot switch Host to Maintenance mode, Host is not operational.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL();

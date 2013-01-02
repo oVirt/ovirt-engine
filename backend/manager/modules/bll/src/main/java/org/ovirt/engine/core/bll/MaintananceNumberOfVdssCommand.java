@@ -177,7 +177,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                         hostNotRespondingList.add(vds.getvds_name());
                     } else if (vds.getstatus() == VDSStatus.NonResponsive && vds.getspm_status() != VdsSpmStatus.None) {
                         result = false;
-                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_SPM);
+                        addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
                     } else if (vds.getspm_status() == VdsSpmStatus.SPM && vds.getstatus() == VDSStatus.Up) {
                         try {
                             @SuppressWarnings("unchecked")
@@ -193,7 +193,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                             }
                         } catch (VdcBLLException e) {
                             if (e.getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
-                                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_SPM);
+                                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
                                 result = false;
                             } else {
                                 log.error("Error getting spm task list.", e);
