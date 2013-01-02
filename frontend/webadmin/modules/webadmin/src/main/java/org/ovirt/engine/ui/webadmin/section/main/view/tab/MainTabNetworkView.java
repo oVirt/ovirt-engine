@@ -69,7 +69,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getStoragePoolName();
+                return object.getDataCenterName();
             }
         };
 

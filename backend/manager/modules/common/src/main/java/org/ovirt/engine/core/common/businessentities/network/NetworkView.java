@@ -6,15 +6,15 @@ public class NetworkView extends Network {
 
     private static final long serialVersionUID = 7541192304006710467L;
 
-    private String storagePoolName;
+    private String dataCenterName;
     private Version compatibilityVersion;
 
-    public String getStoragePoolName() {
-        return storagePoolName;
+    public String getDataCenterName() {
+        return dataCenterName;
     }
 
     public void setStoragePoolName(String storagePoolName) {
-        this.storagePoolName = storagePoolName;
+        this.dataCenterName = storagePoolName;
     }
 
     public Version getCompatibilityVersion() {
@@ -30,7 +30,7 @@ public class NetworkView extends Network {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
-        result = prime * result + ((getStoragePoolName() == null) ? 0 : getStoragePoolName().hashCode());
+        result = prime * result + ((getDataCenterName() == null) ? 0 : getDataCenterName().hashCode());
         return result;
     }
 
@@ -53,11 +53,11 @@ public class NetworkView extends Network {
         } else if (!getCompatibilityVersion().equals(other.getCompatibilityVersion())) {
             return false;
         }
-        if (getStoragePoolName() == null) {
-            if (other.getStoragePoolName() != null) {
+        if (getDataCenterName() == null) {
+            if (other.getDataCenterName() != null) {
                 return false;
             }
-        } else if (!getStoragePoolName().equals(other.getStoragePoolName())) {
+        } else if (!getDataCenterName().equals(other.getDataCenterName())) {
             return false;
         }
         return true;
