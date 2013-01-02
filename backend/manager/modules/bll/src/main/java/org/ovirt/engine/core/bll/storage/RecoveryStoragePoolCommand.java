@@ -49,7 +49,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && checkStoragePool();
+        boolean returnValue = checkStoragePool() && super.canDoAction();
 
         if (returnValue) {
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
