@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
@@ -11,8 +9,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -61,14 +57,6 @@ public class BackendGroupAssignedPermissionsResourceTest
     }
 
     @Override
-    protected List<permissions> setUpPermissions() {
-        List<permissions> perms = super.setUpPermissions();
-        perms.add(getEntity(perms.size() - 1));
-        perms.get(perms.size() - 1).setObjectType(VdcObjectType.System);
-        return perms;
-    }
-
-    @Override
     protected void verifyModel(Permission model, int index) {
         super.verifyModel(model, index);
         assertTrue(model.isSetGroup());
@@ -88,5 +76,19 @@ public class BackendGroupAssignedPermissionsResourceTest
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
     }
-}
 
+    @Test
+    public void testListWithEveryonePermissions() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+
+        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+                                    GetDbUserByUserIdParameters.class,
+                                    new String[] {"UserId"},
+                                    new Object[] {GUIDS[1]},
+                                    getUserByIdx(1));
+        setUpQueryExpectations("", null, EVERYONE);
+
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+}

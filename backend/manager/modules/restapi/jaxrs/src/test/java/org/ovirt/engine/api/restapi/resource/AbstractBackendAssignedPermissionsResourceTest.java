@@ -174,11 +174,25 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assert(query.equals(""));
 
+        List<permissions> perms = setUpPermissions();
         setUpEntityQueryExpectations(queryType,
                                      queryParams.getClass(),
                                      new String[] { queryParameterName },
                                      new Object[] { GUIDS[1] },
-                                     setUpPermissions(),
+                                     perms,
+                                     failure);
+
+        control.replay();
+    }
+
+    protected void setUpQueryExpectations(String query, Object failure, Guid adElementId) throws Exception {
+        assert(query.equals(""));
+
+        setUpEntityQueryExpectations(queryType,
+                                     queryParams.getClass(),
+                                     new String[] { queryParameterName },
+                                     new Object[] { GUIDS[1] },
+                                     setUpPermissionsWithAdElementId(adElementId),
                                      failure);
 
         control.replay();
@@ -209,6 +223,16 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         List<permissions> perms = new ArrayList<permissions>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
+        }
+        return perms;
+    }
+
+    protected List<permissions> setUpPermissionsWithAdElementId(Guid adElementId) {
+        List<permissions> perms = new ArrayList<permissions>();
+        for (int i = 0; i < NAMES.length; i++) {
+            permissions entity = getEntity(i);
+            entity.setad_element_id(adElementId);
+            perms.add(entity);
         }
         return perms;
     }

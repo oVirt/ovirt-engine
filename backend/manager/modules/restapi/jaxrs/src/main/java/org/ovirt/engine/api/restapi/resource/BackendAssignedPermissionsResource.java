@@ -125,10 +125,19 @@ public class BackendAssignedPermissionsResource
     protected Permissions mapCollection(Set<permissions> entities) {
         Permissions collection = new Permissions();
         for (permissions entity : entities) {
-            Permission permission = map(entity, getUserById(entity.getad_element_id()));
-            collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
+             castEveryonePermissionsToUser(entity);
+             Permission permission = map(entity, getUserById(entity.getad_element_id()));
+             collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
         }
         return collection;
+    }
+
+    private void castEveryonePermissionsToUser(permissions entity) {
+        if (entity.getad_element_id() != null &&
+            entity.getad_element_id().equals(Guid.EVERYONE) &&
+            queryType.equals(VdcQueryType.GetPermissionsByAdElementId)) {
+            entity.setad_element_id(this.targetId);
+        }
     }
 
     public DbUser getUserById(Guid userId) {

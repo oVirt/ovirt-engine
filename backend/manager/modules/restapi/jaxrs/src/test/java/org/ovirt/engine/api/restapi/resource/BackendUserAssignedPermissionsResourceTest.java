@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
@@ -11,8 +9,6 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -63,6 +59,21 @@ public class BackendUserAssignedPermissionsResourceTest
         verifyCollection(getCollection());
     }
 
+    @Test
+    public void testListWithEveryonePermissions() throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+
+        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+                                    GetDbUserByUserIdParameters.class,
+                                    new String[] {"UserId"},
+                                    new Object[] {GUIDS[1]},
+                                    getUserByIdx(1));
+        setUpQueryExpectations("", null, EVERYONE);
+
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+
     @Override
     protected Permission getModel() {
         Permission model = new Permission();
@@ -71,14 +82,6 @@ public class BackendUserAssignedPermissionsResourceTest
         model.setRole(new Role());
         model.getRole().setId(GUIDS[3].toString());
         return model;
-    }
-
-    @Override
-    protected List<permissions> setUpPermissions() {
-        List<permissions> perms = super.setUpPermissions();
-        perms.add(getEntity(perms.size() - 1));
-        perms.get(perms.size() - 1).setObjectType(VdcObjectType.System);
-        return perms;
     }
 
     @Override
