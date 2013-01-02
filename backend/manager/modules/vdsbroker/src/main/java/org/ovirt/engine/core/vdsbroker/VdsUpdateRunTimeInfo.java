@@ -1175,7 +1175,7 @@ public class VdsUpdateRunTimeInfo {
                     ResourceManager.getInstance().InternalSetVmStatus(vmTo, VMStatus.Suspended);
                 }
 
-                clearVm(vmTo);
+                clearVm(vmTo, vmInternalData.getVmDynamic().getExitStatus(), vmInternalData.getVmDynamic().getExitMessage());
             }
 
             VmStatistics vmStatistics = getDbFacade().getVmStatisticsDao().get(vm.getId());
@@ -1275,7 +1275,7 @@ public class VdsUpdateRunTimeInfo {
                     }
                 }
                 // set vm status to down if source vm crushed
-                ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.Down);
+                ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.Down, vmDynamic.getExitStatus(), vmDynamic.getExitMessage());
                 addVmDynamicToList(curVm.getDynamicData());
                 addVmStatisticsToList(curVm.getStatisticsData());
                 addVmInterfaceStatisticsToList(curVm.getInterfaces());
@@ -1441,7 +1441,10 @@ public class VdsUpdateRunTimeInfo {
                 addVmStatisticsToList(vmToRemove.getStatisticsData());
                 addVmInterfaceStatisticsToList(vmToRemove.getInterfaces());
             } else {
-                clearVm(vmToRemove);
+                clearVm(vmToRemove,
+                        VmExitStatus.Error,
+                        String.format("Could not find VM %s on host, assuming it went down unexpectedly",
+                                vmToRemove.getVmName()));
             }
             log.infoFormat("vm {0} running in db and not running in vds - add to rerun treatment. vds {1}",
                     vmToRemove.getVmName(), _vds.getvds_name());
@@ -1717,10 +1720,13 @@ public class VdsUpdateRunTimeInfo {
         vmDeviceToSave.put(vmDevice.getId(), vmDevice);
     }
 
-    private void clearVm(VM vm) {
-        if (vm.getStatus() != VMStatus.MigratingFrom) {
-            if (vm.getStatus() != VMStatus.Suspended) {
-                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down);
+    private void clearVm(VM vm, VmExitStatus exitStatus, String exitMessage) {
+        if (vm.getStatus() != VMStatus.MigratingFrom ) {
+            // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
+            // the exit status and message were set, and we don't want to override them here.
+            // we will add it to _vmDynamicToSave though because it might been removed from it in #updateRepository
+            if (vm.getStatus() != VMStatus.Suspended && vm.getStatus() != VMStatus.Down) {
+                ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down, exitStatus, exitMessage);
             }
             addVmDynamicToList(vm.getDynamicData());
             addVmStatisticsToList(vm.getStatisticsData());

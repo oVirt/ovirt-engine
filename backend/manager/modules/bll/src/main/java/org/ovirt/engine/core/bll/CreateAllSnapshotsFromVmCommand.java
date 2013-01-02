@@ -17,14 +17,17 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -44,7 +47,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @LockIdNameAttribute
-public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent{
+public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -2407757772735253053L;
     List<DiskImage> selectedActiveDisks;
@@ -69,7 +72,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return jobProperties;
     }
 
-
     /**
      * Filter all allowed snapshot disks.
      * @return list of disks to be snapshot.
@@ -88,6 +90,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         Guid newActiveSnapshotId = Guid.NewGuid();
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
+        getParameters().setInitialVmStatus(getVm().getStatus());
 
         getSnapshotDao().updateId(createdSnapshotId, newActiveSnapshotId);
         new SnapshotsManager().addSnapshot(createdSnapshotId,
@@ -145,25 +148,51 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        Guid createdSnapshotId =
-                getSnapshotDao().getId(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
-        if (getParameters().getTaskGroupSuccess()) {
-            getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
+        // The following code must be executed in an inner transaction to make the changes visible
+        // to the RunVm command that might occur afterwards
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
-            if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isStatusUp()
-                    && getVm().getRunOnVds() != null) {
-                performLiveSnapshot(createdSnapshotId);
+            @Override
+            public Void runInTransaction() {
+                final boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
+                Guid createdSnapshotId =
+                        getSnapshotDao().getId(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+                if (taskGroupSucceeded) {
+                    getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
+
+                    if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isStatusUp()
+                            && getVm().getRunOnVds() != null) {
+                        performLiveSnapshot(createdSnapshotId);
+                    }
+                } else {
+                    revertToActiveSnapshot(createdSnapshotId);
+                }
+
+                getVmStaticDAO().incrementDbGeneration(getVm().getId());
+
+                endActionOnDisks();
+                setSucceeded(taskGroupSucceeded);
+                getReturnValue().setEndActionTryAgain(false);
+                return null;
             }
-        } else {
-            revertToActiveSnapshot(createdSnapshotId);
+        });
+
+        // if the VM is HA + it went down during the snapshot creation process because of an error, run it
+        // (during the snapshot creation process the VM couldn't be started (rerun))
+        if (getVm() != null && getVm().isAutoStartup() && isVmDownUnintentionally() &&
+                getParameters().getInitialVmStatus() != VMStatus.Down) {
+            Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+                    new RunVmParams(getVmId()),
+                    ExecutionHandler.createInternalJobContext());
         }
+    }
 
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
-
-        endActionOnDisks();
-
-        setSucceeded(getParameters().getTaskGroupSuccess());
-        getReturnValue().setEndActionTryAgain(false);
+    /**
+     * returns true if the VM is down because of an error, otherwise false
+     */
+    private boolean isVmDownUnintentionally() {
+        VM vm = getVmDAO().get(getVmId());
+        return vm.getExitStatus() == VmExitStatus.Error && ImagesHandler.isVmDown(vm);
     }
 
     /**
@@ -286,8 +315,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return Config.<Boolean> GetValue(
                 ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
-
-
 
     @Override
     protected VdcActionType getChildActionType() {

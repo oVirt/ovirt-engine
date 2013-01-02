@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -235,11 +237,21 @@ public class ResourceManager {
 
     /**
      * Set vm status without saving to DB
+     *
+     * <p> Note: Calling this method with status=down, must be only when the
+     *     VM went down normally, otherwise call {@link #InternalSetVmStatus(VM, VMStatus, VmExitStatus, String)}
+     *
      * @param vm
      * @param status
      */
     public void InternalSetVmStatus(VM vm, final VMStatus status) {
+        InternalSetVmStatus(vm, status, VmExitStatus.Normal, StringUtils.EMPTY);
+    }
+
+    public void InternalSetVmStatus(VM vm, final VMStatus status, final VmExitStatus exitStaus, final String exitMessage) {
         vm.setStatus(status);
+        vm.setExitStatus(exitStaus);
+        vm.setExitMessage(exitMessage);
         boolean isVmStatusDown = VM.isStatusDown(status);
 
         if (isVmStatusDown || status == VMStatus.Unknown) {
