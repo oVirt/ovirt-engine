@@ -238,12 +238,11 @@ public class ResourceManager {
      * @param vm
      * @param status
      */
-    public void InternalSetVmStatus(VM vm, VMStatus status) {
+    public void InternalSetVmStatus(VM vm, final VMStatus status) {
         vm.setStatus(status);
-        VMStatus vmStatus = vm.getStatus();
-        boolean isVmStatusDown = VM.isStatusDown(vmStatus);
+        boolean isVmStatusDown = VM.isStatusDown(status);
 
-        if (isVmStatusDown || vmStatus == VMStatus.Unknown) {
+        if (isVmStatusDown || status == VMStatus.Unknown) {
             resetVmAttributes(vm);
 
             if (isVmStatusDown) {
