@@ -58,7 +58,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
 
     static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity, boolean isDisplay, boolean isRequired, int index) {
         NetworkCluster networkCluster = new NetworkCluster();
-        networkCluster.setis_display(isDisplay);
+        networkCluster.setDisplay(isDisplay);
         networkCluster.setRequired(isRequired);
         expect(entity.getCluster()).andReturn(networkCluster).anyTimes();
         return setUpEntityExpectations(entity, index);

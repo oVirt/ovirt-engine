@@ -702,7 +702,7 @@ public class VdsUpdateRunTimeInfo {
                 && networksByName.containsKey(iface.getNetworkName())) {
 
             Network net = networksByName.get(iface.getNetworkName());
-            if (net.getCluster().getstatus() == NetworkStatus.OPERATIONAL && net.getCluster().isRequired()
+            if (net.getCluster().getStatus() == NetworkStatus.OPERATIONAL && net.getCluster().isRequired()
                     && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
                 return true;
             }

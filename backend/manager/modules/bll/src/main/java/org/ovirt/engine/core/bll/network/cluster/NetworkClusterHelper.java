@@ -75,7 +75,7 @@ public class NetworkClusterHelper {
                 }
             }
 
-            networkCluster.setstatus(status);
+            networkCluster.setStatus(status);
             DbFacade.getInstance().getNetworkClusterDao().updateStatus(networkCluster);
         }
     }

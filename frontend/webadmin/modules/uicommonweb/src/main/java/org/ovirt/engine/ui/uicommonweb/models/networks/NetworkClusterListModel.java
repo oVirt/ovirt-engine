@@ -125,7 +125,7 @@ public class NetworkClusterListModel extends SearchableListModel
             // Attachment wasn't changed- check if needs update
             if (wasAttached && !needsDetach) {
                 if ((manageModel.isRequired() != item.getSecond().isRequired())
-                        || (manageModel.isDisplayNetwork() != item.getSecond().getis_display())) {
+                        || (manageModel.isDisplayNetwork() != item.getSecond().isDisplay())) {
                     needsUpdate = true;
                 }
             }

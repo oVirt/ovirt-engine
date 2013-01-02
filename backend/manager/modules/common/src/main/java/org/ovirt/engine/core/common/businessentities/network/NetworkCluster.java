@@ -26,7 +26,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
     private NetworkStatus status = NetworkStatus.NON_OPERATIONAL;
 
     @Column(name = "is_display")
-    private Boolean isDisplay = false;
+    private boolean display;
 
     /**
      * A cluster network can be tagged as monitored. Monitored network have implications on automated actions taken on a
@@ -43,9 +43,9 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         builder.append("NetworkCluster {id=")
                 .append(getId())
                 .append(", status=")
-                .append(getstatus())
-                .append(", is_display=")
-                .append(getis_display())
+                .append(getStatus())
+                .append(", display=")
+                .append(isDisplay())
                 .append(", required=")
                 .append(isRequired())
                 .append("}");
@@ -56,7 +56,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((isDisplay == null) ? 0 : isDisplay.hashCode());
+        result = prime * result + (display ? 1231 : 1237);
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (required ? 11 : 13);
@@ -72,10 +72,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         if (getClass() != obj.getClass())
             return false;
         NetworkCluster other = (NetworkCluster) obj;
-        if (isDisplay == null) {
-            if (other.isDisplay != null)
-                return false;
-        } else if (!isDisplay.equals(other.isDisplay))
+        if (display != other.display)
             return false;
         if (status == null) {
             if (other.status != null)
@@ -94,11 +91,11 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
     }
 
 
-    public NetworkCluster(Guid cluster_id, Guid network_id, NetworkStatus status, boolean isDisplay, boolean required) {
-        id.setClusterId(cluster_id);
-        id.setNetworkId(network_id);
+    public NetworkCluster(Guid clusterId, Guid networkId, NetworkStatus status, boolean display, boolean required) {
+        id.setClusterId(clusterId);
+        id.setNetworkId(networkId);
         this.status = status;
-        this.isDisplay = isDisplay;
+        this.display = display;
         this.required = required;
     }
 
@@ -112,36 +109,36 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         this.id = id;
     }
 
-    public Guid getcluster_id() {
+    public Guid getClusterId() {
         return id.getClusterId();
     }
 
-    public void setcluster_id(Guid value) {
+    public void setClusterId(Guid value) {
         id.setClusterId(value);
     }
 
-    public Guid getnetwork_id() {
+    public Guid getNetworkId() {
         return id.getNetworkId();
     }
 
-    public void setnetwork_id(Guid value) {
+    public void setNetworkId(Guid value) {
         id.setNetworkId(value);
     }
 
-    public NetworkStatus getstatus() {
+    public NetworkStatus getStatus() {
         return this.status;
     }
 
-    public void setstatus(NetworkStatus value) {
+    public void setStatus(NetworkStatus value) {
         this.status = value;
     }
 
-    public boolean getis_display() {
-        return this.isDisplay;
+    public boolean isDisplay() {
+        return this.display;
     }
 
-    public void setis_display(boolean value) {
-        this.isDisplay = value;
+    public void setDisplay(boolean value) {
+        this.display = value;
     }
 
     public boolean isRequired() {

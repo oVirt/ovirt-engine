@@ -260,7 +260,7 @@ public class ClusterNetworkListModel extends SearchableListModel
                 Network clusterNetwork = existingClusterNetworks.get(existingClusterNetworks.indexOf(network));
 
                 if ((networkModel.isRequired() != clusterNetwork.getCluster().isRequired())
-                        || (networkModel.isDisplayNetwork() != clusterNetwork.getCluster().getis_display())) {
+                        || (networkModel.isDisplayNetwork() != clusterNetwork.getCluster().isDisplay())) {
                     needsUpdate = true;
                 }
             }
@@ -343,8 +343,8 @@ public class ClusterNetworkListModel extends SearchableListModel
 
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
-                && network != null && !network.getCluster().getis_display()
-                && network.getCluster().getstatus() != NetworkStatus.NON_OPERATIONAL);
+                && network != null && !network.getCluster().isDisplay()
+                && network.getCluster().getStatus() != NetworkStatus.NON_OPERATIONAL);
     }
 
     public void New()

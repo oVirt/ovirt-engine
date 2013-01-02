@@ -445,7 +445,7 @@ public abstract class VmInterfaceModel extends Model
                 }
                 for (Network a : (ArrayList<Network>) result1)
                 {
-                    if (a.getCluster().getstatus() == NetworkStatus.OPERATIONAL && a.isVmNetwork())
+                    if (a.getCluster().getStatus() == NetworkStatus.OPERATIONAL && a.isVmNetwork())
                     {
                         networks.add(a);
                     }

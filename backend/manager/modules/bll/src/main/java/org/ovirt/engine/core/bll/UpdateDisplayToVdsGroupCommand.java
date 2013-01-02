@@ -31,15 +31,15 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
                 new Predicate<NetworkCluster>() {
                     @Override
                     public boolean eval(NetworkCluster n) {
-                        return n.getis_display();
+                        return n.isDisplay();
                     }
                 });
         if (oldDisplay != null) {
-            oldDisplay.setis_display(false);
+            oldDisplay.setDisplay(false);
             DbFacade.getInstance().getNetworkClusterDao().update(oldDisplay);
         }
 
-        _networkCluster.setis_display(getParameters().getIsDisplay());
+        _networkCluster.setDisplay(getParameters().getIsDisplay());
         DbFacade.getInstance().getNetworkClusterDao().update(_networkCluster);
 
         setSucceeded(true);
@@ -53,7 +53,7 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
                 new Predicate<NetworkCluster>() {
                     @Override
                     public boolean eval(NetworkCluster x) {
-                        return x.getnetwork_id().equals(getParameters().getNetwork().getId());
+                        return x.getNetworkId().equals(getParameters().getNetwork().getId());
                     }
                 });
 

@@ -42,8 +42,8 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         network.setId(networkId);
         network.setDataCenterId(storagePoolId);
         cluster.setId(clusterId);
-        networkCluster.setcluster_id(clusterId);
-        networkCluster.setnetwork_id(networkId);
+        networkCluster.setClusterId(clusterId);
+        networkCluster.setNetworkId(networkId);
 
         setupNetworkDao();
         setupVdsGroupDao();

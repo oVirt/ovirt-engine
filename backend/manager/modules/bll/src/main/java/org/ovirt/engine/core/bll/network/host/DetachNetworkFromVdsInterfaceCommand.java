@@ -125,7 +125,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         // check if network in cluster and vds active
         if ((vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing)
                 && getParameters().getNetwork().getCluster() != null
-                && getParameters().getNetwork().getCluster().getstatus() == NetworkStatus.OPERATIONAL) {
+                && getParameters().getNetwork().getCluster().getStatus() == NetworkStatus.OPERATIONAL) {
             List<Network> networks = getDbFacade().getNetworkDao().getAllForCluster(vds.getvds_group_id());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override

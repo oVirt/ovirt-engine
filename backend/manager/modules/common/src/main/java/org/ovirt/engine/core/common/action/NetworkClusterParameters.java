@@ -19,7 +19,7 @@ public class NetworkClusterParameters extends VdsGroupParametersBase {
     }
 
     public NetworkClusterParameters(NetworkCluster networkCluster) {
-        super(networkCluster.getcluster_id());
+        super(networkCluster.getClusterId());
         this.networkCluster = networkCluster;
     }
 

@@ -102,7 +102,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
             @Override
             public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
                 if (object.getSecond() != null){
-                    if (object.getSecond().getis_display()){
+                    if (object.getSecond().isDisplay()){
                         return templates.image(dispalyImage);
                     }
                     return null;
@@ -113,7 +113,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
             @Override
             public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
-                if (object.getSecond() != null && object.getSecond().getis_display()){
+                if (object.getSecond() != null && object.getSecond().isDisplay()){
                     return (templates.imageTextSetupNetwork(dispalyImage, constants.displayItemInfo()));
                 }
 

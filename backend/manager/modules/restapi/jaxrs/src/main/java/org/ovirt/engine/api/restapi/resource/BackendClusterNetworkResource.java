@@ -30,8 +30,8 @@ public class BackendClusterNetworkResource
     public Network update(Network incoming) {
         validateEnums(Network.class, incoming);
         org.ovirt.engine.core.common.businessentities.network.Network network = map(incoming, map(get()));
-        network.getCluster().setnetwork_id(network.getId());
-        network.getCluster().setcluster_id(cluster.getVDSGroup().getId());
+        network.getCluster().setNetworkId(network.getId());
+        network.getCluster().setClusterId(cluster.getVDSGroup().getId());
         performAction(VdcActionType.UpdateNetworkOnCluster,
                       new NetworkClusterParameters(network.getCluster()));
         return get();

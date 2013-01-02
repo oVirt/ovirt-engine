@@ -19,7 +19,7 @@ public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
                 NetworkStatus.NON_OPERATIONAL,
 
                 // Cluster attachment data can sometimes be missing, so use defaults in that case.
-                net.getCluster() == null ? false : net.getCluster().getis_display(),
+                net.getCluster() == null ? false : net.getCluster().isDisplay(),
                 net.getCluster() == null ? true : net.getCluster().isRequired()));
         _network = net;
     }

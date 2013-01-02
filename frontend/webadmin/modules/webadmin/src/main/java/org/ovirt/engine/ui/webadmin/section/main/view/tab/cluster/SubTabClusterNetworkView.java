@@ -49,7 +49,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         TextColumnWithTooltip<Network> statusColumn = new EnumColumn<Network, NetworkStatus>() {
             @Override
             public NetworkStatus getRawValue(Network object) {
-                return object.getCluster().getstatus();
+                return object.getCluster().getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusNetwork());
@@ -58,7 +58,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
             @Override
             public String getValue(Network object) {
                 // according to ClusterNetworkListView.xaml:45
-                return (object.getCluster() == null ? false : object.getCluster().getis_display()) ? constants.displayNetwork() : constants.empty();
+                return (object.getCluster() == null ? false : object.getCluster().isDisplay()) ? constants.displayNetwork() : constants.empty();
             }
         };
         getTable().addColumn(roleColumn, constants.roleNetwork());

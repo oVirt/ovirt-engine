@@ -44,7 +44,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             getNetworkClusterDAO().save(new NetworkCluster(getVdsGroupId(), getNetwork().getId(),
                     NetworkStatus.OPERATIONAL, false, getNetworkCluster().isRequired()));
         }
-        if (getNetwork().getCluster().getis_display()) {
+        if (getNetwork().getCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
         }
         NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
@@ -57,7 +57,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean logicalNetworkExists() {
-        if (getNetworkDAO().get(getNetworkCluster().getnetwork_id()) != null) {
+        if (getNetworkDAO().get(getNetworkCluster().getNetworkId()) != null) {
             return true;
         }
 
@@ -78,8 +78,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     private boolean networkExists() {
         List<NetworkCluster> networks = getNetworkClusterDAO().getAllForCluster(getVdsGroupId());
         for (NetworkCluster networkCluster : networks) {
-            if (networkCluster.getnetwork_id().equals(
-                    getNetworkCluster().getnetwork_id())) {
+            if (networkCluster.getNetworkId().equals(
+                    getNetworkCluster().getNetworkId())) {
                 return true;
             }
         }
@@ -113,7 +113,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissions = new ArrayList<PermissionSubject>();
 
-        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getnetwork_id();
+        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getNetworkId();
         // require permissions on network
         permissions.add(new PermissionSubject(networkId,
                 VdcObjectType.Network,

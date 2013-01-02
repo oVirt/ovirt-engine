@@ -13,8 +13,8 @@ public class NetworkStatusColumn extends WebAdminImageResourceColumn<Network> {
     }
 
     public ImageResource getValue(NetworkCluster net_cluster) {
-        setEnumTitle(net_cluster.getstatus());
-        switch (net_cluster.getstatus()) {
+        setEnumTitle(net_cluster.getStatus());
+        switch (net_cluster.getStatus()) {
         case OPERATIONAL:
             return getApplicationResources().upImage();
         case NON_OPERATIONAL:

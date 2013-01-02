@@ -51,7 +51,7 @@ public class ClusterNetworkModel extends EntityModel {
     }
 
     public boolean isDisplayNetwork() {
-        return getEntity().getCluster().getis_display();
+        return getEntity().getCluster().isDisplay();
     }
 
     public boolean isManagement() {
@@ -71,7 +71,7 @@ public class ClusterNetworkModel extends EntityModel {
     }
 
     public void setDisplayNetwork(boolean displayNetwork) {
-        getEntity().getCluster().setis_display(displayNetwork);
+        getEntity().getCluster().setDisplay(displayNetwork);
     }
 
     public void setManagement(boolean management) {

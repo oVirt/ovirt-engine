@@ -120,7 +120,7 @@ public abstract class VmInfoBuilderBase {
                 .getNetworkClusterDao().getAllForCluster(vm.getVdsGroupId());
         NetworkCluster networkCluster = null;
         for (NetworkCluster tempNetworkCluster : all) {
-            if (tempNetworkCluster.getis_display()) {
+            if (tempNetworkCluster.isDisplay()) {
                 networkCluster = tempNetworkCluster;
                 break;
             }
@@ -130,7 +130,7 @@ public abstract class VmInfoBuilderBase {
             List<Network> allNetworks = DbFacade.getInstance().getNetworkDao()
                     .getAll();
             for (Network tempNetwork : allNetworks) {
-                if (tempNetwork.getId().equals(networkCluster.getnetwork_id())) {
+                if (tempNetwork.getId().equals(networkCluster.getNetworkId())) {
                     net = tempNetwork;
                     break;
                 }

@@ -23,10 +23,10 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
                 public NetworkCluster mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     NetworkCluster entity = new NetworkCluster();
-                    entity.setcluster_id(Guid.createGuidFromString(rs.getString("cluster_id")));
-                    entity.setnetwork_id(Guid.createGuidFromString(rs.getString("network_id")));
-                    entity.setstatus(NetworkStatus.forValue(rs.getInt("status")));
-                    entity.setis_display(rs.getBoolean("is_display"));
+                    entity.setClusterId(Guid.createGuidFromString(rs.getString("cluster_id")));
+                    entity.setNetworkId(Guid.createGuidFromString(rs.getString("network_id")));
+                    entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
+                    entity.setDisplay(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));
                     return entity;
                 }
@@ -72,10 +72,10 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
     @Override
     public void save(NetworkCluster cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", cluster.getcluster_id())
-                .addValue("network_id", cluster.getnetwork_id())
-                .addValue("status", cluster.getstatus())
-                .addValue("is_display", cluster.getis_display())
+                .addValue("cluster_id", cluster.getClusterId())
+                .addValue("network_id", cluster.getNetworkId())
+                .addValue("status", cluster.getStatus())
+                .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired());
 
         getCallsHandler().executeModification("Insertnetwork_cluster", parameterSource);
@@ -84,10 +84,10 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
     @Override
     public void update(NetworkCluster cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", cluster.getcluster_id())
-                .addValue("network_id", cluster.getnetwork_id())
-                .addValue("status", cluster.getstatus())
-                .addValue("is_display", cluster.getis_display())
+                .addValue("cluster_id", cluster.getClusterId())
+                .addValue("network_id", cluster.getNetworkId())
+                .addValue("status", cluster.getStatus())
+                .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired());
 
         getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
@@ -96,9 +96,9 @@ public class NetworkClusterDAODbFacadeImpl extends BaseDAODbFacade implements Ne
     @Override
     public void updateStatus(NetworkCluster cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", cluster.getcluster_id())
-                .addValue("network_id", cluster.getnetwork_id())
-                .addValue("status", cluster.getstatus());
+                .addValue("cluster_id", cluster.getClusterId())
+                .addValue("network_id", cluster.getNetworkId())
+                .addValue("status", cluster.getStatus());
 
         getCallsHandler().executeModification("Updatenetwork_cluster_status", parameterSource);
     }

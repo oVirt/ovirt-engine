@@ -31,7 +31,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     private Network getNetwork() {
         if (network == null) {
-            network = getNetworkDAO().get(getNetworkCluster().getnetwork_id());
+            network = getNetworkDAO().get(getNetworkCluster().getNetworkId());
         }
 
         return network;
@@ -49,7 +49,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     protected void executeCommand() {
         getNetworkClusterDAO().update(getNetworkCluster());
 
-        if (getNetworkCluster().getis_display()) {
+        if (getNetworkCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(), getNetwork().getId());
         }
 
@@ -76,7 +76,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissions = super.getPermissionCheckSubjects();
-        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getnetwork_id();
+        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getNetworkId();
         permissions.add(new PermissionSubject(networkId, VdcObjectType.Network, ActionGroup.ASSIGN_CLUSTER_NETWORK));
         return permissions;
     }

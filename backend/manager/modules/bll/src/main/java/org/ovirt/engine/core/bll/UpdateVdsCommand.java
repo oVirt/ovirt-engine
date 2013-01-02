@@ -161,7 +161,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             .getAllForCluster(_oldVds.getvds_group_id());
             for (NetworkCluster item : networkClusters) {
                 for (Network net : networks) {
-                    if (net.getId().equals(item.getnetwork_id())) {
+                    if (net.getId().equals(item.getNetworkId())) {
                         NetworkClusterHelper.setStatus(_oldVds.getvds_group_id(), net);
                     }
                 }

@@ -22,7 +22,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
         final NetworkCluster nc = LinqUtils.firstOrNull(all, new Predicate<NetworkCluster>() {
             @Override
             public boolean eval(NetworkCluster networkCluster) {
-                return networkCluster.getis_display();
+                return networkCluster.isDisplay();
             }
         });
         if (nc != null) {
@@ -31,7 +31,7 @@ public class GetNetworkDisplayByClusterIdQuery<P extends VdsGroupQueryParamenter
                             new Predicate<Network>() {
                                 @Override
                                 public boolean eval(Network network) {
-                                    return network.getId().equals(nc.getnetwork_id());
+                                    return network.getId().equals(nc.getNetworkId());
                                 }
                             }));
         }

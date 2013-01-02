@@ -45,7 +45,7 @@ public class NetworkPanel extends NetworkItemPanel {
             vmImage = null;
             notSyncImage = null;
         } else {
-            monitorImage = network.getEntity().getCluster().getis_display() ?
+            monitorImage = network.getEntity().getCluster().isDisplay() ?
                     new Image(resources.networkMonitor()) : null;
             mgmtNetworkImage = network.isManagement() ? new Image(resources.mgmtNetwork()) : null;
             vmImage = network.getEntity().isVmNetwork() ? new Image(resources.networkVm()) : null;
@@ -59,7 +59,7 @@ public class NetworkPanel extends NetworkItemPanel {
                 vmImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().getCluster().getis_display()) {
+            if (network.getEntity().getCluster().isDisplay()) {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 

@@ -186,7 +186,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         List<String> networkNames = new ArrayList<String>();
 
         for (Network net : clusterNetworks) {
-            if (net.getCluster().getstatus() == OPERATIONAL &&
+            if (net.getCluster().getStatus() == OPERATIONAL &&
                     net.getCluster().isRequired() &&
                     !vdsNetworksByName.containsKey(net.getName())) {
                 networkNames.add(net.getname());

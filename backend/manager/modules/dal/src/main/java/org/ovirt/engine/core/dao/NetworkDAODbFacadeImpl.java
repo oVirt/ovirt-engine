@@ -130,9 +130,9 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             Network entity = super.mapRow(rs, rowNum);
 
             entity.setCluster(new NetworkCluster());
-            entity.getCluster().setis_display((Boolean) rs.getObject("is_display"));
+            entity.getCluster().setDisplay((Boolean) rs.getObject("is_display"));
             entity.getCluster().setRequired(rs.getBoolean("required"));
-            entity.getCluster().setstatus(NetworkStatus.forValue(rs.getInt("status")));
+            entity.getCluster().setStatus(NetworkStatus.forValue(rs.getInt("status")));
 
             return entity;
         }

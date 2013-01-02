@@ -86,7 +86,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             }
         }
 
-        boolean isDisplay = entity.getCluster() != null ? entity.getCluster().getis_display() : false;
+        boolean isDisplay = entity.getCluster() != null ? entity.getCluster().isDisplay() : false;
         // Usages
         if (networkModel.isManagement() || isDisplay || entity.isVmNetwork()) {
 
