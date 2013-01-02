@@ -1006,10 +1006,10 @@ public class VdsBrokerObjectsBuilder {
 
     private static Network createNetworkData(String networkName, Map<String, Object> network) {
         Network net = new Network();
-        net.setname(networkName);
-        net.setaddr((String) network.get("addr"));
-        net.setsubnet((String) network.get("netmask"));
-        net.setgateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
+        net.setName(networkName);
+        net.setAddr((String) network.get("addr"));
+        net.setSubnet((String) network.get("netmask"));
+        net.setGateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
         if (StringUtils.isNotBlank((String) network.get(VdsProperties.mtu))) {
             net.setMtu(Integer.parseInt((String) network.get(VdsProperties.mtu)));
         }
@@ -1208,11 +1208,11 @@ public class VdsBrokerObjectsBuilder {
                 iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
             }
 
-            iface.setAddress(net.getaddr());
-            iface.setSubnet(net.getsubnet());
+            iface.setAddress(net.getAddr());
+            iface.setSubnet(net.getSubnet());
             boolean bridgedNetwork = isBridgedNetwork(network);
             iface.setBridged(bridgedNetwork);
-            setGatewayIfManagementNetwork(iface, net.getgateway());
+            setGatewayIfManagementNetwork(iface, net.getGateway());
 
             if (bridgedNetwork) {
                 Map<String, Object> networkConfig =

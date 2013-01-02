@@ -215,7 +215,7 @@ public class VmInterfaceManagerTest {
     private Network createNewNetwork(boolean isVmNetwork, String networkName) {
         Network network = new Network();
         network.setVmNetwork(isVmNetwork);
-        network.setname(networkName);
+        network.setName(networkName);
         return network;
     }
 

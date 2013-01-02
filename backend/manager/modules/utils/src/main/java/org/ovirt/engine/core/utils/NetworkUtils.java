@@ -161,7 +161,7 @@ public final class NetworkUtils {
         if (networks.containsKey(iface.getNetworkName())) {
             Network network = networks.get(iface.getNetworkName());
             if ((network.getMtu() == 0 || iface.getMtu() == network.getMtu())
-                    && ObjectUtils.equals(iface.getVlanId(), network.getvlan_id())
+                    && ObjectUtils.equals(iface.getVlanId(), network.getVlanId())
                     && iface.isBridged() == network.isVmNetwork()) {
                 return new VdsNetworkInterface.NetworkImplementationDetails(true, true);
             } else {
@@ -179,6 +179,6 @@ public final class NetworkUtils {
      *            The network to check
      */
     public static boolean isNonVmNonVlanNetwork(Network network) {
-        return !network.isVmNetwork() && network.getvlan_id() == null;
+        return !network.isVmNetwork() && network.getVlanId() == null;
     }
 }

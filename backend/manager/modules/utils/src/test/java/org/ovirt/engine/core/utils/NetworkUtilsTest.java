@@ -191,7 +191,7 @@ public class NetworkUtilsTest {
         Network network = new Network();
         network.setVmNetwork(vmNetwork);
         network.setMtu(mtu);
-        network.setvlan_id(vlanId);
+        network.setVlanId(vlanId);
 
         return Collections.singletonMap(networkName, network);
     }

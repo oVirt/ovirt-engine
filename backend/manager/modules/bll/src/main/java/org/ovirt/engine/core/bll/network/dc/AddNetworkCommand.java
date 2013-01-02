@@ -60,9 +60,9 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
         // we return ok only if the network not exists
         List<Network> all;
-        if (getNetwork().getstorage_pool_id() != null
-                && !getNetwork().getstorage_pool_id().getValue().equals(Guid.Empty)) {
-            all = getNetworkDAO().getAllForDataCenter(getNetwork().getstorage_pool_id().getValue());
+        if (getNetwork().getDataCenterId() != null
+                && !getNetwork().getDataCenterId().getValue().equals(Guid.Empty)) {
+            all = getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId().getValue());
         } else {
             all = getNetworkDAO().getAll();
         }

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     public NetworkCommon(T parameters) {
         super(parameters);
-        this.setStoragePoolId(getNetwork().getstorage_pool_id());
+        this.setStoragePoolId(getNetwork().getDataCenterId());
     }
 
     protected Network getNetwork() {
@@ -43,7 +43,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected ValidationResult stpForVmNetworkOnly() {
-        return getNetwork().isVmNetwork() || !getNetwork().getstp()
+        return getNetwork().isVmNetwork() || !getNetwork().getStp()
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP);
     }
@@ -56,14 +56,14 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected ValidationResult vlanIsFree(List<Network> networks) {
-        if (getNetwork().getvlan_id() != null) {
+        if (getNetwork().getVlanId() != null) {
             for (Network network : networks) {
-                if (network.getvlan_id() != null
-                        && network.getvlan_id().equals(getNetwork().getvlan_id())
-                        && network.getstorage_pool_id().equals(getNetwork().getstorage_pool_id())
+                if (network.getVlanId() != null
+                        && network.getVlanId().equals(getNetwork().getVlanId())
+                        && network.getDataCenterId().equals(getNetwork().getDataCenterId())
                         && !network.getId().equals(getNetwork().getId())) {
                     return new ValidationResult(VdcBllMessages.NETWORK_VLAN_IN_USE,
-                            String.format("$vlanId %d", getNetwork().getvlan_id()));
+                            String.format("$vlanId %d", getNetwork().getVlanId()));
                 }
             }
         }

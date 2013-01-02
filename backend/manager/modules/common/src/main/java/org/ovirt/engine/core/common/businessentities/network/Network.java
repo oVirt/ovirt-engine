@@ -83,7 +83,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
-    private NGuid storagePoolId;
+    private NGuid dataCenterId;
 
     @ManyToOne
     @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
@@ -117,19 +117,19 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         return cluster;
     }
 
-    public String getaddr() {
+    public String getAddr() {
         return this.addr;
     }
 
-    public void setaddr(String value) {
+    public void setAddr(String value) {
         this.addr = value;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return this.description;
     }
 
-    public void setdescription(String value) {
+    public void setDescription(String value) {
         this.description = value;
     }
 
@@ -155,56 +155,56 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         return this.name;
     }
 
-    public void setname(String value) {
+    public void setName(String value) {
         this.name = value;
     }
 
-    public String getsubnet() {
+    public String getSubnet() {
         return this.subnet;
     }
 
-    public void setsubnet(String value) {
+    public void setSubnet(String value) {
         this.subnet = value;
     }
 
-    public String getgateway() {
+    public String getGateway() {
         return this.gateway;
     }
 
-    public void setgateway(String value) {
+    public void setGateway(String value) {
         this.gateway = value;
     }
 
-    public Integer gettype() {
+    public Integer getType() {
         return this.type;
     }
 
-    public void settype(Integer value) {
+    public void setType(Integer value) {
         this.type = value;
     }
 
-    public Integer getvlan_id() {
+    public Integer getVlanId() {
         return this.vlanId;
     }
 
-    public void setvlan_id(Integer value) {
+    public void setVlanId(Integer value) {
         this.vlanId = value;
     }
 
-    public boolean getstp() {
+    public boolean getStp() {
         return this.stp;
     }
 
-    public void setstp(boolean value) {
+    public void setStp(boolean value) {
         this.stp = value;
     }
 
-    public NGuid getstorage_pool_id() {
-        return this.storagePoolId;
+    public NGuid getDataCenterId() {
+        return this.dataCenterId;
     }
 
-    public void setstorage_pool_id(NGuid value) {
-        this.storagePoolId = value;
+    public void setDataCenterId(NGuid value) {
+        this.dataCenterId = value;
     }
 
     public void setCluster(NetworkCluster cluster) {
@@ -223,19 +223,19 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 .append(" {id=")
                 .append(getId())
                 .append(", description=")
-                .append(getdescription())
+                .append(getDescription())
                 .append(", subnet=")
-                .append(getsubnet())
+                .append(getSubnet())
                 .append(", gateway=")
-                .append(getgateway())
+                .append(getGateway())
                 .append(", type=")
-                .append(gettype())
-                .append(", vlan_id=")
-                .append(getvlan_id())
+                .append(getType())
+                .append(", vlanId=")
+                .append(getVlanId())
                 .append(", stp=")
-                .append(getstp())
-                .append(", storage_pool_id=")
-                .append(getstorage_pool_id())
+                .append(getStp())
+                .append(", dataCenterId=")
+                .append(getDataCenterId())
                 .append(", mtu=")
                 .append(getMtu())
                 .append(", vmNetwork=")
@@ -259,7 +259,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        result = prime * result + ((dataCenterId == null) ? 0 : dataCenterId.hashCode());
         result = prime * result + (stp ? 1231 : 1237);
         result = prime * result + ((subnet == null) ? 0 : subnet.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -311,10 +311,10 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (storagePoolId == null) {
-            if (other.storagePoolId != null)
+        if (dataCenterId == null) {
+            if (other.dataCenterId != null)
                 return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
+        } else if (!dataCenterId.equals(other.dataCenterId))
             return false;
         if (stp != other.stp)
             return false;

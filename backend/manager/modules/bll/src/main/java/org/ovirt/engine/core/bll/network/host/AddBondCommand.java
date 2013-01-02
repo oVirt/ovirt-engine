@@ -36,9 +36,9 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         T params = getParameters();
         String address = params.getAddress();
         String subnet = StringUtils.isEmpty(params.getSubnet()) ? params.getNetwork()
-                .getsubnet() : params.getSubnet();
+                .getSubnet() : params.getSubnet();
         String gateway = StringUtils.isEmpty(params.getGateway()) ? params.getNetwork()
-                .getgateway() : params.getGateway();
+                .getGateway() : params.getGateway();
 
         NetworkVdsmVDSCommandParameters vdsParams = new NetworkVdsmVDSCommandParameters(params.getVdsId(),
                 params.getNetwork(),

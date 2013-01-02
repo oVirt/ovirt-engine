@@ -855,7 +855,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         {
                             if (isVlanSelected)
                             {
-                                if (unAttachedNetwork.getvlan_id() != null)
+                                if (unAttachedNetwork.getVlanId() != null)
                                 {
                                     networksToAdd.add(unAttachedNetwork);
                                 }
@@ -873,7 +873,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     Network tempVar = new Network();
                     tempVar.setId(NGuid.Empty);
-                    tempVar.setname("None"); //$NON-NLS-1$
+                    tempVar.setName("None"); //$NON-NLS-1$
                     networksToAdd.add(0, tempVar);
                 }
 
@@ -1352,7 +1352,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     {
                         if (isVlanSelected)
                         {
-                            if (unAttachedNetwork.getvlan_id() != null)
+                            if (unAttachedNetwork.getVlanId() != null)
                             {
                                 networksToAdd.add(unAttachedNetwork);
                             }
@@ -1759,7 +1759,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 Network defaultNetwork = new Network();
                 VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
-                defaultNetwork.setname(nic.getNetworkName());
+                defaultNetwork.setName(nic.getNetworkName());
                 Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 
@@ -1871,7 +1871,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) hostInterfaceListModel.getWindow();
                         ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
                         Network defaultNetwork = new Network();
-                        defaultNetwork.setname(nic.getNetworkName());
+                        defaultNetwork.setName(nic.getNetworkName());
                         Network tempVar3 = Linq.FindNetworkByName(networks, nic.getNetworkName());
                         Network net = (tempVar3 != null) ? tempVar3 : defaultNetwork;
 
@@ -1964,7 +1964,7 @@ public class HostInterfaceListModel extends SearchableListModel
             // If the selected item is a non-attached or attached to vlan eth (over bond or not),
             // and the selected network in the dialog is a new vlan, attach selected network.
             if ((StringHelper.isNullOrEmpty(nic.getNetworkName()) && (nic.getBonded() == null || !nic.getBonded()) && !isUpdateVlan)
-                    || (bondWithVlans && (!vLanAttached && network.getvlan_id() != null)))
+                    || (bondWithVlans && (!vLanAttached && network.getVlanId() != null)))
             {
                 parameters = new AttachNetworkToVdsParameters(getEntity().getId(), network, nic);
                 actionType = VdcActionType.AttachNetworkToVdsInterface;
@@ -2102,7 +2102,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networks = (ArrayList<Network>) ReturnValue;
                 Network defaultNetwork = new Network();
-                defaultNetwork.setname(nic.getNetworkName());
+                defaultNetwork.setName(nic.getNetworkName());
                 Network tempVar = Linq.FindNetworkByName(networks, nic.getNetworkName());
                 Network net = (tempVar != null) ? tempVar : defaultNetwork;
 

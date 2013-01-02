@@ -78,7 +78,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> descriptionColumn = new TextColumnWithTooltip<NetworkView>(40) {
             @Override
             public String getValue(NetworkView object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork());
@@ -136,7 +136,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         TextColumnWithTooltip<NetworkView> vlanColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getvlan_id() == null ? "-" : object.getvlan_id().toString(); //$NON-NLS-1$
+                return object.getVlanId() == null ? "-" : object.getVlanId().toString(); //$NON-NLS-1$
             }
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork());

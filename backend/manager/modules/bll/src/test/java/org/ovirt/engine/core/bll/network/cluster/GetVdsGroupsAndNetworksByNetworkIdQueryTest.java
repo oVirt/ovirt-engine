@@ -40,7 +40,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         when(params.getNetworkId()).thenReturn(networkId);
 
         network.setId(networkId);
-        network.setstorage_pool_id(storagePoolId);
+        network.setDataCenterId(storagePoolId);
         cluster.setId(clusterId);
         networkCluster.setcluster_id(clusterId);
         networkCluster.setnetwork_id(networkId);

@@ -44,7 +44,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<storage
         TextColumnWithTooltip<Network> typeColumn = new TextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         getTable().addColumn(typeColumn, constants.descriptionNetwork());

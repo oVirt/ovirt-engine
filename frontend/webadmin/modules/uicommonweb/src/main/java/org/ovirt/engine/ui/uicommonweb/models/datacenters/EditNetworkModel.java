@@ -57,10 +57,10 @@ public class EditNetworkModel extends NetworkModel {
         setTitle(ConstantsManager.getInstance().getConstants().editLogicalNetworkTitle());
         setHashName("edit_logical_network"); //$NON-NLS-1$
         getName().setEntity(getNetwork().getname());
-        getDescription().setEntity(getNetwork().getdescription());
-        getIsStpEnabled().setEntity(getNetwork().getstp());
-        getHasVLanTag().setEntity(getNetwork().getvlan_id() != null);
-        getVLanTag().setEntity((getNetwork().getvlan_id() == null ? 0 : getNetwork().getvlan_id()));
+        getDescription().setEntity(getNetwork().getDescription());
+        getIsStpEnabled().setEntity(getNetwork().getStp());
+        getHasVLanTag().setEntity(getNetwork().getVlanId() != null);
+        getVLanTag().setEntity((getNetwork().getVlanId() == null ? 0 : getNetwork().getVlanId()));
         initMtu();
         initIsVm();
     }

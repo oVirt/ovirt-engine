@@ -117,7 +117,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
                 if (networkModel instanceof EditNetworkModel) {
                     storage_pool currentDc =
-                            findDc(networkModel.getNetwork().getstorage_pool_id().getValue(), dataCenters);
+                            findDc(networkModel.getNetwork().getDataCenterId().getValue(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.FirstOrDefault(dataCenters));

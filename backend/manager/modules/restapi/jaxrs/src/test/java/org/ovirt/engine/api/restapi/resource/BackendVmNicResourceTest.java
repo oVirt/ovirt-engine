@@ -268,7 +268,7 @@ public class BackendVmNicResourceTest
         ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
         org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
         network.setId(GUIDS[0]);
-        network.setname("orcus");
+        network.setName("orcus");
         networks.add(network);
         setGetNetworksQueryExpectations(times, networks);
     }

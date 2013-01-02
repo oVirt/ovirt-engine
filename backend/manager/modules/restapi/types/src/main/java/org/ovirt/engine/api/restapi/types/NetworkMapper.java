@@ -23,34 +23,34 @@ public class NetworkMapper {
             entity.setId(new Guid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setname(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
-            entity.setdescription(model.getDescription());
+            entity.setDescription(model.getDescription());
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
-            entity.setstorage_pool_id(new Guid(model.getDataCenter().getId()));
+            entity.setDataCenterId(new Guid(model.getDataCenter().getId()));
         }
         if (model.isSetIp()) {
             if (model.getIp().isSetAddress()) {
-                entity.setaddr(model.getIp().getAddress());
+                entity.setAddr(model.getIp().getAddress());
             }
             if (model.getIp().isSetNetmask()) {
-                entity.setsubnet(model.getIp().getNetmask());
+                entity.setSubnet(model.getIp().getNetmask());
             }
             if (model.getIp().isSetGateway()) {
-                entity.setgateway(model.getIp().getGateway());
+                entity.setGateway(model.getIp().getGateway());
             }
         }
         if (model.isSetVlan() && model.getVlan().getId()!=null) {
             try {
-                entity.setvlan_id(model.getVlan().getId());
+                entity.setVlanId(model.getVlan().getId());
             } catch (NumberFormatException e) {
                 // REVIST: handle parse error
             }
         }
         if (model.isSetStp()) {
-            entity.setstp(model.isStp());
+            entity.setStp(model.isStp());
         }
         if (model.isSetUsages()) {
             List<NetworkUsage> networkUsages = new ArrayList<NetworkUsage>();
@@ -77,25 +77,25 @@ public class NetworkMapper {
         Network model = template != null ? template : new Network();
         model.setId(entity.getId().toString());
         model.setName(entity.getname());
-        model.setDescription(entity.getdescription());
-        if (entity.getstorage_pool_id() != null) {
+        model.setDescription(entity.getDescription());
+        if (entity.getDataCenterId() != null) {
             DataCenter dataCenter = new DataCenter();
-            dataCenter.setId(entity.getstorage_pool_id().toString());
+            dataCenter.setId(entity.getDataCenterId().toString());
             model.setDataCenter(dataCenter);
         }
-        if (entity.getaddr() != null ||
-            entity.getsubnet() != null ||
-            entity.getgateway() != null) {
+        if (entity.getAddr() != null ||
+            entity.getSubnet() != null ||
+            entity.getGateway() != null) {
             model.setIp(new IP());
-            model.getIp().setAddress(entity.getaddr());
-            model.getIp().setNetmask(entity.getsubnet());
-            model.getIp().setGateway(entity.getgateway());
+            model.getIp().setAddress(entity.getAddr());
+            model.getIp().setNetmask(entity.getSubnet());
+            model.getIp().setGateway(entity.getGateway());
         }
-        if (entity.getvlan_id() != null) {
+        if (entity.getVlanId() != null) {
             model.setVlan(new VLAN());
-            model.getVlan().setId(entity.getvlan_id());
+            model.getVlan().setId(entity.getVlanId());
         }
-        model.setStp(entity.getstp());
+        model.setStp(entity.getStp());
         model.setMtu(entity.getMtu());
 
         model.setUsages(new Usages());

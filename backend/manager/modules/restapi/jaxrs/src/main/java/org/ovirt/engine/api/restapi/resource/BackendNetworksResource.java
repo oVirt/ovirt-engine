@@ -59,9 +59,9 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     @Override
     protected AddNetworkStoragePoolParameters getActionParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity) {
         if (namedDataCenter(network)) {
-            entity.setstorage_pool_id(getDataCenterId(network));
+            entity.setDataCenterId(getDataCenterId(network));
         }
-        return new AddNetworkStoragePoolParameters(entity.getstorage_pool_id().getValue(), entity);
+        return new AddNetworkStoragePoolParameters(entity.getDataCenterId().getValue(), entity);
     }
 
     protected String[] getRequiredAddFields() {

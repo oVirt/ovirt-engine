@@ -423,7 +423,7 @@ public class BackendHostNicsResourceTest
     public static org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {
         org.ovirt.engine.core.common.businessentities.network.Network entity = new org.ovirt.engine.core.common.businessentities.network.Network();
         entity.setId(NETWORK_GUID);
-        entity.setname(NETWORK_NAME);
+        entity.setName(NETWORK_NAME);
         return entity;
     }
 
@@ -527,7 +527,7 @@ public class BackendHostNicsResourceTest
             ArrayList<org.ovirt.engine.core.common.businessentities.network.Network> networks = new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>();
             org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
             network.setId(GUIDS[0]);
-            network.setname("orcus");
+            network.setName("orcus");
             networks.add(network);
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
                     VdsGroupQueryParamenters.class,

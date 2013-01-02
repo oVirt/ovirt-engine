@@ -46,9 +46,9 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private void addDefaultNetworks() {
         Network net = new Network();
         net.setId(Guid.NewGuid());
-        net.setname(Config.<String> GetValue(ConfigValues.ManagementNetwork));
-        net.setdescription(AddVdsGroupCommand.DefaultNetworkDescription);
-        net.setstorage_pool_id(getStoragePool().getId());
+        net.setName(Config.<String> GetValue(ConfigValues.ManagementNetwork));
+        net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
+        net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         getNetworkDAO().save(net);
     }

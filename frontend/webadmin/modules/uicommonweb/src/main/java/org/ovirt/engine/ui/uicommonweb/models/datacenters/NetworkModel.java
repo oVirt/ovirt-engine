@@ -368,10 +368,10 @@ public abstract class NetworkModel extends Model
     }
 
     public void flush() {
-        network.setstorage_pool_id(getSelectedDc().getId());
-        network.setname((String) getName().getEntity());
-        network.setstp((Boolean) getIsStpEnabled().getEntity());
-        network.setdescription((String) getDescription().getEntity());
+        network.setDataCenterId(getSelectedDc().getId());
+        network.setName((String) getName().getEntity());
+        network.setStp((Boolean) getIsStpEnabled().getEntity());
+        network.setDescription((String) getDescription().getEntity());
         network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
 
         network.setMtu(0);
@@ -380,10 +380,10 @@ public abstract class NetworkModel extends Model
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
 
-        network.setvlan_id(null);
+        network.setVlanId(null);
         if ((Boolean) getHasVLanTag().getEntity())
         {
-            network.setvlan_id(Integer.parseInt(getVLanTag().getEntity().toString()));
+            network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
     }
 
@@ -454,7 +454,7 @@ public abstract class NetworkModel extends Model
         {
             Network tempVar = new Network();
             tempVar.setId(networkId);
-            tempVar.setname(network.getname());
+            tempVar.setName(network.getname());
             // Init default NetworkCluster values (required, display, status)
             tempVar.setCluster(new NetworkCluster());
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));

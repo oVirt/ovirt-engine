@@ -12,7 +12,7 @@ public class DcNetworkParams {
     }
 
     public DcNetworkParams(Network network) {
-        vlanId = network.getvlan_id();
+        vlanId = network.getVlanId();
         mtu = network.getMtu();
         vmNetwork = network.isVmNetwork();
     }

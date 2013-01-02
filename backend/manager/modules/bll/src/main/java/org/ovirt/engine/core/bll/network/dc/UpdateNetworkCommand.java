@@ -96,7 +96,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 return n.getname().trim().toLowerCase()
                         .equals(getNetworkName().trim().toLowerCase())
                         && !n.getId().equals(getNetwork().getId())
-                        && getNetwork().getstorage_pool_id().equals(n.getstorage_pool_id());
+                        && getNetwork().getDataCenterId().equals(n.getDataCenterId());
             }
         });
         if (net != null) {

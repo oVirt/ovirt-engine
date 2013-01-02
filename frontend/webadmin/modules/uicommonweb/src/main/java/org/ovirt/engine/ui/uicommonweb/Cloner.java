@@ -279,16 +279,16 @@ public final class Cloner
     {
         Network obj = new Network();
 
-        obj.setaddr(instance.getaddr());
-        obj.setdescription(instance.getdescription());
+        obj.setAddr(instance.getAddr());
+        obj.setDescription(instance.getDescription());
         obj.setId(instance.getId());
-        obj.setname(instance.getname());
-        obj.setsubnet(instance.getsubnet());
-        obj.setgateway(instance.getgateway());
-        obj.settype(instance.gettype());
-        obj.setvlan_id(instance.getvlan_id());
-        obj.setstp(instance.getstp());
-        obj.setstorage_pool_id(instance.getstorage_pool_id());
+        obj.setName(instance.getname());
+        obj.setSubnet(instance.getSubnet());
+        obj.setGateway(instance.getGateway());
+        obj.setType(instance.getType());
+        obj.setVlanId(instance.getVlanId());
+        obj.setStp(instance.getStp());
+        obj.setDataCenterId(instance.getDataCenterId());
         obj.setMtu(instance.getMtu());
         if (instance.getCluster() !=null){
             obj.setCluster(CloneNetworkCluster(instance.getCluster()));

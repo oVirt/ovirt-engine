@@ -38,7 +38,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         T params = getParameters();
         String address = params.getAddress();
         String subnet = StringUtils.isEmpty(params.getSubnet()) ? params.getNetwork()
-                .getsubnet() : params.getSubnet();
+                .getSubnet() : params.getSubnet();
         String gateway = StringUtils.isEmpty(params.getGateway()) ? "" : params.getGateway();
         java.util.ArrayList<String> nics = new java.util.ArrayList<String>();
         nics.add(params.getInterface().getName());
@@ -143,7 +143,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // check that nic have no vlans
-        if (params.getNetwork().getvlan_id() == null) {
+        if (params.getNetwork().getVlanId() == null) {
             VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetAllChildVlanInterfaces,
                     new GetAllChildVlanInterfacesQueryParameters(params.getVdsId(), params

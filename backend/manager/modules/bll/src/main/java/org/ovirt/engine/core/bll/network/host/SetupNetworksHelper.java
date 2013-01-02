@@ -280,7 +280,7 @@ public class SetupNetworksHelper {
             if (getExistingClusterNetworks().containsKey(networkName)) {
                 Network network = getExistingClusterNetworks().get(networkName);
                 validateNetworkExclusiveOnIface(iface,
-                        determineNetworkType(network.getvlan_id(), network.isVmNetwork()));
+                        determineNetworkType(network.getVlanId(), network.isVmNetwork()));
 
                 VdsNetworkInterface existingIface = getExistingIfaces().get(iface.getName());
                 if (existingIface != null && !networkName.equals(existingIface.getNetworkName())) {

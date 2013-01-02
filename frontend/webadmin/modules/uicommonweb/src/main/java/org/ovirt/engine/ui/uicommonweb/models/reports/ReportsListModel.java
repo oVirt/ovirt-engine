@@ -181,7 +181,7 @@ public class ReportsListModel extends SearchableListModel {
             }
             case Network: {
                 Network network = (Network) treeItemModel.getEntity();
-                setDataCenterID(network.getstorage_pool_id().toString());
+                setDataCenterID(network.getDataCenterId().toString());
                 setResourceId("P_Network_ID", network.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }

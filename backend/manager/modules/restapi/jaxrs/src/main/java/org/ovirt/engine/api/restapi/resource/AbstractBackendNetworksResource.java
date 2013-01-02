@@ -73,7 +73,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
                 (name != null && name.equals(entity.getname()))
-                && (entity.getstorage_pool_id()!=null) && (entity.getstorage_pool_id().toString().equals(dataCenterId))) {
+                && (entity.getDataCenterId()!=null) && (entity.getDataCenterId().toString().equals(dataCenterId))) {
                 return entity;
             }
         }

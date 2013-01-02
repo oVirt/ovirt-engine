@@ -102,16 +102,16 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     @Override
     protected MapSqlParameterSource createFullParametersMapper(Network network) {
         return getCustomMapSqlParameterSource()
-                .addValue("addr", network.getaddr())
-                .addValue("description", network.getdescription())
+                .addValue("addr", network.getAddr())
+                .addValue("description", network.getDescription())
                 .addValue("id", network.getId())
                 .addValue("name", network.getname())
-                .addValue("subnet", network.getsubnet())
-                .addValue("gateway", network.getgateway())
-                .addValue("type", network.gettype())
-                .addValue("vlan_id", network.getvlan_id())
-                .addValue("stp", network.getstp())
-                .addValue("storage_pool_id", network.getstorage_pool_id())
+                .addValue("subnet", network.getSubnet())
+                .addValue("gateway", network.getGateway())
+                .addValue("type", network.getType())
+                .addValue("vlan_id", network.getVlanId())
+                .addValue("stp", network.getStp())
+                .addValue("storage_pool_id", network.getDataCenterId())
                 .addValue("mtu", network.getMtu())
                 .addValue("vm_network", network.isVmNetwork());
     }
@@ -145,15 +145,15 @@ public class NetworkDAODbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
             T entity = createNetworkEntity();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
-            entity.setname(rs.getString("name"));
-            entity.setdescription(rs.getString("description"));
-            entity.settype((Integer) rs.getObject("type"));
-            entity.setaddr(rs.getString("addr"));
-            entity.setsubnet(rs.getString("subnet"));
-            entity.setgateway(rs.getString("gateway"));
-            entity.setvlan_id((Integer) rs.getObject("vlan_id"));
-            entity.setstp(rs.getBoolean("stp"));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+            entity.setName(rs.getString("name"));
+            entity.setDescription(rs.getString("description"));
+            entity.setType((Integer) rs.getObject("type"));
+            entity.setAddr(rs.getString("addr"));
+            entity.setSubnet(rs.getString("subnet"));
+            entity.setGateway(rs.getString("gateway"));
+            entity.setVlanId((Integer) rs.getObject("vlan_id"));
+            entity.setStp(rs.getBoolean("stp"));
+            entity.setDataCenterId(NGuid.createGuidFromString(rs
                  .getString("storage_pool_id")));
             entity.setMtu(rs.getInt("mtu"));
             entity.setVmNetwork(rs.getBoolean("vm_network"));

@@ -76,8 +76,8 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
         else {
             // Description
-            if (entity.getdescription() != null && !entity.getdescription().trim().equals("")) { //$NON-NLS-1$
-                addRow(SafeHtmlUtils.fromString(entity.getdescription()));
+            if (entity.getDescription() != null && !entity.getDescription().trim().equals("")) { //$NON-NLS-1$
+                addRow(SafeHtmlUtils.fromString(entity.getDescription()));
             }
             // Not in sync
             if (!networkModel.isInSync())

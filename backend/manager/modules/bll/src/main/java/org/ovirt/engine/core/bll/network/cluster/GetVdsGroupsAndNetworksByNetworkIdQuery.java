@@ -28,9 +28,9 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends NetworkIdParamete
                 new ArrayList<PairQueryable<VDSGroup, NetworkCluster>>();
 
         Network network = getDbFacade().getNetworkDao().get(getParameters().getNetworkId());
-        if (network != null && network.getstorage_pool_id() != null) {
+        if (network != null && network.getDataCenterId() != null) {
             List<VDSGroup> vdsGroups = getDbFacade().getVdsGroupDao()
-                    .getAllForStoragePool(network.getstorage_pool_id().getValue());
+                    .getAllForStoragePool(network.getDataCenterId().getValue());
             List<NetworkCluster> networkClusters = getDbFacade().getNetworkClusterDao()
                     .getAllForNetwork(getParameters().getNetworkId());
 

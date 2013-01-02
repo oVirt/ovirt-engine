@@ -31,8 +31,8 @@ public class RemoveNetworksModel extends ConfirmationModel {
         {
             if (a instanceof NetworkView) {
                 NetworkView netView = (NetworkView) a;
-                if (netView.getdescription() == null
-                        || netView.getdescription().trim().equals("")) { //$NON-NLS-1$
+                if (netView.getDescription() == null
+                        || netView.getDescription().trim().equals("")) { //$NON-NLS-1$
                     list.add(ConstantsManager.getInstance()
                             .getMessages()
                             .networkDc(netView.getname(), netView.getStoragePoolName()));
@@ -41,15 +41,15 @@ public class RemoveNetworksModel extends ConfirmationModel {
                             .getMessages()
                             .networkDcDescription(netView.getname(),
                                     netView.getStoragePoolName(),
-                                    netView.getdescription()));
+                                    netView.getDescription()));
                 }
 
             } else if (a instanceof Network) {
                 Network network = (Network) a;
-                if (network.getdescription() == null || "".equals(network.getdescription().trim())) { //$NON-NLS-1$
+                if (network.getDescription() == null || "".equals(network.getDescription().trim())) { //$NON-NLS-1$
                     list.add(network.getName());
                 } else {
-                    list.add(StringFormat.format("%1$s (%2$s)", network.getName(), network.getdescription())); //$NON-NLS-1$
+                    list.add(StringFormat.format("%1$s (%2$s)", network.getName(), network.getDescription())); //$NON-NLS-1$
                 }
             }
         }
@@ -72,7 +72,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
         for (Object a : sourceListModel.getSelectedItems())
         {
             Network network = (Network) a;
-            pb.add(new AddNetworkStoragePoolParameters(network.getstorage_pool_id().getValue(), network));
+            pb.add(new AddNetworkStoragePoolParameters(network.getDataCenterId().getValue(), network));
         }
         Frontend.RunMultipleAction(VdcActionType.RemoveNetwork, pb);
 

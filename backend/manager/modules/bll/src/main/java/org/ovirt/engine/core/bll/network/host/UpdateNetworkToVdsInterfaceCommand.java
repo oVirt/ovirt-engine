@@ -44,7 +44,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
     protected void executeCommand() {
         String address = getParameters().getAddress();
         String subnet = StringUtils.isEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
-                .getsubnet() : getParameters().getSubnet();
+                .getSubnet() : getParameters().getSubnet();
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
         java.util.ArrayList<String> interfaceNames = new java.util.ArrayList<String>();
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {
@@ -61,9 +61,9 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getname(), getParameters().getNetwork().getvlan_id(), getParameters()
+                getParameters().getNetwork().getname(), getParameters().getNetwork().getVlanId(), getParameters()
                         .getBondName(), interfaceNames.toArray(new String[] {}), address, subnet, gateway,
-                getParameters().getNetwork().getstp(), getParameters().getBondingOptions(), getParameters()
+                getParameters().getNetwork().getStp(), getParameters().getBondingOptions(), getParameters()
                         .getBootProtocol());
         parameters.setVmNetwork(getParameters().getNetwork().isVmNetwork());
         parameters.setOldNetworkName(getParameters().getOldNetworkName());

@@ -242,13 +242,13 @@ public class SetupNetworksVDSCommandTest {
     }
 
     private VdsNetworkInterface createVlan(VdsNetworkInterface iface, Network net) {
-        return createVdsInterface(iface.getName() + "." + net.getvlan_id(),
+        return createVdsInterface(iface.getName() + "." + net.getVlanId(),
                 false,
                 null,
                 null,
                 NetworkBootProtocol.None,
                 net.getName(),
-                net.getvlan_id());
+                net.getVlanId());
     }
 
     private Network createNetwork(Integer vlanId) {

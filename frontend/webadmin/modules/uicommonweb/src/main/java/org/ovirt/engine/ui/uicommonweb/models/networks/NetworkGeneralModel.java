@@ -48,7 +48,7 @@ public class NetworkGeneralModel extends EntityModel
 
         setName(extendedNetwork.getName());
         setId(extendedNetwork.getId());
-        setDescription(extendedNetwork.getdescription());
+        setDescription(extendedNetwork.getDescription());
 
         String role = ""; //$NON-NLS-1$
 
@@ -64,7 +64,7 @@ public class NetworkGeneralModel extends EntityModel
             role = role.concat(ConstantsManager.getInstance().getConstants().vmNetworkRole());
         }
         setRole(role);
-        setVlan(extendedNetwork.getvlan_id());
+        setVlan(extendedNetwork.getVlanId());
 
         if (extendedNetwork.getMtu() == 0) {
             setMtu(null);

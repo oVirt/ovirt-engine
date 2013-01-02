@@ -163,7 +163,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
 
         if (dcNetParams != null) {
-            getEntity().setvlan_id(dcNetParams.getVlanId());
+            getEntity().setVlanId(dcNetParams.getVlanId());
             getEntity().setMtu(dcNetParams.getMtu());
             getEntity().setVmNetwork(dcNetParams.isVmNetwork());
         }
@@ -194,7 +194,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     }
 
     public int getVlanId() {
-        Integer vlanId = getEntity().getvlan_id();
+        Integer vlanId = getEntity().getVlanId();
         return vlanId == null ? -1 : vlanId;
     }
 

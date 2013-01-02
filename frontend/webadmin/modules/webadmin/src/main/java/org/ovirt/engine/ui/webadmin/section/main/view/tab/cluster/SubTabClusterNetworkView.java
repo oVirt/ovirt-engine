@@ -66,7 +66,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         TextColumnWithTooltip<Network> descColumn = new TextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         getTable().addColumn(descColumn, constants.descriptionNetwork());

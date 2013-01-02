@@ -500,8 +500,8 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private LogicalNetworkModel createUnmanagedNetworkModel(String networkName, VdsNetworkInterface nic) {
         Network unmanagedNetwork = new Network();
-        unmanagedNetwork.setname(networkName);
-        unmanagedNetwork.setvlan_id(nic.getVlanId());
+        unmanagedNetwork.setName(networkName);
+        unmanagedNetwork.setVlanId(nic.getVlanId());
         unmanagedNetwork.setMtu(nic.getMtu());
         unmanagedNetwork.setVmNetwork(nic.isBridged());
         LogicalNetworkModel networkModel = new LogicalNetworkModel(unmanagedNetwork, this);
@@ -596,7 +596,7 @@ public class HostSetupNetworksModel extends EntityModel {
                     // The real vlanId, isBridged and mtu configured on the host can be not synced with the values
                     // configured in the networks table (dc networks).
                     // The real values configured on the host should be displayed.
-                    networkModel.getEntity().setvlan_id(nic.getVlanId());
+                    networkModel.getEntity().setVlanId(nic.getVlanId());
                     networkModel.getEntity().setMtu(nic.getMtu());
                     networkModel.getEntity().setVmNetwork(nic.isBridged());
                 }

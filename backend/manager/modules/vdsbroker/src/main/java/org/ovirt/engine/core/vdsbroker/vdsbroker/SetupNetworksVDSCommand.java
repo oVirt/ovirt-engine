@@ -44,7 +44,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, NetworkUtils.StripVlan(i.getName()));
             if (isVlan(net)) {
-                opts.put("vlan", net.getvlan_id().toString());
+                opts.put("vlan", net.getVlanId().toString());
             }
 
             // TODO: add bootproto to network object
@@ -67,7 +67,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             opts.put("bridged", Boolean.toString(net.isVmNetwork()));
             if (net.isVmNetwork()) {
-                opts.put(VdsProperties.stp, net.getstp() ? "yes" : "no");
+                opts.put(VdsProperties.stp, net.getStp() ? "yes" : "no");
             }
 
             networks.add(net.getname(), opts);
@@ -81,7 +81,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     private static boolean isVlan(Network net) {
-        return net.getvlan_id() != null;
+        return net.getVlanId() != null;
     }
 
     private XmlRpcStruct generateBonds() {

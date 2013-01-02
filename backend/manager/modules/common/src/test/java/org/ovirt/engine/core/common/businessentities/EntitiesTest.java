@@ -50,9 +50,9 @@ public class EntitiesTest {
     public void objectNames() {
         List<Network> list = new ArrayList<Network>();
         Network n1 = new Network();
-        n1.setname("network1");
+        n1.setName("network1");
         Network n2 = new Network();
-        n2.setname("network2");
+        n2.setName("network2");
         list.add(n1);
         list.add(n2);
         Set<String> names = Entities.objectNames(list);

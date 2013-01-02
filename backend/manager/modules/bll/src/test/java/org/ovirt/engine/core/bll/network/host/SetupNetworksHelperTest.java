@@ -366,11 +366,11 @@ public class SetupNetworksHelperTest {
     public void vlanNetworkWithVmNetworkDenied() {
         Network net1 = createNetwork("net1");
         Network net2 = createNetwork("net2");
-        net2.setvlan_id(100);
+        net2.setVlanId(100);
         mockExistingNetworks(net1, net2);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
         mockExistingIfaces(nic, vlanNic);
 
         nic.setNetworkName(net1.getName());
@@ -386,11 +386,11 @@ public class SetupNetworksHelperTest {
     public void vmNetworkWithVlanNetworkDenied() {
         Network net1 = createNetwork("net1");
         Network net2 = createNetwork("net2");
-        net2.setvlan_id(100);
+        net2.setVlanId(100);
         mockExistingNetworks(net1, net2);
 
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
         mockExistingIfaces(nic, vlanNic);
 
         nic.setNetworkName(net1.getName());
@@ -406,13 +406,13 @@ public class SetupNetworksHelperTest {
     public void unmanagedVlanNetworkWithVmNetworkDenied() {
         Network net1 = createNetwork("net1");
         Network net2 = createNetwork("net2");
-        net2.setvlan_id(100);
+        net2.setVlanId(100);
         mockExistingNetworks(net1);
 
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
         mockExistingIfaces(nic);
 
-        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        VdsNetworkInterface vlanNic = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, vlanNic));
 
@@ -445,9 +445,9 @@ public class SetupNetworksHelperTest {
         Network net1 = createNetwork("net1");
         net1.setVmNetwork(false);
         Network net2 = createNetwork("net2");
-        net2.setvlan_id(200);
+        net2.setVlanId(200);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net1);
-        VdsNetworkInterface vlan = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        VdsNetworkInterface vlan = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
 
         mockExistingNetworks(net1, net2);
         mockExistingIfaces(nic);
@@ -460,12 +460,12 @@ public class SetupNetworksHelperTest {
     @Test
     public void twoVlanVmNetworks() {
         Network net1 = createNetwork("net1");
-        net1.setvlan_id(100);
+        net1.setVlanId(100);
         Network net2 = createNetwork("net2");
-        net2.setvlan_id(200);
+        net2.setVlanId(200);
         VdsNetworkInterface nic = createNic("nic0", null);
-        VdsNetworkInterface vlan1 = createVlan(nic.getName(), net1.getvlan_id(), net1.getName());
-        VdsNetworkInterface vlan2 = createVlan(nic.getName(), net2.getvlan_id(), net2.getName());
+        VdsNetworkInterface vlan1 = createVlan(nic.getName(), net1.getVlanId(), net1.getName());
+        VdsNetworkInterface vlan2 = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
 
         mockExistingNetworks(net1, net2);
         mockExistingIfaces(nic);
@@ -789,14 +789,14 @@ public class SetupNetworksHelperTest {
         net.setMtu(9000);
         Network newNet = createNetwork("vlanVmMtu9000");
         newNet.setMtu(9000);
-        newNet.setvlan_id(100);
+        newNet.setVlanId(100);
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         mockExistingIfaces(nic);
 
         SetupNetworksHelper helper = createHelper(
-                createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
+                createParametersForNics(nic, createVlan(nic.getName(), newNet.getVlanId(), newNet.getName())));
 
         validateAndExpectNoViolations(helper);
     }
@@ -819,7 +819,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void nonVmWithSameMTUAddedToNic() {
         Network net = createNetwork("vlanVmMtu9000");
-        net.setvlan_id(100);
+        net.setVlanId(100);
         net.setMtu(9000);
         Network newNet = createNetwork("nonVmMtu9000");
         newNet.setVmNetwork(false);
@@ -856,14 +856,14 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("nonVm");
         net.setVmNetwork(false);
         Network newNet = createNetwork("vlanVm");
-        newNet.setvlan_id(100);
+        newNet.setVlanId(100);
         mockExistingNetworks(net, newNet);
 
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         mockExistingIfaces(nic);
 
         SetupNetworksHelper helper = createHelper(
-                createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
+                createParametersForNics(nic, createVlan(nic.getName(), newNet.getVlanId(), newNet.getName())));
 
         validateAndExpectNoViolations(helper);
     }
@@ -889,7 +889,7 @@ public class SetupNetworksHelperTest {
         net.setVmNetwork(false);
         net.setMtu(5000);
         Network newNet = createNetwork("vlanVmMtu9000");
-        newNet.setvlan_id(100);
+        newNet.setVlanId(100);
         newNet.setMtu(9000);
         mockExistingNetworks(net, newNet);
 
@@ -897,7 +897,7 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(nic);
 
         SetupNetworksHelper helper = createHelper(
-                createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
+                createParametersForNics(nic, createVlan(nic.getName(), newNet.getVlanId(), newNet.getName())));
 
         validateAndExpectMtuValidation(helper, net, newNet);
     }
@@ -920,7 +920,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void nonVmWithDifferentMTUAddedToNic() {
         Network net = createNetwork("vlanVmMtu9000");
-        net.setvlan_id(100);
+        net.setVlanId(100);
         net.setMtu(9000);
         Network newNet = createNetwork("nonVmMtu5000");
         newNet.setVmNetwork(false);
@@ -955,7 +955,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void nonVmWithDefaultMTUAddedToNic() {
         Network net = createNetwork("vlanVmMtu9000");
-        net.setvlan_id(100);
+        net.setVlanId(100);
         net.setMtu(9000);
         Network newNet = createNetwork("nonVm");
         newNet.setVmNetwork(false);
@@ -989,10 +989,10 @@ public class SetupNetworksHelperTest {
     @Test
     public void nonVmVlanWithDifferentMTUAddedToNic() {
         Network net = createNetwork("vlanVmMtu9000");
-        net.setvlan_id(100);
+        net.setVlanId(100);
         net.setMtu(9000);
         Network newNet = createNetwork("vlanNonVmMtu5000");
-        newNet.setvlan_id(200);
+        newNet.setVlanId(200);
         newNet.setMtu(5000);
         newNet.setVmNetwork(false);
         mockExistingNetworks(net, newNet);
@@ -1001,7 +1001,7 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface nicWithVlan = createVlanSyncedWithNetwork(nic.getName(), net);
         mockExistingIfaces(nic, nicWithVlan);
 
-        VdsNetworkInterface nicWithNonVmVlan = createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName());
+        VdsNetworkInterface nicWithNonVmVlan = createVlan(nic.getName(), newNet.getVlanId(), newNet.getName());
         nicWithNonVmVlan.setMtu(newNet.getMtu());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic, nicWithVlan, nicWithNonVmVlan));
@@ -1030,7 +1030,7 @@ public class SetupNetworksHelperTest {
         net.setVmNetwork(false);
         net.setMtu(5000);
         Network newNet = createNetwork("vlanVmMtu9000");
-        newNet.setvlan_id(100);
+        newNet.setVlanId(100);
         newNet.setMtu(9000);
         mockExistingNetworks(net, newNet);
 
@@ -1039,7 +1039,7 @@ public class SetupNetworksHelperTest {
 
         nic.setNetworkName(net.getName());
         SetupNetworksHelper helper = createHelper(
-                createParametersForNics(nic, createVlan(nic.getName(), newNet.getvlan_id(), newNet.getName())));
+                createParametersForNics(nic, createVlan(nic.getName(), newNet.getVlanId(), newNet.getName())));
 
         validateAndExpectMtuValidation(helper, net, newNet);
     }
@@ -1222,7 +1222,7 @@ public class SetupNetworksHelperTest {
                 nicName,
                 false,
                 null,
-                network.getvlan_id(),
+                network.getVlanId(),
                 network.getName(),
                 network.isVmNetwork());
         return nic;
@@ -1236,7 +1236,7 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a vlan NIC with the given parameters.
      */
     private VdsNetworkInterface createVlanSyncedWithNetwork(String nicName, Network network) {
-        VdsNetworkInterface nic = createVlan(nicName, network.getvlan_id(), network.getName());
+        VdsNetworkInterface nic = createVlan(nicName, network.getVlanId(), network.getName());
         nic.setBridged(network.isVmNetwork());
         nic.setMtu(network.getMtu());
         return nic;

@@ -31,9 +31,9 @@ public class NetworkDAOTest extends BaseDAOTestCase {
         datacenter = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
         new_net = new Network();
-        new_net.setname("newnet1");
-        new_net.setdescription("New network");
-        new_net.setstorage_pool_id(datacenter);
+        new_net.setName("newnet1");
+        new_net.setDescription("New network");
+        new_net.setDataCenterId(datacenter);
     }
 
     /**
@@ -255,7 +255,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     private void verifyDataCenterNetworks(List<Network> result) {
         assertGetAllForClusterResult(result);
         for (Network net : result) {
-            assertEquals(datacenter, net.getstorage_pool_id());
+            assertEquals(datacenter, net.getDataCenterId());
         }
     }
 
@@ -284,7 +284,7 @@ public class NetworkDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         Network before = dao.getByName(EXISTING_NETWORK_NAME);
 
-        before.setdescription("This is a completely changed description");
+        before.setDescription("This is a completely changed description");
 
         dao.update(before);
 

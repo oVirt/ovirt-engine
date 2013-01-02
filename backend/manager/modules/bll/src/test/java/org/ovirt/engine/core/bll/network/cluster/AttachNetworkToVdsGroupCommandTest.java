@@ -79,7 +79,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     private Network createNetwork() {
         network = new Network();
-        network.setname("test network");
+        network.setName("test network");
         return network;
     }
 
