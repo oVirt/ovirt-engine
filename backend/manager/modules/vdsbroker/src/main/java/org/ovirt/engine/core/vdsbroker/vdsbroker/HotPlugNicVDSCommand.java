@@ -3,11 +3,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
@@ -43,10 +42,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         map.add(VdsProperties.mac_addr, nic.getMacAddress());
         map.add(VdsProperties.network, StringUtils.defaultString(nic.getNetworkName()));
 
-        boolean linkingSupported =
-                Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported,
-                        getParameters().getVm().getVdsGroupCompatibilityVersion().getValue());
-        if (linkingSupported) {
+        if (FeatureSupported.networkLinking(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
             map.add(VdsProperties.linkActive, String.valueOf(nic.isLinked()));
         }
         addAddress(map, vmDevice.getAddress());

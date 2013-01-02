@@ -10,10 +10,9 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -25,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -472,9 +471,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.network, StringUtils.defaultString(vmInterface.getNetworkName()));
 
-        boolean linkingSupported =
-                Config.<Boolean> GetValue(ConfigValues.NetworkLinkingSupported, clusterVersion.getValue());
-        if (linkingSupported) {
+        if (FeatureSupported.networkLinking(clusterVersion)) {
             struct.add(VdsProperties.linkActive, String.valueOf(vmInterface.isLinked()));
         }
 
@@ -496,7 +493,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     public static void addNetworkFiltersToNic(XmlRpcStruct struct, Version clusterVersion) {
-        if (Config.<Boolean> GetValue(ConfigValues.EnableMACAntiSpoofingFilterRules, clusterVersion.getValue())) {
+        if (FeatureSupported.antiMacSpoofing(clusterVersion)) {
             struct.add(VdsProperties.NW_FILTER, NetworkFilters.NO_MAC_SPOOFING.getFilterName());
         }
     }

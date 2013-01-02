@@ -40,4 +40,23 @@ public class FeatureSupported {
     public static boolean nonVmNetwork(Version version) {
         return supportedInConfig(ConfigValues.NonVmNetworkSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if bridges element reported by VDSM is supported for the version, <code>false</code> if
+     *         it's not.
+     */
+    public static boolean bridgesReportByVdsm(Version version) {
+        return supportedInConfig(ConfigValues.SupportBridgesReportByVDSM, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if anti MAC spoofing is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean antiMacSpoofing(Version version) {
+        return supportedInConfig(ConfigValues.EnableMACAntiSpoofingFilterRules, version);
+    }
 }

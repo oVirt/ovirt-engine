@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -977,12 +978,8 @@ public class VdsBrokerObjectsBuilder {
 
         Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
 
-        boolean bridgesReportSupported =
-                Config.<Boolean> GetValue(ConfigValues.SupportBridgesReportByVDSM,
-                        vds.getvds_group_compatibility_version().getValue());
-
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
-        if (bridgesReportSupported) {
+        if (FeatureSupported.bridgesReportByVdsm(vds.getvds_group_compatibility_version())) {
             VdsNetworkInterface iface = null;
             String interfaceName = (String) network.get(VdsProperties.NETWORK_INTERFACE);
             if (interfaceName != null) {
