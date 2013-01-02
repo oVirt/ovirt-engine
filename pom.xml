@@ -7,7 +7,22 @@
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
-
+  <organization>
+    <name>oVirt.org</name>
+    <url>http://www.ovirt.org/</url>
+  </organization>
+  <ciManagement>
+    <system>jenkins</system>
+    <url>http://jenkins.ovirt.org/</url>
+  </ciManagement>
+  <issueManagement>
+    <system>bugzilla</system>
+    <url>https://bugzilla.redhat.com/enter_bug.cgi?product=ovirt</url>
+  </issueManagement>
+  <scm>
+    <developerConnection>scm:git:ssh://gerrit.ovirt.org/ovirt-engine.git</developerConnection>
+    <connection>scm:git:http://gerrit.ovirt.org/p/ovirt-engine.git</connection>
+  </scm>
   <!--Project Sub Modules-->
   <modules>
     <module>build-tools-root</module>
