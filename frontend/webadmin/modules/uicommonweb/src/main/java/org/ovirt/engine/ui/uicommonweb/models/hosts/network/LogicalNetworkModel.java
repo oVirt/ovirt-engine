@@ -56,9 +56,9 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             } else {
                 if (targetNic.getEntity().getBootProtocol() == null) {
                     if (!isManagement()) {
-                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.None);
+                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.NONE);
                     } else {
-                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.Dhcp);
+                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.DHCP);
                     }
                 }
             }
@@ -91,9 +91,9 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             } else {
                 if (bridge.getBootProtocol() == null) {
                     if (!isManagement()) {
-                        bridge.setBootProtocol(NetworkBootProtocol.None);
+                        bridge.setBootProtocol(NetworkBootProtocol.NONE);
                     } else {
-                        bridge.setBootProtocol(NetworkBootProtocol.Dhcp);
+                        bridge.setBootProtocol(NetworkBootProtocol.DHCP);
                     }
                 }
             }

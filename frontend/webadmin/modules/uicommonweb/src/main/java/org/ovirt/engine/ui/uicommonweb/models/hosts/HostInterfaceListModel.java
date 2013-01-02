@@ -887,7 +887,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 hostInterfaceModel.setNoneBootProtocolAvailable(!item.getIsManagement());
                 hostInterfaceModel.setBootProtocol(!hostInterfaceModel.getNoneBootProtocolAvailable()
-                        && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp
+                        && item.getBootProtocol() == NetworkBootProtocol.NONE ? NetworkBootProtocol.DHCP
                         : item.getBootProtocol());
 
                 hostInterfaceModel.getAddress().setEntity(item.getAddress());
@@ -1005,7 +1005,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 managementModel.setNoneBootProtocolAvailable(!item.getIsManagement());
                 managementModel.setBootProtocol(!managementModel.getNoneBootProtocolAvailable()
-                        && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp
+                        && item.getBootProtocol() == NetworkBootProtocol.NONE ? NetworkBootProtocol.DHCP
                         : item.getBootProtocol());
 
                 managementModel.getAddress().setEntity(item.getAddress());
@@ -1455,7 +1455,7 @@ public class HostInterfaceListModel extends SearchableListModel
         if (interfaceWithNetwork != null)
         {
             innerBondModel.setBootProtocol(!innerBondModel.getNoneBootProtocolAvailable()
-                    && interfaceWithNetwork.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp
+                    && interfaceWithNetwork.getBootProtocol() == NetworkBootProtocol.NONE ? NetworkBootProtocol.DHCP
                     : interfaceWithNetwork.getBootProtocol());
             innerBondModel.getAddress().setEntity(interfaceWithNetwork.getAddress());
             innerBondModel.getSubnet().setEntity(interfaceWithNetwork.getSubnet());
@@ -1463,7 +1463,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         else
         {
-            innerBondModel.setBootProtocol(NetworkBootProtocol.None);
+            innerBondModel.setBootProtocol(NetworkBootProtocol.NONE);
         }
 
         innerBondModel.getGateway().setIsAvailable(isAnyManagement);

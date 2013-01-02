@@ -670,7 +670,7 @@ public class VdsUpdateRunTimeInfo {
             // It is enough for at least one of the interfaces of the bond to be up
             bondsWithStatus.put(iface.getBondName(),
                     bondsWithStatus.get(iface.getBondName())
-                            || (iface.getStatistics().getStatus() == InterfaceStatus.Up));
+                            || (iface.getStatistics().getStatus() == InterfaceStatus.UP));
 
             if (!networks.contains(networkName)
                     && !bondsWithStatus.containsKey(iface.getName())) {
@@ -695,14 +695,14 @@ public class VdsUpdateRunTimeInfo {
      * @param iface
      */
     private boolean isRequiredInterfaceDown(Map<String, Network> networksByName, VdsNetworkInterface iface) {
-        if (iface.getStatistics().getStatus() != InterfaceStatus.Up
+        if (iface.getStatistics().getStatus() != InterfaceStatus.UP
                 && iface.getNetworkName() != null
                 && iface.getBonded() == null
                 && !isBondOrVlanOverBond(iface)
                 && networksByName.containsKey(iface.getNetworkName())) {
 
             Network net = networksByName.get(iface.getNetworkName());
-            if (net.getCluster().getstatus() == NetworkStatus.Operational && net.getCluster().isRequired()
+            if (net.getCluster().getstatus() == NetworkStatus.OPERATIONAL && net.getCluster().isRequired()
                     && (iface.getVlanId() == null || !isVlanInterfaceUp(iface))) {
                 return true;
             }
@@ -792,7 +792,7 @@ public class VdsUpdateRunTimeInfo {
         String ifaceName = StringHelper.trimEnd(sb.toString(), '.');
         for (VdsNetworkInterface iface : _vds.getInterfaces()) {
             if (iface.getName().equals(ifaceName)) {
-                return iface.getStatistics().getStatus() == InterfaceStatus.Up;
+                return iface.getStatistics().getStatus() == InterfaceStatus.UP;
             }
         }
 

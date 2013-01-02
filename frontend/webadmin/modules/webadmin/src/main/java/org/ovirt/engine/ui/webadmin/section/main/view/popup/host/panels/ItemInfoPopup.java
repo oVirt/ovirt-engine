@@ -117,7 +117,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         NetworkBootProtocol bootProtocol = entity.getBootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName()));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
-        if (bootProtocol == NetworkBootProtocol.StaticIp) {
+        if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
             addRow(constants.addressItemInfo(), entity.getAddress());
             addRow(constants.subnetItemInfo(), entity.getSubnet());
             if (entity.getIsManagement()) {

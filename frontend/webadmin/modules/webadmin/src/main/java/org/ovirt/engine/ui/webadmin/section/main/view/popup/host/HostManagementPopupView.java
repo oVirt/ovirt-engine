@@ -181,7 +181,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
     @Override
     public void edit(final HostManagementNetworkModel object) {
         Driver.driver.edit(object);
-        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+        bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -189,7 +189,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
                 HostManagementNetworkModel model = (HostManagementNetworkModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
-                    bootProtocol.setEnabled(NetworkBootProtocol.None, model.getNoneBootProtocolAvailable());
+                    bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
                 else if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());

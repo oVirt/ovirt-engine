@@ -50,8 +50,8 @@ public class BackendHostNicsResourceTest
     private static final String SLAVE_NAME = "slave";
     private static final int SINGLE_NIC_IDX = GUIDS.length - 2;
     private static final Integer NIC_SPEED = 100;
-    private static final InterfaceStatus NIC_STATUS = InterfaceStatus.Up;
-    private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.StaticIp;
+    private static final InterfaceStatus NIC_STATUS = InterfaceStatus.UP;
+    private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.STATIC_IP;
     private static final String SETUPNETWORKS_ACTION_BASE_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics";
     private static final String SETUPNETWORKS_ACTION_URL = "/api/hosts/00000000-0000-0000-0000-000000000000/nics/setupnetworks";
     private static final String SETUPNETWORKS_ACTION_REL = "setupnetworks";

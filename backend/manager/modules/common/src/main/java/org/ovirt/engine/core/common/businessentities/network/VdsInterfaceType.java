@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 public enum VdsInterfaceType {
     // we use this enum with bit manipulation
-    None(0), // 00000
-    General(1), // 00001
-    Management(2), // 00010
-    Storage(4), // 00100
-    Guests(8); // 01000
+    NONE(0), // 00000
+    GENERAL(1), // 00001
+    MANAGEMENT(2), // 00010
+    STORAGE(4), // 00100
+    GUESTS(8); // 01000
 
     private int intValue;
     private static java.util.HashMap<Integer, VdsInterfaceType> mappings = new HashMap<Integer, VdsInterfaceType>();

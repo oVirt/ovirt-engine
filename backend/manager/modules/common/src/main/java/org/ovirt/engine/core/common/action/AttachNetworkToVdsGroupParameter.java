@@ -16,7 +16,7 @@ public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
     public AttachNetworkToVdsGroupParameter(VDSGroup group, Network net) {
         super(new NetworkCluster(group.getId(),
                 net.getId(),
-                NetworkStatus.NonOperational,
+                NetworkStatus.NON_OPERATIONAL,
 
                 // Cluster attachment data can sometimes be missing, so use defaults in that case.
                 net.getCluster() == null ? false : net.getCluster().getis_display(),

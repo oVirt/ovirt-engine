@@ -40,7 +40,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private NetworkImplementationDetails networkImplementationDetails;
 
     public VdsNetworkInterface() {
-        super(new VdsNetworkStatistics(), VdsInterfaceType.None.getValue());
+        super(new VdsNetworkStatistics(), VdsInterfaceType.NONE.getValue());
     }
 
     /**

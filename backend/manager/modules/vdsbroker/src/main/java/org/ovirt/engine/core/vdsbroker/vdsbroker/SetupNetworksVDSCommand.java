@@ -50,10 +50,10 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             // TODO: add bootproto to network object
             if (i.getBootProtocol() != null) {
                 switch (i.getBootProtocol()) {
-                case Dhcp:
+                case DHCP:
                     opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
                     break;
-                case StaticIp:
+                case STATIC_IP:
                     putIfNotEmpty(opts, "ipaddr", i.getAddress());
                     putIfNotEmpty(opts, "netmask", i.getSubnet());
                     putIfNotEmpty(opts, "gateway", i.getGateway());

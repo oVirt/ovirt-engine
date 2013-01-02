@@ -97,9 +97,9 @@ public class NetworkPanel extends NetworkItemPanel {
     protected ImageResource getStatusImage() {
         NetworkStatus netStatus = ((LogicalNetworkModel) item).getStatus();
 
-        if (netStatus == NetworkStatus.Operational) {
+        if (netStatus == NetworkStatus.OPERATIONAL) {
             return resources.upImage();
-        } else if (netStatus == NetworkStatus.NonOperational) {
+        } else if (netStatus == NetworkStatus.NON_OPERATIONAL) {
             return resources.downImage();
         } else {
             return resources.questionMarkImage();

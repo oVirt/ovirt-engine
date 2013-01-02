@@ -143,9 +143,9 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
-        nic.setBootProtocol(NetworkBootProtocol.None);
+        nic.setBootProtocol(NetworkBootProtocol.NONE);
         mockExistingIfaces(nic);
-        nic.setBootProtocol(NetworkBootProtocol.Dhcp);
+        nic.setBootProtocol(NetworkBootProtocol.DHCP);
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
@@ -157,7 +157,7 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
-        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         nic.setGateway(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
         nic.setGateway(RandomUtils.instance().nextString(10));
@@ -172,7 +172,7 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
-        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         nic.setSubnet(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
         nic.setSubnet(RandomUtils.instance().nextString(10));
@@ -187,7 +187,7 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
-        nic.setBootProtocol(NetworkBootProtocol.StaticIp);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         nic.setAddress(RandomUtils.instance().nextString(10));
         mockExistingIfaces(nic);
         nic.setAddress(RandomUtils.instance().nextString(10));
@@ -246,12 +246,12 @@ public class SetupNetworksHelperTest {
         Network net = createNetwork("net");
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBridged(!net.isVmNetwork());
-        nic.setBootProtocol(NetworkBootProtocol.None);
+        nic.setBootProtocol(NetworkBootProtocol.NONE);
 
         mockExistingNetworks(net);
         mockExistingIfaces(nic);
 
-        nic.setBootProtocol(NetworkBootProtocol.Dhcp);
+        nic.setBootProtocol(NetworkBootProtocol.DHCP);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
 
         validateAndExpectViolation(helper, VdcBllMessages.NETWORKS_NOT_IN_SYNC, net.getName());
@@ -707,10 +707,10 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net);
 
         VdsNetworkInterface bond = createBond(BOND_NAME, net.getName());
-        bond.setBootProtocol(NetworkBootProtocol.None);
+        bond.setBootProtocol(NetworkBootProtocol.NONE);
         List<VdsNetworkInterface> slaves = createNics(bond.getName());
         mockExistingIfacesWithBond(bond, slaves);
-        bond.setBootProtocol(NetworkBootProtocol.Dhcp);
+        bond.setBootProtocol(NetworkBootProtocol.DHCP);
 
         SetupNetworksHelper helper = createHelper(createParametersForBond(bond, slaves));
 

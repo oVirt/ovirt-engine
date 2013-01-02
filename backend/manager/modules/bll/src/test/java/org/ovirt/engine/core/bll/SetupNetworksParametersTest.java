@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.StaticIp;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.STATIC_IP;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class SetupNetworksParametersTest {
         assertFalse(validator.validate(params).isEmpty());
 
         nic.setGateway("");
-        nic.setBootProtocol(StaticIp);
+        nic.setBootProtocol(STATIC_IP);
         nic.setAddress("1.1.1.1");
 
         assertTrue(validator.validate(params).isEmpty());

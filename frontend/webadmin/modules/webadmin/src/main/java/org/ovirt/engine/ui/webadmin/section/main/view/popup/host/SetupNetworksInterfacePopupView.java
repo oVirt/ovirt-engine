@@ -42,6 +42,6 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
 
         bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
         bootProtocol.setEnabled(object.getBootProtocolsAvailable());
-        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+        bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
     }
 }

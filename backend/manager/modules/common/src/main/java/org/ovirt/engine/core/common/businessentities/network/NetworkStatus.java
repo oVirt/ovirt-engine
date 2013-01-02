@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum NetworkStatus {
-    NonOperational(0),
-    Operational(1);
+    NON_OPERATIONAL(0),
+    OPERATIONAL(1);
 
     private int intValue;
     private static Map<Integer, NetworkStatus> mappings;

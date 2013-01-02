@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum InterfaceStatus {
-    None(0),
-    Up(1),
-    Down(2);
+    NONE(0),
+    UP(1),
+    DOWN(2);
 
     private int intValue;
     private static Map<Integer, InterfaceStatus> mappings;

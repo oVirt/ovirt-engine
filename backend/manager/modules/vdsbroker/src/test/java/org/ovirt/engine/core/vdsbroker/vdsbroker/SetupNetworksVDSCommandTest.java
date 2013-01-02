@@ -46,7 +46,7 @@ public class SetupNetworksVDSCommandTest {
     @Test
     public void vlanOverNic() {
         Network net = createNetwork(RandomUtils.instance().nextInt(0, 4000));
-        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, null);
+        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, null);
         VdsNetworkInterface vlan = createVlan(nic, net);
 
         SetupNetworksVdsCommandParameters parameters =
@@ -94,7 +94,7 @@ public class SetupNetworksVDSCommandTest {
     @Test
     public void networkWithDhcp() {
         Network net = createNetwork(null);
-        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.Dhcp, net.getName());
+        VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, net.getName());
 
         SetupNetworksVdsCommandParameters parameters =
                 new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
@@ -246,7 +246,7 @@ public class SetupNetworksVDSCommandTest {
                 false,
                 null,
                 null,
-                NetworkBootProtocol.None,
+                NetworkBootProtocol.NONE,
                 net.getName(),
                 net.getVlanId());
     }

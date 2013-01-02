@@ -44,7 +44,7 @@ public class SetupNetworksManagementPopupView  extends HostManagementPopupView i
 
         bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
         bootProtocol.setEnabled(object.getBootProtocolsAvailable());
-        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+        bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
     }
 
     @Override

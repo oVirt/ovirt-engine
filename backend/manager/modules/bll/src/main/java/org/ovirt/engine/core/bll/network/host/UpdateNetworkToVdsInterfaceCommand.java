@@ -229,7 +229,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         // check address exists in static ip
-        if (getParameters().getBootProtocol() == NetworkBootProtocol.StaticIp) {
+        if (getParameters().getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             if (StringUtils.isEmpty(getParameters().getAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;

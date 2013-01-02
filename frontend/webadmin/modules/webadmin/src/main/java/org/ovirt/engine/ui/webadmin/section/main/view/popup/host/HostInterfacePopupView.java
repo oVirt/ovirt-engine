@@ -183,11 +183,11 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     bootProtocolLabel.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(bootProtocolsAvailable);
-                    bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+                    bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
                     checkConnectivity.setEnabled(bootProtocolsAvailable);
                 }
                 if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
-                    bootProtocol.setEnabled(NetworkBootProtocol.None, model.getNoneBootProtocolAvailable());
+                    bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
                 if ("Message".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());

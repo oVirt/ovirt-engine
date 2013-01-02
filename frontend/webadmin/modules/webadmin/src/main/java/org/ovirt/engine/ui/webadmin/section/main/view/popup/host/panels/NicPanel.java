@@ -50,11 +50,11 @@ public class NicPanel extends NetworkItemPanel {
 
     private ImageResource getStatusImage() {
         switch (((NetworkInterfaceModel) item).getStatus()) {
-        case Up:
+        case UP:
             return resources.nicUp();
-        case Down:
+        case DOWN:
             return resources.nicDown();
-        case None:
+        case NONE:
             return resources.questionMarkImage();
         default:
             return resources.questionMarkImage();

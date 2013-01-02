@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.validation;
 
-import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.StaticIp;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.STATIC_IP;
 import static org.ovirt.engine.core.compat.StringHelper.isNullOrEmpty;
 
 import javax.validation.ConstraintValidator;
@@ -30,7 +30,7 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
         NetworkBootProtocol bootProtocol = iface.getBootProtocol();
         String address = iface.getAddress();
 
-        if (bootProtocol != null && bootProtocol == StaticIp) {
+        if (bootProtocol != null && bootProtocol == STATIC_IP) {
             if (isNullOrEmpty(address)) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate("NETWORK_ADDR_MANDATORY_IN_STATIC_IP")

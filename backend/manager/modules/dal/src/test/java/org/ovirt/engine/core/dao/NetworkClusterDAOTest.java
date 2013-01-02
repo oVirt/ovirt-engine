@@ -161,7 +161,7 @@ public class NetworkClusterDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateStatus() {
-        existingNetworkCluster.setstatus(NetworkStatus.NonOperational);
+        existingNetworkCluster.setstatus(NetworkStatus.NON_OPERATIONAL);
 
         dao.updateStatus(existingNetworkCluster);
 

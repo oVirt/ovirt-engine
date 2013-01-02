@@ -99,7 +99,7 @@ public class HostNicMapper {
             model.setMac(new MAC());
             model.getMac().setAddress(entity.getMacAddress());
         }
-        if(entity.getStatistics().getStatus()!=InterfaceStatus.None){
+        if(entity.getStatistics().getStatus()!=InterfaceStatus.NONE){
             NicStatus nicStatus = map(entity.getStatistics().getStatus(),null);
             if(nicStatus!=null){
                 model.setStatus(StatusUtils.create(nicStatus));
@@ -157,9 +157,9 @@ public class HostNicMapper {
     public static NicStatus map(InterfaceStatus interfaceStatus, NicStatus template) {
         if(interfaceStatus!=null){
             switch (interfaceStatus) {
-            case Up:
+            case UP:
                 return NicStatus.UP;
-            case Down:
+            case DOWN:
                 return NicStatus.DOWN;
             default:
                 return null;
@@ -172,11 +172,11 @@ public class HostNicMapper {
     public static BootProtocol map(NetworkBootProtocol networkBootProtocol, BootProtocol template) {
         if(networkBootProtocol!=null){
             switch (networkBootProtocol) {
-            case Dhcp:
+            case DHCP:
                 return BootProtocol.DHCP;
-            case StaticIp:
+            case STATIC_IP:
                 return BootProtocol.STATIC;
-            case None:
+            case NONE:
                 return BootProtocol.NONE;
             default:
                 return null;
@@ -190,11 +190,11 @@ public class HostNicMapper {
         if(bootProtocol!=null){
             switch (bootProtocol) {
             case DHCP:
-                return NetworkBootProtocol.Dhcp;
+                return NetworkBootProtocol.DHCP;
             case STATIC:
-                return NetworkBootProtocol.StaticIp;
+                return NetworkBootProtocol.STATIC_IP;
             case NONE:
-                return NetworkBootProtocol.None;
+                return NetworkBootProtocol.NONE;
             default:
                 return null;
             }

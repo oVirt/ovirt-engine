@@ -27,7 +27,7 @@ public class AddBondParameters extends BondParametersBase {
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
-    private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.None;
+    private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.NONE;
 
     public AddBondParameters() {
     }

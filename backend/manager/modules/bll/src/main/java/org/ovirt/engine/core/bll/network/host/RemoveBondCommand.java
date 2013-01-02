@@ -66,7 +66,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                             null,
                             false,
                             null,
-                            NetworkBootProtocol.None);
+                            NetworkBootProtocol.NONE);
             retVal = Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveNetwork, parameters);
         }
 

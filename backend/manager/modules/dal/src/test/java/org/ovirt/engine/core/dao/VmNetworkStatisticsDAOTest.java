@@ -33,7 +33,7 @@ public class VmNetworkStatisticsDAOTest extends BaseDAOTestCase {
         newVmStatistics = new VmNetworkStatistics();
         newVmStatistics.setId(NEW_INTERFACE_ID);
         newVmStatistics.setVmId(VM_ID);
-        newVmStatistics.setStatus(InterfaceStatus.Down);
+        newVmStatistics.setStatus(InterfaceStatus.DOWN);
         newVmStatistics.setReceiveDropRate(0.0);
         newVmStatistics.setReceiveRate(0.0);
         newVmStatistics.setTransmitDropRate(0.0);
@@ -122,7 +122,7 @@ public class VmNetworkStatisticsDAOTest extends BaseDAOTestCase {
         VmNetworkStatistics existingStats = dao.get(INTERFACE_ID);
         VmNetworkStatistics existingStats2 = dao.get(Guid.createGuidFromString("e2817b12-f873-4046-b0da-0098293c14fe"));
         existingStats.setReceiveDropRate(10.0);
-        existingStats2.setStatus(InterfaceStatus.Down);
+        existingStats2.setStatus(InterfaceStatus.DOWN);
 
         dao.updateAll(Arrays.asList(new VmNetworkStatistics[] { existingStats, existingStats2 }));
 

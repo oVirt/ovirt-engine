@@ -424,7 +424,7 @@ public class HostSetupNetworksModel extends EntityModel {
             bondPopup.setTitle(ConstantsManager.getInstance().getConstants().createNewBondTitle());
             bondPopup.getNetwork().setIsAvailable(false);
             bondPopup.getCheckConnectivity().setIsAvailable(false);
-            bondPopup.setBootProtocol(NetworkBootProtocol.None);
+            bondPopup.setBootProtocol(NetworkBootProtocol.NONE);
             bondPopup.getAddress().setIsAvailable(false);
             bondPopup.getSubnet().setIsAvailable(false);
             bondPopup.getGateway().setIsAvailable(false);

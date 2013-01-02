@@ -119,9 +119,9 @@ public class NetworkMapper {
     public static NetworkStatus map(org.ovirt.engine.core.common.businessentities.network.NetworkStatus entityStatus,
                                     NetworkStatus template) {
         switch (entityStatus) {
-        case NonOperational:
+        case NON_OPERATIONAL:
             return NetworkStatus.NON_OPERATIONAL;
-        case Operational:
+        case OPERATIONAL:
             return NetworkStatus.OPERATIONAL;
         default:
             return null;
@@ -136,9 +136,9 @@ public class NetworkMapper {
         } else {
             switch (modelStatus) {
             case NON_OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.NonOperational;
+                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.NON_OPERATIONAL;
             case OPERATIONAL:
-                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.Operational;
+                return org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
             default:
                 return null;
             }

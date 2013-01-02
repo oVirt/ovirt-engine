@@ -28,7 +28,7 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.NONE;
 
     public AttachNetworkToVdsParameters() {
     }

@@ -126,7 +126,7 @@ public class BackendHostNicResource
                 params.setBootProtocol(map(bootProtocol, null));
             }
         }else if(nic.isSetIp() && nic.getIp().isSetAddress() && !nic.getIp().getAddress().isEmpty()){
-            params.setBootProtocol(NetworkBootProtocol.StaticIp);
+            params.setBootProtocol(NetworkBootProtocol.STATIC_IP);
         }
         if(nic.isSetBonding() && nic.getBonding().isSetOptions()){
            params.setBondingOptions(getBondingOptions(nic.getBonding().getOptions().getOptions()));

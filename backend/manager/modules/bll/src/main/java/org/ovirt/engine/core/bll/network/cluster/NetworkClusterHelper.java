@@ -27,8 +27,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class NetworkClusterHelper {
 
     /**
-     * Set the network on cluster status in the DB to {@link NetworkStatus#Operational} or
-     * {@link NetworkStatus#NonOperational} depending on the network state in the cluster (if it's implemented by all
+     * Set the network on cluster status in the DB to {@link NetworkStatus#OPERATIONAL} or
+     * {@link NetworkStatus#NON_OPERATIONAL} depending on the network state in the cluster (if it's implemented by all
      * the hosts or not) and if it's required or not.
      *
      * @param vdsGroupId
@@ -38,7 +38,7 @@ public class NetworkClusterHelper {
      */
     @SuppressWarnings("unchecked")
     public static void setStatus(Guid vdsGroupId, final Network net) {
-        NetworkStatus status = NetworkStatus.Operational;
+        NetworkStatus status = NetworkStatus.OPERATIONAL;
         NetworkCluster networkCluster =
                 DbFacade.getInstance().getNetworkClusterDao().get(new NetworkClusterId(vdsGroupId, net.getId()));
 
@@ -69,7 +69,7 @@ public class NetworkClusterHelper {
                         }
                     });
                     if (iface == null) {
-                        status = NetworkStatus.NonOperational;
+                        status = NetworkStatus.NON_OPERATIONAL;
                         break;
                     }
                 }

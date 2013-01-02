@@ -180,7 +180,7 @@ public class HostInterfaceModel extends EntityModel
 
     public boolean getIsStaticAddress()
     {
-        return getBootProtocol() == NetworkBootProtocol.StaticIp;
+        return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
     private boolean privatebondingOptionsOverrideNotification;
@@ -298,7 +298,7 @@ public class HostInterfaceModel extends EntityModel
                     getAddress().setEntity(StringHelper.isNullOrEmpty(item.getAddress()) ? null : item.getAddress());
                     getSubnet().setEntity(StringHelper.isNullOrEmpty(item.getSubnet()) ? null : item.getSubnet());
                     setBootProtocol(!getNoneBootProtocolAvailable()
-                            && item.getBootProtocol() == NetworkBootProtocol.None ? NetworkBootProtocol.Dhcp
+                            && item.getBootProtocol() == NetworkBootProtocol.NONE ? NetworkBootProtocol.DHCP
                             : item.getBootProtocol());
                     break;
                 }

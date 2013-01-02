@@ -21,7 +21,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     private String gateway;
     private boolean stp;
     private String bondingOptions;
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.None;
+    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.NONE;
     private boolean vmNetwork;
     private Network network;
 

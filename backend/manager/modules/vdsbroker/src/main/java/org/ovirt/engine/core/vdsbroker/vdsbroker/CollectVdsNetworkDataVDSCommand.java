@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
-import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.Operational;
+import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -186,7 +186,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         List<String> networkNames = new ArrayList<String>();
 
         for (Network net : clusterNetworks) {
-            if (net.getCluster().getstatus() == Operational &&
+            if (net.getCluster().getstatus() == OPERATIONAL &&
                     net.getCluster().isRequired() &&
                     !vdsNetworksByName.containsKey(net.getName())) {
                 networkNames.add(net.getname());

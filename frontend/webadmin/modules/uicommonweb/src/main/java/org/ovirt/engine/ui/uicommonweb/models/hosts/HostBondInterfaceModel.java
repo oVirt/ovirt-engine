@@ -181,7 +181,7 @@ public class HostBondInterfaceModel extends Model
 
     public boolean getIsStaticAddress()
     {
-        return getBootProtocol() == NetworkBootProtocol.StaticIp;
+        return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
     public HostBondInterfaceModel() {

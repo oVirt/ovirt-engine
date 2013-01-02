@@ -344,7 +344,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1
                 && network != null && !network.getCluster().getis_display()
-                && network.getCluster().getstatus() != NetworkStatus.NonOperational);
+                && network.getCluster().getstatus() != NetworkStatus.NON_OPERATIONAL);
     }
 
     public void New()

@@ -135,7 +135,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
 
         // check address exists in static ip
-        if (params.getBootProtocol() == NetworkBootProtocol.StaticIp) {
+        if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
             if (StringUtils.isEmpty(params.getAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP);
                 return false;

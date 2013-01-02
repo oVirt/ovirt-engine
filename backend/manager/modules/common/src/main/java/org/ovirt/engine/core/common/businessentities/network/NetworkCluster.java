@@ -23,7 +23,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
     private NetworkClusterId id = new NetworkClusterId();
 
     @Column(name = "status")
-    private NetworkStatus status = NetworkStatus.NonOperational;
+    private NetworkStatus status = NetworkStatus.NON_OPERATIONAL;
 
     @Column(name = "is_display")
     private Boolean isDisplay = false;

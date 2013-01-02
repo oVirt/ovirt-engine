@@ -179,7 +179,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
             bootProtocol.asWidget().setVisible(false);
             bootProtocolLabel.setVisible(false);
         }
-        bootProtocol.setEnabled(NetworkBootProtocol.None, object.getNoneBootProtocolAvailable());
+        bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
         updateBondOptions(object.getBondingOptions());
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -188,7 +188,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
                 HostBondInterfaceModel model = (HostBondInterfaceModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
-                    bootProtocol.setEnabled(NetworkBootProtocol.None, model.getNoneBootProtocolAvailable());
+                    bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
                 else if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());

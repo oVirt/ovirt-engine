@@ -653,14 +653,14 @@ public class VdsBrokerObjectsBuilder {
 
     @SuppressWarnings("null")
     private static InterfaceStatus AssignInterfaceStatusValue(XmlRpcStruct input, String name) {
-        InterfaceStatus ifaceStatus = InterfaceStatus.None;
+        InterfaceStatus ifaceStatus = InterfaceStatus.NONE;
         if (input.containsKey(name)) {
             String stringValue = (String) ((input.getItem(name) instanceof String) ? input.getItem(name) : null);
             if (!StringUtils.isEmpty(stringValue)) {
                 if (stringValue.toLowerCase().trim().equals("up")) {
-                    ifaceStatus = InterfaceStatus.Up;
+                    ifaceStatus = InterfaceStatus.UP;
                 } else {
-                    ifaceStatus = InterfaceStatus.Down;
+                    ifaceStatus = InterfaceStatus.DOWN;
                 }
             }
         }
@@ -1205,7 +1205,7 @@ public class VdsBrokerObjectsBuilder {
 
             // set the management ip
             if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
-                iface.setType(iface.getType() | VdsInterfaceType.Management.getValue());
+                iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
             }
 
             iface.setAddress(net.getAddr());
@@ -1253,24 +1253,24 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void addBootProtocol(Map<String, Object> cfg, VdsNetworkInterface iface) {
-        NetworkBootProtocol bootproto = NetworkBootProtocol.None;
+        NetworkBootProtocol bootproto = NetworkBootProtocol.NONE;
 
         if (cfg != null) {
             String bootProtocol = (String) cfg.get("BOOTPROTO");
 
             if (bootProtocol != null) {
                 if (bootProtocol.toLowerCase().equals("dhcp")) {
-                    bootproto = NetworkBootProtocol.Dhcp;
+                    bootproto = NetworkBootProtocol.DHCP;
                 } else if (bootProtocol.toLowerCase().equals("none") || bootProtocol.toLowerCase().equals("static")) {
                     if (StringUtils.isNotEmpty((String) cfg.get("IPADDR"))) {
-                        bootproto = NetworkBootProtocol.StaticIp;
+                        bootproto = NetworkBootProtocol.STATIC_IP;
                     }
                 }
             } else if (StringUtils.isNotEmpty((String) cfg.get("IPADDR"))) {
-                bootproto = NetworkBootProtocol.StaticIp;
+                bootproto = NetworkBootProtocol.STATIC_IP;
             }
 
-            if (bootproto == NetworkBootProtocol.StaticIp) {
+            if (bootproto == NetworkBootProtocol.STATIC_IP) {
                 String gateway = (String) cfg.get(VdsProperties.gateway);
                 if (StringUtils.isNotEmpty(gateway)) {
                     setGatewayIfManagementNetwork(iface, gateway.toString());

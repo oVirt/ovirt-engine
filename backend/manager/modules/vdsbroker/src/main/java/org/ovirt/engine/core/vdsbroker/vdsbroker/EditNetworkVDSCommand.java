@@ -25,10 +25,10 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         Map<String, String> options = new HashMap<String, String>();
 
         switch (getParameters().getBootProtocol()) {
-        case Dhcp:
+        case DHCP:
             options.put(VdsProperties.bootproto, VdsProperties.dhcp);
             break;
-        case StaticIp:
+        case STATIC_IP:
             if (!StringUtils.isEmpty(getParameters().getInetAddr())) {
                 options.put(VdsProperties.ipaddr, getParameters().getInetAddr());
             }

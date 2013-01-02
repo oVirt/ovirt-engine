@@ -396,7 +396,7 @@ public class SetupNetworksHelper {
      *         <code>false</code> otherwise.
      */
     private boolean staticBootProtoPropertiesChanged(VdsNetworkInterface iface, VdsNetworkInterface existingIface) {
-        return iface.getBootProtocol() == NetworkBootProtocol.StaticIp
+        return iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
                 && (!ObjectUtils.equals(iface.getAddress(), existingIface.getAddress())
                         || !ObjectUtils.equals(iface.getGateway(), existingIface.getGateway())
                         || !ObjectUtils.equals(iface.getSubnet(), existingIface.getSubnet()));

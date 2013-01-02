@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum NetworkBootProtocol {
-    None(0),
-    Dhcp(1),
-    StaticIp(2);
+    NONE(0),
+    DHCP(1),
+    STATIC_IP(2);
 
     private int intValue;
     private static Map<Integer, NetworkBootProtocol> mappings;

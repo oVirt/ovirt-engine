@@ -161,7 +161,7 @@ public class HostManagementNetworkModel extends EntityModel
 
     public boolean getIsStaticAddress()
     {
-        return getBootProtocol() == NetworkBootProtocol.StaticIp;
+        return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
     private EntityModel privateCommitChanges;

@@ -37,7 +37,7 @@ public class SetupNetworksManagementPopupPresenterWidget extends HostManagementP
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     ((ViewDef) getView()).getBootProtocolLabel().setEnabled(bootProtocolsAvailable);
                     ((ViewDef) getView()).getBootProtocol().setEnabled(bootProtocolsAvailable);
-                    ((ViewDef) getView()).getBootProtocol().setEnabled(NetworkBootProtocol.None,
+                    ((ViewDef) getView()).getBootProtocol().setEnabled(NetworkBootProtocol.NONE,
                             model.getNoneBootProtocolAvailable());
                 }
             }
