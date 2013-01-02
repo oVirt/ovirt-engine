@@ -11,12 +11,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 /**
- * <code>NetworkClusterDAOHibernateImpl</code> provides an implementation of {@link NetworkClusterDao} that uses
+ * <code>NetworkClusterDaoHibernateImpl</code> provides an implementation of {@link NetworkClusterDao} that uses
  * Hibernate for the persistence implementation.
  *
  */
-public class NetworkClusterDAOHibernateImpl extends BaseDAOHibernateImpl<NetworkCluster, Guid> implements NetworkClusterDao {
-    public NetworkClusterDAOHibernateImpl() {
+public class NetworkClusterDaoHibernateImpl extends BaseDAOHibernateImpl<NetworkCluster, Guid> implements NetworkClusterDao {
+    public NetworkClusterDaoHibernateImpl() {
         super(NetworkCluster.class);
     }
 

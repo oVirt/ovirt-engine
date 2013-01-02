@@ -9,11 +9,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
- * <code>NetworkDAOHibernateImpl</code> provides an implementation of {@Link NetworkDAO} using Hibernate.
+ * <code>NetworkDaoHibernateImpl</code> provides an implementation of {@Link NetworkDAO} using Hibernate.
  *
  */
-public class NetworkDAOHibernateImpl extends BaseDAOHibernateImpl<Network, Guid> implements NetworkDao {
-    public NetworkDAOHibernateImpl() {
+public class NetworkDaoHibernateImpl extends BaseDAOHibernateImpl<Network, Guid> implements NetworkDao {
+    public NetworkDaoHibernateImpl() {
         super(Network.class);
     }
 
