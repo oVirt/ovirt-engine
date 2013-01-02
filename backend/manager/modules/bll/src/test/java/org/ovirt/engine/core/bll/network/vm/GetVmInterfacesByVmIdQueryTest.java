@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /** A test case for {@link GetVmInterfacesByVmIdQuery} */
 public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmInterfacesByVmIdQuery<GetVmByVmIdParameters> > {

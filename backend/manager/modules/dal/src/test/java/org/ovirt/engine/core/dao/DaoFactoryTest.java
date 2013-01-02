@@ -2,6 +2,9 @@ package org.ovirt.engine.core.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class DaoFactoryTest extends Assert {
 

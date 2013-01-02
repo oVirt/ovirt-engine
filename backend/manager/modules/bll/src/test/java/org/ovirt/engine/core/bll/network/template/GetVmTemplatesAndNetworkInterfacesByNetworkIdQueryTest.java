@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * A test for the {@link GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 

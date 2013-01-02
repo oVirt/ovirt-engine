@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * This class implements the logic of the query responsible for getting a VM configuration by snapshot.

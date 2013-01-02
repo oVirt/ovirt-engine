@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkI
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /**
  * A test for the {@link GetVmsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query

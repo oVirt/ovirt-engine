@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkViewDaoTest extends BaseDAOTestCase {
     private NetworkViewDao dao;

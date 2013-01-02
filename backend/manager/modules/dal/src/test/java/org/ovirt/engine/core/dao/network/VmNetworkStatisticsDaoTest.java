@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
 public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
     private static final Guid INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");

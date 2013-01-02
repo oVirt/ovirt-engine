@@ -8,6 +8,7 @@ import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 /**
  * <code>NetworkClusterDAOHibernateImpl</code> provides an implementation of {@link NetworkClusterDao} that uses

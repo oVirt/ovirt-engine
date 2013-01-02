@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DAO;
 
 /**
  * <code>InterfaceDao</code> defines a type for performing CRUD operations on instances of {@link Interface}.

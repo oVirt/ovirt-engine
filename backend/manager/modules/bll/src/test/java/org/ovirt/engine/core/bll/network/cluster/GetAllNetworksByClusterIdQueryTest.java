@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<VdsGroupQueryParamenters, GetAllNetworksByClusterIdQuery<? extends VdsGroupQueryParamenters>> {
 

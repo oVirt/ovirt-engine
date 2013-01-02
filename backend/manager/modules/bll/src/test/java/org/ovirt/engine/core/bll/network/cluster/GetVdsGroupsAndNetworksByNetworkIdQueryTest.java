@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.NetworkClusterDao;
-import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * A test for the {@link GetVdsGroupsAndNetworksByNetworkIdQuery} class. It tests the flow (i.e., that the query delegates properly

@@ -294,7 +294,7 @@ public class FixturesTool {
      * <li>storage_pool_id: rhel6.iscsi (6d849ebf-755f-4552-ad09-9a090cda105d)</li>
      * </ul>
      */
-    protected static final Guid NETWORK_ENGINE = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
+    public static final Guid NETWORK_ENGINE = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
 
     /**
      * Predefined Network without entries in network_cluster with the following properties :
@@ -305,7 +305,7 @@ public class FixturesTool {
      * <li>storage_pool_id: rhel6.iscsi (6d849ebf-755f-4552-ad09-9a090cda105d)</li>
      * </ul>
      */
-    protected static final Guid NETWORK_NO_CLUSTERS_ATTACHED = new Guid("58d5c1c6-cb15-4832-b2a4-023770607190");
+    public static final Guid NETWORK_NO_CLUSTERS_ATTACHED = new Guid("58d5c1c6-cb15-4832-b2a4-023770607190");
 
     /**
      * Predefined VmNetworkInterface with the following properties :
@@ -317,7 +317,7 @@ public class FixturesTool {
      * <li>name: nic1</li>
      * </ul>
      */
-    protected static final Guid VM_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
+    public static final Guid VM_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
 
     /**
      * Predefined VmNetworkInterface with the following properties:
@@ -328,7 +328,7 @@ public class FixturesTool {
      * <li>name: nic1</li>
      * </ul>
      */
-    protected static final Guid TEMPLATE_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c0000");
+    public static final Guid TEMPLATE_NETWORK_INTERFACE = new Guid("e2817b12-f873-4046-b0da-0098293c0000");
 
     /**
      * Predefined VdsNetworkInterface with the following properties :
@@ -339,7 +339,7 @@ public class FixturesTool {
      * <li>mac_addr: 78:E7:D1:E4:8C:70</li>
      * </ul>
      */
-    protected static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
+    public static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
     public static final int NUMBER_OF_VM_INTERFACES = 2;
 }

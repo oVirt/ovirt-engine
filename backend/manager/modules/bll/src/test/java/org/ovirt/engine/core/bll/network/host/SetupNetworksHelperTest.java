@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDao;
-import org.ovirt.engine.core.dao.NetworkDao;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)

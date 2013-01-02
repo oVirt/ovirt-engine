@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class InterfaceDaoTest extends BaseDAOTestCase {

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.NetworkDaoDbFacadeImpl.NetworkRowMapperBase;
+import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.network.NetworkDaoDbFacadeImpl.NetworkRowMapperBase;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 /**

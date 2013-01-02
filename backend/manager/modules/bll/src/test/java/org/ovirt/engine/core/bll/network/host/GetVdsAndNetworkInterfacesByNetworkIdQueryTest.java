@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.NetworkIdParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 /**
  * A test for the {@link GetVdsAndNetworkInterfacesByNetworkIdQuery} class. It tests the flow (i.e., that the query

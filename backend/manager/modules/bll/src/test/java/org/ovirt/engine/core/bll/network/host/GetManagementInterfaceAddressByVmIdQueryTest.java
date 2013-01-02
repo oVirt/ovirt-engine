@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetManagementInterfaceAddressByVmIdQuery<GetVmByVmIdParameters>> {
     @Test

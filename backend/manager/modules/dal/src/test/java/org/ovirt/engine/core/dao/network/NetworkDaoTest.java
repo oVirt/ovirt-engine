@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
 public class NetworkDaoTest extends BaseDAOTestCase {
     private NetworkDao dao;

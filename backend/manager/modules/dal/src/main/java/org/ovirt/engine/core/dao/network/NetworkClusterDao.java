@@ -1,10 +1,11 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DAO;
 
 /**
  * <code>NetworkClusterDAO</code> defines a type for performing CRUD operations on instances of {@link NetworkCluster}.

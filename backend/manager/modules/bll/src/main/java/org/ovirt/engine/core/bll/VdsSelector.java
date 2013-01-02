@@ -25,9 +25,9 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.InterfaceDao;
-import org.ovirt.engine.core.dao.NetworkDao;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 

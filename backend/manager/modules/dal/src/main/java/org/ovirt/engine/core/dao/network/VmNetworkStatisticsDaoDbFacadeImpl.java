@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.dao;
+package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +8,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 

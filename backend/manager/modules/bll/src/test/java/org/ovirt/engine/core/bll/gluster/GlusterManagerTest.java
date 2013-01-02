@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.InterfaceDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -62,6 +61,7 @@ import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 

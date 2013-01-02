@@ -36,7 +36,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;

@@ -6,6 +6,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.criterion.Restrictions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * <code>NetworkDAOHibernateImpl</code> provides an implementation of {@Link NetworkDAO} using Hibernate.

@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.dao.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VmInterfaceManagerTest {
