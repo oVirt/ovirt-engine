@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -60,6 +62,16 @@ public class ReplaceGlusterVolumeBrickCommandTest {
         doReturn(getReplicatedVolume(volumeId4, 4)).when(volumeDao).getById(volumeId4);
         doReturn(null).when(volumeDao).getById(null);
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
+        doReturn(getVDsGroup()).when(command).getVdsGroup();
+    }
+
+    private VDSGroup getVDsGroup() {
+        VDSGroup vdsGroup = new VDSGroup();
+        vdsGroup.setId(clusterId);
+        vdsGroup.setVirtService(false);
+        vdsGroup.setGlusterService(true);
+        vdsGroup.setcompatibility_version(Version.v3_1);
+        return vdsGroup;
     }
 
     private VDS getVds(VDSStatus status) {
