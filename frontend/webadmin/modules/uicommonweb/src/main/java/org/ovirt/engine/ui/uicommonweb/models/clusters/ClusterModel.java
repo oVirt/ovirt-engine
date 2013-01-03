@@ -757,6 +757,11 @@ public class ClusterModel extends Model
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 setIsFingerprintVerified(false);
+                if (getGlusterHostAddress().getEntity() == null
+                        || ((String) getGlusterHostAddress().getEntity()).trim().length() == 0) {
+                    getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
+                    return;
+                }
                 fetchFingerprint((String) getGlusterHostAddress().getEntity());
             }
         });
@@ -1070,11 +1075,16 @@ public class ClusterModel extends Model
                             || ((Boolean) getEnableGlusterService().getEntity());
         }
 
+        getGlusterHostAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+        getGlusterHostPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
+
         if (!validService)
         {
             setMessage(ConstantsManager.getInstance().getConstants().clusterServiceValidationMsg());
         }
-        else if (((Boolean) getIsImportGlusterConfiguration().getEntity()) && !isFingerprintVerified())
+        else if (((Boolean) getIsImportGlusterConfiguration().getEntity()) && getGlusterHostAddress().getIsValid()
+                && getGlusterHostPassword().getIsValid()
+                && !isFingerprintVerified())
         {
             setMessage(ConstantsManager.getInstance().getConstants().fingerprintNotVerified());
         }
@@ -1083,18 +1093,19 @@ public class ClusterModel extends Model
             setMessage(null);
         }
 
-        getGlusterHostAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-        getGlusterHostPassword().ValidateEntity(new IValidation[] { new NotEmptyValidation() });
-
         setIsGeneralTabValid(getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? isFingerprintVerified() : true));
+                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
+                        && getGlusterHostPassword().getIsValid()
+                        && isFingerprintVerified()) : true));
 
         return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? isFingerprintVerified() : true);
+                && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
+                        && getGlusterHostPassword().getIsValid()
+                        && isFingerprintVerified()) : true);
     }
 
 }
