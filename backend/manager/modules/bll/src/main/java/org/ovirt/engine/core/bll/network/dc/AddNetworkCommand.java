@@ -108,10 +108,6 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         MultiLevelAdministrationHandler.addPermission(perms);
     }
 
-    private List<Network> getNetworks() {
-        return getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
-    }
-
     private ValidationResult networkDoesNotExist(List<Network> networks) {
         return getNetworkByName(networks) == null
                 ? ValidationResult.VALID

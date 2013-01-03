@@ -97,4 +97,8 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 VdcObjectType.Network,
                 getActionType().getActionGroup()));
     }
+
+    protected List<Network> getNetworks() {
+        return getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
+    }
 }

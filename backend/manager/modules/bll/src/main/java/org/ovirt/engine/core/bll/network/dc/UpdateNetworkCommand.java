@@ -62,7 +62,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return false;
         }
 
-        List<Network> networks = getNetworkDAO().getAll();
+        List<Network> networks = getNetworks();
 
         if (!validate(vlanIsFree(networks))) {
             return false;
