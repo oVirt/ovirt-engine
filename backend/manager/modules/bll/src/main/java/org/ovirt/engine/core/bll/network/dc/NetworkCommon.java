@@ -18,6 +18,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
+    private List<Network> networks;
+
     public NetworkCommon(T parameters) {
         super(parameters);
         this.setStoragePoolId(getNetwork().getDataCenterId());
@@ -55,9 +57,9 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 : new ValidationResult(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED);
     }
 
-    protected ValidationResult vlanIsFree(List<Network> networks) {
+    protected ValidationResult vlanIsFree() {
         if (getNetwork().getVlanId() != null) {
-            for (Network network : networks) {
+            for (Network network : getNetworks()) {
                 if (network.getVlanId() != null
                         && network.getVlanId().equals(getNetwork().getVlanId())
                         && network.getDataCenterId().equals(getNetwork().getDataCenterId())
@@ -99,6 +101,9 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected List<Network> getNetworks() {
-        return getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
+        if (networks == null) {
+            networks = getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
+        }
+        return networks;
     }
 }

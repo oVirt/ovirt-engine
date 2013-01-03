@@ -39,37 +39,13 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean canDoAction() {
-        if (!validate(storagePoolExists())) {
-            return false;
-        }
-
-        if (!validate(vmNetworkSetCorrectly())) {
-            return false;
-        }
-
-        if (!validate(stpForVmNetworkOnly())) {
-            return false;
-        }
-
-        if (!validate(mtuValid())) {
-            return false;
-        }
-
-        if (!validate(networkPrefixValid())) {
-            return false;
-        }
-
-        List<Network> all = getNetworks();
-
-        if (!validate(networkDoesNotExist(all))) {
-            return false;
-        }
-
-        if (!validate(vlanIsFree(all))) {
-            return false;
-        }
-
-        return true;
+        return validate(storagePoolExists())
+                && validate(vmNetworkSetCorrectly())
+                && validate(stpForVmNetworkOnly())
+                && validate(mtuValid())
+                && validate(networkPrefixValid())
+                && validate(networkDoesNotExist())
+                && validate(vlanIsFree());
     }
 
     @Override
@@ -108,8 +84,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         MultiLevelAdministrationHandler.addPermission(perms);
     }
 
-    private ValidationResult networkDoesNotExist(List<Network> networks) {
-        return getNetworkByName(networks) == null
+    private ValidationResult networkDoesNotExist() {
+        return getNetworkByName(getNetworks()) == null
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.NETWORK_NAME_ALREADY_EXISTS);
     }

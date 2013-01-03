@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 @SuppressWarnings("serial")
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
     private List<NetworkCluster> clusterAttachments;
+    private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters) {
         super(parameters);
@@ -42,50 +43,17 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        if (!validate(storagePoolExists())) {
-            return false;
-        }
-
-        if (!validate(vmNetworkSetCorrectly())) {
-            return false;
-        }
-
-        if (!validate(stpForVmNetworkOnly())) {
-            return false;
-        }
-
-        if (!validate(mtuValid())) {
-            return false;
-        }
-
-        if (!validate(networkPrefixValid())) {
-            return false;
-        }
-
-        List<Network> networks = getNetworks();
-
-        if (!validate(vlanIsFree(networks))) {
-            return false;
-        }
-
-        Network oldNetwork = getNetworkById(networks);
-        if (!validate(networkExists(oldNetwork))) {
-            return false;
-        }
-
-        if (!validate(notChangingManagementNetworkName(oldNetwork))) {
-            return false;
-        }
-
-        if (!validate(networkNameNotUsed(networks))) {
-            return false;
-        }
-
-        if (!validate(networkNotUsedByRunningVm())) {
-            return false;
-        }
-
-        return validate(networkNotAttachedToCluster(oldNetwork));
+        return validate(storagePoolExists())
+                && validate(vmNetworkSetCorrectly())
+                && validate(stpForVmNetworkOnly())
+                && validate(mtuValid())
+                && validate(networkPrefixValid())
+                && validate(vlanIsFree())
+                && validate(networkExists())
+                && validate(notChangingManagementNetworkName())
+                && validate(networkNameNotUsed())
+                && validate(networkNotUsedByRunningVm())
+                && validate(networkNotAttachedToCluster(getOldNetwork()));
     }
 
     @Override
@@ -107,6 +75,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return clusterAttachments;
     }
 
+    private Network getOldNetwork(){
+        if (oldNetwork == null) {
+            oldNetwork = getNetworkById(getNetworks());
+        }
+        return oldNetwork;
+    }
+
     private Network getNetworkById(List<Network> networks) {
         Guid networkId = getNetwork().getId();
         for (Network network : networks) {
@@ -117,14 +92,14 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return null;
     }
 
-    private ValidationResult networkExists(Network oldNetwork) {
-        return oldNetwork == null
+    private ValidationResult networkExists() {
+        return getOldNetwork() == null
             ? new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
 
-    private ValidationResult networkNameNotUsed(List<Network> networks) {
-        Network networkWithSameName = getOtherNetworkWithSameName(networks);
+    private ValidationResult networkNameNotUsed() {
+        Network networkWithSameName = getOtherNetworkWithSameName(getNetworks());
         return networkWithSameName != null
                 ? new ValidationResult(VdcBllMessages.NETWORK_IN_USE)
                 : ValidationResult.VALID;
@@ -156,9 +131,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return ValidationResult.VALID;
     }
 
-    private ValidationResult notChangingManagementNetworkName(Network oldNetwork) {
+    private ValidationResult notChangingManagementNetworkName() {
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
-        return oldNetwork.getName().equals(managementNetwork) &&
+        return getOldNetwork().getName().equals(managementNetwork) &&
                 !getNetworkName().equals(managementNetwork)
                 ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
                 : ValidationResult.VALID;
