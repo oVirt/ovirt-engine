@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
@@ -109,8 +107,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     private List<Network> getNetworks() {
         NGuid dataCenterId = getNetwork().getDataCenterId();
-        if (dataCenterId != null
-                && !dataCenterId.getValue().equals(Guid.Empty)) {
+        if (dataCenterId != null && !dataCenterId.getValue().equals(Guid.Empty)) {
             return getNetworkDAO().getAllForDataCenter(dataCenterId.getValue());
         } else {
             return getNetworkDAO().getAll();
@@ -124,11 +121,12 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     }
 
     private Network getNetworkByName(List<Network> networks) {
-        return LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getName().equals(getNetworkName());
+        String networkName = getNetworkName();
+        for (Network network : networks) {
+            if (network.getName().equals(networkName)) {
+                return network;
             }
-        });
+        }
+        return null;
     }
 }

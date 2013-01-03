@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 @SuppressWarnings("serial")
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
@@ -100,12 +100,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private Network getNetworkById(List<Network> networks) {
-        return LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getId().equals(getNetwork().getId());
+        Guid networkId = getNetwork().getId();
+        for (Network network : networks) {
+            if (network.getId().equals(networkId)) {
+                return network;
             }
-        });
+        }
+        return null;
     }
 
     private ValidationResult storagePoolExists() {
@@ -121,19 +122,24 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private ValidationResult networkNameNotUsed(List<Network> networks) {
-        Network networkWithSameName = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-            @Override
-            public boolean eval(Network network) {
-                return network.getName().trim().toLowerCase()
-                        .equals(getNetworkName().trim().toLowerCase())
-                        && !network.getId().equals(getNetwork().getId())
-                        && getNetwork().getDataCenterId().equals(network.getDataCenterId());
-            }
-        });
-
+        Network networkWithSameName = getOtherNetworkWithSameName(networks);
         return networkWithSameName != null
                 ? new ValidationResult(VdcBllMessages.NETWORK_IN_USE)
                 : ValidationResult.VALID;
+    }
+
+    private Network getOtherNetworkWithSameName(List<Network> networks) {
+        String networkName = getNetworkName().toLowerCase();
+        Guid networkId = getNetwork().getId();
+        NGuid dataCenterId = getNetwork().getDataCenterId();
+        for (Network network : networks) {
+            if (network.getName().toLowerCase().equals(networkName)
+                    && !network.getId().equals(networkId)
+                    && dataCenterId.equals(network.getDataCenterId())) {
+                return network;
+            }
+        }
+        return null;
     }
 
     private ValidationResult networkNotUsedByRunningVm() {
