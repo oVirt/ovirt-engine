@@ -39,6 +39,10 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean canDoAction() {
+        if (!validate(storagePoolExists())) {
+            return false;
+        }
+
         if (!validate(vmNetworkSetCorrectly())) {
             return false;
         }

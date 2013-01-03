@@ -117,12 +117,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return null;
     }
 
-    private ValidationResult storagePoolExists() {
-        return getStoragePool() == null
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
-                : ValidationResult.VALID;
-    }
-
     private ValidationResult networkExists(Network oldNetwork) {
         return oldNetwork == null
             ? new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS)

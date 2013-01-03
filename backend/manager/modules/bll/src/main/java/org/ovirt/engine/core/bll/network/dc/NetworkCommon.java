@@ -82,6 +82,12 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 : ValidationResult.VALID;
     }
 
+    protected ValidationResult storagePoolExists() {
+        return getStoragePool() == null
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
+                : ValidationResult.VALID;
+    }
+
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         Network network = getNetwork();
