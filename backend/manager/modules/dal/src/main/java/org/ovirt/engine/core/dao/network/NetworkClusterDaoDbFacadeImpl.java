@@ -12,10 +12,6 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-/**
- * <code>NetworkClusterDaoDbFacadeImpl</code> provides a concrete implementation of {@link NetworkClusterDao} based on
- * {@link org.springframework.jdbc.core.JdbcTemplate}
- */
 public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements NetworkClusterDao {
 
     private static final ParameterizedRowMapper<NetworkCluster> mapper =

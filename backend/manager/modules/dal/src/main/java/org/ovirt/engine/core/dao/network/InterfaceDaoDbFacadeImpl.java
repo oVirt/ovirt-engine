@@ -18,9 +18,6 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-/**
- * <code>InterfaceDaoDbFacadeImpl</code> provides an implementation of {@link InterfaceDao}.
- */
 public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements InterfaceDao {
 
     @Override

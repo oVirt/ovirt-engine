@@ -7,11 +7,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
 
-/**
- * <code>NetworkClusterDAO</code> defines a type for performing CRUD operations on instances of {@link NetworkCluster}.
- *
- *
- */
 public interface NetworkClusterDao extends DAO {
 
     /**

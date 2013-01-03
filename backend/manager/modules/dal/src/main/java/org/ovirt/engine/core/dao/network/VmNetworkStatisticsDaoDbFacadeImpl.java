@@ -12,9 +12,6 @@ import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-/**
- * <code>VmNetworkStatisticsDAODbFacadeImpl</code> provides an implementation of {@link VmNetworkStatisticsDao}.
- */
 public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmNetworkStatistics, Guid>
         implements VmNetworkStatisticsDao {
 

@@ -15,10 +15,6 @@ import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-/**
- * <code>NetworkDaoDbFacadeImpl</code> provides a concrete implementation of {@link #NetworkDao} based on code
- * refactored from {@link #DbFacade}.
- */
 public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, Guid> implements NetworkDao {
 
     public NetworkDaoDbFacadeImpl() {

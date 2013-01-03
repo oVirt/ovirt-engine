@@ -6,10 +6,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.GenericDao;
 
-/**
- * <code>VmNetworkInterfaceDao</code> defines a type for performing CRUD operations on instances of
- * {@link VmNetworkInterface}.
- */
 public interface VmNetworkInterfaceDao extends GenericDao<VmNetworkInterface, Guid> {
     /**
      * Retrieves all interfaces for the given VM id.

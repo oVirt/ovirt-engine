@@ -10,9 +10,6 @@ import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDaoDbFacadeImpl.NetworkRowMapperBase;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-/**
- * <code>NetworkViewDaoDbFacadeImpl</code> provides a concrete implementation of {@link #NetworViewkDao}.
- */
 public class NetworkViewDaoDbFacadeImpl extends BaseDAODbFacade implements NetworkViewDao {
 
     @Override
