@@ -28,7 +28,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected void executeCommand() {
         getNetworkDAO().update(getNetwork());
 
-        for (VDSGroup cluster : clusters) {
+        for (VDSGroup cluster : getClusters()) {
             NetworkClusterHelper.setStatus(cluster.getId(), getNetwork());
         }
         setSucceeded(true);
@@ -99,6 +99,14 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return super.getValidationGroups();
     }
 
+    private List<VDSGroup> getClusters() {
+        if (clusters == null) {
+            clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+        }
+
+        return clusters;
+    }
+
     private Network getNetworkById(List<Network> networks) {
         Guid networkId = getNetwork().getId();
         for (Network network : networks) {
@@ -144,7 +152,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private ValidationResult networkNotUsedByRunningVm() {
         String networkName = getNetworkName();
-        for (VDSGroup cluster : getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId())) {
+        for (VDSGroup cluster : getClusters()) {
             List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(cluster.getId(), networkName);
             if (vms.size() > 0) {
                 return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
