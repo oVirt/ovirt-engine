@@ -9,7 +9,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.pm.VdsFencingOptions;
+import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
     private FenceStatusReturnForXmlRpc _result;
@@ -40,12 +40,12 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      *            The reason.
      */
     protected void AlertPowerManagementStatusFailed(String reason) {
-        Alert(AuditLogType.VDS_ALERT_FENCING_TEST_FAILED, reason);
+        Alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
     }
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        VdsFencingOptions vdsFencingOptions = new VdsFencingOptions(getParameters().getType(),
+        VdsFenceOptions vdsFencingOptions = new VdsFenceOptions(getParameters().getType(),
                 getParameters().getOptions());
         String options = vdsFencingOptions.ToInternalString();
         // ignore starting already started host or stopping already stopped host.

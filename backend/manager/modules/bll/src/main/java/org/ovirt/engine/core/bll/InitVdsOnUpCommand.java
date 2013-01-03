@@ -58,7 +58,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 @SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
-    private boolean _fencingSucceeded = true;
+    private boolean _fenceSucceeded = true;
     private boolean _vdsProxyFound;
     private boolean _connectStorageSucceeded, _connectPoolSucceeded;
     private boolean _glusterPeerListSucceeded, _glusterPeerProbeSucceeded;
@@ -83,7 +83,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private boolean initVirtResources() {
         if (InitializeStorage()) {
-            processFencing();
+            processFence();
             processStoragePoolStatus();
         } else {
             Map<String, String> customLogValues = Collections.singletonMap("StoragePoolName", getStoragePoolName());
@@ -93,13 +93,13 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         return true;
     }
 
-    private void processFencing() {
-        FencingExecutor executor = new FencingExecutor(getVds(), FenceActionType.Status);
-        // check first if we have any VDS to act as the proxy for fencing
+    private void processFence() {
+        FenceExecutor executor = new FenceExecutor(getVds(), FenceActionType.Status);
+        // check first if we have any VDS to act as the proxy for fence
         // actions.
         if (getVds().getpm_enabled() && executor.FindVdsToFence()) {
             VDSReturnValue returnValue = executor.Fence();
-            _fencingSucceeded = returnValue.getSucceeded();
+            _fenceSucceeded = returnValue.getSucceeded();
             _fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
             _vdsProxyFound = true;
         }
@@ -250,9 +250,9 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             type = AuditLogType.CONNECT_STORAGE_SERVERS_FAILED;
         } else if (!_connectPoolSucceeded) {
             type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
-        } else if (getVds().getpm_enabled() && _fencingSucceeded) {
+        } else if (getVds().getpm_enabled() && _fenceSucceeded) {
             type = AuditLogType.VDS_FENCE_STATUS;
-        } else if (getVds().getpm_enabled() && !_fencingSucceeded) {
+        } else if (getVds().getpm_enabled() && !_fenceSucceeded) {
             type = AuditLogType.VDS_FENCE_STATUS_FAILED;
         }
 
@@ -261,14 +261,14 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         if (getVds().getpm_enabled()) {
             if (!_vdsProxyFound) {
                 logable.AddCustomValue("Reason",
-                        AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST));
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCING_TEST_FAILED);
+                        AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             } else if (!_fenceStatusReturnValue.getIsSucceeded()) {
                 logable.AddCustomValue("Reason", _fenceStatusReturnValue.getMessage());
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCING_TEST_FAILED);
+                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             }
         } else {
-            AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED);
+            AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
         }
         return type;
     }

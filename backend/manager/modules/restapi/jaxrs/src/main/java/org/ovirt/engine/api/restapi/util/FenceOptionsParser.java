@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 
-public class FencingOptionsParser {
+public class FenceOptionsParser {
 
     /* Format of @str is <agent>;<agent>;...
      * Format of @typeStr is <name>=<type>,<name=type>,...

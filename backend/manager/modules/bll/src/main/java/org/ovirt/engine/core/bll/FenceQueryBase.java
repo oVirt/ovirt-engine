@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.*;
 import org.ovirt.engine.core.common.queries.*;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.*;
 
-public abstract class FencingQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    protected FencingQueryBase(P parameters) {
+public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+    protected FenceQueryBase(P parameters) {
         super(parameters);
     }
 
@@ -49,6 +49,6 @@ public abstract class FencingQueryBase<P extends VdcQueryParametersBase> extends
      * Alerts if power management status failed.
      */
     protected void AlertPowerManagementStatusFailed(String reason) {
-        Alert(AuditLogType.VDS_ALERT_FENCING_TEST_FAILED, reason);
+        Alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
     }
 }

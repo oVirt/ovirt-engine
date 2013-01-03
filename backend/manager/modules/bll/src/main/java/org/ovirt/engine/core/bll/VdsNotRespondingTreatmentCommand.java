@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters> extends RestartVdsCommand<T> {
     /**
-     * use this member to determine if fencing failed but vms moved to unknown mode (for the audit log type)
+     * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private boolean _vmsMovedToUnknown;
 
@@ -33,11 +33,11 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * Create an executor which retries to find a proxy, since this command is automatic and we don't want it to fail
      * fast if no proxy is available, but to try a few times.
      *
-     * @return The executor, which is used to check if a proxy is available for fencing the host.
+     * @return The executor, which is used to check if a proxy is available for fence the host.
      */
     @Override
-    protected FencingExecutor createExecutorForProxyCheck() {
-        return new FencingExecutor(getVds(), getParameters().getAction());
+    protected FenceExecutor createExecutorForProxyCheck() {
+        return new FenceExecutor(getVds(), getParameters().getAction());
     }
 
     /**
@@ -51,7 +51,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             super.executeCommand();
         } else {
             setCommandShouldBeLogged(false);
-            log.infoFormat("Not fencing host {0}({1}) since it's status is ok, or it doesn't exist anymore.",
+            log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
     }
@@ -64,7 +64,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     protected void HandleError() {
         final String RESTART = "Restart";
         MoveVMsToUnknown();
-        // if fencing failed on spm, move storage pool to non operational
+        // if fence failed on spm, move storage pool to non operational
         if (getVds().getspm_status() != VdsSpmStatus.None) {
             log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
                     getVds().getvds_name(), getVds().getStoragePoolId());
@@ -87,7 +87,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     /**
-     * Determine if the status is legal for actually fencing the VDS.
+     * Determine if the status is legal for actually fence the VDS.
      *
      * @return <c>true</c> if the VDS should be fenced, otherwise <c>false</c>.
      */

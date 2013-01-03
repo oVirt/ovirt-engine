@@ -227,10 +227,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot add new Host using a secured connection, Certificate file could not be found.")
     String VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND();
 
-    @DefaultStringValue("Cannot fence Host, Host fencing is disabled.")
-    String VDS_FENCING_DISABLED();
+    @DefaultStringValue("Cannot fence Host, Host fence is disabled.")
+    String VDS_FENCE_DISABLED();
 
-    @DefaultStringValue("Fencing is disabled due to the Engine Service start up sequence.")
+    @DefaultStringValue("Fence is disabled due to the Engine Service start up sequence.")
     String VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL();
 
     @DefaultStringValue(" Power Management operation ${operation} is still running, please retry in ${seconds} Sec.")
@@ -1244,7 +1244,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot get Host version when Host is in Non Responsive status.")
     String VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE();
 
-    @DefaultStringValue("Due to intermittent connectivity to this Host, fencing operations are not allowed at this time. The system is trying to reconnect, please try again in 30 seconds.")
+    @DefaultStringValue("Due to intermittent connectivity to this Host, fence operations are not allowed at this time. The system is trying to reconnect, please try again in 30 seconds.")
     String ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY();
 
     @DefaultStringValue("Cannot ${action} ${type}. Power Management is enabled for Host but no Agent type selected.")
@@ -1691,8 +1691,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("${type} VM Cluster.")
     String VAR__TYPE__VM__CLUSTER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Fencing operation failed.")
-    String VDS_FENCING_OPERATION_FAILED();
+    @DefaultStringValue("Cannot ${action} ${type}. Fence operation failed.")
+    String VDS_FENCE_OPERATION_FAILED();
 
     @DefaultStringValue("Cannot ${action} without active ISO domain.")
     String VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO();

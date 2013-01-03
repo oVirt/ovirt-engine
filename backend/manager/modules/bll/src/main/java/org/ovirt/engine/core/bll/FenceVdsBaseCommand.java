@@ -41,13 +41,13 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
     private final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
-    private static final String INTERNAL_FENCING_USER = "Engine";
+    private static final String INTERNAL_FENCE_USER = "Engine";
     private static Log log = LogFactory.getLog(FenceVdsBaseCommand.class);
-    protected FencingExecutor executor;
+    protected FenceExecutor executor;
     protected List<VM> mVmList = null;
-    private boolean privateFencingSucceeded;
-    private FencingExecutor primaryExecutor;
-    private FencingExecutor secondaryExecutor;
+    private boolean privateFenceSucceeded;
+    private FenceExecutor primaryExecutor;
+    private FenceExecutor secondaryExecutor;
     private FenceInvocationResult primaryResult;
     private FenceInvocationResult secondaryResult;
 
@@ -80,12 +80,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     protected abstract int getDelayInSeconds();
 
-    protected boolean getFencingSucceeded() {
-        return privateFencingSucceeded;
+    protected boolean getFenceSucceeded() {
+        return privateFenceSucceeded;
     }
 
-    protected void setFencingSucceeded(boolean value) {
-        privateFencingSucceeded = value;
+    protected void setFenceSucceeded(boolean value) {
+        privateFenceSucceeded = value;
     }
 
     @Override
@@ -107,7 +107,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         if (getVds().getpm_enabled()
                 && IsPowerManagementLegal(getVds().getStaticData(), getVdsGroup().getcompatibility_version().toString())) {
             // check if we are in the interval of X seconds from startup
-            // if yes , system is still initializing , ignore fencing operations
+            // if yes , system is still initializing , ignore fence operations
             java.util.Date waitTo =
                     Backend.getInstance()
                             .getStartedAt()
@@ -137,13 +137,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             } else {
                 addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED_AT_SYSTEM_STARTUP_INTERVAL);
             }
-            // retry operation only when fencing is enabled on Host.
+            // retry operation only when fence is enabled on Host.
             if (!retValue) {
                 HandleError();
             }
         }
         else {
-            addCanDoActionMessage(VdcBllMessages.VDS_FENCING_DISABLED);
+            addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED);
         }
         getReturnValue().setSucceeded(retValue);
         return retValue;
@@ -156,7 +156,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         try {
             // Set status immediately to prevent a race (BZ 636950/656224)
             setStatus();
-            // Check which fencing invocation pattern to invoke
+            // Check which fence invocation pattern to invoke
             // Regular (no secondary agent) , multiple sequential agents or multiple concurent agents
             if (StringUtils.isEmpty(getVds().getPmSecondaryIp())){
                 handleSingleAgent(lastStatus, vdsReturnValue);
@@ -169,7 +169,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     handleMultipleSequentialAgents(lastStatus, vdsReturnValue);
                 }
             }
-            setSucceeded(getFencingSucceeded());
+            setSucceeded(getFenceSucceeded());
         } finally {
             if (!getSucceeded()) {
                 setStatus(lastStatus);
@@ -179,16 +179,16 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     /**
-     * Handling the case of a single fencing agent
+     * Handling the case of a single fence agent
      * @param lastStatus
      */
     private void handleSingleAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        executor = new FencingExecutor(getVds(), getParameters().getAction());
+        executor = new FenceExecutor(getVds(), getParameters().getAction());
         if (executor.FindVdsToFence()) {
             vdsReturnValue = executor.Fence();
-            setFencingSucceeded(vdsReturnValue.getSucceeded());
-            if (getFencingSucceeded()) {
-                executor = new FencingExecutor(getVds(), FenceActionType.Status);
+            setFenceSucceeded(vdsReturnValue.getSucceeded());
+            if (getFenceSucceeded()) {
+                executor = new FenceExecutor(getVds(), FenceActionType.Status);
                 if (waitForStatus(getVds().getvds_name(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
@@ -201,24 +201,24 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     /**
-     * Handling the case of a multiple sequential fencing agents
+     * Handling the case of a multiple sequential fence agents
      * If operation fails on Primary agent, the Secondary agent is used.
      * @param lastStatus
      */
     private void handleMultipleSequentialAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        executor = new FencingExecutor(getVds(), getParameters().getAction());
+        executor = new FenceExecutor(getVds(), getParameters().getAction());
         if (executor.FindVdsToFence()) {
             vdsReturnValue = executor.Fence(FenceAgentOrder.Primary);
-            setFencingSucceeded(vdsReturnValue.getSucceeded());
-            if (getFencingSucceeded()) {
-                executor = new FencingExecutor(getVds(), FenceActionType.Status);
+            setFenceSucceeded(vdsReturnValue.getSucceeded());
+            if (getFenceSucceeded()) {
+                executor = new FenceExecutor(getVds(), FenceActionType.Status);
                 if (waitForStatus(getVds().getvds_name(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
                     vdsReturnValue = executor.Fence(FenceAgentOrder.Secondary);
-                    setFencingSucceeded(vdsReturnValue.getSucceeded());
-                    if (getFencingSucceeded()) {
-                        executor = new FencingExecutor(getVds(), FenceActionType.Status);
+                    setFenceSucceeded(vdsReturnValue.getSucceeded());
+                    if (getFenceSucceeded()) {
+                        executor = new FenceExecutor(getVds(), FenceActionType.Status);
                         if (waitForStatus(getVds().getvds_name(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
                             handleSpecificCommandActions();
                         }
@@ -237,14 +237,14 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     /**
-     * Handling the case of a multiple concurrent fencing agents
+     * Handling the case of a multiple concurrent fence agents
      * for Stop we should have two concurrent threads and wait for both to succeed
      * for Start  we should have two concurrent threads and wait for one to succeed
      * @param lastStatus
      */
     private void handleMultipleConcurrentAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        primaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
-        secondaryExecutor = new FencingExecutor(getVds(), getParameters().getAction());
+        primaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
+        secondaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
         primaryResult = new FenceInvocationResult();
         secondaryResult = new FenceInvocationResult();
         List<Callable<FenceInvocationResult>> tasks = new ArrayList<Callable<FenceInvocationResult>>();
@@ -271,7 +271,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 setResult(f1);
                 if (primaryResult.isSucceeded() || secondaryResult.isSucceeded()) {
                     handleSpecificCommandActions();
-                    setFencingSucceeded(true);
+                    setFenceSucceeded(true);
                 } else {
                     tryOtherAgent(lastStatus, ecs);
                 }
@@ -295,14 +295,14 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 }
                 if (primaryResult.isSucceeded() && secondaryResult.isSucceeded()) {
                     handleSpecificCommandActions();
-                    setFencingSucceeded(true);
+                    setFenceSucceeded(true);
                 } else {
                     handleError(lastStatus,
                             (!primaryResult.isSucceeded()) ? primaryResult.getValue() : secondaryResult.getValue());
                 }
                 break;
             default:
-                setFencingSucceeded(true);
+                setFenceSucceeded(true);
                 break;
             }
         } catch (InterruptedException e) {
@@ -319,7 +319,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         setResult(f2);
         if (primaryResult.isSucceeded() || secondaryResult.isSucceeded()) {
             handleSpecificCommandActions();
-            setFencingSucceeded(true);
+            setFenceSucceeded(true);
         } else {
             handleError(lastStatus, primaryResult.getValue());
             handleError(lastStatus, secondaryResult.getValue());
@@ -335,12 +335,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
     }
 
-    private FenceInvocationResult run(FencingExecutor executor, FenceAgentOrder order) {
+    private FenceInvocationResult run(FenceExecutor executor, FenceAgentOrder order) {
         FenceInvocationResult fenceInvocationResult = new FenceInvocationResult();
         fenceInvocationResult.setOrder(order);
         fenceInvocationResult.setValue(executor.Fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
-            executor = new FencingExecutor(getVds(), FenceActionType.Status);
+            executor = new FenceExecutor(getVds(), FenceActionType.Status);
             fenceInvocationResult.setSucceeded(waitForStatus(getVds().getvds_name(), getParameters().getAction(), order));
         }
         return fenceInvocationResult;
@@ -352,15 +352,15 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // invocation and not on its result), we have to try the Start command again
         // before giving up
         if (getParameters().getAction() == FenceActionType.Start) {
-            executor = new FencingExecutor(getVds(), FenceActionType.Start);
+            executor = new FenceExecutor(getVds(), FenceActionType.Start);
             vdsReturnValue = executor.Fence();
-            setFencingSucceeded(vdsReturnValue.getSucceeded());
-            if (getFencingSucceeded()) {
-                executor = new FencingExecutor(getVds(), FenceActionType.Status);
+            setFenceSucceeded(vdsReturnValue.getSucceeded());
+            if (getFenceSucceeded()) {
+                executor = new FenceExecutor(getVds(), FenceActionType.Status);
                 if (waitForStatus(getVds().getvds_name(), FenceActionType.Start, FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
-                    setFencingSucceeded(false);
+                    setFenceSucceeded(false);
                 }
             } else {
                 handleError(lastStatus, vdsReturnValue);
@@ -368,10 +368,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
         } else {
             // We reach this if we wait for on/off status after start/stop as defined in configurable delay/retries and
-            // did not reach the desired on/off status.We assume that fencing operation didn't complete successfully
+            // did not reach the desired on/off status.We assume that fence operation didn't complete successfully
             // Setting this flag will cause the appropriate Alert to pop and to restore host status to it's previous
             // value as appears in the finally block.
-            setFencingSucceeded(false);
+            setFenceSucceeded(false);
         }
     }
 
@@ -382,8 +382,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             log.errorFormat("Failed to {0} VDS", getParameters().getAction()
                     .name()
                     .toLowerCase());
-            throw new VdcBLLException(VdcBllErrors.VDS_FENCING_OPERATION_FAILED);
-        } else { // Fencing operation was skipped because Host is already in the requested state.
+            throw new VdcBLLException(VdcBllErrors.VDS_FENCE_OPERATION_FAILED);
+        } else { // Fence operation was skipped because Host is already in the requested state.
             setStatus(lastStatus);
         }
     }
@@ -394,8 +394,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      *
      * @return An executor used to check the availability of a proxy host.
      */
-    protected FencingExecutor createExecutorForProxyCheck() {
-        return new FencingExecutor(getVds(), FenceActionType.Status);
+    protected FenceExecutor createExecutorForProxyCheck() {
+        return new FenceExecutor(getVds(), FenceActionType.Status);
     }
 
     protected void DestroyVmOnDestination(VM vm) {
@@ -466,7 +466,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     @Override
     public String getUserName() {
         String userName = super.getUserName();
-        return StringUtils.isEmpty(userName)? INTERNAL_FENCING_USER: userName;
+        return StringUtils.isEmpty(userName)? INTERNAL_FENCE_USER: userName;
     }
 
 
@@ -511,7 +511,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             AuditLogableBase auditLogable = new AuditLogableBase();
             auditLogable.AddCustomValue("Host", vdsName);
             auditLogable.AddCustomValue("Status", actionName);
-            AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCING_STATUS_VERIFICATION_FAILED);
+            AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
             log.errorFormat("Failed to verify host {0} {1} status. Have retried {2} times with delay of {3} seconds between each retry.",
                     vdsName,
                     ACTION_NAME,

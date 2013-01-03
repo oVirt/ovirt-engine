@@ -8,9 +8,9 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.Option;
 
-import static org.ovirt.engine.api.restapi.util.FencingOptionsParser.parse;
+import static org.ovirt.engine.api.restapi.util.FenceOptionsParser.parse;
 
-public class FencingOptionsParserTest extends Assert {
+public class FenceOptionsParserTest extends Assert {
 
     @Test
     public void testParseEmpty() {

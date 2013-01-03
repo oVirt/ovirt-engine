@@ -59,7 +59,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             // execute StartVds action
             returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Start, VdcActionType.StartVds);
             setSucceeded(returnValueBase.getSucceeded());
-            setFencingSucceeded(getSucceeded());
+            setFenceSucceeded(getSucceeded());
         } else {
             setSucceeded(false);
         }
@@ -107,7 +107,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
 
     @Override
     protected void HandleError() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCING_OPERATION_FAILED);
+        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RESTART);
         log.errorFormat("Failed to run RestartVdsCommand on vds :{0}", getVdsName());

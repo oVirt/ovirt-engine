@@ -116,13 +116,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         }
 
         if (!vdsStatic.getpm_enabled() || StringUtils.isEmpty(vdsStatic.getpm_type())) {
-            Alert(AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED);
+            Alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             // remove any test failure alerts
             AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
-                    AuditLogType.VDS_ALERT_FENCING_TEST_FAILED);
+                    AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
         } else {
             AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
-                    AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED);
+                    AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
         }
     }
 
@@ -143,7 +143,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Alerts if power management operation failed.
      */
     protected void AlertIfPowerManagementOperationFailed() {
-        Alert(AuditLogType.VDS_ALERT_FENCING_OPERATION_FAILED);
+        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_FAILED);
     }
 
     /**
@@ -151,7 +151,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * @param operation The operation name.
      */
     protected void AlertIfPowerManagementOperationSkipped(String operation) {
-        Alert(AuditLogType.VDS_ALERT_FENCING_OPERATION_SKIPPED,operation);
+        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED,operation);
     }
 
     protected void LogSettingVmToDown(Guid vdsId, Guid vmId) {

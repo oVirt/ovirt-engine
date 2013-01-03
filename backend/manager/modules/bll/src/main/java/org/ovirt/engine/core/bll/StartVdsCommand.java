@@ -50,7 +50,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCING_OPERATION_FAILED);
+        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
 

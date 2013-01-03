@@ -11,7 +11,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
-public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends FencingQueryBase<P> {
+public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends FenceQueryBase<P> {
 
     public GetVdsFenceStatusQuery(P parameters) {
         super(parameters);
@@ -23,7 +23,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
         VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         setVdsId(vds.getId());
         setVdsName(vds.getvds_name());
-        FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);
+        FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;
         if (executor.FindVdsToFence()) {
             returnValue = executor.Fence(FenceAgentOrder.Primary);
@@ -52,7 +52,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fenci
                     "Failed to run Power Management command on Host %1$s, no running proxy Host was found.",
                     vds.getvds_name());
             getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
-            AlertPowerManagementStatusFailed(AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST));
+            AlertPowerManagementStatusFailed(AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
         }
     }
 

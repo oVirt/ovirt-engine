@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-public class VdsFencingOptions implements Serializable {
+public class VdsFenceOptions implements Serializable {
 
     private static final long serialVersionUID = -8832636627473217232L;
     private static final String COMMA = ",";
@@ -28,10 +28,10 @@ public class VdsFencingOptions implements Serializable {
     private static final String FALSE_STRING = "false";
     private static final String YES = "yes";
     private static final String NO = "no";
-    private static final String AGENT_ERROR = "Cannot find fencing agent named {0} in fencing option mapping";
+    private static final String AGENT_ERROR = "Cannot find fence agent named {0} in fence option mapping";
     private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format {0}";
 
-    private static Log log = LogFactory.getLog(VdsFencingOptions.class);
+    private static Log log = LogFactory.getLog(VdsFenceOptions.class);
     private static HashMap<String, HashMap<String, String>> fencingOptionMapping;
     private static HashMap<String, String> fencingOptionTypes;
 
@@ -43,7 +43,7 @@ public class VdsFencingOptions implements Serializable {
     /**
      * Initializes a new instance of the <see cref="VdsFencingOptions"/> class.
      */
-    public VdsFencingOptions() {
+    public VdsFenceOptions() {
         InitCache();
         Init();
     }
@@ -56,7 +56,7 @@ public class VdsFencingOptions implements Serializable {
      * @param fencingOptions
      *            The fencing options.
      */
-    public VdsFencingOptions(String agent, String fencingOptions) {
+    public VdsFenceOptions(String agent, String fencingOptions) {
         if (!StringHelper.isNullOrEmpty(agent)) {
             this.fenceAgent = agent;
             this.fencingOptions = fencingOptions;

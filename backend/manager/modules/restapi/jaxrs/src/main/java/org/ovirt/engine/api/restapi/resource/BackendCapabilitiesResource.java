@@ -90,7 +90,7 @@ import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
-import org.ovirt.engine.api.restapi.util.FencingOptionsParser;
+import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
 import org.ovirt.engine.api.restapi.util.ServerCpuParser;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
@@ -396,7 +396,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     private List<PowerManagement> getPowerManagers(Version version) {
-        return FencingOptionsParser.parse(getConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
+        return FenceOptionsParser.parse(getConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
                                           getConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionTypes, version),
                                           true);
     }

@@ -212,11 +212,11 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_REGISTER_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_REGISTER_SUCCEEDED, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_REGISTER_EXISTING_VDS_UPDATE_FAILED, AuditLogSeverity.ERROR);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_IS_NOT_CONFIGURED, AuditLogSeverity.ALERT);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_TEST_FAILED, AuditLogSeverity.ALERT);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_OPERATION_FAILED, AuditLogSeverity.ALERT);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_OPERATION_SKIPPED, AuditLogSeverity.ALERT);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_STATUS_VERIFICATION_FAILED, AuditLogSeverity.ALERT);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, AuditLogSeverity.ALERT);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, AuditLogSeverity.ALERT);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_OPERATION_FAILED, AuditLogSeverity.ALERT);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, AuditLogSeverity.ALERT);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED, AuditLogSeverity.ALERT);
         mSeverities.put(AuditLogType.VDS_RUN_IN_NO_KVM_MODE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_VERSION_NOT_SUPPORTED_FOR_CLUSTER, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_CPU_LOWER_THAN_CLUSTER, AuditLogSeverity.WARNING);
@@ -277,7 +277,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.VDS_MANUAL_FENCE_STATUS_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_MANUAL_FENCE_FAILED_CALL_FENCE_SPM, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.USER_VDS_MAINTENANCE, AuditLogSeverity.NORMAL);
-        mSeverities.put(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST, AuditLogSeverity.NORMAL);
+        mSeverities.put(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_LOW_MEM, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_STORAGE_CONNECTION_FAILED_BUT_LAST_VDS, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_STORAGES_CONNECTION_FAILED, AuditLogSeverity.ERROR);

@@ -23,15 +23,15 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.pm.VdsFencingOptions;
+import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
-public class FencingExecutor {
+public class FenceExecutor {
     private final VDS _vds;
     private FenceActionType _action = FenceActionType.forValue(0);
     private Guid proxyHostId;
     private String proxyHostName;
 
-    public FencingExecutor(VDS vds, FenceActionType actionType) {
+    public FenceExecutor(VDS vds, FenceActionType actionType) {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
         if (! vds.getId().equals(Guid.Empty)) {
             VDS dbVds =  DbFacade.getInstance().getVdsDao().get(vds.getId());
@@ -79,7 +79,7 @@ public class FencingExecutor {
             if (_vds.getId().equals(NO_VDS)) {
                 // try first to find a Host in UP status
                 proxyHost = getFenceProxy(true, false, proxyOption);
-                // trying other Hosts that are not in UP since they can be a proxy for fencing operations
+                // trying other Hosts that are not in UP since they can be a proxy for fence operations
                 if (proxyHost == null) {
                     proxyHost = getFenceProxy(false, false, proxyOption);
                 }
@@ -105,7 +105,7 @@ public class FencingExecutor {
                     // do not retry getting proxy for Status operation.
                     if (_action == FenceActionType.Status)
                         break;
-                    log.infoFormat("Atempt {0} to find fencing proxy host failed...", ++count);
+                    log.infoFormat("Atempt {0} to find fence proxy host failed...", ++count);
                     try {
                         Thread.sleep(delayInMs);
                     } catch (Exception e) {
@@ -152,7 +152,7 @@ public class FencingExecutor {
                                     new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
                 }
             }
-            retValue = runFencingAction(_action, order);
+            retValue = runFenceAction(_action, order);
         } catch (VdcBLLException e) {
             retValue = new VDSReturnValue();
             retValue.setReturnValue(new FenceStatusReturnValue("unknown", e.getMessage()));
@@ -167,16 +167,16 @@ public class FencingExecutor {
      * @return Whether the proxy host can be used to fence the host successfully.
      */
     public boolean checkProxyHostConnectionToHost() {
-        return runFencingAction(FenceActionType.Status, FenceAgentOrder.Primary).getSucceeded();
+        return runFenceAction(FenceActionType.Status, FenceAgentOrder.Primary).getSucceeded();
     }
 
 
     /**
-     * Run the specified fencing action.
+     * Run the specified fence action.
      * @param actionType The action to run.
-     * @return The result of running the fencing command.
+     * @return The result of running the fence command.
      */
-    private VDSReturnValue runFencingAction(FenceActionType actionType, FenceAgentOrder order) {
+    private VDSReturnValue runFenceAction(FenceActionType actionType, FenceAgentOrder order) {
         String managementIp = getManagementIp(order);
         String managementPort = getManagementPort(order);
         String managementAgent = getManagementAgent(order);
@@ -200,11 +200,11 @@ public class FencingExecutor {
     private String getManagementOptions(FenceAgentOrder order) {
         String managementOptions = "";
         if (order == FenceAgentOrder.Primary) {
-            managementOptions = VdsFencingOptions.getDefaultAgentOptions(_vds.getpm_type(), _vds.getpm_options());
+            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getpm_type(), _vds.getpm_options());
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementOptions =
-                    VdsFencingOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions());
+                    VdsFenceOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions());
         }
         return managementOptions;
     }
@@ -235,10 +235,10 @@ public class FencingExecutor {
         String agent = "";
      // get real agent and default parameters
         if (order == FenceAgentOrder.Primary) {
-            agent = VdsFencingOptions.getRealAgent(_vds.getpm_type());
+            agent = VdsFenceOptions.getRealAgent(_vds.getpm_type());
         }
         else if (order == FenceAgentOrder.Secondary) {
-            agent = VdsFencingOptions.getRealAgent(_vds.getPmSecondaryType());
+            agent = VdsFenceOptions.getRealAgent(_vds.getPmSecondaryType());
         }
         return agent;
     }
@@ -332,6 +332,6 @@ public class FencingExecutor {
         });
         return proxyHost;
     }
-    private static Log log = LogFactory.getLog(FencingExecutor.class);
+    private static Log log = LogFactory.getLog(FenceExecutor.class);
     private enum PMProxyOptions {CLUSTER,DC;};
 }

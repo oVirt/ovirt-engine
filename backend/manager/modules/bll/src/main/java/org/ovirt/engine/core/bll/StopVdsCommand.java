@@ -50,7 +50,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected void HandleError() {
-        addCanDoActionMessage(VdcBllMessages.VDS_FENCING_OPERATION_FAILED);
+        addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
         log.errorFormat("Failed to run StopVdsCommand on vds :{0}", getVdsName());

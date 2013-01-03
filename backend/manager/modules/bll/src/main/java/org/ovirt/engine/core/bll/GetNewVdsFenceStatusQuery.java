@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
-public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters> extends FencingQueryBase<P> {
+public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters> extends FenceQueryBase<P> {
 
     public GetNewVdsFenceStatusQuery(P parameters) {
         super(parameters);
@@ -38,7 +38,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
             tempVar.setPmSecondaryPassword(getParameters().getPassword());
         }
         VDS vds = tempVar;
-        FencingExecutor executor = new FencingExecutor(vds, FenceActionType.Status);
+        FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         if (executor.FindVdsToFence()) {
             VDSReturnValue returnValue = executor.Fence(getParameters().getOrder());
             if (returnValue.getReturnValue() != null) {
@@ -48,7 +48,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
             getQueryReturnValue().setSucceeded(false);
             getQueryReturnValue().setReturnValue(
                     new FenceStatusReturnValue(UNKNOWN, AuditLogDirector
-                            .GetMessage(AuditLogType.VDS_ALERT_FENCING_NO_PROXY_HOST)));
+                            .GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST)));
         }
     }
 }
