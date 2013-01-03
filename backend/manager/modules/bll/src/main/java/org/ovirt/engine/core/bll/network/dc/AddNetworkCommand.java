@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @SuppressWarnings("serial")
@@ -106,12 +105,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     }
 
     private List<Network> getNetworks() {
-        NGuid dataCenterId = getNetwork().getDataCenterId();
-        if (dataCenterId != null && !dataCenterId.getValue().equals(Guid.Empty)) {
-            return getNetworkDAO().getAllForDataCenter(dataCenterId.getValue());
-        } else {
-            return getNetworkDAO().getAll();
-        }
+        return getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
     }
 
     private ValidationResult networkDoesNotExist(List<Network> networks) {
