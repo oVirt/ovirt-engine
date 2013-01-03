@@ -612,7 +612,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED) {
             promptNoQuotaInDCMessage();
         }
-        else if (!((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version()))
+        else if (getSelectedItem() != null
+                && !((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version()))
         {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
@@ -633,7 +634,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             tempVar2.setIsCancel(true);
             confirmModel.getCommands().add(tempVar2);
         }
-        else if (((storage_pool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
+        else if (getSelectedItem() != null
+                && ((storage_pool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
                 && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED)
         {
             checkForQuotaInDC(model.getEntity(), this);
