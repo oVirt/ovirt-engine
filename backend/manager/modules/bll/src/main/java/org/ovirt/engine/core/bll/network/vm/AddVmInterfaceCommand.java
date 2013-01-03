@@ -77,11 +77,19 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
         });
 
-        boolean succeeded = true;
-        if (getParameters().getInterface().isPlugged()) {
-            succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
+        boolean succeeded = false;
+        try {
+            if (getParameters().getInterface().isPlugged()) {
+                succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
+            } else {
+                succeeded = true;
+            }
+        } finally {
+            setSucceeded(succeeded);
+            if (!succeeded) {
+                MacPoolManager.getInstance().freeMac(getMacAddress());
+            }
         }
-        setSucceeded(succeeded);
     }
 
     private void addInterfaceDeviceToDb() {
@@ -219,12 +227,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.NETWORK_ADD_VM_INTERFACE : AuditLogType.NETWORK_ADD_VM_INTERFACE_FAILED;
-    }
-
-    @Override
-    public void rollback() {
-        super.rollback();
-        MacPoolManager.getInstance().freeMac(getMacAddress());
     }
 
     /**
