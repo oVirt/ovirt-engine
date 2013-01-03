@@ -636,7 +636,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Storage Domain(s)")
     String storageDomainsDisk();
 
-    @DefaultStringValue("SDs")
+    @DefaultStringValue("Domains")
     String storageDomainsLabelDisk();
 
     @DefaultStringValue("Type")
