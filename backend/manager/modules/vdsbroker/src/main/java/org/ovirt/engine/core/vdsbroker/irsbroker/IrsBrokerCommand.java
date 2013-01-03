@@ -82,7 +82,6 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
     public static final long BYTES_TO_GB = 1024 * 1024 * 1024;
-    public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
 
     public static void UpdateVdsDomainsData(Guid vdsId, String vdsName, Guid storagePoolId,
@@ -181,7 +180,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 && (storagePool.getstatus() == StoragePoolStatus.Up
                                         || storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool
                                         .getstatus() == StoragePoolStatus.Contend)) {
-                            ProceedStoragePoolStats(storagePool);
+                            proceedStoragePoolStats(storagePool);
                         }
 
                     }
@@ -193,7 +192,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         private int _errorAttempts;
 
         @SuppressWarnings("unchecked")
-        private void ProceedStoragePoolStats(storage_pool storagePool) {
+        private void proceedStoragePoolStats(storage_pool storagePool) {
             // ugly patch because vdsm doesnt check if host is spm on spm
             // operations
             VDSReturnValue result = null;
@@ -279,7 +278,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
                 for (storage_domains domainData : data.getValue()) {
                     domainsInVds.add(domainData.getId());
-                    ProceedStorageDomain(domainData, masterVersion, storagePool);
+                    proceedStorageDomain(domainData, masterVersion, storagePool);
                 }
                 List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
                         .getAllForStoragePool(_storagePoolId);
@@ -298,7 +297,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void ProceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
+        private void proceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
             storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
             StorageDomainStatic domainFromDb = null;
             StoragePoolIsoMap domainPoolMap = null;
@@ -549,7 +548,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * Returns True if there are other vdss in pool
          */
         public boolean getHasVdssForSpmSelection() {
-            return (GetPrioritizedVdsInPool().size() > 0);
+            return (getPrioritizedVdsInPool().size() > 0);
         }
 
         private String gethostFromVds() {
@@ -563,12 +562,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 return null;
             }
 
-            List<VDS> prioritizedVdsInPool = GetPrioritizedVdsInPool();
+            List<VDS> prioritizedVdsInPool = getPrioritizedVdsInPool();
             mCurrentVdsId = null;
 
             // If VDS is in initialize status, wait for it to be up (or until
             // configurable timeout is reached)
-            WaitForVdsIfIsInitializing(curVdsId);
+            waitForVdsIfIsInitializing(curVdsId);
             // update pool status to problematic while selecting spm
             StoragePoolStatus prevStatus = storagePool.getstatus();
             if (prevStatus != StoragePoolStatus.Problematic) {
@@ -641,13 +640,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                     RefObject<VDS> tempRefObject = new RefObject<VDS>(selectedVds);
                     spmStatus =
-                            HandleSpmStatusResult(curVdsId, prioritizedVdsInPool, storagePool, tempRefObject, spmStatus);
+                            handleSpmStatusResult(curVdsId, prioritizedVdsInPool, storagePool, tempRefObject, spmStatus);
                     selectedVds = tempRefObject.argvalue;
 
                     if (selectedVds != null) {
                         RefObject<VDS> tempRefObject2 = new RefObject<VDS>(selectedVds);
                         RefObject<SpmStatusResult> tempRefObject3 = new RefObject<SpmStatusResult>(spmStatus);
-                        returnValue = HandleSelectedVdsForSPM(storagePool, tempRefObject2, tempRefObject3, prevStatus);
+                        returnValue = handleSelectedVdsForSPM(storagePool, tempRefObject2, tempRefObject3, prevStatus);
                         selectedVds = tempRefObject2.argvalue;
                         spmStatus = tempRefObject3.argvalue;
                     } else {
@@ -674,7 +673,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             return returnValue;
         }
 
-        private List<VDS> GetPrioritizedVdsInPool() {
+        private List<VDS> getPrioritizedVdsInPool() {
             Guid curVdsId = (mCurrentVdsId != null) ? mCurrentVdsId : Guid.Empty;
             // Gets a list of the hosts in the storagePool, that are "UP", ordered
             // by vds_spm_priority (not including -1) and secondly ordered by RANDOM(), to
@@ -691,11 +690,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         private boolean _isSpmStartCalled;
 
-        private String HandleSelectedVdsForSPM(storage_pool storagePool, RefObject<VDS> selectedVds,
-                RefObject<SpmStatusResult> spmStatus, StoragePoolStatus prevStatus) {
+        private String handleSelectedVdsForSPM(storage_pool storagePool, RefObject<VDS> selectedVds,
+                                               RefObject<SpmStatusResult> spmStatus, StoragePoolStatus prevStatus) {
             String returnValue = null;
             if (spmStatus.argvalue == null || spmStatus.argvalue.getSpmStatus() != SpmStatus.SPM) {
-                MovePoolToProblematicInDB(storagePool, true);
+                movePoolToProblematicInDB(storagePool, true);
 
                 selectedVds.argvalue = null;
                 log.infoFormat(
@@ -731,7 +730,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          *
          * @param curVdsId
          */
-        private void WaitForVdsIfIsInitializing(Guid curVdsId) {
+        private void waitForVdsIfIsInitializing(Guid curVdsId) {
             if (!Guid.Empty.equals(curVdsId)
                     && DbFacade.getInstance().getVdsDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
                 final int DELAY = 5;// 5 Sec
@@ -753,7 +752,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void MovePoolToProblematicInDB(storage_pool storagePool, boolean resetSpmInDB) {
+        private void movePoolToProblematicInDB(storage_pool storagePool, boolean resetSpmInDB) {
             ResourceManager
                     .getInstance()
                     .getEventListener()
@@ -766,11 +765,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private SpmStatusResult HandleSpmStatusResult(Guid curVdsId,
-                List<VDS> vdsByPool,
-                final storage_pool storagePool,
-                RefObject<VDS> selectedVds,
-                SpmStatusResult spmStatus) {
+        private SpmStatusResult handleSpmStatusResult(Guid curVdsId,
+                                                      List<VDS> vdsByPool,
+                                                      final storage_pool storagePool,
+                                                      RefObject<VDS> selectedVds,
+                                                      SpmStatusResult spmStatus) {
             if (spmStatus.getSpmStatus() == SpmStatus.Free) {
                 int vdsSpmIdToFence = -1;
                 boolean startSpm = true;
@@ -1186,7 +1185,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 log.infoFormat("Domain {0} has recovered from problem. No active host in the DC is reporting it as" +
                         " problematic, so clearing the domain recovery timer.", domainIdTuple);
                 _domainsInProblem.remove(domainId);
-                ClearTimer(domainId);
+                clearTimer(domainId);
             }
         }
 
@@ -1199,7 +1198,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "OnTimer", inputType,
                     inputParams, Config.<Integer> GetValue(ConfigValues.StorageDomainFalureTimeoutInMinutes),
                     TimeUnit.MINUTES);
-            ClearTimer(domainId);
+            clearTimer(domainId);
             _timers.put(domainId, jobId);
         }
 
@@ -1316,7 +1315,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                      // we assume the problem is with the
                      // Domain.
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
-                    log.warnFormat("Domain {0} was reported by all hosts in status UP as problematic. Moving the domain to NonOperational.",
+                    log.errorFormat("Domain {0} was reported by all hosts in status UP as problematic. Moving the domain to NonOperational.",
                             domainIdTuple);
                     result = ResourceManager.getInstance()
                             .getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
@@ -1331,7 +1330,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // clear from cache of _vdssInProblem and
             // _domainsInProblem
             clearDomainFromCache(domainId);
-            ClearTimer(domainId);
+            clearTimer(domainId);
             return result;
         }
 
@@ -1341,7 +1340,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          * @param domainId
          *            - the domain to clean the timer for
          */
-        private void ClearTimer(Guid domainId) {
+        private void clearTimer(Guid domainId) {
             String jobId = _timers.remove(domainId);
             if (jobId != null) {
                 SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
