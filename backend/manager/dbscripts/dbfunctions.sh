@@ -136,10 +136,12 @@ run_post_upgrade() {
 # The second argument is the label to use while notifying
 # the user about the running of the script
 execute_commands_in_dir() {
-    files=$(get_files "upgrade/${1}" 1)
-    for execFile in $(ls $files | sort); do
-       run_file $execFile
-    done
+    if [ -d upgrade/$1 ]; then
+        files=$(get_files "upgrade/${1}" 1)
+        for execFile in $(ls $files | sort); do
+           run_file $execFile
+        done
+    fi
 }
 
 run_required_scripts() {
