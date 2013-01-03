@@ -55,7 +55,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         Network result = dao.getByName(EXISTING_NETWORK_NAME);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getname());
+        assertEquals(EXISTING_NETWORK_NAME, result.getName());
     }
 
     /**
@@ -66,7 +66,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME, datacenter);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getname());
+        assertEquals(EXISTING_NETWORK_NAME, result.getName());
     }
 
     /**
@@ -77,7 +77,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME, cluster);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getname());
+        assertEquals(EXISTING_NETWORK_NAME, result.getName());
     }
 
     /**
@@ -272,7 +272,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         new_net.setId(Guid.NewGuid());
         dao.save(new_net);
 
-        Network result = dao.getByName(new_net.getname());
+        Network result = dao.getByName(new_net.getName());
 
         assertNotNull(result);
         assertEquals(new_net, result);

@@ -125,7 +125,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             @Override
             public boolean eval(VdsNetworkInterface i) {
                 if (i.getNetworkName() != null) {
-                    return i.getNetworkName().equals(getParameters().getNetwork().getname());
+                    return i.getNetworkName().equals(getParameters().getNetwork().getName());
                 }
                 return false;
             }
@@ -140,7 +140,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {
-                return network.getname().equals(getParameters().getNetwork().getname());
+                return network.getName().equals(getParameters().getNetwork().getName());
             }
         })) {
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);

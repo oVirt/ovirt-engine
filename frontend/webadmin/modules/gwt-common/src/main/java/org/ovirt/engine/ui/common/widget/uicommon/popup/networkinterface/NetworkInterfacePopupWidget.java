@@ -179,7 +179,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((Network) object).getname();
+                return ((Network) object).getName();
             }
         });
 

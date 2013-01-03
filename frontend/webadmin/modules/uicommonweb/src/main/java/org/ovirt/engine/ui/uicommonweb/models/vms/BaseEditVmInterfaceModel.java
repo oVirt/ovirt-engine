@@ -94,7 +94,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     protected void initSelectedNetwork(ArrayList<Network> networks) {
         for (Network a : networks)
         {
-            String networkName = a == null ? null : a.getname();
+            String networkName = a == null ? null : a.getName();
             if (StringHelper.stringsEqual(networkName, getNic().getNetworkName()))
             {
                 getNetwork().setSelectedItem(a);

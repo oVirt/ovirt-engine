@@ -75,7 +75,7 @@ public class BackendTemplateNicsResource
                                 .getId())
                                 : null, device.getNetwork().getName());
                 if (net != null) {
-                    ni.setNetworkName(net.getname());
+                    ni.setNetworkName(net.getName());
                 }
             } else {
                 ni.setNetworkName(null);

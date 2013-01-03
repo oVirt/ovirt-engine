@@ -136,7 +136,7 @@ public abstract class VmInfoBuilderBase {
                 }
             }
             if (net != null) {
-                createInfo.add(VdsProperties.displaynetwork, net.getname());
+                createInfo.add(VdsProperties.displaynetwork, net.getName());
             }
         }
     }

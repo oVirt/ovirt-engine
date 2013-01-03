@@ -781,7 +781,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 {
                     for (Network network : networksByCluster)
                     {
-                        if (StringHelper.stringsEqual(network.getname(), item.getNetworkName()))
+                        if (StringHelper.stringsEqual(network.getName(), item.getNetworkName()))
                         {
                             networksToAdd.add(network);
                             if (selectedNetwork == null)
@@ -797,7 +797,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
                     for (Network network : networksByCluster)
                     {
-                        networkDictionary.put(network.getname(), network);
+                        networkDictionary.put(network.getName(), network);
                     }
                     // creating list of attached networks.
                     ArrayList<Network> attachedNetworks = new ArrayList<Network>();
@@ -1217,7 +1217,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (network != null)
         {
-            parameters.setOldNetworkName(network.getname());
+            parameters.setOldNetworkName(network.getName());
         }
         parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
         parameters.setBootProtocol(model.getBootProtocol());
@@ -1307,7 +1307,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 HashMap<String, Network> networkDictionary = new HashMap<String, Network>();
                 for (Network network : networksByCluster)
                 {
-                    networkDictionary.put(network.getname(), network);
+                    networkDictionary.put(network.getName(), network);
                 }
                 // creating list of attached networks.
                 ArrayList<Network> attachedNetworks = new ArrayList<Network>();
@@ -1939,7 +1939,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             bondWithVlans = true;
                             for (HostVLan vLan : item.getVLans())
                             {
-                                if (StringHelper.stringsEqual(network.getname(), vLan.getNetworkName()))
+                                if (StringHelper.stringsEqual(network.getName(), vLan.getNetworkName()))
                                 {
                                     vLanAttached = true;
                                     break;
@@ -1954,7 +1954,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 for (VdsNetworkInterface item : getSelectedItemsWithVlans())
                 {
-                    if (item.getVlanId() != null && StringHelper.stringsEqual(item.getNetworkName(), network.getname()))
+                    if (item.getVlanId() != null && StringHelper.stringsEqual(item.getNetworkName(), network.getName()))
                     {
                         isUpdateVlan = true;
                         break;
@@ -1975,7 +1975,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         new UpdateNetworkToVdsParameters(getEntity().getId(),
                                 network,
                                 new ArrayList<VdsNetworkInterface>(Arrays.asList(new VdsNetworkInterface[] { nic })));
-                parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getname()));
+                parameters.setOldNetworkName((nic.getNetworkName() != null ? nic.getNetworkName() : network.getName()));
                 parameters.setCheckConnectivity((Boolean) model.getCheckConnectivity().getEntity());
 
                 actionType = VdcActionType.UpdateNetworkToVdsInterface;

@@ -195,7 +195,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
                     message.setText(model.getMessage());
                 }
                 else if ("Entity".equals(propertyName)) { //$NON-NLS-1$
-                    nameEditor.asEditor().getSubEditor().setValue(object.getEntity().getname());
+                    nameEditor.asEditor().getSubEditor().setValue(object.getEntity().getName());
                 }
             }
         });

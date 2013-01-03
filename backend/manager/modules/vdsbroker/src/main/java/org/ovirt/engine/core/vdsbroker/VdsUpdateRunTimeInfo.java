@@ -720,10 +720,10 @@ public class VdsUpdateRunTimeInfo {
                 for (Network net : clusterNetworks) {
                     // If this is the network on the bond, or on a vlan over the bond, and the network is required
                     // we want to check this network
-                    if ((net.getname().equals(iface.getNetworkName())
-                            || isVlanOverBondNetwork(bondName, net.getname())) && net.getCluster().isRequired()) {
+                    if ((net.getName().equals(iface.getNetworkName())
+                            || isVlanOverBondNetwork(bondName, net.getName())) && net.getCluster().isRequired()) {
                         retVal.setFirst(true);
-                        retVal.setSecond(net.getname());
+                        retVal.setSecond(net.getName());
                         return retVal;
                     }
                 }

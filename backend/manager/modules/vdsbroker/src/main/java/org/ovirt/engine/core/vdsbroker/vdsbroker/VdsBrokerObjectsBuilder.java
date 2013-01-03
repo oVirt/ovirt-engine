@@ -1194,10 +1194,10 @@ public class VdsBrokerObjectsBuilder {
             Network net) {
 
         if (iface != null) {
-            iface.setNetworkName(net.getname());
+            iface.setNetworkName(net.getName());
 
             if (currVlans.containsKey(iface.getName())) {
-                networkVlans.put(net.getname(), currVlans.get(iface.getName()));
+                networkVlans.put(net.getName(), currVlans.get(iface.getName()));
             }
 
             // set the management ip

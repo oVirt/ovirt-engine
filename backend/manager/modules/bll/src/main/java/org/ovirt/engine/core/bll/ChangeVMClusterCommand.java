@@ -124,7 +124,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             if (netName != null) {
                 boolean exists = false;
                 for (Network net : networks) {
-                    if (net.getname().equals(netName)) {
+                    if (net.getName().equals(netName)) {
                         exists = true;
                         break;
                     }
@@ -166,7 +166,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
                     public boolean eval(Network n) {
-                        return iface.getNetworkName().equals(n.getname());
+                        return iface.getNetworkName().equals(n.getName());
                     }
                 });
                 // if network not exists in cluster we remove the network to

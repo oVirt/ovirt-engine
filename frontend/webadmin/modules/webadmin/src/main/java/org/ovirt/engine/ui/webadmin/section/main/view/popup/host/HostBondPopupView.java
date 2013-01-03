@@ -128,7 +128,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             protected String renderNullSafe(Object object) {
-                return ((Network) object).getname();
+                return ((Network) object).getName();
             }
 
         });

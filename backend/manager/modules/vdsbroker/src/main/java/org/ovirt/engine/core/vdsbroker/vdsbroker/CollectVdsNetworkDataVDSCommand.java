@@ -174,7 +174,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
             if (net.isVmNetwork()
                     && interfacesByNetworkName.containsKey(net.getName())
                     && !interfacesByNetworkName.get(net.getName()).isBridged()) {
-                networkNames.add(net.getname());
+                networkNames.add(net.getName());
             }
         }
 
@@ -189,7 +189,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
             if (net.getCluster().getStatus() == OPERATIONAL &&
                     net.getCluster().isRequired() &&
                     !vdsNetworksByName.containsKey(net.getName())) {
-                networkNames.add(net.getname());
+                networkNames.add(net.getName());
             }
         }
         return StringUtils.join(networkNames, ",");

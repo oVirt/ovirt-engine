@@ -27,7 +27,7 @@ public class GetNonOperationalVdsQuery<P extends NetworkNonOperationalQueryParam
             if (LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
-                    return StringUtils.equals(i.getNetworkName(), getParameters().getNetwork().getname());
+                    return StringUtils.equals(i.getNetworkName(), getParameters().getNetwork().getName());
                 }
             }) == null) {
                 retVal.add(vds);

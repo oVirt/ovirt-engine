@@ -33,7 +33,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     public String getNetworkName() {
-        return getNetwork().getname();
+        return getNetwork().getName();
     }
 
     @Override

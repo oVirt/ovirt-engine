@@ -194,7 +194,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
                         lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork()
                                 .getId()) : null, device.getNetwork().getName());
                 if (net != null) {
-                    ni.setNetworkName(net.getname());
+                    ni.setNetworkName(net.getName());
                 }
             } else {
                 ni.setNetworkName(null);

@@ -88,7 +88,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         boolean exists = false;
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         for (Network net : networks) {
-            if (StringUtils.equals(net.getname(), managementNetwork)) {
+            if (StringUtils.equals(net.getName(), managementNetwork)) {
                 exists = true;
             }
         }
@@ -100,7 +100,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                         getVdsGroup().getStoragePoolId()
                                                 .getValue());
                 for (Network net : storagePoolNets) {
-                    if (StringUtils.equals(net.getname(), managementNetwork)) {
+                    if (StringUtils.equals(net.getName(), managementNetwork)) {
                         getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(), net.getId(),
                                 NetworkStatus.OPERATIONAL, true, true));
                     }

@@ -221,7 +221,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network n) {
-                    return n.getname().equals(getInterface().getNetworkName());
+                    return n.getName().equals(getInterface().getNetworkName());
                 }
             })) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);

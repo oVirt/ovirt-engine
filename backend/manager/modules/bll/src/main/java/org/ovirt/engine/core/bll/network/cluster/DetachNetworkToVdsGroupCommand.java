@@ -45,7 +45,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     @Override
     protected boolean canDoAction() {
         // check that we are not removing the management network
-        if (StringUtils.equals(getParameters().getNetwork().getname(),
+        if (StringUtils.equals(getParameters().getNetwork().getName(),
                 Config.<String> GetValue(ConfigValues.ManagementNetwork))) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK);
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
@@ -55,11 +55,11 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         // check that there is no vm running with this network
         List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(
-                getParameters().getVdsGroupId(), getParameters().getNetwork().getname());
+                getParameters().getVdsGroupId(), getParameters().getNetwork().getName());
         if (vms.size() > 0) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_VM);
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                    getParameters().getNetwork().getname()));
+                    getParameters().getNetwork().getName()));
             return false;
         }
 
@@ -94,7 +94,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         }
 
-        if (getParameters().getNetwork().getname().equals(NetworkUtils.getEngineNetwork())) {
+        if (getParameters().getNetwork().getName().equals(NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
@@ -125,7 +125,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     public String getNetworkName() {
-        return getParameters().getNetwork().getname();
+        return getParameters().getNetwork().getName();
     }
 
     @Override

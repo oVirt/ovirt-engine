@@ -131,7 +131,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network n) {
-                    return n.getname().equals(bond.getName());
+                    return n.getName().equals(bond.getName());
                 }
             })) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);

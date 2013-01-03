@@ -22,7 +22,7 @@ public class UpdateDisplayToVdsGroupCommand<T extends DisplayNetworkToVdsGroupPa
     }
 
     public String getNetworkName() {
-        return getParameters().getNetwork().getname();
+        return getParameters().getNetwork().getName();
     }
 
     @Override

@@ -125,7 +125,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             protected String renderNullSafe(Object object) {
-                return ((Network) object).getname();
+                return ((Network) object).getName();
             }
 
         });

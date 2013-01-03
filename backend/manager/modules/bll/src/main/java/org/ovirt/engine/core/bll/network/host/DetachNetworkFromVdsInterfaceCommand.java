@@ -58,7 +58,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
 
         NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getname(), vlanId, bond, nics.toArray(new String[] {}), getParameters()
+                getParameters().getNetwork().getName(), vlanId, bond, nics.toArray(new String[] {}), getParameters()
                         .getNetwork().getAddr(), getParameters().getNetwork().getSubnet(), getParameters().getNetwork()
                         .getGateway(), getParameters().getNetwork().getStp(), getParameters().getBondingOptions(),
                 getParameters().getBootProtocol());
@@ -101,7 +101,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             List<Network> networks = getDbFacade().getNetworkDao()
                             .getAllForCluster(getVdsGroupId());
             for (Network n : networks) {
-                if (n.getname().equals(iface.getNetworkName())) {
+                if (n.getName().equals(iface.getNetworkName())) {
                     getParameters().setNetwork(n);
                     break;
                 }
@@ -115,7 +115,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             }
             return false;
         } else if (!StringUtils.equals(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
-                .getname())) {
+                .getName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK);
             return false;
         }
@@ -130,7 +130,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {
-                    return network.getname().equals(getParameters().getNetwork().getname());
+                    return network.getName().equals(getParameters().getNetwork().getName());
                 }
             })) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_HOST_IS_BUSY);

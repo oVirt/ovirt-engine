@@ -69,7 +69,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         boolean exists = null != LinqUtils.firstOrNull(all, new Predicate<Network>() {
             @Override
             public boolean eval(Network net) {
-                return net.getname().equals(getNetworkName());
+                return net.getName().equals(getNetworkName());
             }
         });
         if (exists) {

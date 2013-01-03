@@ -42,7 +42,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     public String getNetworkName() {
-        return getNetwork().getname();
+        return getNetwork().getName();
     }
 
     @Override

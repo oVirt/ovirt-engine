@@ -108,7 +108,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_HAVE_NETWORK);
             return false;
         }
-        if (!NetworkUtils.getEngineNetwork().equals(params.getNetwork().getname())
+        if (!NetworkUtils.getEngineNetwork().equals(params.getNetwork().getName())
                 && !StringUtils.isEmpty(params.getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;

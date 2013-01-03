@@ -212,7 +212,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
         for (Object item : selectedItems)
         {
             Network network = (Network) item;
-            if (StringHelper.stringsEqual(network.getname(), ENGINE_NETWORK))
+            if (StringHelper.stringsEqual(network.getName(), ENGINE_NETWORK))
             {
                 anyEngine = true;
                 break;

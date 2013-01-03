@@ -109,7 +109,7 @@ public class SetupNetworksHelperTest {
         mockExistingNetworks(net);
         mockExistingIfaces(nic1, nic2);
 
-        nic2.setNetworkName(net.getname());
+        nic2.setNetworkName(net.getName());
         nic1.setNetworkName(null);
         SetupNetworksHelper helper = createHelper(createParametersForNics(nic1, nic2));
 

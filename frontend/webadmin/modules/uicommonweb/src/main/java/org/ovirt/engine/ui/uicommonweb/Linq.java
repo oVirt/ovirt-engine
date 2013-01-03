@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -32,6 +28,10 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -231,7 +231,7 @@ public final class Linq
         @Override
         public int compare(Network x, Network y)
         {
-            return x.getname().compareTo(y.getname());
+            return x.getName().compareTo(y.getName());
         }
     }
 
@@ -520,7 +520,7 @@ public final class Linq
     {
         for (Network n : items)
         {
-            if (StringHelper.stringsEqual(n.getname(), name))
+            if (StringHelper.stringsEqual(n.getName(), name))
             {
                 return n;
             }
@@ -964,7 +964,7 @@ public final class Linq
             storageDomainslists.add(list);
         }
 
-        return (ArrayList<storage_domains>) Intersection(storageDomainslists);
+        return Intersection(storageDomainslists);
     }
 
     public static <T> ArrayList<EntityModel> ToEntityModelList(ArrayList<T> list)

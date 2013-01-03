@@ -66,7 +66,7 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
 
     static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getDataCenterId()).andReturn(GUIDS[1]).anyTimes();
         return entity;

@@ -106,7 +106,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                 .addValue("addr", network.getAddr())
                 .addValue("description", network.getDescription())
                 .addValue("id", network.getId())
-                .addValue("name", network.getname())
+                .addValue("name", network.getName())
                 .addValue("subnet", network.getSubnet())
                 .addValue("gateway", network.getGateway())
                 .addValue("type", network.getType())

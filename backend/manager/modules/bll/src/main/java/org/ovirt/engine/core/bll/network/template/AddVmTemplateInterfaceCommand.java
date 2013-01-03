@@ -80,7 +80,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {
-                    return network.getname().equals(getNetworkName());
+                    return network.getName().equals(getNetworkName());
                 }
             })) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);

@@ -29,7 +29,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     public LogicalNetworkModel(Network network, HostSetupNetworksModel setupModel) {
         this(setupModel);
         setEntity(network);
-        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
+        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getName())) {
             setManagement(true);
         }
     }
@@ -185,7 +185,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     @Override
     public String getName() {
-        return getEntity().getname();
+        return getEntity().getName();
     }
 
     @Override

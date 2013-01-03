@@ -62,7 +62,7 @@ public class BackendHostNicsResource
         List<org.ovirt.engine.core.common.businessentities.network.Network> clusterNetworks = getClusterNetworks();
         Map<String, String> networkIds = new HashMap<String, String>();
         for(org.ovirt.engine.core.common.businessentities.network.Network nwk : clusterNetworks) {
-            networkIds.put(nwk.getname(), nwk.getId().toString());
+            networkIds.put(nwk.getName(), nwk.getId().toString());
         }
         for (VdsNetworkInterface iface : ifaces) {
             HostNIC hostNic = populate(map(iface, ifaces), iface);
@@ -107,7 +107,7 @@ public class BackendHostNicsResource
             if (iface.getId().toString().equals(id)) {
                 HostNIC hostNic = populate(map(iface, ifaces), iface);
                 for(org.ovirt.engine.core.common.businessentities.network.Network nwk : getClusterNetworks()){
-                    if(nwk.getname().equals(iface.getNetworkName())) {
+                    if(nwk.getName().equals(iface.getNetworkName())) {
                         hostNic.getNetwork().setId(nwk.getId().toString());
                         hostNic.getNetwork().setName(null);
                         break;
@@ -193,7 +193,7 @@ public class BackendHostNicsResource
         VdsNetworkInterface iface = super.map(entity, template);
         if (entity.isSetNetwork()) {
             org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(entity.getNetwork());
-            iface.setNetworkName(net.getname());
+            iface.setNetworkName(net.getName());
         }
         return iface;
     }
@@ -258,7 +258,7 @@ public class BackendHostNicsResource
                                                    VdcQueryType.GetAllNetworks,
                                                    new GetAllNetworkQueryParamenters(Guid.Empty))) {
             if ((id != null && id.equals(entity.getId().toString())) ||
-                (name != null && name.equals(entity.getname()))) {
+                (name != null && name.equals(entity.getName()))) {
                 return entity;
             }
         }
@@ -333,7 +333,7 @@ public class BackendHostNicsResource
         }else{
             String networkName = net.getName();
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : networks){
-                if(nwk.getname().equals(networkName)) return nwk;
+                if(nwk.getName().equals(networkName)) return nwk;
             }
         }
         return notFound(org.ovirt.engine.core.common.businessentities.network.Network.class);
@@ -381,7 +381,7 @@ public class BackendHostNicsResource
         for (HostNIC nic : hostNics) {
             if (nic.isSetOverrideConfiguration() && nic.isOverrideConfiguration() && nic.isSetNetwork()) {
                 org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(nic.getNetwork());
-                networks.add(net.getname());
+                networks.add(net.getName());
             }
         }
         return networks;

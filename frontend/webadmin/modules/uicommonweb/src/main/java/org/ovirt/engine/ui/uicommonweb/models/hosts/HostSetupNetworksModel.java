@@ -541,7 +541,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private void initNetworkModels() {
         Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
         for (Network network : allNetworks) {
-            networkModels.put(network.getname(), new LogicalNetworkModel(network, this));
+            networkModels.put(network.getName(), new LogicalNetworkModel(network, this));
         }
         setNetworks(networkModels);
     }
@@ -735,7 +735,7 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void initDcNetworkParams() {
         for (Network network : allNetworks) {
-            netTodcParams.put(network.getname(), new DcNetworkParams(network));
+            netTodcParams.put(network.getName(), new DcNetworkParams(network));
         }
     }
 

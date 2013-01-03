@@ -35,7 +35,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
         for (Network net : getParameters().getNetworks()) {
             Map<String, String> opts = new HashMap<String, String>();
-            VdsNetworkInterface i = findNetworkInterface(net.getname(), getParameters().getInterfaces(),
+            VdsNetworkInterface i = findNetworkInterface(net.getName(), getParameters().getInterfaces(),
                     getParameters().getBonds());
 
             Boolean bonded = isVlan(net)
@@ -70,7 +70,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.stp, net.getStp() ? "yes" : "no");
             }
 
-            networks.add(net.getname(), opts);
+            networks.add(net.getName(), opts);
         }
 
         for (String net : getParameters().getRemovedNetworks()) {

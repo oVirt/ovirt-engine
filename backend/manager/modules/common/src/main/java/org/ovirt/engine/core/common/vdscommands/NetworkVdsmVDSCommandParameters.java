@@ -67,7 +67,7 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
             String gateway,
             String bondingOptions,
             NetworkBootProtocol bootProtocol) {
-        this(vdsId, net.getname(), net.getVlanId(), bondName, nics, address,
+        this(vdsId, net.getName(), net.getVlanId(), bondName, nics, address,
                 subnet,
                 gateway,
                 net.getStp(),

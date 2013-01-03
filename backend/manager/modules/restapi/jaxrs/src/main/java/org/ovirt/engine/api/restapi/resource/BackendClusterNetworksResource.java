@@ -86,7 +86,7 @@ public class BackendClusterNetworksResource
             GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
             List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
             for (org.ovirt.engine.core.common.businessentities.network.Network nw: networks) {
-                if (nw.getname().equals(networkName)) {
+                if (nw.getName().equals(networkName)) {
                     return nw.getId().toString();
                 }
             }

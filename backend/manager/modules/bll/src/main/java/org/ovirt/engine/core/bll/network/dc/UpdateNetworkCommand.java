@@ -84,7 +84,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         // check defalut network name is not renamed
         String defaultNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
-        if (oldNetwork.getname().equals(defaultNetwork) &&
+        if (oldNetwork.getName().equals(defaultNetwork) &&
                 !getNetworkName().equals(defaultNetwork)) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK);
             return false;
@@ -93,7 +93,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network n) {
-                return n.getname().trim().toLowerCase()
+                return n.getName().trim().toLowerCase()
                         .equals(getNetworkName().trim().toLowerCase())
                         && !n.getId().equals(getNetwork().getId())
                         && getNetwork().getDataCenterId().equals(n.getDataCenterId());

@@ -76,7 +76,7 @@ public class NetworkMapper {
     public static Network map(org.ovirt.engine.core.common.businessentities.network.Network entity, Network template) {
         Network model = template != null ? template : new Network();
         model.setId(entity.getId().toString());
-        model.setName(entity.getname());
+        model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         if (entity.getDataCenterId() != null) {
             DataCenter dataCenter = new DataCenter();

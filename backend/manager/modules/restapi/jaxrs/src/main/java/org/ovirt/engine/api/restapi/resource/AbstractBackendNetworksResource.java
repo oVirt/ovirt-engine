@@ -62,7 +62,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
     public org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Guid id, String name) {
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
-                (name != null && name.equals(entity.getname()))) {
+                (name != null && name.equals(entity.getName()))) {
                 return entity;
             }
         }
@@ -72,7 +72,7 @@ public abstract class AbstractBackendNetworksResource extends AbstractBackendCol
     public org.ovirt.engine.core.common.businessentities.network.Network lookupNetwork(Guid id, String name, String dataCenterId) {
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(queryType, getQueryParameters())) {
             if ((id != null && id.equals(entity.getId())) ||
-                (name != null && name.equals(entity.getname()))
+                (name != null && name.equals(entity.getName()))
                 && (entity.getDataCenterId()!=null) && (entity.getDataCenterId().toString().equals(dataCenterId))) {
                 return entity;
             }

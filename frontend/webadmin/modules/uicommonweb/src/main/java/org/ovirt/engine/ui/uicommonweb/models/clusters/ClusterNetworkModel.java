@@ -19,7 +19,7 @@ public class ClusterNetworkModel extends EntityModel {
             // Init with default values
             getEntity().setCluster(new NetworkCluster());
         }
-        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getname())) {
+        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getName())) {
             setManagement(true);
         }
     }
@@ -35,7 +35,7 @@ public class ClusterNetworkModel extends EntityModel {
 
 
     public String getNetworkName() {
-        return getEntity().getname();
+        return getEntity().getName();
     }
 
     public VDSGroup getCluster() {

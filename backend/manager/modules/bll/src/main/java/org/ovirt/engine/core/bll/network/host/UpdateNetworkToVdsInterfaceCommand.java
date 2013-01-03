@@ -61,7 +61,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         NetworkVdsmVDSCommandParameters parameters = new NetworkVdsmVDSCommandParameters(getParameters().getVdsId(),
-                getParameters().getNetwork().getname(), getParameters().getNetwork().getVlanId(), getParameters()
+                getParameters().getNetwork().getName(), getParameters().getNetwork().getVlanId(), getParameters()
                         .getBondName(), interfaceNames.toArray(new String[] {}), address, subnet, gateway,
                 getParameters().getNetwork().getStp(), getParameters().getBondingOptions(), getParameters()
                         .getBootProtocol());
@@ -172,7 +172,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                 @Override
                 public boolean eval(VdsNetworkInterface i) {
                     if (i.getNetworkName() != null) {
-                        return i.getNetworkName().equals(getParameters().getNetwork().getname());
+                        return i.getNetworkName().equals(getParameters().getNetwork().getName());
                     }
                     return false;
                 }
@@ -199,7 +199,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         if (StringUtils.equals(getParameters().getOldNetworkName(), NetworkUtils.getEngineNetwork())
-                && !StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
+                && !StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getEngineNetwork())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
@@ -207,7 +207,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             return false;
         }
 
-        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getname())
+        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getName())
                 && StringUtils.isNotEmpty(getParameters().getGateway())) {
             if (!getParameters().getGateway().equals(ifaceGateway)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
@@ -222,7 +222,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         // check conectivity
         getParameters().setCheckConnectivity(getParameters().getCheckConnectivity());
         if (getParameters().getCheckConnectivity()) {
-            if (!StringUtils.equals(getParameters().getNetwork().getname(), NetworkUtils.getEngineNetwork())) {
+            if (!StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getEngineNetwork())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }

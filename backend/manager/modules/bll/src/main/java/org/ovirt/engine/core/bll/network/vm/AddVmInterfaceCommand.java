@@ -154,7 +154,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {
-                    return network.getname().equals(getNetworkName());
+                    return network.getName().equals(getNetworkName());
                 }
             });
 
@@ -163,7 +163,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 return false;
             } else if (!interfaceNetwork.isVmNetwork()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
-                addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getname()));
+                addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getName()));
                 return false;
             }
         }

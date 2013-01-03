@@ -103,7 +103,7 @@ public abstract class BackendNicsResource
     protected org.ovirt.engine.core.common.businessentities.network.Network lookupClusterNetwork(Guid clusterId, Guid id, String name, List<org.ovirt.engine.core.common.businessentities.network.Network> networks) {
         for (org.ovirt.engine.core.common.businessentities.network.Network network : networks) {
             if ((id != null && id.equals(network.getId())) ||
-                (name != null && name.equals(network.getname()))) {
+                (name != null && name.equals(network.getName()))) {
                 return network;
             }
         }
@@ -123,7 +123,7 @@ public abstract class BackendNicsResource
                                                    VdcQueryType.GetAllNetworksByClusterId,
                                                    new VdsGroupQueryParamenters(clusterId))) {
             if ((id != null && id.equals(entity.getId())) ||
-                (name != null && name.equals(entity.getname()))) {
+                (name != null && name.equals(entity.getName()))) {
                 return entity;
             }
         }

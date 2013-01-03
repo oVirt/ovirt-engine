@@ -454,7 +454,7 @@ public abstract class NetworkModel extends Model
         {
             Network tempVar = new Network();
             tempVar.setId(networkId);
-            tempVar.setName(network.getname());
+            tempVar.setName(network.getName());
             // Init default NetworkCluster values (required, display, status)
             tempVar.setCluster(new NetworkCluster());
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
@@ -515,7 +515,7 @@ public abstract class NetworkModel extends Model
     }
 
     public boolean isManagemet() {
-        return StringHelper.stringsEqual(getNetwork().getname(), ENGINE_NETWORK);
+        return StringHelper.stringsEqual(getNetwork().getName(), ENGINE_NETWORK);
     }
 
     protected void onIsEnableChange() {

@@ -47,7 +47,7 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
             if (network != null) {
                 Network net = new Network();
                 net.setId(networkId);
-                net.setName(network.getname());
+                net.setName(network.getName());
                 portMirroring.setNetworks(networks);
                 portMirroring.getNetworks().getNetworks().add(net);
             }

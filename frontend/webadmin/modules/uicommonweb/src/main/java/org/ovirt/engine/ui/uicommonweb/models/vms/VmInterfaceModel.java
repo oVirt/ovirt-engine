@@ -383,7 +383,7 @@ public abstract class VmInterfaceModel extends Model
         // Save changes.
         nic.setName((String) getName().getEntity());
         Network network = (Network) getNetwork().getSelectedItem();
-        nic.setNetworkName(network != null ? network.getname() : null);
+        nic.setNetworkName(network != null ? network.getName() : null);
         nic.setLinked((Boolean) getLinked().getEntity());
         onSavePortMirroring(nic);
         if (getNicType().getSelectedItem() == null)

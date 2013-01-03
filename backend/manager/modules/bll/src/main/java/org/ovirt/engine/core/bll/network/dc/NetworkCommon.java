@@ -28,7 +28,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     public String getNetworkName() {
-        return getNetwork().getname();
+        return getNetwork().getName();
     }
 
     @Override

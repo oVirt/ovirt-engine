@@ -65,7 +65,7 @@ public class NetworkClusterHelper {
                     VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                         @Override
                         public boolean eval(VdsNetworkInterface i) {
-                            return StringUtils.equals(i.getNetworkName(), net.getname());
+                            return StringUtils.equals(i.getNetworkName(), net.getName());
                         }
                     });
                     if (iface == null) {

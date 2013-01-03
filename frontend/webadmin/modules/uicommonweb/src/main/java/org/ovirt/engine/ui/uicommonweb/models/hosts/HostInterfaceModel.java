@@ -286,14 +286,14 @@ public class HostInterfaceModel extends EntityModel
         UpdateCanSpecify();
 
         Network network = (Network) getNetwork().getSelectedItem();
-        setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getname(), "None")) ? false //$NON-NLS-1$
+        setBootProtocolsAvailable((network != null && StringHelper.stringsEqual(network.getName(), "None")) ? false //$NON-NLS-1$
                 : true);
 
         if (getNetworks() != null)
         {
             for (VdsNetworkInterface item : getNetworks())
             {
-                if (StringHelper.stringsEqual(item.getNetworkName(), network.getname()))
+                if (StringHelper.stringsEqual(item.getNetworkName(), network.getName()))
                 {
                     getAddress().setEntity(StringHelper.isNullOrEmpty(item.getAddress()) ? null : item.getAddress());
                     getSubnet().setEntity(StringHelper.isNullOrEmpty(item.getSubnet()) ? null : item.getSubnet());

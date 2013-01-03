@@ -35,11 +35,11 @@ public class RemoveNetworksModel extends ConfirmationModel {
                         || netView.getDescription().trim().equals("")) { //$NON-NLS-1$
                     list.add(ConstantsManager.getInstance()
                             .getMessages()
-                            .networkDc(netView.getname(), netView.getDataCenterName()));
+                            .networkDc(netView.getName(), netView.getDataCenterName()));
                 } else {
                     list.add(ConstantsManager.getInstance()
                             .getMessages()
-                            .networkDcDescription(netView.getname(),
+                            .networkDcDescription(netView.getName(),
                                     netView.getDataCenterName(),
                                     netView.getDescription()));
                 }

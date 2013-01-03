@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -282,7 +282,7 @@ public final class Cloner
         obj.setAddr(instance.getAddr());
         obj.setDescription(instance.getDescription());
         obj.setId(instance.getId());
-        obj.setName(instance.getname());
+        obj.setName(instance.getName());
         obj.setSubnet(instance.getSubnet());
         obj.setGateway(instance.getGateway());
         obj.setType(instance.getType());

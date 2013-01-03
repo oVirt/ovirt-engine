@@ -48,7 +48,7 @@ public class BackendNicResource extends BackendDeviceResource<NIC, Nics, VmNetwo
         validateParameters(resource, requiredUpdateFields);
         Network network = findNetwork(resource);
         if (network!=null) {
-            resource.getNetwork().setName(network.getname());
+            resource.getNetwork().setName(network.getName());
             resource.getNetwork().setId(null);
         }
         return performUpdate(resource, entityResolver, updateType, updateParametersProvider);

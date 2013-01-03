@@ -105,7 +105,7 @@ public class BackendHostNicResource
                                              newNetwork!=null ? newNetwork : oldNetwork ,
                                              new ArrayList<VdsNetworkInterface>(){{add(inter);}});
 
-        params.setOldNetworkName(oldNetwork!=null ? oldNetwork.getname() : null);
+        params.setOldNetworkName(oldNetwork!=null ? oldNetwork.getName() : null);
         if(nic.isSetName() && inter.getBonded() != null && inter.getBonded()){
             params.setBondName(nic.getName());
         }
@@ -167,7 +167,7 @@ public class BackendHostNicResource
     private org.ovirt.engine.core.common.businessentities.network.Network lookupAtachedNetwork(String networkName) {
         if(!StringHelper.isNullOrEmpty(networkName)){
             for(org.ovirt.engine.core.common.businessentities.network.Network nwk : parent.getClusterNetworks()){
-                if(nwk.getname().equals(networkName)) return nwk;
+                if(nwk.getName().equals(networkName)) return nwk;
             }
         }
         return null;

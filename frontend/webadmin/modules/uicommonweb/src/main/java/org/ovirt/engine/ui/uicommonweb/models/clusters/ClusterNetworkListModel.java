@@ -146,8 +146,8 @@ public class ClusterNetworkListModel extends SearchableListModel
                     @Override
                     public int compare(Network o1, Network o2) {
                         // management first
-                        return HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(o1.getname()) ? -1
-                                : o1.getname().compareTo(o2.getname());
+                        return HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(o1.getName()) ? -1
+                                : o1.getName().compareTo(o2.getName());
                     }
                 });
                 searchableListModel.setItems(newItems);

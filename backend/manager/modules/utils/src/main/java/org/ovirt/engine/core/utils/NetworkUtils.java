@@ -116,7 +116,7 @@ public final class NetworkUtils {
         if (!networks.isEmpty()) {
             Map<String, Network> byName = new HashMap<String, Network>();
             for (Network net : networks) {
-                byName.put(net.getname(), net);
+                byName.put(net.getName(), net);
             }
             return byName;
         } else {

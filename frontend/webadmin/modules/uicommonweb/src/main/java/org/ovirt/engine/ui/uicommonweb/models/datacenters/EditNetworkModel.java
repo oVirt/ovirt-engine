@@ -56,7 +56,7 @@ public class EditNetworkModel extends NetworkModel {
         setApplyCommand(new UICommand(APPLY_COMMAND_NAME, getSourceListModel()));
         setTitle(ConstantsManager.getInstance().getConstants().editLogicalNetworkTitle());
         setHashName("edit_logical_network"); //$NON-NLS-1$
-        getName().setEntity(getNetwork().getname());
+        getName().setEntity(getNetwork().getName());
         getDescription().setEntity(getNetwork().getDescription());
         getIsStpEnabled().setEntity(getNetwork().getStp());
         getHasVLanTag().setEntity(getNetwork().getVlanId() != null);

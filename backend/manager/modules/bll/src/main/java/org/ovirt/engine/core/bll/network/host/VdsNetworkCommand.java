@@ -13,6 +13,6 @@ public abstract class VdsNetworkCommand<T extends AttachNetworkToVdsParameters> 
     }
 
     public String getNetworkName() {
-        return getParameters().getNetwork().getname();
+        return getParameters().getNetwork().getName();
     }
 }
