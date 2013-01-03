@@ -139,6 +139,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     @Column(name = "allow_console_reconnect")
     private boolean allowConsoleReconnect;
 
+    /**
+     * this field is used to save the ovf version,
+     * in case the vm object was built from ovf.
+     * not persisted to db.
+     */
+    private String ovfVersion;
+
     // not persisted to db
     private Date exportDate;
 
@@ -768,5 +775,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setdefault_display_type(DisplayType value) {
         defaultDisplayType = value;
+    }
+
+    public String getOvfVersion() {
+        return ovfVersion;
+    }
+
+    public void setOvfVersion(String ovfVersion) {
+        this.ovfVersion = ovfVersion;
     }
 }

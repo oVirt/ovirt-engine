@@ -290,6 +290,9 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNode content = _document.SelectSingleNode("//*/Content");
         XmlNode node;
 
+        // set ovf version to the ovf object
+        vmBase.setOvfVersion(getVersion());
+
         node = content.SelectSingleNode("Description");
         if (node != null) {
             vmBase.setdescription(node.InnerText);

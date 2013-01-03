@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -589,14 +590,21 @@ public class VmDeviceUtils {
         return new HashSet<BaseDisk>(diskMap.values());
     }
 
-    private static <T extends VmBase> void updateVmDevice(T entity, VmDevice vmDevice, Guid deviceId, List<VmDevice> vmDeviceToUpdate) {
-        VmDevice exportedDevice = entity.getManagedVmDeviceMap().get(deviceId);
-        if (exportedDevice != null) {
-            vmDevice.setAddress(exportedDevice.getAddress());
-            vmDevice.setBootOrder(exportedDevice.getBootOrder());
-            vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
-            vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
-            vmDeviceToUpdate.add(vmDevice);
+    private static <T extends VmBase> void updateVmDevice(T entity,
+            VmDevice vmDevice,
+            Guid deviceId,
+            List<VmDevice> vmDeviceToUpdate) {
+        // update device information only if ovf support devices - from 3.1
+        Version ovfVer = new Version(entity.getOvfVersion());
+        if (!VmDeviceCommonUtils.isOldClusterVersion(ovfVer)) {
+            VmDevice exportedDevice = entity.getManagedVmDeviceMap().get(deviceId);
+            if (exportedDevice != null) {
+                vmDevice.setAddress(exportedDevice.getAddress());
+                vmDevice.setBootOrder(exportedDevice.getBootOrder());
+                vmDevice.setIsPlugged(exportedDevice.getIsPlugged());
+                vmDevice.setIsReadOnly(exportedDevice.getIsReadOnly());
+                vmDeviceToUpdate.add(vmDevice);
+            }
         }
     }
 

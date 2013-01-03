@@ -1511,4 +1511,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     public void setBalloonEnabled(boolean isBallonEnabled) {
         balloonEnabled = isBallonEnabled;
     }
+
+    public String getOvfVersion() {
+        return vmStatic.getOvfVersion();
+    }
+
+    public void setOvfVersion(String ovfVersion) {
+        vmStatic.setOvfVersion(ovfVersion);
+    }
 }
