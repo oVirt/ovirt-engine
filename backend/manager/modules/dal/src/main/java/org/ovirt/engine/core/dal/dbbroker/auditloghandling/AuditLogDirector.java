@@ -361,7 +361,7 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_REMOVE_DISK, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.USER_FAILED_REMOVE_DISK, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.USER_FINISHED_REMOVE_DISK, AuditLogSeverity.NORMAL);
-        mSeverities.put(AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK, AuditLogSeverity.ERROR);
+        mSeverities.put(AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW_ERROR, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.IRS_DISK_SPACE_LOW, AuditLogSeverity.WARNING);
