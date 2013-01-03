@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -28,7 +29,6 @@ import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 @Entity
 @Table(name = "network")
@@ -81,7 +81,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
-    private NGuid dataCenterId;
+    @NotNull(message = "VALIDATION.STORAGE_POOL.ID.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
+    private Guid dataCenterId;
 
     @ManyToOne
     @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
@@ -190,11 +191,11 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         this.stp = value;
     }
 
-    public NGuid getDataCenterId() {
+    public Guid getDataCenterId() {
         return this.dataCenterId;
     }
 
-    public void setDataCenterId(NGuid value) {
+    public void setDataCenterId(Guid value) {
         this.dataCenterId = value;
     }
 

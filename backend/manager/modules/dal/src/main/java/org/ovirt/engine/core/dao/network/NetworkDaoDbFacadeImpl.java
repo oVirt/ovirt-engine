@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -150,7 +149,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.setGateway(rs.getString("gateway"));
             entity.setVlanId((Integer) rs.getObject("vlan_id"));
             entity.setStp(rs.getBoolean("stp"));
-            entity.setDataCenterId(NGuid.createGuidFromString(rs
+            entity.setDataCenterId(Guid.createGuidFromString(rs
                  .getString("storage_pool_id")));
             entity.setMtu(rs.getInt("mtu"));
             entity.setVmNetwork(rs.getBoolean("vm_network"));
@@ -164,6 +163,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     static class NetworkRowMapper extends NetworkRowMapperBase<Network> {
         public final static NetworkRowMapper instance = new NetworkRowMapper();
 
+        @Override
         protected Network createNetworkEntity() {
             return new Network();
         }
