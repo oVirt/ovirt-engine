@@ -905,10 +905,7 @@ public class VdsBrokerObjectsBuilder {
 
         addHostBondDevices(vds, xmlRpcStruct);
 
-        // network to vlan map
-        Map<String, Integer> networkVlans = new HashMap<String, Integer>();
-
-        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct, currVlans, networkVlans);
+        addHostNetworksAndUpdateInterfaces(vds, xmlRpcStruct, currVlans);
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
@@ -921,8 +918,9 @@ public class VdsBrokerObjectsBuilder {
 
     private static void addHostNetworksAndUpdateInterfaces(VDS vds,
             XmlRpcStruct xmlRpcStruct,
-            Map<String, Integer> currVlans,
-            Map<String, Integer> networkVlans) {
+            Map<String, Integer> currVlans) {
+
+        Map<String, Integer> networkVlans = new HashMap<String, Integer>();
 
         // Networks collection (name point to list of nics or bonds)
         Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORKS);
