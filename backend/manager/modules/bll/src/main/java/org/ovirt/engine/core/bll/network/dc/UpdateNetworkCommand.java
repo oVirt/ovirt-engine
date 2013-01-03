@@ -6,9 +6,9 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @SuppressWarnings("serial")
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
-    private List<VDSGroup> clusters;
+    private List<NetworkCluster> clusterAttachments;
 
     public UpdateNetworkCommand(T parameters) {
         super(parameters);
@@ -28,8 +28,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected void executeCommand() {
         getNetworkDAO().update(getNetwork());
 
-        for (VDSGroup cluster : getClusters()) {
-            NetworkClusterHelper.setStatus(cluster.getId(), getNetwork());
+        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
+            NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
         }
         setSucceeded(true);
     }
@@ -99,12 +99,12 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return super.getValidationGroups();
     }
 
-    private List<VDSGroup> getClusters() {
-        if (clusters == null) {
-            clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
+    private List<NetworkCluster> getClusterAttachments() {
+        if (clusterAttachments == null) {
+            clusterAttachments = getNetworkClusterDAO().getAllForNetwork(getNetwork().getId());
         }
 
-        return clusters;
+        return clusterAttachments;
     }
 
     private Network getNetworkById(List<Network> networks) {
@@ -146,8 +146,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private ValidationResult networkNotUsedByRunningVm() {
         String networkName = getNetworkName();
-        for (VDSGroup cluster : getClusters()) {
-            List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(cluster.getId(), networkName);
+        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
+            List<VmStatic> vms =
+                    getVmStaticDAO().getAllByGroupAndNetworkName(clusterAttachment.getClusterId(), networkName);
             if (vms.size() > 0) {
                 return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
             }
