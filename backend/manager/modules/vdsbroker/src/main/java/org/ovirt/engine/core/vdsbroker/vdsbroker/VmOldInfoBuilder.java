@@ -169,9 +169,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             }
         }
         if (!StringUtils.isEmpty(macs.toString().trim())) {
-            createInfo.add(VdsProperties.mac_addr, macs.toString());
-            createInfo.add(VdsProperties.nic_type, nics.toString());
-            createInfo.add(VdsProperties.bridge, networks.toString());
+            createInfo.add(VdsProperties.MAC_ADDR, macs.toString());
+            createInfo.add(VdsProperties.NIC_TYPE, nics.toString());
+            createInfo.add(VdsProperties.BRIDGE, networks.toString());
         }
     }
 

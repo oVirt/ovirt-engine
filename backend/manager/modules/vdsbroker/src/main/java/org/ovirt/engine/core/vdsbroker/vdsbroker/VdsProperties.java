@@ -66,21 +66,44 @@ public final class VdsProperties {
     public static final String vm_migrating = "vmMigrating";
     public static final String images_last_check = "imagesLastCheck";
     public static final String images_last_delay = "imagesLastDelay";
-    public static final String network = "network";
-    public static final String linkActive = "linkActive";
-    public static final String bootproto = "BOOTPROTO";
-    public static final String stp = "STP";
-    public static final String mtu = "mtu";
-    public static final String bonding_opts = "BONDING_OPTS";
-    public static final String dhcp = "dhcp";
-    public static final String force = "force";
-    public static final String connectivityCheck = "connectivityCheck";
-    public static final String connectivityTimeout = "connectivityTimeout";
-    public static final String ipaddr = "IPADDR";
-    public static final String netmask = "NETMASK";
-    public static final String gateway = "GATEWAY";
+
+    // Network related properties
+    public static final String NETWORK = "network";
+    public static final String LINK_ACTIVE = "linkActive";
+    public static final String BOOT_PROTOCOL = "BOOTPROTO";
+    public static final String STP = "STP";
+    public static final String MTU = "mtu";
+    public static final String BONDING_OPTIONS = "BONDING_OPTS";
+    public static final String DHCP = "dhcp";
+    public static final String FORCE = "force";
+    public static final String CONNECTIVITY_CHECK = "connectivityCheck";
+    public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
+    public static final String IP_ADDRESS = "IPADDR";
+    public static final String NETMASK = "NETMASK";
+    public static final String GATEWAY = "GATEWAY";
     public static final String GLOBAL_GATEWAY = "gateway";
-    public static final String displaynetwork = "displayNetwork";
+    public static final String DISPLAY_NETWORK = "displayNetwork";
+    public static final String VM_NETWORK = "network";
+    public static final String VM_INTERFACE_NAME = "name";
+    public static final String INTERFACE_SPEED = "speed";
+    public static final String VM_NETWORK_INTERFACE = "nic";
+    public static final String NETWORK_NICS = "nics";
+    public static final String NETWORK_VLANS = "vlans";
+    public static final String NETWORKS = "networks";
+    public static final String NETWORK_BONDINGS = "bondings";
+    public static final String NETWORK_BRIDGES = "bridges";
+    public static final String NETWORK_LAST_CLIENT_INTERFACE = "lastClientIface";
+    public static final String NETWORK_INTERFACE = "iface";
+    public static final String VM_NETWORK_INTERFACES = "netIfaces";
+    public static final String VM_IPV4_ADDRESSES = "inet";
+    public static final String VM_IPV6_ADDRESSES = "inet6";
+    public static final String VM_INTERFACE_MAC_ADDRESS = "hw";
+    public static final String NIC_TYPE = "nicModel";
+    public static final String PORT_MIRRORING = "portMirroring";
+    public static final String BRIDGE = "bridge";
+    public static final String NW_FILTER = "filter";
+    public static final String MAC_ADDR = "macAddr";
+
     public static final String supported_cluster_levels = "clusterLevels";
     public static final String supported_engines = "supportedENGINEs";
     public static final String emulatedMachine = "emulatedMachine";
@@ -116,27 +139,10 @@ public final class VdsProperties {
     public static final String anonymous_transparent_huge_pages = "anonHugePages";
     public static final String transparent_huge_pages = "transparentHugePages";
 
-    public static final String vm_network = "network";
-    public static final String VM_INTERFACE_NAME = "name";
-    public static final String if_speed = "speed";
     public static final String exit_code = "exitCode";
     public static final String exit_message = "exitMessage";
     public static final String multimedia_ports = "multimediaPorts";
     public static final String monitorResponse = "monitorResponse";
-
-    // Network related
-    public static final String VM_NETWORK_INTERFACE = "nic";
-    public static final String network_nics = "nics";
-    public static final String network_vlans = "vlans";
-    public static final String network_networks = "networks";
-    public static final String network_bondings = "bondings";
-    public static final String NETWORK_BRIDGES = "bridges";
-    public static final String network_lastclientinterface = "lastClientIface";
-    public static final String NETWORK_INTERFACE = "iface";
-    public static final String VM_NETWORK_INTERFACES = "netIfaces";
-    public static final String VM_IPV4_ADDRESSES = "inet";
-    public static final String VM_IPV6_ADDRESSES = "inet6";
-    public static final String VM_INTERFACE_MAC_ADDRESS = "hw";
 
     // Disks usage configuration
     public static final String VM_DISKS_USAGE = "disksUsage";
@@ -154,10 +160,6 @@ public final class VdsProperties {
     public static final String image_group_id = "imageID";
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
-    public static final String nic_type = "nicModel";
-    public static final String portMirroring = "portMirroring";
-    public static final String bridge = "bridge";
-    public static final String NW_FILTER = "filter";
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
@@ -167,12 +169,8 @@ public final class VdsProperties {
     public static final String smartcardEnabled = "smartcardEnable";
     // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
-    public static final String vm_ip = "guestIPs";
+    public static final String VM_IP = "guestIPs";
     public static final String vm_usage_mem_percent = "memUsage";
-    public static final String vm_if_id = "ifid"; // currently not in use
-    public static final String vm_if_name = "name";
-    public static final String vm_line_rate = "speed";
-    public static final String mac_addr = "macAddr";
     public static final String vm_host = "guestName";
     public static final String app_list = "appsList";
     public static final String guest_os = "guestOs";
@@ -223,7 +221,6 @@ public final class VdsProperties {
     public static final String DeviceType = "deviceType";
     public static final String Devices = "devices";
     public static final String Index = "index";
-    public static final String Iface = "iface";
     public static final String PoolId = "poolID";
     public static final String DomainId = "domainID";
     public static final String ImageId = "imageID";

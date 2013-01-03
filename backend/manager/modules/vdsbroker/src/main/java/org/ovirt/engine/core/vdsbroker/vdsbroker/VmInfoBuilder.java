@@ -243,10 +243,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 struct.add(VdsProperties.Device, vmDevice.getDevice());
                 switch (disk.getDiskInterface()) {
                 case IDE:
-                    struct.add(VdsProperties.Iface, "ide");
+                    struct.add(VdsProperties.NETWORK_INTERFACE, "ide");
                     break;
                 case VirtIO:
-                    struct.add(VdsProperties.Iface, VdsProperties.Virtio);
+                    struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Virtio);
                     break;
                 default:
                     // ISCI not supported
@@ -469,24 +469,24 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Version clusterVersion) {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
-        struct.add(VdsProperties.network, StringUtils.defaultString(vmInterface.getNetworkName()));
+        struct.add(VdsProperties.NETWORK, StringUtils.defaultString(vmInterface.getNetworkName()));
 
         if (FeatureSupported.networkLinking(clusterVersion)) {
-            struct.add(VdsProperties.linkActive, String.valueOf(vmInterface.isLinked()));
+            struct.add(VdsProperties.LINK_ACTIVE, String.valueOf(vmInterface.isLinked()));
         }
 
         addAddress(vmDevice, struct);
-        struct.add(VdsProperties.mac_addr, vmInterface.getMacAddress());
+        struct.add(VdsProperties.MAC_ADDR, vmInterface.getMacAddress());
         addBootOrder(vmDevice, struct);
         struct.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
         struct.add(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-        struct.add(VdsProperties.nic_type, nicModel);
+        struct.add(VdsProperties.NIC_TYPE, nicModel);
         if (vmInterface.isPortMirroring()) {
             List<String> networks = new ArrayList<String>();
             if (vmInterface.getNetworkName() != null) {
                 networks.add(vmInterface.getNetworkName());
             }
-            struct.add(VdsProperties.portMirroring, networks);
+            struct.add(VdsProperties.PORT_MIRRORING, networks);
         }
 
         addNetworkFiltersToNic(struct, clusterVersion);
@@ -502,7 +502,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "0"); // IDE slot 2 is reserved by VDSM to CDROM
-        struct.add(VdsProperties.Iface, VdsProperties.Fdc);
+        struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Fdc);
         struct.add(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
         struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }
@@ -511,7 +511,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.add(VdsProperties.Type, vmDevice.getType());
         struct.add(VdsProperties.Device, vmDevice.getDevice());
         struct.add(VdsProperties.Index, "2"); // IDE slot 2 is reserved by VDSM to CDROM
-        struct.add(VdsProperties.Iface, VdsProperties.Ide);
+        struct.add(VdsProperties.NETWORK_INTERFACE, VdsProperties.Ide);
         struct.add(VdsProperties.ReadOnly, Boolean.TRUE.toString());
         struct.add(VdsProperties.Shareable, Boolean.FALSE.toString());
     }

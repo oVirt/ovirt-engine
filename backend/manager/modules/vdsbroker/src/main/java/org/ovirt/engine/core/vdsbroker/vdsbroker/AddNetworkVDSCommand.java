@@ -32,28 +32,28 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
 
         switch (getParameters().getBootProtocol()) {
         case DHCP:
-            options.put(VdsProperties.bootproto, VdsProperties.dhcp);
+            options.put(VdsProperties.BOOT_PROTOCOL, VdsProperties.DHCP);
             break;
         case STATIC_IP:
             if (!StringUtils.isEmpty(getParameters().getInetAddr())) {
-                options.put(VdsProperties.ipaddr, getParameters().getInetAddr());
+                options.put(VdsProperties.IP_ADDRESS, getParameters().getInetAddr());
             }
             if (!StringUtils.isEmpty(getParameters().getNetworkMask())) {
-                options.put(VdsProperties.netmask, getParameters().getNetworkMask());
+                options.put(VdsProperties.NETMASK, getParameters().getNetworkMask());
             }
             if (!StringUtils.isEmpty(getParameters().getGateway())) {
-                options.put(VdsProperties.gateway, getParameters().getGateway());
+                options.put(VdsProperties.GATEWAY, getParameters().getGateway());
             }
             break;
         }
 
-        options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
+        options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");
 
         if (!StringUtils.isEmpty(getParameters().getBondingOptions())) {
-            options.put(VdsProperties.bonding_opts, getParameters().getBondingOptions());
+            options.put(VdsProperties.BONDING_OPTIONS, getParameters().getBondingOptions());
         }
 
-        options.put(VdsProperties.stp, (getParameters().getStp()) ? "yes" : "no");
+        options.put(VdsProperties.STP, (getParameters().getStp()) ? "yes" : "no");
         // options[VdsProperties.force] = "true";
 
         options.put("bridged", Boolean.toString(getParameters().isVmNetwork()));

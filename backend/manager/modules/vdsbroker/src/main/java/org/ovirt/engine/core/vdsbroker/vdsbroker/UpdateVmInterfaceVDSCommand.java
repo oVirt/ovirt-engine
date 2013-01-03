@@ -25,9 +25,9 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         deviceStruct.add(VdsProperties.Alias, getParameters().getVmDevice().getAlias());
 
         VmNetworkInterface nic = getParameters().getNic();
-        deviceStruct.add(VdsProperties.network, StringUtils.defaultString(nic.getNetworkName()));
-        deviceStruct.add(VdsProperties.linkActive, String.valueOf(nic.isLinked()));
-        deviceStruct.add(VdsProperties.portMirroring,
+        deviceStruct.add(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));
+        deviceStruct.add(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
+        deviceStruct.add(VdsProperties.PORT_MIRRORING,
                 nic.isPortMirroring() && nic.getNetworkName() != null
                         ? Collections.singletonList(nic.getNetworkName()) : Collections.<String> emptyList());
 

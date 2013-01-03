@@ -205,7 +205,7 @@ public class VdsBrokerObjectsBuilder {
 
         initAppsList(xmlRpcStruct, vm);
         vm.setguest_os(AssignStringValue(xmlRpcStruct, VdsProperties.guest_os));
-        vm.setvm_ip(AssignStringValue(xmlRpcStruct, VdsProperties.vm_ip));
+        vm.setvm_ip(AssignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
         if (vm.getvm_ip() != null) {
             if (vm.getvm_ip().startsWith("127.0.")) {
                 vm.setvm_ip(null);
@@ -261,8 +261,8 @@ public class VdsBrokerObjectsBuilder {
         vm.setelapsed_time(AssignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
 
         // ------------- vm network statistics -----------------------
-        if (xmlRpcStruct.containsKey(VdsProperties.vm_network)) {
-            Map networkStruct = (Map) xmlRpcStruct.getItem(VdsProperties.vm_network);
+        if (xmlRpcStruct.containsKey(VdsProperties.VM_NETWORK)) {
+            Map networkStruct = (Map) xmlRpcStruct.getItem(VdsProperties.VM_NETWORK);
             vm.setInterfaceStatistics(new ArrayList<VmNetworkInterface>());
             for (Object tempNic : networkStruct.values()) {
                 XmlRpcStruct nic = new XmlRpcStruct((Map) tempNic);
@@ -281,9 +281,9 @@ public class VdsBrokerObjectsBuilder {
                 stats.getStatistics().setReceiveDropRate(rx_dropped != null ? rx_dropped : 0);
                 stats.getStatistics().setTransmitRate(tx_rate != null ? tx_rate : 0);
                 stats.getStatistics().setTransmitDropRate(tx_dropped != null ? tx_dropped : 0);
-                stats.setMacAddress((String) ((nic.getItem(VdsProperties.mac_addr) instanceof String) ? nic
-                        .getItem(VdsProperties.mac_addr) : null));
-                stats.setSpeed(AssignIntValue(nic, VdsProperties.if_speed));
+                stats.setMacAddress((String) ((nic.getItem(VdsProperties.MAC_ADDR) instanceof String) ? nic
+                        .getItem(VdsProperties.MAC_ADDR) : null));
+                stats.setSpeed(AssignIntValue(nic, VdsProperties.INTERFACE_SPEED));
             }
         }
 
@@ -504,7 +504,7 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vds network statistics ---------------------
         Map<String, Object> interfaces = (Map<String, Object>) ((xmlRpcStruct
-                .getItem(VdsProperties.network) instanceof Map) ? xmlRpcStruct.getItem(VdsProperties.network)
+                .getItem(VdsProperties.NETWORK) instanceof Map) ? xmlRpcStruct.getItem(VdsProperties.NETWORK)
                 : null);
         if (interfaces != null) {
             int networkUsage = 0;
@@ -531,7 +531,7 @@ public class VdsBrokerObjectsBuilder {
                     iface.getStatistics().setReceiveDropRate(rx_dropped != null ? rx_dropped : 0);
                     iface.getStatistics().setTransmitRate(tx_rate != null ? tx_rate : 0);
                     iface.getStatistics().setTransmitDropRate(tx_dropped != null ? tx_dropped : 0);
-                    iface.setSpeed(AssignIntValue(dict, VdsProperties.if_speed));
+                    iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
                     iface.getStatistics().setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
                     int hold =
@@ -925,7 +925,7 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Integer> networkVlans) {
 
         // Networks collection (name point to list of nics or bonds)
-        Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_networks);
+        Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORKS);
 
         if (networks != null) {
             vds.getNetworks().clear();
@@ -1007,8 +1007,8 @@ public class VdsBrokerObjectsBuilder {
         net.setAddr((String) network.get("addr"));
         net.setSubnet((String) network.get("netmask"));
         net.setGateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
-        if (StringUtils.isNotBlank((String) network.get(VdsProperties.mtu))) {
-            net.setMtu(Integer.parseInt((String) network.get(VdsProperties.mtu)));
+        if (StringUtils.isNotBlank((String) network.get(VdsProperties.MTU))) {
+            net.setMtu(Integer.parseInt((String) network.get(VdsProperties.MTU)));
         }
         return net;
     }
@@ -1028,7 +1028,7 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void addHostBondDevices(VDS vds, XmlRpcStruct xmlRpcStruct) {
-        Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_bondings);
+        Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
             for (Entry<String, Object> entry : bonds.entrySet()) {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
@@ -1051,8 +1051,8 @@ public class VdsBrokerObjectsBuilder {
                         addBondDeviceToHost(vds, iface, (Object[]) bond.get("slaves"));
                     }
 
-                    if (StringUtils.isNotBlank((String) bond.get(VdsProperties.mtu))) {
-                        iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.mtu)));
+                    if (StringUtils.isNotBlank((String) bond.get(VdsProperties.MTU))) {
+                        iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.MTU)));
                     }
 
                     Map<String, Object> config =
@@ -1081,7 +1081,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Integer> currVlans = new HashMap<String, Integer>();
 
         // vlans
-        Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_vlans);
+        Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
             for (Entry<String, Object> entry : vlans.entrySet()) {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
@@ -1105,8 +1105,8 @@ public class VdsBrokerObjectsBuilder {
 
                 iface.setAddress((String) vlan.get("addr"));
                 iface.setSubnet((String) vlan.get("netmask"));
-                if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.mtu))) {
-                    iface.setMtu(Integer.parseInt((String) vlan.get(VdsProperties.mtu)));
+                if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.MTU))) {
+                    iface.setMtu(Integer.parseInt((String) vlan.get(VdsProperties.MTU)));
                 }
 
                 iStats.setVdsId(vds.getId());
@@ -1126,7 +1126,7 @@ public class VdsBrokerObjectsBuilder {
      *            A nested map contains network interfaces data
      */
     private static void addHostNetworkInterfaces(VDS vds, XmlRpcStruct xmlRpcStruct) {
-        Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.network_nics);
+        Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.getItem(VdsProperties.NETWORK_NICS);
         if (nics != null) {
             for (String key : nics.keySet()) {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
@@ -1166,8 +1166,8 @@ public class VdsBrokerObjectsBuilder {
             if (nic.get("permhwaddr") != null) {
                 iface.setMacAddress((String) nic.get("permhwaddr"));
             }
-            if (StringUtils.isNotBlank((String) nic.get(VdsProperties.mtu))) {
-                iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.mtu)));
+            if (StringUtils.isNotBlank((String) nic.get(VdsProperties.MTU))) {
+                iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.MTU)));
             }
             addBootProtocol((Map<String, Object>) nic.get("cfg"), iface);
         }
@@ -1268,7 +1268,7 @@ public class VdsBrokerObjectsBuilder {
             }
 
             if (bootproto == NetworkBootProtocol.STATIC_IP) {
-                String gateway = (String) cfg.get(VdsProperties.gateway);
+                String gateway = (String) cfg.get(VdsProperties.GATEWAY);
                 if (StringUtils.isNotEmpty(gateway)) {
                     setGatewayIfManagementNetwork(iface, gateway.toString());
                 }

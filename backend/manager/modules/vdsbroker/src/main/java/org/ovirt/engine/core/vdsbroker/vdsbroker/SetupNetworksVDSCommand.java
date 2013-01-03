@@ -67,7 +67,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             opts.put("bridged", Boolean.toString(net.isVmNetwork()));
             if (net.isVmNetwork()) {
-                opts.put(VdsProperties.stp, net.getStp() ? "yes" : "no");
+                opts.put(VdsProperties.STP, net.getStp() ? "yes" : "no");
             }
 
             networks.add(net.getName(), opts);
@@ -107,11 +107,11 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     private XmlRpcStruct generateOptions() {
         XmlRpcStruct options = new XmlRpcStruct();
 
-        options.add(VdsProperties.connectivityCheck, Boolean.toString(getParameters().isCheckConnectivity()));
+        options.add(VdsProperties.CONNECTIVITY_CHECK, Boolean.toString(getParameters().isCheckConnectivity()));
 
         // VDSM uses the connectivity timeout only if 'connectivityCheck' is set to true
         if (getParameters().isCheckConnectivity()) {
-            options.add(VdsProperties.connectivityTimeout, getParameters().getConectivityTimeout());
+            options.add(VdsProperties.CONNECTIVITY_TIMEOUT, getParameters().getConectivityTimeout());
         }
         return options;
     }

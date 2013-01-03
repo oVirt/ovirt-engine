@@ -39,15 +39,15 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
 
         map.add(VdsProperties.Type, VmDeviceType.INTERFACE.getName());
         map.add(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
-        map.add(VdsProperties.mac_addr, nic.getMacAddress());
-        map.add(VdsProperties.network, StringUtils.defaultString(nic.getNetworkName()));
+        map.add(VdsProperties.MAC_ADDR, nic.getMacAddress());
+        map.add(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));
 
         if (FeatureSupported.networkLinking(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
-            map.add(VdsProperties.linkActive, String.valueOf(nic.isLinked()));
+            map.add(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
         }
         addAddress(map, vmDevice.getAddress());
         map.add(VdsProperties.SpecParams, vmDevice.getSpecParams());
-        map.add(VdsProperties.nic_type, VmInterfaceType.forValue(nic.getType()).name());
+        map.add(VdsProperties.NIC_TYPE, VmInterfaceType.forValue(nic.getType()).name());
         map.add(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
 
         if (vmDevice.getBootOrder() > 0) {
@@ -55,7 +55,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         }
 
         if (nic.isPortMirroring()) {
-            map.add(VdsProperties.portMirroring, nic.getNetworkName() == null
+            map.add(VdsProperties.PORT_MIRRORING, nic.getNetworkName() == null
                     ? Collections.<String> emptyList() : Collections.singletonList(nic.getNetworkName()));
         }
 
