@@ -82,7 +82,7 @@ public class RsdlBuilder {
     protected static final Log LOG = LogFactory.getLog(RsdlBuilder.class);
 
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
-    private static final String PARAMS_METADATA = "rsdl_metadata_v-3.1.yaml";
+    private static final String PARAMS_METADATA = "rsdl_metadata.yaml";
 
     public RsdlBuilder(BackendApiResource apiResource) {
         this.apiResource = apiResource;
@@ -117,6 +117,7 @@ public class RsdlBuilder {
         uniteDuplicateLinks(rsdl);
 
         Collections.sort(rsdl.getLinks().getLinks(), new Comparator<DetailedLink>(){
+            @Override
             public int compare(DetailedLink dl1, DetailedLink dl2) {
                 int res = dl1.getHref().compareTo(dl2.getHref());
                 return res != 0 ? res : dl1.getRel().compareTo(dl2.getRel());
