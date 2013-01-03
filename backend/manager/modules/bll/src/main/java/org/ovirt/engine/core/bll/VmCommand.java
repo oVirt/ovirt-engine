@@ -182,7 +182,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void endVmCommand() {
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        if (getVm() != null) {
+            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        }
         endActionOnDisks();
         unlockVm();
         setSucceeded(true);
