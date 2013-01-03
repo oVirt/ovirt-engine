@@ -6,12 +6,15 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 import org.ovirt.engine.ui.common.widget.table.resize.ResizableHeader;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -25,6 +28,8 @@ import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.dom.client.TableSectionElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -73,6 +78,8 @@ import com.google.gwt.view.client.SelectionModel;
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasResizableColumns<T> {
     // Minimum width of a column used with column resizing, in pixels
     private static final int RESIZE_MINIMUM_COLUMN_WIDTH = 30;
+    // Click event type
+    private static final String CLICK = "click"; //$NON-NLS-1$
 
     @UiField
     @WithElementId
@@ -112,7 +119,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerScrollPosition = 0;
 
-    public AbstractActionTable(SearchableTableModelProvider<T, ?> dataProvider,
+    public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus) {
         super(dataProvider, eventBus);
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
@@ -124,11 +131,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 // Enable multiple selection only when Control/Shift key is pressed
                 mousePosition[0] = event.getClientX();
                 mousePosition[1] = event.getClientY();
-                if ("click".equals(event.getType()) && !multiSelectionDisabled) { //$NON-NLS-1$
+                if (CLICK.equals(event.getType()) && !multiSelectionDisabled) {
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
-
                 super.onBrowserEvent2(event);
             }
 
@@ -178,6 +184,19 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
         };
+        //Can't do this in the onBrowserEvent, as the GWT Cell table doesn't support double click.
+        this.table.addDomHandler(new DoubleClickHandler() {
+            @Override
+            public void onDoubleClick(DoubleClickEvent event) {
+                Model model = dataProvider.getModel();
+                UICommand defaultCommand = model.getDefaultCommand();
+                if (defaultCommand != null && defaultCommand.getIsExecutionAllowed()) {
+                    DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);
+                    invoker.invokeDefaultCommand();
+                }
+            }
+        }, DoubleClickEvent.getType());
+
         // Create table header row
         this.tableHeader = new ActionCellTable<T>(dataProvider, headerResources);
         this.tableHeader.setRowData(new ArrayList<T>());

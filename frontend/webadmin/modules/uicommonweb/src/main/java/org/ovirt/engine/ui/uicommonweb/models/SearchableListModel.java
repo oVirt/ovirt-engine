@@ -894,6 +894,32 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         }
     }
 
+    /**
+     * Sub classes that have an edit command will override this method.
+     *
+     * @return An edit {@code UICommand}
+     */
+    public UICommand getEditCommand() {
+        // Returning null will result in no action. I can't make this
+        // method abstract like I want as not all sub classes will
+        // implement the edit command.
+        return null;
+    }
+
+    /**
+     * Get the default command, in most cases this will be 'edit'. If sub
+     * classes want a different default command they can override this method
+     * and return the command they want.
+     *
+     * If a user double clicks in a grid or tree, this default command is
+     * invoked.
+     * @return The default {@code UICommand}
+     */
+    @Override
+    public UICommand getDefaultCommand() {
+        return getEditCommand();
+    }
+
     // ////////////////////////////
     // GridController methods
     // ///////////////////////////
