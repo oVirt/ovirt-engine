@@ -91,9 +91,9 @@ create or replace FUNCTION fn_db_delete_config_value(v_option_name varchar(100),
 returns void
 AS $procedure$
 begin
-    if (exists (select 1 from vdc_options where option_name ilike v_option_name and version in (v_version))) then
+    if (exists (select 1 from vdc_options where option_name ilike v_option_name and version in (select ID from fnSplitter(v_version)))) then
         begin
-            delete from vdc_options where option_name ilike v_option_name and version in (v_version);
+            delete from vdc_options where option_name ilike v_option_name and version in (select ID from fnSplitter(v_version));
         end;
     end if;
 END; $procedure$
@@ -104,7 +104,7 @@ create or replace FUNCTION fn_db_delete_config_for_version(v_version text)
 returns void
 AS $procedure$
 BEGIN
-     delete from vdc_options where version in (v_version);
+     delete from vdc_options where version in (select ID from fnSplitter(v_version));
 END; $procedure$
 LANGUAGE plpgsql;
 
