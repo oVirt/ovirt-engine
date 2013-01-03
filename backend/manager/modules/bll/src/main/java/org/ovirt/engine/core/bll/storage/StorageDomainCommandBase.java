@@ -241,6 +241,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
         if (getLunDao().get(lun.getLUN_id()) == null) {
+            lun.setvolume_group_id(volumeGroupId);
             getLunDao().save(lun);
         } else if (!volumeGroupId.isEmpty()){
             getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
