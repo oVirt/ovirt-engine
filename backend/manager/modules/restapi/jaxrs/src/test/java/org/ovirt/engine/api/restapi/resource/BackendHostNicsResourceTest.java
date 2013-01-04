@@ -110,8 +110,8 @@ public class BackendHostNicsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetVdsInterfacesByVdsId,
-                                  GetVdsByVdsIdParameters.class,
-                                  new String[] { "VdsId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { PARENT_GUID },
                                   setUpInterfaces());
 
@@ -177,8 +177,8 @@ public class BackendHostNicsResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      new ArrayList<VdsNetworkInterface>());
         control.replay();
@@ -208,8 +208,8 @@ public class BackendHostNicsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_GUID },
                 new LinkedList<VdsNetworkInterface>());
         control.replay();
@@ -327,8 +327,8 @@ public class BackendHostNicsResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                         GetVdsByVdsIdParameters.class,
-                                         new String[] { "VdsId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { PARENT_GUID },
                                          setUpInterfaces());
         }
@@ -349,8 +349,8 @@ public class BackendHostNicsResourceTest
         assert(query.equals(""));
 
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      setUpInterfaces(),
                                      failure);

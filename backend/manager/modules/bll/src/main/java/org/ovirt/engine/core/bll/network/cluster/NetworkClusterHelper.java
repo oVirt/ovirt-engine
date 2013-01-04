@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,7 +61,7 @@ public class NetworkClusterHelper {
                     List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
                             .getInstance()
                             .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
-                                    new GetVdsByVdsIdParameters(vds.getId())).getReturnValue();
+                                    new IdQueryParameters(vds.getId())).getReturnValue();
                     VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                         @Override
                         public boolean eval(VdsNetworkInterface i) {

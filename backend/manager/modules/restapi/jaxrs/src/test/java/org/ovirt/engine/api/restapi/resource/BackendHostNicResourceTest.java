@@ -80,8 +80,8 @@ public class BackendHostNicResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      new ArrayList<VdsNetworkInterface>());
         control.replay();
@@ -198,13 +198,13 @@ public class BackendHostNicResourceTest
         model2.setNetworkName(null);
         model1.setVdsId(GUIDS[0]);
         setUpGetEntityExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_GUID },
                 asList(model1));
         setUpGetEntityExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                GetVdsByVdsIdParameters.class,
-                new String[] { "VdsId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { PARENT_GUID },
                 asList(model2));
         HostNIC hostNicModel = getHostNicModel(1);
@@ -310,8 +310,8 @@ public class BackendHostNicResourceTest
         int i=0;
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                    GetVdsByVdsIdParameters.class,
-                    new String[] { "VdsId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { PARENT_GUID },
                     asList(getModel(i)));
             i += 1;
@@ -395,8 +395,8 @@ public class BackendHostNicResourceTest
         action.getNetwork().setId(NETWORK_GUID.toString());
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      new ArrayList<VdsNetworkInterface>());
         control.replay();
@@ -436,8 +436,8 @@ public class BackendHostNicResourceTest
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      ifaces);
         control.replay();
@@ -460,8 +460,8 @@ public class BackendHostNicResourceTest
 
     protected void setUpEntityQueryExpectations() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
-                                     GetVdsByVdsIdParameters.class,
-                                     new String[] { "VdsId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
                                      setUpInterfaces());
     }

@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -413,7 +412,7 @@ public class HostInterfaceListModel extends SearchableListModel
             }
         };
 
-        GetVdsByVdsIdParameters tempVar = new GetVdsByVdsIdParameters(getEntity().getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetVdsInterfacesByVdsId, tempVar, _asyncQuery);
 

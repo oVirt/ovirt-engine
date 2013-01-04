@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
-public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsInterfacesByVdsIdQuery(P parameters) {
         super(parameters);
     }
@@ -23,7 +23,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
     @Override
     protected void executeQueryCommand() {
         final List<VdsNetworkInterface> list = getDbFacade().getInterfaceDao()
-                .getAllInterfacesForVds(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
+                .getAllInterfacesForVds(getParameters().getId(), getUserID(), getParameters().isFiltered());
 
         // 1. here we return all interfaces (eth0, eth1, eth2) - the first
         // condition
@@ -46,7 +46,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends GetVdsByVdsIdParameters> ext
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>(list.size());
 
         if (!list.isEmpty()) {
-            VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getVdsId());
+            VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());
             Map<String, Network> networks = Entities.entitiesByName(
                     getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getvds_group_id()));
             for (final VdsNetworkInterface i : list) {

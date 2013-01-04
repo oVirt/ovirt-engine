@@ -150,7 +150,7 @@ public class BackendHostNicsResource
     }
 
     protected List<VdsNetworkInterface> getCollection() {
-        return getBackendCollection(VdcQueryType.GetVdsInterfacesByVdsId, new GetVdsByVdsIdParameters(asGuid(hostId)));
+        return getBackendCollection(VdcQueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(asGuid(hostId)));
     }
 
     protected List<VdsNetworkInterface> getCollection(List<VdsNetworkInterface> collection) {
