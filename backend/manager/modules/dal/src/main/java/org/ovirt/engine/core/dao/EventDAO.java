@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -66,7 +66,7 @@ public interface EventDAO extends DAO {
      */
     void unsubscribe(event_subscriber subscriber);
 
-    List<event_map> getEventMapByName(String event_up_name);
+    List<EventMap> getEventMapByName(String event_up_name);
 
-    List<event_map> getAllEventMaps();
+    List<EventMap> getAllEventMaps();
 }

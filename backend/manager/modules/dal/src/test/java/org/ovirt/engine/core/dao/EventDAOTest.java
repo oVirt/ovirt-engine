@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
@@ -177,7 +177,7 @@ public class EventDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEventMapByNameWithInvalidName() {
-        List<event_map> result = dao.getEventMapByName("farkle");
+        List<EventMap> result = dao.getEventMapByName("farkle");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -185,17 +185,17 @@ public class EventDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetEventMapByName() {
-        List<event_map> result = dao.getEventMapByName("TestRun");
+        List<EventMap> result = dao.getEventMapByName("TestRun");
 
         assertNotNull(result);
-        for (event_map mapping : result) {
-            assertEquals("TestRun", mapping.getevent_up_name());
+        for (EventMap mapping : result) {
+            assertEquals("TestRun", mapping.getEventUpName());
         }
     }
 
     @Test
     public void testGetAllEventMaps() {
-        List<event_map> result = dao.getAllEventMaps();
+        List<EventMap> result = dao.getAllEventMaps();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

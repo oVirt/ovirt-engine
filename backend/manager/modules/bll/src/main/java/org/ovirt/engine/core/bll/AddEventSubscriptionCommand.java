@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -27,21 +27,21 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         // check if user is not already subscribed to this event with same
         // method and address
         Guid subscriberId = getParameters().getEventSubscriber().getsubscriber_id();
-        String event_name = getParameters().getEventSubscriber().getevent_up_name();
-        int method_id = getParameters().getEventSubscriber().getmethod_id();
+        String eventName = getParameters().getEventSubscriber().getevent_up_name();
+        int methodId = getParameters().getEventSubscriber().getmethod_id();
         List<event_subscriber> subscriptions = DbFacade.getInstance()
                 .getEventDao().getAllForSubscriber(subscriberId);
-        if (IsAlreadySubscribed(subscriptions, subscriberId, event_name, method_id)) {
+        if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, methodId)) {
             addCanDoActionMessage(VdcBllMessages.EN_ALREADY_SUBSCRIBED);
             retValue = false;
         } else {
             // get notification method
-            List<EventNotificationMethod> event_notification_methods = (DbFacade.getInstance()
-                    .getEventDao().getEventNotificationMethodsById(method_id));
-            if (event_notification_methods.size() > 0) {
+            List<EventNotificationMethod> eventNotificationMethods = (DbFacade.getInstance()
+                    .getEventDao().getEventNotificationMethodsById(methodId));
+            if (eventNotificationMethods.size() > 0) {
                 // validate event
-                List<event_map> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(event_name);
-                if (event_map.size() > 0) {
+                List<EventMap> eventMap = DbFacade.getInstance().getEventDao().getEventMapByName(eventName);
+                if (eventMap.size() > 0) {
                     String domain = getParameters().getDomain();
                     // Validate user
                     DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
@@ -56,7 +56,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                                 retValue = false;
                             } else {
                                 retValue =
-                                        ValidateAdd(event_notification_methods, getParameters().getEventSubscriber(),
+                                        ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(),
                                                 user);
                             }
                         } catch (VdcBLLException vdcBllException) {
@@ -64,7 +64,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                             retValue = false;
                         }
                     } else {
-                        retValue = ValidateAdd(event_notification_methods, getParameters().getEventSubscriber(), user);
+                        retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(), user);
                     }
                 } else {
                     addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);

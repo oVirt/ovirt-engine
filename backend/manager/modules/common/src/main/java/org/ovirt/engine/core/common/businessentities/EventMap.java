@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "event_map")
-public class event_map implements Serializable {
+public class EventMap implements Serializable {
     private static final long serialVersionUID = 3159004698645803750L;
 
     @EmbeddedId
@@ -27,38 +27,38 @@ public class event_map implements Serializable {
     @Transient
     private int eventUpId;
 
-    public event_map() {
+    public EventMap() {
     }
 
-    public int getevent_down_id() {
+    public int getEventDownId() {
         return this.eventDownId;
     }
 
-    public void setevent_down_id(int value) {
+    public void setEventDownId(int value) {
         this.eventDownId = value;
     }
 
-    public int getevent_up_id() {
+    public int getEventUpId() {
         return this.eventUpId;
     }
 
-    public void setevent_up_id(int value) {
+    public void setEventUpId(int value) {
         this.eventUpId = value;
     }
 
-    public String getevent_up_name() {
+    public String getEventUpName() {
         return this.id.eventUpName;
     }
 
-    public void setevent_up_name(String value) {
+    public void setEventUpName(String value) {
         this.id.eventUpName = value;
     }
 
-    public String getevent_down_name() {
+    public String getEventDownName() {
         return this.id.eventDownName;
     }
 
-    public void setevent_down_name(String value) {
+    public void setEventDownName(String value) {
         this.id.eventDownName = value;
     }
 

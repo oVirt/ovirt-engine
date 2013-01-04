@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -23,7 +23,7 @@ public class RemoveEventSubscriptionCommand<T extends EventSubscriptionParametes
                 .getEventDao().getEventNotificationMethodsById(getParameters().getEventSubscriber().getmethod_id()));
         if (event_notification_methods.size() > 0) {
             // validate event
-            List<event_map> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(
+            List<EventMap> event_map = DbFacade.getInstance().getEventDao().getEventMapByName(
                     getParameters().getEventSubscriber().getevent_up_name());
             if (event_map.size() > 0) {
                 // Validate user

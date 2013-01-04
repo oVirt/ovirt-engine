@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hibernate.Session;
 
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
@@ -75,12 +75,12 @@ public class EventDAOWrapperImpl extends BaseDAOWrapperImpl implements EventDAO 
     }
 
     @Override
-    public List<event_map> getEventMapByName(String event_up_name) {
+    public List<EventMap> getEventMapByName(String event_up_name) {
         return mapDAO.getByEventUpName(event_up_name);
     }
 
     @Override
-    public List<event_map> getAllEventMaps() {
+    public List<EventMap> getAllEventMaps() {
         return mapDAO.getAll();
     }
 

@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.hibernate.criterion.Restrictions;
 
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventMapId;
 import org.ovirt.engine.core.dao.BaseDAOHibernateImpl;
 
-public class MapDAOHibernateImpl extends BaseDAOHibernateImpl<event_map, EventMapId> {
+public class MapDAOHibernateImpl extends BaseDAOHibernateImpl<EventMap, EventMapId> {
     public MapDAOHibernateImpl() {
-        super(event_map.class);
+        super(EventMap.class);
     }
 
-    public List<event_map> getByEventUpName(String event_up_name) {
+    public List<EventMap> getByEventUpName(String event_up_name) {
         return findByCriteria(Restrictions.eq("id.eventUpName", event_up_name));
     }
 }

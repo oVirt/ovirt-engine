@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.ovirt.engine.core.common.EventNotificationMethods;
-import org.ovirt.engine.core.common.businessentities.event_map;
+import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -157,15 +157,15 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_map> getAllEventMaps() {
+    public List<EventMap> getAllEventMaps() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        ParameterizedRowMapper<event_map> mapper = new ParameterizedRowMapper<event_map>() {
+        ParameterizedRowMapper<EventMap> mapper = new ParameterizedRowMapper<EventMap>() {
             @Override
-            public event_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                event_map entity = new event_map();
-                entity.setevent_up_name(rs.getString("event_up_name"));
-                entity.setevent_down_name(rs.getString("event_down_name"));
+            public EventMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                EventMap entity = new EventMap();
+                entity.setEventUpName(rs.getString("event_up_name"));
+                entity.setEventDownName(rs.getString("event_down_name"));
                 return entity;
             }
         };
@@ -175,15 +175,15 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<event_map> getEventMapByName(String event_up_name) {
+    public List<EventMap> getEventMapByName(String event_up_name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("event_name", event_up_name);
 
-        ParameterizedRowMapper<event_map> mapper = new ParameterizedRowMapper<event_map>() {
+        ParameterizedRowMapper<EventMap> mapper = new ParameterizedRowMapper<EventMap>() {
             @Override
-            public event_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                event_map entity = new event_map();
-                entity.setevent_up_name(rs.getString("event_up_name"));
-                entity.setevent_down_name(rs.getString("event_down_name"));
+            public EventMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                EventMap entity = new EventMap();
+                entity.setEventUpName(rs.getString("event_up_name"));
+                entity.setEventDownName(rs.getString("event_down_name"));
                 return entity;
             }
         };
