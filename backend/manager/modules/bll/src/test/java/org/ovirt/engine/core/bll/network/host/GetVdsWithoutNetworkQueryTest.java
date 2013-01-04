@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
 
@@ -19,14 +19,14 @@ import org.ovirt.engine.core.dao.VdsDAO;
  * the DAO}). The internal workings of the DAO are not tested.
  */
 public class GetVdsWithoutNetworkQueryTest
-        extends AbstractQueryTest<NetworkIdParameters,
-        GetVdsWithoutNetworkQuery<NetworkIdParameters>> {
+        extends AbstractQueryTest<IdQueryParameters,
+        GetVdsWithoutNetworkQuery<IdQueryParameters>> {
 
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
         Guid networkId = Guid.NewGuid();
-        when(params.getNetworkId()).thenReturn(networkId);
+        when(params.getId()).thenReturn(networkId);
 
         // Set up the DAOs
         VDS vds = new VDS();
@@ -36,7 +36,7 @@ public class GetVdsWithoutNetworkQueryTest
         when(getDbFacadeMockInstance().getVdsDao()).thenReturn(vdsDaoMock);
 
         // Run the query
-        GetVdsWithoutNetworkQuery<NetworkIdParameters> query = getQuery();
+        GetVdsWithoutNetworkQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

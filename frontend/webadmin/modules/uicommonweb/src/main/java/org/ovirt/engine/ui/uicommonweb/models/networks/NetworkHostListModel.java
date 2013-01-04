@@ -8,7 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -81,13 +81,13 @@ public class NetworkHostListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
-        networkIdParams.setRefresh(getIsQueryFirstTime());
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
+        params.setRefresh(getIsQueryFirstTime());
 
         if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
-            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, networkIdParams, asyncQuery);
+            Frontend.RunQuery(VdcQueryType.GetVdsWithoutNetwork, params, asyncQuery);
         } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
-            Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
+            Frontend.RunQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, params, asyncQuery);
         }
 
         setIsQueryFirstTime(false);

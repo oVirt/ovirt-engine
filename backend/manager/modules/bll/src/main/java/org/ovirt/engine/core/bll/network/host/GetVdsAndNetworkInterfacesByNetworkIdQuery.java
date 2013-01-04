@@ -8,14 +8,14 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * A query to retrieve all Host-Network Interface pairs that the given Network is attached to.
  */
-public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParameters> extends QueriesCommandBase<P> {
+public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetVdsAndNetworkInterfacesByNetworkIdQuery(P parameters) {
         super(parameters);
@@ -24,9 +24,9 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParam
     @Override
     protected void executeQueryCommand() {
         List<VDS> vdsList = getDbFacade().getVdsDao()
-                .getAllForNetwork(getParameters().getNetworkId());
+                .getAllForNetwork(getParameters().getId());
         List<VdsNetworkInterface> vdsNetworkInterfaceList = getDbFacade().getInterfaceDao()
-                .getVdsInterfacesByNetworkId(getParameters().getNetworkId());
+                .getVdsInterfacesByNetworkId(getParameters().getId());
 
         final Map<Guid, VDS> vdsById = Entities.businessEntitiesById(vdsList);
 
