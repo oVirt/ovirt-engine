@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
@@ -146,7 +146,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         if (params.getNetwork().getVlanId() == null) {
             VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
                     VdcQueryType.GetAllChildVlanInterfaces,
-                    new GetAllChildVlanInterfacesQueryParameters(params.getVdsId(), params
+                    new InterfaceAndIdQueryParameters(params.getVdsId(), params
                             .getInterface()));
             @SuppressWarnings("unchecked")
             ArrayList<VdsNetworkInterface> vlanIfaces = (ArrayList<VdsNetworkInterface>) ret.getReturnValue();

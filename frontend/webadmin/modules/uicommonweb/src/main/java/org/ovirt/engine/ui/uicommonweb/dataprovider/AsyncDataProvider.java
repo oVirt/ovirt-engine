@@ -56,7 +56,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -2304,8 +2304,8 @@ public final class AsyncDataProvider {
         {
             // Filter out the Interfaces that have child vlan Interfaces
 
-            ArrayList<GetAllChildVlanInterfacesQueryParameters> parametersList =
-                    new ArrayList<GetAllChildVlanInterfacesQueryParameters>();
+            ArrayList<InterfaceAndIdQueryParameters> parametersList =
+                    new ArrayList<InterfaceAndIdQueryParameters>();
             ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
             GetAllChildVlanInterfaces(vdsID, ifacesOptions, new IFrontendMultipleQueryAsyncCallback() {
 
@@ -2427,7 +2427,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetVlanParent, new GetAllChildVlanInterfacesQueryParameters(vdsID,
+        Frontend.RunQuery(VdcQueryType.GetVlanParent, new InterfaceAndIdQueryParameters(vdsID,
                 iface), aQuery);
     }
 
@@ -2450,7 +2450,7 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllSiblingVlanInterfaces,
-                new GetAllChildVlanInterfacesQueryParameters(vdsID, iface), aQuery);
+                new InterfaceAndIdQueryParameters(vdsID, iface), aQuery);
 
     }
 
@@ -2461,7 +2461,7 @@ public final class AsyncDataProvider {
         for (final VdsNetworkInterface iface : ifaces)
         {
             queryTypeList.add(VdcQueryType.GetAllChildVlanInterfaces);
-            parametersList.add(new GetAllChildVlanInterfacesQueryParameters(vdsID, iface));
+            parametersList.add(new InterfaceAndIdQueryParameters(vdsID, iface));
         }
         Frontend.RunMultipleQueries(queryTypeList, parametersList, callback);
     }

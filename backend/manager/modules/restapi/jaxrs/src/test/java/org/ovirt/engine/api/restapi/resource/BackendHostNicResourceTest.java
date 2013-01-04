@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -228,7 +228,7 @@ public class BackendHostNicResourceTest
         vlan.setNetworkName("some network name");
         vlans.add(vlan);
         setUpEntityQueryExpectations(VdcQueryType.GetAllChildVlanInterfaces,
-                                     GetAllChildVlanInterfacesQueryParameters.class,
+                                     InterfaceAndIdQueryParameters.class,
                                      new String[]{"Id", "Interface"},
                                      new Object[]{PARENT_GUID, hostNicModel},
                                      vlans);

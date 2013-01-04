@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -152,7 +152,7 @@ public class BackendHostNicResource
         if (!StringHelper.isNullOrEmpty(oldNetworkName)) {
             return lookupAtachedNetwork(originalInter.getNetworkName());
         } else {
-            GetAllChildVlanInterfacesQueryParameters params = new GetAllChildVlanInterfacesQueryParameters(
+            InterfaceAndIdQueryParameters params = new InterfaceAndIdQueryParameters(
                                                                     asGuid(originalInter.getVdsId()),
                                                                     originalInter);
             List<VdsNetworkInterface> vlans = getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetAllChildVlanInterfaces, params);

@@ -5,14 +5,14 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 /**
  * This query get vlan interface and return all it's siblings, i.e input: eth2.2
  * return: eth2.4 eth2.5 (without eth2.2)
  */
-public class GetAllSiblingVlanInterfacesQuery<P extends GetAllChildVlanInterfacesQueryParameters>
+public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParameters>
         extends QueriesCommandBase<P> {
     public GetAllSiblingVlanInterfacesQuery(P parameters) {
         super(parameters);
