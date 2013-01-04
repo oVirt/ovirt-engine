@@ -229,7 +229,7 @@ public class BackendHostNicResourceTest
         vlans.add(vlan);
         setUpEntityQueryExpectations(VdcQueryType.GetAllChildVlanInterfaces,
                                      GetAllChildVlanInterfacesQueryParameters.class,
-                                     new String[]{"VdsId", "Interface"},
+                                     new String[]{"Id", "Interface"},
                                      new Object[]{PARENT_GUID, hostNicModel},
                                      vlans);
     }

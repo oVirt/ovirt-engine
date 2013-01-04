@@ -23,7 +23,7 @@ public class GetAllSiblingVlanInterfacesQuery<P extends GetAllChildVlanInterface
         java.util.ArrayList<VdsNetworkInterface> retVal = new java.util.ArrayList<VdsNetworkInterface>();
         if (((VdsNetworkInterface) getParameters().getInterface()).getVlanId() != null) {
             List<VdsNetworkInterface> vdsInterfaces =
-                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getVdsId());
+                    getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
             for (int i = 0; i < vdsInterfaces.size(); i++) {
                 if (vdsInterfaces.get(i).getVlanId() != null
                         && !StringUtils.equals(getParameters().getInterface().getName(), vdsInterfaces.get(i)
