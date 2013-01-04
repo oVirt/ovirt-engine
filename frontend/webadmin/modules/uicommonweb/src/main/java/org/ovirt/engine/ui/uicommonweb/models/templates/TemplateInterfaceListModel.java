@@ -232,7 +232,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     UpdateActionAvailability();
                 }
             }),
-                    ((VmTemplate) getEntity()).getvds_group_id());
+                    ((VmTemplate) getEntity()).getVdsGroupId());
         }
     }
 

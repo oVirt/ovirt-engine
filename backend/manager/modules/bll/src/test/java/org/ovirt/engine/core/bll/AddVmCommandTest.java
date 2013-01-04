@@ -497,9 +497,9 @@ public class AddVmCommandTest {
         VM vm = new VM();
         VmDynamic dynamic = new VmDynamic();
         VmStatic stat = new VmStatic();
-        stat.setvmt_guid(Guid.NewGuid());
-        stat.setvm_name("testVm");
-        stat.setpriority(1);
+        stat.setVmtGuid(Guid.NewGuid());
+        stat.setVmName("testVm");
+        stat.setPriority(1);
         vm.setStaticData(stat);
         vm.setDynamicData(dynamic);
         return vm;

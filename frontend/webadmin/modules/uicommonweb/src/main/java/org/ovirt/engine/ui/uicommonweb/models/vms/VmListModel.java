@@ -1636,7 +1636,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
 
-        model.getIsHighlyAvailable().setEntity(vm.getStaticData().getauto_startup());
+        model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
     }
 
     private void OnNewTemplate()

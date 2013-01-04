@@ -94,7 +94,7 @@ public class OvfVmWriterTest {
         vm.setOrigin(OriginType.OVIRT);
         vm.setId(new Guid());
         vm.setVmDescription("test-description");
-        vm.getStaticData().setdomain("domain_name");
+        vm.getStaticData().setDomain("domain_name");
         vm.setTimeZone("Israel Standard Time");
         vm.setDbGeneration(2L);
         initInterfaces(vm);
@@ -128,9 +128,9 @@ public class OvfVmWriterTest {
     private static VmTemplate createVmTemplate() {
         VmTemplate template = new VmTemplate();
         template.setname("test-template");
-        template.setorigin(OriginType.OVIRT);
+        template.setOrigin(OriginType.OVIRT);
         template.setId(new Guid());
-        template.setdescription("test-description");
+        template.setDescription("test-description");
         template.setDbGeneration(2L);
         return template;
     }

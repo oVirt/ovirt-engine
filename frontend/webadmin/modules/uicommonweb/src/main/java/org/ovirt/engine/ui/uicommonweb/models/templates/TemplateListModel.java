@@ -365,7 +365,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
         model.setHashName("edit_template"); //$NON-NLS-1$
-        model.setVmType(template.getvm_type());
+        model.setVmType(template.getVmType());
 
         model.Initialize(this.getSystemTreeSelectedItem());
 
@@ -502,52 +502,52 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         // Save changes.
-        template.setvm_type(model.getVmType());
+        template.setVmType(model.getVmType());
         template.setname(name);
-        template.setos((VmOsType) model.getOSType().getSelectedItem());
-        template.setnum_of_monitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        template.setOs((VmOsType) model.getOSType().getSelectedItem());
+        template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
-        template.setdescription((String) model.getDescription().getEntity());
-        template.setdomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
-        template.setmem_size_mb((Integer) model.getMemSize().getEntity());
-        template.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
-        template.settime_zone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
+        template.setDescription((String) model.getDescription().getEntity());
+        template.setDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
+        template.setMemSizeMb((Integer) model.getMemSize().getEntity());
+        template.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        template.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null) ? ((Map.Entry<String, String>) model.getTimeZone()
                 .getSelectedItem()).getKey()
                 : ""); //$NON-NLS-1$
-        template.setnum_of_sockets((Integer) model.getNumOfSockets().getSelectedItem());
-        template.setcpu_per_socket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+        template.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+        template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
-        template.setusb_policy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        template.setis_auto_suspend(false);
-        template.setis_stateless((Boolean) model.getIsStateless().getEntity());
+        template.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+        template.setAutoSuspend(false);
+        template.setStateless((Boolean) model.getIsStateless().getEntity());
         template.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
         template.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-        template.setdefault_boot_sequence(model.getBootSequence());
-        template.setiso_path(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
-        template.setauto_startup((Boolean) model.getIsHighlyAvailable().getEntity());
-        template.setkernel_url((String) model.getKernel_path().getEntity());
-        template.setkernel_params((String) model.getKernel_parameters().getEntity());
-        template.setinitrd_url((String) model.getInitrd_path().getEntity());
+        template.setDefaultBootSequence(model.getBootSequence());
+        template.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        template.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
+        template.setKernelUrl((String) model.getKernel_path().getEntity());
+        template.setKernelParams((String) model.getKernel_parameters().getEntity());
+        template.setInitrdUrl((String) model.getInitrd_path().getEntity());
 
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             template.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
-        template.setdefault_display_type((DisplayType) displayProtocolSelectedItem.getEntity());
+        template.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
 
         EntityModel prioritySelectedItem = (EntityModel) model.getPriority().getSelectedItem();
-        template.setpriority((Integer) prioritySelectedItem.getEntity());
+        template.setPriority((Integer) prioritySelectedItem.getEntity());
 
         // host migration configuration
         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
         if ((Boolean) model.getIsAutoAssign().getEntity())
         {
-            template.setdedicated_vm_for_vds(null);
+            template.setDedicatedVmForVds(null);
         }
         else
         {
-            template.setdedicated_vm_for_vds(defaultHost.getId());
+            template.setDedicatedVmForVds(defaultHost.getId());
         }
 
         template.setMigrationSupport(MigrationSupport.MIGRATABLE);

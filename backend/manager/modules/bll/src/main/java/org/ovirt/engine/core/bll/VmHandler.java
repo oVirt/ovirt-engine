@@ -78,11 +78,11 @@ public class VmHandler {
         mUpdateVmsStatic = new ObjectIdentityChecker(VmHandler.class,
                 Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
 
-        mUpdateVmsStatic.AddPermittedFields(new String[] { "vm_name", "description", "domain", "os", "osType",
-                "creation_date", "num_of_monitors", "allowConsoleReconnect", "usb_policy", "is_auto_suspend",
-                "auto_startup",
-                "dedicated_vm_for_vds", "default_display_type", "priority", "default_boot_sequence", "initrd_url",
-                "kernel_url", "kernel_params", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
+        mUpdateVmsStatic.AddPermittedFields(new String[] { "vmName", "description", "domain", "os", "osType",
+                "creationDate", "numOfMonitors", "allowConsoleReconnect", "usbPolicy", "autoSuspend",
+                "autoStartup",
+                "dedicatedVmForVds", "defaultDisplayType", "priority", "defaultBootSequence", "initrdUrl",
+                "kernelUrl", "kernelParams", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
                 "quotaEnforcementType", "cpuPinning",
                 "vmPayload", "balloonEnabled", "smartcardEnabled","deleteProtected","dbGeneration",
                 "images", // images list is relational entity - ignore value changes
@@ -91,8 +91,8 @@ public class VmHandler {
         });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum<?>[] { VMStatus.Down }),
-                Arrays.asList(new String[] { "vds_group_id", "time_zone", "is_stateless", "nice_level", "mem_size_mb",
-                        "num_of_sockets", "cpu_per_socket", "iso_path", "userDefinedProperties",
+                Arrays.asList(new String[] { "vdsGroupId", "timeZone", "stateless", "niceLevel", "memSizeMb",
+                        "numOfSockets", "cpuPerSocket", "isoPath", "userDefinedProperties",
                         "predefinedProperties", "customProperties" }));
     }
 
@@ -450,8 +450,8 @@ public class VmHandler {
 
     public static void updateImportedVmUsbPolicy(VmBase vmBase) {
         //Enforce disabled USB policy for Linux OS with legacy policy.
-        if (vmBase.getos().isLinux() &&  vmBase.getusb_policy().equals(UsbPolicy.ENABLED_LEGACY)) {
-            vmBase.setusb_policy(UsbPolicy.DISABLED);
+        if (vmBase.getOs().isLinux() &&  vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
+            vmBase.setUsbPolicy(UsbPolicy.DISABLED);
         }
     }
 

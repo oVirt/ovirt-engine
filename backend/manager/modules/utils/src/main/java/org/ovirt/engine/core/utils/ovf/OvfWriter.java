@@ -187,15 +187,15 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeGeneralData() {
         _writer.WriteStartElement("Description");
-        _writer.WriteRaw(vmBase.getdescription());
+        _writer.WriteRaw(vmBase.getDescription());
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("Domain");
-        _writer.WriteRaw(vmBase.getdomain());
+        _writer.WriteRaw(vmBase.getDomain());
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("CreationDate");
-        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getcreation_date()));
+        _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(vmBase.getCreationDate()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("ExportDate");
@@ -203,7 +203,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("IsAutoSuspend");
-        _writer.WriteRaw(String.valueOf(vmBase.getis_auto_suspend()));
+        _writer.WriteRaw(String.valueOf(vmBase.isAutoSuspend()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("DeleteProtected");
@@ -215,26 +215,26 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("TimeZone");
-        _writer.WriteRaw(vmBase.gettime_zone());
+        _writer.WriteRaw(vmBase.getTimeZone());
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("default_boot_sequence");
-        _writer.WriteRaw(String.valueOf(vmBase.getdefault_boot_sequence().getValue()));
+        _writer.WriteRaw(String.valueOf(vmBase.getDefaultBootSequence().getValue()));
         _writer.WriteEndElement();
 
-        if (!StringHelper.isNullOrEmpty(vmBase.getinitrd_url())) {
+        if (!StringHelper.isNullOrEmpty(vmBase.getInitrdUrl())) {
             _writer.WriteStartElement("initrd_url");
-            _writer.WriteRaw(vmBase.getinitrd_url());
+            _writer.WriteRaw(vmBase.getInitrdUrl());
             _writer.WriteEndElement();
         }
-        if (!StringHelper.isNullOrEmpty(vmBase.getkernel_url())) {
+        if (!StringHelper.isNullOrEmpty(vmBase.getKernelUrl())) {
             _writer.WriteStartElement("kernel_url");
-            _writer.WriteRaw(vmBase.getkernel_url());
+            _writer.WriteRaw(vmBase.getKernelUrl());
             _writer.WriteEndElement();
         }
-        if (!StringHelper.isNullOrEmpty(vmBase.getkernel_params())) {
+        if (!StringHelper.isNullOrEmpty(vmBase.getKernelParams())) {
             _writer.WriteStartElement("kernel_params");
-            _writer.WriteRaw(vmBase.getkernel_params());
+            _writer.WriteRaw(vmBase.getKernelParams());
             _writer.WriteEndElement();
         }
 
@@ -243,7 +243,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("VmType");
-        _writer.WriteRaw(String.valueOf(vmBase.getvm_type().getValue()));
+        _writer.WriteRaw(String.valueOf(vmBase.getVmType().getValue()));
         _writer.WriteEndElement();
     }
 
@@ -258,7 +258,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeManagedDeviceInfo(VmBase vmBase, XmlTextWriter writer, Guid deviceId) {
-        VmDevice vmDevice = vmBase.getManagedVmDeviceMap().get(deviceId);
+        VmDevice vmDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
             writeVmDeviceInfo(vmDevice);
         }
@@ -267,7 +267,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected void writeOtherDevices(VmBase vmBase, XmlTextWriter write) {
         List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
 
-        Collection<VmDevice> managedDevices = vmBase.getManagedVmDeviceMap().values();
+        Collection<VmDevice> managedDevices = vmBase.getManagedDeviceMap().values();
         for (VmDevice device : managedDevices) {
             if (VmDeviceCommonUtils.isSpecialDevice(device.getDevice(), device.getType())) {
                 devices.add(device);
@@ -288,8 +288,8 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeMonitors(VmBase vmBase) {
-        Collection<VmDevice> devices = vmBase.getManagedVmDeviceMap().values();
-        int numOfMonitors = vmBase.getnum_of_monitors();
+        Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
+        int numOfMonitors = vmBase.getNumOfMonitors();
         int i = 0;
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
@@ -317,7 +317,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeCd(VmBase vmBase) {
-        Collection<VmDevice> devices = vmBase.getManagedVmDeviceMap().values();
+        Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType().equals(VmDeviceType.CDROM.getName())) {
                 _writer.WriteStartElement("Item");

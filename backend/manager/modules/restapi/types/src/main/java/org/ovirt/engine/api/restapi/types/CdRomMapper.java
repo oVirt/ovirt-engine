@@ -15,7 +15,7 @@ public class CdRomMapper {
     public static VM map(CdRom model, VM template) {
         VM entity = template != null ? template : new VM();
         if (model.isSetFile() && model.getFile().isSetId()) {
-            entity.getStaticData().setiso_path(model.getFile().getId());
+            entity.getStaticData().setIsoPath(model.getFile().getId());
         }
         return entity;
     }
@@ -24,9 +24,9 @@ public class CdRomMapper {
     public static CdRom map(VM entity, CdRom template) {
         CdRom model = template != null ? template : new CdRom();
         model.setId(CDROM_ID.toString());
-        if (!StringHelper.isNullOrEmpty(entity.getStaticData().getiso_path())) {
+        if (!StringHelper.isNullOrEmpty(entity.getStaticData().getIsoPath())) {
             model.setFile(new File());
-            model.getFile().setId(entity.getStaticData().getiso_path());
+            model.getFile().setId(entity.getStaticData().getIsoPath());
         }
         return model;
     }
@@ -39,9 +39,9 @@ public class CdRomMapper {
     public static CdRom map(VmTemplate entity, CdRom template) {
         CdRom model = template != null ? template : new CdRom();
         model.setId(CDROM_ID.toString());
-        if (!StringHelper.isNullOrEmpty(entity.getiso_path())) {
+        if (!StringHelper.isNullOrEmpty(entity.getIsoPath())) {
             model.setFile(new File());
-            model.getFile().setId(entity.getiso_path());
+            model.getFile().setId(entity.getIsoPath());
         }
         return model;
     }

@@ -193,7 +193,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         VmStatic vm = getVmStaticDAO().get(getVmId());
 
         List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
-        if (!checkPciAndIdeLimit(vm.getnum_of_monitors(),
+        if (!checkPciAndIdeLimit(vm.getNumOfMonitors(),
                 allInterfaces,
                 allDisks,
                 getReturnValue().getCanDoActionMessages())) {
@@ -217,7 +217,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         if (getInterface().getNetworkName() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
+            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getVdsGroupId());
             if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network n) {

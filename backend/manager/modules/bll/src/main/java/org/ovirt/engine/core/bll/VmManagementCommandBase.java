@@ -28,7 +28,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         super(parameters);
         if (parameters.getVmStaticData() != null) {
             setVmId(parameters.getVmStaticData().getId());
-            setVdsGroupId(parameters.getVmStaticData().getvds_group_id());
+            setVdsGroupId(parameters.getVmStaticData().getVdsGroupId());
         }
     }
 
@@ -38,7 +38,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     @Override
     protected List<Class<?>> getValidationGroups() {
-        if (getParameters().getVmStaticData().getvm_type() == VmType.Desktop) {
+        if (getParameters().getVmStaticData().getVmType() == VmType.Desktop) {
             addValidationGroup(DesktopVM.class);
         }
         return super.getValidationGroups();
@@ -53,12 +53,12 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      */
     protected boolean isDedicatedVdsOnSameCluster(VmStatic vm) {
         boolean result = true;
-        if (vm.getdedicated_vm_for_vds() != null) {
+        if (vm.getDedicatedVmForVds() != null) {
             // get dedicated host id
-            Guid guid = vm.getdedicated_vm_for_vds().getValue();
+            Guid guid = vm.getDedicatedVmForVds().getValue();
             // get dedicated host cluster and comparing it to VM cluster
             VDS vds = getVdsDAO().get(guid);
-            result = vds != null && (vm.getvds_group_id().equals(vds.getvds_group_id()));
+            result = vds != null && (vm.getVdsGroupId().equals(vds.getvds_group_id()));
         }
         if (!result) {
             getReturnValue().getCanDoActionMessages()
@@ -99,7 +99,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         HashSet<Integer> vcpus = new HashSet<Integer>();
         String[] rules = cpuPinning.split("_");
 
-        int maxvCPU = vmStatic.getnum_of_cpus();
+        int maxvCPU = vmStatic.getNumOfCpus();
 
 
         for (String rule : rules) {
@@ -126,8 +126,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             }
 
             // can not check if no dedicated vds was configured
-            if (vmStatic.getdedicated_vm_for_vds() != null) {
-                VDS dedicatedVds = getVds(vmStatic.getdedicated_vm_for_vds().getValue());
+            if (vmStatic.getDedicatedVmForVds() != null) {
+                VDS dedicatedVds = getVds(vmStatic.getDedicatedVmForVds().getValue());
                 // check only from cluster version 3.2
                 if (dedicatedVds != null &&
                         dedicatedVds.getvds_group_compatibility_version() != null &&

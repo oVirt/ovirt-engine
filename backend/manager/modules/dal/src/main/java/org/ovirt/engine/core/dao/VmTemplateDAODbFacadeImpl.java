@@ -128,42 +128,42 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     private MapSqlParameterSource getInsertOrUpdateParameters(VmTemplate template) {
         return getCustomMapSqlParameterSource()
                 .addValue("child_count", template.getchild_count())
-                .addValue("creation_date", template.getcreation_date())
-                .addValue("description", template.getdescription())
-                .addValue("mem_size_mb", template.getmem_size_mb())
+                .addValue("creation_date", template.getCreationDate())
+                .addValue("description", template.getDescription())
+                .addValue("mem_size_mb", template.getMemSizeMb())
                 .addValue("name", template.getname())
-                .addValue("num_of_sockets", template.getnum_of_sockets())
-                .addValue("cpu_per_socket", template.getcpu_per_socket())
-                .addValue("os", template.getos())
+                .addValue("num_of_sockets", template.getNumOfSockets())
+                .addValue("cpu_per_socket", template.getCpuPerSocket())
+                .addValue("os", template.getOs())
                 .addValue("vmt_guid", template.getId())
-                .addValue("vds_group_id", template.getvds_group_id())
-                .addValue("domain", template.getdomain())
-                .addValue("num_of_monitors", template.getnum_of_monitors())
-                .addValue("allow_console_reconnect", template.getAllowConsoleReconnect())
+                .addValue("vds_group_id", template.getVdsGroupId())
+                .addValue("domain", template.getDomain())
+                .addValue("num_of_monitors", template.getNumOfMonitors())
+                .addValue("allow_console_reconnect", template.isAllowConsoleReconnect())
                 .addValue("status", template.getstatus())
-                .addValue("usb_policy", template.getusb_policy())
-                .addValue("time_zone", template.gettime_zone())
-                .addValue("fail_back", template.getfail_back())
-                .addValue("is_auto_suspend", template.getis_auto_suspend())
-                .addValue("vm_type", template.getvm_type())
-                .addValue("nice_level", template.getnice_level())
+                .addValue("usb_policy", template.getUsbPolicy())
+                .addValue("time_zone", template.getTimeZone())
+                .addValue("fail_back", template.isFailBack())
+                .addValue("is_auto_suspend", template.isAutoSuspend())
+                .addValue("vm_type", template.getVmType())
+                .addValue("nice_level", template.getNiceLevel())
                 .addValue("default_boot_sequence",
-                        template.getdefault_boot_sequence())
+                        template.getDefaultBootSequence())
                 .addValue("default_display_type",
-                        template.getdefault_display_type())
-                .addValue("priority", template.getpriority())
-                .addValue("auto_startup", template.getauto_startup())
-                .addValue("is_stateless", template.getis_stateless())
+                        template.getDefaultDisplayType())
+                .addValue("priority", template.getPriority())
+                .addValue("auto_startup", template.isAutoStartup())
+                .addValue("is_stateless", template.isStateless())
                 .addValue("is_smartcard_enabled", template.isSmartcardEnabled())
                 .addValue("is_delete_protected", template.isDeleteProtected())
-                .addValue("iso_path", template.getiso_path())
-                .addValue("origin", template.getorigin())
-                .addValue("initrd_url", template.getinitrd_url())
-                .addValue("kernel_url", template.getkernel_url())
-                .addValue("kernel_params", template.getkernel_params())
+                .addValue("iso_path", template.getIsoPath())
+                .addValue("origin", template.getOrigin())
+                .addValue("initrd_url", template.getInitrdUrl())
+                .addValue("kernel_url", template.getKernelUrl())
+                .addValue("kernel_params", template.getKernelParams())
                 .addValue("quota_id", template.getQuotaId())
                 .addValue("migration_support", template.getMigrationSupport().getValue())
-                .addValue("dedicated_vm_for_vds", template.getdedicated_vm_for_vds());
+                .addValue("dedicated_vm_for_vds", template.getDedicatedVmForVds());
     }
 
     @Override
@@ -210,23 +210,23 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
 
             entity.setId(Guid.createGuidFromString(rs.getString("vmt_guid")));
             entity.setchild_count(rs.getInt("child_count"));
-            entity.setmem_size_mb(rs.getInt("mem_size_mb"));
+            entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setname(rs.getString("name"));
-            entity.setos(VmOsType.forValue(rs.getInt("os")));
-            entity.setvds_group_id(Guid.createGuidFromString(rs.getString("vds_group_id")));
-            entity.setdomain(rs.getString("domain"));
-            entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
+            entity.setOs(VmOsType.forValue(rs.getInt("os")));
+            entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
+            entity.setDomain(rs.getString("domain"));
+            entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setstatus(VmTemplateStatus.forValue(rs.getInt("status")));
             entity.setvds_group_name(rs.getString("vds_group_name"));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
+            entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
-            entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDedicatedVmForVds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             return entity;
         }
     }

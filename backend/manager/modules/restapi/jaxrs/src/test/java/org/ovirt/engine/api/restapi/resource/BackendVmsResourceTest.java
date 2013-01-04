@@ -487,7 +487,7 @@ public class BackendVmsResourceTest
         expect(vmConfiguration.getDiskMap()).andReturn(diskImageMap).anyTimes();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(GUIDS[0]);
-        vmStatic.setvm_name(NAMES[0]);
+        vmStatic.setVmName(NAMES[0]);
         expect(vmConfiguration.getStaticData()).andReturn(vmStatic).anyTimes();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
@@ -885,14 +885,14 @@ public class BackendVmsResourceTest
     static org.ovirt.engine.core.common.businessentities.VmTemplate setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VmTemplate entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getvds_group_id()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getnum_of_cpus()).andReturn(8).anyTimes();
-        expect(entity.getnum_of_sockets()).andReturn(2).anyTimes();
-        expect(entity.getdefault_display_type()).andReturn(DisplayType.vnc).anyTimes();
-        expect(entity.getnum_of_monitors()).andReturn(2).anyTimes();
-        expect(entity.getvm_type()).andReturn(VmType.Server).anyTimes();
+        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
+        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
+        expect(entity.getDefaultDisplayType()).andReturn(DisplayType.vnc).anyTimes();
+        expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
+        expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
         return entity;
     }
 

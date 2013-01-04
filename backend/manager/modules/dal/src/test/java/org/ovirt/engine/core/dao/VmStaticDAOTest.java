@@ -44,10 +44,10 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.NewGuid());
-        newVmStatic.setvm_name("New Virtual Machine");
-        newVmStatic.setvds_group_id(VDS_GROUP_ID);
-        newVmStatic.setvmt_guid(vmtemplate.getId());
-        newVmStatic.setorigin(OriginType.OVIRT);
+        newVmStatic.setVmName("New Virtual Machine");
+        newVmStatic.setVdsGroupId(VDS_GROUP_ID);
+        newVmStatic.setVmtGuid(vmtemplate.getId());
+        newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(Guid.NewGuid());
     }
 
@@ -82,7 +82,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals("rhel5-pool-50", vm.getvm_name());
+            assertEquals("rhel5-pool-50", vm.getVmName());
         }
     }
 
@@ -91,7 +91,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllStaticByStoragePool() {
-        NGuid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getvds_group_id()).getStoragePoolId();
+        NGuid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getVdsGroupId()).getStoragePoolId();
 
         assertNotNull(spID.getValue());
 
@@ -112,7 +112,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getvds_group_id());
+            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
         }
     }
 
@@ -126,7 +126,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getvds_group_id());
+            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
         }
     }
 
@@ -140,7 +140,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(VDS_GROUP_ID, vm.getvds_group_id());
+            assertEquals(VDS_GROUP_ID, vm.getVdsGroupId());
         }
     }
 
@@ -160,7 +160,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdate() {
-        existingVmStatic.setdescription("updated");
+        existingVmStatic.setDescription("updated");
         dao.update(existingVmStatic);
         VmStatic result = dao.get(EXISTING_VM_ID);
         assertNotNull(result);
@@ -220,6 +220,6 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(VDS_STATIC_ID);
 
         assertFalse(namesPinnedToHost.isEmpty());
-        assertTrue(namesPinnedToHost.contains(existingVmStatic.getvm_name()));
+        assertTrue(namesPinnedToHost.contains(existingVmStatic.getVmName()));
     }
 }

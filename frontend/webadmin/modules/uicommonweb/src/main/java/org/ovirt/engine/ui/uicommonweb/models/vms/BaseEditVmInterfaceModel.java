@@ -39,13 +39,13 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     protected void init() {
         Integer selectedNicType = getNic().getType();
         ArrayList<VmInterfaceType> nicTypes =
-                AsyncDataProvider.GetNicTypeList(getVm().getos(),
+                AsyncDataProvider.GetNicTypeList(getVm().getOs(),
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         getNicType().setItems(nicTypes);
 
         if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
         {
-            selectedNicType = AsyncDataProvider.GetDefaultNicType(getVm().getos()).getValue();
+            selectedNicType = AsyncDataProvider.GetDefaultNicType(getVm().getOs()).getValue();
         }
 
         getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));

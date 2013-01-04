@@ -35,9 +35,9 @@ public class OvfTemplateReader extends OvfReader {
         _vmTemplate.setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
-            _vmTemplate.setos(VmOsType.valueOf(node.InnerText));
+            _vmTemplate.setOs(VmOsType.valueOf(node.InnerText));
         } else {
-            _vmTemplate.setos(VmOsType.Unassigned);
+            _vmTemplate.setOs(VmOsType.Unassigned);
         }
     }
 
@@ -51,15 +51,15 @@ public class OvfTemplateReader extends OvfReader {
             // CPU
             case 3:
                 _vmTemplate
-                        .setnum_of_sockets(Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).InnerText));
+                        .setNumOfSockets(Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).InnerText));
                 _vmTemplate
-                        .setcpu_per_socket(Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).InnerText));
+                        .setCpuPerSocket(Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).InnerText));
                 break;
 
             // Memory
             case 4:
                 _vmTemplate
-                        .setmem_size_mb(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                        .setMemSizeMb(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
                 break;
 
             // Image
@@ -126,13 +126,13 @@ public class OvfTemplateReader extends OvfReader {
                 break;
             // USB
             case 23:
-                _vmTemplate.setusb_policy(UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
+                _vmTemplate.setUsbPolicy(UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
                 break;
 
             // Monitor
             case 20:
                 _vmTemplate
-                        .setnum_of_monitors(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                        .setNumOfMonitors(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
                 readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.TRUE);
                 break;
             // OTHER

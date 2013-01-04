@@ -125,7 +125,7 @@ public class BackendVmPoolResource
                                                 VdcQueryType.GetVmTemplate,
                                                 new GetVmTemplateParameters(vm.getId()),
                                                 vm.getId().toString());
-                vm.getStaticData().setmem_size_mb(template.getmem_size_mb());
+                vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
             }
 
             AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);

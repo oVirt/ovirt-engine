@@ -91,7 +91,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
-            setVmTemplateId(parameters.getVmStaticData().getvmt_guid());
+            setVmTemplateId(parameters.getVmStaticData().getVmtGuid());
         }
 
         parameters.setEntityId(getVmId());
@@ -154,8 +154,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean canAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getvm_name(), getStoragePoolId()
-                .getValue(), vmStaticFromParams.getpriority());
+        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getVmName(), getStoragePoolId()
+                .getValue(), vmStaticFromParams.getPriority());
 
         if (returnValue) {
             List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
@@ -216,7 +216,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         returnValue =
                 returnValue
-                        && checkPciAndIdeLimit(getParameters().getVmStaticData().getnum_of_monitors(),
+                        && checkPciAndIdeLimit(getParameters().getVmStaticData().getNumOfMonitors(),
                                 getVmInterfaces(),
                                 getVmDisks(), getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
@@ -225,14 +225,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean checkNumberOfMonitors() {
-        return VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getdefault_display_type(),
-                getParameters().getVmStaticData().getnum_of_monitors(),
+        return VmHandler.isNumOfMonitorsLegal(getParameters().getVmStaticData().getDefaultDisplayType(),
+                getParameters().getVmStaticData().getNumOfMonitors(),
                 getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean hostToRunExist() {
-        if (getParameters().getVmStaticData().getdedicated_vm_for_vds() != null) {
-            if (DbFacade.getInstance().getVdsDao().get(getParameters().getVmStaticData().getdedicated_vm_for_vds()) == null) {
+        if (getParameters().getVmStaticData().getDedicatedVmForVds() != null) {
+            if (DbFacade.getInstance().getVdsDao().get(getParameters().getVmStaticData().getDedicatedVmForVds()) == null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
                 return false;
             }
@@ -313,7 +313,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         // check for Vm Payload
         if (returnValue && getParameters().getVmPayload() != null) {
             returnValue = checkPayload(getParameters().getVmPayload(),
-                    getParameters().getVmStaticData().getiso_path());
+                    getParameters().getVmStaticData().getIsoPath());
             if (returnValue) {
                 // we save the content in base64 string
                 getParameters().getVmPayload().setContent(Base64.encodeBase64String(
@@ -344,8 +344,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean checkCpuSockets() {
-        return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getnum_of_sockets(),
-                getParameters().getVmStaticData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
+        return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
+                getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
                         .toString(), getReturnValue().getCanDoActionMessages());
     }
 
@@ -548,7 +548,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (vmStaticData != null) {
 
             returnValue = vmStaticData.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST
-                    || !vmStaticData.getauto_startup();
+                    || !vmStaticData.isAutoStartup();
 
             if (!returnValue) {
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST
@@ -556,7 +556,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
 
             if (!returnValue) {
-                returnValue = returnValue && IsLegalClusterId(vmStaticData.getvds_group_id(), reasons);
+                returnValue = returnValue && IsLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
             }
 
             if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
@@ -564,7 +564,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
 
             returnValue = returnValue
-                    && VmHandler.isMemorySizeLegal(vmStaticData.getos(), vmStaticData.getmem_size_mb(),
+                    && VmHandler.isMemorySizeLegal(vmStaticData.getOs(), vmStaticData.getMemSizeMb(),
                             reasons, getVdsGroup().getcompatibility_version().toString());
 
         }
@@ -588,12 +588,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addVmStatic() {
         VmStatic vmStatic = getParameters().getVmStaticData();
-        if (vmStatic.getorigin() == null) {
-            vmStatic.setorigin(OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)));
+        if (vmStatic.getOrigin() == null) {
+            vmStatic.setOrigin(OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)));
         }
         vmStatic.setId(getVmId());
         vmStatic.setQuotaId(getQuotaId());
-        vmStatic.setcreation_date(new Date());
+        vmStatic.setCreationDate(new Date());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         if (vmStatic.getCustomProperties() != null) {
@@ -617,7 +617,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         tempVar.setstatus(VMStatus.Down);
         tempVar.setvm_host("");
         tempVar.setvm_ip("");
-        tempVar.setdisplay_type(getParameters().getVmStaticData().getdefault_display_type());
+        tempVar.setdisplay_type(getParameters().getVmStaticData().getDefaultDisplayType());
         VmDynamic vmDynamic = tempVar;
         DbFacade.getInstance().getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);

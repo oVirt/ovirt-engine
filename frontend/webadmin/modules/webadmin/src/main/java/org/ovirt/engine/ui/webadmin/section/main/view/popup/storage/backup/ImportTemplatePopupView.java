@@ -46,7 +46,7 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
         TextColumnWithTooltip<Object> originColumn = new EnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
-                return ((VmTemplate) object).getorigin();
+                return ((VmTemplate) object).getOrigin();
             }
         };
         table.addColumn(originColumn, constants.originTemplate(), "100px"); //$NON-NLS-1$
@@ -54,7 +54,7 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
         TextColumnWithTooltip<Object> memoryColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VmTemplate) object).getmem_size_mb()) + " MB"; //$NON-NLS-1$
+                return String.valueOf(((VmTemplate) object).getMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
         table.addColumn(memoryColumn, constants.memoryTemplate(), "100px"); //$NON-NLS-1$
@@ -62,7 +62,7 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
         TextColumnWithTooltip<Object> cpuColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VmTemplate) object).getnum_of_cpus());
+                return String.valueOf(((VmTemplate) object).getNumOfCpus());
             }
         };
         table.addColumn(cpuColumn, constants.cpusTemplate(), "50px"); //$NON-NLS-1$

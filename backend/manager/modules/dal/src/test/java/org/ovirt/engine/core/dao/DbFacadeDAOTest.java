@@ -259,8 +259,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         // initialize the VMs with equal settings: non HA, priority 1 and MIGRATABLE
         for (int i = 0; i < vmStaticArray.length; i++) {
-            vmStaticArray[i].setauto_startup(false);
-            vmStaticArray[i].setpriority(1);
+            vmStaticArray[i].setAutoStartup(false);
+            vmStaticArray[i].setPriority(1);
             vmStaticArray[i].setMigrationSupport(MigrationSupport.MIGRATABLE);
         }
 
@@ -290,7 +290,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         // Setting the array in descending order due to their priorities to maintain its correctness
         for (int i = 0; i < arrayLength; i++) {
-            vmStaticArray[i].setpriority(arrayLength - i + 1);
+            vmStaticArray[i].setPriority(arrayLength - i + 1);
         }
 
         updateArrayOfVmStaticsInDb(vmStaticArray);
@@ -313,7 +313,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         vmStaticArray[1] = tempVmStatic;
 
         // Maintaining the order correctness of the elements by incrementing the auto_startup of the first element
-        vmStaticArray[0].setauto_startup(true);
+        vmStaticArray[0].setAutoStartup(true);
 
         updateArrayOfVmStaticsInDb(vmStaticArray);
         return vmStaticArray;
@@ -395,7 +395,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForVM() {
         VmStatic vmStatic = dbFacade.getVmStaticDao().get(VM_ID);
         assertNotNull(vmStatic);
-        String name = vmStatic.getvm_name();
+        String name = vmStatic.getVmName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_STATIC_GUID, VdcObjectType.VM)));
     }
 
@@ -508,19 +508,19 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         // The vm starts out as initialized
         VmStatic vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
-        assertTrue(vmStaticForTest.getis_initialized());
+        assertTrue(vmStaticForTest.isInitialized());
 
         // Change it into uninitialized and make sure that the change succeeded
         dbFacade.SaveIsInitialized(vmStaticForTest.getId(), !INITIALIZED);
         vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
-        assertFalse(vmStaticForTest.getis_initialized());
+        assertFalse(vmStaticForTest.isInitialized());
 
         // Change it back to initialized and make sure that the change succeeded
         dbFacade.SaveIsInitialized(vmStaticForTest.getId(), INITIALIZED);
         vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
         assertNotNull(vmStaticForTest);
-        assertTrue(vmStaticForTest.getis_initialized());
+        assertTrue(vmStaticForTest.isInitialized());
     }
 
     @Test

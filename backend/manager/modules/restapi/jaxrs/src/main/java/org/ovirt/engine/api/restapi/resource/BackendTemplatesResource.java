@@ -59,10 +59,10 @@ public class BackendTemplatesResource
         validateEnums(Template.class, template);
         VmStatic staticVm = getMapper(Template.class, VmStatic.class).map(template, getVm(template));
         if (namedCluster(template)) {
-            staticVm.setvds_group_id(getClusterId(template));
+            staticVm.setVdsGroupId(getClusterId(template));
         }
 
-        staticVm.setusb_policy(VmMapper.getUsbPolicyOnCreate(template.getUsb(), lookupCluster(staticVm.getvds_group_id())));
+        staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(template.getUsb(), lookupCluster(staticVm.getVdsGroupId())));
 
         // REVISIT: powershell has a IsVmTemlateWithSameNameExist safety check
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,

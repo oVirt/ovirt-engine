@@ -22,7 +22,7 @@ public class VmCandidateInfo extends ImportCandidateInfoBase {
 
     @Override
     public String getCandidateDisplayName() {
-        return getVmData().getvm_name();
+        return getVmData().getVmName();
     }
 
     public VmCandidateInfo() {

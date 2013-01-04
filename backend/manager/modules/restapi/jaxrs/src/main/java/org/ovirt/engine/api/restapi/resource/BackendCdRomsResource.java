@@ -57,7 +57,7 @@ public class BackendCdRomsResource
 
     @Override
     protected VdcActionParametersBase getAddParameters(VM mapped, CdRom cdrom) {
-        return new VmManagementParametersBase(getUpdatable(mapped.getStaticData().getiso_path()));
+        return new VmManagementParametersBase(getUpdatable(mapped.getStaticData().getIsoPath()));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BackendCdRomsResource
                                        VdcQueryType.GetVmByVmId,
                                        new GetVmByVmIdParameters(parentId),
                                        parentId.toString()).getStaticData();
-        updatable.setiso_path(isoPath);
+        updatable.setIsoPath(isoPath);
         return updatable;
     }
 

@@ -33,10 +33,10 @@ public class VmStatic extends VmBase {
 
     @Column(name = "vmt_guid")
     @Type(type = "guid")
-    private Guid vmt_guid = new Guid();
+    private Guid vmtGuid = new Guid();
 
     @Column(name = "is_initialized")
-    private boolean is_initialized;
+    private boolean initialized;
 
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -52,7 +52,7 @@ public class VmStatic extends VmBase {
      * Disk size in sectors of 512 bytes
      */
     @Transient
-    private int m_nDiskSize;
+    private int diskSize;
 
     @Transient
     private int minAllocatedMemField;
@@ -69,51 +69,51 @@ public class VmStatic extends VmBase {
     private boolean useHostCpuFlags = false;
 
     public VmStatic() {
-        setnum_of_monitors(1);
-        is_initialized = false;
-        setis_auto_suspend(false);
-        setnice_level(0);
-        setdefault_boot_sequence(BootSequence.C);
+        setNumOfMonitors(1);
+        initialized = false;
+        setAutoSuspend(false);
+        setNiceLevel(0);
+        setDefaultBootSequence(BootSequence.C);
         defaultDisplayType = DisplayType.qxl;
-        setvm_type(VmType.Desktop);
+        setVmType(VmType.Desktop);
     }
 
     public VmStatic(VmStatic vmStatic) {
         super(vmStatic.getId(),
-                vmStatic.getvds_group_id(),
-                vmStatic.getos(),
-                vmStatic.getcreation_date(),
-                vmStatic.getdescription(),
-                vmStatic.getmem_size_mb(),
-                vmStatic.getnum_of_sockets(),
-                vmStatic.getcpu_per_socket(),
-                vmStatic.getnum_of_monitors(),
-                vmStatic.getdomain(),
-                vmStatic.gettime_zone(),
-                vmStatic.getvm_type(),
-                vmStatic.getusb_policy(),
-                vmStatic.getfail_back(),
-                vmStatic.getdefault_boot_sequence(),
-                vmStatic.getnice_level(),
-                vmStatic.getis_auto_suspend(),
-                vmStatic.getpriority(),
-                vmStatic.getauto_startup(),
-                vmStatic.getis_stateless(),
-                vmStatic.getiso_path(),
-                vmStatic.getorigin(),
-                vmStatic.getkernel_url(),
-                vmStatic.getkernel_params(),
-                vmStatic.getinitrd_url(),
+                vmStatic.getVdsGroupId(),
+                vmStatic.getOs(),
+                vmStatic.getCreationDate(),
+                vmStatic.getDescription(),
+                vmStatic.getMemSizeMb(),
+                vmStatic.getNumOfSockets(),
+                vmStatic.getCpuPerSocket(),
+                vmStatic.getNumOfMonitors(),
+                vmStatic.getDomain(),
+                vmStatic.getTimeZone(),
+                vmStatic.getVmType(),
+                vmStatic.getUsbPolicy(),
+                vmStatic.isFailBack(),
+                vmStatic.getDefaultBootSequence(),
+                vmStatic.getNiceLevel(),
+                vmStatic.isAutoSuspend(),
+                vmStatic.getPriority(),
+                vmStatic.isAutoStartup(),
+                vmStatic.isStateless(),
+                vmStatic.getIsoPath(),
+                vmStatic.getOrigin(),
+                vmStatic.getKernelUrl(),
+                vmStatic.getKernelParams(),
+                vmStatic.getInitrdUrl(),
                 vmStatic.getQuotaId(),
                 vmStatic.isSmartcardEnabled(),
                 vmStatic.isDeleteProtected());
-        name = vmStatic.getvm_name();
-        vmt_guid = vmStatic.getvmt_guid();
+        name = vmStatic.getVmName();
+        vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
-        setnum_of_monitors(vmStatic.getnum_of_monitors());
-        setis_initialized(vmStatic.getis_initialized());
-        setdefault_display_type(vmStatic.getdefault_display_type());
-        setdedicated_vm_for_vds(vmStatic.getdedicated_vm_for_vds());
+        setNumOfMonitors(vmStatic.getNumOfMonitors());
+        setInitialized(vmStatic.isInitialized());
+        setDefaultDisplayType(vmStatic.getDefaultDisplayType());
+        setDedicatedVmForVds(vmStatic.getDedicatedVmForVds());
         setMigrationSupport(vmStatic.getMigrationSupport());
         setMinAllocatedMem(vmStatic.getMinAllocatedMem());
     }
@@ -158,11 +158,11 @@ public class VmStatic extends VmBase {
                 deleteProtected);
 
         this.name = vm_name;
-        this.vmt_guid = vmt_guid;
-        this.setnum_of_monitors(num_of_monitors);
-        this.setis_initialized(is_initialized);
-        this.setusb_policy(usb_policy);
-        this.setdedicated_vm_for_vds(dedicated_vm_for_vds);
+        this.vmtGuid = vmt_guid;
+        this.setNumOfMonitors(num_of_monitors);
+        this.setInitialized(is_initialized);
+        this.setUsbPolicy(usb_policy);
+        this.setDedicatedVmForVds(dedicated_vm_for_vds);
         this.setMinAllocatedMem(minAllocatedMem);
         this.useHostCpuFlags = useHostCpuFlags;
     }
@@ -192,46 +192,46 @@ public class VmStatic extends VmBase {
     }
 
     public int getDiskSize() {
-        return m_nDiskSize;
+        return diskSize;
     }
 
     public void setDiskSize(int value) {
-        m_nDiskSize = value;
+        diskSize = value;
     }
 
-    public boolean getIsFirstRun() {
-        return !getis_initialized();
+    public boolean isFirstRun() {
+        return !isInitialized();
     }
 
-    public String getvm_name() {
+    public String getVmName() {
         return this.name;
     }
 
-    public void setvm_name(String value) {
+    public void setVmName(String value) {
         this.name = value;
     }
 
-    public Guid getvmt_guid() {
-        return this.vmt_guid;
+    public Guid getVmtGuid() {
+        return this.vmtGuid;
     }
 
-    public void setvmt_guid(Guid value) {
-        this.vmt_guid = value;
+    public void setVmtGuid(Guid value) {
+        this.vmtGuid = value;
     }
 
-    public boolean getis_initialized() {
-        return is_initialized;
+    public boolean isInitialized() {
+        return initialized;
     }
 
-    public void setis_initialized(boolean value) {
-        is_initialized = value;
+    public void setInitialized(boolean value) {
+        initialized = value;
     }
 
     public int getMinAllocatedMem() {
         if (minAllocatedMemField > 0) {
             return minAllocatedMemField;
         }
-        return getmem_size_mb();
+        return getMemSizeMb();
     }
 
     public void setMinAllocatedMem(int value) {
@@ -256,12 +256,12 @@ public class VmStatic extends VmBase {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
-        result = prime * result + (is_initialized ? 1231 : 1237);
-        result = prime * result + m_nDiskSize;
+        result = prime * result + (initialized ? 1231 : 1237);
+        result = prime * result + diskSize;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
-        result = prime * result + ((vmt_guid == null) ? 0 : vmt_guid.hashCode());
+        result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
         result = prime * result + (useHostCpuFlags ? 0 : 1);
         return result;
     }
@@ -281,10 +281,10 @@ public class VmStatic extends VmBase {
         if (defaultDisplayType != other.defaultDisplayType) {
             return false;
         }
-        if (is_initialized != other.is_initialized) {
+        if (initialized != other.initialized) {
             return false;
         }
-        if (m_nDiskSize != other.m_nDiskSize) {
+        if (diskSize != other.diskSize) {
             return false;
         }
         if (name == null) {
@@ -308,11 +308,11 @@ public class VmStatic extends VmBase {
         } else if (!userDefinedProperties.equals(other.userDefinedProperties)) {
             return false;
         }
-        if (vmt_guid == null) {
-            if (other.vmt_guid != null) {
+        if (vmtGuid == null) {
+            if (other.vmtGuid != null) {
                 return false;
             }
-        } else if (!vmt_guid.equals(other.vmt_guid)) {
+        } else if (!vmtGuid.equals(other.vmtGuid)) {
             return false;
         }
         if(useHostCpuFlags != other.useHostCpuFlags) {

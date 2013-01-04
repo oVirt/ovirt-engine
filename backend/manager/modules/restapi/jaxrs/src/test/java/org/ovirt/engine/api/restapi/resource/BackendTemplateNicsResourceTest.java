@@ -189,7 +189,7 @@ public class BackendTemplateNicsResourceTest
     protected void setGetTemplateQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             VmTemplate template = new VmTemplate();
-            template.setvds_group_id(GUIDS[0]);
+            template.setVdsGroupId(GUIDS[0]);
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                         GetVmTemplateParameters.class,
                                          new String[] { "Id" },

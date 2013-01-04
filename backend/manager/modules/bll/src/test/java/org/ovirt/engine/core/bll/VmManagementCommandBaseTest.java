@@ -25,9 +25,9 @@ public class VmManagementCommandBaseTest {
         VmManagementCommandBase<VmManagementParametersBase> test =
                 spy(new VmManagementCommandBase<VmManagementParametersBase>(Guid.Empty));
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setnum_of_sockets(6);
-        vmStatic.setcpu_per_socket(2);
-        vmStatic.setdedicated_vm_for_vds(Guid.Empty);
+        vmStatic.setNumOfSockets(6);
+        vmStatic.setCpuPerSocket(2);
+        vmStatic.setDedicatedVmForVds(Guid.Empty);
         final VDS dedicatedVds = new VDS();
         dedicatedVds.setCpuThreads(16);
         dedicatedVds.setvds_group_compatibility_version(Version.v3_2);

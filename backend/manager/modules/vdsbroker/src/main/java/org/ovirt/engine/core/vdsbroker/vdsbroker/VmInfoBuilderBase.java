@@ -209,11 +209,11 @@ public abstract class VmInfoBuilderBase {
         final String DEFAULT_TYPE = "default";
         String ret = DEFAULT_TYPE;
 
-        if (vm.getvm_type() == VmType.Desktop) {
+        if (vm.getVmType() == VmType.Desktop) {
 
             String soundDeviceTypeConfig = Config.<String> GetValue(
                     ConfigValues.DesktopAudioDeviceType, compatibilityVersion.toString());
-            String vmOS = vm.getos().name();
+            String vmOS = vm.getOs().name();
 
             Pattern regexPattern = Pattern.compile(String
                     .format(OS_REGEX, vmOS));

@@ -84,38 +84,38 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         if (template != null)
         {
             // Copy VM parameters from template.
-            getModel().getOSType().setSelectedItem(template.getos());
-            getModel().getTotalCPUCores().setEntity(Integer.toString(template.getnum_of_cpus()));
-            getModel().getNumOfSockets().setSelectedItem(template.getnum_of_sockets());
-            getModel().getNumOfMonitors().setSelectedItem(template.getnum_of_monitors());
-            getModel().getDomain().setSelectedItem(template.getdomain());
-            getModel().getMemSize().setEntity(template.getmem_size_mb());
-            getModel().getUsbPolicy().setSelectedItem(template.getusb_policy());
-            getModel().setBootSequence(template.getdefault_boot_sequence());
-            getModel().getIsHighlyAvailable().setEntity(template.getauto_startup());
+            getModel().getOSType().setSelectedItem(template.getOs());
+            getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
+            getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
+            getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
+            getModel().getDomain().setSelectedItem(template.getDomain());
+            getModel().getMemSize().setEntity(template.getMemSizeMb());
+            getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
+            getModel().setBootSequence(template.getDefaultBootSequence());
+            getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
 
             updateHostPinning(template.getMigrationSupport());
-            doChangeDefautlHost(template.getdedicated_vm_for_vds());
+            doChangeDefautlHost(template.getDedicatedVmForVds());
 
             getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
 
             if (getModel().getVmType() == VmType.Desktop) {
-                getModel().getIsStateless().setEntity(template.getis_stateless());
-                getModel().getAllowConsoleReconnect().setEntity(template.getAllowConsoleReconnect());
+                getModel().getIsStateless().setEntity(template.isStateless());
+                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
             }
 
-            boolean hasCd = !StringHelper.isNullOrEmpty(template.getiso_path());
+            boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
             getModel().getCdImage().setIsChangable(hasCd);
             getModel().getCdAttached().setEntity(hasCd);
             if (hasCd) {
-                getModel().getCdImage().setSelectedItem(template.getiso_path());
+                getModel().getCdImage().setSelectedItem(template.getIsoPath());
             }
 
-            if (!StringHelper.isNullOrEmpty(template.gettime_zone()))
+            if (!StringHelper.isNullOrEmpty(template.getTimeZone()))
             {
-                updateTimeZone(template.gettime_zone());
+                updateTimeZone(template.getTimeZone());
             }
             else
             {
@@ -137,7 +137,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                     isFirst = false;
                 }
                 DisplayType dt = (DisplayType) a.getEntity();
-                if (dt == template.getdefault_display_type())
+                if (dt == template.getDefaultDisplayType())
                 {
                     displayProtocol = a;
                     break;
@@ -146,9 +146,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
 
             // By default, take kernel params from template.
-            getModel().getKernel_path().setEntity(template.getkernel_url());
-            getModel().getKernel_parameters().setEntity(template.getkernel_params());
-            getModel().getInitrd_path().setEntity(template.getinitrd_url());
+            getModel().getKernel_path().setEntity(template.getKernelUrl());
+            getModel().getKernel_parameters().setEntity(template.getKernelParams());
+            getModel().getInitrd_path().setEntity(template.getInitrdUrl());
 
             if (!template.getId().equals(NGuid.Empty))
             {
@@ -168,7 +168,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                 getModel().setDisks(null);
             }
 
-            InitPriority(template.getpriority());
+            InitPriority(template.getPriority());
             InitStorageDomains();
             UpdateMinAllocatedMemory();
         }

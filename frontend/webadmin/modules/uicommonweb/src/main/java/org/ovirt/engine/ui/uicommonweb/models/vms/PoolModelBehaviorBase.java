@@ -109,29 +109,29 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         if (vmBase != null) {
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
             // Copy VM parameters from template.
-            getModel().getOSType().setSelectedItem(vmBase.getos());
-            getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getnum_of_cpus()));
-            getModel().getNumOfSockets().setSelectedItem(vmBase.getnum_of_sockets());
-            getModel().getNumOfMonitors().setSelectedItem(vmBase.getnum_of_monitors());
-            getModel().getDomain().setSelectedItem(vmBase.getdomain());
-            getModel().getMemSize().setEntity(vmBase.getmem_size_mb());
-            getModel().getUsbPolicy().setSelectedItem(vmBase.getusb_policy());
-            getModel().setBootSequence(vmBase.getdefault_boot_sequence());
-            getModel().getIsHighlyAvailable().setEntity(vmBase.getauto_startup());
+            getModel().getOSType().setSelectedItem(vmBase.getOs());
+            getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getNumOfCpus()));
+            getModel().getNumOfSockets().setSelectedItem(vmBase.getNumOfSockets());
+            getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());
+            getModel().getDomain().setSelectedItem(vmBase.getDomain());
+            getModel().getMemSize().setEntity(vmBase.getMemSizeMb());
+            getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
+            getModel().setBootSequence(vmBase.getDefaultBootSequence());
+            getModel().getIsHighlyAvailable().setEntity(vmBase.isAutoStartup());
             getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
             getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
 
-            boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getiso_path());
+            boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
 
             getModel().getCdImage().setIsChangable(hasCd);
             getModel().getCdAttached().setEntity(hasCd);
             if (hasCd) {
-                getModel().getCdImage().setSelectedItem(vmBase.getiso_path());
+                getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
             }
 
-            if (!StringHelper.isNullOrEmpty(vmBase.gettime_zone()))
+            if (!StringHelper.isNullOrEmpty(vmBase.getTimeZone()))
             {
-                updateTimeZone(vmBase.gettime_zone());
+                updateTimeZone(vmBase.getTimeZone());
             }
             else
             {
@@ -143,7 +143,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getModel().getCluster().getItems();
             VDSGroup selectCluster =
-                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getvds_group_id()));
+                    Linq.FirstOrDefault(clusters, new Linq.ClusterPredicate(vmBase.getVdsGroupId()));
 
             getModel().getCluster().setSelectedItem((selectCluster != null) ? selectCluster
                     : Linq.FirstOrDefault(clusters));
@@ -169,9 +169,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
 
             // By default, take kernel params from template.
-            getModel().getKernel_path().setEntity(vmBase.getkernel_url());
-            getModel().getKernel_parameters().setEntity(vmBase.getkernel_params());
-            getModel().getInitrd_path().setEntity(vmBase.getinitrd_url());
+            getModel().getKernel_path().setEntity(vmBase.getKernelUrl());
+            getModel().getKernel_parameters().setEntity(vmBase.getKernelParams());
+            getModel().getInitrd_path().setEntity(vmBase.getInitrdUrl());
 
             getModel().setIsDisksAvailable(true);
 
@@ -193,7 +193,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             getModel().getProvisioning().setEntity(false);
 
-            InitPriority(vmBase.getpriority());
+            InitPriority(vmBase.getPriority());
             InitStorageDomains();
             UpdateMinAllocatedMemory();
         }

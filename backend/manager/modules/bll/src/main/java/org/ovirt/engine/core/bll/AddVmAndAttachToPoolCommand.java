@@ -23,7 +23,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         VmStatic vmStatic = getParameters().getVmStaticData();
         boolean vmAddedSuccessfully = false;
         VdcReturnValueBase returnValueFromAddVm = null;
-        if (VmTemplateHandler.BlankVmTemplateId.equals(vmStatic.getvmt_guid())) {
+        if (VmTemplateHandler.BlankVmTemplateId.equals(vmStatic.getVmtGuid())) {
             // Vm from scratch
             AddVmFromScratchParameters tempVar = new AddVmFromScratchParameters(vmStatic, getParameters()
                     .getDiskInfoList(), getParameters().getStorageDomainId());

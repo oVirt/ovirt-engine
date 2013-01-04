@@ -449,42 +449,42 @@ public class TemplateGeneralModel extends EntityModel
         VmTemplate template = getEntity();
 
         setName(template.getname());
-        setDescription(template.getdescription());
+        setDescription(template.getDescription());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setHostCluster(template.getvds_group_name());
-        setDefinedMemory(template.getmem_size_mb() + " MB"); //$NON-NLS-1$
-        setHasHighlyAvailable(template.getvm_type() == VmType.Server);
-        setIsHighlyAvailable(template.getauto_startup());
-        setPriority(PriorityToString(template.getpriority()));
-        setMonitorCount(template.getnum_of_monitors());
-        setAllowConsoleReconnect(template.getAllowConsoleReconnect());
+        setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
+        setHasHighlyAvailable(template.getVmType() == VmType.Server);
+        setIsHighlyAvailable(template.isAutoStartup());
+        setPriority(PriorityToString(template.getPriority()));
+        setMonitorCount(template.getNumOfMonitors());
+        setAllowConsoleReconnect(template.isAllowConsoleReconnect());
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
-                template.getnum_of_cpus(),
-                template.getnum_of_sockets(),
-                template.getcpu_per_socket()));
+                template.getNumOfCpus(),
+                template.getNumOfSockets(),
+                template.getCpuPerSocket()));
 
         Translator translator = EnumTranslator.Create(VmOsType.class);
-        setOS(translator.get(template.getos()));
+        setOS(translator.get(template.getOs()));
 
         translator = EnumTranslator.Create(DisplayType.class);
-        setDefaultDisplayType(translator.get(template.getdefault_display_type()));
+        setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
 
         translator = EnumTranslator.Create(OriginType.class);
-        setOrigin(translator.get(template.getorigin()));
+        setOrigin(translator.get(template.getOrigin()));
 
-        setHasDomain(AsyncDataProvider.IsWindowsOsType(template.getos()));
-        setDomain(template.getdomain());
+        setHasDomain(AsyncDataProvider.IsWindowsOsType(template.getOs()));
+        setDomain(template.getDomain());
 
-        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(template.getos()));
-        setTimeZone(template.gettime_zone());
+        setHasTimeZone(AsyncDataProvider.IsWindowsOsType(template.getOs()));
+        setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);
         translator = EnumTranslator.Create(UsbPolicy.class);
-        setUsbPolicy(translator.get(template.getusb_policy()));
+        setUsbPolicy(translator.get(template.getUsbPolicy()));
 
-        setIsStateless(template.getis_stateless());
+        setIsStateless(template.isStateless());
     }
 
     public String PriorityToString(int value)

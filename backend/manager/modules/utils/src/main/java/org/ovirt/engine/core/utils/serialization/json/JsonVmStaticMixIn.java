@@ -19,7 +19,7 @@ public abstract class JsonVmStaticMixIn extends VmStatic {
 
     @JsonIgnore
     @Override
-    public abstract Map<Guid, VmDevice> getManagedVmDeviceMap();
+    public abstract Map<Guid, VmDevice> getManagedDeviceMap();
 
     @JsonIgnore
     @Override

@@ -25,7 +25,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         super(parameters);
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
-        setVdsGroupId(getVmTemplate().getvds_group_id());
+        setVdsGroupId(getVmTemplate().getVdsGroupId());
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                         .getValue() : Guid.Empty);
@@ -46,14 +46,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             } else {
                 if (getVdsGroup() == null) {
                     addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
-                } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getos(),
-                        mOldTemplate.getmem_size_mb(),
+                } else if (VmHandler.isMemorySizeLegal(mOldTemplate.getOs(),
+                        mOldTemplate.getMemSizeMb(),
                         getReturnValue()
                                 .getCanDoActionMessages(),
                         getVdsGroup().getcompatibility_version().toString())) {
-                    if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getpriority(), getReturnValue()
+                    if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
                             .getCanDoActionMessages())
-                            && IsDomainLegal(getParameters().getVmTemplateData().getdomain(), getReturnValue()
+                            && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
                                     .getCanDoActionMessages())) {
                         returnValue = VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(mOldTemplate, getVmTemplate());
                         if (!returnValue) {
@@ -66,12 +66,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         // Check that the USB policy is legal
         if (returnValue) {
-            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getusb_policy(), getParameters().getVmTemplateData().getos(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
+            returnValue = VmHandler.isUsbPolicyLegal(getParameters().getVmTemplateData().getUsbPolicy(), getParameters().getVmTemplateData().getOs(), getVdsGroup(), getReturnValue().getCanDoActionMessages());
         }
 
         if (returnValue) {
-            returnValue = AddVmCommand.CheckCpuSockets(getParameters().getVmTemplateData().getnum_of_sockets(),
-                    getParameters().getVmTemplateData().getcpu_per_socket(), getVdsGroup().getcompatibility_version()
+            returnValue = AddVmCommand.CheckCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
+                    getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
                             .toString(), getReturnValue().getCanDoActionMessages());
         }
 

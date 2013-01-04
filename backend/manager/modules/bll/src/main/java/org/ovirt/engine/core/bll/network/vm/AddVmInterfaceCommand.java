@@ -55,7 +55,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
-        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getVmName());
         if (StringUtils.isEmpty(getMacAddress())) {
             getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
@@ -143,7 +143,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         allInterfaces.add(getParameters().getInterface());
 
         List<Disk> allDisks = getDiskDao().getAllForVm(getParameters().getVmId());
-        if (!checkPciAndIdeLimit(vm.getnum_of_monitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
+        if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -157,7 +157,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         if (getNetworkName() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getvds_group_id());
+            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getVdsGroupId());
 
             Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override

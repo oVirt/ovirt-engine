@@ -93,7 +93,7 @@ public class AbstractBackendCdRomsResourceTest<T extends AbstractBackendReadOnly
     static VM setUpEntityExpectations(VM entity, VmStatic staticVm, VMStatus status, int index) {
         expect(entity.getQueryableId()).andReturn(PARENT_ID).anyTimes();
         expect(entity.getStaticData()).andReturn(staticVm).anyTimes();
-        expect(staticVm.getiso_path()).andReturn(ISO_PATH).anyTimes();
+        expect(staticVm.getIsoPath()).andReturn(ISO_PATH).anyTimes();
         if (status != null) {
             expect(entity.getStatus()).andReturn(status).anyTimes();
         }

@@ -237,7 +237,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setIsReadOnly(Boolean.FALSE);
         }
         if (isManaged) {
-            vmBase.getManagedVmDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+            vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
         } else {
             vmBase.getUnmanagedDeviceList().add(vmDevice);
         }
@@ -295,19 +295,19 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = content.SelectSingleNode("Description");
         if (node != null) {
-            vmBase.setdescription(node.InnerText);
+            vmBase.setDescription(node.InnerText);
         }
 
         node = content.SelectSingleNode("Domain");
         if (node != null) {
-            vmBase.setdomain(node.InnerText);
+            vmBase.setDomain(node.InnerText);
         }
 
         node = content.SelectSingleNode("CreationDate");
         if (node != null) {
             Date creationDate = OvfParser.UtcDateStringToLocaDate(node.InnerText);
             if (creationDate != null) {
-                vmBase.setcreation_date(creationDate);
+                vmBase.setCreationDate(creationDate);
             }
         }
 
@@ -321,39 +321,39 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = content.SelectSingleNode("IsAutoSuspend");
         if (node != null) {
-            vmBase.setis_auto_suspend(Boolean.parseBoolean(node.InnerText));
+            vmBase.setAutoSuspend(Boolean.parseBoolean(node.InnerText));
         }
 
         node = content.SelectSingleNode("TimeZone");
         if (node != null) {
-            vmBase.settime_zone(node.InnerText);
+            vmBase.setTimeZone(node.InnerText);
         }
 
         node = content.SelectSingleNode("default_boot_sequence");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setdefault_boot_sequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
+                vmBase.setDefaultBootSequence(BootSequence.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
         node = content.SelectSingleNode("initrd_url");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setinitrd_url(node.InnerText);
+                vmBase.setInitrdUrl(node.InnerText);
             }
         }
 
         node = content.SelectSingleNode("kernel_url");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setkernel_url(node.InnerText);
+                vmBase.setKernelUrl(node.InnerText);
             }
         }
 
         node = content.SelectSingleNode("kernel_params");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setkernel_params(node.InnerText);
+                vmBase.setKernelParams(node.InnerText);
             }
         }
 
@@ -370,7 +370,7 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
                 defaultDisplayType = DisplayType.forValue(Integer.parseInt(node.InnerText));
-                vmBase.setdefault_display_type(defaultDisplayType);
+                vmBase.setDefaultDisplayType(defaultDisplayType);
             }
         }
 
@@ -392,14 +392,14 @@ public abstract class OvfReader implements IOvfBuilder {
         node = content.SelectSingleNode("Origin");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setorigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
+                vmBase.setOrigin(OriginType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 
         node = content.SelectSingleNode("VmType");
         if (node != null) {
             if (!StringUtils.isEmpty(node.InnerText)) {
-                vmBase.setvm_type(VmType.forValue(Integer.parseInt(node.InnerText)));
+                vmBase.setVmType(VmType.forValue(Integer.parseInt(node.InnerText)));
             }
         }
 

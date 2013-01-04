@@ -45,7 +45,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return object.getorigin() == null ? messageConstants.notSpecifiedLabel() : object.getorigin()
+                        return object.getOrigin() == null ? messageConstants.notSpecifiedLabel() : object.getOrigin()
                                 .toString();
                     }
                 };
@@ -55,7 +55,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return String.valueOf(object.getmem_size_mb()) + " MB"; //$NON-NLS-1$
+                        return String.valueOf(object.getMemSizeMb()) + " MB"; //$NON-NLS-1$
                     }
                 };
         getTable().addColumn(memoryColumn,constants.memoryTemplate());
@@ -64,7 +64,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new TextColumnWithTooltip<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
-                        return String.valueOf(object.getnum_of_cpus());
+                        return String.valueOf(object.getNumOfCpus());
                     }
                 };
         getTable().addColumn(cpuColumn, constants.cpusVm());
@@ -82,7 +82,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<sto
                 new GeneralDateTimeColumn<VmTemplate>() {
                     @Override
                     protected Date getRawValue(VmTemplate object) {
-                        return object.getcreation_date();
+                        return object.getCreationDate();
                     }
                 };
         getTable().addColumn(creationDateColumn, constants.creationDateTemplate());

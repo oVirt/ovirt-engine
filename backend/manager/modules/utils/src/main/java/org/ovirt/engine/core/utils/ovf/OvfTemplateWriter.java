@@ -29,10 +29,10 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw(_vmTemplate.getId().toString());
         _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
-        _writer.WriteRaw(_vmTemplate.getorigin() == null ? "" : String.valueOf(_vmTemplate.getorigin().getValue()));
+        _writer.WriteRaw(_vmTemplate.getOrigin() == null ? "" : String.valueOf(_vmTemplate.getOrigin().getValue()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("default_display_type");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getdefault_display_type().getValue()));
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getDefaultDisplayType().getValue()));
         _writer.WriteEndElement();
     }
 
@@ -51,7 +51,7 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw("Guest Operating System");
         _writer.WriteEndElement();
         _writer.WriteStartElement("Description");
-        _writer.WriteRaw(_vmTemplate.getos().name());
+        _writer.WriteRaw(_vmTemplate.getOs().name());
         _writer.WriteEndElement();
         _writer.WriteEndElement();
 
@@ -59,8 +59,8 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualHardwareSection_Type");
         _writer.WriteStartElement("Info");
-        _writer.WriteRaw(String.format("%1$s CPU, %2$s Memeory", _vmTemplate.getnum_of_cpus(),
-                _vmTemplate.getmem_size_mb()));
+        _writer.WriteRaw(String.format("%1$s CPU, %2$s Memeory", _vmTemplate.getNumOfCpus(),
+                _vmTemplate.getMemSizeMb()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("System");
@@ -73,7 +73,7 @@ public class OvfTemplateWriter extends OvfWriter {
         // item cpu
         _writer.WriteStartElement("Item");
         _writer.WriteStartElement(RASD_URI, "Caption");
-        _writer.WriteRaw(String.format("%1$s virtual cpu", _vmTemplate.getnum_of_cpus()));
+        _writer.WriteRaw(String.format("%1$s virtual cpu", _vmTemplate.getNumOfCpus()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Number of virtual CPU");
@@ -85,17 +85,17 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.CPU);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "num_of_sockets");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getnum_of_sockets()));
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getNumOfSockets()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "cpu_per_socket");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getcpu_per_socket()));
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getCpuPerSocket()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item memory
         _writer.WriteStartElement("Item");
         _writer.WriteStartElement(RASD_URI, "Caption");
-        _writer.WriteRaw(String.format("%1$s MB of memory", _vmTemplate.getmem_size_mb()));
+        _writer.WriteRaw(String.format("%1$s MB of memory", _vmTemplate.getMemSizeMb()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Memory Size");
@@ -110,7 +110,7 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw("MegaBytes");
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "VirtualQuantity");
-        _writer.WriteRaw(String.valueOf(_vmTemplate.getmem_size_mb()));
+        _writer.WriteRaw(String.valueOf(_vmTemplate.getMemSizeMb()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
@@ -212,7 +212,7 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "UsbPolicy");
-        _writer.WriteRaw((_vmTemplate.getusb_policy()) != null ? _vmTemplate.getusb_policy().toString()
+        _writer.WriteRaw((_vmTemplate.getUsbPolicy()) != null ? _vmTemplate.getUsbPolicy().toString()
                 : UsbPolicy.DISABLED.name());
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item

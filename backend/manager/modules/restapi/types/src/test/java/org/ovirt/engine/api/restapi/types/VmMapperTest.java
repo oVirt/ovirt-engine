@@ -43,8 +43,8 @@ public class VmMapperTest extends
         statistics.setcpu_sys(new Double(20L));
         VmDynamic dynamic = new VmDynamic();
         dynamic.setstatus(VMStatus.Up);
-        dynamic.setboot_sequence(to.getdefault_boot_sequence());
-        dynamic.setdisplay_type(to.getdefault_display_type());
+        dynamic.setboot_sequence(to.getDefaultBootSequence());
+        dynamic.setdisplay_type(to.getDefaultDisplayType());
         org.ovirt.engine.core.common.businessentities.VM ret =
                 new org.ovirt.engine.core.common.businessentities.VM(to,
                         dynamic,

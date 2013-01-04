@@ -29,7 +29,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getvm_name());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getVmName());
 
         // return mac to pool
         VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());

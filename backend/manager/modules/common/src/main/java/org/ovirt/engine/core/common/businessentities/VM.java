@@ -188,11 +188,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public String getVmName() {
-        return this.vmStatic.getvm_name();
+        return this.vmStatic.getVmName();
     }
 
     public void setVmName(String value) {
-        this.vmStatic.setvm_name(value);
+        this.vmStatic.setVmName(value);
     }
 
     public int getMemSizeMb() {
@@ -200,19 +200,19 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public int getVmMemSizeMb() {
-        return this.vmStatic.getmem_size_mb();
+        return this.vmStatic.getMemSizeMb();
     }
 
     public void setVmMemSizeMb(int value) {
-        this.vmStatic.setmem_size_mb(value);
+        this.vmStatic.setMemSizeMb(value);
     }
 
     public String getVmDomain() {
-        return this.vmStatic.getdomain();
+        return this.vmStatic.getDomain();
     }
 
     public void setVmDomain(String value) {
-        this.vmStatic.setdomain(value);
+        this.vmStatic.setDomain(value);
     }
 
     public VmOsType getOs() {
@@ -220,19 +220,19 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public VmOsType getVmOs() {
-        return this.vmStatic.getos();
+        return this.vmStatic.getOs();
     }
 
     public void setVmOs(VmOsType value) {
-        this.vmStatic.setos(value);
+        this.vmStatic.setOs(value);
     }
 
     public Date getVmCreationDate() {
-        return this.vmStatic.getcreation_date();
+        return this.vmStatic.getCreationDate();
     }
 
     public void setVmCreationDate(Date value) {
-        this.vmStatic.setcreation_date(value);
+        this.vmStatic.setCreationDate(value);
     }
 
     public Guid getQuotaId() {
@@ -256,7 +256,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public void setIsQuotaDefault(boolean isQuotaDefault) {
-        this.vmStatic.setIsQuotaDefault(isQuotaDefault);
+        this.vmStatic.setQuotaDefault(isQuotaDefault);
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
@@ -272,23 +272,23 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public String getVmDescription() {
-        return this.vmStatic.getdescription();
+        return this.vmStatic.getDescription();
     }
 
     public void setVmDescription(String value) {
-        this.vmStatic.setdescription(value);
+        this.vmStatic.setDescription(value);
     }
 
     public int getNumOfMonitors() {
-        return this.vmStatic.getnum_of_monitors();
+        return this.vmStatic.getNumOfMonitors();
     }
 
     public void setNumOfMonitors(int value) {
-        this.vmStatic.setnum_of_monitors(value);
+        this.vmStatic.setNumOfMonitors(value);
     }
 
     public boolean getAllowConsoleReconnect() {
-        return this.vmStatic.getAllowConsoleReconnect();
+        return this.vmStatic.isAllowConsoleReconnect();
     }
 
     public void setAllowConsoleReconnect(boolean value) {
@@ -296,23 +296,23 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public boolean isInitialized() {
-        return this.vmStatic.getis_initialized();
+        return this.vmStatic.isInitialized();
     }
 
     public void setInitialized(boolean value) {
-        this.vmStatic.setis_initialized(value);
+        this.vmStatic.setInitialized(value);
     }
 
     public boolean isAutoSuspend() {
-        return this.vmStatic.getis_auto_suspend();
+        return this.vmStatic.isAutoSuspend();
     }
 
     public void setAutoSuspend(boolean value) {
-        this.vmStatic.setis_auto_suspend(value);
+        this.vmStatic.setAutoSuspend(value);
     }
 
     public int getNumOfCpus() {
-        return this.vmStatic.getnum_of_cpus();
+        return this.vmStatic.getNumOfCpus();
     }
 
     /**
@@ -327,63 +327,63 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public int getNumOfSockets() {
-        return this.vmStatic.getnum_of_sockets();
+        return this.vmStatic.getNumOfSockets();
     }
 
     public void setNumOfSockets(int value) {
-        this.vmStatic.setnum_of_sockets(value);
+        this.vmStatic.setNumOfSockets(value);
     }
 
     public int getCpuPerSocket() {
-        return this.vmStatic.getcpu_per_socket();
+        return this.vmStatic.getCpuPerSocket();
     }
 
     public void setCpuPerSocket(int value) {
-        this.vmStatic.setcpu_per_socket(value);
+        this.vmStatic.setCpuPerSocket(value);
     }
 
     public UsbPolicy getUsbPolicy() {
-        return vmStatic.getusb_policy();
+        return vmStatic.getUsbPolicy();
     }
 
     public void setUsbPolicy(UsbPolicy value) {
-        vmStatic.setusb_policy(value);
+        vmStatic.setUsbPolicy(value);
     }
 
     public boolean isAutoStartup() {
-        return vmStatic.getauto_startup();
+        return vmStatic.isAutoStartup();
     }
 
     public void setAutoStartup(boolean value) {
-        vmStatic.setauto_startup(value);
+        vmStatic.setAutoStartup(value);
     }
 
     public NGuid getDedicatedVmForVds() {
-        return vmStatic.getdedicated_vm_for_vds();
+        return vmStatic.getDedicatedVmForVds();
     }
 
     public void setDedicatedVmForVds(NGuid value) {
-        vmStatic.setdedicated_vm_for_vds(value);
+        vmStatic.setDedicatedVmForVds(value);
     }
 
     public Guid getVdsGroupId() {
-        return this.vmStatic.getvds_group_id();
+        return this.vmStatic.getVdsGroupId();
     }
 
     public void setVdsGroupId(Guid value) {
-        this.vmStatic.setvds_group_id(value);
+        this.vmStatic.setVdsGroupId(value);
     }
 
     public String getTimeZone() {
-        return vmStatic.gettime_zone();
+        return vmStatic.getTimeZone();
     }
 
     public void setTimeZone(String value) {
-        vmStatic.settime_zone(value);
+        vmStatic.setTimeZone(value);
     }
 
     public boolean isStateless() {
-        return vmStatic.getis_stateless();
+        return vmStatic.isStateless();
     }
 
     public boolean isSmartcardEnabled() {
@@ -395,7 +395,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public void setStateless(boolean value) {
-        vmStatic.setis_stateless(value);
+        vmStatic.setStateless(value);
     }
 
     public void setDeleteProtected(boolean deleteProtected) {
@@ -407,59 +407,59 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public DisplayType getDefaultDisplayType() {
-        return vmStatic.getdefault_display_type();
+        return vmStatic.getDefaultDisplayType();
     }
 
     public void setDefaultDisplayType(DisplayType value) {
-        vmStatic.setdefault_display_type(value);
+        vmStatic.setDefaultDisplayType(value);
     }
 
     public int getPriority() {
-        return vmStatic.getpriority();
+        return vmStatic.getPriority();
     }
 
     public void setPriority(int value) {
-        vmStatic.setpriority(value);
+        vmStatic.setPriority(value);
     }
 
     public String getIsoPath() {
-        return vmStatic.getiso_path();
+        return vmStatic.getIsoPath();
     }
 
     public void setIsoPath(String value) {
-        vmStatic.setiso_path(value);
+        vmStatic.setIsoPath(value);
     }
 
     public OriginType getOrigin() {
-        return vmStatic.getorigin();
+        return vmStatic.getOrigin();
     }
 
     public void setOrigin(OriginType value) {
-        vmStatic.setorigin(value);
+        vmStatic.setOrigin(value);
     }
 
     public String getInitrdUrl() {
-        return vmStatic.getinitrd_url();
+        return vmStatic.getInitrdUrl();
     }
 
     public void setInitrdUrl(String value) {
-        vmStatic.setinitrd_url(value);
+        vmStatic.setInitrdUrl(value);
     }
 
     public String getKernelUrl() {
-        return vmStatic.getkernel_url();
+        return vmStatic.getKernelUrl();
     }
 
     public void setKernelUrl(String value) {
-        vmStatic.setkernel_url(value);
+        vmStatic.setKernelUrl(value);
     }
 
     public String getKernelParams() {
-        return vmStatic.getkernel_params();
+        return vmStatic.getKernelParams();
     }
 
     public void setKernelParams(String value) {
-        vmStatic.setkernel_params(value);
+        vmStatic.setKernelParams(value);
     }
 
     private NGuid vmPoolId;
@@ -779,11 +779,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public Guid getVmtGuid() {
-        return this.vmStatic.getvmt_guid();
+        return this.vmStatic.getVmtGuid();
     }
 
     public void setVmtGuid(Guid value) {
-        this.vmStatic.setvmt_guid(value);
+        this.vmStatic.setVmtGuid(value);
     }
 
     private String vmtName;
@@ -929,27 +929,27 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public boolean isFailBack() {
-        return this.vmStatic.getfail_back();
+        return this.vmStatic.isFailBack();
     }
 
     public void setFailBack(boolean value) {
-        this.vmStatic.setfail_back(value);
+        this.vmStatic.setFailBack(value);
     }
 
     public BootSequence getDefaultBootSequence() {
-        return this.vmStatic.getdefault_boot_sequence();
+        return this.vmStatic.getDefaultBootSequence();
     }
 
     public void setDefaultBootSequence(BootSequence value) {
-        this.vmStatic.setdefault_boot_sequence(value);
+        this.vmStatic.setDefaultBootSequence(value);
     }
 
     public int getNiceLevel() {
-        return this.vmStatic.getnice_level();
+        return this.vmStatic.getNiceLevel();
     }
 
     public void setNiceLevel(int value) {
-        this.vmStatic.setnice_level(value);
+        this.vmStatic.setNiceLevel(value);
     }
 
     public void setDbGeneration(long value) {
@@ -969,11 +969,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public VmType getVmType() {
-        return this.vmStatic.getvm_type();
+        return this.vmStatic.getVmType();
     }
 
     public void setVmType(VmType value) {
-        this.vmStatic.setvm_type(value);
+        this.vmStatic.setVmType(value);
     }
 
     public String getHibernationVolHandle() {
@@ -1073,8 +1073,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         useSysPrep = value;
     }
 
-    public boolean getIsFirstRun() {
-        return vmStatic.getIsFirstRun();
+    public boolean isFirstRun() {
+        return vmStatic.isFirstRun();
     }
 
     public static boolean isStatusUp(VMStatus st) {
@@ -1449,7 +1449,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public Map<Guid, VmDevice> getManagedVmDeviceMap() {
-        return vmStatic.getManagedVmDeviceMap();
+        return vmStatic.getManagedDeviceMap();
     }
 
     public void setManagedDeviceMap(Map<Guid, VmDevice> map) {

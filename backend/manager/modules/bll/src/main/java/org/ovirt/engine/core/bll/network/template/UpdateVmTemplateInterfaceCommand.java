@@ -101,7 +101,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterface().getId());
             if (iface != null) {
                 Network network =
-                        getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getvds_group_id());
+                        getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getVdsGroupId());
 
                 if (getParameters().getInterface().isPortMirroring()
                         && (isNetworkChanged(iface) || !iface.isPortMirroring())) {

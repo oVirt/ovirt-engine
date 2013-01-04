@@ -60,7 +60,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     protected DisplayType extractDisplayType(VmBase vmBase) {
         if (vmBase instanceof VmStatic) {
-            return ((VmStatic) vmBase).getdefault_display_type();
+            return ((VmStatic) vmBase).getDefaultDisplayType();
         }
 
         return null;

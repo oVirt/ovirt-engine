@@ -54,28 +54,28 @@ public class VmDeviceUtils {
         VmBase entity = params.getVmStaticData();
         if (entity != null) {
             updateCdInVmDevice(oldVmBase, entity);
-            if (oldVmBase.getdefault_boot_sequence() != entity
-                    .getdefault_boot_sequence()) {
+            if (oldVmBase.getDefaultBootSequence() != entity
+                    .getDefaultBootSequence()) {
                 updateBootOrderInVmDeviceAndStoreToDB(entity);
             }
 
             // if the console type has changed, recreate Video devices
-            if (oldVmBase.getdefault_display_type() != entity.getdefault_display_type()) {
+            if (oldVmBase.getDefaultDisplayType() != entity.getDefaultDisplayType()) {
                 // delete all video device
                 for (VmDevice device : dao.getVmDeviceByVmIdAndType(oldVmBase.getId(), VmDeviceType.VIDEO.getName())) {
                     dao.remove(device.getId());
                 }
                 // add video device per each monitor
-                for (int i = 0; i<entity.getnum_of_monitors();i++) {
+                for (int i = 0; i<entity.getNumOfMonitors();i++) {
                     addManagedDevice(new VmDeviceId(Guid.NewGuid(), entity.getId()),
                             VmDeviceType.VIDEO,
-                            entity.getdefault_display_type().getVmDeviceType(),
-                            getMemExpr(entity.getnum_of_monitors()),
+                            entity.getDefaultDisplayType().getVmDeviceType(),
+                            getMemExpr(entity.getNumOfMonitors()),
                             true,
                             false);
                 }
-            } else if (entity.getdefault_display_type() == DisplayType.qxl && oldVmBase.getnum_of_monitors() != entity
-                    .getnum_of_monitors()) {
+            } else if (entity.getDefaultDisplayType() == DisplayType.qxl && oldVmBase.getNumOfMonitors() != entity
+                    .getNumOfMonitors()) {
                 // spice number of monitors has changed
                 updateNumOfMonitorsInVmDevice(oldVmBase, entity);
             }
@@ -129,7 +129,7 @@ public class VmDeviceUtils {
      */
     private static void updateAudioDevice(VM oldVm, VmBase newVmBase) {
         // for desktop, if the os type has changed, recreate Audio devices
-        if (newVmBase.getvm_type() == VmType.Desktop && oldVm.getOs() != newVmBase.getos()) {
+        if (newVmBase.getVmType() == VmType.Desktop && oldVm.getOs() != newVmBase.getOs()) {
             Guid vmId = oldVm.getId();
             // remove any old sound device
             List<VmDevice> list =
@@ -179,7 +179,7 @@ public class VmDeviceUtils {
             vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        String isoPath=vmBase.getiso_path();
+        String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
         // indicates if VM has already a non empty CD in DB
@@ -217,7 +217,7 @@ public class VmDeviceUtils {
                     // to the new VMStatic params
                     continue;
                 } else {
-                    specParams.putAll(getMemExpr(vmBase.getnum_of_monitors()));
+                    specParams.putAll(getMemExpr(vmBase.getNumOfMonitors()));
                 }
             } else if (VmDeviceType.DISK.getName().equals(device.getType())
                     && VmDeviceType.CDROM.getName().equals(device.getDevice())) {
@@ -250,7 +250,7 @@ public class VmDeviceUtils {
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
 
             // create sound card for a desktop VM if not exists
-            if (vmBase.getvm_type() == VmType.Desktop) {
+            if (vmBase.getVmType() == VmType.Desktop) {
                 List<VmDevice> list = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceType.SOUND.getName());
                 if (list.size() == 0) {
                     String soundDevice = VmInfoBuilderBase.getSoundDevice(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
@@ -440,7 +440,7 @@ public class VmDeviceUtils {
         if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
             cd.getSpecParams()
-                    .put(VdsProperties.Path, (newVmBase.getiso_path() == null) ? "" : newVmBase.getiso_path());
+                    .put(VdsProperties.Path, (newVmBase.getIsoPath() == null) ? "" : newVmBase.getIsoPath());
             dao.update(cd);
         }
     }
@@ -451,12 +451,12 @@ public class VmDeviceUtils {
      */
 
     private static void updateCdInVmDevice(VmBase newVmBase) {
-        if (StringUtils.isNotEmpty(newVmBase.getiso_path())) {
+        if (StringUtils.isNotEmpty(newVmBase.getIsoPath())) {
             // new CD was added
             VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
                     newVmBase.getId()), VmDeviceType.DISK.getName(),
                     VmDeviceType.CDROM.getName(), "", 0,
-                            Collections.<String, Object> singletonMap(VdsProperties.Path, newVmBase.getiso_path()),
+                            Collections.<String, Object> singletonMap(VdsProperties.Path, newVmBase.getIsoPath()),
                             true,
                             null,
                             false,
@@ -474,17 +474,17 @@ public class VmDeviceUtils {
             VmBase newStatic) {
         int prevNumOfMonitors=0;
         if (oldVmBase != null) {
-            prevNumOfMonitors = oldVmBase.getnum_of_monitors();
+            prevNumOfMonitors = oldVmBase.getNumOfMonitors();
         }
-        if (newStatic.getnum_of_monitors() > prevNumOfMonitors) {
+        if (newStatic.getNumOfMonitors() > prevNumOfMonitors) {
             // monitors were added
             for (int i = prevNumOfMonitors; i < newStatic
-                    .getnum_of_monitors(); i++) {
+                    .getNumOfMonitors(); i++) {
                 Guid newId = Guid.NewGuid();
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
                         VmDeviceType.VIDEO,
                         VmDeviceType.QXL,
-                        getMemExpr(newStatic.getnum_of_monitors()),
+                        getMemExpr(newStatic.getNumOfMonitors()),
                         true,
                         false);
             }
@@ -494,7 +494,7 @@ public class VmDeviceUtils {
                     .getVmDeviceDao()
                     .getVmDeviceByVmIdAndType(newStatic.getId(),
                             VmDeviceType.VIDEO.getName());
-            removeNumberOfDevices(list, prevNumOfMonitors - newStatic.getnum_of_monitors());
+            removeNumberOfDevices(list, prevNumOfMonitors - newStatic.getNumOfMonitors());
         }
     }
 
@@ -506,11 +506,11 @@ public class VmDeviceUtils {
      */
     private static void updateUSBSlots(VmBase oldVm, VmBase newVm) {
         UsbPolicy oldUsbPolicy = UsbPolicy.DISABLED;
-        UsbPolicy newUsbPolicy = newVm.getusb_policy();
+        UsbPolicy newUsbPolicy = newVm.getUsbPolicy();
         int currentNumberOfSlots = 0;
 
         if (oldVm != null) {
-            oldUsbPolicy = oldVm.getusb_policy();
+            oldUsbPolicy = oldVm.getUsbPolicy();
             currentNumberOfSlots = getUsbRedirectDevices(oldVm).size();
         }
 
@@ -597,7 +597,7 @@ public class VmDeviceUtils {
         // update device information only if ovf support devices - from 3.1
         Version ovfVer = new Version(entity.getOvfVersion());
         if (!VmDeviceCommonUtils.isOldClusterVersion(ovfVer)) {
-            VmDevice exportedDevice = entity.getManagedVmDeviceMap().get(deviceId);
+            VmDevice exportedDevice = entity.getManagedDeviceMap().get(deviceId);
             if (exportedDevice != null) {
                 vmDevice.setAddress(exportedDevice.getAddress());
                 vmDevice.setBootOrder(exportedDevice.getBootOrder());
@@ -629,7 +629,7 @@ public class VmDeviceUtils {
     }
 
     private static <T extends VmBase> String getAddress(T entity, final Guid id) {
-        VmDevice device = entity.getManagedVmDeviceMap().get(id);
+        VmDevice device = entity.getManagedDeviceMap().get(id);
         if (device != null)
             return device.getAddress();
         else
@@ -644,13 +644,13 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addOtherDevices(T entity, List<VmDevice> vmDeviceToAdd) {
         boolean hasCD = false;
-        for (VmDevice vmDevice : entity.getManagedVmDeviceMap().values()) {
+        for (VmDevice vmDevice : entity.getManagedDeviceMap().values()) {
             if (isDiskOrInterface(vmDevice)) {
                 continue; // skip disks/interfaces that were added separately.
             }
             vmDevice.setIsManaged(true);
             if (vmDevice.getType().equals(VmDeviceType.VIDEO.getName())) {
-                vmDevice.setSpecParams(getMemExpr(entity.getnum_of_monitors()));
+                vmDevice.setSpecParams(getMemExpr(entity.getNumOfMonitors()));
             }
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
                 hasCD = true;
@@ -802,7 +802,7 @@ public class VmDeviceUtils {
     }
 
     private static void setNewIdInImportedCollections(VmBase entity) {
-        for (VmDevice managedDevice : entity.getManagedVmDeviceMap().values()){
+        for (VmDevice managedDevice : entity.getManagedDeviceMap().values()){
             if (!isDiskOrInterface(managedDevice)) {
                 managedDevice.setId(new VmDeviceId(Guid.NewGuid(), entity.getId()));
             }

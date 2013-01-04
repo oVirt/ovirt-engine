@@ -66,7 +66,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         getTable().addColumn(new VmImageColumn<VmTemplate>(new OsTypeExtractor<VmTemplate>() {
             @Override
             public VmOsType extractOsType(VmTemplate item) {
-                return item.getos();
+                return item.getOs();
             }
         }), "", "77px"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -77,7 +77,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                         ElementIdUtils.createTableCellElementId(elementIdPrefix, "name", context), //$NON-NLS-1$
                         template.getname()));
 
-                String description = template.getdescription();
+                String description = template.getDescription();
                 if (description != null && !description.isEmpty()) {
                     sb.append(templates.vmDescriptionCellItem(description));
                 }

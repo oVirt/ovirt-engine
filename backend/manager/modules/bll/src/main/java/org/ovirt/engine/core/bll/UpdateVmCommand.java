@@ -73,9 +73,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         VM oldVm = getVm();
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         VmStatic newVmStatic = getParameters().getVmStaticData();
-        newVmStatic.setcreation_date(oldVm.getStaticData().getcreation_date());
-        if (newVmStatic.getcreation_date().equals(DateTime.getMinValue())) {
-            newVmStatic.setcreation_date(new Date());
+        newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
+        if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
+            newVmStatic.setCreationDate(new Date());
         }
         UpdateVmNetworks();
         getVmStaticDAO().update(newVmStatic);
@@ -117,12 +117,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void UpdateVmNetworks() {
         // check if the cluster has changed
-        if (!getVm().getVdsGroupId().equals(getParameters().getVmStaticData().getvds_group_id())) {
+        if (!getVm().getVdsGroupId().equals(getParameters().getVmStaticData().getVdsGroupId())) {
             List<Network> networks = DbFacade
                     .getInstance()
                     .getNetworkDao()
                     .getAllForCluster(
-                            getParameters().getVmStaticData().getvds_group_id());
+                            getParameters().getVmStaticData().getVdsGroupId());
             List<VmNetworkInterface> interfaces = DbFacade.getInstance()
                     .getVmNetworkInterfaceDao()
                     .getAllForVm(getParameters().getVmStaticData().getId());
@@ -371,10 +371,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 list.add(new QuotaVdsGroupConsumptionParameter(getParameters().getVmStaticData().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
-                        getParameters().getVmStaticData().getvds_group_id(),
-                        getParameters().getVmStaticData().getcpu_per_socket()
-                                * getParameters().getVmStaticData().getnum_of_sockets(),
-                        getParameters().getVmStaticData().getmem_size_mb()));
+                        getParameters().getVmStaticData().getVdsGroupId(),
+                        getParameters().getVmStaticData().getCpuPerSocket()
+                                * getParameters().getVmStaticData().getNumOfSockets(),
+                        getParameters().getVmStaticData().getMemSizeMb()));
             }
 
         }

@@ -43,10 +43,10 @@ public class VmTemplateHandlerTest {
     @Test
     public void testUpdateFieldsIsQuotaDefault() {
         VmTemplate src = new VmTemplate();
-        src.setIsQuotaDefault(true);
+        src.setQuotaDefault(true);
 
         VmTemplate dest = new VmTemplate();
-        dest.setIsQuotaDefault(false);
+        dest.setQuotaDefault(false);
 
         assertTrue("Update should be valid for different quota default statuses",
                 VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(src, dest));

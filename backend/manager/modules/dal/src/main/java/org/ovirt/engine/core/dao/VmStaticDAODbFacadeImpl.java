@@ -42,38 +42,38 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     private MapSqlParameterSource getFullParameterSource(VmStatic vm) {
         return getIdParamterSource(vm.getId())
-                .addValue("description", vm.getdescription())
-                .addValue("mem_size_mb", vm.getmem_size_mb())
-                .addValue("os", vm.getos())
-                .addValue("vds_group_id", vm.getvds_group_id())
-                .addValue("vm_name", vm.getvm_name())
-                .addValue("vmt_guid", vm.getvmt_guid())
-                .addValue("domain", vm.getdomain())
-                .addValue("creation_date", vm.getcreation_date())
-                .addValue("num_of_monitors", vm.getnum_of_monitors())
-                .addValue("is_initialized", vm.getis_initialized())
-                .addValue("is_auto_suspend", vm.getis_auto_suspend())
-                .addValue("num_of_sockets", vm.getnum_of_sockets())
-                .addValue("cpu_per_socket", vm.getcpu_per_socket())
-                .addValue("usb_policy", vm.getusb_policy())
-                .addValue("time_zone", vm.gettime_zone())
-                .addValue("auto_startup", vm.getauto_startup())
-                .addValue("is_stateless", vm.getis_stateless())
+                .addValue("description", vm.getDescription())
+                .addValue("mem_size_mb", vm.getMemSizeMb())
+                .addValue("os", vm.getOs())
+                .addValue("vds_group_id", vm.getVdsGroupId())
+                .addValue("vm_name", vm.getVmName())
+                .addValue("vmt_guid", vm.getVmtGuid())
+                .addValue("domain", vm.getDomain())
+                .addValue("creation_date", vm.getCreationDate())
+                .addValue("num_of_monitors", vm.getNumOfMonitors())
+                .addValue("is_initialized", vm.isInitialized())
+                .addValue("is_auto_suspend", vm.isAutoSuspend())
+                .addValue("num_of_sockets", vm.getNumOfSockets())
+                .addValue("cpu_per_socket", vm.getCpuPerSocket())
+                .addValue("usb_policy", vm.getUsbPolicy())
+                .addValue("time_zone", vm.getTimeZone())
+                .addValue("auto_startup", vm.isAutoStartup())
+                .addValue("is_stateless", vm.isStateless())
                 .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
                 .addValue("is_delete_protected", vm.isDeleteProtected())
-                .addValue("dedicated_vm_for_vds", vm.getdedicated_vm_for_vds())
-                .addValue("fail_back", vm.getfail_back())
-                .addValue("vm_type", vm.getvm_type())
-                .addValue("nice_level", vm.getnice_level())
+                .addValue("dedicated_vm_for_vds", vm.getDedicatedVmForVds())
+                .addValue("fail_back", vm.isFailBack())
+                .addValue("vm_type", vm.getVmType())
+                .addValue("nice_level", vm.getNiceLevel())
                 .addValue("default_boot_sequence",
-                        vm.getdefault_boot_sequence())
-                .addValue("default_display_type", vm.getdefault_display_type())
-                .addValue("priority", vm.getpriority())
-                .addValue("iso_path", vm.getiso_path())
-                .addValue("origin", vm.getorigin())
-                .addValue("initrd_url", vm.getinitrd_url())
-                .addValue("kernel_url", vm.getkernel_url())
-                .addValue("kernel_params", vm.getkernel_params())
+                        vm.getDefaultBootSequence())
+                .addValue("default_display_type", vm.getDefaultDisplayType())
+                .addValue("priority", vm.getPriority())
+                .addValue("iso_path", vm.getIsoPath())
+                .addValue("origin", vm.getOrigin())
+                .addValue("initrd_url", vm.getInitrdUrl())
+                .addValue("kernel_url", vm.getKernelUrl())
+                .addValue("kernel_params", vm.getKernelParams())
                 .addValue("migration_support",
                         vm.getMigrationSupport().getValue())
                 .addValue("predefined_properties", vm.getPredefinedProperties())
@@ -81,7 +81,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                         vm.getUserDefinedProperties())
                 .addValue("min_allocated_mem", vm.getMinAllocatedMem())
                 .addValue("quota_id", vm.getQuotaId())
-                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
+                .addValue("allow_console_reconnect", vm.isAllowConsoleReconnect())
                 .addValue("cpu_pinning", vm.getCpuPinning())
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags());
     }
@@ -178,16 +178,16 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             map(rs, entity);
 
             entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
-            entity.setmem_size_mb(rs.getInt("mem_size_mb"));
-            entity.setvds_group_id(Guid.createGuidFromString(rs.getString("vds_group_id")));
+            entity.setMemSizeMb(rs.getInt("mem_size_mb"));
+            entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
 
-            entity.setvm_name(rs.getString("vm_name"));
-            entity.setvmt_guid(Guid.createGuidFromString(rs.getString("vmt_guid")));
-            entity.setdomain(rs.getString("domain"));
-            entity.setnum_of_monitors(rs.getInt("num_of_monitors"));
-            entity.setis_initialized(rs.getBoolean("is_initialized"));
-            entity.setdedicated_vm_for_vds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
-            entity.setdefault_display_type(DisplayType.forValue(rs.getInt("default_display_type")));
+            entity.setVmName(rs.getString("vm_name"));
+            entity.setVmtGuid(Guid.createGuidFromString(rs.getString("vmt_guid")));
+            entity.setDomain(rs.getString("domain"));
+            entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
+            entity.setInitialized(rs.getBoolean("is_initialized"));
+            entity.setDedicatedVmForVds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
             String predefinedProperties = rs.getString("predefined_properties");
             String userDefinedProperties = rs.getString("userdefined_properties");

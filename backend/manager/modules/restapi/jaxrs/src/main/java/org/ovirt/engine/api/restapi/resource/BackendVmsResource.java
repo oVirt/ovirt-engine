@@ -93,10 +93,10 @@ public class BackendVmsResource extends
             VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
                     getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
             if (namedCluster(vm)) {
-                staticVm.setvds_group_id(getClusterId(vm));
+                staticVm.setVdsGroupId(getClusterId(vm));
             }
 
-            staticVm.setusb_policy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(), lookupCluster(staticVm.getvds_group_id())));
+            staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(), lookupCluster(staticVm.getVdsGroupId())));
 
             if (!isFiltered()) {
                 // if the user set the host-name within placement-policy, rather than the host-id (legal) -
@@ -104,7 +104,7 @@ public class BackendVmsResource extends
                 if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
                         && vm.getPlacementPolicy().getHost().isSetName()
                         && !vm.getPlacementPolicy().getHost().isSetId()) {
-                    staticVm.setdedicated_vm_for_vds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
+                    staticVm.setDedicatedVmForVds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
                 }
             } else {
                 vm.setPlacementPolicy(null);

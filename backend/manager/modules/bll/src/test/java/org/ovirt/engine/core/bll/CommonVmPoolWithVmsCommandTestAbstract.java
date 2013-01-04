@@ -317,10 +317,10 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     private VmStatic getVmStatic() {
         VmStatic vmStatic = new VmStatic();
-        vmStatic.setos(VmOsType.Unassigned);
-        vmStatic.setmem_size_mb(300);
-        vmStatic.setis_stateless(false);
-        vmStatic.setvmt_guid(vmTemplateId);
+        vmStatic.setOs(VmOsType.Unassigned);
+        vmStatic.setMemSizeMb(300);
+        vmStatic.setStateless(false);
+        vmStatic.setVmtGuid(vmTemplateId);
         return vmStatic;
     }
 

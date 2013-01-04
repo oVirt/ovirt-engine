@@ -70,7 +70,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
-        setVmTemplateId(getParameters().getVmStaticData().getvmt_guid());
+        setVmTemplateId(getParameters().getVmStaticData().getVmtGuid());
         initTemplate();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
@@ -95,10 +95,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         boolean isAtLeastOneVMCreationFailed = false;
         setActionReturnValue(poolId);
 
-        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getvmt_guid(),
+        VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
-        String vmName = getParameters().getVmStaticData().getvm_name();
+        String vmName = getParameters().getVmStaticData().getVmName();
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> GetValue(ConfigValues.VmPoolMaxSubsequentFailures);
         for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
@@ -113,7 +113,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                             new IsVmWithSameNameExistParameters(currentVmName)).getReturnValue());
 
             VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
-            currVm.setvm_name(currentVmName);
+            currVm.setVmName(currentVmName);
             AddVmAndAttachToPoolParameters addVmAndAttachToPoolParams =
                     new AddVmAndAttachToPoolParameters(currVm, poolId, currentVmName,
                             diskInfoDestinationMap);
@@ -145,7 +145,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
         getReturnValue().setCanDoAction(!isAtLeastOneVMCreationFailed);
         setSucceeded(!isAtLeastOneVMCreationFailed);
-        VmTemplateHandler.UnLockVmTemplate(getParameters().getVmStaticData().getvmt_guid());
+        VmTemplateHandler.UnLockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
         getCompensationContext().resetCompensation();
     }
 
@@ -225,7 +225,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        if (getParameters().getVmStaticData().getis_stateless()) {
+        if (getParameters().getVmStaticData().isStateless()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_FROM_POOL_CANNOT_BE_STATELESS);
             return false;
         }
@@ -241,8 +241,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected boolean isMemorySizeLegal(Version version) {
         VmStatic vmStaticData = getParameters().getVmStaticData();
         return VmHandler.isMemorySizeLegal
-                (vmStaticData.getos(),
-                        vmStaticData.getmem_size_mb(),
+                (vmStaticData.getOs(),
+                        vmStaticData.getMemSizeMb(),
                         getReturnValue().getCanDoActionMessages(),
                         version.toString());
     }
@@ -252,7 +252,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 (getReturnValue().getCanDoActionMessages(),
                         getParameters().getVmsCount()
                                 * getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId()).size(),
-                        getParameters().getVmStaticData().getpriority());
+                        getParameters().getVmStaticData().getPriority());
     }
 
     protected boolean areTemplateImagesInStorageReady(Guid storageId) {
@@ -346,7 +346,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected boolean isVmPoolNameValidLength(String vmPoolName) {
 
         // get VM-pool OS type
-        VmOsType osType = getParameters().getVmStaticData().getos();
+        VmOsType osType = getParameters().getVmStaticData().getOs();
 
         // determine the max length considering the OS and the max-VMs-in-pool
         // get the max VM name (configuration parameter)

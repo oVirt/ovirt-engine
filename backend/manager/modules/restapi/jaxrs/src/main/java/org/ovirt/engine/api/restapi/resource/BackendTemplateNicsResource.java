@@ -70,7 +70,7 @@ public class BackendTemplateNicsResource
             if (device.isSetId() || device.isSetName()) {
                 Guid clusterId = getEntity(VmTemplate.class,
                         VdcQueryType.GetVmTemplate,
-                        new GetVmTemplateParameters(parentId), "id").getvds_group_id();
+                        new GetVmTemplateParameters(parentId), "id").getVdsGroupId();
                 Network net =
                         lookupClusterNetwork(clusterId, device.getNetwork().isSetId() ? asGuid(device.getNetwork()
                                 .getId())
@@ -96,7 +96,7 @@ public class BackendTemplateNicsResource
     protected Guid getClusterId() {
         Guid clusterId = getEntity(VmTemplate.class,
                                    VdcQueryType.GetVmTemplate,
-                                   new GetVmTemplateParameters(parentId), "id").getvds_group_id();
+                                   new GetVmTemplateParameters(parentId), "id").getVdsGroupId();
         return clusterId;
     }
 

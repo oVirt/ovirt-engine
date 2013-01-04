@@ -103,7 +103,7 @@ public class BackendVmPoolsResource
         // and then override any values (memory size, boot order etc.)
         // that are set in the client-provided VmPool instance
         VM vm = getMapper(VmPool.class, VM.class).map(model, null);
-        vm.getStaticData().setmem_size_mb(template.getmem_size_mb());
+        vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
         return vm;
     }
 

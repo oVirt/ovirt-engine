@@ -162,7 +162,7 @@ public class PermissionDAOHibernateImpl extends BaseDAOHibernateImpl<permissions
         VmStatic vmStatic = (VmStatic) query.uniqueResult();
 
         if (vmStatic != null) {
-            addVdsGroupId(vmStatic.getvds_group_id(), ids);
+            addVdsGroupId(vmStatic.getVdsGroupId(), ids);
         }
     }
 

@@ -72,32 +72,32 @@ public class VmMapper {
     public static VmStatic map(VmTemplate entity, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
         staticVm.setId(NGuid.Empty);
-        staticVm.setvmt_guid(entity.getId());
-        staticVm.setdomain(entity.getdomain());
-        staticVm.setvds_group_id(entity.getvds_group_id());
-        staticVm.setmem_size_mb(entity.getmem_size_mb());
-        staticVm.setos(entity.getos());
-        staticVm.setnice_level(entity.getnice_level());
-        staticVm.setfail_back(entity.getfail_back());
-        staticVm.setauto_startup(entity.getauto_startup());
-        staticVm.setis_stateless(entity.getis_stateless());
+        staticVm.setVmtGuid(entity.getId());
+        staticVm.setDomain(entity.getDomain());
+        staticVm.setVdsGroupId(entity.getVdsGroupId());
+        staticVm.setMemSizeMb(entity.getMemSizeMb());
+        staticVm.setOs(entity.getOs());
+        staticVm.setNiceLevel(entity.getNiceLevel());
+        staticVm.setFailBack(entity.isFailBack());
+        staticVm.setAutoStartup(entity.isAutoStartup());
+        staticVm.setStateless(entity.isStateless());
         staticVm.setDeleteProtected(entity.isDeleteProtected());
         staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
-        staticVm.setauto_startup(entity.getauto_startup());
-        staticVm.setdefault_boot_sequence(entity.getdefault_boot_sequence());
-        staticVm.setvm_type(entity.getvm_type());
-        entity.setdefault_display_type(entity.getdefault_display_type());
-        staticVm.setiso_path(entity.getiso_path());
-        staticVm.setnum_of_sockets(entity.getnum_of_sockets());
-        staticVm.setcpu_per_socket(entity.getcpu_per_socket());
-        staticVm.setkernel_url(entity.getkernel_url());
-        staticVm.setkernel_params(entity.getkernel_params());
-        staticVm.setinitrd_url(entity.getinitrd_url());
-        staticVm.settime_zone(entity.gettime_zone());
-        staticVm.setnum_of_monitors(entity.getnum_of_monitors());
-        staticVm.setAllowConsoleReconnect(entity.getAllowConsoleReconnect());
-        staticVm.setpriority(entity.getpriority());
-        staticVm.setusb_policy(entity.getusb_policy());
+        staticVm.setAutoStartup(entity.isAutoStartup());
+        staticVm.setDefaultBootSequence(entity.getDefaultBootSequence());
+        staticVm.setVmType(entity.getVmType());
+        entity.setDefaultDisplayType(entity.getDefaultDisplayType());
+        staticVm.setIsoPath(entity.getIsoPath());
+        staticVm.setNumOfSockets(entity.getNumOfSockets());
+        staticVm.setCpuPerSocket(entity.getCpuPerSocket());
+        staticVm.setKernelUrl(entity.getKernelUrl());
+        staticVm.setKernelParams(entity.getKernelParams());
+        staticVm.setInitrdUrl(entity.getInitrdUrl());
+        staticVm.setTimeZone(entity.getTimeZone());
+        staticVm.setNumOfMonitors(entity.getNumOfMonitors());
+        staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
+        staticVm.setPriority(entity.getPriority());
+        staticVm.setUsbPolicy(entity.getUsbPolicy());
         return staticVm;
     }
 
@@ -105,25 +105,25 @@ public class VmMapper {
     public static VmStatic map(VM vm, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
         if (vm.isSetName()) {
-            staticVm.setvm_name(vm.getName());
+            staticVm.setVmName(vm.getName());
         }
         if (vm.isSetId()) {
             staticVm.setId(new Guid(vm.getId()));
         }
         if (vm.isSetDescription()) {
-            staticVm.setdescription(vm.getDescription());
+            staticVm.setDescription(vm.getDescription());
         }
         if (vm.isSetMemory()) {
-            staticVm.setmem_size_mb((int) (vm.getMemory() / BYTES_PER_MB));
-        } else if (staticVm.getmem_size_mb()==0){
+            staticVm.setMemSizeMb((int) (vm.getMemory() / BYTES_PER_MB));
+        } else if (staticVm.getMemSizeMb()==0){
           //TODO: Get rid of this logic code when Backend supports default memory.
-            staticVm.setmem_size_mb(DEFAULT_MEMORY_SIZE);
+            staticVm.setMemSizeMb(DEFAULT_MEMORY_SIZE);
         }
         if (vm.isSetTemplate() && vm.getTemplate().getId() != null) {
-            staticVm.setvmt_guid(new Guid(vm.getTemplate().getId()));
+            staticVm.setVmtGuid(new Guid(vm.getTemplate().getId()));
         }
         if (vm.isSetCluster() && vm.getCluster().getId() != null) {
-            staticVm.setvds_group_id(new Guid(vm.getCluster().getId()));
+            staticVm.setVdsGroupId(new Guid(vm.getCluster().getId()));
         }
         if (vm.isSetCpu()) {
             if (vm.getCpu().isSetMode()) {
@@ -131,10 +131,10 @@ public class VmMapper {
             }
             if (vm.getCpu().isSetTopology()) {
                 if (vm.getCpu().getTopology().getCores()!=null) {
-                    staticVm.setcpu_per_socket(vm.getCpu().getTopology().getCores());
+                    staticVm.setCpuPerSocket(vm.getCpu().getTopology().getCores());
                 }
                 if (vm.getCpu().getTopology().getSockets()!=null) {
-                    staticVm.setnum_of_sockets(vm.getCpu().getTopology().getSockets());
+                    staticVm.setNumOfSockets(vm.getCpu().getTopology().getSockets());
                 }
             }
             if (vm.getCpu().isSetCpuTune()) {
@@ -145,30 +145,30 @@ public class VmMapper {
             if (vm.getOs().isSetType()) {
                 OsType osType = OsType.fromValue(vm.getOs().getType());
                 if (osType != null) {
-                    staticVm.setos(map(osType, null));
+                    staticVm.setOs(map(osType, null));
                 }
             }
             if (vm.getOs().isSetBoot() && vm.getOs().getBoot().size() > 0) {
-                staticVm.setdefault_boot_sequence(map(vm.getOs().getBoot(), null));
+                staticVm.setDefaultBootSequence(map(vm.getOs().getBoot(), null));
             }
             if (vm.getOs().isSetKernel()) {
-                staticVm.setkernel_url(vm.getOs().getKernel());
+                staticVm.setKernelUrl(vm.getOs().getKernel());
             }
             if (vm.getOs().isSetInitrd()) {
-                staticVm.setinitrd_url(vm.getOs().getInitrd());
+                staticVm.setInitrdUrl(vm.getOs().getInitrd());
             }
             if (vm.getOs().isSetCmdline()) {
-                staticVm.setkernel_params(vm.getOs().getCmdline());
+                staticVm.setKernelParams(vm.getOs().getCmdline());
             }
         }
         if (vm.isSetType()) {
             VmType vmType = VmType.fromValue(vm.getType());
             if (vmType != null) {
-                staticVm.setvm_type(map(vmType, null));
+                staticVm.setVmType(map(vmType, null));
             }
         }
         if (vm.isSetStateless()) {
-            staticVm.setis_stateless(vm.isStateless());
+            staticVm.setStateless(vm.isStateless());
         }
         if (vm.isSetDeleteProtected()) {
             staticVm.setDeleteProtected(vm.isDeleteProtected());
@@ -176,24 +176,24 @@ public class VmMapper {
         if (vm.isSetHighAvailability()) {
             HighAvailability ha = vm.getHighAvailability();
             if (ha.isSetEnabled()) {
-                staticVm.setauto_startup(ha.isEnabled());
+                staticVm.setAutoStartup(ha.isEnabled());
             }
             if (ha.isSetPriority()) {
-                staticVm.setpriority(ha.getPriority());
+                staticVm.setPriority(ha.getPriority());
             }
         }
         if (vm.isSetOrigin()) {
-            staticVm.setorigin(map(vm.getOrigin(), (OriginType)null));
+            staticVm.setOrigin(map(vm.getOrigin(), (OriginType)null));
         }
         if (vm.isSetDisplay()) {
             if (vm.getDisplay().isSetType()) {
                 DisplayType displayType = DisplayType.fromValue(vm.getDisplay().getType());
                 if (displayType != null) {
-                    staticVm.setdefault_display_type(map(displayType, null));
+                    staticVm.setDefaultDisplayType(map(displayType, null));
                 }
             }
             if (vm.getDisplay().isSetMonitors()) {
-                staticVm.setnum_of_monitors(vm.getDisplay().getMonitors());
+                staticVm.setNumOfMonitors(vm.getDisplay().getMonitors());
             }
             if (vm.getDisplay().isSetAllowOverride()) {
                 staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowOverride());
@@ -209,17 +209,17 @@ public class VmMapper {
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
-            staticVm.setdedicated_vm_for_vds(createGuidFromString(vm.getPlacementPolicy().getHost().getId()));
+            staticVm.setDedicatedVmForVds(createGuidFromString(vm.getPlacementPolicy().getHost().getId()));
         }
         if (vm.isSetDomain() && vm.getDomain().isSetName()) {
-            staticVm.setdomain(vm.getDomain().getName());
+            staticVm.setDomain(vm.getDomain().getName());
         }
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) {
             Long memGuaranteed = vm.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
             staticVm.setMinAllocatedMem(memGuaranteed.intValue());
         }
         if (vm.isSetTimezone()) {
-            staticVm.settime_zone(TimeZoneMapping.getWindows(vm.getTimezone()));
+            staticVm.setTimeZone(TimeZoneMapping.getWindows(vm.getTimezone()));
         }
         if (vm.isSetCustomProperties() && vm.getCustomProperties().isSetCustomProperty()) {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));

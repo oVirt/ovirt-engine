@@ -79,8 +79,8 @@ public class VmTemplate extends VmBase {
     private double actualDiskSize = 0;
 
     public VmTemplate() {
-        setis_auto_suspend(false);
-        setnice_level(0);
+        setAutoSuspend(false);
+        setNiceLevel(0);
         diskTemplateMap = new HashMap<Guid, DiskImage>();
     }
 
@@ -122,7 +122,7 @@ public class VmTemplate extends VmBase {
 
         this.childCount = child_count;
         this.name = name;
-        this.setnum_of_monitors(num_of_monitors);
+        this.setNumOfMonitors(num_of_monitors);
         this.setstatus(VmTemplateStatus.forValue(status));
     }
 

@@ -455,7 +455,7 @@ public abstract class VmInterfaceModel extends Model
                 okCommand.setIsExecutionAllowed(true);
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getVm().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getVm().getVdsGroupId());
     }
 
     protected void initCommands() {

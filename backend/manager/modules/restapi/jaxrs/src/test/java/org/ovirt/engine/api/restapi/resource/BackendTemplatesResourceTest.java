@@ -390,11 +390,11 @@ public class BackendTemplatesResourceTest
 
     static VmTemplate setUpEntityExpectations(VmTemplate entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getvds_group_id()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getnum_of_cpus()).andReturn(8).anyTimes();
-        expect(entity.getnum_of_sockets()).andReturn(2).anyTimes();
+        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
+        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
         return entity;
     }
 

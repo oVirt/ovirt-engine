@@ -161,19 +161,19 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
             memory = modulusMemory;
         }
 
-        if (memory < vm.getStaticData().getmem_size_mb()) {
+        if (memory < vm.getStaticData().getMemSizeMb()) {
             if (powerClientAutoAdjustMemoryLog) {
                 log.infoFormat(
                         "VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory adjusted to oriignal value as the result was lower than predefined value: {0}",
-                        vm.getStaticData().getmem_size_mb());
+                        vm.getStaticData().getMemSizeMb());
             }
-            memory = vm.getStaticData().getmem_size_mb();
+            memory = vm.getStaticData().getMemSizeMb();
         }
 
         if (powerClientAutoAdjustMemoryLog) {
             log.infoFormat("VdcBll.RunVmCommand.AutoMemoryAdjust - VM memory will be: {0}", memory);
         }
-        vm.getStaticData().setmem_size_mb(memory);
+        vm.getStaticData().setMemSizeMb(memory);
     }
 
     private static Log log = LogFactory.getLog(RunVmOnDedicatedVdsCommand.class);

@@ -275,14 +275,14 @@ public class SnapshotsManager {
             vm.setInterfaces(interfaces);
 
             // These fields are not saved in the OVF, so get them from the current VM.
-            vm.setDedicatedVmForVds(oldVmStatic.getdedicated_vm_for_vds());
-            vm.setIsoPath(oldVmStatic.getiso_path());
-            vm.setVdsGroupId(oldVmStatic.getvds_group_id());
+            vm.setDedicatedVmForVds(oldVmStatic.getDedicatedVmForVds());
+            vm.setIsoPath(oldVmStatic.getIsoPath());
+            vm.setVdsGroupId(oldVmStatic.getVdsGroupId());
             // The VM configuration does not hold the vds group Id.
             // It is necessary to fetch the vm static from the Db, in order to get this information
             VmStatic vmStaticFromDb = getVmStaticDao().get(vm.getId());
             if (vmStaticFromDb != null) {
-                VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getvds_group_id());
+                VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getVdsGroupId());
                 if (vdsGroup != null) {
                     vm.setStoragePoolId(vdsGroup.getStoragePoolId().getValue());
                     vm.setVdsGroupCompatibilityVersion(vdsGroup.getcompatibility_version());

@@ -29,13 +29,13 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
 
         setupWindowModelFrom(template);
         updateHostPinning(template.getMigrationSupport());
-        doChangeDefautlHost(template.getdedicated_vm_for_vds());
+        doChangeDefautlHost(template.getDedicatedVmForVds());
     }
 
     @Override
     protected DisplayType extractDisplayType(VmBase vmBase) {
         if (vmBase instanceof VmTemplate) {
-            return ((VmTemplate) vmBase).getdefault_display_type();
+            return ((VmTemplate) vmBase).getDefaultDisplayType();
         }
 
         return null;

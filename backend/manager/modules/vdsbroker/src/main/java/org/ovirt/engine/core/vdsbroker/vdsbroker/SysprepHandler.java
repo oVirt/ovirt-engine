@@ -65,7 +65,7 @@ public final class SysprepHandler {
 
     public static String GetSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
-        switch (vm.getStaticData().getos()) {
+        switch (vm.getStaticData().getOs()) {
         case WindowsXP:
             sysPrepContent = LoadFile(Config.<String> GetValue(ConfigValues.SysPrepXPPath));
             sysPrepContent = replace(sysPrepContent, "$ProductKey$", Config.<String> GetValue(ConfigValues.ProductKey));
@@ -200,7 +200,7 @@ public final class SysprepHandler {
             vm.setTimeZone(TimeZoneInfo.Local.getId());
         }
 
-        switch (vm.getStaticData().getos()) {
+        switch (vm.getStaticData().getOs()) {
         case WindowsXP:
         case Windows2003:
         case Windows2003x64:

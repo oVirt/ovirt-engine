@@ -63,7 +63,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
-                return object.getcreation_date();
+                return object.getCreationDate();
             }
         };
         getTable().addColumn(dateColumn, constants.creationDateTemplate());

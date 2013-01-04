@@ -43,7 +43,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.NewGuid());
         newVmTemplate.setname("NewVmTemplate");
-        newVmTemplate.setvds_group_id(VDS_GROUP_ID);
+        newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
     }
 
     /**
@@ -179,7 +179,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
 
         assertGetAllResult(result);
         for (VmTemplate template : result) {
-            assertEquals(VDS_GROUP_ID, template.getvds_group_id());
+            assertEquals(VDS_GROUP_ID, template.getVdsGroupId());
         }
     }
 
@@ -211,7 +211,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        existingTemplate.setdescription("This is an updated description");
+        existingTemplate.setDescription("This is an updated description");
 
         dao.update(existingTemplate);
 

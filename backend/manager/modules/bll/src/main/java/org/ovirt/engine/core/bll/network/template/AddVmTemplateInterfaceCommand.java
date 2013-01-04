@@ -62,7 +62,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
         allInterfaces.add(getParameters().getInterface());
 
-        if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getnum_of_monitors(), allInterfaces,
+        if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(), allInterfaces,
                 new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
@@ -76,7 +76,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
         if (getNetworkName() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getvds_group_id());
+            List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getVdsGroupId());
             if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network network) {
@@ -119,7 +119,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName())
                 && getVmTemplate() != null) {
 
-            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getvds_group_id());
+            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getVdsGroupId());
             if (getParameters().getInterface().isPortMirroring()) {
                 subjects.add(new PermissionSubject(network == null ? null : network.getId(),
                         VdcObjectType.Network,

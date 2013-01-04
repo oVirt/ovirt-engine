@@ -75,7 +75,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
             super.setVmId(parameterMasterVm.getId());
-            setVdsGroupId(parameterMasterVm.getvds_group_id());
+            setVdsGroupId(parameterMasterVm.getVdsGroupId());
         }
         if (getVm() != null) {
             VmHandler.updateDisksFromDb(getVm());
@@ -155,12 +155,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage diskImage : getVm().getDiskList()) {
             mImages.add(diskImage);
         }
-        if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getos(),
-                getParameters().getMasterVm().getmem_size_mb(),
+        if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getOs(),
+                getParameters().getMasterVm().getMemSizeMb(),
                 getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version().toString())) {
             return false;
         }
-        if (!IsVmPriorityValueLegal(getParameters().getMasterVm().getpriority(), getReturnValue()
+        if (!IsVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
                 .getCanDoActionMessages())) {
             return false;
         }
@@ -259,8 +259,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
         }
-        return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getnum_of_sockets(),
-                getParameters().getMasterVm().getcpu_per_socket(), getVdsGroup()
+        return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
+                getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                         .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
     }
 
@@ -275,28 +275,28 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void AddVmTemplateToDb() {
         // TODO: add timezone handling
         setVmTemplate(new VmTemplate(0, new Date(), getParameters().getDescription(),
-                getParameters().getMasterVm().getmem_size_mb(), getVmTemplateName(),
-                getParameters().getMasterVm().getnum_of_sockets(), getParameters().getMasterVm()
-                        .getcpu_per_socket(), getParameters().getMasterVm().getos(),
-                getParameters().getMasterVm().getvds_group_id(), getVmTemplateId(),
-                getParameters().getMasterVm().getdomain(), getParameters().getMasterVm()
-                        .getnum_of_monitors(), (VmTemplateStatus.Locked.getValue()), (getParameters().getMasterVm()
-                        .getusb_policy().getValue()), getParameters().getMasterVm().gettime_zone(),
-                getParameters().getMasterVm().getis_auto_suspend(), getParameters().getMasterVm()
-                        .getnice_level(), getParameters().getMasterVm().getfail_back(),
-                getParameters().getMasterVm().getdefault_boot_sequence(), getParameters()
-                        .getMasterVm().getvm_type(),
+                getParameters().getMasterVm().getMemSizeMb(), getVmTemplateName(),
+                getParameters().getMasterVm().getNumOfSockets(), getParameters().getMasterVm()
+                        .getCpuPerSocket(), getParameters().getMasterVm().getOs(),
+                getParameters().getMasterVm().getVdsGroupId(), getVmTemplateId(),
+                getParameters().getMasterVm().getDomain(), getParameters().getMasterVm()
+                        .getNumOfMonitors(), (VmTemplateStatus.Locked.getValue()), (getParameters().getMasterVm()
+                        .getUsbPolicy().getValue()), getParameters().getMasterVm().getTimeZone(),
+                getParameters().getMasterVm().isAutoSuspend(), getParameters().getMasterVm()
+                        .getNiceLevel(), getParameters().getMasterVm().isFailBack(),
+                getParameters().getMasterVm().getDefaultBootSequence(), getParameters()
+                        .getMasterVm().getVmType(),
                 getParameters().getMasterVm().isSmartcardEnabled(),
                 getParameters().getMasterVm().isDeleteProtected()));
-        getVmTemplate().setauto_startup(getParameters().getMasterVm().getauto_startup());
-        getVmTemplate().setpriority(getParameters().getMasterVm().getpriority());
-        getVmTemplate().setdefault_display_type(getParameters().getMasterVm().getdefault_display_type());
-        getVmTemplate().setinitrd_url(getParameters().getMasterVm().getinitrd_url());
-        getVmTemplate().setkernel_url(getParameters().getMasterVm().getkernel_url());
-        getVmTemplate().setkernel_params(getParameters().getMasterVm().getkernel_params());
-        getVmTemplate().setis_stateless(getParameters().getMasterVm().getis_stateless());
+        getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
+        getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
+        getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());
+        getVmTemplate().setInitrdUrl(getParameters().getMasterVm().getInitrdUrl());
+        getVmTemplate().setKernelUrl(getParameters().getMasterVm().getKernelUrl());
+        getVmTemplate().setKernelParams(getParameters().getMasterVm().getKernelParams());
+        getVmTemplate().setStateless(getParameters().getMasterVm().isStateless());
         getVmTemplate().setQuotaId(getParameters().getMasterVm().getQuotaId());
-        getVmTemplate().setdedicated_vm_for_vds(getParameters().getMasterVm().getdedicated_vm_for_vds());
+        getVmTemplate().setDedicatedVmForVds(getParameters().getMasterVm().getDedicatedVmForVds());
         getVmTemplate().setMigrationSupport(getParameters().getMasterVm().getMigrationSupport());
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());

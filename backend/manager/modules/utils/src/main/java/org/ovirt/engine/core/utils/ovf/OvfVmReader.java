@@ -42,9 +42,9 @@ public class OvfVmReader extends OvfReader {
         _vm.getStaticData().setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
-            _vm.getStaticData().setos(VmOsType.valueOf(node.InnerText));
+            _vm.getStaticData().setOs(VmOsType.valueOf(node.InnerText));
         } else {
-            _vm.getStaticData().setos(VmOsType.Unassigned);
+            _vm.getStaticData().setOs(VmOsType.Unassigned);
         }
     }
 
@@ -55,12 +55,12 @@ public class OvfVmReader extends OvfReader {
             String resourceType = node.SelectSingleNode("rasd:ResourceType", _xmlNS).InnerText;
 
             if (StringHelper.EqOp(resourceType, OvfHardware.CPU)) {
-                _vm.getStaticData().setnum_of_sockets(
+                _vm.getStaticData().setNumOfSockets(
                         Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).InnerText));
-                _vm.getStaticData().setcpu_per_socket(
+                _vm.getStaticData().setCpuPerSocket(
                         Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Memory)) {
-                _vm.getStaticData().setmem_size_mb(
+                _vm.getStaticData().setMemSizeMb(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.DiskImage)) {
                 final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
@@ -111,10 +111,10 @@ public class OvfVmReader extends OvfReader {
                 _vm.getInterfaces().add(iface);
                 readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.USB)) {
-                _vm.getStaticData().setusb_policy(
+                _vm.getStaticData().setUsbPolicy(
                         UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
             } else if (StringHelper.EqOp(resourceType, OvfHardware.Monitor)) {
-                _vm.getStaticData().setnum_of_monitors(
+                _vm.getStaticData().setNumOfMonitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
                 readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
             } else if (StringHelper.EqOp(resourceType, OvfHardware.CD)) {
@@ -142,13 +142,13 @@ public class OvfVmReader extends OvfReader {
         // General Vm
         XmlNode node = content.SelectSingleNode("Name");
         if (node != null) {
-            _vm.getStaticData().setvm_name(node.InnerText);
-            name = _vm.getStaticData().getvm_name();
+            _vm.getStaticData().setVmName(node.InnerText);
+            name = _vm.getStaticData().getVmName();
         }
         node = content.SelectSingleNode("TemplateId");
         if (node != null) {
             if (!StringHelper.isNullOrEmpty(node.InnerText)) {
-                _vm.getStaticData().setvmt_guid(new Guid(node.InnerText));
+                _vm.getStaticData().setVmtGuid(new Guid(node.InnerText));
             }
         }
         node = content.SelectSingleNode("TemplateName");
@@ -159,15 +159,15 @@ public class OvfVmReader extends OvfReader {
         }
         node = content.SelectSingleNode("IsInitilized");
         if (node != null) {
-            _vm.getStaticData().setis_initialized(Boolean.parseBoolean(node.InnerText));
+            _vm.getStaticData().setInitialized(Boolean.parseBoolean(node.InnerText));
         }
         node = content.SelectSingleNode("TimeZone");
         if (node != null) {
-            _vm.getStaticData().settime_zone(node.InnerText);
+            _vm.getStaticData().setTimeZone(node.InnerText);
         }
         node = content.SelectSingleNode("IsStateless");
         if (node != null) {
-            _vm.getStaticData().setis_stateless(Boolean.parseBoolean(node.InnerText));
+            _vm.getStaticData().setStateless(Boolean.parseBoolean(node.InnerText));
         }
         node = content.SelectSingleNode("quota_id");
         if (node != null) {

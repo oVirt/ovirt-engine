@@ -112,8 +112,8 @@ public class BackendTemplateResource
         @Override
         public VdcActionParametersBase getParameters(Template incoming, VmTemplate entity) {
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
-            updated.setusb_policy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getusb_policy(),
-                    lookupCluster(updated.getvds_group_id())));
+            updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
+                    lookupCluster(updated.getVdsGroupId())));
 
             return new UpdateVmTemplateParameters(updated);
         }

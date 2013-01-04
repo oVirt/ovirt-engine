@@ -30,8 +30,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private ArrayList<DiskImage> images;
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
-    private Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
-    private List<VmDevice> vmUnManagedDeviceList = new ArrayList<VmDevice>();
+    private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
+    private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
 
     @Id
     @GeneratedValue(generator = "system-uuid")
@@ -42,7 +42,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Column(name = "vds_group_id")
     @Type(type = "guid")
-    private Guid vds_group_id;
+    private Guid vdsGroupId;
 
     private VmOsType mOs = VmOsType.Unassigned;
 
@@ -86,7 +86,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private UsbPolicy usbPolicy = UsbPolicy.DISABLED;
 
     @Column(name = "fail_back", nullable = false)
-    private boolean fail_back;
+    private boolean failBack;
 
     @Column(name = "default_boot_sequence", nullable = false)
     @Enumerated
@@ -170,15 +170,15 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Column(name = "dedicated_vm_for_vds")
     @Type(type = "guid")
-    private NGuid dedicated_vm_for_vds;
+    private NGuid dedicatedVmForVds;
 
     @Column(name = "default_display_type")
     @Enumerated
     protected DisplayType defaultDisplayType = DisplayType.qxl;
 
     public VmBase(Guid id,
-            Guid vds_group_id,
-            VmOsType mOs,
+            Guid vdsGroupId,
+            VmOsType os,
             Date creationDate,
             String description,
             int memSizeMB,
@@ -189,7 +189,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
             String timezone,
             VmType vmType,
             UsbPolicy usbPolicy,
-            boolean fail_back,
+            boolean failBack,
             BootSequence defaultBootSequence,
             int niceLevel,
             boolean autosuspend,
@@ -206,8 +206,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
             boolean deleteProtected) {
         super();
         this.id = id;
-        this.vds_group_id = vds_group_id;
-        this.mOs = mOs;
+        this.vdsGroupId = vdsGroupId;
+        this.mOs = os;
         this.creationDate = creationDate;
         this.description = description;
         this.memSizeMB = memSizeMB;
@@ -218,7 +218,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.timezone = timezone;
         this.vmType = vmType;
         this.usbPolicy = usbPolicy;
-        this.fail_back = fail_back;
+        this.failBack = failBack;
         this.defaultBootSequence = defaultBootSequence;
         this.niceLevel = niceLevel;
         this.autosuspend = autosuspend;
@@ -263,24 +263,24 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         return diskList;
     }
 
-    public Map<Guid, VmDevice> getManagedVmDeviceMap() {
-        return vmManagedDeviceMap;
+    public Map<Guid, VmDevice> getManagedDeviceMap() {
+        return managedDeviceMap;
     }
 
     public void setManagedDeviceMap(Map<Guid, VmDevice> map) {
-        this.vmManagedDeviceMap = map;
+        this.managedDeviceMap = map;
     }
 
     public List<VmDevice> getUnmanagedDeviceList() {
-        return vmUnManagedDeviceList;
+        return unmanagedDeviceList;
     }
 
     public void setUnmanagedDeviceList(List<VmDevice> list) {
-        this.vmUnManagedDeviceList = list;
+        this.unmanagedDeviceList = list;
     }
 
-    public int getnum_of_cpus() {
-        return this.getcpu_per_socket() * this.getnum_of_sockets();
+    public int getNumOfCpus() {
+        return this.getCpuPerSocket() * this.getNumOfSockets();
     }
 
     @Override
@@ -293,209 +293,209 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.id = value;
     }
 
-    public Guid getvds_group_id() {
-        return vds_group_id;
+    public Guid getVdsGroupId() {
+        return vdsGroupId;
     }
 
-    public void setvds_group_id(Guid value) {
-        this.vds_group_id = value;
+    public void setVdsGroupId(Guid value) {
+        this.vdsGroupId = value;
     }
 
-    public VmOsType getos() {
+    public VmOsType getOs() {
         return mOs;
     }
 
-    public void setos(VmOsType value) {
+    public void setOs(VmOsType value) {
         mOs = value;
     }
 
     @Deprecated
     public VmOsType getOsType() {
-        return getos();
+        return getOs();
     }
 
     @Deprecated
     public void setOsType(VmOsType value) {
-        setos(value);
+        setOs(value);
     }
 
-    public Date getcreation_date() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setcreation_date(Date value) {
+    public void setCreationDate(Date value) {
         this.creationDate = value;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setdescription(String value) {
+    public void setDescription(String value) {
         this.description = value;
     }
 
-    public int getmem_size_mb() {
+    public int getMemSizeMb() {
         return memSizeMB;
     }
 
-    public void setmem_size_mb(int value) {
+    public void setMemSizeMb(int value) {
         this.memSizeMB = value;
     }
 
-    public int getnum_of_sockets() {
+    public int getNumOfSockets() {
         return numOfSockets;
     }
 
-    public void setnum_of_sockets(int value) {
+    public void setNumOfSockets(int value) {
         this.numOfSockets = value;
     }
 
-    public int getcpu_per_socket() {
+    public int getCpuPerSocket() {
         return cpusPerSocket;
     }
 
-    public void setcpu_per_socket(int value) {
+    public void setCpuPerSocket(int value) {
         this.cpusPerSocket = value;
     }
 
-    public int getnum_of_monitors() {
+    public int getNumOfMonitors() {
         return numOfMonitors;
     }
 
-    public void setnum_of_monitors(int value) {
+    public void setNumOfMonitors(int value) {
         numOfMonitors = value;
     }
 
-    public String getdomain() {
+    public String getDomain() {
         return domain;
     }
 
-    public void setdomain(String value) {
+    public void setDomain(String value) {
         domain = value;
     }
 
-    public String gettime_zone() {
+    public String getTimeZone() {
         return timezone;
     }
 
-    public void settime_zone(String value) {
+    public void setTimeZone(String value) {
         timezone = value;
     }
 
-    public VmType getvm_type() {
+    public VmType getVmType() {
         return vmType;
     }
 
-    public void setvm_type(VmType value) {
+    public void setVmType(VmType value) {
         vmType = value;
     }
 
-    public UsbPolicy getusb_policy() {
+    public UsbPolicy getUsbPolicy() {
         return usbPolicy;
     }
 
-    public void setusb_policy(UsbPolicy value) {
+    public void setUsbPolicy(UsbPolicy value) {
         usbPolicy = value;
     }
 
-    public boolean getfail_back() {
-        return fail_back;
+    public boolean isFailBack() {
+        return failBack;
     }
 
-    public void setfail_back(boolean value) {
-        fail_back = value;
+    public void setFailBack(boolean value) {
+        failBack = value;
     }
 
-    public BootSequence getdefault_boot_sequence() {
+    public BootSequence getDefaultBootSequence() {
         return defaultBootSequence;
     }
 
-    public void setdefault_boot_sequence(BootSequence value) {
+    public void setDefaultBootSequence(BootSequence value) {
         defaultBootSequence = value;
     }
 
-    public int getnice_level() {
+    public int getNiceLevel() {
         return niceLevel;
     }
 
-    public void setnice_level(int value) {
+    public void setNiceLevel(int value) {
         niceLevel = value;
     }
 
-    public boolean getis_auto_suspend() {
+    public boolean isAutoSuspend() {
         return autosuspend;
     }
 
-    public void setis_auto_suspend(boolean value) {
+    public void setAutoSuspend(boolean value) {
         autosuspend = value;
     }
 
-    public int getpriority() {
+    public int getPriority() {
         return priority;
     }
 
-    public void setpriority(int value) {
+    public void setPriority(int value) {
         priority = value;
     }
 
-    public boolean getauto_startup() {
+    public boolean isAutoStartup() {
         return autoStartup;
     }
 
-    public void setauto_startup(boolean value) {
+    public void setAutoStartup(boolean value) {
         autoStartup = value;
     }
 
-    public boolean getis_stateless() {
+    public boolean isStateless() {
         return stateless;
     }
 
-    public void setis_stateless(boolean value) {
+    public void setStateless(boolean value) {
         stateless = value;
     }
 
-    public String getiso_path() {
+    public String getIsoPath() {
         return isoPath;
     }
 
-    public void setiso_path(String value) {
+    public void setIsoPath(String value) {
         isoPath = value;
     }
 
-    public OriginType getorigin() {
+    public OriginType getOrigin() {
         return origin;
     }
 
-    public void setorigin(OriginType value) {
+    public void setOrigin(OriginType value) {
         origin = value;
     }
 
-    public String getkernel_url() {
+    public String getKernelUrl() {
         return kernelUrl;
     }
 
-    public void setkernel_url(String value) {
+    public void setKernelUrl(String value) {
         kernelUrl = value;
     }
 
-    public String getkernel_params() {
+    public String getKernelParams() {
         return kernelParams;
     }
 
-    public void setkernel_params(String value) {
+    public void setKernelParams(String value) {
         kernelParams = value;
     }
 
-    public String getinitrd_url() {
+    public String getInitrdUrl() {
         return initrdUrl;
     }
 
-    public void setinitrd_url(String value) {
+    public void setInitrdUrl(String value) {
         initrdUrl = value;
     }
 
-    public boolean getAllowConsoleReconnect() {
+    public boolean isAllowConsoleReconnect() {
         return allowConsoleReconnect;
     }
 
@@ -538,7 +538,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
-        result = prime * result + (fail_back ? 1231 : 1237);
+        result = prime * result + (failBack ? 1231 : 1237);
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
@@ -555,12 +555,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + (smartcardEnabled ? 1231 : 1237);
         result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
         result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
-        result = prime * result + ((vds_group_id == null) ? 0 : vds_group_id.hashCode());
+        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
         result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
         result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
-        result = prime * result + ((dedicated_vm_for_vds == null) ? 0 : dedicated_vm_for_vds.hashCode());
+        result = prime * result + ((dedicatedVmForVds == null) ? 0 : dedicatedVmForVds.hashCode());
 
         return result;
     }
@@ -610,7 +610,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         } else if (!domain.equals(other.domain)) {
             return false;
         }
-        if (fail_back != other.fail_back) {
+        if (failBack != other.failBack) {
             return false;
         }
         if (id == null) {
@@ -688,11 +688,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         if (usbPolicy != other.usbPolicy) {
             return false;
         }
-        if (vds_group_id == null) {
-            if (other.vds_group_id != null) {
+        if (vdsGroupId == null) {
+            if (other.vdsGroupId != null) {
                 return false;
             }
-        } else if (!vds_group_id.equals(other.vds_group_id)) {
+        } else if (!vdsGroupId.equals(other.vdsGroupId)) {
             return false;
         }
         if (vmType != other.vmType) {
@@ -706,12 +706,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         if (allowConsoleReconnect != other.allowConsoleReconnect) {
             return false;
         }
-        if (dedicated_vm_for_vds == null) {
-            if (other.dedicated_vm_for_vds != null) {
+        if (dedicatedVmForVds == null) {
+            if (other.dedicatedVmForVds != null) {
                 return false;
             }
         } else {
-            if (!dedicated_vm_for_vds.equals(other.dedicated_vm_for_vds)) {
+            if (!dedicatedVmForVds.equals(other.dedicatedVmForVds)) {
                 return false;
             }
         }
@@ -741,7 +741,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         return isQuotaDefault;
     }
 
-    public void setIsQuotaDefault(boolean isQuotaDefault) {
+    public void setQuotaDefault(boolean isQuotaDefault) {
         this.isQuotaDefault = isQuotaDefault;
     }
 
@@ -761,19 +761,19 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.migrationSupport = migrationSupport;
     }
 
-    public NGuid getdedicated_vm_for_vds() {
-        return dedicated_vm_for_vds;
+    public NGuid getDedicatedVmForVds() {
+        return dedicatedVmForVds;
     }
 
-    public void setdedicated_vm_for_vds(NGuid value) {
-        dedicated_vm_for_vds = value;
+    public void setDedicatedVmForVds(NGuid value) {
+        dedicatedVmForVds = value;
     }
 
-    public DisplayType getdefault_display_type() {
+    public DisplayType getDefaultDisplayType() {
         return defaultDisplayType;
     }
 
-    public void setdefault_display_type(DisplayType value) {
+    public void setDefaultDisplayType(DisplayType value) {
         defaultDisplayType = value;
     }
 

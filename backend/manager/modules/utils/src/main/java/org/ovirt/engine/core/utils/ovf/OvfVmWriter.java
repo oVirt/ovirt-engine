@@ -31,19 +31,19 @@ public class OvfVmWriter extends OvfWriter {
     protected void writeGeneralData() {
         super.writeGeneralData();
         _writer.WriteStartElement("Name");
-        _writer.WriteRaw(_vm.getStaticData().getvm_name());
+        _writer.WriteRaw(_vm.getStaticData().getVmName());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateId");
-        _writer.WriteRaw(_vm.getStaticData().getvmt_guid().toString());
+        _writer.WriteRaw(_vm.getStaticData().getVmtGuid().toString());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateName");
         _writer.WriteRaw(_vm.getVmtName());
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsInitilized");
-        _writer.WriteRaw(String.valueOf(_vm.getStaticData().getis_initialized()));
+        _writer.WriteRaw(String.valueOf(_vm.getStaticData().isInitialized()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("IsStateless");
-        _writer.WriteRaw(String.valueOf(vmBase.getis_stateless()));
+        _writer.WriteRaw(String.valueOf(vmBase.isStateless()));
         _writer.WriteEndElement();
         _writer.WriteStartElement("Origin");
         _writer.WriteRaw(String.valueOf(_vm.getOrigin().getValue()));
@@ -129,7 +129,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw("Guest Operating System");
         _writer.WriteEndElement();
         _writer.WriteStartElement("Description");
-        _writer.WriteRaw(vmBase.getos().name());
+        _writer.WriteRaw(vmBase.getOs().name());
         _writer.WriteEndElement();
         _writer.WriteEndElement();
 
@@ -137,8 +137,8 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("Section");
         _writer.WriteAttributeString(XSI_URI, "type", "ovf:VirtualHardwareSection_Type");
         _writer.WriteStartElement("Info");
-        _writer.WriteRaw(String.format("%1$s CPU, %2$s Memeory", _vm.getStaticData().getnum_of_cpus(), _vm
-                .getStaticData().getmem_size_mb()));
+        _writer.WriteRaw(String.format("%1$s CPU, %2$s Memeory", _vm.getStaticData().getNumOfCpus(), _vm
+                .getStaticData().getMemSizeMb()));
         _writer.WriteEndElement();
 
         _writer.WriteStartElement("System");
@@ -151,7 +151,7 @@ public class OvfVmWriter extends OvfWriter {
         // item cpu
         _writer.WriteStartElement("Item");
         _writer.WriteStartElement(RASD_URI, "Caption");
-        _writer.WriteRaw(String.format("%1$s virtual cpu", _vm.getStaticData().getnum_of_cpus()));
+        _writer.WriteRaw(String.format("%1$s virtual cpu", _vm.getStaticData().getNumOfCpus()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Number of virtual CPU");
@@ -163,17 +163,17 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.CPU);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "num_of_sockets");
-        _writer.WriteRaw(String.valueOf(vmBase.getnum_of_sockets()));
+        _writer.WriteRaw(String.valueOf(vmBase.getNumOfSockets()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "cpu_per_socket");
-        _writer.WriteRaw(String.valueOf(vmBase.getcpu_per_socket()));
+        _writer.WriteRaw(String.valueOf(vmBase.getCpuPerSocket()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
         // item memory
         _writer.WriteStartElement("Item");
         _writer.WriteStartElement(RASD_URI, "Caption");
-        _writer.WriteRaw(String.format("%1$s MB of memory", vmBase.getmem_size_mb()));
+        _writer.WriteRaw(String.format("%1$s MB of memory", vmBase.getMemSizeMb()));
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "Description");
         _writer.WriteRaw("Memory Size");
@@ -188,7 +188,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw("MegaBytes");
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "VirtualQuantity");
-        _writer.WriteRaw(String.valueOf(vmBase.getmem_size_mb()));
+        _writer.WriteRaw(String.valueOf(vmBase.getMemSizeMb()));
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 
@@ -296,7 +296,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteRaw(OvfHardware.USB);
         _writer.WriteEndElement();
         _writer.WriteStartElement(RASD_URI, "UsbPolicy");
-        _writer.WriteRaw(vmBase.getusb_policy() != null ? vmBase.getusb_policy().toString() : UsbPolicy.DISABLED.name());
+        _writer.WriteRaw(vmBase.getUsbPolicy() != null ? vmBase.getUsbPolicy().toString() : UsbPolicy.DISABLED.name());
         _writer.WriteEndElement();
         _writer.WriteEndElement(); // item
 

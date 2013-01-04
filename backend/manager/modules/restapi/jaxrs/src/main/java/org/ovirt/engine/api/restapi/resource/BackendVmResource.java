@@ -236,7 +236,7 @@ public class BackendVmResource extends
                                                                         VdcQueryType.GetVmByVmId,
                                                                         new GetVmByVmIdParameters(guid),
                                                                         "VM");
-        if(vm.getVmOs().isWindows() && vm.getIsFirstRun()) {
+        if(vm.getVmOs().isWindows() && vm.isFirstRun()) {
             params.setReinitialize(true);
         }
         return params;
@@ -384,8 +384,8 @@ public class BackendVmResource extends
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());
 
-            updated.setusb_policy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
-                    lookupCluster(updated.getvds_group_id())));
+            updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
+                    lookupCluster(updated.getVdsGroupId())));
 
             VmManagementParametersBase params = new VmManagementParametersBase(updated);
 

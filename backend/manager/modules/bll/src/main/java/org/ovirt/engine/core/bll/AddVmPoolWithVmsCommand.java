@@ -36,7 +36,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
 
-        if (returnValue && VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVmStaticData().getvmt_guid())) {
+        if (returnValue && VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVmStaticData().getVmtGuid())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_FROM_BLANK_TEMPLATE);
 
@@ -70,7 +70,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getvds_group_id(),
+        permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
         permissionList.add(new PermissionSubject(getVmTemplateId(), VdcObjectType.VmTemplate,

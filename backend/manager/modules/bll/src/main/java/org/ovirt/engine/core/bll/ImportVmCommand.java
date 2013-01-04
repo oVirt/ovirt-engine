@@ -86,9 +86,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
-    private List<Guid> diskGuidList = new ArrayList<Guid>();
-    private List<Guid> imageGuidList = new ArrayList<Guid>();
-    private List<String> macsAdded = new ArrayList<String>();
+    private final List<Guid> diskGuidList = new ArrayList<Guid>();
+    private final List<Guid> imageGuidList = new ArrayList<Guid>();
+    private final List<String> macsAdded = new ArrayList<String>();
 
     public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
@@ -358,7 +358,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
         if (duplicateVm != null) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getvm_name()));
+            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getVmName()));
             return false;
         }
         return true;
@@ -809,8 +809,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         logImportEvents();
         getVm().getStaticData().setId(getVmId());
-        getVm().getStaticData().setcreation_date(new Date());
-        getVm().getStaticData().setvds_group_id(getParameters().getVdsGroupId());
+        getVm().getStaticData().setCreationDate(new Date());
+        getVm().getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
         if (getParameters().getCopyCollapse()) {
@@ -856,7 +856,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
-        String vmName = vmStaticFromOvf.getvm_name();
+        String vmName = vmStaticFromOvf.getVmName();
         AuditLogableBase logable = new AuditLogableBase();
         logable.AddCustomValue("FieldName", fieldName);
         logable.AddCustomValue("VmName", vmName);

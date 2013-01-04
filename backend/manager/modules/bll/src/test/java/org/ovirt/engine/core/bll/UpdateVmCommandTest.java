@@ -85,7 +85,7 @@ public class UpdateVmCommandTest {
         group.setcompatibility_version(Version.v3_0);
 
         vm.setVdsGroupId(group.getId());
-        vmStatic.setvds_group_id(group.getId());
+        vmStatic.setVdsGroupId(group.getId());
 
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(VdcActionType.UpdateVm);
@@ -103,7 +103,7 @@ public class UpdateVmCommandTest {
 
     @Test
     public void testLongName() {
-        vmStatic.setvm_name("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
+        vmStatic.setVmName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
         assertFalse("canDoAction should fail for too long vm name.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
@@ -136,7 +136,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testInvalidMemory() {
         prepareVmToPassCanDoAction();
-        vmStatic.setmem_size_mb(99999);
+        vmStatic.setMemSizeMb(99999);
 
         assertFalse("canDoAction should have failed with invalid memory.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_MEMORY_SIZE);
@@ -149,7 +149,7 @@ public class UpdateVmCommandTest {
         // this will cause null to return when getting vds from vdsDAO
         doReturn(vdsDAO).when(command).getVdsDAO();
 
-        vmStatic.setdedicated_vm_for_vds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
@@ -163,7 +163,7 @@ public class UpdateVmCommandTest {
         vds.setvds_group_id(Guid.NewGuid());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        vmStatic.setdedicated_vm_for_vds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
@@ -177,7 +177,7 @@ public class UpdateVmCommandTest {
         vds.setvds_group_id(group.getId());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        vmStatic.setdedicated_vm_for_vds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
@@ -185,7 +185,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testInvalidNumberOfMonitors() {
         prepareVmToPassCanDoAction();
-        vmStatic.setnum_of_monitors(99);
+        vmStatic.setNumOfMonitors(99);
 
         assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
@@ -202,7 +202,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testUpdateFieldsQutoaDefault() {
         vm.setIsQuotaDefault(true);
-        vmStatic.setIsQuotaDefault(false);
+        vmStatic.setQuotaDefault(false);
 
         assertTrue("Quota default should be updatable", command.areUpdatedFieldsLegal());
     }
@@ -210,15 +210,15 @@ public class UpdateVmCommandTest {
     @Test
     public void testChangeClusterForbidden() {
         prepareVmToPassCanDoAction();
-        vmStatic.setvds_group_id(Guid.NewGuid());
+        vmStatic.setVdsGroupId(Guid.NewGuid());
 
         assertFalse("canDoAction should have failed with cant change cluster.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
     }
 
     private void prepareVmToPassCanDoAction() {
-        vmStatic.setvm_name("vm1");
-        vmStatic.setmem_size_mb(256);
+        vmStatic.setVmName("vm1");
+        vmStatic.setMemSizeMb(256);
         mockVmDaoGetVm();
         mockSameNameQuery(false);
         mockValidateCustomProperties();
