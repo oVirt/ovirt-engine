@@ -9,13 +9,13 @@ import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
-public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetManagementInterfaceAddressByVmIdQuery<GetVmByVmIdParameters>> {
+public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetManagementInterfaceAddressByVmIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
         Guid vmID = Guid.NewGuid();
@@ -28,7 +28,7 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
         VdsNetworkInterface managementInterface = new VdsNetworkInterface();
         managementInterface.setAddress("my_address");
 
-        GetVmByVmIdParameters paramsMock = getQueryParameters();
+        IdQueryParameters paramsMock = getQueryParameters();
         when(paramsMock.getId()).thenReturn(vmID);
 
         InterfaceDao interfaceDAOMock = mock(InterfaceDao.class);

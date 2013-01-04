@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -515,7 +516,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         };
 
         Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
-                new GetVmByVmIdParameters(vmId),
+                new IdQueryParameters(vmId),
                 _asyncQuery);
     }
 

@@ -3,11 +3,11 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class GetManagementInterfaceAddressByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetManagementInterfaceAddressByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetManagementInterfaceAddressByVmIdQuery(P parameters) {
         super(parameters);

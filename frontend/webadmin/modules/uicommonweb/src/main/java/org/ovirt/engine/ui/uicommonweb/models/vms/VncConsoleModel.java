@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -73,7 +73,7 @@ public class VncConsoleModel extends ConsoleModel
                             };
 
                             Frontend.RunQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
-                                    new GetVmByVmIdParameters(getEntity().getId()), _asyncQuery);
+                                    new IdQueryParameters(getEntity().getId()), _asyncQuery);
                         }
                         else {
                             postGetHost(getEntity().getDisplayIp());
