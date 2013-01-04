@@ -76,8 +76,10 @@ import com.google.gwt.view.client.SelectionModel;
  *            Table row data type.
  */
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T>, HasResizableColumns<T> {
+
     // Minimum width of a column used with column resizing, in pixels
     private static final int RESIZE_MINIMUM_COLUMN_WIDTH = 30;
+
     // Click event type
     private static final String CLICK = "click"; //$NON-NLS-1$
 
@@ -117,7 +119,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private Column<T, ?> emptyNoWidthColumn;
 
     // Table container's horizontal scroll position, used to align table header with main table
-    private int tableContainerScrollPosition = 0;
+    private int tableContainerHorizontalScrollPosition = 0;
+
+    // Table container's vertical scroll position, used to retain table scroll position after data refresh
+    private int tableContainerVerticalScrollPosition = 0;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus) {
@@ -167,6 +172,13 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
                 updateTableControls();
+
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                     @Override
+                     public void execute() {
+                         tableContainer.getElement().setScrollTop(tableContainerVerticalScrollPosition);
+                     }
+                });
             }
 
             @Override
@@ -342,7 +354,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         tableContainer.addDomHandler(new ScrollHandler() {
             @Override
             public void onScroll(ScrollEvent event) {
-                tableContainerScrollPosition = tableContainer.getElement().getScrollLeft();
+                tableContainerHorizontalScrollPosition = tableContainer.getElement().getScrollLeft();
+                tableContainerVerticalScrollPosition = tableContainer.getElement().getScrollTop();
                 updateTableHeaderPosition();
             }
         }, ScrollEvent.getType());
@@ -352,17 +365,17 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     }
 
     void enforceScrollPosition() {
-        tableContainer.getElement().setScrollLeft(tableContainerScrollPosition);
+        tableContainer.getElement().setScrollLeft(tableContainerHorizontalScrollPosition);
         updateTableHeaderPosition();
     }
 
     void updateTableHeaderPosition() {
-        tableHeader.getElement().getStyle().setLeft(-tableContainerScrollPosition, Unit.PX);
+        tableHeader.getElement().getStyle().setLeft(-tableContainerHorizontalScrollPosition, Unit.PX);
     }
 
     @Override
     public void resetScrollPosition() {
-        tableContainerScrollPosition = 0;
+        tableContainerHorizontalScrollPosition = 0;
         enforceScrollPosition();
     }
 
