@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworkResourceTest
@@ -41,8 +41,8 @@ public class BackendClusterNetworkResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                     VdsGroupQueryParamenters.class,
-                                     new String[] { "VdsGroupId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { CLUSTER_ID },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -110,8 +110,8 @@ public class BackendClusterNetworkResourceTest
     protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isRequired) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                         VdsGroupQueryParamenters.class,
-                                         new String[] { "VdsGroupId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },
                                          getEntityList(isDisplay, isRequired));
         }

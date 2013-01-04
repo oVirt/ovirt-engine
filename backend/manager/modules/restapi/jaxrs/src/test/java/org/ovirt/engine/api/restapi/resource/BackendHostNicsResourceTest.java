@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResourceTest
@@ -530,8 +530,8 @@ public class BackendHostNicsResourceTest
             network.setName("orcus");
             networks.add(network);
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    VdsGroupQueryParamenters.class,
-                    new String[] { "VdsGroupId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     networks);
         }

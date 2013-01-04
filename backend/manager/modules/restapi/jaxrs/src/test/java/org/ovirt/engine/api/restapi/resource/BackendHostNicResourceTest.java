@@ -32,8 +32,8 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistic
 import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicResourceTest
@@ -248,8 +248,8 @@ public class BackendHostNicResourceTest
     private void setupGetNetworkExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    VdsGroupQueryParamenters.class,
-                    new String[] { "VdsGroupId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     getNetworksModel());
         }
@@ -493,8 +493,8 @@ public class BackendHostNicResourceTest
             network.setName("orcus");
             networks.add(network);
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    VdsGroupQueryParamenters.class,
-                    new String[] { "VdsGroupId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     networks);
         }

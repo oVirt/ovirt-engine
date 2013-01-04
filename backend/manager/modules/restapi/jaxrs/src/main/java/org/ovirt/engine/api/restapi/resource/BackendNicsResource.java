@@ -13,9 +13,9 @@ import org.ovirt.engine.api.model.PortMirroring;
 import org.ovirt.engine.api.resource.DevicesResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendNicsResource
@@ -49,7 +49,7 @@ public abstract class BackendNicsResource
         Guid clusterId = getClusterId();
         List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
              VdcQueryType.GetAllNetworksByClusterId,
-             new VdsGroupQueryParamenters(clusterId));
+             new IdQueryParameters(clusterId));
         for (VmNetworkInterface entity : entities) {
             org.ovirt.engine.core.common.businessentities.network.Network network = null;
             if (entity.getNetworkName() != null) {
@@ -121,7 +121,7 @@ public abstract class BackendNicsResource
     protected org.ovirt.engine.core.common.businessentities.network.Network getClusterNetwork(Guid clusterId, Guid id, String name) {
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
                                                    VdcQueryType.GetAllNetworksByClusterId,
-                                                   new VdsGroupQueryParamenters(clusterId))) {
+                                                   new IdQueryParameters(clusterId))) {
             if ((id != null && id.equals(entity.getId())) ||
                 (name != null && name.equals(entity.getName()))) {
                 return entity;

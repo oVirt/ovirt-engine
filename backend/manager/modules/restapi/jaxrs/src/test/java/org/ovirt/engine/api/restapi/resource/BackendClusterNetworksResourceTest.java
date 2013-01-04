@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksResourceTest<BackendClusterNetworksResource> {
@@ -30,8 +30,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                     VdsGroupQueryParamenters.class,
-                                     new String[] { "VdsGroupId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { CLUSTER_ID },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -102,8 +102,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
                                   true,
                                   null,
                                   VdcQueryType.GetAllNetworksByClusterId,
-                                  VdsGroupQueryParamenters.class,
-                                  new String[] { "VdsGroupId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { CLUSTER_ID },
                                   asList(getEntity(0)));
         Network model = getModel(0);
@@ -179,8 +179,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                                         VdsGroupQueryParamenters.class,
-                                         new String[] { "VdsGroupId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },
                                          getEntityList(),
                                          failure);

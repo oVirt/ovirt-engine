@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -154,7 +154,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
         };
 
-        VdsGroupQueryParamenters tempVar = new VdsGroupQueryParamenters(getEntity().getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, tempVar, _asyncQuery);
     }
@@ -165,7 +165,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworksByClusterId,
-                new VdsGroupQueryParamenters(getEntity().getId())));
+                new IdQueryParameters(getEntity().getId())));
         setItems(getAsyncResult().getData());
     }
 

@@ -10,12 +10,12 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<VdsGroupQueryParamenters, GetAllNetworksByClusterIdQuery<? extends VdsGroupQueryParamenters>> {
+public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetAllNetworksByClusterIdQuery<? extends IdQueryParameters>> {
 
     /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
     @Test
@@ -30,7 +30,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Vd
         DbFacade dbFacade = getDbFacadeMockInstance();
         when(dbFacade.getNetworkDao()).thenReturn(networkDAOMock);
 
-        when(getQueryParameters().getVdsGroupId()).thenReturn(clusterID);
+        when(getQueryParameters().getId()).thenReturn(clusterID);
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")

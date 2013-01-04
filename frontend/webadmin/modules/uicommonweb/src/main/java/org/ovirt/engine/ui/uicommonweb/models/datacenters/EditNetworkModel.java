@@ -11,10 +11,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -109,7 +109,7 @@ public class EditNetworkModel extends NetworkModel {
         for (VDSGroup vdsGroup : clusterList)
         {
             queryTypeList.add(VdcQueryType.GetAllNetworksByClusterId);
-            parametersList.add(new VdsGroupQueryParamenters(vdsGroup.getId()));
+            parametersList.add(new IdQueryParameters(vdsGroup.getId()));
             NetworkClusterModel tempVar = new NetworkClusterModel(vdsGroup);
             tempVar.setAttached(false);
             items.add(tempVar);

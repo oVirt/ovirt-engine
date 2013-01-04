@@ -36,7 +36,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResourceTest
@@ -276,8 +275,8 @@ public class BackendVmNicResourceTest
     protected void setGetNetworksQueryExpectations(int times, List<org.ovirt.engine.core.common.businessentities.network.Network> networks) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                    VdsGroupQueryParamenters.class,
-                    new String[] { "VdsGroupId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { GUIDS[0] },
                     networks);
         }

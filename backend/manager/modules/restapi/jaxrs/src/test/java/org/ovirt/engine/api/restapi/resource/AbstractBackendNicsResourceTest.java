@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.compat.Guid;
 
 @Ignore
@@ -158,8 +157,8 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
                 network.setName("orcus");
                 networks.add(network);
                 setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
-                        VdsGroupQueryParamenters.class,
-                        new String[] { "VdsGroupId" },
+                        IdQueryParameters.class,
+                        new String[] { "Id" },
                         new Object[] { GUIDS[0] },
                         networks);
             }

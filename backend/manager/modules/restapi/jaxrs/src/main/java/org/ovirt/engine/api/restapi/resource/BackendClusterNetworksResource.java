@@ -8,7 +8,6 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
-
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -16,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdsGroupQueryParamenters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -49,7 +48,7 @@ public class BackendClusterNetworksResource
 
     @Override
     protected VdcQueryParametersBase getQueryParameters() {
-        return new VdsGroupQueryParamenters(asGuid(clusterId));
+        return new IdQueryParameters(asGuid(clusterId));
     }
 
     @Override
