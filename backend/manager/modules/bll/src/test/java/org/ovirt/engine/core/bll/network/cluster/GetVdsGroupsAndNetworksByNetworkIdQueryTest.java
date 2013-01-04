@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -24,8 +24,8 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
  * to the DAO}). The internal workings of the DAO are not tested.
  */
 public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
-        extends AbstractQueryTest<NetworkIdParameters,
-        GetVdsGroupsAndNetworksByNetworkIdQuery<NetworkIdParameters>> {
+        extends AbstractQueryTest<IdQueryParameters,
+        GetVdsGroupsAndNetworksByNetworkIdQuery<IdQueryParameters>> {
 
     private Guid networkId = Guid.NewGuid();
     private Guid storagePoolId = Guid.NewGuid();
@@ -37,7 +37,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
-        when(params.getNetworkId()).thenReturn(networkId);
+        when(params.getId()).thenReturn(networkId);
 
         network.setId(networkId);
         network.setDataCenterId(storagePoolId);
@@ -54,7 +54,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         List<PairQueryable<VDSGroup, NetworkCluster>> expected = Collections.singletonList(networkClusterPair);
 
         // Run the query
-        GetVdsGroupsAndNetworksByNetworkIdQuery<NetworkIdParameters> query = getQuery();
+        GetVdsGroupsAndNetworksByNetworkIdQuery<IdQueryParameters> query = getQuery();
         query.executeQueryCommand();
 
         // Assert the result

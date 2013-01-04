@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -231,9 +231,9 @@ public class NetworkClusterListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
-        networkIdParams.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, networkIdParams, asyncQuery);
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
+        params.setRefresh(getIsQueryFirstTime());
+        Frontend.RunQuery(VdcQueryType.GetVdsGroupsAndNetworksByNetworkId, params, asyncQuery);
     }
 
     @Override
