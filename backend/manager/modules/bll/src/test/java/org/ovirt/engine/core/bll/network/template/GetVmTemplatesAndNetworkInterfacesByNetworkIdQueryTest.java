@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
@@ -22,8 +22,8 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
  * delegates properly to the DAO}). The internal workings of the DAO are not tested.
  */
 public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQueryTest
-extends AbstractQueryTest<NetworkIdParameters,
-GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<NetworkIdParameters>> {
+        extends AbstractQueryTest<IdQueryParameters,
+        GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<IdQueryParameters>> {
 
     private Guid networkId = Guid.NewGuid();
     private Guid vmTemplateId = Guid.NewGuid();
@@ -33,7 +33,7 @@ GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<NetworkIdParameters>> {
     @Test
     public void testExecuteQueryCommand() {
         // Setup the query parameters
-        when(params.getNetworkId()).thenReturn(networkId);
+        when(params.getId()).thenReturn(networkId);
 
         vmTemplate.setId(vmTemplateId);
         vmNetworkInterface.setVmTemplateId(vmTemplateId);

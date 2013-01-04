@@ -8,7 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
@@ -122,10 +122,10 @@ public class NetworkTemplateListModel extends SearchableListModel
             }
         };
 
-        NetworkIdParameters networkIdParams = new NetworkIdParameters(getEntity().getId());
-        networkIdParams.setRefresh(getIsQueryFirstTime());
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
+        params.setRefresh(getIsQueryFirstTime());
 
-        Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, networkIdParams, asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, asyncQuery);
     }
 
     @Override

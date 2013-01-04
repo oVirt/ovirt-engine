@@ -8,14 +8,14 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.NetworkIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * A query to retrieve all VmTemplate-Network Interface pairs that the given Network is attached to.
  */
-public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<P extends NetworkIdParameters> extends QueriesCommandBase<P> {
+public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery(P parameters) {
         super(parameters);
     }
@@ -23,9 +23,9 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<P extends Networ
     @Override
     protected void executeQueryCommand() {
         List<VmTemplate> vmTemplateList = getDbFacade().getVmTemplateDao()
-                .getAllForNetwork(getParameters().getNetworkId());
+                .getAllForNetwork(getParameters().getId());
         List<VmNetworkInterface> vmNetworkInterfaceList = getDbFacade().getVmNetworkInterfaceDao()
-                .getAllForTemplatesByNetwork(getParameters().getNetworkId());
+                .getAllForTemplatesByNetwork(getParameters().getId());
 
         final Map<Guid, VmTemplate> vmTemplatesById = Entities.businessEntitiesById(vmTemplateList);
 
