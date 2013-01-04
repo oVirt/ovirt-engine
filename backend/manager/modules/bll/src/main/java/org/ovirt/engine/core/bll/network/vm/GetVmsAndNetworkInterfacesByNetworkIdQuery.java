@@ -24,9 +24,9 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
     @Override
     protected void executeQueryCommand() {
         List<VM> vmList = getDbFacade().getVmDao()
-                .getAllForNetwork(getParameters().getNetworkId());
+                .getAllForNetwork(getParameters().getId());
         List<VmNetworkInterface> vmNetworkInterfaceList = getDbFacade().getVmNetworkInterfaceDao()
-                .getAllForNetwork(getParameters().getNetworkId());
+                .getAllForNetwork(getParameters().getId());
 
         final Map<Guid, VM> vmsById = Entities.businessEntitiesById(vmList);
 

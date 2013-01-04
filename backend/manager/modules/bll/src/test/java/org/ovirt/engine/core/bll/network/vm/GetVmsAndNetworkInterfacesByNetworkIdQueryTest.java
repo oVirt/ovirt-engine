@@ -43,7 +43,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
 
     private void expectAndTestForVmAndInterface() {
         // Set up the query parameters
-        when(params.getNetworkId()).thenReturn(networkId);
+        when(params.getId()).thenReturn(networkId);
 
         vm.setId(vmId);
         vmNetworkInterface.setVmId(vmId);

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmsAndNetworkInterfacesByNetworkIdParameters extends NetworkIdParameters {
+public class GetVmsAndNetworkInterfacesByNetworkIdParameters extends IdQueryParameters {
 
     private static final long serialVersionUID = -3306070454507733795L;
 
