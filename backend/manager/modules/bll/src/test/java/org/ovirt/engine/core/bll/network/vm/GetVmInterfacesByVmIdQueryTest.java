@@ -6,13 +6,13 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 
 /** A test case for {@link GetVmInterfacesByVmIdQuery} */
-public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmByVmIdParameters, GetVmInterfacesByVmIdQuery<GetVmByVmIdParameters> > {
+public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmInterfacesByVmIdQuery<IdQueryParameters>> {
 
     /** A test that checked that all the parameters are passed properly to the DAO */
     @Test
@@ -24,7 +24,7 @@ public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<GetVmB
 
         Guid guid   = new Guid();
 
-        GetVmByVmIdParameters params = getQueryParameters();
+        IdQueryParameters params = getQueryParameters();
         when(params.getId()).thenReturn(guid);
 
         GetVmInterfacesByVmIdQuery<?> query = getQuery();

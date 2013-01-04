@@ -1858,7 +1858,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new GetVmByVmIdParameters(id), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
     }
 
     public static void GetVmDiskList(AsyncQuery aQuery, Guid id) {

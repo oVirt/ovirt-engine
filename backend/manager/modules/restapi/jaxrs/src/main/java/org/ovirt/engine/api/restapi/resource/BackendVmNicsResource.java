@@ -40,7 +40,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     public BackendVmNicsResource(Guid parentId) {
         super(parentId,
               VdcQueryType.GetVmInterfacesByVmId,
-              new GetVmByVmIdParameters(parentId),
+              new IdQueryParameters(parentId),
               VdcActionType.AddVmInterface,
               VdcActionType.RemoveVmInterface,
               VdcActionType.UpdateVmInterface);

@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -42,7 +42,7 @@ public class PoolInterfaceListModel extends SearchableListModel
                         }
                         PoolInterfaceListModel poolInterfaceListModel = (PoolInterfaceListModel) model;
                         poolInterfaceListModel.SyncSearch(VdcQueryType.GetVmInterfacesByVmId,
-                                new GetVmByVmIdParameters(vm.getId()));
+                                new IdQueryParameters(vm.getId()));
                     }
                 }
             };

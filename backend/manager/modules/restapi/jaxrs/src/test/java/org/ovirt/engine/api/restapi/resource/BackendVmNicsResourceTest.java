@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVmNicsResourceTest
@@ -23,7 +24,7 @@ public class BackendVmNicsResourceTest
     public BackendVmNicsResourceTest() {
         super(new BackendVmNicsResource(PARENT_ID),
               VdcQueryType.GetVmInterfacesByVmId,
-              new GetVmByVmIdParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 
@@ -103,7 +104,7 @@ public class BackendVmNicsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetVmInterfacesByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));

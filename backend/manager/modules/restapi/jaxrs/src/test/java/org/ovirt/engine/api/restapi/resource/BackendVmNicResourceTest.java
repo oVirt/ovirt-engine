@@ -64,7 +64,7 @@ public class BackendVmNicResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<VmNetworkInterface>());
@@ -131,7 +131,7 @@ public class BackendVmNicResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<VmNetworkInterface>());
@@ -294,7 +294,7 @@ public class BackendVmNicResourceTest
         List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                     GetVmByVmIdParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      ifaces);
@@ -360,7 +360,7 @@ public class BackendVmNicResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                         GetVmByVmIdParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());
@@ -374,7 +374,7 @@ public class BackendVmNicResourceTest
     protected void setUpGetEntityExpectations(int times, VmNetworkInterface entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                       GetVmByVmIdParameters.class,
+                                       IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { PARENT_ID },
                                        entity);

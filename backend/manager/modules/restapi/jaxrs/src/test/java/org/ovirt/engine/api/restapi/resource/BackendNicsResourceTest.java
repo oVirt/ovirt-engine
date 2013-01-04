@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendNicsResourceTest
@@ -25,7 +26,7 @@ public class BackendNicsResourceTest
     public BackendNicsResourceTest() {
         super(new BackendVmNicsResource(PARENT_ID),
               VdcQueryType.GetVmInterfacesByVmId,
-              new GetVmByVmIdParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 
@@ -65,7 +66,7 @@ public class BackendNicsResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                GetVmByVmIdParameters.class,
+                IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { PARENT_ID },
                 new LinkedList<VmNetworkInterface>());
@@ -122,7 +123,7 @@ public class BackendNicsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetVmInterfacesByVmId,
-                                  GetVmByVmIdParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
@@ -212,7 +213,7 @@ public class BackendNicsResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
-                                         GetVmByVmIdParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());

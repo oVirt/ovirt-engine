@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetVmInterfacesByVmIdQuery<P extends GetVmByVmIdParameters> extends QueriesCommandBase<P> {
+public class GetVmInterfacesByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVmInterfacesByVmIdQuery(P parameters) {
         super(parameters);
     }
