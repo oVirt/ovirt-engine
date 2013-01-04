@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendTemplateNicsResourceTest
@@ -23,7 +24,7 @@ public class BackendTemplateNicsResourceTest
     public BackendTemplateNicsResourceTest() {
         super(new BackendTemplateNicsResource(PARENT_ID),
               VdcQueryType.GetTemplateInterfacesByTemplateId,
-              new GetVmTemplateParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 
@@ -51,7 +52,7 @@ public class BackendTemplateNicsResourceTest
     protected void setUpGetEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                         GetVmTemplateParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          asList(getInterface(0, null)),
@@ -100,7 +101,7 @@ public class BackendTemplateNicsResourceTest
                                   true,
                                   null,
                                   VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                  GetVmTemplateParameters.class,
+                                  IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));

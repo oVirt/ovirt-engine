@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll.network.template;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
-public class GetTemplateInterfacesByTemplateIdQuery<P extends GetVmTemplateParameters> extends QueriesCommandBase<P> {
+public class GetTemplateInterfacesByTemplateIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetTemplateInterfacesByTemplateIdQuery(P parameters) {
         super(parameters);
     }

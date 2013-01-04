@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendReadOnlyNicsResourceTest
@@ -17,9 +17,9 @@ public class BackendReadOnlyNicsResourceTest
     public BackendReadOnlyNicsResourceTest() {
         super(new BackendReadOnlyNicsResource(PARENT_ID,
                                                VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                               new GetVmTemplateParameters(PARENT_ID)),
+                                               new IdQueryParameters(PARENT_ID)),
               VdcQueryType.GetTemplateInterfacesByTemplateId,
-              new GetVmTemplateParameters(PARENT_ID),
+              new IdQueryParameters(PARENT_ID),
               "Id");
     }
 

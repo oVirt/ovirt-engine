@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,7 +25,7 @@ public class BackendTemplateNicsResource
     public BackendTemplateNicsResource(Guid parentId) {
         super(parentId,
               VdcQueryType.GetTemplateInterfacesByTemplateId,
-              new GetVmTemplateParameters(parentId),
+              new IdQueryParameters(parentId),
               VdcActionType.AddVmTemplateInterface,
               VdcActionType.RemoveVmTemplateInterface,
               VdcActionType.UpdateVmTemplateInterface);

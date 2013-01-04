@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendReadOnlyNicResourceTest
@@ -32,7 +32,7 @@ public class BackendReadOnlyNicResourceTest
     protected static BackendReadOnlyNicsResource getCollection() {
         return new BackendReadOnlyNicsResource(PARENT_ID,
                  VdcQueryType.GetTemplateInterfacesByTemplateId,
-                 new GetVmTemplateParameters(PARENT_ID));
+                 new IdQueryParameters(PARENT_ID));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BackendReadOnlyNicResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                     GetVmTemplateParameters.class,
+                                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      new ArrayList<VmNetworkInterface>());
@@ -89,7 +89,7 @@ public class BackendReadOnlyNicResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                                         GetVmTemplateParameters.class,
+                                         IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { PARENT_ID },
                                          getEntityList());

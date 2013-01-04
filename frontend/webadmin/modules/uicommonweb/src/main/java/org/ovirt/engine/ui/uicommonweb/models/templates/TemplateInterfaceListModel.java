@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -110,7 +110,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         super.SyncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                new GetVmTemplateParameters(getEntityStronglyTyped().getId()));
+                new IdQueryParameters(getEntityStronglyTyped().getId()));
     }
 
     @Override
@@ -119,7 +119,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                new GetVmTemplateParameters(getEntityStronglyTyped().getId())));
+                new IdQueryParameters(getEntityStronglyTyped().getId())));
         setItems(getAsyncResult().getData());
     }
 
