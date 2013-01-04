@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -685,7 +686,7 @@ public class HostSetupNetworksModel extends EntityModel {
         };
 
         VDS vds = (VDS) getEntity();
-        Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new GetVdsByVdsIdParameters(vds.getId()), asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new IdQueryParameters(vds.getId()), asyncQuery);
     }
 
     private void queryInterfaces() {

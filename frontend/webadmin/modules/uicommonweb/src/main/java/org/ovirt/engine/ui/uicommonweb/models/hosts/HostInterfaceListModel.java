@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Event;
@@ -1426,7 +1427,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     };
                     Frontend.RunQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
-                            new GetVdsByVdsIdParameters(host.getId()),
+                            new IdQueryParameters(host.getId()),
                             _asyncQuery1);
                 }
             }
