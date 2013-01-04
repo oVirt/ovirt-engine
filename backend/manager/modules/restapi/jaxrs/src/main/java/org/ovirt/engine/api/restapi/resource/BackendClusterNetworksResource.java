@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -82,7 +81,7 @@ public class BackendClusterNetworksResource
 
     private String getNetworkId(String networkName, String clusterId) {
             NGuid dataCenterId = getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupById, new GetVdsGroupByIdParameters(asGuid(clusterId)), null).getStoragePoolId();
-            GetAllNetworkQueryParamenters params = new GetAllNetworkQueryParamenters(asGuid(dataCenterId));
+            IdQueryParameters params = new IdQueryParameters(asGuid(dataCenterId));
             List<org.ovirt.engine.core.common.businessentities.network.Network> networks = getBackendCollection(VdcQueryType.GetAllNetworks, params);
             for (org.ovirt.engine.core.common.businessentities.network.Network nw: networks) {
                 if (nw.getName().equals(networkName)) {

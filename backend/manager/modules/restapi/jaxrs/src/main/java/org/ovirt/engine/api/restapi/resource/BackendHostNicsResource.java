@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -256,7 +255,7 @@ public class BackendHostNicsResource
 
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
                                                    VdcQueryType.GetAllNetworks,
-                                                   new GetAllNetworkQueryParamenters(Guid.Empty))) {
+                                                   new IdQueryParameters(Guid.Empty))) {
             if ((id != null && id.equals(entity.getId().toString())) ||
                 (name != null && name.equals(entity.getName()))) {
                 return entity;

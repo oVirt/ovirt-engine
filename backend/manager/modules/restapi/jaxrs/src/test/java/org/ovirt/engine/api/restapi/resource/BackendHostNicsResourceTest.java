@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -338,8 +337,8 @@ public class BackendHostNicsResourceTest
     protected void setUpNetworkQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                    GetAllNetworkQueryParamenters.class,
-                    new String[] { "StoragePoolId" },
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
                     new Object[] { Guid.Empty },
                     asList(getNetwork()));
         }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +53,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
 
     @Override
     protected VdcQueryParametersBase getQueryParameters() {
-        return new GetAllNetworkQueryParamenters(Guid.Empty);
+        return new IdQueryParameters(Guid.Empty);
     }
 
     @Override

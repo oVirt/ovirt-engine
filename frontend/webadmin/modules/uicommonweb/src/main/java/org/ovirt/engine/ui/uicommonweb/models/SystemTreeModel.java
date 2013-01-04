@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -277,7 +277,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                         for (storage_pool dataCenter : systemTreeModel.getDataCenters())
                                         {
                                             queryTypeList.add(VdcQueryType.GetAllNetworks);
-                                            queryParamList.add(new GetAllNetworkQueryParamenters(dataCenter.getId()));
+                                            queryParamList.add(new IdQueryParameters(dataCenter.getId()));
                                         }
 
                                         Frontend.RunMultipleQueries(queryTypeList, queryParamList, new IFrontendMultipleQueryAsyncCallback() {

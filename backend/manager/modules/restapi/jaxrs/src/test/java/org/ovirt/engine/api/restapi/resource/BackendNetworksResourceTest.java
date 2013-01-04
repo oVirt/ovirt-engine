@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -33,8 +33,8 @@ public class BackendNetworksResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                                     GetAllNetworkQueryParamenters.class,
-                                     new String[] { "StoragePoolId" },
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
                                      new Object[] { Guid.Empty },
                                      new ArrayList<org.ovirt.engine.core.common.businessentities.network.Network>());
         control.replay();
@@ -61,8 +61,8 @@ public class BackendNetworksResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                GetAllNetworkQueryParamenters.class,
-                new String[] { "StoragePoolId" },
+                IdQueryParameters.class,
+                new String[] { "Id" },
                 new Object[] { Guid.Empty },
                 new LinkedList<org.ovirt.engine.core.common.businessentities.network.Network>(),
                 null);
@@ -114,8 +114,8 @@ public class BackendNetworksResourceTest
                                   true,
                                   null, //GUIDS[0],
                                   VdcQueryType.GetAllNetworks,
-                                  GetAllNetworkQueryParamenters.class,
-                                  new String[] { "StoragePoolId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { Guid.Empty },
                                   asList(getEntity(0)));
         Network model = getModel(0);
@@ -143,8 +143,8 @@ public class BackendNetworksResourceTest
                                   true,
                                   null, //GUIDS[0],
                                   VdcQueryType.GetAllNetworks,
-                                  GetAllNetworkQueryParamenters.class,
-                                  new String[] { "StoragePoolId" },
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
                                   new Object[] { Guid.Empty },
                                   asList(getEntity(0)));
         Network model = getModel(0);
@@ -215,8 +215,8 @@ public class BackendNetworksResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                                         GetAllNetworkQueryParamenters.class,
-                                         new String[] { "StoragePoolId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { Guid.Empty },
                                          getEntityList(),
                                          failure);

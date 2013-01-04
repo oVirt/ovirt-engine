@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVdsGroupByVdsGroupIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -202,8 +201,8 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     protected void setUpGetNetworksByDataCenterExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
-                                         GetAllNetworkQueryParamenters.class,
-                                         new String[] { "StoragePoolId" },
+                                         IdQueryParameters.class,
+                                         new String[] { "Id" },
                                          new Object[] { GUIDS[2] },
                                          getEntityList(),
                                          failure);

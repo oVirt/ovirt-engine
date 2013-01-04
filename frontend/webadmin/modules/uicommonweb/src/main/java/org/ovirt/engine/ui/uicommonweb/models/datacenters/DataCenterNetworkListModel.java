@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -125,7 +125,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
             }
         };
 
-        GetAllNetworkQueryParamenters tempVar = new GetAllNetworkQueryParamenters(getEntity().getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.RunQuery(VdcQueryType.GetAllNetworks, tempVar, _asyncQuery);
     }
@@ -136,7 +136,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
         super.AsyncSearch();
 
         setAsyncResult(Frontend.RegisterQuery(VdcQueryType.GetAllNetworks,
-                new GetAllNetworkQueryParamenters(getEntity().getId())));
+                new IdQueryParameters(getEntity().getId())));
         setItems(getAsyncResult().getData());
     }
 

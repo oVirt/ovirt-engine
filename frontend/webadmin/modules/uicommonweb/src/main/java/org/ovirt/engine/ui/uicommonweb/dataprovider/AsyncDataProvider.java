@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.queries.GetAllChildVlanInterfacesQueryParame
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
-import org.ovirt.engine.core.common.queries.GetAllNetworkQueryParamenters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
@@ -1429,7 +1428,7 @@ public final class AsyncDataProvider {
             }
         };
 
-        Frontend.RunQuery(VdcQueryType.GetAllNetworks, new GetAllNetworkQueryParamenters(dataCenterId), aQuery);
+        Frontend.RunQuery(VdcQueryType.GetAllNetworks, new IdQueryParameters(dataCenterId), aQuery);
     }
 
     public static void GetISOStorageDomainList(AsyncQuery aQuery) {
