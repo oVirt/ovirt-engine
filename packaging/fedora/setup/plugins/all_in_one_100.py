@@ -23,7 +23,7 @@ basedefs.SPACE_LEN = 80
 
 # Product version
 MAJOR = '3'
-MINOR = '1'
+MINOR = '2'
 
 # Controller object will be initialized from main flow
 controller = None
