@@ -219,3 +219,6 @@ JAVA_DIRS = [
 # Accepted JVMs should give an string matching this when executed with
 # the -version option:
 JAVA_VERSION = "1.7.0"
+
+# Random password default length
+RANDOM_PASS_LENGTH = 12

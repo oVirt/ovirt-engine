@@ -20,6 +20,8 @@ import time
 import tempfile
 import csv
 import miniyum
+import string
+import random
 
 """
 ENUM implementation for python (from the vdsm team)
@@ -1549,3 +1551,8 @@ def checkAvailableSpace(required, dbName=None, dbFolder=None, msg=output_message
         logging.debug(msg)
         print msg
         raise Exception(msg)
+
+def generatePassword(length):
+    chars = string.ascii_letters + string.digits + '!@#$%^&()'
+    randomizer = random.SystemRandom()
+    return ''.join(randomizer.choice(chars) for char in xrange(length))

@@ -255,6 +255,19 @@ def initConfig():
                 "CONDITION"       : False}]
          ,
          "ALL_PARAMS" : [
+             {  "CMD_OPTION"      :"random-passwords",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_RANDOM_PASSWORDS_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_RANDOM_PASSWORDS_PROMPT,
+                "OPTION_LIST"     :["yes", "no"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   : "no",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "RANDOM_PASSWORDS",
+                "USE_DEFAULT"     : True,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False},
+
              {  "CMD_OPTION"      :"mac-range",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_MAC_RANGE_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_MAC_RANG_PROMPT,
@@ -2044,6 +2057,18 @@ def main(configFile=None):
                 controller.CONF["DB_PASS"] = controller.CONF[passkey]
                 break
 
+        # Override passwords with random if needed
+        if controller.CONF["RANDOM_PASSWORDS"] == "yes":
+            logging.debug("Overriding given passwords with random")
+            controller.CONF["AUTH_PASS"] = utils.generatePassword(basedefs.RANDOM_PASS_LENGTH)
+            if controller.CONF["DB_LOCAL_PASS"]: # Override db password only if db is local
+                controller.CONF["DB_PASS"] = utils.generatePassword(basedefs.RANDOM_PASS_LENGTH)
+
+            # Add random password to masked passwords
+            masked_value_set.add(controller.CONF["AUTH_PASS"])
+            masked_value_set.add(controller.CONF["DB_PASS"])
+
+
         # Run main setup logic
         runSequences()
 
@@ -2116,7 +2141,7 @@ def initCmdLineParser():
     parser = OptionParser(usage)
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other option")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
-                                            configuration file. using this option excludes all other option")
+                                            configuration file. using this option excludes all other options")
     parser.add_option("--no-mem-check", help="Disable minimum memory check", action="store_true", default=False)
 
     # For each group, create a group option
