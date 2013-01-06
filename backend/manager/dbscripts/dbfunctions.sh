@@ -86,6 +86,8 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} > drop_all_functions.sql
     execute_file "drop_all_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     \rm -f drop_all_functions.sql
+    #drop old uuid functions
+    psql -U postgres -h ${SERVERNAME} -p ${PORT} -f drop_old_uuid_functions.sql ${DATABASE} > /dev/null
     # recreate generic functions
     execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
