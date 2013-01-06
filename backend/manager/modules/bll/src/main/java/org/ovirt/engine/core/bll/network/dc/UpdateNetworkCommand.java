@@ -6,6 +6,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @SuppressWarnings("serial")
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
@@ -53,7 +55,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(notChangingManagementNetworkName())
                 && validate(networkNameNotUsed())
                 && validate(networkNotUsedByRunningVm())
-                && validate(networkNotAttachedToCluster(getOldNetwork()));
+                && validate(networkNotUsedByHost());
     }
 
     @Override
@@ -137,5 +139,15 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 !getNetworkName().equals(managementNetwork)
                 ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
                 : ValidationResult.VALID;
+    }
+
+    private ValidationResult networkNotUsedByHost() {
+        List<VDS> hostsWithNetwork = getVdsDAO().getAllForNetwork(getOldNetwork().getId());
+        if (hostsWithNetwork.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE_BY_HOSTS,
+                ReplacementUtils.replaceWithNameable("HOSTS_USING_NETWORK", hostsWithNetwork));
     }
 }
