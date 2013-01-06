@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -46,5 +49,13 @@ public abstract class AbstractVmInterfaceCommand<T extends VmOperationParameterB
         getReturnValue().setFault(internalReturnValue.getFault());
         getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+    }
+
+    protected boolean addMacToPool(String macAddress) {
+        if (MacPoolManager.getInstance().addMac(macAddress)) {
+            return true;
+        } else {
+            throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
+        }
     }
 }

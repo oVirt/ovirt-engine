@@ -703,4 +703,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to update VM Network Interface.")
     String UPDATE_VNIC_FAILED();
+
+    @DefaultStringValue("Mac Address is in use.")
+    String MAC_ADDRESS_IS_IN_USE();
 }

@@ -46,7 +46,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private static final long serialVersionUID = -2404956975945588597L;
     private VmNetworkInterface oldIface;
     private VmDevice oldVmDevice;
-    private boolean macAddressChanged;
+    private boolean macShouldBeChanged;
     private RequiredAction requiredAction = null;
 
     public UpdateVmInterfaceCommand(T parameters) {
@@ -89,22 +89,36 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
 
-        getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntity(oldIface);
-                getVmNetworkInterfaceDao().update(getInterface());
-                if (macAddressChanged) {
-                    MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
-                }
-                getCompensationContext().stateChanged();
-                return null;
+        boolean succeeded = false;
+        boolean macAddedToPool = false;
+        try {
+            if (macShouldBeChanged) {
+                macAddedToPool = addMacToPool(getMacAddress());
             }
-        });
 
-        setSucceeded(updateHost());
+            getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
+
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    getCompensationContext().snapshotEntity(oldIface);
+                    getVmNetworkInterfaceDao().update(getInterface());
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
+
+            succeeded = updateHost();
+        } finally {
+            setSucceeded(succeeded);
+            if (macAddedToPool) {
+                if (succeeded) {
+                    MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
+                } else {
+                    MacPoolManager.getInstance().freeMac(getInterface().getMacAddress());
+                }
+            }
+        }
     }
 
     private boolean updateHost() {
@@ -136,23 +150,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     private boolean properiesRequiringVmUpdateDeviceWereUpdated() {
         return (!StringUtils.equals(oldIface.getNetworkName(), getNetworkName()))
                 || oldIface.isLinked() != getInterface().isLinked();
-    }
-
-    /**
-     * Reverts the MAC addresses status before as were before:
-     * <p/>
-     * <li>The original MAC address is re-allocated.</li>
-     * <li>The new MAC address is freed.</li>
-     */
-    @Override
-    public void rollback() {
-        super.rollback();
-        if (macAddressChanged) {
-            MacPoolManager.getInstance().addMac(oldIface.getMacAddress());
-            if (!Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses)) {
-                MacPoolManager.getInstance().freeMac(getMacAddress());
-            }
-        }
     }
 
     @Override
@@ -229,17 +226,15 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
         }
 
-        macAddressChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
-        if (macAddressChanged) {
+        macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
+        if (macShouldBeChanged) {
             if (Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
                 return false;
             }
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            // this must be the last check because it adds the mac address to the pool
-            if (!MacPoolManager.getInstance().addMac(getMacAddress())
-                    && !allowDupMacs) {
+            if (MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }

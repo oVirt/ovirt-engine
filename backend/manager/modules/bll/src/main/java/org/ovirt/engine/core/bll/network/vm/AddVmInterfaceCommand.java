@@ -56,29 +56,35 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         AddCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
         this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getVmName());
-        if (StringUtils.isEmpty(getMacAddress())) {
-            getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
-        }
-
-        getParameters().getInterface().setSpeed(
-                VmInterfaceType.forValue(
-                        getParameters().getInterface().getType()).getSpeed());
-
-        getParameters().getInterface().setId(Guid.NewGuid());
-        getParameters().getInterface().setVmId(getParameters().getVmId());
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                addInterfaceToDb(getParameters().getInterface());
-                addInterfaceDeviceToDb();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
 
         boolean succeeded = false;
+        boolean macAddedToPool = false;
+
         try {
+            if (StringUtils.isEmpty(getMacAddress())) {
+                getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+                macAddedToPool = true;
+            } else {
+                macAddedToPool = addMacToPool(getMacAddress());
+            }
+
+            getParameters().getInterface().setSpeed(
+                    VmInterfaceType.forValue(
+                            getParameters().getInterface().getType()).getSpeed());
+
+            getParameters().getInterface().setId(Guid.NewGuid());
+            getParameters().getInterface().setVmId(getParameters().getVmId());
+
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    addInterfaceToDb(getParameters().getInterface());
+                    addInterfaceDeviceToDb();
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
+
             if (getParameters().getInterface().isPlugged()) {
                 succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
             } else {
@@ -86,7 +92,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
         } finally {
             setSucceeded(succeeded);
-            if (!succeeded) {
+            if (macAddedToPool && !succeeded) {
                 MacPoolManager.getInstance().freeMac(getMacAddress());
             }
         }
@@ -183,9 +189,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
 
             Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            // this must be the last check because it adds the mac address to the pool
-            if (!MacPoolManager.getInstance().addMac(getMacAddress())
-                    && !allowDupMacs) {
+            if (MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
