@@ -360,12 +360,13 @@ public class BackendVmsResource extends
     @Override
     public Response remove(String id, Action action) {
         getEntity(id);
-        return performAction(VdcActionType.RemoveVm,
-                             new RemoveVmParameters(asGuid(id),
-                                                    action != null && action.isSetForce() ? action.isForce()
-                                                                                     :
-                                                                                     false));
-
+        boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
+        RemoveVmParameters params = new RemoveVmParameters(asGuid(id), forceRemove);
+        // If detach only is set we do not remove the VM disks
+        if (action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDetachOnly()) {
+            params.setRemoveDisks(false);
+        }
+        return performAction(VdcActionType.RemoveVm, params);
     }
 
     protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {

@@ -120,6 +120,22 @@ public class BackendVmsResourceTest
     }
 
     @Test
+    public void testRemoveDetachOnly() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations();
+        setUpGetPayloadExpectations(0);
+        setUpGetBallooningExpectations();
+        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+                "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
+
+        Action action = new Action();
+        action.setVm(new VM());
+        action.getVm().setDisks(new Disks());
+        action.getVm().getDisks().setDetachOnly(true);
+        verifyRemove(collection.remove(GUIDS[0].toString(), action));
+    }
+
+    @Test
     public void testRemoveForcedIncomplete() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
@@ -917,10 +933,12 @@ public class BackendVmsResourceTest
         return model;
     }
 
+    @Override
     protected List<VM> getCollection() {
         return collection.list().getVMs();
     }
 
+    @Override
     protected void verifyModel(VM model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
@@ -963,6 +981,7 @@ public class BackendVmsResourceTest
         model.setStorageDomain(storageDomain);
     }
 
+    @Override
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
         return setUpEntityExpectations(
                 control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),

@@ -29,7 +29,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean'}
+        optionalArguments: {action.force: 'xs:boolean', action.vm.disks.detach_only: 'xs:boolean'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
