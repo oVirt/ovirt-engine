@@ -54,7 +54,6 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -287,20 +286,6 @@ public class BackendVmResource extends
         return doAction(VdcActionType.MoveVm,
                         new MoveVmParameters(guid, getStorageDomainId(action)),
                         action);
-    }
-
-    @Override
-    protected Guid getStorageDomainId(Action action) {
-        if (action.getStorageDomain().isSetId()) {
-            return asGuid(action.getStorageDomain().getId());
-        } else {
-            return lookupStorageDomainIdByName(action.getStorageDomain().getName());
-        }
-    }
-
-    @Override
-    protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
     }
 
     @Override

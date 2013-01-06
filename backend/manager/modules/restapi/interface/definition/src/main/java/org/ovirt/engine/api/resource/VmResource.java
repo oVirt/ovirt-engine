@@ -86,6 +86,7 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("export")
     public Response export(Action action);
 
+    @Deprecated
     @POST
     @Formatted
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})

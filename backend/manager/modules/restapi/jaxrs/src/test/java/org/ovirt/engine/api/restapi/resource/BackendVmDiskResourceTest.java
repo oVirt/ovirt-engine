@@ -2,23 +2,37 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
+import org.ovirt.engine.core.common.action.MoveDiskParameters;
+import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
+import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -235,6 +249,127 @@ public class BackendVmDiskResourceTest
                                        new Object[] { PARENT_ID },
                                        entity);
         }
+    }
+
+    @Test
+    public void testMoveBySdId() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                getEntity(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
+                MoveDisksParameters.class,
+                new String[] { "ParametersList" },
+                new Object[] { Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3])) }));
+
+        verifyActionResponse(((VmDiskResource) resource).move(setUpMoveParams(false)));
+    }
+
+    @Test
+    public void testMoveBySdNameWithoutFilter() throws Exception {
+        testMoveBySdName(false);
+    }
+
+    @Test
+    public void testMoveBySdNameWithFilter() throws Exception {
+        testMoveBySdName(true);
+    }
+
+    protected void testMoveBySdName(boolean isFiltered) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+
+        if (isFiltered) {
+            setUpFilteredQueryExpectations();
+            setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+                    VdcQueryParametersBase.class,
+                    new String[] {},
+                    new Object[] {},
+                    Collections.singletonList(getStorageDomain(2)));
+        }
+        else {
+            setUpGetEntityExpectations("Storage: name=" + NAMES[2],
+                    SearchType.StorageDomain,
+                    getStorageDomain(2));
+        }
+
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                getEntity(1));
+        setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
+                MoveDisksParameters.class,
+                new String[] { "ParametersList" },
+                new Object[] { Collections.singletonList(new MoveDiskParameters(GUIDS[1], Guid.Empty, GUIDS[3])) }));
+
+        verifyActionResponse(((VmDiskResource) resource).move(setUpMoveParams(true)));
+    }
+
+    protected void setUpFilteredQueryExpectations() {
+        List<String> filterValue = new ArrayList<String>();
+        filterValue.add("true");
+        EasyMock.reset(httpHeaders);
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
+    }
+
+    protected storage_domains getStorageDomain(int idx) {
+        storage_domains dom = new storage_domains();
+        dom.setId(GUIDS[idx]);
+        dom.setstorage_name(NAMES[idx]);
+        return dom;
+    }
+
+    @Test
+    public void testIncompleteMove() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        try {
+            control.replay();
+            ((VmDiskResource) resource).move(new Action());
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Action", "move", "storageDomain.id|name");
+        }
+    }
+
+    private void verifyActionResponse(Response r) throws Exception {
+        verifyActionResponse(r, "vms/" + PARENT_ID + "/disks/" + PARENT_ID, false);
+    }
+
+    protected storage_domains getStorageDomainEntity(int index) {
+        storage_domains entity = control.createMock(storage_domains.class);
+        return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
+    }
+
+    static storage_domains setUpStorageDomainEntityExpectations(storage_domains entity,
+            int index,
+            StorageType storageType) {
+        expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
+        expect(entity.getstorage_name()).andReturn(NAMES[2]).anyTimes();
+        expect(entity.getstatus()).andReturn(StorageDomainStatus.Active).anyTimes();
+        expect(entity.getstorage_domain_type()).andReturn(StorageDomainType.Master).anyTimes();
+        expect(entity.getstorage_type()).andReturn(storageType).anyTimes();
+        expect(entity.getstorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        return entity;
+    }
+
+    private Action setUpMoveParams(boolean byName) {
+        Action action = new Action();
+        StorageDomain sd = new StorageDomain();
+        if (byName) {
+            sd.setName(NAMES[2]);
+        } else {
+            sd.setId(GUIDS[3].toString());
+        }
+        action.setStorageDomain(sd);
+        return action;
+    }
+
+    protected UriInfo setUpActionExpectations(VdcActionType task,
+            Class<? extends VdcActionParametersBase> clz,
+            String[] names,
+            Object[] values) {
+        return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
 }

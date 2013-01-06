@@ -33,7 +33,7 @@ import org.ovirt.engine.api.model.Disk;
 @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
 public interface VmDiskResource extends DiskResource, DeviceResource<Disk> {
 
-    @Path("{action: (activate|deactivate)}/{oid}")
+    @Path("{action: (activate|deactivate|move)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
@@ -49,6 +49,13 @@ public interface VmDiskResource extends DiskResource, DeviceResource<Disk> {
     @Path("deactivate")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
     public Response deactivate(Action action);
+
+    @POST
+    @Formatted
+    @Actionable
+    @Path("move")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    public Response move(Action action);
 
     @PUT
     @Formatted

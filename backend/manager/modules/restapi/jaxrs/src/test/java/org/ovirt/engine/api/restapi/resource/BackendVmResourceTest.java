@@ -606,8 +606,8 @@ public class BackendVmResourceTest
     @Test
     public void testExportWithStorageDomainName() throws Exception {
         setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                                   SearchType.StorageDomain,
-                                   getStorageDomain(2));
+                SearchType.StorageDomain,
+                getStorageDomain(2));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
@@ -662,8 +662,8 @@ public class BackendVmResourceTest
     @Test
     public void testMoveWithStorageDomainName() throws Exception {
         setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                                   SearchType.StorageDomain,
-                                   getStorageDomain(2));
+                SearchType.StorageDomain,
+                getStorageDomain(2));
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setName(NAMES[2]);
@@ -815,6 +815,7 @@ public class BackendVmResourceTest
     protected storage_domains getStorageDomain(int idx) {
         storage_domains dom = new storage_domains();
         dom.setId(GUIDS[idx]);
+        dom.setstorage_name(NAMES[idx]);
         return dom;
     }
 
