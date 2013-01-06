@@ -13,6 +13,11 @@ UPDATE vm_static
 SET    entity_type = 'VM'
 WHERE  vm_guid IN (SELECT vm_guid FROM vm_dynamic);
 
+
+UPDATE vm_static
+SET    entity_type = 'TEMPLATE'
+WHERE  entity_type IS NULL;
+
 ALTER TABLE vm_static ALTER COLUMN entity_type SET NOT NULL;
 IF  EXISTS (SELECT 1 from pg_constraint where conname = 'vm_templates_vm_static') THEN
     ALTER TABLE vm_static DROP CONSTRAINT vm_templates_vm_static;
