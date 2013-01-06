@@ -1,25 +1,24 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
@@ -37,67 +36,11 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        // check that we are not removing the management network
-        if (StringUtils.equals(getParameters().getNetwork().getName(),
-                Config.<String> GetValue(ConfigValues.ManagementNetwork))) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK);
-            getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                Config.<String> GetValue(ConfigValues.ManagementNetwork)));
-            return false;
-        }
-
-        // check that there is no vm running with this network
-        List<VmStatic> vms = getVmStaticDAO().getAllByGroupAndNetworkName(
-                getParameters().getVdsGroupId(), getParameters().getNetwork().getName());
-        if (vms.size() > 0) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_VM);
-            getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                    getParameters().getNetwork().getName()));
-            return false;
-        }
-
-        // check that no template is using this network
-        List<VmTemplate> templates = getVmTemplateDAO().getAllForVdsGroup(getParameters().getVdsGroupId());
-        for (VmTemplate tmpl : templates) {
-            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForTemplate(tmpl.getId());
-            if (networkUsedByAnInterface(interfaces)) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE);
-                return false;
-            }
-        }
-
-        // check if network in use by vm
-        List<VM> vmList = getVmDAO().getAllForVdsGroup(getVdsGroup().getId());
-        for (VM vm : vmList) {
-            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-            if (networkUsedByAnInterface(interfaces)) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
-                return false;
-            }
-        }
-
-        if (getParameters().getNetwork().getName().equals(NetworkUtils.getEngineNetwork())) {
-            getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
-            getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                    Config.<String> GetValue(ConfigValues.ManagementNetwork)));
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if the given list has a {@link VmNetworkInterface} with the Network name that is being detached.
-     */
-    private boolean networkUsedByAnInterface(List<VmNetworkInterface> interfaces) {
-        for (VmNetworkInterface vmNetworkInterface : interfaces) {
-            if (getNetworkName().equals(vmNetworkInterface.getNetworkName())) {
-                return true;
-            }
-        }
-
-        return false;
+        DetachNetworkValidator validator =
+                new DetachNetworkValidator(getParameters().getNetwork(), getParameters().getNetworkCluster());
+        return validate(validator.notManagementNetwork())
+                && validate(validator.clusterNetworkNotUsedByVms())
+                && validate(validator.clusterNetworkNotUsedByTemplates());
     }
 
     @Override
@@ -122,5 +65,33 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return Collections.singletonList(new PermissionSubject(networkId,
                 VdcObjectType.Network,
                 getActionType().getActionGroup()));
+    }
+
+    private class DetachNetworkValidator extends NetworkValidator {
+
+        private NetworkCluster networkCluster;
+
+        public DetachNetworkValidator(Network network, NetworkCluster networkCluster) {
+            super(network);
+            this.networkCluster = networkCluster;
+        }
+
+        public ValidationResult clusterNetworkNotUsedByVms() {
+            return networkNotUsed(getVmStaticDAO().getAllByGroupAndNetworkName(networkCluster.getClusterId(),
+                    network.getName()),
+                    VdcBllMessages.VAR__ENTITIES__VMS);
+        }
+
+        public ValidationResult clusterNetworkNotUsedByTemplates() {
+            List<VmTemplate> templatesUsingNetwork = new ArrayList<VmTemplate>();
+            for (VmTemplate template : getVmTemplateDAO().getAllForVdsGroup(networkCluster.getClusterId())) {
+                for (VmNetworkInterface nic : getVmNetworkInterfaceDao().getAllForTemplate(template.getId())) {
+                    if (network.getName().equals(nic.getNetworkName())) {
+                        templatesUsingNetwork.add(template);
+                    }
+                }
+            }
+            return networkNotUsed(templatesUsingNetwork, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+        }
     }
 }
