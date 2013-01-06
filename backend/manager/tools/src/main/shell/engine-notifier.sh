@@ -40,8 +40,21 @@ else
     CONF_FILE="${ENGINE_ETC}/notifier/notifier.conf"
 fi
 
-# Import configurations
-. $CONF_FILE
+# Import configurations safely
+old_IFS=$IFS
+IFS=$'\n'
+for line in `cat $CONF_FILE`:
+    do
+    if [[ $line == "\#*" ]] || [[ ${line}x == "x" ]] ;  then
+        #if comment or empty, skip
+        continue
+    else
+        declare "$line"
+    fi
+done
+IFS=$old_IFS
+
+
 
 # Do basic checking of properties in configuration file to ensure
 # a) properties are defined
