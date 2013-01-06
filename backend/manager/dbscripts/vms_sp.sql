@@ -103,7 +103,9 @@ Create or replace FUNCTION DeleteOvfGenerations(v_vms_ids VARCHAR(5000))
     RETURNS VOID
     AS $procedure$
 BEGIN
-    DELETE FROM vm_ovf_generations WHERE vm_guid IN (SELECT * FROM fnSplitterUuid(v_vms_ids));
+    DELETE FROM vm_ovf_generations WHERE vm_guid IN (SELECT * FROM fnSplitterUuid(v_vms_ids))
+    -- needed here to ensure that vm with the same id hasn't been added by import vm/template command
+    AND vm_guid NOT IN (SELECT vm_guid FROM vm_static);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -432,6 +434,8 @@ RETURNS VOID
 BEGIN
 INSERT INTO vm_static(description, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors,allow_console_reconnect,is_initialized,is_auto_suspend,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected,host_cpu_flags)
 	VALUES(v_description,  v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors, v_allow_console_reconnect, v_is_initialized, v_is_auto_suspend, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected,v_host_cpu_flags);
+-- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
+DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
 END; $procedure$
 LANGUAGE plpgsql;

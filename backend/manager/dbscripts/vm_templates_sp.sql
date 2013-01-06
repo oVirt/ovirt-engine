@@ -125,6 +125,8 @@ VALUES(
     v_dedicated_vm_for_vds,
     v_is_smartcard_enabled,
     v_is_delete_protected);
+-- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
+DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
 VALUES (v_vmt_guid, (SELECT storage_pool_id
                      FROM vds_groups vg
