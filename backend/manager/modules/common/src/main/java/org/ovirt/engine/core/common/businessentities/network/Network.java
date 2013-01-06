@@ -73,7 +73,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @Column(name = "vlan_id")
     @Min(value = 0, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
-    @Max(value = 4095, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
+    @Max(value = 4094, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
     private Integer vlanId;
 
     @Column(name = "stp")

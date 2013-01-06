@@ -246,7 +246,7 @@ public abstract class NetworkModel extends Model
         {
             IntegerValidation tempVar4 = new IntegerValidation();
             tempVar4.setMinimum(0);
-            tempVar4.setMaximum(4095);
+            tempVar4.setMaximum(4094);
             getVLanTag().ValidateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
         }
 

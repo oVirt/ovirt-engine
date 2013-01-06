@@ -1047,7 +1047,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("In order to complete the operation a new master Storage Domain needs to be elected, which requires at least one active Host in the Data Center.\n-Please make sure one of the Hosts is active in the Data Center first.")
     String ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE();
 
-    @DefaultStringValue("VLAN ID must be a number between 0 and 4905")
+    @DefaultStringValue("VLAN ID must be a number between 0 and 4094.")
     String NETWORK_VLAN_OUT_OF_RANGE();
 
     @DefaultStringValue("Cannot attach Storage Domain.\n-Please attach Data Domain to the Data Center first.")
