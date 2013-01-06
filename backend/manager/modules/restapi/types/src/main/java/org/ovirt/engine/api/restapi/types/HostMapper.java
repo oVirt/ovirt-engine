@@ -213,7 +213,11 @@ public class HostMapper {
         sm.setPriority(entity.getVdsSpmPriority());
         sm.setValue(entity.getspm_status() == VdsSpmStatus.SPM);
         model.setStorageManager(sm);
-        if (entity.getVersion() != null) {
+        if (entity.getVersion() != null &&
+                entity.getVersion().getMajor() != -1 &&
+                entity.getVersion().getMinor() != -1 &&
+                entity.getVersion().getRevision() != -1 &&
+                entity.getVersion().getBuild() != -1) {
             Version version = new Version();
             version.setMajor(entity.getVersion().getMajor());
             version.setMinor(entity.getVersion().getMinor());
