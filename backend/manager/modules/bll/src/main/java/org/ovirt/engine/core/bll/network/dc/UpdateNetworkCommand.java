@@ -101,7 +101,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     private ValidationResult networkNameNotUsed() {
         Network networkWithSameName = getOtherNetworkWithSameName(getNetworks());
         return networkWithSameName != null
-                ? new ValidationResult(VdcBllMessages.NETWORK_IN_USE)
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE)
                 : ValidationResult.VALID;
     }
 

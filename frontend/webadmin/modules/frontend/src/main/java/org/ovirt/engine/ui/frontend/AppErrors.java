@@ -1050,8 +1050,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot change Data Center association when editing a Cluster.")
     String VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL();
 
-    @DefaultStringValue("The Logical Network is in use.\n-Please remove it from all Hosts in Cluster and try again.")
-    String NETWORK_IN_USE();
+    @DefaultStringValue("Cannot ${action} ${type}. The logical network's name is already used by an existing logical network in the same data-center.\n-Please choose a different name.")
+    String ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE();
 
     @DefaultStringValue("Volume Group (VGs) and Logical Volumes (LVs) are not specified.")
     String ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV();
