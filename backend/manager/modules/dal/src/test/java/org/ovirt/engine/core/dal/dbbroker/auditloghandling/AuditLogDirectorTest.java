@@ -8,26 +8,18 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 //import static org.mockito.Mockito.when;
 //
-//import java.util.Collections;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//import junit.framework.Assert;
-//
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.mockito.Mock;
-//import org.mockito.Mockito;
-//import org.ovirt.engine.core.common.AuditLogType;
-//import org.ovirt.engine.core.common.businessentities.AuditLog;
-//import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-//import org.ovirt.engine.core.dao.AuditLogDAO;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
 
 
 //@RunWith(PowerMockRunner.class)
 //@PrepareForTest({ AuditLogDirector.class })
-//public class AuditLogDirectorTest {
+public class AuditLogDirectorTest {
 //
 //    @Mock
 //    DbFacade dbFacade;
@@ -49,10 +41,10 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 //        PowerMockito.when(AuditLogDirector.getDbFacadeInstance()).thenReturn(dbFacade);
 //    }
 //
-//    @Test
-//    public void testPropertyLoading() {
-//        AuditLogDirector.checkSeverities();
-//    }
+    @Test
+    public void testPropertyLoading() {
+        AuditLogDirector.checkSeverities();
+    }
 //
 //    /**
 //     * The test assures that audit loggable objects with timeout, which were created without an explicit log type, with
@@ -60,15 +52,15 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 //     * The test invokes two {@Code AuditLogDirector.log()} calls and verifies that each call insert an entry into
 //     * the database.<br>
 //     */
-//    @Test
-//    public void testLegalAuditLog() {
-//        AuditLogableBase logableObject1 = new AuditLogableBase();
-//        AuditLogDirector.log(logableObject1, AuditLogType.IRS_DISK_SPACE_LOW);
-//
-//        AuditLogableBase logableObject2 = new AuditLogableBase();
-//        AuditLogDirector.log(logableObject2, AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
-//        Mockito.verify(auditLogDao, Mockito.times(2)).save(Mockito.any(AuditLog.class));
-//    }
+    // @Test
+    // public void testLegalAuditLog() {
+    // AuditLogableBase logableObject1 = new AuditLogableBase();
+    // AuditLogDirector.log(logableObject1, AuditLogType.IRS_DISK_SPACE_LOW);
+    //
+    // AuditLogableBase logableObject2 = new AuditLogableBase();
+    // AuditLogDirector.log(logableObject2, AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
+    // Mockito.verify(auditLogDao, Mockito.times(2)).save(Mockito.any(AuditLog.class));
+    // }
 //
 //    /**
 //     * The test assures that audit loggable objects with timeout, which were created without an explicit log type and
@@ -86,23 +78,55 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 //        Mockito.verify(auditLogDao, Mockito.times(1)).save(Mockito.any(AuditLog.class));
 //    }
 //
-//    @Test
-//    public void testResolveUnknownVariable() {
-//        final String message = "This is my ${Variable}";
-//        final String expectedResolved = "This is my <UNKNOWN>";
-//        Map<String, String> values = Collections.emptyMap();
-//        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
-//        Assert.assertEquals(expectedResolved, resolvedMessage);
-//    }
-//
-//    @Test
-//    public void testResolveKnownVariable() {
-//        final String message = "This is my ${Variable}";
-//        final String expectedResolved = "This is my value";
-//        Map<String, String> values = new HashMap<String, String>();
-//        values.put("variable", "value");
-//        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
-//        Assert.assertEquals(expectedResolved, resolvedMessage);
-//    }
-//
-// }
+    @Test
+    public void testResolveUnknownVariable() {
+        final String message = "This is my ${Variable}";
+        final String expectedResolved = String.format("This is my %1s", AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+        Map<String, String> values = Collections.emptyMap();
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+
+    @Test
+    public void testResolveKnownVariable() {
+        final String message = "This is my ${Variable}";
+        final String expectedResolved = "This is my value";
+        Map<String, String> values = Collections.singletonMap("variable", "value");
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+
+    @Test
+    public void testResolveCombinedMessage() {
+        final String message =
+                "${first} equals one, ${second} equals two, '${blank}' equals blank and ${nonExist} is unknown";
+        final String expectedResolved =
+                String.format("one equals one, two equals two, ' ' equals blank and %1s is unknown",
+                        AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+        Map<String, String> values = new HashMap<String, String>();
+        values.put("first", "one");
+        values.put("second", "two");
+        values.put("blank", " ");
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+
+    @Test
+    public void testResolveAuditLogableBase() {
+        final String vdsName = "TestVDS";
+        final String vmName = "TestVM";
+        final String message =
+                "The VM name is ${vmName}, the VDS name is ${vdsName} and the template name is ${vmTemplateName}";
+        final String expectedResolved =
+                String.format("The VM name is %1s, the VDS name is %2s and the template name is %3s",
+                        vmName,
+                        vdsName,
+                        AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVmName(vmName);
+        logable.setVdsName(vdsName);
+        String resolvedMessage = AuditLogDirector.resolveMessage(message, logable);
+        Assert.assertEquals(expectedResolved, resolvedMessage);
+    }
+}

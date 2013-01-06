@@ -22,7 +22,7 @@ public class TypeCompat {
         try {
             PropertyDescriptor[] pds = Introspector.getBeanInfo(type).getPropertyDescriptors();
             for (PropertyDescriptor pd : pds) {
-                // Class is a bogud property, remove it
+                // Class is a bogus property, remove it
                 if (!CLASS.equals(pd.getName())) {
                     returnValue.add(new PropertyInfo(pd));
                 }

@@ -28,7 +28,7 @@ public final class AuditLogDirector {
     private static final Map<AuditLogType, AuditLogSeverity> mSeverities =
             new EnumMap<AuditLogType, AuditLogSeverity>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
-    private static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
+    static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
 
     static {
         initMessages();
@@ -775,10 +775,10 @@ public final class AuditLogDirector {
         if (auditLogable == null || auditLogable.getLegal()) {
             String message = null;
             String resolvedMessage = null;
-            AuditLogSeverity severity = AuditLogSeverity.forValue(0);
-            if (!((severity = mSeverities.get(logType)) != null)) {
+            AuditLogSeverity severity = mSeverities.get(logType);
+            if (severity == null) {
                 severity = AuditLogSeverity.NORMAL;
-                log.infoFormat("No severity for {0} type", logType);
+                log.infoFormat("No severity for {0} audit log type, assuming Normal severity", logType);
             }
             AuditLog auditLog = null;
             if (auditLogable != null) {
@@ -932,11 +932,8 @@ public final class AuditLogDirector {
         while (matcher.find()) {
             token = matcher.group();
 
-            // remove leading ${
-            token = token.substring(2);
-
-            // remove trailing }
-            token = token.substring(0, token.length() - 1);
+            // remove leading ${ and trailing }
+            token = token.substring(2, token.length() - 1);
 
             // get value from value map
             value = values.get(token.toLowerCase());
@@ -953,8 +950,7 @@ public final class AuditLogDirector {
     }
 
     static Map<String, String> getAvailableValues(AuditLogableBase logable) {
-        Map<String, String> returnValue =
-                new HashMap<String, String>(logable.getCustomValues());
+        Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
         Class<?> type = AuditLogableBase.class;
         for (PropertyInfo propertyInfo : TypeCompat.GetProperties(type)) {
             Object value = propertyInfo.GetValue(logable, null);
@@ -962,7 +958,7 @@ public final class AuditLogDirector {
             if (!returnValue.containsKey(propertyInfo.getName().toLowerCase())) {
                 returnValue.put(propertyInfo.getName().toLowerCase(), stringValue);
             } else {
-                log.errorFormat("Try to add duplicate values with same name. Type: {0}. Value: {1}",
+                log.errorFormat("Try to add duplicate audit log values with the same name. Type: {0}. Value: {1}",
                         logable.getAuditLogTypeValue(), propertyInfo.getName().toLowerCase());
             }
         }
@@ -976,5 +972,4 @@ public final class AuditLogDirector {
     private static void defaultLog(AuditLogableBase auditLogable) {
         auditLogable.DefaultLog();
     }
-
 }
