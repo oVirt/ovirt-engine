@@ -41,7 +41,8 @@ public class ActivateStorageDomainCommandTest {
     public void nonInternalLockedDisallowed() {
         testExecution(StorageDomainStatus.Locked);
         canDoActionFails();
-        hasIllegalStatusMessage();
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
+                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name()));
     }
 
     @Test

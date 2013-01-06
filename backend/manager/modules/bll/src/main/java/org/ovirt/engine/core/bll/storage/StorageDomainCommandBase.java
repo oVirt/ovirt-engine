@@ -167,10 +167,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainStatus(final StorageDomainStatus... statuses) {
         boolean valid = false;
-        if (getStorageDomainStatus() != null) {
+        StorageDomainStatus status = getStorageDomainStatus();
+        if (status != null) {
             valid = Arrays.asList(statuses).contains(getStorageDomainStatus());
         }
         if (!valid) {
+            if (status == StorageDomainStatus.Locked) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+            }
             addStorageDomainStatusIllegalMessage();
         }
         return valid;
