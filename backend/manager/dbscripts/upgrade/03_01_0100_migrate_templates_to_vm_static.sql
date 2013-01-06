@@ -14,7 +14,9 @@ SET    entity_type = 'VM'
 WHERE  vm_guid IN (SELECT vm_guid FROM vm_dynamic);
 
 ALTER TABLE vm_static ALTER COLUMN entity_type SET NOT NULL;
-ALTER TABLE vm_static DROP CONSTRAINT vm_templates_vm_static;
+IF  EXISTS (SELECT 1 from pg_constraint where conname = 'vm_templates_vm_static') THEN
+    ALTER TABLE vm_static DROP CONSTRAINT vm_templates_vm_static;
+END IF;
 
 INSERT INTO vm_static (
     vm_guid,
@@ -91,7 +93,9 @@ WHERE  vmt_guid NOT IN (
     FROM   vm_static
     WHERE  entity_type = 'TEMPLATE');
 
-ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid);
+IF  NOT EXISTS (SELECT 1 from pg_constraint where conname = 'vm_templates_vm_static') THEN
+    ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid);
+END IF;
 
 INSERT
 INTO   image_vm_map(
