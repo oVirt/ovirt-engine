@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
@@ -242,6 +244,20 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
+        if (!isFiltered()) {
+            return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
+        }
+        else {
+            List<storage_domains> storageDomains =
+                    getBackendCollection(storage_domains.class,
+                            VdcQueryType.GetAllStorageDomains,
+                            new VdcQueryParametersBase());
+            for (storage_domains storageDomain : storageDomains) {
+                if (storageDomain.getstorage_name().equals(name)) {
+                    return storageDomain.getId();
+                }
+            }
+            return null;
+        }
     }
 }

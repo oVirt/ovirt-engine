@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 import org.ovirt.engine.api.model.Action;
@@ -21,7 +23,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -94,16 +98,20 @@ public class BackendTemplateDiskResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
-                                         GetVmTemplatesDisksParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_ID },
-                                         getEntityList());
+                    GetVmTemplatesDisksParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { PARENT_ID },
+                    getEntityList());
         }
     }
 
     @Test
     public void testCopyBySdId() throws Exception {
-        setUpEntityQueryExpectations(1);
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,
                                            MoveOrCopyImageGroupParameters.class,
                                            new String[] { "ImageId", "SourceDomainId", "StorageDomainId", "Operation" },
@@ -113,15 +121,40 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
-    public void testCopyBySdName() throws Exception {
-        setUpEntityQueryExpectations(1);
-        setUpGetEntityExpectations("Storage: name=" + NAMES[2],
-                                    SearchType.StorageDomain,
-                                    getStorageDomainEntity(0));
+    public void testCopyBySdNameWithoutFilter() throws Exception {
+        testCopyBySdName(false);
+    }
+
+    @Test
+    public void testCopyBySdNameWithFilter() throws Exception {
+        testCopyBySdName(true);
+    }
+
+    protected void testCopyBySdName(boolean isFiltered) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+
+        if (isFiltered) {
+            setUpFilteredQueryExpectations();
+            setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+                    VdcQueryParametersBase.class,
+                    new String[] {},
+                    new Object[] {},
+                    Collections.singletonList(getStorageDomainEntity(0)));
+        }
+        else {
+            setUpGetEntityExpectations("Storage: name=" + NAMES[2],
+                    SearchType.StorageDomain,
+                    getStorageDomainEntity(0));
+        }
+        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] { "DiskId" },
+                new Object[] { GUIDS[1] },
+                getEntity(1));
         setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,
-                                           MoveOrCopyImageGroupParameters.class,
-                                           new String[] { "ImageId", "SourceDomainId", "StorageDomainId", "Operation" },
-                                           new Object[] { GUIDS[1], Guid.Empty, GUIDS[3], ImageOperation.Copy }));
+                MoveOrCopyImageGroupParameters.class,
+                new String[] { "ImageId", "SourceDomainId", "StorageDomainId", "Operation" },
+                new Object[] { GUIDS[1], Guid.Empty, GUIDS[3], ImageOperation.Copy }));
 
         verifyActionResponse(resource.copy(setUpCopyParams(true)));
     }
@@ -173,5 +206,12 @@ public class BackendTemplateDiskResourceTest
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
+    }
+
+    protected void setUpFilteredQueryExpectations() {
+        List<String> filterValue = new ArrayList<String>();
+        filterValue.add("true");
+        EasyMock.reset(httpHeaders);
+        expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
 }

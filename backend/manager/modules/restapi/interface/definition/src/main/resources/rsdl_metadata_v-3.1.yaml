@@ -2195,8 +2195,8 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean'}
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

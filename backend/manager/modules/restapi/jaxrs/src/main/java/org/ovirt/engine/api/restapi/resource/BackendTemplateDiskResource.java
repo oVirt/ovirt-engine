@@ -9,6 +9,8 @@ import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
@@ -23,16 +25,22 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
     @Override
     public Response copy(Action action) {
         validateParameters(action, "storageDomain.id|name");
+        Guid storageDomainId = getStorageDomainId(action);
+        Guid imageId = asGuid(getDisk().getImageId());
         MoveOrCopyImageGroupParameters params =
-                new MoveOrCopyImageGroupParameters(asGuid(get().getImageId()),
-                                                   Guid.Empty,
-                                                   getStorageDomainId(action),
-                                                   ImageOperation.Copy);
+                new MoveOrCopyImageGroupParameters(imageId,
+                        Guid.Empty,
+                        storageDomainId,
+                        ImageOperation.Copy);
         return doAction(VdcActionType.MoveOrCopyDisk, params, action);
     }
 
     @Override
     protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
         return model;
+    }
+
+    protected Disk getDisk() {
+        return performGet(VdcQueryType.GetDiskByDiskId, new GetDiskByDiskIdParameters(guid));
     }
 }
