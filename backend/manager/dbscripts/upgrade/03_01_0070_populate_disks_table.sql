@@ -16,8 +16,9 @@ BEGIN
                JOIN   image_vm_map ivm ON i.image_guid = ivm.image_id
                WHERE  active = TRUE)
    LOOP
-      INSERT
-      INTO   disks
+      IF NOT EXISTS (SELECT disk_id from disks WHERE disk_id = cur.image_group_id) THEN
+          INSERT
+          INTO   disks
              (disk_id,
               status,
               internal_drive_mapping,
@@ -26,7 +27,7 @@ BEGIN
               disk_interface,
               wipe_after_delete,
               propagate_errors)
-      VALUES
+          VALUES
              (cur.image_group_id,
               CASE WHEN cur.imagestatus = 1 THEN 'OK'
                    WHEN cur.imagestatus = 2 THEN 'LOCKED'
@@ -51,7 +52,7 @@ BEGIN
               CASE WHEN cur.propagate_errors = 1 THEN 'On'
                    ELSE 'Off'
               END);
-
+      END IF;
    END LOOP;
 
    -- Populate Disks table from image_templates table.
@@ -62,8 +63,9 @@ BEGIN
                JOIN   vm_template_image_map vtim USING (it_guid)
                JOIN   images i ON it.it_guid = i.image_guid)
    LOOP
-      INSERT
-      INTO   disks
+      IF NOT EXISTS (SELECT disk_id from disks WHERE disk_id = cur.image_group_id) THEN
+          INSERT
+          INTO   disks
              (disk_id,
               status,
               internal_drive_mapping,
@@ -72,7 +74,7 @@ BEGIN
               disk_interface,
               wipe_after_delete,
               propagate_errors)
-      VALUES
+          VALUES
              (cur.image_group_id,
               CASE WHEN cur.imagestatus = 1 THEN 'OK'
                    WHEN cur.imagestatus = 2 THEN 'LOCKED'
@@ -97,7 +99,7 @@ BEGIN
               CASE WHEN cur.propagate_errors = 1 THEN 'On'
                    ELSE 'Off'
               END);
-
+      END IF;
    END LOOP;
 
 END; $function$
