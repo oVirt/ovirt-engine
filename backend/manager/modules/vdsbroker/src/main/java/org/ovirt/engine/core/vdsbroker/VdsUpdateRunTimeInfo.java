@@ -989,7 +989,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void logDeviceInformation(Guid vmId, XmlRpcStruct device) {
-        String message = "Recieved a {0} Device without an address when processing VM {1} devices, skipping device";
+        String message = "Received a {0} Device without an address when processing VM {1} devices, skipping device";
         String deviceType = getDeviceType(device);
 
         if (shouldLogDeviceDetails(deviceType)) {
@@ -1011,7 +1011,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void processVmDevices(XmlRpcStruct vm) {
         if (vm == null || vm.getItem(VdsProperties.vm_guid) == null) {
-            log.errorFormat("Recieved NULL VM or VM id when processing VM devices, abort.");
+            log.errorFormat("Received NULL VM or VM id when processing VM devices, abort.");
             return;
         }
         Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
