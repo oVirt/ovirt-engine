@@ -1459,7 +1459,7 @@ def restoreEngineFromMaintenance():
 # Returns db size in MB
 def getDbSize(dbname):
     sql = "SELECT pg_database_size(\'%s\')" % (dbname)
-    out, rc = execRemoteSqlCommand(getDbUser(),
+    out, rc = execRemoteSqlCommand(getDbAdminUser(),
                                     getDbHostName(),
                                     getDbPort(),
                                     basedefs.DB_POSTGRES,
