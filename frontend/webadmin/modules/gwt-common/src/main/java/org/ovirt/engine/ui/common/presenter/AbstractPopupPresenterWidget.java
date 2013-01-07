@@ -89,6 +89,7 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
             handleEnterKey();
         } else if (KeyCodes.KEY_ESCAPE == event.getKeyCode()) {
             handleEscapeKey();
+            event.preventDefault();
         }
     }
 
