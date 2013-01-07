@@ -1,5 +1,4 @@
-
-ALTER TABLE disks DROP CONSTRAINT fk_disk_active_image;
+SELECT fn_db_drop_constraint('disks','fk_disk_active_image');
 SELECT fn_db_drop_column('disks', 'active_image_id');
 
 SELECT fn_db_drop_column('images', 'internal_drive_mapping');

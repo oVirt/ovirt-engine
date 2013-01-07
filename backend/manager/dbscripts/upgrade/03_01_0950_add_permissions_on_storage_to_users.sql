@@ -72,7 +72,11 @@ BEGIN
                     v_STORAGE_OBJECT_TYPE
              FROM vds_groups
              INNER JOIN storage_pool_iso_map ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id
-             WHERE vds_groups.vds_group_id = v_permissions.object_id);
+             WHERE vds_groups.vds_group_id = v_permissions.object_id and
+             cast(v_DISK_CREATOR_ROLE_ID as VARCHAR) || cast(v_permissions.ad_element_id as VARCHAR) ||
+                  cast(storage_pool_iso_map.storage_id as VARCHAR) not in
+             ( select cast(role_id as VARCHAR) || cast(ad_element_id as VARCHAR) ||
+                      cast(object_id as VARCHAR) from permissions));
 
         -- CREATE_VM on Data Center will allow creating Disks on the Storage Domains of the Data Center.
         ELSIF (v_permissions.object_type_id = v_DATA_CENTER_OBJECT_TYPE) THEN

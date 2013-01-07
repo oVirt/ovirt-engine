@@ -19,9 +19,7 @@ SET    entity_type = 'TEMPLATE'
 WHERE  entity_type IS NULL;
 
 ALTER TABLE vm_static ALTER COLUMN entity_type SET NOT NULL;
-IF  EXISTS (SELECT 1 from pg_constraint where conname = 'vm_templates_vm_static') THEN
-    ALTER TABLE vm_static DROP CONSTRAINT vm_templates_vm_static;
-END IF;
+perform fn_db_drop_constraint('vm_static','vm_templates_vm_static');
 
 INSERT INTO vm_static (
     vm_guid,
@@ -98,9 +96,7 @@ WHERE  vmt_guid NOT IN (
     FROM   vm_static
     WHERE  entity_type = 'TEMPLATE');
 
-IF  NOT EXISTS (SELECT 1 from pg_constraint where conname = 'vm_templates_vm_static') THEN
-    ALTER TABLE vm_static ADD CONSTRAINT vm_templates_vm_static FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid);
-END IF;
+perform fn_db_create_constraint('vm_static', 'vm_templates_vm_static', 'FOREIGN KEY (vmt_guid) REFERENCES vm_static (vm_guid)');
 
 INSERT
 INTO   image_vm_map(
