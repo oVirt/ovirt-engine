@@ -95,12 +95,19 @@ public class AutoRecoveryManager {
         final BackendInternal backend = getBackend();
         log.info("Autorecovering " + fails.size() + " " + logMsg);
         for (final T fail : fails) {
-            log.info("Autorecovering " + logMsg + ": " + fail.getId());
+            log.info("Autorecovering " + logMsg + " id: " + fail.getId() + getHostName(fail));
             final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
             actionParams.setShouldBeLogged(true);
             backend.runInternalAction(actionType, actionParams);
         }
         log.info("Checking autorecoverable " + logMsg + " done");
+    }
+
+    private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {
+        if (entity instanceof VDS) {
+            return ", name : "+((VDS) entity).getvds_name();
+        }
+        return "";
     }
 
     protected DbFacade getDbFacade() {
