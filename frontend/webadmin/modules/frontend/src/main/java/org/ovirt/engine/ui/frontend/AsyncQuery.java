@@ -3,6 +3,17 @@ package org.ovirt.engine.ui.frontend;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public class AsyncQuery {
+
+    /**
+     * Null object singleton that represents an empty (no-op) query callback.
+     */
+    private static final INewAsyncCallback EMPTY_CALLBACK = new INewAsyncCallback() {
+        @Override
+        public void OnSuccess(Object model, Object returnValue) {
+            // Empty
+        }
+    };
+
     public Object Model;
     public INewAsyncCallback asyncCallback;
     public IAsyncConverter converterCallback;
@@ -12,6 +23,7 @@ public class AsyncQuery {
     private String context;
 
     public AsyncQuery() {
+        this.asyncCallback = EMPTY_CALLBACK;
     }
 
     public AsyncQuery(Object target, INewAsyncCallback asyncCallback) {
@@ -82,4 +94,5 @@ public class AsyncQuery {
     public IAsyncConverter getConverter() {
         return converterCallback;
     }
+
 }
