@@ -146,7 +146,7 @@ public class AboutModel extends Model
         // timeLimit = Convert.ToDateTime(licenseProperties["TimeLimitProperty"]);
         // }
         // catch {
-        // QLogger.getInstance().ErrorFormat("AboutModel(AboutView view): cannot convert {0} cause bugous license expire date recieved",
+        // QLogger.getInstance().ErrorFormat("AboutModel(AboutView view): cannot convert {0} cause bugous license expire date received",
         // licenseProperties["TimeLimitProperty"]); }
         // if (isProduct)
         // {
