@@ -109,7 +109,9 @@ public class VdsUpdateRunTimeInfo {
     private static Map<Guid, Long> hostDownTimes = new HashMap<Guid, Long>();
     private int runningVmsInTransition = 0;
 
-    private void SaveDataToDb() {
+    private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
+
+    private void saveDataToDb() {
         if (_saveVdsDynamic) {
             _vdsManager.UpdateDynamicData(_vds.getDynamicData());
         }
@@ -117,7 +119,7 @@ public class VdsUpdateRunTimeInfo {
         if (_saveVdsStatistics) {
             VdsStatistics stat = _vds.getStatisticsData();
             _vdsManager.UpdateStatisticsData(stat);
-            CheckVdsMemoryThreshold(stat);
+            checkVdsMemoryThreshold(stat);
 
             final List<VdsNetworkStatistics> statistics = new LinkedList<VdsNetworkStatistics>();
             for (VdsNetworkInterface iface : _vds.getInterfaces()) {
@@ -254,7 +256,7 @@ public class VdsUpdateRunTimeInfo {
      *
      * @param stat
      */
-    private void CheckVdsMemoryThreshold(VdsStatistics stat) {
+    private void checkVdsMemoryThreshold(VdsStatistics stat) {
 
         Integer threshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         if (stat.getmem_available() < threshold) {
@@ -305,7 +307,7 @@ public class VdsUpdateRunTimeInfo {
                     processHardwareCapsNeeded = true;
                 }
                 // save all data to db
-                SaveDataToDb();
+                saveDataToDb();
             } catch (IRSErrorException ex) {
                 logFailureMessage("ResourceManager::refreshVdsRunTimeInfo:", ex);
                 if (log.isDebugEnabled()) {
@@ -453,7 +455,7 @@ public class VdsUpdateRunTimeInfo {
                 throw e;
             }
         }
-        MoveVDSToMaintenanceIfNeeded();
+        moveVDSToMaintenanceIfNeeded();
     }
 
     private void refreshVdsStats() {
@@ -485,9 +487,7 @@ public class VdsUpdateRunTimeInfo {
         }
         // save also dynamic because vm_count data and image_check getting with
         // statistics data
-        /**
-         * TODO: omer- one day remove dynamic save when possible please check if vdsDynamic changed before save
-         */
+        // TODO: omer- one day remove dynamic save when possible please check if vdsDynamic changed before save
         _saveVdsDynamic = true;
         _saveVdsStatistics = true;
 
@@ -898,7 +898,7 @@ public class VdsUpdateRunTimeInfo {
                                     guestAgentNicHash);
                         } else {
                             updateGuestAgentInterfacesChanges(vmDynamic, vmGuestAgentInterfaces, guestAgentNicHash);
-                            AddVmDynamicToList(vmDynamic);
+                            addVmDynamicToList(vmDynamic);
                         }
                     }
                 }
@@ -946,7 +946,7 @@ public class VdsUpdateRunTimeInfo {
                         if (_vmDynamicToSave.containsKey(vm.getId())) {
                             _vmDynamicToSave.get(vm.getId()).setHash(vmDynamic.getHash());
                         } else {
-                            AddVmDynamicToList(vmDynamic);
+                            addVmDynamicToList(vmDynamic);
                         }
                     }
                 }
@@ -1129,8 +1129,7 @@ public class VdsUpdateRunTimeInfo {
                 tempRunningList.add(runningVm.getVmDynamic());
             }
             for (VmDynamic runningVm : tempRunningList) {
-                VM vmToUpdate = null;
-                vmToUpdate = _vmDict.get(runningVm.getId());
+                VM vmToUpdate = _vmDict.get(runningVm.getId());
 
                 if (vmToUpdate == null
                         || (vmToUpdate.getStatus() != runningVm.getstatus() && !(vmToUpdate.getStatus() == VMStatus.SavingState && runningVm
@@ -1165,9 +1164,7 @@ public class VdsUpdateRunTimeInfo {
                 continue;
             }
 
-            VM vmTo = null;
-            // _vdsManager.getVm(vm.getvm_guid());
-            vmTo = _vmDict.get(vm.getId());
+            VM vmTo = _vmDict.get(vm.getId());
             VMStatus status = VMStatus.Unassigned;
             if (vmTo != null) {
                 status = vmTo.getStatus();
@@ -1189,24 +1186,22 @@ public class VdsUpdateRunTimeInfo {
                 vdsBrokerCommand.Execute();
 
                 if (vmTo != null && status == VMStatus.SavingState) {
-                    AfterSuspendTreatment(vm);
+                    afterSuspendTreatment(vm);
                 } else if (status != VMStatus.MigratingFrom) {
-                    HandleVmOnDown(vmTo, vm, vmStatistics);
+                    handleVmOnDown(vmTo, vm, vmStatistics);
                 }
             }
         }
     }
 
-    private void HandleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
+    private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
         VmExitStatus exitStatus = vmDynamic.getExitStatus();
 
         if (exitStatus != VmExitStatus.Normal) {
 
             auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
 
-            /**
-             * Vm failed to run - try to rerun it on other Vds
-             */
+            // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
                 if (ResourceManager.getInstance().IsVmInAsyncRunningList(vmDynamic.getId())) {
                     log.infoFormat("Running on vds during rerun failed vm: {0}", vmDynamic.getrun_on_vds());
@@ -1219,7 +1214,7 @@ public class VdsUpdateRunTimeInfo {
             else // => cacheVm == null
             {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
-                AddVmDynamicToList(vmDynamic);
+                addVmDynamicToList(vmDynamic);
             }
         } else {
             // if went down normally during migration process (either on source or on destination)
@@ -1228,9 +1223,7 @@ public class VdsUpdateRunTimeInfo {
                 auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
             }
 
-            /**
-             * Vm moved safely to down status. May be migration - just remove it from Async Running command.
-             */
+            // Vm moved safely to down status. May be migration - just remove it from Async Running command.
             ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
         }
     }
@@ -1247,7 +1240,7 @@ public class VdsUpdateRunTimeInfo {
         auditLog(logable, type);
     }
 
-    private void AfterSuspendTreatment(VmDynamic vm) {
+    private void afterSuspendTreatment(VmDynamic vm) {
         AuditLogType type = vm.getExitStatus() == VmExitStatus.Normal ? AuditLogType.USER_SUSPEND_VM_OK
                 : AuditLogType.USER_FAILED_SUSPEND_VM;
 
@@ -1283,9 +1276,9 @@ public class VdsUpdateRunTimeInfo {
                 }
                 // set vm status to down if source vm crushed
                 ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.Down);
-                AddVmDynamicToList(curVm.getDynamicData());
-                AddVmStatisticsToList(curVm.getStatisticsData());
-                AddVmInterfaceStatisticsToList(curVm.getInterfaces());
+                addVmDynamicToList(curVm.getDynamicData());
+                addVmStatisticsToList(curVm.getStatisticsData());
+                addVmInterfaceStatisticsToList(curVm.getInterfaces());
                 type = AuditLogType.VM_MIGRATION_ABORT;
                 logable.AddCustomValue("MigrationError", vmDynamic.getExitMessage());
 
@@ -1309,8 +1302,7 @@ public class VdsUpdateRunTimeInfo {
     private void updateRepository(List<VM> running) {
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VmDynamic runningVm = vmInternalData.getVmDynamic();
-            VM vmToUpdate = null;
-            vmToUpdate = _vmDict.get(runningVm.getId());
+            VM vmToUpdate = _vmDict.get(runningVm.getId());
 
             // launch powerclient on clientIp change logic
             // if not migrating here and not down
@@ -1361,9 +1353,7 @@ public class VdsUpdateRunTimeInfo {
                         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmToUpdate.getId());
                         auditLog(logable, AuditLogType.VM_NOT_RESPONDING);
                     }
-                    /**
-                     * check if vm is suspended and remove it from async list
-                     */
+                    // check if vm is suspended and remove it from async list
                     else if (runningVm.getstatus() == VMStatus.Paused) {
                         _vmsToRemoveFromAsync.add(vmToUpdate.getId());
                         if (vmToUpdate.getStatus() != VMStatus.Paused) {
@@ -1392,14 +1382,14 @@ public class VdsUpdateRunTimeInfo {
                 }
                 if (vmToUpdate != null || runningVm.getstatus() != VMStatus.MigratingFrom) {
                     RefObject<VM> tempRefObj = new RefObject<VM>(vmToUpdate);
-                    boolean updateSucceed = UpdateVmRunTimeInfo(tempRefObj, runningVm);
+                    boolean updateSucceed = updateVmRunTimeInfo(tempRefObj, runningVm);
                     vmToUpdate = tempRefObj.argvalue;
                     if (updateSucceed) {
-                        AddVmDynamicToList(vmToUpdate.getDynamicData());
+                        addVmDynamicToList(vmToUpdate.getDynamicData());
                     }
                 }
                 if (vmToUpdate != null) {
-                    UpdateVmStatistics(vmToUpdate);
+                    updateVmStatistics(vmToUpdate);
                     if (_vmDict.containsKey(runningVm.getId())) {
                         running.add(_vmDict.get(runningVm.getId()));
                         if (!_vdsManager.getInitialized()) {
@@ -1447,9 +1437,9 @@ public class VdsUpdateRunTimeInfo {
                 vmToRemove.setRunOnVds(vmToRemove.getmigrating_to_vds());
                 log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getVmName(), vmToRemove.getId());
                 ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, VMStatus.Unknown);
-                AddVmDynamicToList(vmToRemove.getDynamicData());
-                AddVmStatisticsToList(vmToRemove.getStatisticsData());
-                AddVmInterfaceStatisticsToList(vmToRemove.getInterfaces());
+                addVmDynamicToList(vmToRemove.getDynamicData());
+                addVmStatisticsToList(vmToRemove.getStatisticsData());
+                addVmInterfaceStatisticsToList(vmToRemove.getInterfaces());
             } else {
                 clearVm(vmToRemove);
             }
@@ -1478,9 +1468,7 @@ public class VdsUpdateRunTimeInfo {
     private boolean inMigrationTo(VmDynamic runningVm, VM vmToUpdate) {
         boolean returnValue = false;
         if (runningVm.getstatus() == VMStatus.MigratingTo) {
-            /**
-             * inMigration
-             */
+            // in migration
             log.infoFormat(
                     "vds::refreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
@@ -1543,7 +1531,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void MoveVDSToMaintenanceIfNeeded() {
+    private void moveVDSToMaintenanceIfNeeded() {
         if ((_vds.getstatus() == VDSStatus.PreparingForMaintenance)
                 && monitoringStrategy.canMoveToMaintenance(_vds)) {
             _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
@@ -1556,7 +1544,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private boolean UpdateVmRunTimeInfo(RefObject<VM> vmToUpdate, VmDynamic vmNewDynamicData) {
+    private boolean updateVmRunTimeInfo(RefObject<VM> vmToUpdate, VmDynamic vmNewDynamicData) {
         boolean returnValue = false;
         if (vmToUpdate.argvalue == null) {
             vmToUpdate.argvalue = getDbFacade().getVmDao().get(vmNewDynamicData.getId());
@@ -1613,13 +1601,13 @@ public class VdsUpdateRunTimeInfo {
         return returnValue;
     }
 
-    private void UpdateVmStatistics(VM vmToUpdate) {
+    private void updateVmStatistics(VM vmToUpdate) {
         // check if time for vm statistics refresh - update cache and DB
         if (_vdsManager.getRefreshStatistics()) {
             VmStatistics vmStatistics = _runningVms.get(vmToUpdate.getId()).getVmStatistics();
             vmToUpdate.updateRunTimeStatisticsData(vmStatistics, vmToUpdate);
-            AddVmStatisticsToList(vmToUpdate.getStatisticsData());
-            UpdateInterfaceStatistics(vmToUpdate, vmStatistics);
+            addVmStatisticsToList(vmToUpdate.getStatisticsData());
+            updateInterfaceStatistics(vmToUpdate, vmStatistics);
 
             for (DiskImageDynamic imageDynamic : _runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks()) {
                 _vmDiskImageDynamicToSave.put(imageDynamic.getId(), imageDynamic);
@@ -1627,7 +1615,7 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
-    private void UpdateInterfaceStatistics(VM vm, VmStatistics statistics) {
+    private void updateInterfaceStatistics(VM vm, VmStatistics statistics) {
         if (statistics.getInterfaceStatistics() == null) {
             return;
         }
@@ -1692,7 +1680,7 @@ public class VdsUpdateRunTimeInfo {
         }
 
         vm.setUsageNetworkPercent((vm.getUsageNetworkPercent() > 100) ? 100 : vm.getUsageNetworkPercent());
-        AddVmInterfaceStatisticsToList(vm.getInterfaces());
+        addVmInterfaceStatisticsToList(vm.getInterfaces());
     }
 
     /**
@@ -1700,7 +1688,7 @@ public class VdsUpdateRunTimeInfo {
      *
      * @param vmDynamic
      */
-    private void AddVmDynamicToList(VmDynamic vmDynamic) {
+    private void addVmDynamicToList(VmDynamic vmDynamic) {
         _vmDynamicToSave.put(vmDynamic.getId(), vmDynamic);
     }
 
@@ -1709,11 +1697,11 @@ public class VdsUpdateRunTimeInfo {
      *
      * @param vmDynamic
      */
-    private void AddVmStatisticsToList(VmStatistics vmStatistics) {
+    private void addVmStatisticsToList(VmStatistics vmStatistics) {
         _vmStatisticsToSave.put(vmStatistics.getId(), vmStatistics);
     }
 
-    private void AddVmInterfaceStatisticsToList(List<VmNetworkInterface> list) {
+    private void addVmInterfaceStatisticsToList(List<VmNetworkInterface> list) {
         if (list.size() <= 0) {
             return;
         }
@@ -1734,9 +1722,9 @@ public class VdsUpdateRunTimeInfo {
             if (vm.getStatus() != VMStatus.Suspended) {
                 ResourceManager.getInstance().InternalSetVmStatus(vm, VMStatus.Down);
             }
-            AddVmDynamicToList(vm.getDynamicData());
-            AddVmStatisticsToList(vm.getStatisticsData());
-            AddVmInterfaceStatisticsToList(vm.getInterfaces());
+            addVmDynamicToList(vm.getDynamicData());
+            addVmStatisticsToList(vm.getStatisticsData());
+            addVmInterfaceStatisticsToList(vm.getInterfaces());
             if (!ResourceManager.getInstance().IsVmInAsyncRunningList(vm.getId())) {
                 _vmsMovedToDown.add(vm.getId());
             }
@@ -1766,6 +1754,4 @@ public class VdsUpdateRunTimeInfo {
     public DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
-
-    private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 }
