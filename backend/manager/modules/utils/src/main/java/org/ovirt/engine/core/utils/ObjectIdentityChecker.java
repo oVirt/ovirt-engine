@@ -2,8 +2,10 @@ package org.ovirt.engine.core.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -14,35 +16,35 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class ObjectIdentityChecker {
-    private IObjectDescriptorContainer mContainer;
-    private static Map<String, Class<?>> mAliases =
+    private IObjectDescriptorContainer container;
+    private static Map<String, Class<?>> aliases =
             new HashMap<String, Class<?>>();
-    private static Map<Class<?>, ObjectIdentityChecker> mIdentities =
+    private static Map<Class<?>, ObjectIdentityChecker> identities =
             new HashMap<Class<?>, ObjectIdentityChecker>();
-    private static Map<Class<?>, Class<?>> mStatusTypes =
+    private static Map<Class<?>, Class<?>> statusTypes =
             new HashMap<Class<?>, Class<?>>();
-    private Map<Enum<?>, List<String>> mDictionary =
-            new HashMap<Enum<?>, List<String>>();
-    private List<String> mPermitted = new ArrayList<String>();
+    private Map<Enum<?>, Set<String>> dictionary =
+            new HashMap<Enum<?>, Set<String>>();
+    private Set<String> permitted = new HashSet<String>();
 
     public ObjectIdentityChecker(Class<?> type) {
-        mIdentities.put(type, this);
+        identities.put(type, this);
     }
 
     public ObjectIdentityChecker(Class<?> type, Iterable<String> aliases) {
         this(type);
         for (String alias : aliases) {
-            mAliases.put(alias, type);
+            ObjectIdentityChecker.aliases.put(alias, type);
         }
     }
 
     public ObjectIdentityChecker(Class<?> type, Iterable<String> aliases, Class<?> enumType) {
         this(type, aliases);
-        mStatusTypes.put(type, enumType);
+        statusTypes.put(type, enumType);
     }
 
     public final void setContainer(IObjectDescriptorContainer value) {
-        mContainer = value;
+        container = value;
     }
 
     public static boolean CanUpdateField(Object fieldContainer, String fieldName, Enum<?> status) {
@@ -50,8 +52,8 @@ public class ObjectIdentityChecker {
     }
 
     public static boolean CanUpdateField(String objectType, String fieldName, Enum<?> status, Object fieldContainer) {
-        Class<?> type = null;
-        if ((type = mAliases.get(objectType)) != null) {
+        Class<?> type = aliases.get(objectType);
+        if (type != null) {
             return CanUpdateField(type, fieldName, status, fieldContainer);
         } else {
             throw new RuntimeException(String.format("status type %1$s not exist", type));
@@ -60,8 +62,8 @@ public class ObjectIdentityChecker {
 
     public static boolean CanUpdateField(Class<?> objectType, String fieldName, Enum<?> status,
             Object fieldContainer) {
-        ObjectIdentityChecker checker = null;
-        if ((checker = mIdentities.get(objectType)) != null) {
+        ObjectIdentityChecker checker = identities.get(objectType);
+        if (checker != null) {
             return checker.IsFieldUpdatable(status, fieldName, fieldContainer);
         }
         return true;
@@ -69,10 +71,10 @@ public class ObjectIdentityChecker {
 
     @SuppressWarnings("unchecked")
     public static boolean CanUpdateField(String objectType, String fieldName, String status) {
-        Class<?> type = null;
-        if ((type = mAliases.get(objectType)) != null) {
+        Class<?> type = aliases.get(objectType);
+        if (type != null) {
             @SuppressWarnings("rawtypes")
-            final Class statusType = mStatusTypes.get(type);
+            final Class statusType = statusTypes.get(type);
             if (statusType != null) {
                 Enum<?> currentStatus;
                 try {
@@ -91,14 +93,12 @@ public class ObjectIdentityChecker {
     }
 
     public final void AddField(Enum<?> status, String fieldName) {
-        List<String> values = null;
-        if (!((values = mDictionary.get(status)) != null)) {
-            values = new ArrayList<String>();
-            mDictionary.put(status, values);
+        Set<String> values = dictionary.get(status);
+        if (values == null) {
+            values = new HashSet<String>();
+            dictionary.put(status, values);
         }
-        if (!values.contains(fieldName)) {
-            values.add(fieldName);
-        }
+        values.add(fieldName);
     }
 
     public final void AddField(Iterable<Enum<?>> statuses, String fieldName) {
@@ -114,9 +114,7 @@ public class ObjectIdentityChecker {
     }
 
     public final void AddPermittedField(String fieldName) {
-        if (!mPermitted.contains(fieldName)) {
-            mPermitted.add(fieldName);
-        }
+        permitted.add(fieldName);
     }
 
     public final void AddPermittedFields(String[] fieldNames) {
@@ -126,22 +124,18 @@ public class ObjectIdentityChecker {
     }
 
     public final boolean IsFieldUpdatable(String name) {
-        return mPermitted.contains(name);
+        return permitted.contains(name);
     }
 
     private boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
         boolean returnValue = true;
         if (!IsFieldUpdatable(name)) {
-            if (fieldContainer != null && mContainer != null
-                    && !mContainer.CanUpdateField(fieldContainer, name, status)) {
+            if (fieldContainer != null && container != null
+                    && !container.CanUpdateField(fieldContainer, name, status)) {
                 returnValue = false;
             } else {
-                List<String> values = null;
-                if ((values = mDictionary.get(status)) != null && values != null) {
-                    returnValue = values.contains(name);
-                } else {
-                    returnValue = false;
-                }
+                Set<String> values = dictionary.get(status);
+                returnValue = values != null ? values.contains(name) : false;
             }
             if (!returnValue) {
                 LogError(name, status);
