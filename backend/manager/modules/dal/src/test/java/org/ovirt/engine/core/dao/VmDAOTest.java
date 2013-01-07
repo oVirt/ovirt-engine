@@ -171,8 +171,8 @@ public class VmDAOTest extends BaseDAOTestCase {
                 return ((VM)input).getId();
             }
         });
-        assertTrue("the recieved list didn't contain a expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_60));
-        assertTrue("the recieved list didn't contain a expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_59));
+        assertTrue("the received list didn't contain an expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_60));
+        assertTrue("the received list didn't contain an expected VM", recieved.contains(FixturesTool.VM_RHEL5_POOL_59));
     }
 
     /**
