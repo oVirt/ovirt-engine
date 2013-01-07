@@ -739,7 +739,7 @@ public class IsoDomainListSyncronizer {
     private boolean isStorageDomainValid(Guid storageDomainId, FileTypeExtension fileTypeExtension, boolean forceRefresh) {
         // Check storage domain Id validity.
         if (storageDomainId == null) {
-            log.error("Storage domain ID recieved from command query is null.");
+            log.error("Storage domain ID received from command query is null.");
             return false;
         }
         if (!refreshRepos(storageDomainId, fileTypeExtension, forceRefresh)) {
