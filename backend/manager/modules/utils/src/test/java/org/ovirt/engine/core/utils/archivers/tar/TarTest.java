@@ -12,10 +12,12 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class TarTest {
 
@@ -76,6 +78,7 @@ public class TarTest {
 
     @Test
     public void testSimple() throws Exception {
+        assumeTrue(SystemUtils.IS_OS_UNIX);
 
         File tmpTar = null;
         File tmpDir1 = null;
