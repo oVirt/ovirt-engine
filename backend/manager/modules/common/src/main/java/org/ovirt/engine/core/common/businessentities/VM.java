@@ -1365,8 +1365,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     /**
      * Version in .Net style: a.b.c.d when a: major version, b: minor version , c: major revision, d: minor revision
-     * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version, recieved
-     * from vds in format : a.b.d there is no major revision recieved from vds - always 0
+     * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version, received
+     * from vds in format : a.b.d there is no major revision received from vds - always 0
      */
     private Version privateGuestAgentVersion;
 
