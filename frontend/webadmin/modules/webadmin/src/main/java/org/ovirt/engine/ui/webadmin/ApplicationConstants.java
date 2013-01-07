@@ -1885,8 +1885,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String lastTaskEventFooter();
 
     // Network popup
-    @DefaultStringValue("Apply")
-    String applyClustersNetworkPopup();
 
     // Header
     @DefaultStringValue("Logged in user")

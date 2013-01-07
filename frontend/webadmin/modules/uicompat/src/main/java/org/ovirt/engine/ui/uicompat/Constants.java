@@ -629,9 +629,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Logical Network(s)")
     String logicalNetworksMsg();
 
-    @DefaultStringValue("Cannot edit Management Network when there are Clusters in the Data Center")
-    String cannotDetachManagementNetworkFromClustersMsg();
-
     @DefaultStringValue("You are about to attach the network to all the selected clusters and to detach the network from all the unselected clusters.\n\nAre you sure you want to continue?")
     String youAreAboutToAttachDetachNetworkToFromTheClustersMsg();
 

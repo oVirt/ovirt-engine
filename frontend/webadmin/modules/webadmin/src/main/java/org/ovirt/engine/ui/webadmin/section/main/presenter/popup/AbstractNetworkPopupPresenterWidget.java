@@ -6,10 +6,8 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 
 public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V extends AbstractNetworkPopupPresenterWidget.ViewDef<T>>
@@ -21,15 +19,7 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
 
         void setMtuEnabled(boolean flag);
 
-        void setNetworkClusterList(ListModel networkClusterList);
-
         void setMessageLabel(String label);
-
-        void postModelEnabled(boolean enabled);
-
-        HasClickHandlers getApply();
-
-        void setApplyEnabled(boolean enabled);
 
         void updateVisibility();
 
@@ -81,8 +71,6 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
             }
         });
 
-        getView().setNetworkClusterList(model.getNetworkClusterList());
-
         // Listen to Properties
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -93,16 +81,6 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
                 }
-            }
-        });
-
-        // Listen to "IsEnabled" property
-        model.getIsEnabled().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel entity = (EntityModel) sender;
-                boolean inputFieldsEnabled = (Boolean) entity.getEntity();
-                getView().postModelEnabled(inputFieldsEnabled);
             }
         });
     }

@@ -22,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
@@ -76,8 +75,7 @@ public class NetworkModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand) {
 
-                if (lastExecutedCommand == getModel().getRemoveCommand()
-                        || lastExecutedCommand.getName().equals(EditNetworkModel.APPLY_COMMAND_NAME)) { //$NON-NLS-1$
+                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);

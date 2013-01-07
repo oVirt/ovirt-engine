@@ -7,9 +7,6 @@
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractNetworkPopupView.WidgetStyle">
-		.dock {
-			border-right: 1px solid #BBBBBB;
-		}
 
 		.mainLabel {
 			font-weight: bold;
@@ -39,20 +36,6 @@
 			padding: 5px;
 		}
 
-		.applyDialog {
-			padding-bottom: 6px;
-		}
-
-		.applyEnabled {
-			font-size: 8pt;
-			color: blue;
-		}
-
-		.applyDisabled {
-			font-size: 8pt;
-			color: #888888;
-		}
-
 		.indent {
 			padding-left: 20px;
 		}
@@ -64,42 +47,37 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="435px" height="520px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="435px" height="520px">
 		<d:content>
-			<g:DockLayoutPanel unit="PCT">
-				<g:center>
-					<g:FlowPanel addStyleNames="{style.dock}">
-						<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
-						<g:HTMLPanel addStyleNames="{style.indent}">
-							<g:HTML ui:field="messageLabel" addStyleNames="{style.message}"/>
-							<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
-							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-							<g:HorizontalPanel>
-								<e:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
-								<e:EntityModelTextBoxOnlyEditor ui:field="vlanTag" />
-							</g:HorizontalPanel>
-							<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
-							<g:HorizontalPanel>
-								<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
-								<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
-							</g:HorizontalPanel>
-						</g:HTMLPanel>
-					</g:FlowPanel>
-				</g:center>
-				<g:south size="50">
-					<g:VerticalPanel>
-						<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
-						<g:HTMLPanel addStyleNames="{style.indent}">
-							<d:SimpleDialogButton ui:field="apply" text="{constants.applyClustersNetworkPopup}" addStyleNames="{style.applyDialog}"/>
-							<g:ScrollPanel height="160px" width="100%">
-								<e:EntityModelCellTable ui:field="clustersTable" />
-							</g:ScrollPanel>
-						</g:HTMLPanel>
-						<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
-					</g:VerticalPanel>
-				</g:south>
-			</g:DockLayoutPanel>
+		    <g:VerticalPanel>
+				<g:FlowPanel>
+					<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
+					<g:HTMLPanel addStyleNames="{style.indent}">
+						<g:HTML ui:field="messageLabel" addStyleNames="{style.message}"/>
+						<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
+						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+						<g:HorizontalPanel>
+							<e:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
+							<e:EntityModelTextBoxOnlyEditor ui:field="vlanTag" />
+						</g:HorizontalPanel>
+						<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
+						<g:HorizontalPanel>
+							<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
+							<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
+						</g:HorizontalPanel>
+					</g:HTMLPanel>
+				</g:FlowPanel>
+				<g:VerticalPanel ui:field="attachPanel">
+					<g:Label ui:field="assignLabel" addStyleNames="{style.mainLabel}"/>
+					<g:HTMLPanel addStyleNames="{style.indent}">
+						<g:ScrollPanel height="160px" width="100%">
+							<e:EntityModelCellTable ui:field="clustersTable" />
+						</g:ScrollPanel>
+					</g:HTMLPanel>
+					<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
+				</g:VerticalPanel>
+		    </g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 

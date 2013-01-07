@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -29,7 +30,6 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
     public void updateVisibility() {
         super.updateVisibility();
         messageLabel.setVisible(false);
-        apply.setVisible(false);
         publicUseEditor.setVisible(true);
     }
 
@@ -47,6 +47,11 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
     @Override
     public NewNetworkModel flush() {
        return Driver.driver.flush();
+    }
+
+    @Override
+    public void setNetworkClusterList(ListModel networkClusterList) {
+        clustersTable.edit(networkClusterList);
     }
 
 }

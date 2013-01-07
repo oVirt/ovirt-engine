@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
@@ -30,7 +29,6 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxHeader;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -38,6 +36,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractModelBoundPopupView<T> implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
@@ -45,6 +44,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField
+    public SimpleDialogPanel mainPanel;
 
     @UiField
     @Ignore
@@ -92,12 +94,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public final EntityModelCellTable<ListModel> clustersTable;
 
     @UiField
-    @Ignore
-    public HTML messageLabel;
+    public VerticalPanel attachPanel;
 
     @UiField
     @Ignore
-    public SimpleDialogButton apply;
+    public HTML messageLabel;
 
     @UiField
     public WidgetStyle style;
@@ -150,7 +151,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
         publicUseEditor.addContentWidgetStyleName(style.publicUseEditor());
         publicUseEditor.asCheckBox().addStyleName(style.checkBox());
-        apply.setCustomContentStyle(style.applyEnabled());
     }
 
     @Override
@@ -171,16 +171,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void setMessageLabel(String label) {
         messageLabel.setHTML(label);
-    }
-
-    @Override
-    public void postModelEnabled(boolean enabled) {
-        messageLabel.setVisible(!enabled);
-    }
-
-    @Override
-    public HasClickHandlers getApply() {
-        return apply;
     }
 
     @SuppressWarnings("unchecked")
@@ -267,24 +257,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @Override
-    public void setNetworkClusterList(ListModel networkClusterList) {
-        clustersTable.edit(networkClusterList);
-    }
-
-    @Override
     public void updateVisibility() {
         messageLabel.setVisible(false);
         publicUseEditor.setVisible(false);
-    }
-
-    @Override
-    public void setApplyEnabled(boolean enabled) {
-        apply.setEnabled(enabled);
-        if (enabled) {
-            apply.setCustomContentStyle(style.applyEnabled());
-        } else {
-            apply.setCustomContentStyle(style.applyDisabled());
-        }
     }
 
     interface WidgetStyle extends CssResource {
@@ -293,10 +268,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         String vlanEditor();
 
         String checkBox();
-
-        String applyEnabled();
-
-        String applyDisabled();
 
         String publicUseEditor();
     }

@@ -24,6 +24,7 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
             ApplicationConstants constants,
             ApplicationTemplates templates) {
         super(eventBus, resources, constants, templates);
+        mainPanel.setHeight("290px"); //$NON-NLS-1$
         Driver.driver.initialize(this);
     }
 
@@ -40,8 +41,14 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
     }
 
     @Override
+    public void updateVisibility() {
+        super.updateVisibility();
+        attachPanel.setVisible(false);
+    }
+
+    @Override
     public EditNetworkModel flush() {
-       return Driver.driver.flush();
+        return Driver.driver.flush();
     }
 
 }

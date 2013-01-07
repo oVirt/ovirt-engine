@@ -182,12 +182,6 @@ public class DataCenterNetworkListModel extends SearchableListModel
         networkModel.getDataCenters().setSelectedItem(getEntity());
     }
 
-    public void apply()
-    {
-        EditNetworkModel model = (EditNetworkModel) getWindow();
-        model.apply();
-    }
-
     @Override
     protected void OnSelectedItemChanged()
     {
@@ -239,10 +233,6 @@ public class DataCenterNetworkListModel extends SearchableListModel
         else if (command == getRemoveCommand())
         {
             remove();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), EditNetworkModel.APPLY_COMMAND_NAME))
-        {
-            apply();
         }
     }
 

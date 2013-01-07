@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -17,9 +23,22 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewNetworkModel extends NetworkModel {
 
+    private ListModel privateNetworkClusterList;
+
     public NewNetworkModel(ListModel sourceListModel) {
         super(sourceListModel);
+        setNetworkClusterList(new ListModel());
         init();
+    }
+
+    public ListModel getNetworkClusterList()
+    {
+        return privateNetworkClusterList;
+    }
+
+    public void setNetworkClusterList(ListModel value)
+    {
+        privateNetworkClusterList = value;
     }
 
     private void init() {
@@ -28,7 +47,54 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     @Override
-    public void postExecuteSave() {
+    public void syncWithBackend() {
+        super.syncWithBackend();
+        // Get dc- cluster list
+        AsyncDataProvider.GetClusterList(new AsyncQuery(NewNetworkModel.this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object model, Object ReturnValue)
+                    {
+                        onGetClusterList((ArrayList<VDSGroup>) ReturnValue);
+                    }
+                }), getSelectedDc().getId());
+    }
+
+    protected void onGetClusterList(ArrayList<VDSGroup> clusterList) {
+        // Cluster list
+        List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
+        for (VDSGroup cluster : clusterList)
+        {
+            items.add(createNetworkClusterModel(cluster));
+        }
+        getNetworkClusterList().setItems(items);
+
+        if (firstInit) {
+            firstInit = false;
+            addCommands();
+        }
+    }
+
+    protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {
+        NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
+        networkClusterModel.setAttached(false);
+
+        return networkClusterModel;
+    }
+
+    @Override
+    protected void initMtu() {
+        getHasMtu().setEntity(false);
+        getMtu().setEntity(null);
+    }
+
+    @Override
+    protected void initIsVm() {
+        getIsVmNetwork().setEntity(true);
+    }
+
+    @Override
+    protected void executeSave() {
         // New network
         final AddNetworkStoragePoolParameters parameters =
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
@@ -54,50 +120,42 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     @Override
-    public void onGetClusterList(ArrayList<VDSGroup> clusterList) {
-        // Cluster list
-        List<NetworkClusterModel> items = new ArrayList<NetworkClusterModel>();
-        for (VDSGroup cluster : clusterList)
+    protected void postSaveAction(Guid networkGuid, boolean succeeded) {
+        super.postSaveAction(networkGuid, succeeded);
+
+        if (!succeeded) {
+            return;
+        }
+
+        Guid networkId = getNetwork().getId() == null ? networkGuid : getNetwork().getId();
+        ArrayList<VdcActionParametersBase> actionParameters1 =
+                new ArrayList<VdcActionParametersBase>();
+
+        for (VDSGroup attachNetworkToCluster : getClustersToAttach())
         {
-            items.add(createNetworkClusterModel(cluster));
+            Network tempVar = new Network();
+            tempVar.setId(networkId);
+            tempVar.setName(getNetwork().getName());
+            // Init default NetworkCluster values (required, display, status)
+            tempVar.setCluster(new NetworkCluster());
+            actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
         }
-        getNetworkClusterList().setItems(items);
 
-        if (firstInit) {
-            firstInit = false;
-            addCommands();
+        Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
+    }
+
+    public ArrayList<VDSGroup> getClustersToAttach()
+    {
+        ArrayList<VDSGroup> clusterToAttach = new ArrayList<VDSGroup>();
+
+        for (Object item : getNetworkClusterList().getItems())
+        {
+            NetworkClusterModel networkClusterModel = (NetworkClusterModel) item;
+            if (networkClusterModel.isAttached())
+            {
+                clusterToAttach.add(networkClusterModel.getEntity());
+            }
         }
-    }
-
-    @Override
-    protected void addCommands() {
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
-        getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance()
-                .getConstants()
-                .cancel());
-        tempVar2.setIsCancel(true);
-        getCommands().add(tempVar2);
-    }
-
-    protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {
-        NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
-        networkClusterModel.setAttached(false);
-
-        return networkClusterModel;
-    }
-
-    @Override
-    protected void initMtu() {
-        getHasMtu().setEntity(false);
-        getMtu().setEntity(null);
-    }
-
-    @Override
-    protected void initIsVm() {
-        getIsVmNetwork().setEntity(true);
+        return clusterToAttach;
     }
 }

@@ -90,11 +90,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     }
 
-    public void apply() {
-        EditNetworkModel model = (EditNetworkModel) getWindow();
-        model.apply();
-    }
-
     public void remove() {
         if (getConfirmWindow() != null)
         {
@@ -220,10 +215,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         else if (command == getRemoveCommand())
         {
             remove();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), EditNetworkModel.APPLY_COMMAND_NAME))
-        {
-            apply();
         }
     }
 
