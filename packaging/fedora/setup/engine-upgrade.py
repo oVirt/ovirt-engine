@@ -331,7 +331,7 @@ class MYum():
             for query in self._miniyum.queryPackages(patterns=[package['name']]):
                 if query['operation'] == 'installed':
                     logging.debug("Checking package %s", query['display_name'])
-                    if not self._miniyum.queryLocalCachePackages(patterns=[query['display_name']]):
+                    if not self._miniyum.queryPackages(patterns=[query['display_name']], showdups=True):
                         logging.debug("package %s not available in cache" % query['display_name'])
                         return False
 

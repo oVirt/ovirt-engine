@@ -41,6 +41,13 @@ import yum.callbacks
 class MiniYumSinkBase(object):
     """Sink base."""
 
+    @property
+    def failed(self):
+        return self._failed
+
+    def clearError(self):
+        self._failed = False
+
     def verbose(self, msg):
         """verbose log.
 
@@ -66,7 +73,7 @@ class MiniYumSinkBase(object):
         msg -- message to print
 
         """
-        pass
+        self._failed = True
 
     def keepAlive(self, msg):
         """keepAlive log.
@@ -437,7 +444,18 @@ class MiniYum(object):
 
         return ret
 
-    def __init__(self, sink=None, blockStdHandles=True, extraLog=None):
+    @property
+    def sink(self):
+        return self._sink
+
+    def __init__(
+        self,
+        sink=None,
+        blockStdHandles=True,
+        extraLog=None,
+        disabledPlugins=None,
+        enabledPlugins=None,
+    ):
         """Constructor.
 
         Keyword arguments:
@@ -462,7 +480,25 @@ class MiniYum(object):
 
             with self._disableOutput:
                 self._yb = self._YumBase(self._sink)
+                if disabledPlugins is not None:
+                    self._yb.preconf.disabled_plugins = disabledPlugins
+                if enabledPlugins is not None:
+                    self._yb.preconf.enabled_plugins = enabledPlugins
 
+                #
+                # DO NOT use async which is the
+                # hardcoded default as we will not
+                # be able to monitor progress
+                #
+                from urlgrabber import grabber
+                if hasattr(grabber, 'parallel_wait'):
+                    for repo in self._yb.repos.listEnabled():
+                        repo._async = False
+
+                #
+                # Set progress bar hook, useless if
+                # async/parallel is enabled.
+                #
                 self._yb.repos.setProgressBar(
                     self._DownloadCallback(self._sink)
                 )
@@ -784,13 +820,14 @@ class MiniYum(object):
             self._sink.error(e)
             raise
 
-    def queryPackages(self, pkgnarrow='all', patterns=None):
+    def queryPackages(self, pkgnarrow='all', patterns=None, showdups=None):
         try:
             with self._disableOutput:
                 ret = []
                 holder = self._yb.doPackageLists(
                     pkgnarrow=pkgnarrow,
-                    patterns=patterns
+                    patterns=patterns,
+                    showdups=showdups,
                 )
                 for op, l in (
                     ('available', holder.available),
@@ -819,20 +856,10 @@ class MiniYum(object):
             self._sink.error(e)
             raise
 
-    def queryLocalCachePackages(self, patterns=None):
-        try:
-            with self._disableOutput:
-                return [
-                    self._get_package_info(p)
-                    for p in self._yb.pkgSack.returnPackages(patterns=patterns)
-                ]
-
-        except Exception as e:
-            self._sink.error(e)
-            raise
-
     def processTransaction(self):
         """Process built transaction."""
+
+        self._sink.clearError()
 
         try:
             with self._disableOutput:
@@ -848,17 +875,23 @@ class MiniYum(object):
             self._sink.error(e)
             raise
 
+        if self._sink.failed:
+            raise RuntimeError(
+                _('One or more elements within Yum transaction failed')
+            )
+
 
 class Example(object):
     """Example of miniyum usage."""
 
-    class MyMiniYumSunk(MiniYumSinkBase):
+    class MyMiniYumSink(MiniYumSinkBase):
         """Events."""
 
         KEEPALIVE_INTERVAL = 60
 
         def __init__(self):
             """dup the stdout as during yum operation so we redirect it."""
+            super(Example.MyMiniYumSink, self).__init__()
             self._stream = os.dup(sys.stdout.fileno())
             self._touch()
 
@@ -869,17 +902,21 @@ class Example(object):
             self._last = time.time()
 
         def verbose(self, msg):
+            super(Example.MyMiniYumSink, self).verbose(msg)
             os.write(self._stream, ('VERB: -->%s<--\n' % msg).encode('utf-8'))
 
         def info(self, msg):
+            super(Example.MyMiniYumSink, self).info(msg)
             self._touch()
             os.write(self._stream, ('OK:   -->%s<--\n' % msg).encode('utf-8'))
 
         def error(self, msg):
+            super(Example.MyMiniYumSink, self).error(msg)
             self._touch()
             os.write(self._stream, ('FAIL: -->%s<--\n' % msg).encode('utf-8'))
 
         def keepAlive(self, msg):
+            super(Example.MyMiniYumSink, self).keepAlive(msg)
             if time.time() - self._last >= \
                     self.KEEPALIVE_INTERVAL:
                 self.info(msg)
@@ -896,7 +933,7 @@ class Example(object):
     @staticmethod
     def main():
         # BEGIN: PROCESS-INITIALIZATION
-        miniyumsink = Example.MyMiniYumSunk()
+        miniyumsink = Example.MyMiniYumSink()
         MiniYum.setup_log_hook(sink=miniyumsink)
         extraLog = open('/tmp/miniyum.log', 'a')
         miniyum = MiniYum(sink=miniyumsink, extraLog=extraLog)
@@ -943,3 +980,6 @@ if __name__ == '__main__':
     Example.main()
 
 __all__ = ['MiniYum', 'MiniYumSinkBase']
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

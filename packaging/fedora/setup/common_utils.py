@@ -19,7 +19,7 @@ import shutil
 import time
 import tempfile
 import csv
-from miniyum import MiniYum
+import miniyum
 
 """
 ENUM implementation for python (from the vdsm team)
@@ -289,7 +289,7 @@ class XMLConfigFileHandler(ConfigFileHandler):
         parentNode.addChild(newNode.xpathEval('/*')[0])
 
 
-class MiniYumSink(object):
+class MiniYumSink(miniyum.MiniYumSinkBase):
     """miniyum user interaction sink.
 
     We want logging to go into our own internal log.
@@ -312,6 +312,7 @@ class MiniYumSink(object):
             raise
 
     def __init__(self):
+        super(MiniYumSink, self).__init__()
         self._fds = None
         self._fds = self._currentfds()
 
@@ -321,16 +322,19 @@ class MiniYumSink(object):
                 os.close(fd)
 
     def verbose(self, msg):
+        super(MiniYumSink, self).verbose(msg)
         logging.debug("YUM: VERB: %s" % msg)
 
     def info(self, msg):
+        super(MiniYumSink, self).info(msg)
         logging.info("YUM: OK:   %s" % msg)
 
     def error(self, msg):
+        super(MiniYumSink, self).error(msg)
         logging.error("YUM: FAIL: %s" % msg)
 
     def keepAlive(self, msg):
-        pass
+        super(MiniYumSink, self).keepAlive(msg)
 
     def askForGPGKeyImport(self, userid, hexkeyid):
         logging.warning("YUM: APPROVE-GPG: userid=%s, hexkeyid=%s" % (
@@ -345,9 +349,6 @@ class MiniYumSink(object):
         for i in range(3):
             os.dup2(save[i], i)
         return ret
-
-    def reexec(self):
-        pass
 
 def getXmlNode(xml, xpath):
     nodes = xml.xpathEval(xpath)
@@ -1270,10 +1271,10 @@ def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
 
     # TODO
     # Do not create miniyum here, pass it via argument
-    miniyum = MiniYum(sink=MiniYumSink())
+    localminiyum = miniyum.MiniYum(sink=MiniYumSink())
 
     res = [
-        p for p in miniyum.queryPackages(patterns=[rpmName])
+        p for p in localminiyum.queryPackages(patterns=[rpmName])
         if p['operation'] == 'installed'
     ]
 
