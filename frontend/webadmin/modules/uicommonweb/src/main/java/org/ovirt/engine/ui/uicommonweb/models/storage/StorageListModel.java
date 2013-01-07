@@ -1851,55 +1851,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             new Object[] {context, isSucceeded, model, message});
     }
 
-    private void ImportSanStorage(TaskContext context)
-    {
-        this.context = context;
-
-        ArrayList<Object> data = (ArrayList<Object>) context.getState();
-        StorageModel storageModel = (StorageModel) getWindow();
-        ImportSanStorageModel sanStorageModel = (ImportSanStorageModel) storageModel.getSelectedItem();
-        Guid hostId = (Guid) data.get(1);
-        StorageDomain storage;
-
-        if (sanStorageModel.getSelectedItem() != null)
-        {
-            storage = (StorageDomain) sanStorageModel.getSelectedItem();
-        }
-        else
-        {
-            ListModel candidates = sanStorageModel.getCandidatesList();
-            EntityModel selectedItem = (EntityModel) candidates.getSelectedItem();
-            storage = (StorageDomain) selectedItem.getEntity();
-        }
-
-        AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storage == null ? null : storage.getStorageStaticData());
-        params.setVdsId(hostId);
-
-        Frontend.RunAction(VdcActionType.AddExistingSANStorageDomain, params, new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-
-                Object[] array = (Object[]) result.getState();
-                StorageListModel storageListModel = (StorageListModel) array[0];
-                StorageDomain sdToAdd1 = (StorageDomain) array[1];
-                VdcReturnValueBase returnVal = result.getReturnValue();
-
-                boolean success = returnVal != null && returnVal.getSucceeded();
-                if (success) {
-
-                    StorageModel model = (StorageModel) storageListModel.getWindow();
-                    storage_pool dataCenter = (storage_pool) model.getDataCenter().getSelectedItem();
-                    if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        storageListModel.AttachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
-                    }
-                    storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
-                }
-
-                OnFinish(storageListModel.context, success, storageListModel.storageModel, null);
-            }
-        }, new Object[] {this, storage});
-    }
-
     @Override
     public void run(TaskContext context)
     {
@@ -1925,10 +1876,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         else if (StringHelper.stringsEqual(key, "ImportNfs")) //$NON-NLS-1$
         {
             ImportNfsStorage(context);
-        }
-        else if (StringHelper.stringsEqual(key, "ImportSan")) //$NON-NLS-1$
-        {
-            ImportSanStorage(context);
         }
         else if (StringHelper.stringsEqual(key, "Finish")) //$NON-NLS-1$
         {

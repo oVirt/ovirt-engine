@@ -214,7 +214,6 @@ public enum VdcActionType {
     UpdateStoragePool(958, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, QuotaDependency.NONE),
     FenceVdsManualy(959, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
     AddExistingNFSStorageDomain(960, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
-    AddExistingSANStorageDomain(961, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     AddStorageServerConnection(1000, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     DisconnectStorageServerConnection(1002, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     ConnectHostToStoragePoolServers(1004, QuotaDependency.NONE),
