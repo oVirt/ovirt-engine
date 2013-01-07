@@ -87,8 +87,8 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
                 return ((VmTemplate)input).getId();
             }
         });
-        assertTrue("the recieved list didn't contain a expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
-        assertTrue("the recieved list didn't contain a expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
+        assertTrue("the received list didn't contain an expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
+        assertTrue("the received list didn't contain an expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
     }
 
     /**
