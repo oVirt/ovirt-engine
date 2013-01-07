@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
+public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic vmStatic;
@@ -1518,5 +1518,10 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     public void setOvfVersion(String ovfVersion) {
         vmStatic.setOvfVersion(ovfVersion);
+    }
+
+    @Override
+    public String getName() {
+        return getVmName();
     }
 }

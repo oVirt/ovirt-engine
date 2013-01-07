@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
+public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
@@ -1329,4 +1329,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return maxSchedulingMemory;
     }
 
+    @Override
+    public String getName() {
+        return getvds_name();
+    }
 }
