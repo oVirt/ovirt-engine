@@ -203,7 +203,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 vdsGroupId = Guid.createGuidFromString(
                         Config.<String> GetValue(ConfigValues.PowerClientAutoRegistrationDefaultVdsGroupID));
                 log.debugFormat(
-                        "RegisterVdsQuery::ExecuteCommand - VdsGroupId recieved as -1, using PowerClientAutoRegistrationDefaultVdsGroupID: {0}",
+                        "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using PowerClientAutoRegistrationDefaultVdsGroupID: {0}",
                         vdsGroupId);
             } else {
                 vdsGroupId = getParameters().getVdsGroupId();
