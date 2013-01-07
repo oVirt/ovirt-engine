@@ -17,12 +17,14 @@ Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_stp BOOLEAN ,
     	v_storage_pool_id UUID,
 	v_mtu INTEGER,
-	v_vm_network BOOLEAN)
+	v_vm_network BOOLEAN,
+	v_provider_network_provider_id UUID,
+	v_provider_network_external_id TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network)
-	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network );
+INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network, provider_network_provider_id, provider_network_external_id)
+	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network, v_provider_network_provider_id, v_provider_network_external_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -40,7 +42,9 @@ Create or replace FUNCTION Updatenetwork(v_addr VARCHAR(50) ,
 	v_stp BOOLEAN ,
 	v_storage_pool_id UUID,
 	v_mtu INTEGER,
-	v_vm_network BOOLEAN)
+	v_vm_network BOOLEAN,
+	v_provider_network_provider_id UUID,
+	v_provider_network_external_id TEXT)
 RETURNS VOID
 
 	--The [network] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -50,7 +54,9 @@ BEGIN
       SET addr = v_addr,description = v_description,name = v_name,subnet = v_subnet,
       gateway = v_gateway,type = v_type,vlan_id = v_vlan_id,
       stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu,
-      vm_network = v_vm_network
+      vm_network = v_vm_network,
+      provider_network_provider_id = v_provider_network_provider_id,
+      provider_network_external_id = v_provider_network_external_id
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -176,7 +182,9 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
-	    mtu INTEGER, vm_network BOOLEAN, network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
+	    mtu INTEGER, vm_network BOOLEAN,
+	    provider_network_provider_id UUID, provider_network_external_id TEXT,
+	    network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
 	    required BOOLEAN, migration BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType
@@ -196,6 +204,8 @@ RETURN QUERY SELECT
     network.storage_pool_id,
     network.mtu,
     network.vm_network,
+    network.provider_network_provider_id,
+    network.provider_network_external_id,
     network_cluster.network_id,
     network_cluster.cluster_id,
     network_cluster.status,

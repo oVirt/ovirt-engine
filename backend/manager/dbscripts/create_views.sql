@@ -1107,6 +1107,8 @@ SELECT network.id AS id,
    network.mtu AS mtu,
    network.vm_network AS vm_network,
    network.storage_pool_id AS storage_pool_id,
+   network.provider_network_provider_id AS provider_network_provider_id,
+   network.provider_network_external_id AS provider_network_external_id,
    storage_pool.name AS storage_pool_name,
    storage_pool.compatibility_version AS compatibility_version
 FROM network

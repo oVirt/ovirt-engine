@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
@@ -102,7 +103,11 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                 .addValue("stp", network.getStp())
                 .addValue("storage_pool_id", network.getDataCenterId())
                 .addValue("mtu", network.getMtu())
-                .addValue("vm_network", network.isVmNetwork());
+                .addValue("vm_network", network.isVmNetwork())
+                .addValue("provider_network_provider_id",
+                        network.getProvidedBy() == null ? null : network.getProvidedBy().getProviderId())
+                .addValue("provider_network_external_id",
+                        network.getProvidedBy() == null ? null : network.getProvidedBy().getExternalId());
     }
 
     @Override
@@ -147,6 +152,12 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
                  .getString("storage_pool_id")));
             entity.setMtu(rs.getInt("mtu"));
             entity.setVmNetwork(rs.getBoolean("vm_network"));
+            String providerId = rs.getString("provider_network_provider_id");
+            if (providerId != null) {
+                entity.setProvidedBy(new ProviderNetwork(
+                        Guid.createGuidFromString(providerId),
+                        rs.getString("provider_network_external_id")));
+            }
 
             return entity;
         }
