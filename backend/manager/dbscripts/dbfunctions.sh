@@ -268,6 +268,7 @@ run_upgrade_files() {
         last="${current:2:7}"
         disable_gaps_from="3010910"
         files=$(get_files "upgrade" 1)
+        insertfilename=$(mktemp)
         for file in $(ls -1 $files); do
             before=$(get_db_time)
             checksum=$(md5sum $file | cut -d " " -f1)
@@ -323,9 +324,10 @@ run_upgrade_files() {
                 CMD="insert into schema_version(version,script,checksum,installed_by,started_at,ended_at,state,current,comment)
                      values (trim('$ver'),'$file','$checksum','${USERNAME}',
                      cast(trim('$before') as timestamp),cast(trim('$after') as timestamp),'$state',false,'$comment');"
-                execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+                echo ${CMD} >> ${insertfilename}
             fi
         done
+        execute_file ${insertfilename} ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
         set_last_version
 
         # restore views & SPs if dropped
