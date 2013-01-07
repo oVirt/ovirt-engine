@@ -974,7 +974,7 @@ public class VmMapper {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Bad format: " + strCpu, e);
         }
-        if (strPin[1].matches("\\^?(\\d(\\-\\d)?)(,\\^?((\\d(\\-\\d)?)))*")) {
+        if (strPin[1].matches("\\^?(\\d+(\\-\\d+)?)(,\\^?((\\d+(\\-\\d+)?)))*")) {
             pin.setCpuSet(strPin[1]);
         } else {
             throw new IllegalArgumentException("Bad format: " + strPin[1]);

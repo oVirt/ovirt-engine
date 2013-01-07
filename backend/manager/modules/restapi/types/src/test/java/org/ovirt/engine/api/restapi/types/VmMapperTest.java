@@ -217,6 +217,18 @@ public class VmMapperTest extends
         VCpuPin pin = VmMapper.stringToVCpupin("1#1");
         assertEquals(1, pin.getVcpu());
         assertEquals("1", pin.getCpuSet());
+
+        pin = VmMapper.stringToVCpupin("1#10");
+        assertEquals(1, pin.getVcpu());
+        assertEquals("10", pin.getCpuSet());
+
+        pin = VmMapper.stringToVCpupin("1#10,11,12");
+        assertEquals(1, pin.getVcpu());
+        assertEquals("10,11,12", pin.getCpuSet());
+
+        pin = VmMapper.stringToVCpupin("1#10-12,16");
+        assertEquals(1, pin.getVcpu());
+        assertEquals("10-12,16", pin.getCpuSet());
     }
 
     @Test
