@@ -663,6 +663,27 @@
         </row>
     </table>
 
+    <table name="providers">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>url</column>
+        <column>provider_type</column>
+        <column>auth_required</column>
+        <column>auth_username</column>
+        <column>auth_password</column>
+        <row>
+            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
+            <value>provider</value>
+            <value>External provider</value>
+            <value>http://provider.com</value>
+            <value>OPENSTACK_NETWORK</value>
+            <value>false</value>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
     <table name="network">
         <column>id</column>
         <column>name</column>

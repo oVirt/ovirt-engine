@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Image;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -108,6 +109,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -146,6 +148,7 @@ public class DbFacade {
             put(VmNetworkInterface.class, VmNetworkInterfaceDao.class);
             put(VmNetworkStatistics.class, VmNetworkStatisticsDao.class);
             put(Network.class, NetworkDao.class);
+            put(Provider.class, ProviderDao.class);
             put(Snapshot.class, SnapshotDao.class);
             put(VmDevice.class, VmDeviceDAO.class);
             put(image_storage_domain_map.class, ImageStorageDomainMapDao.class);
@@ -647,6 +650,15 @@ public class DbFacade {
      */
     public AdGroupDAO getAdGroupDao() {
         return getDao(AdGroupDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link ProviderDao}.
+     *
+     * @return the dao
+     */
+    public ProviderDao getProviderDao() {
+        return getDao(ProviderDao.class);
     }
 
     /**
