@@ -27,7 +27,7 @@ public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND);
             result = false;
         }
-        if (event.getOrigin().equalsIgnoreCase(OVIRT)) {
+        if (OVIRT.equalsIgnoreCase(event.getOrigin())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
             result = false;
         }
