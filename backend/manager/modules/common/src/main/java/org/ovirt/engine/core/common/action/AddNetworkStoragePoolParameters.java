@@ -9,17 +9,20 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = -7392121807419409051L;
 
     @Valid
-    private Network _network;
+    private Network network;
 
     private boolean publicUse;
 
-    public AddNetworkStoragePoolParameters(Guid storagePoolId, Network net) {
+    public AddNetworkStoragePoolParameters() {
+    }
+
+    public AddNetworkStoragePoolParameters(Guid storagePoolId, Network network) {
         super(storagePoolId);
-        _network = net;
+        this.network = network;
     }
 
     public Network getNetwork() {
-        return _network;
+        return network;
     }
 
     public void setPublicUse(boolean publicUse) {
@@ -28,8 +31,5 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public boolean isPublicUse() {
         return publicUse;
-    }
-
-    public AddNetworkStoragePoolParameters() {
     }
 }
