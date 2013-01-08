@@ -77,4 +77,5 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("No {0} to display")
     String noItemsToDisplay(String items);
+
 }

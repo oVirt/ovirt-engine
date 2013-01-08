@@ -14,141 +14,109 @@
 	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
 
 	<ui:style type="org.ovirt.engine.ui.userportal.section.main.view.tab.extended.SideTabExtendedResourceView.Style">
+		.parent {
+			background-color: #f1f1f1;
+		}
+
 		.mainPanel {
 			float: left;
-			margin-left: 15px;
+			margin: 15px;
 			margin-right: 20px;
-			height: 100%;
-			overflow-x: hidden;
-			overflow-y: visible;
-			width: 98%;
-		}
-
-		.infoContainerLeft, .infoContainerMiddle, .infoContainerRight {
-			padding-top: 15px;
-			min-width: 260px;
-		}
-
-		.infoContainerLeft {
-			float: left;
-			width: 33%;
-		}
-
-		.infoContainerMiddle {
-			float: left;
-			width: 32%;
-			padding-left: 5px;
-		}
-
-		.infoContainerRight {
-			float: right;
-			width: 33%;
-			padding-left: 5px;
-		}
-
-		.infoContainerContainer {
-			overflow: visible;
+			margin-top: 15px;
+			height: 98%;
 			width: 100%;
-			float: left;
+			background-color: #f1f1f1;
 		}
 
-		.infoBoxLeft, .infoBoxMiddle, .infoBoxRight, .infoBoxLeftExtended, .infoBoxMiddleExtended, .infoBoxRightExtended {
+		.westPanel {
+			overflow: visible;
+			height: 100%;
+		}
+
+		.infoBoxCpu, .infoBoxMemory {
 			width: 260px;
 			border-style: solid;
 			border-width: 1px;
-			border-color: #e3eaf2;
-			padding-top: 8px;
-			padding-left: 8px;
+			border-color: #7a7a7a;
+			padding: 1px;
 			border-radius: 9px;
+			background-color: white;
+			box-shadow: 2px 2px 5px #888888;
+			position: absolute;
+			margin-bottom: 15px;
 		}
 
-		.infoBoxLeft, .infoBoxMiddle, .infoBoxRight {
-			height: 120px;
-		}
-
-		.infoBoxLeftExtended, .infoBoxMiddleExtended, .infoBoxRightExtended {
-			height: 230px;
-		}
-
-		.infoBoxMiddle, .infoBoxMiddleExtended {
-			margin: 0 auto;
-		}
-
-		.infoBoxLeft, .infoBoxLeftExtended {
+		.headingContainer {
 			float: left;
-		}
-
-		.infoBoxRight, .infoBoxRightExtended {
-			float: right;
+			background-color: #273240;
+			width: 100%;
+			border-radius: 9px 9px 0 0;
 		}
 
 		.iconImageContainer {
 			float: left;
+			padding-top: 1px;
+			padding-left: 4px;
 		}
 
-		.infoBoxDetailsRowLabel, .infoBoxDetailsRowValue, .detailsBoxRowLabel, .detailsBoxRowValue {
+		.headingTextContainer {
+			float: left;
+			padding: 10px;
+		}
+
+		.detailsBoxRowLabel, .detailsBoxRowValue {
 			float: left;
 			padding-top: 7px;
-		}
-
-		.infoBoxDetailsRowLabel, .detailsBoxRowLabel {
-			color: #3A5F7D;
 			font-family: Arial,sans-serif;
 			font-size: 13px;
+		}
+
+		.detailsBoxRowLabel {
 			text-align: left;
 			width: 50%;
 		}
 
-		.infoBoxDetailsRowValue, .detailsBoxRowValue {
+		.detailsBoxRowValue {
 			color: black;
-			font-family: Arial,sans-serif;
-			font-size: 13px;
 			padding-left: 7px;
-			text-align: left;
+			text-align: right;
 			width: 30%;
 		}
 
 		.resourcesGeneralLabel {
-			color: black;
+			color: white;
 			font-family: Arial,sans-serif;
-			font-size: 14px;
+			font-size: 18px;
 			font-weight: bold;
-		}
-
-		.infoBoxDetailsRow {
-			width: 100%;
 		}
 
 		.infoBoxDetails, .infoBoxDetailsStorage {
 			float: left;
-			width: 84%;
+			width: 100%;
 			padding-left: 8px;
 		}
 
 		.infoBoxDetailsStorage {
-			margin: 30px;
-		}
-
-		.bottomBorder {
-			border-width: 1px;
-			border-color: #e3eaf2;
-			border-style: solid;
-			width: 100%;
-			margin-top: 15px;
-			margin-bottom: 15px;
-			float: left;
-			border-radius: 9px;
+			border-right-width: 1px;
+			border-right-color: #e3eaf2;
+			border-right-style: solid;
+			width: 260px;
 			height: 265px;
 		}
 
-		.storageBox {
-			padding-top: 8px;
-			padding-left: 15px;
-			width: 350px;
-			float: left;
+		.centerPanel {
+			border-width: 1px;
+			border-color: #7a7a7a;
+			border-style: solid;
+			width: 99%;
+			margin-bottom: 15px;
+			border-radius: 9px;
+			background-color: white;
+			box-shadow: 2px 2px 5px #888888;
+			padding: 1px;
 		}
 
-		.storageBoxLow {
+		.snapshotsDataPanel {
 			padding-top: 8px;
 			padding-left: 15px;
 			width: 350px;
@@ -159,49 +127,69 @@
 			width: 100%;
 		}
 
-		.detailsBoxRowLabel {
-			width: 60%;
-		}
-
-		.detailsBoxRowValue {
-			width: 30%;
-		}
-
 		.expanderContent {
 			float: left;
-			width: 90%;
-			height: 100px;
+			width: 97%;
+			height: 160px;
+			overflow-x: hidden;
+			overflow-y: scroll;
 		}
 
 		.expander {
 			margin-top:15px;
+			float: left;
+			width: 95%;
+			height: 17px;
+			background-color: #d5d5d5;
+			font-size: 9px;
+			font-weight: bold;
 		}
 
 		.progressBar {
 			width: 80%;
+			margin-left: 7px;
 		}
 
 		.quotaList {
 			width: 100%;
-			height: auto;
+			height: 100px;
+		}
+
+		.othersUseLabel, .youUseLabel{
+			height: 7px;
+			width: 7px;
+			margin: 3px;
+			float: left;
 		}
 
 		.othersUseLabel {
-			height: 7px;
-			width: 7px;
 			background-color: #b6c2cb;
-			margin: 3px;
 		}
 
 		.youUseLabel {
-			height: 7px;
-			width: 7px;
 			background-color: #043459;
+		}
+
+		.freeLabel {
+			height: 6px;
+			width: 6px;
+			background-color: #ffffff;
+			border-style: solid;
+			border-width: 1px;
+			border-color: #7a7a7a;
 			margin: 3px;
+			float: left;
 		}
 
 		.legend {
 			width: 10;
+			float: left;
+		}
+
+		.legendRight {
+			width: 10;
+			float: left;
+		    margin-left: 15px;
 		}
 
 		.line {
@@ -213,138 +201,194 @@
 			margin-top: 8px;
 		}
 
+		.verticalLine {
+			height: 100%;
+			width: 10px;
+			border-right-width: 1px;
+			border-right-color: #e3eaf2;
+			border-right-style: solid;
+		}
+
 		.refreshPanel {
-			float: right;
+			float: left;
+			cursor: hand;
 			cursor: pointer;
 			border: 1px solid transparent;
 			display: table-cell;
 			width: 30px;
 		}
 
-		.refreshPanelWrapper {
-			text-align: right;
+		.legendContainer {
+		 	background-color: #f1f3f6;
+			font-size: 10px;
+			float: left;
+			width: 100%;
+			height: 13px;
+			padding-top: 2px;
+		}
+
+		.legendText {
+			float: left;
+		}
+
+		.vmTablePanel {
+			height: 40%;
+			width: 99%;
+			visibility: visible;
+		}
+
+		.quotaSummaryText, .vmDisksAndSnapshotsText {
+			float: left;
+		    margin-top: 10px;
+			margin-bottom: 2px;
+			margin-left: 10px;
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.quotaNameText {
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.vmDisksAndSnapshotsText {
+			margin-left: 15px;
 		}
 
 	</ui:style>
 
-	<g:FlowPanel>
-	<g:SimplePanel width="100%">
-		<f:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
-	</g:SimplePanel>
-	<g:ScrollPanel>
-		<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
-			<g:FlowPanel ui:field="infoContainer" addStyleNames="{style.infoContainerContainer}">
-				<g:FlowPanel addStyleNames="{style.infoContainerLeft}">
-					<g:FlowPanel ui:field="infoBoxLeft" addStyleNames="{style.infoBoxLeft}">
-						<g:FlowPanel>
-							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-								<g:Image resource='{resources.vmIcon}'/>
-							</g:FlowPanel>
-							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="{constants.vmsExtResource}:"
-										 addStyleNames="{style.resourcesGeneralLabel}"/>
-								<w:PercentageProgressBar ui:field="vmsProgressBar" addStyleNames="{style.progressBar}"/>
+	<g:FlowPanel addStyleNames="{style.parent}">
 
-								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="{constants.definedVmsExtResource}:"
-											 addStyleNames="{style.infoBoxDetailsRowLabel}"/>
-									<w:ToStringEntityModelLabel
-											ui:field="definedVms" addStyleNames="{style.infoBoxDetailsRowValue}"/>
+
+		<g:DockLayoutPanel ui:field="mainPanel" addStyleNames="{style.mainPanel}">
+			<g:west size='280'>
+				<g:DockLayoutPanel unit="PCT" ui:field="infoContainer" addStyleNames="{style.westPanel}">
+					<g:north size='50'>
+						<g:FlowPanel ui:field="infoBoxCpu" addStyleNames="{style.infoBoxCpu}">
+
+							<g:FlowPanel addStyleNames="{style.headingContainer}">
+								<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+									<g:Image resource='{resources.cpuIcon}'/>
 								</g:FlowPanel>
-
-								<g:FlowPanel addStyleNames="{style.infoBoxDetailsRow}">
-									<g:Label text="{constants.runningVmsExtResource}:"
-											 addStyleNames="{style.infoBoxDetailsRowLabel}"/>
-									<w:ToStringEntityModelLabel
-											ui:field="runningVms" addStyleNames="{style.infoBoxDetailsRowValue}"/>
+								<g:FlowPanel addStyleNames="{style.headingTextContainer}">
+									<g:Label text="{constants.vcpusExtResource}"
+											 addStyleNames="{style.resourcesGeneralLabel}"/>
 								</g:FlowPanel>
 							</g:FlowPanel>
-
-						</g:FlowPanel>
-					</g:FlowPanel>
-				</g:FlowPanel>
-
-				<g:FlowPanel addStyleNames="{style.infoContainerMiddle}">
-					<g:FlowPanel ui:field="infoBoxMiddle" addStyleNames="{style.infoBoxMiddle}">
-						<g:FlowPanel>
-							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-								<g:Image resource='{resources.cpuIcon}'/>
+							<g:FlowPanel addStyleNames="{style.legendContainer}">
+								<g:FlowPanel addStyleNames="{style.legend}">
+									<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
+									<g:Label text="{constants.othersUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
+									<g:Label text="{constants.youUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.freeLabel}"/>
+									<g:Label text="{constants.freeQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-
-
-								<g:Label text="{constants.vcpusExtResource}:"
-										 addStyleNames="{style.resourcesGeneralLabel}"/>
+								<g:Label text="{constants.quotaSummary}" addStyleNames="{style.quotaSummaryText}"/>
 								<w:QuotaProgressBar ui:field="cpusProgressBar" addStyleNames="{style.progressBar}"/>
-								<g:HorizontalPanel addStyleNames="{style.legend}">
-									<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
-									<g:Label text="{constants.othersUseQuota}"/>
-								</g:HorizontalPanel>
-								<g:HorizontalPanel addStyleNames="{style.legend}">
-									<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
-									<g:Label text="{constants.youUseQuota}"/>
-								</g:HorizontalPanel>
-								<g:SimplePanel addStyleNames="{style.line}"/>
-								<g:FlowPanel>
-									<d:AdvancedParametersExpander ui:field="vcpuExpander"
-																  addStyleNames="{style.expander}"/>
-									<g:ScrollPanel ui:field="vcpuExpanderContent"
-												   addStyleNames="{style.expanderContent}">
-										<g:VerticalPanel ui:field="cpusQuotasList" addStyleNames="{style.quotaList}"/>
-									</g:ScrollPanel>
-								</g:FlowPanel>
-
+								<d:AdvancedParametersExpander ui:field="vcpuExpander" addStyleNames="{style.expander}"/>
+								<g:ScrollPanel ui:field="vcpuExpanderContent" addStyleNames="{style.expanderContent}">
+									<g:VerticalPanel ui:field="cpusQuotasList" addStyleNames="{style.quotaList}"/>
+								</g:ScrollPanel>
 							</g:FlowPanel>
 
 						</g:FlowPanel>
-					</g:FlowPanel>
-				</g:FlowPanel>
-
-				<g:FlowPanel addStyleNames="{style.infoContainerRight}">
-					<g:FlowPanel ui:field="infoBoxRight" addStyleNames="{style.infoBoxRight}">
-						<g:FlowPanel>
-							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-								<g:Image resource='{resources.memoryIcon}'/>
+					</g:north>
+					<g:south size='50'>
+						<g:FlowPanel ui:field="infoBoxMemory" addStyleNames="{style.infoBoxMemory}">
+							<g:FlowPanel addStyleNames="{style.headingContainer}">
+								<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+									<g:Image resource='{resources.memoryIcon}'/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.headingTextContainer}">
+									<g:Label text="{constants.memExtResource}"
+											 addStyleNames="{style.resourcesGeneralLabel}"/>
+								</g:FlowPanel>
+							</g:FlowPanel>
+							<g:FlowPanel addStyleNames="{style.legendContainer}">
+								<g:FlowPanel addStyleNames="{style.legend}">
+									<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
+									<g:Label text="{constants.othersUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
+									<g:Label text="{constants.youUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.freeLabel}"/>
+									<g:Label text="{constants.freeQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
 							</g:FlowPanel>
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="{constants.memExtResource}:"
-										 addStyleNames="{style.resourcesGeneralLabel}"/>
+								<g:Label text="{constants.quotaSummary}" addStyleNames="{style.quotaSummaryText}"/>
+
 								<w:QuotaProgressBar ui:field="memoryProgressBar" addStyleNames="{style.progressBar}"/>
-								<g:HorizontalPanel addStyleNames="{style.legend}">
-									<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
-									<g:Label text="{constants.othersUseQuota}"/>
-								</g:HorizontalPanel>
-								<g:HorizontalPanel addStyleNames="{style.legend}">
-									<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
-									<g:Label text="{constants.youUseQuota}"/>
-								</g:HorizontalPanel>
-								<g:SimplePanel addStyleNames="{style.line}"/>
-								<g:FlowPanel>
-									<d:AdvancedParametersExpander ui:field="memoryExpander"
-																  addStyleNames="{style.expander}"/>
-									<g:ScrollPanel ui:field="memoryExpanderContent"
-												   addStyleNames="{style.expanderContent}">
-										<g:VerticalPanel ui:field="memoryQuotasList" addStyleNames="{style.quotaList}"/>
-									</g:ScrollPanel>
-								</g:FlowPanel>
-							</g:FlowPanel>
 
+								<d:AdvancedParametersExpander ui:field="memoryExpander"
+															  addStyleNames="{style.expander}"/>
+								<g:ScrollPanel ui:field="memoryExpanderContent"
+											   addStyleNames="{style.expanderContent}">
+									<g:VerticalPanel ui:field="memoryQuotasList" addStyleNames="{style.quotaList}"/>
+								</g:ScrollPanel>
+							</g:FlowPanel>
+						</g:FlowPanel>
+					</g:south>
+				</g:DockLayoutPanel>
+			</g:west>
+
+			<g:center>
+				<g:FlowPanel ui:field="bottomLayoutPanel" addStyleNames="{style.centerPanel}">
+					<g:FlowPanel addStyleNames="{style.headingContainer}">
+						<g:FlowPanel addStyleNames="{style.iconImageContainer}">
+							<g:Image resource='{resources.storageIcon}'/>
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.headingTextContainer}">
+							<g:Label text="{constants.storageExtResource}"
+									 addStyleNames="{style.resourcesGeneralLabel}"/>
 						</g:FlowPanel>
 					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:FlowPanel>
 
-			<g:DockLayoutPanel ui:field="bottomLayoutPanel" addStyleNames="{style.bottomBorder}">
-				<g:north size='130'>
 					<g:HorizontalPanel ui:field="bottomInfoBox">
-
-						<g:FlowPanel addStyleNames="{style.storageBox}">
-							<g:FlowPanel addStyleNames="{style.iconImageContainer}">
-								<g:Image resource='{resources.storageIcon}'/>
+						<g:FlowPanel addStyleNames="{style.infoBoxDetailsStorage}">
+							<g:FlowPanel addStyleNames="{style.legendContainer}">
+								<g:FlowPanel addStyleNames="{style.legend}">
+									<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
+									<g:Label text="{constants.othersUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
+									<g:Label text="{constants.youUseQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.legendRight}">
+									<g:SimplePanel addStyleNames="{style.freeLabel}"/>
+									<g:Label text="{constants.freeQuota}" addStyleNames="{style.legendText}"/>
+								</g:FlowPanel>
 							</g:FlowPanel>
+							<g:Label text="{constants.quotaSummary}" addStyleNames="{style.quotaSummaryText}"/>
+							<w:QuotaProgressBar ui:field="storageProgressBar" addStyleNames="{style.progressBar}"/>
+
+
+							<g:FlowPanel>
+								<d:AdvancedParametersExpander ui:field="storageExpander"
+															  addStyleNames="{style.expander}"/>
+								<g:ScrollPanel ui:field="storageExpanderContent"
+											   addStyleNames="{style.expanderContent}">
+									<g:VerticalPanel ui:field="storageQuotasList" addStyleNames="{style.quotaList}"/>
+								</g:ScrollPanel>
+							</g:FlowPanel>
+						</g:FlowPanel>
+
+						<g:FlowPanel addStyleNames="{style.verticalLine}"/>
+
+						<g:FlowPanel addStyleNames="{style.snapshotsDataPanel}">
+
 							<g:FlowPanel addStyleNames="{style.infoBoxDetails}">
-								<g:Label text="{constants.storageExtResource}:"
-										 addStyleNames="{style.resourcesGeneralLabel}"/>
 
 								<g:FlowPanel addStyleNames="{style.storageDetailsRow}">
 									<g:Label text="{constants.totalSizeExtResource}:"
@@ -369,35 +413,19 @@
 							</g:FlowPanel>
 						</g:FlowPanel>
 
-						<g:FlowPanel addStyleNames="{style.infoBoxDetailsStorage}">
-							<!--<g:Label text="{constants.memExtResource}:" addStyleNames="{style.resourcesGeneralLabel}" />-->
-							<w:QuotaProgressBar ui:field="storageProgressBar" addStyleNames="{style.progressBar}"/>
-							<g:HorizontalPanel addStyleNames="{style.legend}">
-								<g:SimplePanel addStyleNames="{style.othersUseLabel}"/>
-								<g:Label text="{constants.othersUseQuota}"/>
-							</g:HorizontalPanel>
-							<g:HorizontalPanel addStyleNames="{style.legend}">
-								<g:SimplePanel addStyleNames="{style.youUseLabel}"/>
-								<g:Label text="{constants.youUseQuota}"/>
-							</g:HorizontalPanel>
-							<g:SimplePanel addStyleNames="{style.line}"/>
-							<g:FlowPanel>
-								<d:AdvancedParametersExpander ui:field="storageExpander"
-															  addStyleNames="{style.expander}"/>
-								<g:ScrollPanel ui:field="storageExpanderContent"
-											   addStyleNames="{style.expanderContent}">
-									<g:VerticalPanel ui:field="storageQuotasList" addStyleNames="{style.quotaList}"/>
-								</g:ScrollPanel>
-							</g:FlowPanel>
-						</g:FlowPanel>
 					</g:HorizontalPanel>
-				</g:north>
-				<g:center>
-					<r:VmTable ui:field="vmTable"/>
-				</g:center>
-			</g:DockLayoutPanel>
-		</g:FlowPanel>
-	</g:ScrollPanel>
+					<g:FlowPanel addStyleNames="{style.line}"/>
+					<g:Label text="{constants.vmDisksAndSnapshots}" addStyleNames="{style.vmDisksAndSnapshotsText}"/>
+					<r:VmTable ui:field="vmTable" addStyleNames="{style.vmTablePanel}"/>
+				</g:FlowPanel>
+			</g:center>
+			<g:east size='50'>
+				<g:SimplePanel width="100%">
+					<f:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}"/>
+				</g:SimplePanel>
+			</g:east>
+		</g:DockLayoutPanel>
+
 	</g:FlowPanel>
 
 </ui:UiBinder>

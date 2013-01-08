@@ -19,7 +19,8 @@
         .percentageLabel, .percentageLabelBlack {
             text-align: center;
             font-family: Arial,sans-serif;
-            font-size: 12px;
+            font-size: 11px;
+            margin: 1px;
         }
 
         .percentageLabel {
@@ -27,7 +28,7 @@
         }
 
         .percentageLabelBlack {
-            color: black;
+            color: #043459;
         }
 
         .percentageBarA {
@@ -48,8 +49,16 @@
 
         .percentageBarUnlimited {
             float: left;
-            background-color: #e0e7ec;
-            width: 100%;
+            background-color: #009933;
+            width: 99%;
+            height: 15px;
+            margin: 1px 0 1px 1px;
+        }
+
+        .percentageBarExceeded {
+            float: left;
+            background-color: #ff0000;
+            width: 99%;
             height: 15px;
             margin: 1px 0 1px 1px;
         }
@@ -67,7 +76,7 @@
     <g:FlowPanel addStyleNames="{style.progressBar}">
         <g:FlowPanel addStyleNames="{style.percentageBox}">
             <g:FlowPanel ui:field="percentageBarA" addStyleNames="{style.percentageBarA}">
-                <g:Label text="0%" ui:field="percentageLabelA" addStyleNames="{style.percentageLabel}"/>
+                <g:Label text="0%" ui:field="percentageLabelA" addStyleNames="{style.percentageLabelBlack}"/>
             </g:FlowPanel>
 
             <g:FlowPanel ui:field="percentageBarB" addStyleNames="{style.percentageBarB}">

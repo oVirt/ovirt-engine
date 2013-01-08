@@ -373,15 +373,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String doubleClickForConsole();
 
 
-    @DefaultStringValue("Consumed by Others")
+    @DefaultStringValue("Used by Others")
     String othersUseQuota();
 
-    @DefaultStringValue("Consumed by You")
+    @DefaultStringValue("Used by You")
     String youUseQuota();
+
+    @DefaultStringValue("Free")
+    String freeQuota();
 
     @DefaultStringValue("Free Memory: ")
     String freeMemory();
 
     @DefaultStringValue("Free Storage: ")
     String freeStorage();
+
+    @DefaultStringValue("Quota Summary ")
+    String quotaSummary();
+
+    @DefaultStringValue("Virtual Machines' Disks & Snapshots ")
+    String vmDisksAndSnapshots();
 }

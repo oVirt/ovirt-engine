@@ -18,6 +18,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
 
     private static final String ZERO = "0%"; //$NON-NLS-1$
     private String title;
+    private static final int FULL_WIDTH = 99;
+    private static final int MINIMUM_SIZE_TO_SHOW_TEXT = 10;
 
     interface WidgetUiBinder extends UiBinder<Widget, DoublePercentageProgressBar> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -27,8 +29,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    private Object valueA;
-    private Object valueB;
+    private Integer valueA;
+    private Integer valueB;
 
     @UiField
     WidgetStyle style;
@@ -57,30 +59,47 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
 
     public void setValueA(Integer value) {
         this.valueA = value;
-        String percentage = value + "%"; //$NON-NLS-1$
-        percentageLabelA.setText(value < 10 ? "" : percentage); //$NON-NLS-1$
-        percentageLabelA.setStyleName(style.percentageLabel());
-        percentageBarA.setWidth(percentage);
-        percentageBarA.setVisible(value != 0);
-        percentageBarA.setTitle(percentage);
     }
 
     public void setValueB(Integer value) {
         this.valueB = value;
-        String percentage = value + "%"; //$NON-NLS-1$
-        percentageLabelB.setText(value < 10 ? "" : percentage); //$NON-NLS-1$
-        percentageBarB.setWidth(percentage);
-        percentageBarB.setVisible(value != 0);
-        percentageBarB.setTitle(percentage);
     }
 
     public void setZeroValue() {
         percentageBarA.setVisible(true);
         percentageBarA.setTitle(title);
         percentageBarA.setStyleName(style.empty());
-        percentageBarA.setWidth("99%"); //$NON-NLS-1$
+        percentageBarA.setWidth(FULL_WIDTH + "%"); //$NON-NLS-1$
         percentageLabelA.setText(ZERO);
         percentageLabelA.setStyleName(style.percentageLabelBlack());
+    }
+
+    public void setBars() {
+        int fakeA = valueA;
+        int fakeB = valueB;
+
+        if (valueA != null && valueB != null && valueA + valueB >= FULL_WIDTH) {
+            double factor = (double)(FULL_WIDTH-1) / (valueA + valueB);
+            fakeA = (int)Math.round(factor * valueA);
+            fakeB = (int)Math.round(factor * valueB);
+
+            fakeA = (fakeB == 0 ? FULL_WIDTH : fakeA);
+            fakeB = (fakeA == 0 ? FULL_WIDTH : fakeB);
+        }
+        setBar(percentageBarA, percentageLabelA, valueA, fakeA, style.percentageLabelBlack());
+        setBar(percentageBarB, percentageLabelB, valueB, fakeB, style.percentageLabel());
+    }
+
+    private void setBar(FlowPanel percentageBar, Label percentageLabel, Integer value, int fakeValue, String style){
+        if (value != null) {
+            String percentage = value + "%"; //$NON-NLS-1$
+            String fakePercentage = fakeValue + "%"; //$NON-NLS-1$
+            percentageLabel.setText(value < MINIMUM_SIZE_TO_SHOW_TEXT ? "" : percentage); //$NON-NLS-1$
+            percentageLabel.setStyleName(style);
+            percentageBar.setWidth(fakePercentage);
+            percentageBar.setVisible(value != 0);
+            percentageBar.setTitle(percentage);
+        }
     }
 
     public Object getValueA() {
@@ -105,6 +124,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
     interface WidgetStyle extends CssResource {
 
         String percentageBarUnlimited();
+
+        String percentageBarExceeded();
 
         String empty();
 
