@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -20,8 +23,7 @@ public class ReplacementUtilsTest {
     @Test
     public void replaceWithSingleItem() {
         List<Object> items = Collections.<Object> singletonList(PROPERTY_VALUE);
-        String[] messageItems = ReplacementUtils.replaceWith(PROPERTY_NAME, items);
-        validateMessageItems(messageItems, items);
+        validateReplacements(ReplacementUtils.replaceWith(PROPERTY_NAME, items), items);
     }
 
     @Test
@@ -35,28 +37,54 @@ public class ReplacementUtilsTest {
         };
 
         List<Nameable> items = Collections.<Nameable> singletonList(item);
-        String[] messageItems = ReplacementUtils.replaceWithNameable(PROPERTY_NAME, items);
-        validateMessageItems(messageItems, items);
+        validateReplacements(ReplacementUtils.replaceWithNameable(PROPERTY_NAME, items), items);
     }
 
     @Test
     public void replaceWithEmptyCollection() {
-        String[] messageItems = ReplacementUtils.replaceWith(PROPERTY_NAME, Collections.emptyList());
-        validateMessageContainsProperties(messageItems);
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, Collections.emptyList());
+        validateReplacementsContainsExpectedProperties(replacements, Collections.emptyList());
     }
 
     @Test
     public void replaceWithMoreThanMaxItems() {
         List<Object> items = createItems();
-        String[] messageItems = ReplacementUtils.replaceWith(PROPERTY_NAME, items);
-        validateMessageContainsProperties(messageItems);
-        validateMessageDoesNotContainUnexpectedItems(messageItems[0], items);
-        assertTrue(messageItems[1].contains(String.valueOf(items.size())));
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items);
+        validateReplacementsContainsExpectedProperties(replacements, items);
+        validateReplacementsDoNotContainUnexpectedItems(replacements, items);
     }
 
-    private void validateMessageDoesNotContainUnexpectedItems(String message, List<Object> items) {
-        for (int i = ReplacementUtils.MAX_NUMBER_OF_PRINTED_ITEMS; i < items.size(); i++) {
-            assertFalse(message.contains(buildPropertyValue(i)));
+    private <T> void validateReplacementsContainsExpectedProperties(Collection<String> replacements, List<T> items) {
+        assertNotNull(replacements);
+        assertEquals(2, replacements.size());
+        assertTrue(validateReplacementContains(replacements, "$" + PROPERTY_NAME + " "));
+        assertTrue(validateReplacementContains(replacements, "$" + PROPERTY_COUNTER_NAME + " "));
+        assertTrue(validateReplacementContains(replacements, String.valueOf(items.size())));
+    }
+
+    private <T> void validateReplacements(Collection<String> replacements, List<T> items) {
+        validateReplacementsContainsExpectedProperties(replacements, items);
+        assertTrue(validateReplacementContains(replacements, PROPERTY_VALUE));
+    }
+
+    private boolean validateReplacementContains(Collection<String> replacements, String property) {
+        Iterator<String> iterator = replacements.iterator();
+        while (iterator.hasNext()) {
+            String replacement = iterator.next();
+            if (replacement.contains(property)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void validateReplacementsDoNotContainUnexpectedItems(Collection<String> replacements, List<Object> items) {
+        Iterator<String> iterator = replacements.iterator();
+        while (iterator.hasNext()) {
+            String replacement = iterator.next();
+            for (int i = ReplacementUtils.MAX_NUMBER_OF_PRINTED_ITEMS; i < items.size(); i++) {
+                assertFalse(replacement.contains(buildPropertyValue(i)));
+            }
         }
     }
 
@@ -72,18 +100,5 @@ public class ReplacementUtilsTest {
 
     private String buildPropertyValue(int id) {
         return PROPERTY_NAME + String.valueOf(id);
-    }
-
-    private void validateMessageContainsProperties(String[] messageItems) {
-        assertNotNull(messageItems);
-        assertTrue(messageItems.length > 0);
-        assertTrue(messageItems[0].contains(PROPERTY_NAME));
-        assertTrue(messageItems[1].contains(PROPERTY_COUNTER_NAME));
-    }
-
-    private <T> void validateMessageItems(String[] messageItems, List<T> items) {
-        validateMessageContainsProperties(messageItems);
-        assertTrue(messageItems[0].contains(PROPERTY_VALUE));
-        assertTrue(messageItems[1].contains(String.valueOf(items.size())));
     }
 }
