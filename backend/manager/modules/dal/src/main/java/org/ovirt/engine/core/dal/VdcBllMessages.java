@@ -4,10 +4,13 @@ package org.ovirt.engine.core.dal;
 public enum VdcBllMessages {
     Unassigned,
     VAR__TYPE__HOST,
+    VAR__ENTITIES__HOSTS,
     VAR__TYPE__VM,
+    VAR__ENTITIES__VMS,
     VAR__TYPE__QUOTA,
     VAR__TYPE__VM__CLUSTER,
     VAR__TYPE__VM_TEMPLATE,
+    VAR__ENTITIES__VM_TEMPLATES,
     VAR__TYPE__SNAPSHOT,
     VAR__TYPE__DESKTOP_POOL,
     VAR__TYPE__VM_FROM_VM_POOL,

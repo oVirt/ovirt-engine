@@ -534,6 +534,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Host")
     String VAR__TYPE__HOST();
 
+    @DefaultStringValue("$entities hosts")
+    String VAR__ENTITIES__HOSTS();
+
     @DefaultStringValue("$type Networks")
     String VAR__TYPE__NETWORKS();
 
@@ -543,6 +546,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type VM")
     String VAR__TYPE__VM();
 
+    @DefaultStringValue("$entities virtual machines")
+    String VAR__ENTITIES__VMS();
+
     @DefaultStringValue("$type Quota")
     String VAR__TYPE__QUOTA();
 
@@ -551,6 +557,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type Template")
     String VAR__TYPE__VM_TEMPLATE();
+
+    @DefaultStringValue("$entities templates")
+    String VAR__ENTITIES__VM_TEMPLATES();
 
     @DefaultStringValue("$type Snapshot")
     String VAR__TYPE__SNAPSHOT();
