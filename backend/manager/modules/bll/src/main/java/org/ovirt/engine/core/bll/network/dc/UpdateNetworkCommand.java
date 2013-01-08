@@ -50,7 +50,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(networkExists(getOldNetwork()))
                 && validate(notChangingManagementNetworkName())
                 && validate(networkNameNotUsed())
-                && validate(networkNotUsedByVms())
+                && validate(networkNotUsedByVms(getOldNetwork()))
                 && validate(networkNotUsedByHosts(getOldNetwork()));
     }
 

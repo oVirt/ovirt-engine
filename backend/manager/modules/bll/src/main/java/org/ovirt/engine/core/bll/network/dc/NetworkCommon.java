@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -114,16 +114,15 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 : ValidationResult.VALID;
     }
 
-    protected ValidationResult networkNotUsedByVms() {
-        String networkName = getNetworkName();
-        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
-            List<VmStatic> vms =
-                    getVmStaticDAO().getAllByGroupAndNetworkName(clusterAttachment.getClusterId(), networkName);
-            if (vms.size() > 0) {
-                return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
-            }
+    protected ValidationResult networkNotUsedByVms(final Network network) {
+        List<VM> vms = getVmDAO().getAllForNetwork(network.getId());
+        if (vms.isEmpty()) {
+            return ValidationResult.VALID;
         }
-        return ValidationResult.VALID;
+
+        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", vms);
+        replacements.add(VdcBllMessages.VAR__ENTITIES__VMS.name());
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
     }
 
     protected List<NetworkCluster> getClusterAttachments() {
