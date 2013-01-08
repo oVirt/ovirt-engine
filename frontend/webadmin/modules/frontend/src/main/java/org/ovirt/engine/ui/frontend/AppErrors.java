@@ -1062,8 +1062,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The logical network's name is already used by an existing logical network in the same data-center.\n-Please choose a different name.")
     String ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Several hosts (${HOSTS_USING_NETWORK_COUNTER}) are using this logical network:\n${HOSTS_USING_NETWORK}\n- Please remove it from all hosts in data-center and try again.")
-    String ACTION_TYPE_FAILED_NETWORK_IN_USE_BY_HOSTS();
+    @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${ENTITIES_USING_NETWORK_COUNTER}) are using this logical network:\n${ENTITIES_USING_NETWORK}\n - Please remove it from all ${entities} that are using it and try again.")
+    String ACTION_TYPE_FAILED_NETWORK_IN_USE();
 
     @DefaultStringValue("Volume Group (VGs) and Logical Volumes (LVs) are not specified.")
     String ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV();

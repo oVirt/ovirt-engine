@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -147,7 +148,9 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE_BY_HOSTS,
-                ReplacementUtils.replaceWithNameable("HOSTS_USING_NETWORK", hostsWithNetwork));
+        Collection<String> replacements =
+                ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", hostsWithNetwork);
+        replacements.add(VdcBllMessages.VAR__ENTITIES__HOSTS.name());
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
     }
 }
