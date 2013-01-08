@@ -447,11 +447,6 @@ public final class ImagesHandler {
     }
 
 
-    public static boolean isVmDown(VM vm) {
-        return vm.getStatus() == VMStatus.Down;
-    }
-
-
     public static boolean isStoragePoolValid(Guid storagePoolId) {
         storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
         if (pool == null || pool.getstatus() != StoragePoolStatus.Up) {
@@ -486,7 +481,7 @@ public final class ImagesHandler {
             returnValue = checkImagesLocked(vm, messages, images);
         }
 
-        if (returnValue && checkVmIsDown && !isVmDown(vm)) {
+        if (returnValue && checkVmIsDown && !vm.isDown()) {
             returnValue = false;
             ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
         }

@@ -1524,4 +1524,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     public String getName() {
         return getVmName();
     }
+
+    /**
+     * Utility method for checking if the VM is with DOWN status
+     *
+     * @return true if the VM's status is DOWN, otherwise false
+     */
+    public boolean isDown() {
+        return getStatus() == VMStatus.Down;
+    }
 }

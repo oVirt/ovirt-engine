@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -206,7 +206,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
      */
     private boolean isVmDownUnintentionally() {
         VM vm = getVmDAO().get(getVmId());
-        return vm.getExitStatus() == VmExitStatus.Error && ImagesHandler.isVmDown(vm);
+        return vm.getExitStatus() == VmExitStatus.Error && vm.isDown();
     }
 
     /**
@@ -315,7 +315,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         // if live snapshot is not available, then if vm is up - snapshot is not possible so it needs to be
         // checked if vm up or not
         // if live snapshot is enabled, there is no need to check if vm is up since in any case snapshot is possible
-        if (!isLiveSnapshotEnabled() && !ImagesHandler.isVmDown(vm)) {
+        if (!isLiveSnapshotEnabled() && !vm.isDown()) {
             // if there is no live snapshot and the vm is up - snapshot is not possible
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT);
         }
