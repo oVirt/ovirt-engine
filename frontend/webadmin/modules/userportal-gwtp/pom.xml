@@ -124,6 +124,13 @@
       <scope>provided</scope>
       <version>${aspectj.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
