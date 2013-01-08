@@ -969,6 +969,14 @@ public class DiskModel extends Model
     public boolean Validate()
     {
         if ((Boolean) getAttachDisk().getEntity()) {
+            if (getInternalAttachableDisks().getSelectedItems() == null &&
+                getExternalAttachableDisks().getSelectedItems() == null) {
+                getInvalidityReasons().add(
+                        ConstantsManager.getInstance().getConstants().noDisksSelected());
+                setIsValid(false);
+                return false;
+            }
+
             return true;
         }
 

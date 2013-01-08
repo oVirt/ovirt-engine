@@ -106,10 +106,7 @@
 		</g:VerticalPanel>
 		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
 			<g:ScrollPanel height="410px">
-				<g:VerticalPanel width="100%">
-					<e:EntityModelCellTable ui:field="internalDiskTable" />
-					<e:EntityModelCellTable ui:field="externalDiskTable" />
-				</g:VerticalPanel>
+				<g:SimplePanel ui:field="innerAttachDiskPanel" width="100%" height="100%"/>
 			</g:ScrollPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
 		</g:VerticalPanel>

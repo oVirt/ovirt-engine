@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -59,6 +60,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> {
@@ -167,6 +169,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     VerticalPanel attachDiskPanel;
 
     @UiField
+    SimplePanel innerAttachDiskPanel;
+
+    @UiField
     FlowPanel externalDiskPanel;
 
     @UiField
@@ -175,12 +180,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @UiField
     HorizontalPanel diskTypePanel;
 
-    @UiField(provided = true)
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel> internalDiskTable;
 
-    @UiField(provided = true)
     @Ignore
     @WithElementId
     EntityModelCellTable<ListModel> externalDiskTable;
@@ -200,6 +203,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     @Ignore
     AbstractStorageView storageView;
 
+    @Ignore
+    ValidatedPanelWidget attachPanelWidget;
+
     boolean isNewLunDiskEnabled;
     StorageModel storageModel;
     IscsiStorageModel iscsiStorageModel;
@@ -214,6 +220,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        initAttachPanelWidget();
         initInternalDiskTable(constants, resources);
         initExternalDiskTable(constants, resources);
         Driver.driver.initialize(this);
@@ -285,6 +292,18 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
         internalDiskTable = new EntityModelCellTable<ListModel>(true);
         externalDiskTable = new EntityModelCellTable<ListModel>(true);
+    }
+
+    private void initAttachPanelWidget() {
+        // Create tables container
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(internalDiskTable);
+        verticalPanel.add(externalDiskTable);
+
+        // Create ValidatedPanelWidget and add tables container
+        attachPanelWidget = new ValidatedPanelWidget();
+        attachPanelWidget.setPanelWidget(verticalPanel);
+        innerAttachDiskPanel.add(attachPanelWidget);
     }
 
     private void initInternalDiskTable(final CommonApplicationConstants constants,
@@ -596,6 +615,21 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 revealStorageView(disk);
+            }
+        });
+
+        // Add event handlers
+        disk.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if (propName.equals("IsValid")) { //$NON-NLS-1$
+                    if (disk.getIsValid()) {
+                        attachPanelWidget.markAsValid();
+                    } else {
+                        attachPanelWidget.markAsInvalid(disk.getInvalidityReasons());
+                    }
+                }
             }
         });
 

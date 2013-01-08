@@ -1713,4 +1713,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("There may be users connected to the console who will not be able to reconnect. Do you want to proceed?")
     String confirmConsoleConnectMessage();
+
+    @DefaultStringValue("No disks selected")
+    String noDisksSelected();
 }
