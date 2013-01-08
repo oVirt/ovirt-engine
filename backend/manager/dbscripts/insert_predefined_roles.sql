@@ -468,17 +468,6 @@ delete from roles_groups where role_id = v_TEMPLATE_USER_ID;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where
 not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_USER_ID and name='TemplateUser' and description='Template User' and is_readonly=true and role_type=2);
 
---------------
---QUOTA_CONSUMER_USER role
---------------
--- Add new role for quota adminstrator
-delete from roles_groups where role_id = v_QUOTA_CONSUMER_USER_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_QUOTA_CONSUMER_USER_ID, 'QuotaConsumer','Quota consumer',true,2 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_QUOTA_CONSUMER_USER_ID and name='QuotaConsumer' and description='Quota consumer' and is_readonly=true and role_type=2);
-
--- Add role to consume from quota
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_QUOTA_CONSUMER_USER_ID, 901);
-
 ---Vm Groups
 --CREATE_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_USER_ID,1);
