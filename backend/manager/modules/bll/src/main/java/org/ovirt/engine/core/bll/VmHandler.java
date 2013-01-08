@@ -110,7 +110,7 @@ public class VmHandler {
             int nicsCount,
             int vmPriority) {
         boolean returnValue = true;
-        if (MacPoolManager.getInstance().getavailableMacsCount() < nicsCount) {
+        if (MacPoolManager.getInstance().getAvailableMacsCount() < nicsCount) {
             if (reasons != null) {
                 reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }

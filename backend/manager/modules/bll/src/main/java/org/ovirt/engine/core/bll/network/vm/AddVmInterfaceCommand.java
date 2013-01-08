@@ -193,7 +193,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
                 return false;
             }
-        } else if (MacPoolManager.getInstance().getavailableMacsCount() <= 0) // check
+        } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) // check
                                                                               // if
                                                                               // we
                                                                               // have

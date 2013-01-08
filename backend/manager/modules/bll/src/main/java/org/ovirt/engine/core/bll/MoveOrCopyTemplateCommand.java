@@ -328,7 +328,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void fillMacAddressIfMissing(VmNetworkInterface iface) {
         if (StringUtils.isEmpty(iface.getMacAddress())
-                && (MacPoolManager.getInstance().getavailableMacsCount() >= 1)) {
+                && (MacPoolManager.getInstance().getAvailableMacsCount() >= 1)) {
             iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
     }
@@ -348,7 +348,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 freeMacs++;
             }
         }
-        if (freeMacs > 0 && !(MacPoolManager.getInstance().getavailableMacsCount() >= freeMacs)) {
+        if (freeMacs > 0 && !(MacPoolManager.getInstance().getAvailableMacsCount() >= freeMacs)) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }

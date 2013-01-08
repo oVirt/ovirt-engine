@@ -191,7 +191,7 @@ public class MacPoolManager {
         return true;
     }
 
-    public int getavailableMacsCount() {
+    public int getAvailableMacsCount() {
         log.infoFormat("MacPoolManager::getAvailableMacsCount - entered");
         lockObj.readLock().lock();
         try {
