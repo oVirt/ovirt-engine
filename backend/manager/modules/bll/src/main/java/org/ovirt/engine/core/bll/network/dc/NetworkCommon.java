@@ -10,9 +10,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
@@ -114,15 +112,18 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 : ValidationResult.VALID;
     }
 
-    protected ValidationResult networkNotUsedByVms(final Network network) {
-        List<VM> vms = getVmDAO().getAllForNetwork(network.getId());
-        if (vms.isEmpty()) {
+    private ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
+        if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
 
-        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", vms);
-        replacements.add(VdcBllMessages.VAR__ENTITIES__VMS.name());
+        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", entities);
+        replacements.add(entitiesReplacement.name());
         return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
+    }
+
+    protected ValidationResult networkNotUsedByVms(final Network network) {
+        return networkNotUsed(getVmDAO().getAllForNetwork(network.getId()), VdcBllMessages.VAR__ENTITIES__VMS);
     }
 
     protected List<NetworkCluster> getClusterAttachments() {
@@ -134,25 +135,11 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
     }
 
     protected ValidationResult networkNotUsedByHosts(final Network network) {
-        List<VDS> hostsWithNetwork = getVdsDAO().getAllForNetwork(network.getId());
-        if (hostsWithNetwork.isEmpty()) {
-            return ValidationResult.VALID;
-        }
-
-        Collection<String> replacements =
-                ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", hostsWithNetwork);
-        replacements.add(VdcBllMessages.VAR__ENTITIES__HOSTS.name());
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
+        return networkNotUsed(getVdsDAO().getAllForNetwork(network.getId()), VdcBllMessages.VAR__ENTITIES__HOSTS);
     }
 
     protected ValidationResult networkNotUsedByTemplates(final Network network) {
-        List<VmTemplate> templates = getVmTemplateDAO().getAllForNetwork(network.getId());
-        if (templates.isEmpty()) {
-            return ValidationResult.VALID;
-        }
-
-        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", templates);
-        replacements.add(VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES.name());
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
+        return networkNotUsed(getVmTemplateDAO().getAllForNetwork(network.getId()),
+                VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
     }
 }
