@@ -33,7 +33,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 @Entity
 @Table(name = "vm_templates")
 @TypeDef(name = "guid", typeClass = GuidType.class)
-public class VmTemplate extends VmBase {
+public class VmTemplate extends VmBase implements Nameable {
     private static final long serialVersionUID = -522552511046744989L;
 
     @Transient
@@ -256,5 +256,10 @@ public class VmTemplate extends VmBase {
     @Override
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    @Override
+    public String getName() {
+        return getname();
     }
 }
