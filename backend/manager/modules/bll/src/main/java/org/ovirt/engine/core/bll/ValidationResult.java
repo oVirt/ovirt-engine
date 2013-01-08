@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,6 +62,19 @@ public final class ValidationResult {
     public ValidationResult(VdcBllMessages message, String... variableReplacements) {
         this(message);
         this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
+    }
+
+    /**
+     * Validation result for failure with a given message.
+     *
+     * @param message
+     *            The validation failure message.
+     * @param variableReplacements
+     *            Replacements for variables that appear in the message, in syntax: "$var text" where $var is the
+     *            variable to be replaced, and the text is the replacement.
+     */
+    public ValidationResult(VdcBllMessages message, Collection<String> variableReplacements) {
+        this(message, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
 
     /**
