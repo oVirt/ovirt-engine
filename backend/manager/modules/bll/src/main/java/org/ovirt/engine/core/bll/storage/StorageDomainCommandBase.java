@@ -169,7 +169,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         boolean valid = false;
         StorageDomainStatus status = getStorageDomainStatus();
         if (status != null) {
-            valid = Arrays.asList(statuses).contains(getStorageDomainStatus());
+            valid = Arrays.asList(statuses).contains(status);
         }
         if (!valid) {
             if (status == StorageDomainStatus.Locked) {
