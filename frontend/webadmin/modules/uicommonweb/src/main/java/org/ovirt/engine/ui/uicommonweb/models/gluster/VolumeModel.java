@@ -421,18 +421,23 @@ public class VolumeModel extends Model {
     private void clusterSelectedItemChanged()
     {
         setBricks(new ListModel());
-        setMessage(null);
 
         if (getCluster().getSelectedItem() != null)
         {
-            VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+            final VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
             AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object model, Object returnValue) {
+                    // In case the result of previous call is returned after selecting some other cluster
+                    if (!((VDSGroup) getCluster().getSelectedItem()).getId().equals(cluster.getId())) {
+                        return;
+                    }
+
                     List<VDS> hostList = (List<VDS>) returnValue;
                     for (VDS host : hostList) {
                         if (host.getstatus() == VDSStatus.Up) {
                             getAddBricksCommand().setIsExecutionAllowed(true);
+                            setMessage(null);
                             return;
                         }
                     }
@@ -444,6 +449,7 @@ public class VolumeModel extends Model {
         else
         {
             getAddBricksCommand().setIsExecutionAllowed(false);
+            setMessage(null);
         }
     }
 
