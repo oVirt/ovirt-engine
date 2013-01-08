@@ -335,12 +335,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
 
-            if (getSelectedItem() != null) {
-                UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-                for (Object object : getItems()) {
+            UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
+            if (items != null && selectedItem != null) {
+                for (Object object : items) {
                     UserPortalItemModel itemModel = (UserPortalItemModel) object;
                     if (itemModel.getEntity().equals(selectedItem.getEntity())) {
                         this.selectedItem = itemModel;
+                        break;
                     }
                 }
             }

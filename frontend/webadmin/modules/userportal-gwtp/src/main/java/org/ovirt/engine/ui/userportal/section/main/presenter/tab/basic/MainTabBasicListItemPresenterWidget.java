@@ -56,11 +56,18 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         void showErrorDialog(String message);
 
-        HasClickHandlers addRunButton(UserPortalItemModel model, UICommand command);
+        HasClickHandlers addRunButton();
 
-        HasClickHandlers addShutdownButton(UserPortalItemModel model, UICommand command);
+        void updateRunButton(UICommand command, boolean isPool);
 
-        HasClickHandlers addSuspendButton(UserPortalItemModel model, UICommand command);
+        HasClickHandlers addShutdownButton();
+
+        void updateShutdownButton(UICommand command);
+
+        HasClickHandlers addSuspendButton();
+
+        void updateSuspendButton(UICommand command);
+
     }
 
     private final ConsoleUtils consoleUtils;
@@ -137,46 +144,76 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         addSelectedItemChangeHandler();
     }
 
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getView().addMouseOutHandler(this));
+        registerHandler(getView().addMouseOverHandler(this));
+        registerHandler(getView().addClickHandler(this));
+        registerHandler(getView().addDoubleClickHandler(this));
+
+        // Add buttons to the view
+        registerHandler(getView().addRunButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(getRunCommand());
+            }
+        }));
+        registerHandler(getView().addShutdownButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(getShutdownCommand());
+            }
+        }));
+        registerHandler(getView().addSuspendButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(getSuspendCommand());
+            }
+        }));
+    }
+
+    @Override
+    protected void onUnbind() {
+        super.onUnbind();
+        removeSelectedItemChangeHandler();
+    }
+
+    void executeCommand(UICommand command) {
+        if (command != null) {
+            command.Execute();
+        }
+    }
+
+    UICommand getRunCommand() {
+        return model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
+    }
+
+    UICommand getShutdownCommand() {
+        return model.getShutdownCommand();
+    }
+
+    UICommand getSuspendCommand() {
+        return model.getPauseCommand();
+    }
+
+    /**
+     * Updates the item presenter widget with new data.
+     */
     public void setModel(UserPortalItemModel model) {
         this.model = model;
 
         setupSelectedProtocol(model);
         setupDefaultVmStyles();
 
-        final UICommand runCommand = model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
-        registerHandler(getView().addRunButton(model, runCommand).addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(runCommand);
-            }
-        }));
-
-        final UICommand shutdownCommand = model.getShutdownCommand();
-        registerHandler(getView().addShutdownButton(model, shutdownCommand).addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(shutdownCommand);
-            }
-        }));
-
-        final UICommand suspendCommand = model.getPauseCommand();
-        registerHandler(getView().addSuspendButton(model, suspendCommand).addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                executeCommand(suspendCommand);
-            }
-        }));
+        getView().updateRunButton(getRunCommand(), model.getIsPool());
+        getView().updateShutdownButton(getShutdownCommand());
+        getView().updateSuspendButton(getSuspendCommand());
 
         getView().edit(model);
 
         if (sameEntity(listModel.getSelectedItem(), model)) {
             setSelectedItem();
-        }
-    }
-
-    void executeCommand(UICommand command) {
-        if (command != null) {
-            command.Execute();
         }
     }
 
@@ -189,21 +226,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             return false;
         }
         return listModelProvider.getKey(prevModel).equals(listModelProvider.getKey(newModel));
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        registerHandler(getView().addMouseOutHandler(this));
-        registerHandler(getView().addMouseOverHandler(this));
-        registerHandler(getView().addClickHandler(this));
-        registerHandler(getView().addDoubleClickHandler(this));
-    }
-
-    @Override
-    protected void onUnbind() {
-        super.onUnbind();
-        removeSelectedItemChangeHandler();
     }
 
     @Override

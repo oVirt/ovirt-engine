@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.basic;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -23,6 +28,8 @@ public class UserPortalBasicListProvider extends UserPortalDataBoundModelProvide
     private final Provider<ConsolePopupPresenterWidget> consolePopupProvider;
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
 
+    private List<UserPortalItemModel> currentItems;
+
     @Inject
     public UserPortalBasicListProvider(ClientGinjector ginjector,
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
@@ -38,6 +45,45 @@ public class UserPortalBasicListProvider extends UserPortalDataBoundModelProvide
     @Override
     protected UserPortalBasicListModel createModel() {
         return new UserPortalBasicListModel();
+    }
+
+    @Override
+    protected void updateDataProvider(List<UserPortalItemModel> items) {
+        // First data update
+        if (currentItems == null) {
+            currentItems = items;
+            super.updateDataProvider(items);
+        }
+
+        // Subsequent data update
+        else if (itemsChanged(items, currentItems)) {
+            super.updateDataProvider(items);
+        }
+    }
+
+    /**
+     * Returns {@code true} if there is a change between {@code newItems} and {@code oldItems}, {@code false} otherwise.
+     */
+    boolean itemsChanged(List<UserPortalItemModel> newItems, List<UserPortalItemModel> oldItems) {
+        Map<Guid, UserPortalItemModel> oldItemMap = new HashMap<Guid, UserPortalItemModel>(oldItems.size());
+        for (UserPortalItemModel oldItem : oldItems) {
+            oldItemMap.put(oldItem.getId(), oldItem);
+        }
+
+        for (UserPortalItemModel newItem : newItems) {
+            Guid newItemId = newItem.getId();
+            UserPortalItemModel oldItem = oldItemMap.get(newItemId);
+
+            // Return true in case of new item or item change
+            if (oldItem == null || !newItem.entityStateEqualTo(oldItem)) {
+                return true;
+            }
+
+            oldItemMap.remove(newItemId);
+        }
+
+        // Return true in case there are no more old items left (to remove)
+        return !oldItemMap.isEmpty();
     }
 
     @Override

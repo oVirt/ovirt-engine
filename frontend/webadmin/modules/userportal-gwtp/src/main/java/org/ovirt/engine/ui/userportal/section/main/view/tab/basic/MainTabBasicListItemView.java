@@ -74,6 +74,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         String shutdownButtonAdditionalStyle();
 
         String suspendButtonAdditionalStyle();
+
     }
 
     @UiField
@@ -117,6 +118,10 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     private String elementId = DOM.createUniqueId();
 
+    private MainTabBasicListItemActionButton runButton;
+    private MainTabBasicListItemActionButton shutdownButton;
+    private MainTabBasicListItemActionButton suspendButton;
+
     @Inject
     public MainTabBasicListItemView(
             ApplicationResources applicationResources,
@@ -142,37 +147,55 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     @Override
-    public HasClickHandlers addRunButton(UserPortalItemModel model, UICommand command) {
+    public HasClickHandlers addRunButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                model.getIsPool() ? constants.takeVm() : constants.runVm(),
-                        resources.playIcon(), resources.playDisabledIcon(),
-                        style.runButtonAdditionalStyle());
+                null, resources.playIcon(), resources.playDisabledIcon(),
+                style.runButtonAdditionalStyle());
         button.setElementId(ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
+        this.runButton = button;
+
         addButtonToPanel(button);
-        updateButton(button, command);
         return button;
     }
 
     @Override
-    public HasClickHandlers addShutdownButton(UserPortalItemModel model, UICommand command) {
+    public void updateRunButton(UICommand command, boolean isPool) {
+        runButton.setTitle(isPool ? constants.takeVm() : constants.runVm());
+        updateButton(runButton, command);
+    }
+
+    @Override
+    public HasClickHandlers addShutdownButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 constants.shutdownVm(), resources.stopIcon(), resources.stopDisabledIcon(),
                 style.shutdownButtonAdditionalStyle());
         button.setElementId(ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
+        this.shutdownButton = button;
+
         addButtonToPanel(button);
-        updateButton(button, command);
         return button;
     }
 
     @Override
-    public HasClickHandlers addSuspendButton(UserPortalItemModel model, UICommand command) {
+    public void updateShutdownButton(UICommand command) {
+        updateButton(shutdownButton, command);
+    }
+
+    @Override
+    public HasClickHandlers addSuspendButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 constants.suspendVm(), resources.pauseIcon(), resources.pauseDisabledIcon(),
                 style.suspendButtonAdditionalStyle());
         button.setElementId(ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
+        this.suspendButton = button;
+
         addButtonToPanel(button);
-        updateButton(button, command);
         return button;
+    }
+
+    @Override
+    public void updateSuspendButton(UICommand command) {
+        updateButton(suspendButton, command);
     }
 
     void addButtonToPanel(MainTabBasicListItemActionButton button) {
@@ -195,7 +218,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        // No-op, the handlers are on the widget itself.
+        // No-op, the handlers are on the widget itself
     }
 
     @Override

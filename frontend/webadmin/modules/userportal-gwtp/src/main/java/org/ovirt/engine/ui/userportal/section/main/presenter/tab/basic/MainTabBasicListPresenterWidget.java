@@ -1,8 +1,12 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -29,46 +33,58 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_VmListContent = new Type<RevealContentHandler<?>>();
 
-    private final Provider<MainTabBasicListItemPresenterWidget> basicVmPresenterWidgetProvider;
-
+    private final Provider<MainTabBasicListItemPresenterWidget> itemPresenterWidgetProvider;
     private final UserPortalBasicListProvider modelProvider;
 
-    private final List<MainTabBasicListItemPresenterWidget> currentItemPresenterWidgets = new ArrayList<MainTabBasicListItemPresenterWidget>();
+    private final Map<Guid, MainTabBasicListItemPresenterWidget> currentItemPresenterWidgets =
+            new HashMap<Guid, MainTabBasicListItemPresenterWidget>();
 
     @Inject
     public MainTabBasicListPresenterWidget(EventBus eventBus, ViewDef view,
-            Provider<MainTabBasicListItemPresenterWidget> basicVmPresenterWidgetProvider,
+            Provider<MainTabBasicListItemPresenterWidget> itemPresenterWidgetProvider,
             UserPortalBasicListProvider modelProvider) {
         super(eventBus, view);
-        this.basicVmPresenterWidgetProvider = basicVmPresenterWidgetProvider;
+        this.itemPresenterWidgetProvider = itemPresenterWidgetProvider;
         this.modelProvider = modelProvider;
         modelProvider.setDataChangeListener(this);
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-    }
-
-    @Override
     public void onDataChange(List<UserPortalItemModel> items) {
-        // TODO optimize
-        //Cleanup existing item presenter widgets.
-        for (MainTabBasicListItemPresenterWidget itemPresenterwidget : currentItemPresenterWidgets) {
-            itemPresenterwidget.unbind();
-            removeFromSlot(TYPE_VmListContent, itemPresenterwidget);
-        }
-        clearSlot(TYPE_VmListContent);
-        currentItemPresenterWidgets.clear();
+        int itemIndex = 0;
+        Set<Guid> itemsToRemove = new HashSet<Guid>(currentItemPresenterWidgets.keySet());
 
-        int vmIndex = 0;
-        for (UserPortalItemModel item : items) {
-            MainTabBasicListItemPresenterWidget basicVmPresenterWidget = basicVmPresenterWidgetProvider.get();
-            basicVmPresenterWidget.getView().setElementId(
-                    ElementIdUtils.createElementId(getView().getElementId(), "vm" + vmIndex++)); //$NON-NLS-1$
-            basicVmPresenterWidget.setModel(item);
-            currentItemPresenterWidgets.add(basicVmPresenterWidget);
-            addToSlot(TYPE_VmListContent, basicVmPresenterWidget);
+        // Clear the list view, detaching any existing item views
+        clearSlot(TYPE_VmListContent);
+
+        // Process newly received data
+        for (UserPortalItemModel newItem : items) {
+            Guid newItemId = newItem.getId();
+            MainTabBasicListItemPresenterWidget itemPresenterWidget = currentItemPresenterWidgets.get(newItemId);
+
+            // Create new item presenter widget, if necessary
+            if (itemPresenterWidget == null) {
+                itemPresenterWidget = itemPresenterWidgetProvider.get();
+                currentItemPresenterWidgets.put(newItemId, itemPresenterWidget);
+            }
+
+            // Initialize item presenter widget with new data
+            itemPresenterWidget.getView().setElementId(ElementIdUtils.createElementId(
+                            getView().getElementId(), "vm" + itemIndex)); //$NON-NLS-1$
+            itemPresenterWidget.setModel(newItem);
+
+            // Update the list view, attaching current item view
+            addToSlot(TYPE_VmListContent, itemPresenterWidget);
+
+            itemsToRemove.remove(newItemId);
+            itemIndex++;
+        }
+
+        // Cleanup old data
+        for (Guid oldItemId : itemsToRemove) {
+            MainTabBasicListItemPresenterWidget itemPresenterWidget = currentItemPresenterWidgets.get(oldItemId);
+            itemPresenterWidget.unbind();
+            currentItemPresenterWidgets.remove(oldItemId);
         }
 
         selectDefault(modelProvider.getModel(), items);

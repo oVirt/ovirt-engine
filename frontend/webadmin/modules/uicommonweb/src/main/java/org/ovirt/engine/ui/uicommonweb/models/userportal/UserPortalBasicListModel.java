@@ -174,7 +174,6 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             }
             ItemsChanging(value, items);
             items = value;
-            ItemsChanged();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             OnPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }

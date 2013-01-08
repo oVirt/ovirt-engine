@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -441,4 +443,24 @@ public class UserPortalItemModel extends EntityModel
         super.ExecuteCommand(command);
         behavior.ExecuteCommand(command);
     }
+
+    public Guid getId() {
+        return (Guid) ((IVdcQueryable) getEntity()).getQueryableId();
+    }
+
+    public boolean entityStateEqualTo(UserPortalItemModel other) {
+        // Compare pools
+        if (getEntity() instanceof VmPool && other.getEntity() instanceof VmPool) {
+            return getEntity().equals(other.getEntity());
+        }
+        // Compare VMs
+        else if (getEntity() instanceof VM && other.getEntity() instanceof VM) {
+            VM thisVm = (VM) getEntity();
+            VM otherVm = (VM) other.getEntity();
+            return thisVm.getDynamicData().getstatus().equals(otherVm.getDynamicData().getstatus())
+                            && thisVm.getStaticData().equals(otherVm.getStaticData());
+        }
+        return false;
+    }
+
 }
