@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicompat;
 
 public interface Enums extends LocalizedEnums {
-    String NetworkStatus___NonOperational();
+    String NetworkStatus___NON_OPERATIONAL();
 
-    String NetworkStatus___Operational();
+    String NetworkStatus___OPERATIONAL();
 
     String StorageDomainStatus___Active();
 
@@ -263,11 +263,11 @@ public interface Enums extends LocalizedEnums {
 
     String AdRefStatus___Active();
 
-    String NetworkBootProtocol___None();
+    String NetworkBootProtocol___NONE();
 
-    String NetworkBootProtocol___Dhcp();
+    String NetworkBootProtocol___DHCP();
 
-    String NetworkBootProtocol___StaticIp();
+    String NetworkBootProtocol___STATIC_IP();
 
     String VmEntityType___VM();
 
