@@ -114,7 +114,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
                 : ValidationResult.VALID;
     }
 
-    protected ValidationResult networkNotUsedByRunningVm() {
+    protected ValidationResult networkNotUsedByVms() {
         String networkName = getNetworkName();
         for (NetworkCluster clusterAttachment : getClusterAttachments()) {
             List<VmStatic> vms =
@@ -134,7 +134,7 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
         return clusterAttachments;
     }
 
-    protected ValidationResult networkNotUsedByHost(final Network network) {
+    protected ValidationResult networkNotUsedByHosts(final Network network) {
         List<VDS> hostsWithNetwork = getVdsDAO().getAllForNetwork(network.getId());
         if (hostsWithNetwork.isEmpty()) {
             return ValidationResult.VALID;
