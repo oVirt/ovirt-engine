@@ -14,9 +14,6 @@ public class InternalConfiguration {
      */
     enum SupportedBrowser {
 
-        // Firefox 10 on Linux
-        Firefox10OnLinux("Firefox", 10.0f, false, "Linux"), //$NON-NLS-1$ //$NON-NLS-2$
-
         // Firefox 17 on Linux
         Firefox17OnLinux("Firefox", 17.0f, false, "Linux"), //$NON-NLS-1$ //$NON-NLS-2$
 
