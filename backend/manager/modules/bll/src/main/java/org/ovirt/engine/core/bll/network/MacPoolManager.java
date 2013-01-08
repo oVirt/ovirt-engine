@@ -192,7 +192,20 @@ public class MacPoolManager {
     }
 
     public int getavailableMacsCount() {
-        return availableMacs.size();
+        log.infoFormat("MacPoolManager::getAvailableMacsCount - entered");
+        lockObj.readLock().lock();
+        try {
+            if (!initialized) {
+                logInitializationError("Failed to get available Macs count.");
+                throw new VdcBLLException(VdcBllErrors.MAC_POOL_NOT_INITIALIZED);
+            }
+
+            int availableMacsSize = availableMacs.size();
+            log.infoFormat("MacPoolManager:: AvailableMacsCount = {0}", availableMacsSize);
+            return availableMacsSize;
+        } finally {
+            lockObj.readLock().unlock();
+        }
     }
 
     public void freeMac(String mac) {
