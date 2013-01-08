@@ -1,14 +1,11 @@
 package org.ovirt.engine.core.bll.network.dc;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
@@ -17,11 +14,9 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @SuppressWarnings("serial")
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
-    private List<NetworkCluster> clusterAttachments;
     private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters) {
@@ -52,11 +47,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(mtuValid())
                 && validate(networkPrefixValid())
                 && validate(vlanIsFree())
-                && validate(networkExists())
+                && validate(networkExists(getOldNetwork()))
                 && validate(notChangingManagementNetworkName())
                 && validate(networkNameNotUsed())
                 && validate(networkNotUsedByRunningVm())
-                && validate(networkNotUsedByHost());
+                && validate(networkNotUsedByHost(getOldNetwork()));
     }
 
     @Override
@@ -68,14 +63,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(UpdateEntity.class);
         return super.getValidationGroups();
-    }
-
-    private List<NetworkCluster> getClusterAttachments() {
-        if (clusterAttachments == null) {
-            clusterAttachments = getNetworkClusterDAO().getAllForNetwork(getNetwork().getId());
-        }
-
-        return clusterAttachments;
     }
 
     private Network getOldNetwork(){
@@ -93,12 +80,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         }
         return null;
-    }
-
-    private ValidationResult networkExists() {
-        return getOldNetwork() == null
-            ? new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS)
-                : ValidationResult.VALID;
     }
 
     private ValidationResult networkNameNotUsed() {
@@ -122,35 +103,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return null;
     }
 
-    private ValidationResult networkNotUsedByRunningVm() {
-        String networkName = getNetworkName();
-        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
-            List<VmStatic> vms =
-                    getVmStaticDAO().getAllByGroupAndNetworkName(clusterAttachment.getClusterId(), networkName);
-            if (vms.size() > 0) {
-                return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
-            }
-        }
-        return ValidationResult.VALID;
-    }
-
     private ValidationResult notChangingManagementNetworkName() {
         String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
         return getOldNetwork().getName().equals(managementNetwork) &&
                 !getNetworkName().equals(managementNetwork)
                 ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
                 : ValidationResult.VALID;
-    }
-
-    private ValidationResult networkNotUsedByHost() {
-        List<VDS> hostsWithNetwork = getVdsDAO().getAllForNetwork(getOldNetwork().getId());
-        if (hostsWithNetwork.isEmpty()) {
-            return ValidationResult.VALID;
-        }
-
-        Collection<String> replacements =
-                ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", hostsWithNetwork);
-        replacements.add(VdcBllMessages.VAR__ENTITIES__HOSTS.name());
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
     }
 }

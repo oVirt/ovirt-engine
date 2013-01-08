@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.dc;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,16 +10,22 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
 public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> extends CommandBase<T> {
     private List<Network> networks;
+    private List<NetworkCluster> clusterAttachments;
 
     public NetworkCommon(T parameters) {
         super(parameters);
@@ -72,12 +79,6 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
         return ValidationResult.VALID;
     }
 
-    protected ValidationResult networkNotAttachedToCluster(final Network network) {
-        return getNetworkClusterDAO().getAllForNetwork(network.getId()).isEmpty()
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NETWORK_CLUSTER_NETWORK_IN_USE);
-    }
-
     protected ValidationResult networkPrefixValid() {
         return getNetworkName().toLowerCase().startsWith("bond")
                 ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME)
@@ -105,5 +106,54 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
             networks = getNetworkDAO().getAllForDataCenter(getNetwork().getDataCenterId());
         }
         return networks;
+    }
+
+    protected ValidationResult networkExists(Network network) {
+        return network == null
+                ? new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS)
+                : ValidationResult.VALID;
+    }
+
+    protected ValidationResult networkNotUsedByRunningVm() {
+        String networkName = getNetworkName();
+        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
+            List<VmStatic> vms =
+                    getVmStaticDAO().getAllByGroupAndNetworkName(clusterAttachment.getClusterId(), networkName);
+            if (vms.size() > 0) {
+                return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    protected List<NetworkCluster> getClusterAttachments() {
+        if (clusterAttachments == null) {
+            clusterAttachments = getNetworkClusterDAO().getAllForNetwork(getNetwork().getId());
+        }
+
+        return clusterAttachments;
+    }
+
+    protected ValidationResult networkNotUsedByHost(final Network network) {
+        List<VDS> hostsWithNetwork = getVdsDAO().getAllForNetwork(network.getId());
+        if (hostsWithNetwork.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        Collection<String> replacements =
+                ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", hostsWithNetwork);
+        replacements.add(VdcBllMessages.VAR__ENTITIES__HOSTS.name());
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
+    }
+
+    protected ValidationResult networkNotUsedByTemplates(final Network network) {
+        List<VmTemplate> templates = getVmTemplateDAO().getAllForNetwork(network.getId());
+        if (templates.isEmpty()) {
+            return ValidationResult.VALID;
+        }
+
+        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", templates);
+        replacements.add(VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES.name());
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_USE, replacements);
     }
 }
