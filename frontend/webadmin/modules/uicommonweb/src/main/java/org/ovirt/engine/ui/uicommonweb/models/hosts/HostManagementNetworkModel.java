@@ -303,8 +303,9 @@ public class HostManagementNetworkModel extends EntityModel
         {
             getAddress().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().ValidateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            getGateway().ValidateEntity(new IValidation[] { new IpAddressValidation() });
         }
 
-        return getInterface().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid();
+        return getInterface().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid() && getGateway().getIsValid();
     }
 }
