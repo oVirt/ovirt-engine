@@ -572,7 +572,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterPopupMemoryOptimizationPanelTitle();
 
     @DefaultStringValue("Allow VMs to run on the hosts up to the specified overcommit threshold." +
-                        " Higher values conserve memory at the expense of greater host CPU usage.")
+            " Higher values conserve memory at the expense of greater host CPU usage.")
     String clusterPopupMemoryOptimizationInfo();
 
     @DefaultStringValue("None - Disable memory page sharing")
@@ -582,8 +582,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String clusterPopupCpuThreadsPanelTitle();
 
     @DefaultStringValue("Allow guests to use host threads as virtual CPU cores, utilizing AMD Clustered MultiThreading or Intel" +
-                        " Hyper-Threading technology on the virtualization host. Enabling this option may be useful for less" +
-                        " CPU-intensive workloads, or to run guests with CPU configurations that would otherwise be restricted.")
+            " Hyper-Threading technology on the virtualization host. Enabling this option may be useful for less" +
+            " CPU-intensive workloads, or to run guests with CPU configurations that would otherwise be restricted.")
     String clusterPopupCpuThreadsInfo();
 
     @DefaultStringValue("Count Threads As Cores")
@@ -1905,8 +1905,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String saveNetCongDetachConfirmPopup();
 
     // Main Section
-    @DefaultStringValue("Tree")
-    String treeMainSection();
+    @DefaultStringValue("System")
+    String systemMainSection();
 
     @DefaultStringValue("Bookmarks")
     String bookmarksMainSection();

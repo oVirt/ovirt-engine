@@ -119,7 +119,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     private void initHeaders(ApplicationConstants constants) {
-        treeHeader = new Label(constants.treeMainSection());
+        treeHeader = new Label(constants.systemMainSection());
         bookmarksHeader = new Label(constants.bookmarksMainSection());
         tagsHeader = new Label(constants.tagsMainSection());
     }
