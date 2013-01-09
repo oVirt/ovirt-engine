@@ -415,11 +415,17 @@ def startEngine():
     enginePermMin = engineConfig.getString("ENGINE_PERM_MIN")
     enginePermMax = engineConfig.getString("ENGINE_PERM_MAX")
 
-    # Module path should include first the engine modules so that they can override
-    # those provided by the application server if needed:
+    # Modules directories:
     jbossModulesDir = os.path.join(jbossHomeDir, "modules")
     engineModulesDir = os.path.join(engineUsrDir, "modules")
-    engineModulePath = "%s:%s" % (engineModulesDir, jbossModulesDir)
+
+    # Link all the JBoss modules into a temporary directory:
+    jbossModulesTmpDir = os.path.join(engineTmpDir, "modules")
+    linkModules(jbossModulesDir, jbossModulesTmpDir)
+
+    # Module path should include first the engine modules so that they can override
+    # those provided by the application server if needed:
+    engineModulePath = "%s:%s" % (engineModulesDir, jbossModulesTmpDir)
 
     # We start with an empty list of arguments:
     engineArgs = []
@@ -581,6 +587,22 @@ def stopEngine():
     # Clean the temporary directory:
     if os.path.exists(engineTmpDir):
         shutil.rmtree(engineTmpDir)
+
+
+def linkModules(modulesDir, modulesTmpDir):
+    # For each directory in the modules directory create the same in the
+    # temporary directory and populate with symlinks pointing to the
+    # original files (excluding indexes):
+    for parentDir, childrenDirs, childrenFiles in os.walk(modulesDir):
+        parentTmpDir = parentDir.replace(modulesDir, modulesTmpDir, 1)
+        if not os.path.exists(parentTmpDir):
+            os.makedirs(parentTmpDir)
+        for childFile in childrenFiles:
+            if childFile.endswith(".index"):
+                continue
+            childPath = os.path.join(parentDir, childFile)
+            childTmpPath = os.path.join(parentTmpDir, childFile)
+            os.symlink(childPath, childTmpPath)
 
 
 def checkEngine():
