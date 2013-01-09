@@ -1001,6 +1001,7 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     HotPlugUnsupportedOsList(338),
 
+    @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     AllowDuplicateMacAddresses(339),
