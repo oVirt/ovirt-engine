@@ -7,7 +7,7 @@
 
 logdir=$1
 maxage=$2
-dateformat="+%Y%m%d_%H"
+dateformat="+%Y%m%d_%H%M%S"
 
 date=`date $dateformat`
 
@@ -31,4 +31,3 @@ for i in `ls $logdir/engine.log.*.gz`; do
   rm -f $logdir/engine.log.*$timestamp.gz
  fi
 done
-
