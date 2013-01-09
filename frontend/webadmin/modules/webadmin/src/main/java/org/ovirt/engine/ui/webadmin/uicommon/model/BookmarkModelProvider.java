@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -82,10 +83,31 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
                 }
             }
         });
+
+        // Clear selection when a new tab is selected
+        getCommonModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getCommonModel().getSelectedItem() != null) {
+                    clearSelection();
+                }
+            }
+        });
+
+        // Clear selection when the search string is updated
+        getCommonModel().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("SearchString".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    clearSelection();
+                }
+            }
+        });
+
     }
 
     void clearSelection() {
-        if (selectionModel.getSelectedObject() != null) {
+        if (selectionModel.getSelectedObject() != null && !getModel().getIsBookmarkInitiated()) {
             selectionModel.setSelected(selectionModel.getSelectedObject(), false);
         }
     }
@@ -93,9 +115,6 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     @Override
     protected void updateDataProvider(List<Bookmark> items) {
         super.updateDataProvider(items);
-
-        // Clear selection when updating data
-        clearSelection();
     }
 
     @Override

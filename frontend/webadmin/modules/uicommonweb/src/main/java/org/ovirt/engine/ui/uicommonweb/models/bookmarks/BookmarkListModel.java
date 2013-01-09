@@ -96,6 +96,18 @@ public class BookmarkListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
+    private boolean privateIsBookmarkInitiated;
+
+    public boolean getIsBookmarkInitiated()
+    {
+        return privateIsBookmarkInitiated;
+    }
+
+    private void setIsBookmarkInitiated(boolean value)
+    {
+        privateIsBookmarkInitiated = value;
+    }
+
     static
     {
         NavigatedEventDefinition = new EventDefinition("Navigated", BookmarkListModel.class); //$NON-NLS-1$
@@ -109,7 +121,9 @@ public class BookmarkListModel extends SearchableListModel
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
+        setIsBookmarkInitiated(true);
         getSearchCommand().Execute();
+        setIsBookmarkInitiated(false);
 
         setIsTimerDisabled(true);
 
@@ -129,8 +143,14 @@ public class BookmarkListModel extends SearchableListModel
             {
                 SearchableListModel bookmarkListModel = (BookmarkListModel) model;
                 List<Bookmark> resultList = (List<Bookmark>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(resultList, COMPARATOR);
+                if (resultList != null) {
+                    Collections.sort(resultList, COMPARATOR);
+                }
+
+                // Prevent bookmark list updates from clearing selected bookmark
+                setIsBookmarkInitiated(true);
                 bookmarkListModel.setItems(resultList);
+                setIsBookmarkInitiated(false);
             }
         };
 
@@ -307,10 +327,13 @@ public class BookmarkListModel extends SearchableListModel
         super.OnSelectedItemChanged();
         UpdateActionAvailability();
 
-        if (getSelectedItem() != null)
+        if (getSelectedItem() != null && !getIsBookmarkInitiated())
         {
+            // Don't fire navigation events in response to the bookmark list updating itself
+            setIsBookmarkInitiated(true);
             getNavigatedEvent().raise(this,
                     new BookmarkEventArgs((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()));
+            setIsBookmarkInitiated(false);
         }
     }
 
