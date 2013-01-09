@@ -335,12 +335,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
     }
 
-    private FenceInvocationResult run(FenceExecutor executor, FenceAgentOrder order) {
+    private FenceInvocationResult run(FenceExecutor fenceExecutor, FenceAgentOrder order) {
         FenceInvocationResult fenceInvocationResult = new FenceInvocationResult();
         fenceInvocationResult.setOrder(order);
-        fenceInvocationResult.setValue(executor.Fence(order));
+        fenceInvocationResult.setValue(fenceExecutor.Fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
-            executor = new FenceExecutor(getVds(), FenceActionType.Status);
+            this.executor = new FenceExecutor(getVds(), FenceActionType.Status);
             fenceInvocationResult.setSucceeded(waitForStatus(getVds().getvds_name(), getParameters().getAction(), order));
         }
         return fenceInvocationResult;
