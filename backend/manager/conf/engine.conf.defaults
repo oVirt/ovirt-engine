@@ -132,6 +132,18 @@ ENGINE_HTTPS_PORT=8701
 ENGINE_AJP_PORT=8702
 
 #
+# A comma separated list of the SSL protocols supported by the engine
+# when the HTTPS connector is enabled. The possible values are the
+# following:
+#
+#   SSLv3
+#   TLSv1
+#   TLSv1.1
+#   TLSv1.2
+#
+ENGINE_HTTPS_PROTOCOLS=SSLv3,TLSv1,TLSv1.1,TLSv1.2
+
+#
 # Database connection details (note that the password is
 # encrypted):
 #
