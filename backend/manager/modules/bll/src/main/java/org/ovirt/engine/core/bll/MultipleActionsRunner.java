@@ -132,45 +132,52 @@ public class MultipleActionsRunner {
         }
     }
 
+    protected void runCanDoActionOnly(final ArrayList<VdcReturnValueBase> returnValues,
+            final int currentCanDoActionId,
+            final int totalSize,
+            final CountDownLatch latch) {
+        CommandBase<?> command = getCommands().get(currentCanDoActionId);
+        if (command != null) {
+            String actionType = command.getActionType().toString();
+            try {
+                log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
+                        new Date(),
+                        currentCanDoActionId + 1,
+                        totalSize,
+                        actionType);
+                VdcReturnValueBase returnValue = command.canDoActionOnly();
+                synchronized (returnValues) {
+                    returnValues.add(returnValue);
+                }
+            } catch (RuntimeException e) {
+                log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1} (Command type: {2}), Error: {3}",
+                        currentCanDoActionId + 1,
+                        totalSize,
+                        actionType,
+                        e);
+            } finally {
+                latch.countDown();
+                log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
+                        new Date(),
+                        currentCanDoActionId + 1,
+                        totalSize,
+                        actionType);
+            }
+        }
+        else {
+            log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1}. Command is null.",
+                    currentCanDoActionId + 1,
+                    totalSize);
+        }
+    }
+
     private void RunCanDoActionAsyncroniousely(
                                                final ArrayList<VdcReturnValueBase> returnValues,
                                                final int currentCanDoActionId, final int totalSize, final CountDownLatch latch) {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                CommandBase<?> command = getCommands().get(currentCanDoActionId);
-                if (command != null) {
-                    String actionType = command.getActionType().toString();
-                    try {
-                        log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
-                                new Date(),
-                                currentCanDoActionId + 1,
-                                totalSize,
-                                actionType);
-                        VdcReturnValueBase returnValue = command.canDoActionOnly();
-                        synchronized (returnValues) {
-                            returnValues.add(returnValue);
-                        }
-                    } catch (RuntimeException e) {
-                        log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1} (Command type: {2}), Error: {3}",
-                                currentCanDoActionId + 1,
-                                totalSize,
-                                actionType,
-                                e);
-                    } finally {
-                        latch.countDown();
-                        log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
-                                new Date(),
-                                currentCanDoActionId + 1,
-                                totalSize,
-                                actionType);
-                    }
-                }
-                else {
-                    log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1}. Command is null.",
-                            currentCanDoActionId + 1,
-                            totalSize);
-                }
+                runCanDoActionOnly(returnValues, currentCanDoActionId, totalSize, latch);
             }
         });
     }
@@ -187,7 +194,7 @@ public class MultipleActionsRunner {
      * @param command
      *            The command to execute
      */
-    final protected void executeValidatedCommands(CommandBase<?> command) {
+    protected void executeValidatedCommands(CommandBase<?> command) {
         if (command.getReturnValue().getCanDoAction()) {
 
             if (executionContext == null || executionContext.isMonitored()) {
