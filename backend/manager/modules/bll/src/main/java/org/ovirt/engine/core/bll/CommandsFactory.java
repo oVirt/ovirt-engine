@@ -31,7 +31,8 @@ public final class CommandsFactory {
             "org.ovirt.engine.core.bll.network.cluster",
             "org.ovirt.engine.core.bll.network.host",
             "org.ovirt.engine.core.bll.network.vm",
-            "org.ovirt.engine.core.bll.network.template" };
+            "org.ovirt.engine.core.bll.network.template",
+            "org.ovirt.engine.core.bll.provider" };
 
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
             new ConcurrentHashMap<String, Class<CommandBase<? extends VdcActionParametersBase>>>(VdcActionType.values().length);

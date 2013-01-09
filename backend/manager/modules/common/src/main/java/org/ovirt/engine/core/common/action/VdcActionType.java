@@ -238,7 +238,12 @@ public enum VdcActionType {
 
     // External events
     AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
-    RemoveExternalEvent(1501, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE);
+    RemoveExternalEvent(1501, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
+
+    // Providers
+    AddProvider(1600, false, QuotaDependency.NONE),
+    UpdateProvider(1601, false, QuotaDependency.NONE),
+    RemoveProvider(1602, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

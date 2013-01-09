@@ -234,6 +234,9 @@ public enum VdcQueryType implements Serializable {
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
 
+    // Providers
+    GetAllProviders,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 
