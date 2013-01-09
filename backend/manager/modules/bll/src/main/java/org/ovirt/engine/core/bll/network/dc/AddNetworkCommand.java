@@ -5,13 +5,12 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -39,13 +38,14 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     protected boolean canDoAction() {
-        return validate(storagePoolExists())
-                && validate(vmNetworkSetCorrectly())
-                && validate(stpForVmNetworkOnly())
-                && validate(mtuValid())
-                && validate(networkPrefixValid())
-                && validate(networkDoesNotExist())
-                && validate(vlanIsFree());
+        NetworkValidator validator = new NetworkValidator(getNetwork());
+        return validate(validator.dataCenterExists())
+                && validate(validator.vmNetworkSetCorrectly())
+                && validate(validator.stpForVmNetworkOnly())
+                && validate(validator.mtuValid())
+                && validate(validator.networkPrefixValid())
+                && validate(validator.networkNameNotUsed())
+                && validate(validator.vlanIdNotUsed());
     }
 
     @Override
@@ -82,21 +82,5 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
         perms.setObjectId(getNetwork().getId());
         perms.setrole_id(role.getId());
         MultiLevelAdministrationHandler.addPermission(perms);
-    }
-
-    private ValidationResult networkDoesNotExist() {
-        return getNetworkByName(getNetworks()) == null
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NETWORK_NAME_ALREADY_EXISTS);
-    }
-
-    private Network getNetworkByName(List<Network> networks) {
-        String networkName = getNetworkName();
-        for (Network network : networks) {
-            if (network.getName().equals(networkName)) {
-                return network;
-            }
-        }
-        return null;
     }
 }

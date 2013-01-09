@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -13,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -30,7 +29,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     protected void executeCommand() {
         getNetworkDAO().update(getNetwork());
 
-        for (NetworkCluster clusterAttachment : getClusterAttachments()) {
+        for (NetworkCluster clusterAttachment : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
             NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
         }
         setSucceeded(true);
@@ -44,18 +43,20 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        return validate(storagePoolExists())
-                && validate(vmNetworkSetCorrectly())
-                && validate(stpForVmNetworkOnly())
-                && validate(mtuValid())
-                && validate(networkPrefixValid())
-                && validate(vlanIsFree())
-                && validate(networkExists(getOldNetwork()))
-                && validate(notChangingManagementNetworkName())
-                && validate(networkNameNotUsed())
-                && validate(networkNotUsedByVms(getOldNetwork()))
-                && validate(networkNotUsedByTemplates(getOldNetwork()))
-                && validate(networkNotUsedByHosts(getOldNetwork()));
+        NetworkValidator validatorNew = new NetworkValidator(getNetwork());
+        UpdateNetworkValidator validatorOld = new UpdateNetworkValidator(getOldNetwork());
+        return validate(validatorNew.dataCenterExists())
+                && validate(validatorNew.vmNetworkSetCorrectly())
+                && validate(validatorNew.stpForVmNetworkOnly())
+                && validate(validatorNew.mtuValid())
+                && validate(validatorNew.networkPrefixValid())
+                && validate(validatorNew.vlanIdNotUsed())
+                && validate(validatorOld.networkIsSet())
+                && validate(validatorOld.notChangingManagementNetwork(getNetwork()))
+                && validate(validatorNew.networkNameNotUsed())
+                && validate(validatorOld.networkNotUsedByVms())
+                && validate(validatorOld.networkNotUsedByTemplates())
+                && validate(validatorOld.networkNotUsedByHosts());
     }
 
     @Override
@@ -69,50 +70,27 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return super.getValidationGroups();
     }
 
-    private Network getOldNetwork(){
+    private Network getOldNetwork() {
         if (oldNetwork == null) {
-            oldNetwork = getNetworkById(getNetworks());
+            oldNetwork = getNetworkDAO().get(getNetwork().getId());
         }
         return oldNetwork;
     }
 
-    private Network getNetworkById(List<Network> networks) {
-        Guid networkId = getNetwork().getId();
-        for (Network network : networks) {
-            if (network.getId().equals(networkId)) {
-                return network;
-            }
+    private class UpdateNetworkValidator extends NetworkValidator {
+
+        public UpdateNetworkValidator(Network network) {
+            super(network);
         }
-        return null;
-    }
 
-    private ValidationResult networkNameNotUsed() {
-        Network networkWithSameName = getOtherNetworkWithSameName(getNetworks());
-        return networkWithSameName != null
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NAME_IN_USE)
-                : ValidationResult.VALID;
-    }
-
-    private Network getOtherNetworkWithSameName(List<Network> networks) {
-        String networkName = getNetworkName().toLowerCase();
-        Guid networkId = getNetwork().getId();
-        NGuid dataCenterId = getNetwork().getDataCenterId();
-        for (Network network : networks) {
-            if (network.getName().toLowerCase().equals(networkName)
-                    && !network.getId().equals(networkId)
-                    && dataCenterId.equals(network.getDataCenterId())) {
-                return network;
-            }
+        public ValidationResult notChangingManagementNetwork(Network newNetwork) {
+            String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
+            return network.getName().equals(managementNetwork) &&
+                    !newNetwork.getName().equals(managementNetwork)
+                    ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
+                    : ValidationResult.VALID;
         }
-        return null;
-    }
 
-    private ValidationResult notChangingManagementNetworkName() {
-        String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
-        return getOldNetwork().getName().equals(managementNetwork) &&
-                !getNetworkName().equals(managementNetwork)
-                ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
-                : ValidationResult.VALID;
     }
 
     @Override
@@ -122,7 +100,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     public String getEntityOldName() {
-        return oldNetwork.getName();
+        return getOldNetwork().getName();
     }
 
     @Override
