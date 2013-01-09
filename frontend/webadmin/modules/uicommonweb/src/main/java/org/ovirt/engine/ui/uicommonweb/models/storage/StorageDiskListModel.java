@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -121,10 +120,9 @@ public class StorageDiskListModel extends SearchableListModel
 
     private boolean isRemoveCommandAvailable(ArrayList<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            boolean isTemplateDisk = disk.getVmEntityType() == VmEntityType.TEMPLATE;
             boolean isImageLocked = disk.getimageStatus() == ImageStatus.LOCKED;
 
-            if (isTemplateDisk || isImageLocked) {
+            if (isImageLocked) {
                 return false;
             }
         }
@@ -173,7 +171,7 @@ public class StorageDiskListModel extends SearchableListModel
 
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
-            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
+            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId(), getEntity().getId());
             paramerterList.add(parameters);
         }
 
