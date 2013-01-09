@@ -49,7 +49,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     protected void validateDiskForCreation(Disk disk) {
-        validateParameters(disk, 3, "format", "interface");
+        validateParameters(disk, 2, "format", "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
