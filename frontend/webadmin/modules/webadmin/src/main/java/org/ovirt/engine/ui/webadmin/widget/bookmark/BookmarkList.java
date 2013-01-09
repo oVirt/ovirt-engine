@@ -12,6 +12,9 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,9 +22,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProvider, Bookmark, CellList<Bookmark>> {
 
@@ -51,9 +56,38 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     protected CellList<Bookmark> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
         ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
-        CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell(templates));
-        display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+        final CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell(templates));
+
+        display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
         display.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+
+        // Using KeyboardSelectionPolicy.BOUND_TO_SELECTION is preferable, but broken (see
+        // gwt issue 6310).  Instead, use ENABLED and handle the keyboard input ourselves.
+        display.addDomHandler(new KeyDownHandler() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onKeyDown(KeyDownEvent event) {
+                SingleSelectionModel<Bookmark> selectionModel = (SingleSelectionModel<Bookmark>) display.getSelectionModel();
+                if (selectionModel.getSelectedObject() != null) {
+                    Bookmark item = null;
+                    int index = display.getVisibleItems().indexOf(selectionModel.getSelectedObject());
+                    int key = event.getNativeEvent().getKeyCode();
+
+                    if (key == KeyCodes.KEY_UP) {
+                        item = display.getVisibleItems().get(index - 1);
+                    } else if (key == KeyCodes.KEY_DOWN) {
+                        item = display.getVisibleItems().get(index + 1);
+                    }
+
+                    if (item != null) {
+                        selectionModel.setSelected(item, true);
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }
+                }
+            }
+        }, KeyDownEvent.getType());
+        display.sinkEvents(Event.ONKEYDOWN);
 
         modelProvider.addDataDisplay(display);
 
