@@ -29,6 +29,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class DbUserCacheManager {
+    private static Log log = LogFactory.getLog(DbUserCacheManager.class);
     private static DbUserCacheManager _instance = new DbUserCacheManager();
     private String jobId;
     private boolean initialized = false;
@@ -80,9 +81,9 @@ public class DbUserCacheManager {
     /**
      * detect differences between current DB users and the directory server users/groups and persist them
      *
-     * @param DbUser
+     * @param dbUser
      *            DB user
-     * @param LdapUser
+     * @param adUser
      *            LDAP user
      * @param updatedUsers
      *            list of changed users.
@@ -156,7 +157,7 @@ public class DbUserCacheManager {
 
     public void refreshAllUserData(List<LdapGroup> updatedGroups) {
         try {
-            log.info("DbUserCacheManager::refreshAllUserData() - entered");
+            log.info("Start refreshing all users data");
             List<DbUser> allUsers = DbFacade.getInstance().getDbUserDao().getAll();
 
             List<String> domainsList = LdapBrokerUtils.getDomainsList(true);
@@ -221,7 +222,7 @@ public class DbUserCacheManager {
                 }
             }
         } catch (RuntimeException e) {
-            log.error("DbUserCacheManager::refreshAllUserData() - failed with exception", e);
+            log.error("Failed to refresh users data.", e);
         }
     }
 
@@ -304,5 +305,4 @@ public class DbUserCacheManager {
         }
     }
 
-    private static Log log = LogFactory.getLog(DbUserCacheManager.class);
 }
