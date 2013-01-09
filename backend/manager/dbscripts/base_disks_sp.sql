@@ -81,6 +81,9 @@ BEGIN
     DELETE
     FROM   base_disks
     WHERE  disk_id = v_disk_id;
+
+    -- Delete the disk's permissions
+   DELETE FROM permissions WHERE object_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
