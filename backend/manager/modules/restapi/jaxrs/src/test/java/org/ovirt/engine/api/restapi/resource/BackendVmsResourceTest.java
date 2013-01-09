@@ -123,8 +123,8 @@ public class BackendVmsResourceTest
     public void testRemoveDetachOnly() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations();
-        setUpGetPayloadExpectations(0);
-        setUpGetBallooningExpectations();
+        setUpGetPayloadExpectations(1, 0);
+        setUpGetBallooningExpectations(1);
         setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "RemoveDisks" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
 
