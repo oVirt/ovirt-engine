@@ -54,6 +54,9 @@ public class VmAndTemplatesGenerationsDaoTest extends BaseDAOTestCase{
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_50);
         vmsGuids.add(FixturesTool.VM_RHEL5_POOL_51);
 
+        VmDAO vmDao = dbFacade.getVmDao();
+        vmDao.remove(FixturesTool.VM_RHEL5_POOL_50);
+        vmDao.remove(FixturesTool.VM_RHEL5_POOL_51);
         vmAndTemplatesGenerationsDAO.deleteOvfGenerations(vmsGuids);
         Long value = vmAndTemplatesGenerationsDAO.getOvfGeneration(FixturesTool.VM_RHEL5_POOL_50);
         assertNull("ovf generation wasn't deleted succesfully", value);
