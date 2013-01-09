@@ -87,7 +87,8 @@ public class VmHandler {
                 "vmPayload", "balloonEnabled", "smartcardEnabled","deleteProtected","dbGeneration",
                 "images", // images list is relational entity - ignore value changes
                 "interfaces", // interfaces is relational entity - ignore value changes
-                "useHostCpuFlags"
+                "useHostCpuFlags",
+                "quotaDefault"
         });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum<?>[] { VMStatus.Down }),
