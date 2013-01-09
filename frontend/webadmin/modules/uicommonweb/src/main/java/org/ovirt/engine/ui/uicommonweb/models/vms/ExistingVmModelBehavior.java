@@ -125,7 +125,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsHighlyAvailable().setEntity(vm.isAutoStartup());
 
         getModel().getTotalCPUCores().setEntity(Integer.toString(vm.getNumOfCpus()));
-        getModel().getTotalCPUCores().setIsChangable(!vm.isStatusUp());
+        getModel().getTotalCPUCores().setIsChangable(!vm.isRunning());
 
         getModel().getIsStateless().setEntity(vm.isStateless());
         getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
@@ -134,7 +134,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsDeleteProtected().setEntity(vm.isDeleteProtected());
 
         getModel().getNumOfSockets().setSelectedItem(vm.getNumOfSockets());
-        getModel().getNumOfSockets().setIsChangable(!vm.isStatusUp());
+        getModel().getNumOfSockets().setIsChangable(!vm.isRunning());
 
         getModel().getKernel_parameters().setEntity(vm.getKernelParams());
         getModel().getKernel_path().setEntity(vm.getKernelUrl());

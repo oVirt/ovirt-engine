@@ -174,7 +174,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 if (taskGroupSucceeded) {
                     getSnapshotDao().updateStatus(createdSnapshotId, SnapshotStatus.OK);
 
-                    if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isStatusUp()
+                    if (getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null && getVm().isRunning()
                             && getVm().getRunOnVds() != null) {
                         performLiveSnapshot(createdSnapshotId);
                     }

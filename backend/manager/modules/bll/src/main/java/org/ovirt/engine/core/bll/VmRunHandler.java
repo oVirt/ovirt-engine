@@ -121,7 +121,7 @@ public class VmRunHandler {
                                     .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
                                             new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
                                     .getReturnValue()).booleanValue();
-                            if (vm.isStatusUp() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
+                            if (vm.isRunning() || (vm.getStatus() == VMStatus.NotResponding) || isVmDuringInit) {
                                 retValue = false;
                                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING.toString());
                             } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {

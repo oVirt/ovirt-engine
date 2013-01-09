@@ -22,26 +22,78 @@ public enum VMStatus implements Identifiable {
     ImageLocked(15),
     PoweringDown(16);
 
-    private int intValue;
-    private static java.util.HashMap<Integer, VMStatus> mappings = new HashMap<Integer, VMStatus>();
+    private int value;
+    private static HashMap<Integer, VMStatus> valueToStatus = new HashMap<Integer, VMStatus>();
 
     static {
         for (VMStatus status : values()) {
-            mappings.put(status.getValue(), status);
+            valueToStatus.put(status.getValue(), status);
         }
     }
 
     private VMStatus(int value) {
-        intValue = value;
+        this.value = value;
     }
 
     @Override
     public int getValue() {
-        return intValue;
+        return value;
     }
 
     public static VMStatus forValue(int value) {
-        return mappings.get(value);
+        return valueToStatus.get(value);
     }
 
+    /**
+     * This method reflects whether it's a VM status in which the guest is up
+     *
+     * @return true if this status indicates that the guest is up, otherwise false
+     */
+    public boolean isGuestUp() {
+        return this == Up || this == PoweringDown || this == PoweredDown || this == PoweringUp;
+    }
+
+    /**
+     * This method reflects whether the VM is surely not running in this status
+     *
+     * <p>Note: There might be cases in which the VM is not running and this method
+     * returns false
+     *
+     * @return true if this status indicates that the VM is not running for sure, otherwise false
+     */
+    public boolean isNotRunning() {
+        return this == Down || this == Suspended || this == ImageLocked || this == ImageIllegal;
+    }
+
+    /**
+     * This method reflects whether the VM is qualify to migration in this status
+     *
+     * @return true if this status indicates that the VM is qualify to migration, otherwise false
+     */
+    public boolean isQualifyToMigrate() {
+        return this == Up || this == PoweringUp || this == Paused || this == RebootInProgress;
+    }
+
+    /**
+     * This method reflects whether the VM is surely running or paused in this status
+     *
+     * @see #isRunning()
+     * @return true if this status indicates that the VM is paused or running for sure, otherwise false
+     */
+    public boolean isRunningOrPaused() {
+        return this.isRunning() || this == Paused || this == SavingState || this == RestoringState;
+    }
+
+    /**
+     * This method reflects whether the VM is surely running in this status
+     *
+     * <p>Note: There might be cases in which the VM is running and this method
+     * returns false
+     *
+     * @return true if this status indicates that the VM is running for sure, otherwise false
+     */
+    public boolean isRunning() {
+        return this == Up || this == PoweredDown || this == PoweringDown
+                || this == PoweringUp || this == MigratingFrom || this == WaitForLaunch || this == RebootInProgress;
+    }
 }

@@ -277,7 +277,7 @@ public class VdsUpdateRunTimeInfo {
         _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
 
         for (VM vm : _vmDict.values()) {
-            if (vm.isStatusUp() && vm.getStatus() != VMStatus.Up) {
+            if (vm.isRunning() && vm.getStatus() != VMStatus.Up) {
                 runningVmsInTransition++;
             }
         }
@@ -1496,7 +1496,7 @@ public class VdsUpdateRunTimeInfo {
     private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
         VMStatus oldVmStatus = vmToUpdate.getStatus();
 
-        if (oldVmStatus == VMStatus.MigratingFrom && VM.isGuestUp(runningVm.getstatus())) {
+        if (oldVmStatus == VMStatus.MigratingFrom && runningVm.getstatus().isGuestUp()) {
             _vmsToRerun.add(runningVm.getId());
             log.infoFormat("adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);

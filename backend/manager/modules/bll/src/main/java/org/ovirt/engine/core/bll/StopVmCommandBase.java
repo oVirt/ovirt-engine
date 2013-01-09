@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -52,7 +51,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm() == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else if (!VM.isStatusUp(getVm().getStatus()) && getVm().getStatus() != VMStatus.Paused
+        } else if (!getVm().isRunning() && getVm().getStatus() != VMStatus.Paused
                 && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
             if (getVm().getStatus() == VMStatus.SavingState || getVm().getStatus() == VMStatus.RestoringState) {
                 retValue = false;

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -79,7 +78,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         // Set the VM to null, to fetch it again from the DB ,instead from the cache.
         // We want to get the VM state from the DB, to avoid multi requests for VM hibernation.
         setVm(null);
-        if (VM.isStatusUp(getVm().getStatus())) {
+        if (getVm().isRunning()) {
 
             TransactionSupport.executeInNewTransaction(
                     new TransactionMethod<Object>() {

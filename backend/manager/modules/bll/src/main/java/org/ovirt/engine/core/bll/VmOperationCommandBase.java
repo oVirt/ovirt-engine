@@ -51,7 +51,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
 
         // If the status of the machine implies that it is not running in a host then
         // there is no need to find the id of the host:
-        if (!VM.isStatusUpOrPaused(status) && status != VMStatus.NotResponding) {
+        if (!status.isRunningOrPaused() && status != VMStatus.NotResponding) {
             return false;
         }
 

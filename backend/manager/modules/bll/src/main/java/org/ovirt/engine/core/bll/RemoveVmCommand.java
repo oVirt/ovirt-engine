@@ -115,7 +115,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public static boolean IsVmRunning(Guid vmId) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm != null) {
-            return VM.isStatusUpOrPaused(vm.getStatus()) || vm.getStatus() == VMStatus.Unknown;
+            return vm.isRunningOrPaused() || vm.getStatus() == VMStatus.Unknown;
         }
         return false;
     }

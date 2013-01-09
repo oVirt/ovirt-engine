@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -223,7 +222,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
             setActionReturnValue(status);
 
-            if (VM.isStatusUp(status) || status == VMStatus.RestoringState) {
+            if (status != null && (status.isRunning() || status == VMStatus.RestoringState)) {
                 setSucceeded(true);
             } else {
                 // Try to rerun Vm on different vds

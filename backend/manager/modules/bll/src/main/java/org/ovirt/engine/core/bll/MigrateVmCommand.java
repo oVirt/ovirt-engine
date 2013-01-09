@@ -195,7 +195,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             } else if (vm.getStatus() == VMStatus.Paused) {
                 retValue = false;
                 reasons.add(VdcBllMessages.MIGRATE_PAUSED_VM_IS_UNSUPPORTED.name());
-            } else if (!VM.isStatusQualifyToMigrate(vm.getStatus())) {
+            } else if (!vm.isQualifyToMigrate()) {
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.name());
             } else if (getDestinationVds() != null && getDestinationVds().getstatus() != VDSStatus.Up) {

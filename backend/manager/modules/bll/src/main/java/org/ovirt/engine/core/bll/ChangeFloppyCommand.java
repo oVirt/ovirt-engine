@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.ChangeDiskVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -25,7 +24,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
 
     @Override
     protected void Perform() {
-        if (VM.isStatusUpOrPaused(getVm().getStatus())) {
+        if (getVm().isRunningOrPaused()) {
             setActionReturnValue(Backend
                     .getInstance()
                     .getResourceManager()

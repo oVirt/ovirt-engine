@@ -1059,10 +1059,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         }
     }
 
-    public boolean isStatusUp() {
-        return isStatusUp(getStatus());
-    }
-
     private boolean useSysPrep;
 
     public boolean useSysPrep() {
@@ -1075,33 +1071,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     public boolean isFirstRun() {
         return vmStatic.isFirstRun();
-    }
-
-    public static boolean isStatusUp(VMStatus st) {
-        return (st == VMStatus.Up || st == VMStatus.PoweredDown || st == VMStatus.PoweringDown
-                || st == VMStatus.PoweringUp || st == VMStatus.MigratingFrom || st == VMStatus.WaitForLaunch || st == VMStatus.RebootInProgress);
-
-    }
-
-    public static boolean isStatusUpOrPaused(VMStatus st) {
-        return (isStatusUp(st) || st == VMStatus.Paused || st == VMStatus.SavingState || st == VMStatus.RestoringState);
-
-    }
-
-    public static boolean isStatusQualifyToMigrate(VMStatus st) {
-        return (st == VMStatus.Up || st == VMStatus.PoweringUp || st == VMStatus.Paused || st == VMStatus.RebootInProgress);
-    }
-
-    public static boolean isStatusUpOrPausedOrSuspended(VMStatus st) {
-        return (isStatusUpOrPaused(st) || st == VMStatus.Suspended);
-    }
-
-    public static boolean isStatusDown(VMStatus st) {
-        return (st == VMStatus.Down || st == VMStatus.Suspended || st == VMStatus.ImageLocked || st == VMStatus.ImageIllegal);
-    }
-
-    public static boolean isGuestUp(VMStatus st) {
-        return (st == VMStatus.Up || st == VMStatus.PoweringDown || st == VMStatus.PoweredDown || st == VMStatus.PoweringUp);
     }
 
     private double _actualDiskWithSnapthotsSize = 0;
@@ -1525,17 +1494,32 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return getVmName();
     }
 
-    /**
-     * Utility method for checking if the VM is with DOWN status
-     *
-     * @return true if the VM's status is DOWN, otherwise false
-     */
+    @Override
+    public String toString() {
+        return "VM [" + getName() + "]";
+    }
+
+    ///////////////////////////////////////////////
+    /// Utility methods that check the VM state ///
+    ///////////////////////////////////////////////
+
     public boolean isDown() {
         return getStatus() == VMStatus.Down;
     }
 
-    @Override
-    public String toString() {
-        return "VM [" + getName() + "]";
+    public boolean isRunning() {
+        return getStatus().isRunning();
+    }
+
+    public boolean isRunningOrPaused() {
+        return getStatus().isRunningOrPaused();
+    }
+
+    public boolean isQualifyToMigrate() {
+        return getStatus().isQualifyToMigrate();
+    }
+
+    public boolean isNotRunning() {
+        return getStatus().isNotRunning();
     }
 }

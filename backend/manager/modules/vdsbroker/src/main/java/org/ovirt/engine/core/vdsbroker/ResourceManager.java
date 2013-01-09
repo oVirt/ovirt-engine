@@ -73,7 +73,7 @@ public class ResourceManager {
         // Cleanup all vms dynamic data. This is defencive code on power crash
         List<VM> vms = DbFacade.getInstance().getVmDao().getAll();
         for (VM vm : vms) {
-            if (!VM.isStatusDown(vm.getStatus())) {
+            if (!vm.isNotRunning()) {
                 // check if vm should be suspended
                 if (vm.getStatus() == VMStatus.SavingState) {
                     InternalSetVmStatus(vm, VMStatus.Suspended);
@@ -252,12 +252,12 @@ public class ResourceManager {
         vm.setStatus(status);
         vm.setExitStatus(exitStaus);
         vm.setExitMessage(exitMessage);
-        boolean isVmStatusDown = VM.isStatusDown(status);
+        boolean isVmNotRunning = status.isNotRunning();
 
-        if (isVmStatusDown || status == VMStatus.Unknown) {
+        if (isVmNotRunning || status == VMStatus.Unknown) {
             resetVmAttributes(vm);
 
-            if (isVmStatusDown) {
+            if (isVmNotRunning) {
                 vm.setRunOnVds(null);
                 vm.setVmPauseStatus(VmPauseStatus.NONE);
             }

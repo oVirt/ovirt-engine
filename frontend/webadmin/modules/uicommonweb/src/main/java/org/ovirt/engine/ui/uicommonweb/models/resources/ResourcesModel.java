@@ -273,7 +273,7 @@ public class ResourcesModel extends SearchableListModel
                     definedCPUs += vm.getNumOfCpus();
                     definedMemory += vm.getVmMemSizeMb();
 
-                    if (vm.isStatusUp())
+                    if (vm.isRunning())
                     {
                         runningVMs++;
                         usedCPUs += vm.getNumOfCpus();
