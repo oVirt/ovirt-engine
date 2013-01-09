@@ -14,12 +14,16 @@ public class Log implements org.apache.commons.logging.Log {
 
     @Override
     public void debug(Object arg0) {
-        log.debug(addPrefixToLogMessage(arg0));
+        if (isDebugEnabled()) {
+            log.debug(addPrefixToLogMessage(arg0));
+        }
     }
 
     @Override
     public void debug(Object arg0, Throwable arg1) {
-        log.debug(addPrefixToLogMessage(arg0), arg1);
+        if (isDebugEnabled()) {
+            log.debug(addPrefixToLogMessage(arg0), arg1);
+        }
     }
 
     @Override
