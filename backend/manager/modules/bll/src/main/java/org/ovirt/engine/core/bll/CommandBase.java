@@ -590,7 +590,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void revertPreviousHandlers() {
         getParameters().decrementExecutionIndex();
         if (getExecutionIndex() >= 0) {
-            log.errorFormat("Reverting task handler: {0}", getCurrentTaskHandler().getClass().getName());
+            log.errorFormat("Reverting task {0}, handler: {1}", getCurrentTaskHandler().getRevertTaskType().name(), getCurrentTaskHandler().getClass().getName());
             getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             getCurrentTaskHandler().compensate();
 

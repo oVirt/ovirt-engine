@@ -37,7 +37,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
             getReturnValue().setSucceeded(false);
             beforeTask();
             addTask(Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(getVDSCommandType(), getVDSParameters()));
+                    .RunVdsCommand(getVDSCommandType(), getVDSParameters()), false);
         }
         ExecutionHandler.setAsyncJob(getEnclosingCommand().getExecutionContext(), true);
         getReturnValue().setSucceeded(true);
@@ -49,11 +49,11 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         VDSCommandType revertCommandType = getRevertVDSCommandType();
         if (revertCommandType != null) {
             addTask(Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(getRevertVDSCommandType(), getRevertVDSParameters()));
+                    .RunVdsCommand(getRevertVDSCommandType(), getRevertVDSParameters()), true);
         }
     }
 
-    private void addTask(VDSReturnValue vdsReturnValue) {
+    private void addTask(VDSReturnValue vdsReturnValue, boolean isRevertedTask) {
         AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
         getReturnValue().getInternalTaskIdList().add(cmd.createTask(
                 taskCreationInfo,
@@ -61,7 +61,11 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
                 getTaskObjectType(),
                 getTaskObjects())
                 );
-        getReturnValue().getTaskIdList().add(taskCreationInfo.getTaskID());
+        Guid taskId = taskCreationInfo.getTaskID();
+        getReturnValue().getTaskIdList().add(taskId);
+        if (isRevertedTask) {
+            log.infoFormat("Reverting task {0} with ID {1} on DataCenter {2}.", taskCreationInfo.getTaskType().name(), taskId, taskCreationInfo.getStoragePoolID());
+        }
     }
 
     @Override
