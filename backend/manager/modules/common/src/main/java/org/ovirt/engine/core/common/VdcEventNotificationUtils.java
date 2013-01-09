@@ -24,6 +24,12 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_APPROVE_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_INSTALL_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_TIME_DRIFT_ALERT);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM);
+
         // VM
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_FAILURE);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_MIGRATION_START);
