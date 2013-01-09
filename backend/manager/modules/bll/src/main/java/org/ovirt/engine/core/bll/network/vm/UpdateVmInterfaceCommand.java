@@ -115,7 +115,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 if (succeeded) {
                     MacPoolManager.getInstance().freeMac(oldIface.getMacAddress());
                 } else {
-                    MacPoolManager.getInstance().freeMac(getInterface().getMacAddress());
+                    MacPoolManager.getInstance().freeMac(getMacAddress());
                 }
             }
         }

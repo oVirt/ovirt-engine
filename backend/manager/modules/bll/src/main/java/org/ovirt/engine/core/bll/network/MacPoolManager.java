@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.network;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -27,9 +29,25 @@ public class MacPoolManager {
 
     private static Log log = LogFactory.getLog(MacPoolManager.class);
 
+    /**
+     * A Map that holds the allocated MAC addresses as keys, and counters as values. These MAC addresses were taken from
+     * the range defined by the user in {@link ConfigValues#MacPoolRanges}
+     */
+    private final Map<String, Integer> allocatedMacs = new HashMap<String, Integer>();
+
+    /**
+     * A Map that holds the allocated MAC addresses as keys, and counters as values. These MAC addresses were allocated
+     * when user requested a specific MAC address that is out of the range defined in {@link ConfigValues#MacPoolRanges}
+     */
+    private final Map<String, Integer> allocatedCustomMacs = new HashMap<String, Integer>();
+
+    /**
+     * A Set that holds the non-allocated MAC addresses from the range defined in {@link ConfigValues#MacPoolRanges}
+     * Every MAC in that range should either be in this Set, or be mapped to a value greater to zero in allocatedMacs,
+     * but not both
+     */
     private final Set<String> availableMacs = new HashSet<String>();
-    private final Set<String> allocatedMacs = new HashSet<String>();
-    private final Set<String> allocatedCustomMacs = new HashSet<String>();
+
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private boolean initialized;
 
@@ -55,7 +73,7 @@ public class MacPoolManager {
 
             List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAll();
             for (VmNetworkInterface iface: interfaces) {
-                addMac(iface.getMacAddress());
+                forceAddMac(iface.getMacAddress());
             }
             initialized = true;
         } catch (Exception ex) {
@@ -155,9 +173,16 @@ public class MacPoolManager {
         return mac;
     }
 
+    /**
+     * Adds the given MAC to the allocateMacs Map, and removes it from the Set of available MACs. Should only be called
+     * with a MAC that is in the Set of available MACs.
+     *
+     * @param mac
+     * @return
+     */
     private boolean commitNewMac(String mac) {
         availableMacs.remove(mac);
-        allocatedMacs.add(mac);
+        allocatedMacs.put(mac, 1);
         if (availableMacs.isEmpty()) {
             AuditLogableBase logable = new AuditLogableBase();
             AuditLogDirector.log(logable, AuditLogType.MAC_POOL_EMPTY);
@@ -192,34 +217,41 @@ public class MacPoolManager {
     }
 
     private void internalFreeMac(String mac) {
-        if (allocatedCustomMacs.contains(mac)) {
-            allocatedCustomMacs.remove(mac);
-        } else if (allocatedMacs.contains(mac)) {
-            allocatedMacs.remove(mac);
-            availableMacs.add(mac);
+        if (allocatedMacs.containsKey(mac)) {
+            removeMacFromMap(allocatedMacs, mac);
+            if (!allocatedMacs.containsKey(mac)) {
+                availableMacs.add(mac);
+            }
+        } else if (allocatedCustomMacs.containsKey(mac)) {
+            removeMacFromMap(allocatedCustomMacs, mac);
+        }
+    }
+
+    private void removeMacFromMap(Map<String, Integer> macMap, String mac) {
+        if (macMap.get(mac) <= 1) {
+            macMap.remove(mac);
+        } else {
+            decrementMacInMap(macMap, mac);
         }
     }
 
     /**
-     * Add user define mac address Function return false if the mac is in use
+     * Add given MAC address if possible.
      *
      * @param mac
-     * @return
+     * @return true if MAC was added successfully, and false if the MAC is in use and
+     *         {@link ConfigValues#AllowDuplicateMacAddresses} is set to false
      */
     public boolean addMac(String mac) {
-        boolean retVal = true;
+        boolean retVal = false;
         lockObj.writeLock().lock();
         try {
-            if (allocatedMacs.contains(mac)) {
-                retVal = false;
+            if (availableMacs.contains(mac)) {
+                retVal = commitNewMac(mac);
+            } else if (allocatedMacs.containsKey(mac)) {
+                retVal = addMacToMap(allocatedMacs, mac);
             } else {
-                if (availableMacs.contains(mac)) {
-                    retVal = commitNewMac(mac);
-                } else if (allocatedCustomMacs.contains(mac)) {
-                    retVal = false;
-                } else {
-                    allocatedCustomMacs.add(mac);
-                }
+                retVal = addMacToMap(allocatedCustomMacs, mac);
             }
         } finally {
             lockObj.writeLock().unlock();
@@ -227,10 +259,32 @@ public class MacPoolManager {
         return retVal;
     }
 
+    /**
+     * Add given MAC address, regardless of it being in use.
+     *
+     * @param mac
+     */
+    public void forceAddMac(String mac) {
+        lockObj.writeLock().lock();
+        try {
+            if (availableMacs.contains(mac)) {
+                commitNewMac(mac);
+            } else if (allocatedMacs.containsKey(mac)) {
+                incrementMacInMap(allocatedMacs, mac);
+            } else if (allocatedCustomMacs.containsKey(mac)) {
+                incrementMacInMap(allocatedCustomMacs, mac);
+            } else {
+                allocatedCustomMacs.put(mac, 1);
+            }
+        } finally {
+            lockObj.writeLock().unlock();
+        }
+    }
+
     public boolean isMacInUse(String mac) {
         lockObj.readLock().lock();
         try {
-            return allocatedMacs.contains(mac) || allocatedCustomMacs.contains(mac);
+            return allocatedMacs.containsKey(mac) || allocatedCustomMacs.containsKey(mac);
         } finally {
             lockObj.readLock().unlock();
         }
@@ -254,5 +308,39 @@ public class MacPoolManager {
 
     @SuppressWarnings("serial")
     private class MacPoolExceededMaxException extends RuntimeException {
+    }
+
+    private boolean allowDuplicate() {
+        return Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+    }
+
+    /**
+     * Adds the given MAC to the given Map, either by putting it in the Map, or incrementing its counter. If MAC is
+     * already taken and {@link ConfigValues#AllowDuplicateMacAddresses} is set to false, returns false and does not add
+     * MAC to Map
+     *
+     * @param macMap
+     *            the Map to add the MAC to
+     * @param mac
+     *            the MAC address to add
+     * @return true if succeeded, false otherwise
+     */
+    private boolean addMacToMap(Map<String, Integer> macMap, String mac) {
+        if (!macMap.containsKey(mac)) {
+            macMap.put(mac, 1);
+            return true;
+        } else if (allowDuplicate()) {
+            incrementMacInMap(macMap, mac);
+            return true;
+        }
+        return false;
+    }
+
+    private void incrementMacInMap(Map<String, Integer> macMap, String mac) {
+        macMap.put(mac, macMap.get(mac) + 1);
+    }
+
+    private void decrementMacInMap(Map<String, Integer> macMap, String mac) {
+        macMap.put(mac, macMap.get(mac) - 1);
     }
 }
