@@ -943,7 +943,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         // only avail for desktop mode
         isStatelessEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
         numOfMonitorsEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
-        allowConsoleReconnectEditor.setVisible(vm.getVmType().equals(VmType.Desktop));
 
         defaultHostEditor.setEnabled(false);
         specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
