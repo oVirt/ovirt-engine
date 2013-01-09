@@ -20,14 +20,17 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public final class CpuFlagsManagerHandler {
+    private static final Log log = LogFactory.getLog(CpuFlagsManagerHandler.class);
     private static Map<Version, CpuFlagsManager> _managersDictionary =
             new HashMap<Version, CpuFlagsManager>();
 
     public static void InitDictionaries() {
+        log.info("Start initializing dictionaries");
         _managersDictionary.clear();
         for (Version ver : Config.<HashSet<Version>> GetValue(ConfigValues.SupportedClusterLevels)) {
             _managersDictionary.put(ver, new CpuFlagsManager(ver));
         }
+       log.info("Finished initializing dictionaries");
     }
 
     public static String GetVDSVerbDataByCpuName(String name, Version ver) {
@@ -423,6 +426,5 @@ public final class CpuFlagsManagerHandler {
         return server1Level - server2Level;
     }
 
-    private static final Log log = LogFactory.getLog(CpuFlagsManagerHandler.class);
 
 }

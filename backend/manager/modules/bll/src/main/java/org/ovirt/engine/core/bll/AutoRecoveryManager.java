@@ -41,8 +41,10 @@ public class AutoRecoveryManager {
      * Should be called by backend, schedules the execution as configured.
      */
     void initialize() {
+        log.info("Start initializing " + getClass().getSimpleName());
         SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer",
                 new Class<?>[] {}, new Object[] {}, Config.<String> GetValue(ConfigValues.AutoRecoverySchedule));
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     /**

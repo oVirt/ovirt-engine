@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     private static final long ONE_HOUR = 60 * 60 * 1000L;
-
+    private static final Log log = LogFactory.getLog(ErrorTranslatorImpl.class);
     private List<String> messageSources;
     private Locale standardLocale;
     private Map<String, String> standardMessages;
@@ -24,10 +24,12 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     // Will assume these are property files, not ResxFiles.
     public ErrorTranslatorImpl(String... errorFileNames) {
+        log.infoFormat("Start initializing " + getClass().getSimpleName());
         messageSources = asList(errorFileNames);
         standardLocale = Locale.getDefault();
         standardMessages = retrieveByLocale(standardLocale);
         messagesByLocale = new ReapedMap<Locale, Map<String, String>>(ONE_HOUR, true);
+        log.infoFormat("Finished initializing " + getClass().getSimpleName());
     }
 
     private synchronized Map<String, String> getMessages(Locale locale) {
@@ -230,5 +232,4 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
                 : name;
     }
 
-    private static Log log = LogFactory.getLog(ErrorTranslatorImpl.class);
 }

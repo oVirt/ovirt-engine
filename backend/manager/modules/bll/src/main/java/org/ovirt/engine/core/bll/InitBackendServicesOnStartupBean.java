@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
@@ -37,35 +36,29 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
     @Override
     @PostConstruct
     public void create() {
-        log.infoFormat("InitResourceManager: {0}", new Date());
+
         ResourceManager.getInstance().init();
         AsyncTaskManager.getInstance().InitAsyncTaskManager();
-        log.infoFormat("AsyncTaskManager: {0}", new Date());
         OvfDataUpdater.getInstance().initOvfDataUpdater();
-        log.infoFormat("OvfDataUpdater: {0}", new Date());
 
         if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
             VdsLoadBalancer.EnableLoadBalancer();
         }
 
-        log.infoFormat("VdsLoadBalancer: {0}", new Date());
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                log.infoFormat("MacPoolManager started: {0}", new Date());
                 MacPoolManager.getInstance().initialize();
-                log.infoFormat("MacPoolManager finished: {0}", new Date());
             }
         });
         StoragePoolStatusHandler.Init();
 
         GlusterManager.getInstance().init();
         try {
-            log.infoFormat("Init VM Custom Properties utilities: {0}", new Date());
+            log.info("Init VM custom properties utilities");
             VmPropertiesUtils.getInstance().init();
         } catch (InitializationException e) {
-            log.errorFormat("Initialization failed. Exception message is {0} ",e.getMessage());
-            log.debug("Initialization failed ",e);
+            log.error("Initialization of vm custom properties failed.",e);
             throw new RuntimeException(e);
         }
     }

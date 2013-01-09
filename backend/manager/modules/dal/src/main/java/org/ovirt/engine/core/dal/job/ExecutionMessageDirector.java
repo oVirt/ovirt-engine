@@ -57,6 +57,7 @@ public class ExecutionMessageDirector {
      *            The base name of the resource bundle
      */
     public void initialize(String bundleBaseName) {
+        log.info("Start initializing " + getClass().getSimpleName());
         ResourceBundle bundle = ResourceBundle.getBundle(bundleBaseName);
         final int jobMessagePrefixLength = JOB_MESSAGE_PREFIX.length();
         final int stepMessagePrefixLength = STEP_MESSAGE_PREFIX.length();
@@ -74,6 +75,7 @@ public class ExecutionMessageDirector {
                         STEP_MESSAGE_PREFIX);
             }
         }
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     /**

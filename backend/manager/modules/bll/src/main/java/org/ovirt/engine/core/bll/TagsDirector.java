@@ -50,12 +50,13 @@ public class TagsDirector {
      */
 
     protected void init() {
-        log.info("TagsDirector initialization");
+        log.info("Start initializing " + getClass().getSimpleName());
         tagsMapByID.clear();
         tagsMapByName.clear();
         tags root = new tags("root", null, true, ROOT_TAG_ID, "root");
         AddTagToHash(root);
         AddChildren(root);
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
 
@@ -234,8 +235,8 @@ public class TagsDirector {
     /**
      * This function will return the tag's ID and its parents IDs.
      *
-     * @param tagId
-     *            the tag ID.
+     * @param tagName
+     *            the tag name.
      * @return a comma seperated list of IDs.
      */
     public String GetTagIdAndParentsIds(String tagName) {
@@ -295,7 +296,7 @@ public class TagsDirector {
      * assigned to an entity. Tag is determined as assigned to an entity if the entity is assigned to the tag or to one
      * of its children.
      *
-     * @param tagName
+     * @param tagNameRegExp
      *            the name of the 'root' tag.
      * @return a comma separated list of IDs.
      */

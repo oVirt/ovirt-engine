@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 /**
- * This class responcible to perform periodically load balancing of servers Its
+ * This class responsible to perform periodically load balancing of servers Its
  * activated only if load balancing enabled by configuration.
  */
 public final class VdsLoadBalancer {
@@ -49,8 +49,10 @@ public final class VdsLoadBalancer {
     }
 
     public static void EnableLoadBalancer() {
+        log.info("Start scheduling to enable vds load balancer");
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance, "PerformLoadBalancing", new Class[] {},
                 new Object[] {}, Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
                 Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes), TimeUnit.MINUTES);
+        log.info("Finished scheduling to enable vds load balancer");
     }
 }

@@ -23,6 +23,7 @@ public class AuditLogCleanupManager {
     }
 
     private AuditLogCleanupManager() {
+        log.info("Start initializing " + getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
         Date mAuditLogCleanupTime = Config.<DateTime> GetValue(ConfigValues.AuditLogCleanupTime);
         calendar.setTimeInMillis(mAuditLogCleanupTime.getTime());
@@ -30,20 +31,22 @@ public class AuditLogCleanupManager {
         String cronExpression = String.format("%d %d %d * * ?", calendar.get(Calendar.SECOND),
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
 
-        log.info("Setting audit clean up manager to run at: " + cronExpression);
+        log.info("Setting audit cleanup manager to run at: " + cronExpression);
         SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "OnTimer", new Class[] {}, new Object[] {},
                 cronExpression);
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     @OnTimerMethodAnnotation("OnTimer")
     public void OnTimer() {
         try {
-            log.info("AuditLogCleanupManager::deleteAgedOutAuditLogs - entered");
+            log.info("Start deleteAgedOutAuditLogs");
             DateTime latestTimeToKeep = DateTime.getNow().AddDays(
                     Config.<Integer> GetValue(ConfigValues.AuditLogAgingThreashold) * -1);
             DbFacade.getInstance().getAuditLogDao().removeAllBeforeDate(latestTimeToKeep);
+            log.info("Finished deleteAgedOutAuditLogs");
         } catch (RuntimeException e) {
-            log.error("AuditLogCleanupManager::deleteAgedOutAuditLogs() - failed with exception", e);
+            log.error("deleteAgedOutAuditLog failed with exception", e);
         }
     }
 

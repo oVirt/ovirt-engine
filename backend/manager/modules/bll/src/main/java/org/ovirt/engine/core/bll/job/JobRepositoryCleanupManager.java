@@ -29,6 +29,7 @@ public class JobRepositoryCleanupManager {
      * Initializes the Job Cleanup scheduler
      */
     public void initialize() {
+        log.info("Start initializing " + getClass().getSimpleName());
         succeededJobTime = Config.<Integer> GetValue(ConfigValues.SucceededJobCleanupTimeInMinutes).intValue();
         failedJobTime = Config.<Integer> GetValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
 
@@ -40,6 +41,7 @@ public class JobRepositoryCleanupManager {
                 cleanupFrequency,
                 cleanupFrequency,
                 TimeUnit.MINUTES);
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     /**

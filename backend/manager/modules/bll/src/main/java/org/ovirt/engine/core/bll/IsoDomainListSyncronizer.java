@@ -50,6 +50,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @SuppressWarnings("synthetic-access")
 public class IsoDomainListSyncronizer {
+    private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
     private List<RepoFileMetaData> problematicRepoFileList = new ArrayList<RepoFileMetaData>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static final IsoDomainListSyncronizer isoDomainListSyncronizer = new IsoDomainListSyncronizer();
@@ -72,6 +73,7 @@ public class IsoDomainListSyncronizer {
      * private constructor to initialize the quartz scheduler
      */
     private IsoDomainListSyncronizer() {
+        log.info("Start initializing " + getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         isoDomainRefreshRate = Config.<Integer> GetValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
@@ -81,6 +83,7 @@ public class IsoDomainListSyncronizer {
                 300000,
                 isoDomainRefreshRate,
                 TimeUnit.MILLISECONDS);
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     /**
@@ -219,11 +222,8 @@ public class IsoDomainListSyncronizer {
      * @param storageDomainId
      *            - The Repository domain Id, we want to refresh.
      * @param storagePoolId
-     *            - The Storage pool Id, we use to fetch the Iso files from.
-     * @param ProblematicRepoFileList
-     *            - List of business entities, each one indicating the problematic entity of storage pool id, storage
-     *            domain id, and file type.
-     * @param fileTypeExtension
+     *            - The Storage pool Id, we use to fetch the Iso files from..
+     * @param fileTypeExt
      *            - The fileTypeExtension we want to fetch the files from the cache.
      * @return Boolean value indicating if the refresh succeeded or not.
      */
@@ -262,9 +262,9 @@ public class IsoDomainListSyncronizer {
      *
      * @param storageDomainId
      *            - The Repository domain Id, we want to refresh.
-     * @param ProblematicRepoFileList
+     * @param problematicRepoFileList
      *            - List of business entities, each one indicating the problematic entity.
-     * @param fileTypeExtension
+     * @param fileTypeExt
      *            - The fileTypeExtension we want to fetch the files from the cache.
      * @return Boolean value indicating if the refresh succeeded or not.
      */
@@ -331,7 +331,7 @@ public class IsoDomainListSyncronizer {
      * Refresh the Iso domain when activating the domain,
      * with executing a new Thread to prevent long lock status for the domain.
      *
-     * @param IsoStorageDomainId
+     * @param isoStorageDomainId
      *            - The storage domain Id we want to get the file list from.
      * @param storagePoolId
      *            - The storage pool Id we get an Iso active domain, we want to get the file list from (used mainly for log issues).
@@ -352,9 +352,9 @@ public class IsoDomainListSyncronizer {
     /**
      * Returns the cached Iso file meta data list, of the storage pool Id with the storage domain id.
      *
-     * @param IsoStorageDomainId
+     * @param isoStoragePoolId
      *            - The storage domain Id we want to get the file list from.
-     * @param IsoStoragePoolId
+     * @param isoStorageDomainId
      *            - The storage pool Id we want to get the file list from.
      * @param fileTypeExtension
      *            - The file type extension (ISO  or Floppy).
@@ -373,7 +373,7 @@ public class IsoDomainListSyncronizer {
     /**
      * Returns the cached Iso file meta data list, for storage domain.
      *
-     * @param IsoStorageDomainId
+     * @param isoStorageDomainId
      *            - The storage domain Id we want to get the file list from.
      * @return List of Iso files fetched from DB, if parameter is invalid returns an empty list.
      */
@@ -409,7 +409,7 @@ public class IsoDomainListSyncronizer {
      * the error uniformly.
      * Create a mock RepoFileMetaData object in a list, to use the functionality of the handleErrorLog with list.
      *
-     * @param IsoStorageDomainId
+     * @param storagePoolId
      *            - The storage domain Id.
      * @param storagePoolId
      *            - The storage pool Id.
@@ -538,9 +538,9 @@ public class IsoDomainListSyncronizer {
     /**
      * Create a new transaction to refresh the Iso file list in to the DB.
      *
-     * @param repoDomainId
+     * @param repoStorageDomainId
      *            - The repository domain id we want to update.
-     * @param storageDomainDao
+     * @param repoFileMetaDataDao
      *            - The Data Access Layer for storage domain.
      * @param isoDomainList
      *            - The Iso files which refreshed in the cache.
@@ -612,7 +612,7 @@ public class IsoDomainListSyncronizer {
     /**
      * Gets the Iso file list from VDSM, and if the fetch is valid refresh the Iso list in the DB.
      *
-     * @param repoFileMetaData
+     * @param repoStoragePoolId
      *            - The repository storage pool id, we want to update the file list.
      * @param repoStorageDomainId
      *            - The repository storage domain id, for activate storage domain id.
@@ -650,7 +650,7 @@ public class IsoDomainListSyncronizer {
     /**
      * Gets the Iso floppy file list from VDSM, and if the fetch is valid refresh the Iso floppy list in the DB.
      *
-     * @param repoFileMetaData
+     * @param repoStoragePoolId
      *            - The repository storage pool id, we want to update the file list.
      * @param repoStorageDomainId
      *            - The repository storage domain id, for activate storage domain id.
@@ -726,7 +726,6 @@ public class IsoDomainListSyncronizer {
         AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_FILE_LIST_SUCCEEDED);
     }
 
-    private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
 
     private boolean isStorageDomainValid(Guid storageDomainId, FileTypeExtension fileTypeExtension, boolean forceRefresh) {
         // Check storage domain Id validity.

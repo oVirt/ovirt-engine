@@ -83,8 +83,7 @@ public final class AsyncTaskManager {
     }
 
     public void InitAsyncTaskManager() {
-
-        log.info("AsyncTaskManager: Initialization of AsyncTaskManager completed successfully.");
+        log.info("Initialization of AsyncTaskManager completed successfully.");
     }
 
     @OnTimerMethodAnnotation("_timer_Elapsed")

@@ -61,7 +61,7 @@ public class ResourceManager {
     }
 
     public void init() {
-        log.info("ResourceManager::ResourceManager::Entered");
+        log.info("Start initializing " + getClass().getSimpleName());
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
         for (VDS helper_vds : allVdsList) {
@@ -97,6 +97,7 @@ public class ResourceManager {
             AddVds(curVds, true);
         }
         IrsBrokerCommand.Init();
+        log.info("Finished initializing " + getClass().getSimpleName());
     }
 
     public boolean AddAsyncRunningVm(Guid vmId) {
@@ -183,7 +184,7 @@ public class ResourceManager {
         }
         vdsManager.schedulJobs();
         _vdsManagersDict.put(vds.getId(), vdsManager);
-        log.infoFormat("ResourceManager::AddVds - VDS {0} was added to the Resource Manager", vds.getId());
+        log.infoFormat("VDS {0} was added to the Resource Manager", vds.getId());
 
     }
 

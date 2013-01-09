@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -97,6 +96,7 @@ public class Backend implements BackendInternal {
         VmHandler.Init();
         VdsHandler.Init();
         VmTemplateHandler.Init();
+        log.info("Completed initializing handlers");
     }
 
     private VDSBrokerFrontend _resourceManger;
@@ -155,7 +155,7 @@ public class Backend implements BackendInternal {
      */
     @Override
     public void Initialize() {
-        log.infoFormat("Start time: {0}", new Date());
+        log.info("Start initializing " + getClass().getSimpleName());
         // When getting a proxy to this bean using JBoss embedded, the initialize method is called for each method
         // invocation on the proxy, as it is called by setup method which is @PostConstruct - the initialized flag
         // makes sure that initialization occurs only once per class (which is ok, as this is a @Service)
@@ -170,41 +170,34 @@ public class Backend implements BackendInternal {
 
         _resourceManger = new VDSBrokerFrontendImpl();
 
-        log.infoFormat("VDSBrokerFrontend: {0}", new Date());
         CpuFlagsManagerHandler.InitDictionaries();
-        log.infoFormat("CpuFlagsManager: {0}", new Date());
+
         // ResourceManager res = ResourceManager.Instance;
         // Initialize the AuditLogCleanupManager
         AuditLogCleanupManager.getInstance();
-        log.infoFormat("AuditLogCleanupManager: {0}", new Date());
 
         TagsDirector.getInstance().init();
-        log.infoFormat("TagsDirector: {0}", new Date());
+
         IsoDomainListSyncronizer.getInstance();
-        log.infoFormat("IsoDomainListSyncronizer: {0}", new Date());
+
         InitHandlers();
-        log.infoFormat("InitHandlers: {0}", new Date());
 
         final String AppErrorsFileName = "bundles/AppErrors.properties";
         final String VdsErrorsFileName = "bundles/VdsmErrors.properties";
         errorsTranslator = new ErrorTranslatorImpl(AppErrorsFileName, VdsErrorsFileName);
-        log.infoFormat("ErrorTranslator: {0}", new Date());
+
         _vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
-        log.infoFormat("VdsErrorTranslator: {0}", new Date());
 
         // initialize the JobRepository object and finalize non-terminated jobs
-        log.infoFormat("Mark uncompleted jobs as {0}: {1}", JobExecutionStatus.UNKNOWN.name(), new Date());
+        log.infoFormat("Mark incomplete jobs as {0}", JobExecutionStatus.UNKNOWN.name());
         initJobRepository();
 
         // initializes the JobRepositoryCleanupManager
-        log.infoFormat("JobRepositoryCleanupManager: {0}", new Date());
         JobRepositoryCleanupManager.getInstance().initialize();
 
         // initialize the AutoRecoveryManager
-        log.infoFormat("AutoRecoveryManager: {0}", new Date());
         AutoRecoveryManager.getInstance().initialize();
 
-        log.infoFormat("ExecutionMessageDirector: {0}", new Date());
         initExecutionMessageDirector();
 
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
@@ -255,6 +248,7 @@ public class Backend implements BackendInternal {
         } catch (RuntimeException e) {
             log.error("Failed to initialize ExecutionMessageDirector", e);
         }
+
     }
 
     /**

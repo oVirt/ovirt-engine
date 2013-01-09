@@ -62,23 +62,25 @@ public class MacPoolManager {
     public void initialize() {
         lockObj.writeLock().lock();
         try {
+            log.info("Start initializing " + getClass().getSimpleName());
             String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
             if (!"".equals(ranges)) {
                 try {
                     initRanges(ranges);
                 } catch (MacPoolExceededMaxException e) {
-                    log.errorFormat("MAC Pool range exceeded maximum number of mac pool addressed. Please check Mac Pool configuration.");
+                    log.error("MAC Pool range exceeded maximum number of mac pool addressed. Please check Mac Pool configuration.");
                 }
             }
 
             List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAll();
+
             for (VmNetworkInterface iface: interfaces) {
                 forceAddMac(iface.getMacAddress());
             }
             initialized = true;
+            log.info("Finished initializing " + getClass().getSimpleName());
         } catch (Exception ex) {
-            log.debug(INIT_ERROR_MSG, ex);
-            log.error(INIT_ERROR_MSG + "Exception message is: " + ex.getMessage());
+            log.error(INIT_ERROR_MSG, ex);
         } finally {
             lockObj.writeLock().unlock();
         }
@@ -221,7 +223,7 @@ public class MacPoolManager {
     private void logInitializationError(String message) {
         log.error("The MAC addresses pool is not initialized");
         AuditLogableBase logable = new AuditLogableBase();
-        logable.AddCustomValue("Message",message);
+        logable.AddCustomValue("Message", message);
         AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESSES_POOL_NOT_INITIALIZED);
     }
 
@@ -246,7 +248,7 @@ public class MacPoolManager {
 
     /**
      * Add given MAC address if possible.
-     *
+     * Add user define mac address Function return false if the mac is in use
      * @param mac
      * @return true if MAC was added successfully, and false if the MAC is in use and
      *         {@link ConfigValues#AllowDuplicateMacAddresses} is set to false
