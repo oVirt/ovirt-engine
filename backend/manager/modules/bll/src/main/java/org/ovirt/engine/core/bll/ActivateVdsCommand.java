@@ -24,20 +24,13 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@SuppressWarnings("serial")
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
     public ActivateVdsCommand(T parameters) {
         super(parameters);
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        if(getParameters().isRunSilent()) {
-            return getSucceeded() ? AuditLogType.VDS_ACTIVATE_ASYNC : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
-        } else {
-            return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
-        }
     }
 
     /**
@@ -121,5 +114,14 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ACTIVATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        if (getParameters().isRunSilent()) {
+            return getSucceeded() ? AuditLogType.VDS_ACTIVATE_ASYNC : AuditLogType.VDS_ACTIVATE_FAILED_ASYNC;
+        } else {
+            return getSucceeded() ? AuditLogType.VDS_ACTIVATE : AuditLogType.VDS_ACTIVATE_FAILED;
+        }
     }
 }
