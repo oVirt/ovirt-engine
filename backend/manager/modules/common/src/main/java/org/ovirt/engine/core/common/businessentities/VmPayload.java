@@ -44,7 +44,7 @@ public class VmPayload implements Serializable {
     }
 
     public static boolean isPayload(Map<String, Object> specParams) {
-        return specParams.containsKey(SpecParamsPayload);
+        return specParams == null ? false : specParams.containsKey(SpecParamsPayload);
     }
 
     public static boolean isPayloadSizeLegal(String payload) {
