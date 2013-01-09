@@ -153,7 +153,6 @@ public class MacPoolManager {
 
     public String allocateNewMac() {
         String mac = null;
-        log.info("MacPoolManager::allocateNewMac entered");
         lockObj.writeLock().lock();
         try {
             if (!initialized) {
@@ -169,7 +168,6 @@ public class MacPoolManager {
         } finally {
             lockObj.writeLock().unlock();
         }
-        log.infoFormat("MacPoolManager::allocateNewMac allocated mac = '{0}", mac);
         return mac;
     }
 
@@ -192,7 +190,6 @@ public class MacPoolManager {
     }
 
     public int getAvailableMacsCount() {
-        log.infoFormat("MacPoolManager::getAvailableMacsCount - entered");
         lockObj.readLock().lock();
         try {
             if (!initialized) {
@@ -201,7 +198,7 @@ public class MacPoolManager {
             }
 
             int availableMacsSize = availableMacs.size();
-            log.infoFormat("MacPoolManager:: AvailableMacsCount = {0}", availableMacsSize);
+            log.debugFormat("Number of available Mac addresses = {0}", availableMacsSize);
             return availableMacsSize;
         } finally {
             lockObj.readLock().unlock();
@@ -209,7 +206,6 @@ public class MacPoolManager {
     }
 
     public void freeMac(String mac) {
-        log.infoFormat("MacPoolManager::freeMac(mac = '{0}') - entered", mac);
         lockObj.writeLock().lock();
         try {
             if (!initialized) {
@@ -304,7 +300,6 @@ public class MacPoolManager {
     }
 
     public void freeMacs(List<String> macs) {
-        log.info("MacPoolManager::freeMacs - entered");
         lockObj.writeLock().lock();
         try {
             if (!initialized) {
