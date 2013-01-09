@@ -197,7 +197,7 @@ public class BackendCdRomResourceTest
         setUpGetEntityExpectations(3, VMStatus.Down);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
-                                           new String[] { "VmStaticData.iso_path" },
+                                           new String[] { "VmStaticData.IsoPath" },
                                            new Object[] { ISO_PATH },
                                            true,
                                            true));
