@@ -386,7 +386,7 @@ class DB():
                 "-p", SERVER_PORT,
                 self.name,
             ]
-            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB)
+            output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERROR_DROP_DB, envDict=utils.getPgPassEnv())
 
             # Restore
             cmd = [
