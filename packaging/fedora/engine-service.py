@@ -312,6 +312,17 @@ def removeEnginePid():
         os.remove(enginePidFile)
 
 
+def setLimit(name):
+    limit = eval("resource.RLIMIT_" + name.upper())
+    value = engineConfig.getInteger("ENGINE_" + name.upper())
+    try:
+        resource.setrlimit(limit, (value, value))
+    except:
+        syslog.syslog(syslog.LOG_WARNING,
+            "Can't change the value of the resource "
+            "limit \"%s\" to %d." % (name, value))
+
+
 def startEngine():
     # Load the configuration and perform checks:
     loadConfig()
@@ -495,9 +506,9 @@ def startEngine():
         return
 
     # Change the resource limits while we are root as we won't be
-    # able to change them once we assume the engine identity:
-    engineNofile = engineConfig.getInteger("ENGINE_NOFILE")
-    resource.setrlimit(resource.RLIMIT_NOFILE, (engineNofile, engineNofile))
+    # able to change them once we assume the engine identity (the
+    # values come from the configuration):
+    setLimit("nofile")
 
     # This is the child process, first thing we do is assume the engine
     # identity:
