@@ -2,13 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -50,12 +52,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     private static final long serialVersionUID = -461387501474222174L;
 
-    private final List<Guid> snapshotsToRemove = new ArrayList<Guid>();
-
-    /**
-     * The snapshot being restored to.
-     */
-    private Snapshot targetSnapshot;
+    private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
 
     /**
      * The snapshot id which will be removed (the stateless/preview/active image).
@@ -86,7 +83,15 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             }
         }
 
-        restoreSnapshotAndRemoveObsoleteSnapshots();
+        // The snapshot being restored to
+        Snapshot targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+
+        if (targetSnapshot == null) {
+            throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
+                    + getParameters().getDstSnapshotId());
+        }
+
+        restoreSnapshotAndRemoveObsoleteSnapshots(targetSnapshot);
 
         boolean succeeded = true;
         for (DiskImage image : getImagesList()) {
@@ -123,7 +128,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     protected void deleteOrphanedImages() {
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
-        List<Guid> deletedDisksIds = new ArrayList<Guid>();
+        Set<Guid> deletedDisksIds = new HashSet<Guid>();
         for (DiskImage image : getDiskImageDao().getImagesWithNoDisk(getVm().getId())) {
             if (!deletedDisksIds.contains(image.getId())) {
                 deletedDisksIds.add(image.getId());
@@ -174,13 +179,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      * Restore the snapshot - if it is not the active snapshot, then the VM configuration will be restored.<br>
      * Additionally, remove all obsolete snapshots (The one after stateless, or the preview chain which was not chosen).
      */
-    protected void restoreSnapshotAndRemoveObsoleteSnapshots() {
-        targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
-
-        if (targetSnapshot == null) {
-            throw new VdcBLLException(VdcBllErrors.ENGINE, "Can't find target snapshot by id: "
-                    + getParameters().getDstSnapshotId());
-        }
+    protected void restoreSnapshotAndRemoveObsoleteSnapshots(Snapshot targetSnapshot) {
 
         switch (targetSnapshot.getType()) {
         case PREVIEW:
@@ -246,9 +245,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
-                if (!snapshotsToRemove.contains(snapshotToRemove.getValue())) {
-                    snapshotsToRemove.add(snapshotToRemove.getValue());
-                }
+                snapshotsToRemove.add(snapshotToRemove.getValue());
 
                 parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
                 snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
