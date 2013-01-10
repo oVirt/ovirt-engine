@@ -37,7 +37,7 @@ public class PasswordValueHelper implements ValueHelper {
                 configDAO.getKey(keyFactory.generateBlankConfigKey("keystorePass", "String"))
                 .getValue();
         } catch (Exception e) {
-            log.debug(e.getMessage());
+            log.error(e);
         }
     }
 
@@ -54,8 +54,8 @@ public class PasswordValueHelper implements ValueHelper {
         /*
          * The idea of this method would normally be to decrypt and return
          * the decrypted value. Due to security reasons, we do not wish to return
-         * the real value. Just and indication if we have a value in the DB or not.
-         * So we if there's no value we return "Empty".
+         * the real value. Just an indication if we have a value in the DB or not.
+         * So if there's no value we return "Empty".
          * If there's a value we try to decrypt. On success we return "Set",
          * On failure we return an error.
          */

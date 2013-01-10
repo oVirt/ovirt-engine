@@ -3,7 +3,6 @@ package org.ovirt.engine.core.config;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 
 /**
