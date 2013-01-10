@@ -49,7 +49,7 @@
       <logger category="com.arjuna">
         <level name="WARN"/>
       </logger>
-      <logger category="org.apache.tomcat.util.modeler">
+      <logger category="org.apache.tomcat.util">
         <level name="WARN"/>
       </logger>
       <logger category="sun.rmi">
