@@ -362,7 +362,7 @@ public class DbUser extends IVdcQueryable {
 
     public DbUser(LdapUser ldapUser) {
         setuser_id(ldapUser.getUserId());
-        setusername(ldapUser.getUserName());
+        setusername(getFullUserName(ldapUser));
         setname(ldapUser.getName());
         setsurname(ldapUser.getSurName());
         setdepartment(ldapUser.getDepartment());
@@ -371,6 +371,14 @@ public class DbUser extends IVdcQueryable {
         setgroups(ldapUser.getGroup());
         setstatus(LdapRefStatus.Active.getValue());
         setGroupIds(ldapUser.getGroupIds());
+    }
+
+    private String getFullUserName(LdapUser ldapUser) {
+        String userName = ldapUser.getUserName();
+        if (userName.indexOf("@") == -1) {
+            userName = userName +"@"+ ldapUser.getDomainControler();
+        }
+        return userName;
     }
 
     public LdapRefStatus getAdStatus() {
