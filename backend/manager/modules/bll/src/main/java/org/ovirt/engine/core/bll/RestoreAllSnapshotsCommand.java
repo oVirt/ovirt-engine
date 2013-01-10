@@ -355,15 +355,20 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        // TODO: need to be fixed. sp id should be available
-        setStoragePoolId(getImagesList().get(0).getstorage_pool_id());
+        List<DiskImage> disks = getImagesList();
 
-        for (DiskImage image : getImagesList()) {
-            if (!image.getImage().isActive() && image.getQuotaId() != null && !Guid.Empty.equals(image.getQuotaId())) {
-                list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
-                        QuotaConsumptionParameter.QuotaAction.RELEASE,
-                        image.getstorage_ids().get(0),
-                        image.getActualSize()));
+        if (disks != null && !disks.isEmpty()) {
+            // TODO: need to be fixed. sp id should be available
+            setStoragePoolId(disks.get(0).getstorage_pool_id());
+
+            for (DiskImage image : disks) {
+                if (!image.getImage().isActive() && image.getQuotaId() != null
+                        && !Guid.Empty.equals(image.getQuotaId())) {
+                    list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
+                            QuotaConsumptionParameter.QuotaAction.RELEASE,
+                            image.getstorage_ids().get(0),
+                            image.getActualSize()));
+                }
             }
         }
 
