@@ -31,7 +31,6 @@
 		
 		.refreshPanel {
 			float: right;
-			cursor: hand;
 			cursor: pointer;
 			border: 1px solid transparent;
 			display: table-cell;

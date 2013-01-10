@@ -48,7 +48,6 @@
 		
 		.handCursor {
 			cursor: pointer;
-			cursor: hand;
 		}
 		
 		.defaultCursor {

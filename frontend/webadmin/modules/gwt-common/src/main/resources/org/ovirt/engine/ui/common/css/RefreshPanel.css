@@ -14,12 +14,10 @@
 	color: gray;
 	background-color: white;
 	text-align: right;
-	cursor: hand;
 	cursor: pointer;
 }
 
 .refreshRateOption .checkitem {
-	cursor: hand;
 	cursor: pointer;
 	margin-right: 10px;
 }
@@ -30,7 +28,6 @@
 	color: gray;
 	width: 40px;
 	background: transparent;
-	cursor: hand;
 	cursor: pointer;
 	border: 0px;
 	padding: 0px;
@@ -112,7 +109,6 @@
 
 .refreshButton,.refreshMenuButton {
 	display: table-cell;
-	cursor: hand;
 	cursor: pointer;
 	text-align: center;
 	vertical-align: middle;

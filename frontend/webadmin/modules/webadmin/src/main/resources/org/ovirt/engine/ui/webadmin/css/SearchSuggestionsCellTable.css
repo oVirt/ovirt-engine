@@ -1,7 +1,6 @@
 .cellTableCell {
 	background-color: white;
 	text-align: left;
-	cursor: hand;
 }
 
 .cellTableOddRowCell,.cellTableEvenRowCell {

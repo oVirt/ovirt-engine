@@ -149,7 +149,7 @@ public class Slider extends Composite {
         slider.addStyleName(style);
         StyleInjector.inject("." + style //$NON-NLS-1$
                 + ".gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger { width: 8px !important; background: " //$NON-NLS-1$
-                + getColor() + "; cursor: hand; cursor: pointer; }"); //$NON-NLS-1$
+                + getColor() + "; cursor: pointer; }"); //$NON-NLS-1$
         percentLabel = new Label();
         setSlidersWidth();
 

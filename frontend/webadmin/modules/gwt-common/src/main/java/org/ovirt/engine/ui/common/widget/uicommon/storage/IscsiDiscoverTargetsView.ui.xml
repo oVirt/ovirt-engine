@@ -67,7 +67,6 @@
 		.discoverTargetsImageButton {
 			background-color: transparent;
 			line-height: 13px;
-			cursor: hand;
 			cursor: pointer;
 		}
 		

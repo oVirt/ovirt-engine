@@ -56,12 +56,10 @@
 			padding-right: 2px;
 			padding-left: 4px;
 			padding-top: 3px;
-			cursor: hand;
 			cursor: pointer;
 		}
 		
 		.collapseButton {
-			cursor: hand;
 			cursor: pointer;
 			float: left;
 			line-height: 25px;
@@ -98,7 +96,6 @@
 		.eventButtonDownStyle,
 		.taskButtonUpStyle,
 		.taskButtonDownStyle {
-			cursor: hand;
 			cursor: pointer;
 		}
 	</ui:style>

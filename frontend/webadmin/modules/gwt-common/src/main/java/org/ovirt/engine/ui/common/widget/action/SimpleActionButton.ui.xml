@@ -17,9 +17,8 @@
 		.buttonMouseOver {
 			border: 1px solid #AAAAAA;
 			cursor: pointer;
-			cursor: hand;
 		}
-		
+
 		.buttonMouseOut {
 			border: 1px solid transparent;
 		}
