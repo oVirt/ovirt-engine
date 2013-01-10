@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
@@ -135,7 +136,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected CommandBase(T parameters) {
         _parameters = parameters;
-        setCurrentUser(SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true));
+        // get the user from the session if the user is logged in
+        IVdcUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
+        if (user != null) {
+            setCurrentUser(user);
+        } else
+        // if the user is not logged in, get the user from the command parameters
+        // this is used for async task completion to get the user who initiated
+        // the task after the user has logged out.
+        if (parameters.getParametersCurrentUser() != null) {
+            setCurrentUser(parameters.getParametersCurrentUser());
+        }
         // correlation ID thread local variable is set for non multi-action
         if (!parameters.getMultipleAction()) {
             ThreadLocalParamsContainer.setCorrelationId(parameters.getCorrelationId());
@@ -1290,6 +1301,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             (AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
 
         VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
+        if (parametersForTask.getParametersCurrentUser() == null && getCurrentUser() != null) {
+            parametersForTask.setParametersCurrentUser(getCurrentUser());
+        }
         AsyncTaskParameters p =
                 new AsyncTaskParameters(asyncTaskCreationInfo, new AsyncTasks(parentCommand,
                         AsyncTaskResultEnum.success,

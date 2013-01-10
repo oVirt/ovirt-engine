@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.IEndedTaskVisitor;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +22,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private transient String sessionid;
     private boolean shouldbelogged;
     private String httpSessionId;
-    private VdcUser parametersCurrentUser;
+    private IVdcUser parametersCurrentUser;
     private TransactionScopeOption transctionOption;
 
     private transient CommandExecutionReason executionReason = CommandExecutionReason.REGULAR_FLOW;
@@ -95,12 +95,12 @@ public class VdcActionParametersBase implements java.io.Serializable {
         return httpSessionId;
     }
 
-    public VdcUser getParametersCurrentUser() {
+    public IVdcUser getParametersCurrentUser() {
         return parametersCurrentUser;
     }
 
 
-    public void setParametersCurrentUser(VdcUser value) {
+    public void setParametersCurrentUser(IVdcUser value) {
         parametersCurrentUser = value;
     }
 
