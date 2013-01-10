@@ -50,7 +50,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -1717,7 +1716,7 @@ public final class AsyncDataProvider {
     public static void GetDefaultPmProxyPreferences(AsyncQuery query) {
         GetConfigFromCache(
             new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
-                Config.DefaultConfigurationVersion),
+                getDefaultConfigurationVersion()),
             query);
     }
 
