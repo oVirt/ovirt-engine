@@ -1342,7 +1342,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 rollbackQuota();
             }
         } catch (NullPointerException e) {
-            log.debug("RollbackQuota: failed (may be because quota is disabled)", e);
+            log.error("RollbackQuota: failed (may be because quota is disabled)", e);
         }
         cancelTasks();
     }

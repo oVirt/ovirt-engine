@@ -80,7 +80,6 @@ public class AutoRecoveryManager {
      * @param actionType        autorecovery action
      * @param paramsCallback    a closure to create the parameters for the autorecovery action
      * @param logMsg            a user-readable name for the failing resource type
-     * @param counters          counters for the failing resources to avoid too frequent auditlog
      */
     <T extends BusinessEntity<Guid>> void check(final AutoRecoverDAO<T> dao,
             final VdcActionType actionType,
@@ -90,7 +89,7 @@ public class AutoRecoveryManager {
             log.info("Autorecovering " + logMsg + " is disabled, skipping");
             return;
         }
-        log.info("Checking autorecoverable " + logMsg);
+        log.debugFormat("Checking autorecoverable {0}" , logMsg);
         final List<T> fails = dao.listFailedAutorecoverables();
         final BackendInternal backend = getBackend();
         log.info("Autorecovering " + fails.size() + " " + logMsg);
@@ -100,7 +99,7 @@ public class AutoRecoveryManager {
             actionParams.setShouldBeLogged(true);
             backend.runInternalAction(actionType, actionParams);
         }
-        log.info("Checking autorecoverable " + logMsg + " done");
+        log.debugFormat("Checking autorecoverable {0} done",logMsg);
     }
 
     private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {
