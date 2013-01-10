@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.notifier;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -72,6 +73,7 @@ public class EngineMonitorService implements Runnable {
     private boolean sslIgnoreCertErrors;
     private SSLSocketFactory sslFactory = null;
     private boolean sslIgnoreHostVerification;
+    private String pidFile;
     private static final HostnameVerifier IgnoredHostnameVerifier = new HostnameVerifier() {
         public boolean verify(String hostname, SSLSession session) {
             return true;
@@ -90,6 +92,7 @@ public class EngineMonitorService implements Runnable {
         initServerConnectivity();
         initServerMonitorInterval();
         initServerMonitorRetries();
+        initPidFile();
         // Boolean.valueOf always returns false unless gets a true expression.
         repeatNonResponsiveNotification =
                 Boolean.valueOf(this.prop.get(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION));
@@ -97,6 +100,13 @@ public class EngineMonitorService implements Runnable {
             log.debug(MessageFormat.format("Checking server status using {0}, {1}ignoring SSL errors.",
                     isHttpsProtocol ? "HTTPS" : "HTTP",
                     sslIgnoreCertErrors ? "" : "without "));
+        }
+    }
+
+    private void initPidFile() {
+        pidFile = prop.get(NotificationProperties.ENGINE_PID);
+        if(pidFile == null) {
+            pidFile = NotificationProperties.DEFAULT_ENGINE_PID;
         }
     }
 
@@ -362,14 +372,28 @@ public class EngineMonitorService implements Runnable {
                 }
             } else {
                 // reports an error for non-responsive server
-                try {
-                    insertEventIntoAuditLog(AuditLogType.VDC_STOP.name(),
-                            AuditLogType.VDC_STOP.getValue(),
-                            AuditLogSeverity.ERROR.getValue(),
-                            ENGINE_NOT_RESPONDING_ERROR);
-                } catch (Exception e) {
-                    log.warn(ENGINE_NOT_RESPONDING_ERROR);
-                    log.error("Failed auditing event up (for non-responsive server).", e);
+                if(new File(pidFile).exists()) {
+                    //assumed crash, since the pid file is still there
+                    try {
+                        insertEventIntoAuditLog(AuditLogType.VDC_STOP.name(),
+                                AuditLogType.VDC_STOP.getValue(),
+                                AuditLogSeverity.ERROR.getValue(),
+                                ENGINE_NOT_RESPONDING_ERROR);
+                    } catch (Exception e) {
+                        log.warn(ENGINE_NOT_RESPONDING_ERROR);
+                        log.error("Failed auditing event up (for crashed non-responsive server).", e);
+                    }
+                } else {
+                    //assumed normal shutdown, pid file is removed
+                    try {
+                        insertEventIntoAuditLog(AuditLogType.VDC_STOP.name(),
+                                AuditLogType.VDC_STOP.getValue(),
+                                AuditLogSeverity.WARNING.getValue(),
+                                ENGINE_NOT_RESPONDING_ERROR);
+                    } catch (Exception e) {
+                        log.warn(ENGINE_NOT_RESPONDING_ERROR);
+                        log.error("Failed auditing event up (for stopped non-responsive server).", e);
+                    }
                 }
             }
         }
