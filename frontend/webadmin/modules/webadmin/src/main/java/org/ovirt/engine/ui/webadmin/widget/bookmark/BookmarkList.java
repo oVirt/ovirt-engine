@@ -41,7 +41,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @UiField
     ScrollPanel scrollPanel;
 
-    private ApplicationConstants constants;
+    private final ApplicationConstants constants;
 
     public BookmarkList(BookmarkModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
@@ -50,6 +50,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider);
         addScrollEventHandler(scrollPanel);
+        setProperVisibleRange();
     }
 
     @Override
@@ -127,20 +128,18 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
         scrollPanel.addScrollHandler(new ScrollHandler() {
             @Override
             public void onScroll(ScrollEvent event) {
-                int currentScrollPosition = scrollPanel.getVerticalScrollPosition();
-                int maxScrollPosition = scrollPanel.getMaximumVerticalScrollPosition();
-
-                if (currentScrollPosition >= maxScrollPosition) {
-                    int pageSize = getDataDisplayWidget().getPageSize();
-
-                    // Extend the visible range of data display widget
-                    Range visibleRange = getDataDisplayWidget().getVisibleRange();
-                    getDataDisplayWidget().setVisibleRange(
-                            visibleRange.getStart(),
-                            visibleRange.getLength() + pageSize);
+                if (scrollPanel.getVerticalScrollPosition() >= scrollPanel.getMaximumVerticalScrollPosition()) {
+                    setProperVisibleRange();
                 }
             }
         });
     }
 
+    private void setProperVisibleRange() {
+        // Extend the visible range of data display widget
+        Range visibleRange = getDataDisplayWidget().getVisibleRange();
+        getDataDisplayWidget().setVisibleRange(
+                visibleRange.getStart(),
+                visibleRange.getLength() + getDataDisplayWidget().getPageSize());
+    }
 }
