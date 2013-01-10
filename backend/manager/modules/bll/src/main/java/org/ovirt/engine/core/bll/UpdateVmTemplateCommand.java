@@ -45,6 +45,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
         boolean returnValue = false;
         mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
+        if (mOldTemplate == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+        }
         if (mOldTemplate != null) {
             VmTemplateHandler.UpdateDisksFromDb(mOldTemplate);
             if (mOldTemplate.getstatus() == VmTemplateStatus.Locked) {
