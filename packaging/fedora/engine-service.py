@@ -224,11 +224,6 @@ def loadConfig():
     jbossConfigFile = os.path.join(engineTmpDir, "engine-service.xml")
 
 
-def checkIdentity():
-    if os.getuid() != 0:
-        raise Exception("This script should run with the root user.")
-
-
 def checkOwnership(name, uid=None, gid=None):
     # Get the metadata of the file:
     st = os.stat(name)
@@ -320,7 +315,6 @@ def removeEnginePid():
 def startEngine():
     # Load the configuration and perform checks:
     loadConfig()
-    checkIdentity()
     checkInstallation()
 
     # Get the PID:
@@ -541,7 +535,6 @@ def startEngine():
 def stopEngine():
     # Load the configuration and perform checks:
     loadConfig()
-    checkIdentity()
     checkInstallation()
 
     # Load the PID:
