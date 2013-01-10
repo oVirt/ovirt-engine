@@ -12,13 +12,15 @@ public class ErrorTranslatorTest extends TestCase {
 
     private static final String TEST_KEY_NO_REPLACEMENT = "TEST_KEY_NO_REPLACEMENT";
     private static final String TEST_KEY_WITH_REPLACEMENT = "TEST_KEY_WITH_REPLACEMENT";
+    private static final String FILENAME = "TestAppErrors";
+    private static final String FILENAME_WITH_SUFFIX = FILENAME + ".properties";
 
     public void testNoStringSubstitutionWithoutSuffix() {
-        doTestNoStringSubstitution("AppErrors");
+        doTestNoStringSubstitution(FILENAME);
     }
 
     public void testNoStringSubstitutionWithSuffix() {
-        doTestNoStringSubstitution("AppErrors.properties");
+        doTestNoStringSubstitution(FILENAME_WITH_SUFFIX);
     }
 
     private void doTestNoStringSubstitution(String name) {
@@ -28,14 +30,14 @@ public class ErrorTranslatorTest extends TestCase {
     }
 
     public void testNoStringSubstitutionWithList() {
-        ErrorTranslator et = new ErrorTranslatorImpl("AppErrors");
+        ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.TranslateErrorText(Arrays.asList(TEST_KEY_NO_REPLACEMENT));
         assertTrue("Size", error.size() == 1);
         assertEquals("String should equal", "VM not found", error.get(0));
     }
 
     public void testStringSubstitutionWithList() {
-        ErrorTranslator et = new ErrorTranslatorImpl("AppErrors");
+        ErrorTranslator et = new ErrorTranslatorImpl(FILENAME);
         List<String> error = et.TranslateErrorText(Arrays.asList(TEST_KEY_WITH_REPLACEMENT,
                 "$action SOMEACTION", "$type SOME Type"));
         String result = "Cannot SOMEACTION SOME Type. VM's Image doesn't exist.";
@@ -44,11 +46,11 @@ public class ErrorTranslatorTest extends TestCase {
     }
 
     public void testLocaleSpecificWithoutSuffix() {
-        doTestLocaleSpecific("AppErrors");
+        doTestLocaleSpecific(FILENAME);
     }
 
     public void testLocaleSpecificWithSuffix() {
-        doTestLocaleSpecific("AppErrors.properties");
+        doTestLocaleSpecific(FILENAME_WITH_SUFFIX);
     }
 
     private void doTestLocaleSpecific(String name) {
@@ -67,11 +69,11 @@ public class ErrorTranslatorTest extends TestCase {
     }
 
     public void testLocaleOverrideWithoutSuffix() {
-        doTestLocaleOverride("AppErrors");
+        doTestLocaleOverride(FILENAME);
     }
 
     public void testLocaleOverrideWithSuffix() {
-        doTestLocaleOverride("AppErrors.properties");
+        doTestLocaleOverride(FILENAME_WITH_SUFFIX);
     }
 
     private void doTestLocaleOverride(String name) {
