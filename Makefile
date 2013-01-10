@@ -210,9 +210,6 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/security/limits.d
 	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
 
-	@install -dm 755 $(DESTDIR)/usr/lib/systemd/system
-	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/tmpfiles.d
-
 install_artifacts:
 	@echo "*** Deploying EAR to $(DESTDIR)"
 	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
@@ -364,7 +361,6 @@ install_misc:
 	install -m 644 backend/manager/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
-	install -m 644 packaging/resources/ovirt-tmpfilesd ${DESTDIR}$(SYSCONF_DIR)/tmpfiles.d/$(ENGINE_NAME).conf
 
 	# USB filter:
 	install -m 644 frontend/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
@@ -389,7 +385,6 @@ install_service:
 	install -m 755 packaging/fedora/engine-service.py $(DESTDIR)$(DATA_DIR)/service
 	install -m 644 packaging/fedora/engine-service.sysconfig $(DESTDIR)$(SYSCONF_DIR)/sysconfig/ovirt-engine
 	install -m 644 packaging/fedora/engine-service.limits $(DESTDIR)$(SYSCONF_DIR)/security/limits.d/10-$(ENGINE_NAME).conf
-	install -m 644 packaging/fedora/engine-service.systemd $(DESTDIR)/usr/lib/systemd/system/ovirt-engine.service
 
 	# Install the links:
 	ln -s $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service

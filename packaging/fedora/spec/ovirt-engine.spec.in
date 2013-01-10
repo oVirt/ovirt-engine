@@ -498,6 +498,12 @@ cp -r deployment/modules/* %{buildroot}%{engine_jboss_modules}
 find %{buildroot}%{engine_jboss_modules} -type d -exec chmod 755 {} \;
 find %{buildroot}%{engine_jboss_modules} -type f -exec chmod 644 {} \;
 
+# Install the systemd files:
+install -dm 755 %{buildroot}%{_unitdir}
+install -m 644 packaging/fedora/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service
+install -dm 755 %{buildroot}%{_sysconfdir}/tmpfiles.d
+install -m 644 packaging/resources/ovirt-tmpfilesd %{buildroot}%{_sysconfdir}/tmpfiles.d/ovirt-engine.conf
+
 
 %preun
 if [ "$1" -eq 0 ]
