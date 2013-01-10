@@ -698,6 +698,9 @@ public class CommonModel extends ListModel
         getEventList().EnsureAsyncSearchStopped();
         getAlertList().EnsureAsyncSearchStopped();
         getTaskList().EnsureAsyncSearchStopped();
+        getBookmarkList().EnsureAsyncSearchStopped();
+        getRoleListModel().EnsureAsyncSearchStopped();
+        getSystemPermissionListModel().EnsureAsyncSearchStopped();
 
         if (Frontend.getIsUserLoggedIn())
         {

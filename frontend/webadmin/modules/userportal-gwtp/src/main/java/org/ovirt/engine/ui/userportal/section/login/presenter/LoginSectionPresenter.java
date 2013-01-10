@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.login.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
@@ -30,38 +29,19 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
     private final PlaceManager placeManager;
     private final CurrentUser user;
     private final LoginPopupPresenterWidget loginPopup;
-    private final ErrorPopupManager errorPopupManager;
 
     @Inject
     public LoginSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, CurrentUser user, LoginPopupPresenterWidget loginPopup,
-            ErrorPopupManager errorPopupManager) {
+            PlaceManager placeManager, CurrentUser user, LoginPopupPresenterWidget loginPopup) {
         super(eventBus, view, proxy);
         this.placeManager = placeManager;
         this.user = user;
         this.loginPopup = loginPopup;
-        this.errorPopupManager = errorPopupManager;
     }
 
     @Override
     protected void revealInParent() {
         RevealRootLayoutContentEvent.fire(this, this);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-
-        // Disable error popups when entering login section
-        errorPopupManager.setShowPopups(false);
-    }
-
-    @Override
-    protected void onHide() {
-        super.onHide();
-
-        // Enable error popups when leaving login section
-        errorPopupManager.setShowPopups(true);
     }
 
     @Override

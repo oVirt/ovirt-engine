@@ -7,16 +7,18 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class FrontendFailureEventListener implements IEventListener {
+
     private final ErrorPopupManager errorPopupManager;
-    private static final CommonApplicationMessages MESSAGES = GWT.create(CommonApplicationMessages.class);
+    private final CommonApplicationMessages messages;
 
     @Inject
-    public FrontendFailureEventListener(ErrorPopupManager errorPopupManager) {
+    public FrontendFailureEventListener(ErrorPopupManager errorPopupManager,
+            CommonApplicationMessages messages) {
         this.errorPopupManager = errorPopupManager;
+        this.messages = messages;
     }
 
     @Override
@@ -24,13 +26,10 @@ public class FrontendFailureEventListener implements IEventListener {
         FrontendFailureEventArgs failureArgs = (FrontendFailureEventArgs) args;
 
         if (failureArgs.getMessage() != null) {
-            errorPopupManager.show(MESSAGES.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessage(failureArgs.getMessage())));
+            errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessage(failureArgs.getMessage())));
         } else if (failureArgs.getMessages() != null) {
-            errorPopupManager.show(MESSAGES.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
+            errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
         }
     }
 
-    public void hide() {
-        errorPopupManager.hide();
-    }
 }

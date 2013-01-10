@@ -93,7 +93,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
     @Override
     public void onLogout() {
         user.onUserLogout();
-        frontendFailureEventListener.hide();
     }
 
     protected void performLogin(T loginModel) {

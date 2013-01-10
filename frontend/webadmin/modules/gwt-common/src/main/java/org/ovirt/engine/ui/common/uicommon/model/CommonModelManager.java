@@ -41,7 +41,6 @@ public class CommonModelManager {
 
                 loginModel.resetAfterLogout();
                 user.onUserLogout();
-                frontendFailureEventListener.hide();
             }
         });
     }
