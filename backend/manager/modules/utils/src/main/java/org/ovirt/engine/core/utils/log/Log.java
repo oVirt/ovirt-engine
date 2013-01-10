@@ -88,12 +88,16 @@ public class Log implements org.apache.commons.logging.Log {
 
     @Override
     public void trace(Object arg0) {
-        log.trace(arg0);
+        if (log.isTraceEnabled()) {
+            log.trace(addPrefixToLogMessage(arg0));
+        }
     }
 
     @Override
     public void trace(Object arg0, Throwable arg1) {
-        log.trace(addPrefixToLogMessage(arg0), arg1);
+        if (log.isTraceEnabled()) {
+            log.trace(addPrefixToLogMessage(arg0), arg1);
+        }
     }
 
     @Override
