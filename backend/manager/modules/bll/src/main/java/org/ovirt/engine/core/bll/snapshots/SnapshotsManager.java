@@ -114,7 +114,7 @@ public class SnapshotsManager {
      * @param compensationContext
      *            In case compensation is needed.
      */
-    protected Snapshot addSnapshot(Guid snapshotId,
+    public Snapshot addSnapshot(Guid snapshotId,
             String description,
             SnapshotStatus snapshotStatus,
             SnapshotType snapshotType,

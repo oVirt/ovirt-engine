@@ -85,6 +85,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return selectedActiveDisks;
     }
 
+    private void incrementVmGeneration() {
+        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+    }
+
     @Override
     protected void executeVmCommand() {
         Guid newActiveSnapshotId = Guid.NewGuid();
@@ -93,19 +97,30 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         getParameters().setInitialVmStatus(getVm().getStatus());
 
         getSnapshotDao().updateId(createdSnapshotId, newActiveSnapshotId);
-        new SnapshotsManager().addSnapshot(createdSnapshotId,
-                getParameters().getDescription(),
-                getParameters().getSnapshotType(),
-                getVm(),
-                getCompensationContext());
 
-        freeLock();
         setActionReturnValue(createdSnapshotId);
 
         if (getDisksList().isEmpty()) {
             getParameters().setTaskGroupSuccess(true);
-            endSuccessfully();
+            new SnapshotsManager().addSnapshot(createdSnapshotId,
+                    getParameters().getDescription(),
+                    SnapshotStatus.OK,
+                    getParameters().getSnapshotType(),
+                    getVm(),
+                    true,
+                    getCompensationContext());
+            // at the moment there's no need to execute vdsm Snapshot command for diskless snapshots,
+            // when support for ram snapshot will be introduced, this vdsm command should be executed
+            // for diskless snapshots as well (currently executed within endSuccesfully() method.
+            incrementVmGeneration();
         } else {
+            new SnapshotsManager().addSnapshot(createdSnapshotId,
+                    getParameters().getDescription(),
+                    getParameters().getSnapshotType(),
+                    getVm(),
+                    getCompensationContext());
+
+            freeLock();
             for (DiskImage image : getDisksList()) {
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());
                 tempVar.setDescription(getParameters().getDescription());
@@ -134,9 +149,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             "CreateAllSnapshotsFromVmCommand::executeVmCommand: Failed to create snapshot!");
                 }
             }
-
-            setSucceeded(true);
         }
+        setSucceeded(true);
     }
 
     /**
@@ -168,7 +182,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     revertToActiveSnapshot(createdSnapshotId);
                 }
 
-                getVmStaticDAO().incrementDbGeneration(getVm().getId());
+                incrementVmGeneration();
 
                 endActionOnDisks();
                 setSucceeded(taskGroupSucceeded);
