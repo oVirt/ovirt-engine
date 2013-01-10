@@ -1716,7 +1716,7 @@ public final class AsyncDataProvider {
     public static void GetDefaultPmProxyPreferences(AsyncQuery query) {
         GetConfigFromCache(
             new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
-                getDefaultConfigurationVersion()),
+                        getDefaultConfigurationVersion()),
             query);
     }
 

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -718,7 +717,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     compatibilityVersion))) {
                 hasCpuPinning = false;
             } else if (Boolean.FALSE.equals(AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
-                    Config.DefaultConfigurationVersion))
+                    AsyncDataProvider.getDefaultConfigurationVersion()))
                     && isVmMigratable()) {
                 hasCpuPinning = false;
             }
