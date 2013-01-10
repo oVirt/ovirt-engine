@@ -52,6 +52,7 @@ public class SnapshotsManager {
      * Save an active snapshot for the VM, without saving the configuration.<br>
      * The snapshot is created in status {@link SnapshotStatus#OK} by default.
      *
+     * @see #addActiveSnapshot(Guid, VM, SnapshotStatus, CompensationContext)
      * @param snapshotId
      *            The ID for the snapshot.
      * @param vm
@@ -62,9 +63,32 @@ public class SnapshotsManager {
     public Snapshot addActiveSnapshot(Guid snapshotId,
             VM vm,
             final CompensationContext compensationContext) {
+        return addActiveSnapshot(snapshotId,
+                vm,
+                SnapshotStatus.OK,
+                compensationContext);
+    }
+
+    /**
+     * Save an active snapshot for the VM, without saving the configuration.<br>
+     * The snapshot is created with the given status {@link SnapshotStatus}.
+     *
+     * @param snapshotId
+     *            The ID for the snapshot.
+     * @param vm
+     *            The VM to save the snapshot for.
+     * @param snapshotStatus
+     *            The initial status of the snapshot
+     * @param compensationContext
+     *            Context for saving compensation details.
+     */
+    public Snapshot addActiveSnapshot(Guid snapshotId,
+            VM vm,
+            SnapshotStatus snapshotStatus,
+            final CompensationContext compensationContext) {
         return addSnapshot(snapshotId,
                 "Active VM",
-                SnapshotStatus.OK,
+                snapshotStatus,
                 SnapshotType.ACTIVE,
                 vm,
                 false,

@@ -113,6 +113,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             deleteOrphanedImages();
         } else {
             getVmStaticDAO().incrementDbGeneration(getVm().getId());
+            getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.OK);
             unlockVm();
         }
 
@@ -224,7 +225,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 targetSnapshot.getId(),
                 getCompensationContext());
         getSnapshotDao().remove(targetSnapshot.getId());
-        snapshotsManager.addActiveSnapshot(targetSnapshot.getId(), getVm(), getCompensationContext());
+        // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
+        snapshotsManager.addActiveSnapshot(targetSnapshot.getId(), getVm(), SnapshotStatus.LOCKED, getCompensationContext());
     }
 
     /**
@@ -370,5 +372,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         return list;
+    }
+
+    @Override
+    protected void endVmCommand() {
+        // if we got here, the target snapshot exists for sure
+        getSnapshotDao().updateStatus(getParameters().getDstSnapshotId(), SnapshotStatus.OK);
+
+        super.endVmCommand();
     }
 }
