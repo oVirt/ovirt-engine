@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -315,7 +317,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                     returnValue = false;
                 } else if (!IsPowerManagementLegal(getParameters().getVdsStaticData(), getVdsGroup()
-                            .getcompatibility_version().toString())) {
+                        .getcompatibility_version().toString())) {
                     returnValue = false;
                 } else {
                     returnValue = returnValue && canConnect(vds);
@@ -360,28 +362,25 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient.setPassword(getParameters().getRootPassword());
                 sshclient.connect();
                 sshclient.authenticate();
-            }
-            catch (AuthenticationException e) {
+            } catch (AuthenticationException e) {
                 log.errorFormat(
-                    "Failed to authenticate session with host {0}",
-                    vds.getvds_name(),
-                    e
-                );
+                        "Failed to authenticate session with host {0}",
+                        vds.getvds_name(),
+                        e
+                        );
 
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
                 returnValue = false;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 log.errorFormat(
-                    "Failed to establish session with host {0}",
-                    vds.getvds_name(),
-                    e
-                );
+                        "Failed to establish session with host {0}",
+                        vds.getvds_name(),
+                        e
+                        );
 
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
                 returnValue = false;
-            }
-            finally {
+            } finally {
                 if (sshclient != null) {
                     sshclient.disconnect();
                 }
@@ -443,5 +442,14 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      */
     private List<VDS> getAllVds(Guid clusterId) {
         return getVdsDAO().getAllForVdsGroup(clusterId);
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        VDSGroup cluster = getVdsGroup();
+        if (cluster != null && cluster.supportsGlusterService() && !isInternalExecution()) {
+            return Collections.singletonMap(cluster.getId().toString(), LockingGroup.GLUSTER.name());
+        }
+        return null;
     }
 }
