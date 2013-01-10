@@ -1332,6 +1332,31 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     HardwareInfoEnabled(410),
 
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("95")
+    LogMaxPhysicalMemoryUsedThresholdInPercentage(411),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("95")
+    LogMaxCpuUsedThresholdInPercentage(412),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("95")
+    LogMaxNetworkUsedThresholdInPercentage(413),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("256")
+    LogMinFreeSwapThresholdInMB(414),
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("95")
+    LogMaxSwapUsedThresholdInPercentage(415),
+
     Invalid(65535);
 
     private int intValue;

@@ -281,6 +281,11 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.USER_VDS_MAINTENANCE, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST, AuditLogSeverity.NORMAL);
         mSeverities.put(AuditLogType.VDS_LOW_MEM, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.VDS_HIGH_MEM_USE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.VDS_HIGH_CPU_USE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.VDS_HIGH_NETWORK_USE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.VDS_HIGH_SWAP_USE, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.VDS_LOW_SWAP, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.VDS_STORAGE_CONNECTION_FAILED_BUT_LAST_VDS, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_STORAGES_CONNECTION_FAILED, AuditLogSeverity.ERROR);
         mSeverities.put(AuditLogType.VDS_STORAGE_VDS_STATS_FAILED, AuditLogSeverity.ERROR);

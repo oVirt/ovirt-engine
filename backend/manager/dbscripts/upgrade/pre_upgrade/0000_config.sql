@@ -487,6 +487,11 @@ select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 
+select fn_db_add_config_value('LogMaxPhysicalMemoryUsedThresholdInPercentage', '95', 'general');
+select fn_db_add_config_value('LogMaxCpuUsedThresholdInPercentage', '95', 'general');
+select fn_db_add_config_value('LogMaxNetworkUsedThresholdInPercentage', '95', 'general');
+select fn_db_add_config_value('LogMinFreeSwapThresholdInMB', '256', 'general');
+select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section

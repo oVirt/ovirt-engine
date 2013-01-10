@@ -120,6 +120,9 @@ public class VdsUpdateRunTimeInfo {
             VdsStatistics stat = _vds.getStatisticsData();
             _vdsManager.UpdateStatisticsData(stat);
             checkVdsMemoryThreshold(stat);
+            checkVdsCpuThreshold(stat);
+            checkVdsNetworkThreshold(stat);
+            checkVdsSwapThreshold(stat);
 
             final List<VdsNetworkStatistics> statistics = new LinkedList<VdsNetworkStatistics>();
             for (VdsNetworkInterface iface : _vds.getInterfaces()) {
@@ -258,14 +261,95 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsMemoryThreshold(VdsStatistics stat) {
 
-        Integer threshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
-        if (stat.getmem_available() < threshold) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.setVdsId(stat.getId());
+        Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
+        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+
+        if (stat.getmem_available() == null) {
+            return;
+        }
+
+        AuditLogType valueToLog = stat.getmem_available() < minAvailableThreshold ?
+                AuditLogType.VDS_LOW_MEM :
+                AuditLogType.VDS_HIGH_MEM_USE;
+
+        if (stat.getmem_available() < minAvailableThreshold
+                || stat.getusage_mem_percent() > maxUsedPercentageThreshold) {
+            AuditLogableBase logable = new AuditLogableBase(stat.getId());
             logable.AddCustomValue("HostName", _vds.getvds_name());
             logable.AddCustomValue("AvailableMemory", stat.getmem_available().toString());
-            logable.AddCustomValue("Threshold", threshold.toString());
-            auditLog(logable, AuditLogType.VDS_LOW_MEM);
+            logable.AddCustomValue("UsedMemory", stat.getusage_mem_percent().toString());
+            logable.AddCustomValue("Threshold", stat.getmem_available() < minAvailableThreshold ?
+                    minAvailableThreshold.toString() :
+                    maxUsedPercentageThreshold.toString());
+            auditLog(logable, valueToLog);
+        }
+    }
+
+    /**
+     * check if value is less than configurable threshold , if yes , generated event log message
+     *
+     * @param stat
+     */
+    private void checkVdsCpuThreshold(VdsStatistics stat) {
+
+        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxCpuUsedThresholdInPercentage);
+        if (stat.getusage_cpu_percent() != null
+                && stat.getusage_cpu_percent() > maxUsedPercentageThreshold) {
+            AuditLogableBase logable = new AuditLogableBase(stat.getId());
+            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("UsedCpu", stat.getusage_cpu_percent().toString());
+            logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
+            auditLog(logable, AuditLogType.VDS_HIGH_CPU_USE);
+        }
+    }
+
+    /**
+     * check if value is less than configurable threshold , if yes , generated event log message
+     *
+     * @param stat
+     */
+    private void checkVdsNetworkThreshold(VdsStatistics stat) {
+
+        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxNetworkUsedThresholdInPercentage);
+        if (stat.getusage_network_percent() != null
+                && stat.getusage_network_percent() > maxUsedPercentageThreshold) {
+            AuditLogableBase logable = new AuditLogableBase(stat.getId());
+            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("UsedNetwork", stat.getusage_network_percent().toString());
+            logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
+            auditLog(logable, AuditLogType.VDS_HIGH_NETWORK_USE);
+        }
+    }
+
+    /**
+     * check if value is less than configurable threshold , if yes , generated event log message
+     *
+     * @param stat
+     */
+    private void checkVdsSwapThreshold(VdsStatistics stat) {
+
+        Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
+        Integer maxUsedPercentageThreshold =
+                Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+
+        if (stat.getswap_total() == null || stat.getswap_free() == null) {
+            return;
+        }
+
+        Long swapUsedPercent = (stat.getswap_total() - stat.getswap_free()) / stat.getswap_total();
+
+        AuditLogType valueToLog = stat.getswap_free() < minAvailableThreshold ?
+                AuditLogType.VDS_LOW_SWAP :
+                AuditLogType.VDS_HIGH_SWAP_USE;
+
+        if (stat.getswap_free() < minAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
+            AuditLogableBase logable = new AuditLogableBase(stat.getId());
+            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("UsedSwap", swapUsedPercent.toString());
+            logable.AddCustomValue("AvailableSwapMemory", stat.getswap_free().toString());
+            logable.AddCustomValue("Threshold", stat.getswap_free() < minAvailableThreshold ?
+                    minAvailableThreshold.toString() : maxUsedPercentageThreshold.toString());
+            auditLog(logable, valueToLog);
         }
     }
 
