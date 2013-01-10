@@ -95,7 +95,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         proceedGroupsSearchResult(user.getMemberof(), groupsDict, generator);
 
         user.setGroups(groupsDict);
-
+        if (user.getUserName() != null && !user.getUserName().contains("@")) {
+            user.setUserName(user.getUserName() + "@" + user.getDomainControler());
+        }
         return user;
     }
 
