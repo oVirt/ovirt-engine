@@ -15,7 +15,7 @@ for i in `ls $logdir/{engine,server,jasperserver}.log.* -t`; do
  m=`expr match $i .*gz`
  if [ $m == 0 ]
  then
-  cat $i | gzip -9 > $i-$date.gz && rm $i
+  cat $i | gzip -9 > $i-${date}_`/bin/date +%N | cut -c6-`.gz && rm $i
  fi
 done;
 
@@ -25,7 +25,7 @@ done;
 
 lastlogday=`date -d "$maxage hours ago" $dateformat`
 for i in `ls $logdir/{engine,server,jasperserver}.log.*.gz`; do
- timestamp=`echo $i | sed s/.*-// | sed s/\.gz//`
+ timestamp=`echo $i | sed s/.*-// | sed 's/_.\{4\}\.gz$//'`
  if [[ "$lastlogday" > "$timestamp" ]]
  then
   rm -f $logdir/{engine,server,jasperserver}.log.*$timestamp.gz
