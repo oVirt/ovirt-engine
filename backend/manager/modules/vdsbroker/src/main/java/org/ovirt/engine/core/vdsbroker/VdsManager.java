@@ -461,6 +461,8 @@ public class VdsManager {
                     _vds.setUsageMemPercent(0);
                     _vds.setUsageNetworkPercent(0);
                 }
+            default:
+                break;
             }
         }
     }
@@ -522,8 +524,8 @@ public class VdsManager {
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
         log.debug("GetCapabilitiesVDSCommand started method");
         VDS oldVDS = vds.clone();
-        GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
-                new VdsIdAndVdsVDSCommandParametersBase(vds));
+        GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
+                new GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(vds));
         vdsBrokerCommand.execute();
         if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
             // Verify version capabilities
