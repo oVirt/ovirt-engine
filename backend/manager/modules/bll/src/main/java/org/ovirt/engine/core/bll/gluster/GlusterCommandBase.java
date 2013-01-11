@@ -6,15 +6,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -82,19 +79,6 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             return false;
         }
         return true;
-    }
-
-    /**
-     * Executes given BLL action, updates the success flag based on the result, and returns the result
-     *
-     * @param actionType
-     * @param params
-     * @return
-     */
-    protected VdcReturnValueBase runBllAction(VdcActionType actionType, VdcActionParametersBase params) {
-        VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(actionType, params);
-        setSucceeded(returnValue.getSucceeded());
-        return returnValue;
     }
 
     protected void handleVdsErrors(AuditLogType errType, List<String> errors) {

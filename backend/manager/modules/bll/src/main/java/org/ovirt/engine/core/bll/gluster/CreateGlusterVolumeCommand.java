@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -17,6 +21,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
+import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateReplicatedVolume;
 import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume;
@@ -39,7 +46,22 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params) {
         super(params);
         volume = getParameters().getVolume();
-        setVdsGroupId(volume.getClusterId());
+
+        if (volume != null) {
+            setVdsGroupId(volume.getClusterId());
+        }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            if (volume != null) {
+                jobProperties.put(GlusterConstants.VOLUME, volume.getName());
+            }
+        }
+
+        return jobProperties;
     }
 
     @Override
@@ -169,11 +191,14 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         for (GlusterVolumeOptionEntity option : volume.getOptions()) {
             // make sure that volume id is set
             option.setVolumeId(volume.getId());
+
             VdcReturnValueBase setOptionReturnValue =
-                    runBllAction(
+                    getBackend().runInternalAction(
                             VdcActionType.SetGlusterVolumeOption,
-                            new GlusterVolumeOptionParameters(option));
-            if (!getSucceeded()) {
+                            new GlusterVolumeOptionParameters(option),
+                            createCommandContext(volume, option));
+            if (!setOptionReturnValue.getSucceeded()) {
+                setSucceeded(false);
                 errors.addAll(setOptionReturnValue.getCanDoActionMessages());
                 errors.addAll(setOptionReturnValue.getExecuteFailedMessages());
             }
@@ -185,10 +210,32 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     /**
+     * Creates command context for setting a given option on the given volume
+     */
+    private CommandContext createCommandContext(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {
+        // Add sub-step for setting given option
+        Step setOptionStep = addSubStep(StepEnum.EXECUTING,
+                StepEnum.SETTING_GLUSTER_OPTION, getOptionValues(volume, option));
+
+        // Create execution context for setting option
+        ExecutionContext setOptionCtx = new ExecutionContext();
+        setOptionCtx.setMonitored(true);
+        setOptionCtx.setStep(setOptionStep);
+
+        return new CommandContext(setOptionCtx, getCompensationContext());
+    }
+
+    private Map<String, String> getOptionValues(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {
+        Map<String, String> values = new HashMap<String, String>();
+        values.put(GlusterConstants.CLUSTER, getVdsGroupName());
+        values.put(GlusterConstants.VOLUME, volume.getName());
+        values.put(GlusterConstants.OPTION_KEY, option.getKey());
+        values.put(GlusterConstants.OPTION_VALUE, option.getValue());
+        return values;
+    }
+
+    /**
      * Validates the the number of bricks against the replica count or stripe count based on volume type
-     *
-     * @param volume
-     * @return
      */
     private boolean validateBricks(GlusterVolumeEntity volume) {
         List<GlusterBrickEntity> bricks = volume.getBricks();
