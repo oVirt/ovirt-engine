@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeOptionVDSParameters;
@@ -20,6 +23,13 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
     public SetGlusterVolumeOptionCommand(GlusterVolumeOptionParameters params) {
         super(params);
+    }
+
+    @Override
+    public Map<String, String> getCustomValues() {
+        AddCustomValue(GlusterConstants.OPTION_KEY, getParameters().getVolumeOption().getKey());
+        AddCustomValue(GlusterConstants.OPTION_VALUE, getParameters().getVolumeOption().getValue());
+        return super.getCustomValues();
     }
 
     @Override
