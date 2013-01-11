@@ -25,17 +25,17 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProvider, SystemTreeModel, CellTree> {
 
+    private static final int ALL_LEVELS = Integer.MAX_VALUE;
+    private static final int ITEM_LEVEL = 2;
+
     interface WidgetUiBinder extends UiBinder<Widget, SystemTree> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
-
-    private final SystemTreeModelProvider modelProvider;
 
     private CellTree display;
 
     public SystemTree(SystemTreeModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        this.modelProvider = modelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         addActionButtons(modelProvider, constants);
         addModelListeners(modelProvider);
@@ -56,7 +56,10 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 return new UICommand(constants.treeExpandAll(), new BaseCommandTarget() {
                     @Override
                     public void ExecuteCommand(UICommand command) {
-                        expandTree(display.getRootTreeNode(), true);
+                        TreeNode expandNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
+                        if (expandNode != null) {
+                            expandTree(expandNode);
+                        }
                     }
                 });
             }
@@ -68,7 +71,10 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 return new UICommand(constants.treeCollapseAll(), new BaseCommandTarget() {
                     @Override
                     public void ExecuteCommand(UICommand command) {
-                        expandTree(display.getRootTreeNode(), false);
+                        TreeNode collapseNode = findNode(display.getRootTreeNode(), modelProvider.getSelectionModel().getSelectedObject());
+                        if (collapseNode != null) {
+                            collapseTree(collapseNode);
+                        }
                     }
                 });
             }
@@ -81,11 +87,11 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 // Reset selection in the model
-                SystemTreeItemModel lastSelectedItem = modelProvider.getSelectionModel().getSelectedObject();
-                modelProvider.getSelectionModel().setSelected(lastSelectedItem, false);
-
-                // Collapse tree on refresh
-                expandTree(display.getRootTreeNode(), false, 2);
+                SystemTreeItemModel lastSelectedItem = modelProvider
+                                .getSelectionModel().getSelectedObject();
+                modelProvider.getSelectionModel().setSelected(
+                                lastSelectedItem, false);
+                expandTree(display.getRootTreeNode(), ITEM_LEVEL);
             }
         });
     }
@@ -94,8 +100,9 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     protected CellTree createDataDisplayWidget(SystemTreeModelProvider modelProvider) {
         SystemTreeResources res = GWT.create(SystemTreeResources.class);
         display = new CellTree(modelProvider, null, res) {
+            @Override
             protected void onLoad() {
-                expandTree(display.getRootTreeNode(), false, 2);
+                expandTree(display.getRootTreeNode(), ITEM_LEVEL);
             }
         };
         display.setAnimationEnabled(true);
@@ -103,21 +110,48 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         return display;
     }
 
-    private void expandTree(TreeNode node, boolean expand) {
-        expandTree(node, expand, 0);
+    private void expandTree(TreeNode node) {
+        expandTree(node, ALL_LEVELS);
     }
 
-    private void expandTree(TreeNode node, boolean expand, int expandFromLevel) {
+    private void expandTree(TreeNode node, int expandUpToLevel) {
         if (node == null) {
             return;
         }
-
-        if (node.getChildCount() > 0) {
-            for (int i = 0; i < node.getChildCount(); i++) {
-                boolean expandNode = 0 < expandFromLevel ? !expand : expand;
-                expandTree(node.setChildOpen(i, expandNode), expand, expandFromLevel - 1);
-            }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            boolean expandNode = 0 < expandUpToLevel ? true : false;
+            expandTree(node.setChildOpen(i, expandNode), expandUpToLevel - 1);
         }
+    }
+
+    private void collapseTree(TreeNode node) {
+        TreeNode parent = node.getParent();
+        if (parent == null) {
+            node.setChildOpen(0, false);
+        } else {
+            parent.setChildOpen(node.getIndex(), false);
+        }
+    }
+
+    private TreeNode findNode(TreeNode node, SystemTreeItemModel model) {
+        TreeNode result = null;
+        if (node == null) {
+            return null;
+        }
+
+        int i = 0;
+        while (result == null && i < node.getChildCount()) {
+            if (model != null && model.equals(node.getChildValue(i))) {
+                result = node.setChildOpen(i, true);
+                break;
+            }
+            //Only check open nodes, otherwise they couldn't have been selected.
+            if (node.isChildOpen(i)) {
+                result = findNode(node.setChildOpen(i, true), model);
+            }
+            i++;
+        }
+        return result;
     }
 
     public interface SystemTreeResources extends CellTree.Resources {
