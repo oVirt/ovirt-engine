@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresen
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -198,46 +199,63 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     void searchByDiskViewType(Object diskViewType) {
         final String disksSearchPrefix = "Disks:"; //$NON-NLS-1$
         final String diskTypeSearchPrefix = "disk_type = "; //$NON-NLS-1$
-        final String searchConjunctionAnd = " all "; //$NON-NLS-1$
-        final String searchRegexAll = "(.)*"; //$NON-NLS-1$
+        final String searchConjunctionAnd = "and "; //$NON-NLS-1$
+        final String searchRegexDisksSearchPrefix = "^\\s*(disk(s)?\\s*(:)+)+\\s*"; //$NON-NLS-1$
+        final String searchRegexDiskTypeClause = "\\s*((and|or)\\s+)?disk_type\\s*=\\s*\\S+"; //$NON-NLS-1$
+        final String searchRegexStartConjunction = "^\\s*(and|or)\\s*"; //$NON-NLS-1$
+        final String searchRegexFlags = "ig"; //$NON-NLS-1$
+
         final String space = " "; //$NON-NLS-1$
         final String empty = ""; //$NON-NLS-1$
+        final String colon = ":"; //$NON-NLS-1$
+
+        RegExp searchPatternDisksSearchPrefix = RegExp.compile(searchRegexDisksSearchPrefix, searchRegexFlags);
+        RegExp searchPatternDiskTypeClause = RegExp.compile(searchRegexDiskTypeClause, searchRegexFlags);
+        RegExp searchPatternStartConjunction = RegExp.compile(searchRegexStartConjunction, searchRegexFlags);
 
         String diskTypePostfix = diskViewType != null ?
                 ((DiskStorageType) diskViewType).name().toLowerCase() + space : null;
-        String diskType = diskTypePostfix != null ?
+        String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 
-        String searchConjunction = !diskType.equals(empty) ?
-                searchConjunctionAnd : empty;
+        String inputSearchString = commonModel.getSearchString().trim();
+        String inputSearchStringPrefix = commonModel.getSearchStringPrefix().trim();
 
-        String searchStringPrefixRaw = commonModel.getSearchStringPrefix().replaceAll(
-                diskTypeSearchPrefix + searchRegexAll, empty).replaceAll(
-                searchConjunctionAnd + searchRegexAll, empty).trim();
+        if (!inputSearchString.isEmpty() && inputSearchStringPrefix.isEmpty()) {
+            int indexOfColon = inputSearchString.indexOf(colon);
+            inputSearchStringPrefix = inputSearchString.substring(0, indexOfColon + 1).trim();
+            inputSearchString = inputSearchString.substring(indexOfColon + 1).trim();
+        }
+        if (inputSearchStringPrefix.isEmpty()) {
+            inputSearchStringPrefix = disksSearchPrefix;
+            inputSearchString = empty;
+        }
+
+        String searchStringPrefixRaw = searchPatternDiskTypeClause
+                .replace(inputSearchStringPrefix, empty).trim();
 
         String searchStringPrefix;
-        if (diskType.equals(empty)) {
-            searchStringPrefix = searchStringPrefixRaw;
-        }
-        else if (searchStringPrefixRaw.equals(disksSearchPrefix)) {
-            searchStringPrefix = disksSearchPrefix + space + diskType;
+        if (diskTypeClause.equals(empty)) {
+            searchStringPrefix = searchStringPrefixRaw + space;
         }
         else {
-            searchStringPrefix = searchStringPrefixRaw.isEmpty() ?
-                    disksSearchPrefix + space + diskType :
-                    searchStringPrefixRaw + searchConjunction + diskType;
+            searchStringPrefix = searchStringPrefixRaw + space
+                    + (searchPatternDisksSearchPrefix.test(searchStringPrefixRaw) ? empty : searchConjunctionAnd)
+                    + diskTypeClause;
         }
+
+        inputSearchString = searchPatternDiskTypeClause
+                .replace(inputSearchString, empty);
+        inputSearchString = searchPatternStartConjunction
+                .replace(inputSearchString, empty);
 
         String searchString;
-        if (!commonModel.getSearchString().contains(":")) { //$NON-NLS-1$
-            searchString = searchStringPrefix.isEmpty() ?
-                    disksSearchPrefix + space + commonModel.getSearchString() :
-                    commonModel.getSearchString().replace(disksSearchPrefix, empty);
+        if (searchPatternDisksSearchPrefix.test(searchStringPrefix) || inputSearchString.isEmpty()) {
+            searchString = inputSearchString;
         }
         else {
-            searchString = searchStringPrefix.isEmpty() ? disksSearchPrefix : empty;
+            searchString = searchConjunctionAnd + inputSearchString;
         }
-
         commonModel.setSearchStringPrefix(searchStringPrefix);
         commonModel.setSearchString(searchString);
 
