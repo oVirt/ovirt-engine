@@ -88,14 +88,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
             List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao()
                     .getAllForCluster(vds.getVdsGroupId());
             if (skipManagementNetwork) {
-                String managementNetworkName = Config.GetValue(ConfigValues.ManagementNetwork);
-                for (Iterator<Network> iterator = clusterNetworks.iterator(); iterator.hasNext();) {
-                    Network network = iterator.next();
-                    if (managementNetworkName.equals(network.getName())) {
-                        iterator.remove();
-                        break;
-                    }
-                }
+                skipManagementNetworkCheck(vds.getInterfaces(), clusterNetworks);
             }
 
             Map<String, String> customLogValues;
@@ -123,6 +116,23 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
             logUnsynchronizedNetworks(vds, Entities.entitiesByName(clusterNetworks));
         }
         return false;
+    }
+
+    private static void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
+        String managementNetworkName = Config.GetValue(ConfigValues.ManagementNetwork);
+        for (VdsNetworkInterface iface : ifaces) {
+            if (managementNetworkName.equals(iface.getNetworkName())) {
+                return;
+            }
+        }
+
+        for (Iterator<Network> iterator = clusterNetworks.iterator(); iterator.hasNext();) {
+            Network network = iterator.next();
+            if (managementNetworkName.equals(network.getName())) {
+                iterator.remove();
+                break;
+            }
+        }
     }
 
     private static void logUnsynchronizedNetworks(VDS vds, Map<String, Network> networks) {

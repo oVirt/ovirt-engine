@@ -393,7 +393,7 @@ public class VdsManager {
             /**
              * refresh capabilities
              */
-            VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds, false);
+            VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds, true);
             if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "Succeeded to refreshCapabilities for host {0} , new status will be {1} ",

@@ -697,6 +697,11 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.NETWORK_ACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.NETWORK_DEACTIVATE_VM_INTERFACE_FAILURE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.INVALID_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VLAN_ID_MISMATCH_FOR_MANAGEMENT_NETWORK_CONFIGURATION, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK, AuditLogSeverity.WARNING);
+
         // External Events/Alerts
         severities.put(AuditLogType.EXTERNAL_EVENT_NORMAL, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.EXTERNAL_EVENT_WARNING, AuditLogSeverity.WARNING);
