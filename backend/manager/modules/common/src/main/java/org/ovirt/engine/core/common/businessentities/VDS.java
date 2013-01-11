@@ -20,6 +20,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     private VdsStatistics mVdsStatistics;
     private ArrayList<VdsNetworkInterface> mInterfaceList;
     private java.util.ArrayList<Network> mNetworkList;
+    private String activeNic;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -253,6 +254,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         vds.setKvmVersion(getKvmVersion());
         vds.setLibvirtVersion(getLibvirtVersion());
         vds.setHooksStr(getHooksStr());
+        vds.setActiveNic(getActiveNic());
 
         return vds;
     }
@@ -1285,4 +1287,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getName()) + "]";
     }
 
+    public String getActiveNic() {
+        return activeNic;
+    }
+
+    public void setActiveNic(String activeNic) {
+        this.activeNic = activeNic;
+    }
 }
