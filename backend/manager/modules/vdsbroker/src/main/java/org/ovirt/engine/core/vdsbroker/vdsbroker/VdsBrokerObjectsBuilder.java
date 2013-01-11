@@ -891,6 +891,8 @@ public class VdsBrokerObjectsBuilder {
      *            A nested map contains network interfaces data
      */
     public static void updateNetworkData(VDS vds, XmlRpcStruct xmlRpcStruct) {
+        vds.setActiveNic(AssignStringValue(xmlRpcStruct, VdsProperties.NETWORK_LAST_CLIENT_INTERFACE));
+
         List<VdsNetworkInterface> oldInterfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();

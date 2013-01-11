@@ -382,7 +382,7 @@ public class VdsManager {
         DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
     }
 
-    public void activate() {
+    public VDS activate() {
         VDS vds = null;
         try {
             // refresh vds from db in case changed while was down
@@ -415,6 +415,8 @@ public class VdsManager {
                 ResourceManager.getInstance().getEventListener().handleVdsVersion(vds.getId());
             }
         }
+
+        return vds;
     }
 
     public void setStatus(VDSStatus status, VDS vds) {
