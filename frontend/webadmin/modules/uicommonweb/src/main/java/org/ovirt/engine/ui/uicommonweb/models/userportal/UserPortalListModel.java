@@ -284,6 +284,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setChangeCdCommand(new UICommand("ChangeCD", this)); //$NON-NLS-1$
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
+        setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
 
         UpdateActionAvailability();
 
