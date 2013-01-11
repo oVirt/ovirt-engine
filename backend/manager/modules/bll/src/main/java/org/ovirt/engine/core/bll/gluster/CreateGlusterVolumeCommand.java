@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * BLL command to create a new Gluster Volume
@@ -157,6 +158,14 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         setVolumeType(createdVolume);
         setBrickOrder(createdVolume.getBricks());
         addVolumeToDb(createdVolume);
+
+        // If we log successful volume creation at the end of this command,
+        // the messages from SetGlusterVolumeOptionCommand appear first,
+        // making it look like options were set before volume was created.
+        // Hence we explicitly log the volume creation before setting the options.
+        AuditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_CREATE);
+        // And don't log it at the end
+        setCommandShouldBeLogged(false);
 
         // set all options of the volume
         setVolumeOptions(createdVolume);
@@ -310,10 +319,11 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getSucceeded()) {
-            return AuditLogType.GLUSTER_VOLUME_CREATE;
-        } else {
+        if (!getSucceeded()) {
+            // Success need not be logged at the end of execution,
+            // as it is already logged by executeCommand()
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_CREATE_FAILED : errorType;
         }
+        return super.getAuditLogTypeValue();
     }
 }
