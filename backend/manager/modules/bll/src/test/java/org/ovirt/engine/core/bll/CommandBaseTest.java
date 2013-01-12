@@ -70,6 +70,11 @@ public class CommandBaseTest {
         protected boolean isBackwardsCompatible() {
             return true;
         }
+
+        @Override
+        protected void logRollbackedTask() {
+            return;
+        }
     }
 
     @Before

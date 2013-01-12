@@ -590,8 +590,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void revertPreviousHandlers() {
         getParameters().decrementExecutionIndex();
         if (getExecutionIndex() >= 0) {
-            String type = (getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name());
-            log.errorFormat("Reverting task {0}, handler: {1}", type, getCurrentTaskHandler().getClass().getName());
+            logRollbackedTask();
             getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             getCurrentTaskHandler().compensate();
 
@@ -600,6 +599,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 revertPreviousHandlers();
             }
         }
+    }
+
+    protected void logRollbackedTask() {
+        String type = (getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name());
+        log.errorFormat("Reverting task {0}, handler: {1}", type, getCurrentTaskHandler().getClass().getName());
     }
 
     private boolean hasRevertTask() {
