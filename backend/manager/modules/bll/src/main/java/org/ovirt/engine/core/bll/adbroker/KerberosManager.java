@@ -82,7 +82,7 @@ public class KerberosManager implements KerberosManagerSericeManagmentMBean {
         } else {
             log.error("Failed loading kerberos setting. File " + krb5File + " not found.");
         }
-
+        System.setProperty("sun.security.krb5.msinterop.kstring","true");
     }
 
     @SuppressWarnings("restriction")
