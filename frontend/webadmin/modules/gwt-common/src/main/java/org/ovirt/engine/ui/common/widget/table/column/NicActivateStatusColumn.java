@@ -44,7 +44,8 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         }
 
         StringBuilder tooltip = new StringBuilder(""); //$NON-NLS-1$
-        if (vnic.isPlugged()) {
+        boolean vnicExist = vnic != null;
+        if (vnicExist && vnic.isPlugged()) {
             tooltip =
                     tooltip.append(templates.cardStatus(constants.pluggedNetworkInteface()).asString());
         } else {
@@ -53,7 +54,7 @@ public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColum
         }
 
         tooltip = tooltip.append("<BR>"); //$NON-NLS-1$
-        if (vnic.isLinked()) {
+        if (vnicExist && vnic.isLinked()) {
             tooltip =
                     tooltip.append(templates.linkState(constants.linkedNetworkInteface())
                             .asString());
