@@ -41,7 +41,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         } else {
-            if (ObjectIdentityChecker.CanUpdateField(vm, "vds_group_id", vm.getStatus())) {
+            if (ObjectIdentityChecker.CanUpdateField(vm, "vdsGroupId", vm.getStatus())) {
                 targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
                 if (targetCluster == null) {
                     addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
