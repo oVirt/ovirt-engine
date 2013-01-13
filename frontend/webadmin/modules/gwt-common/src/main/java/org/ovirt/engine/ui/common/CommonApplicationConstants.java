@@ -1031,7 +1031,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Format: v#p[_v#p]</br>Examples:</br>&#149;0#0 => pin vCPU 0 to pCPU 0</br>&#149;0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3</br>&#149;1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2</br>")
     String cpuPinningLabelExplanation();
 
-    @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection")
+    @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection on cluster version lower than 3.2")
     String nativeUsbSupportWarning();
 
     @DefaultStringValue("LUN is already in use - attaching it could cause data corruption.")

@@ -80,6 +80,7 @@ public enum ConfigurationValues {
     GlusterVolumeOptionOwnerGroupVirtValue,
     CpuPinningEnabled,
     CpuPinMigrationEnabled,
+    MigrationSupportForNativeUsb,
     ;
 
     public static enum ConfigAuthType {

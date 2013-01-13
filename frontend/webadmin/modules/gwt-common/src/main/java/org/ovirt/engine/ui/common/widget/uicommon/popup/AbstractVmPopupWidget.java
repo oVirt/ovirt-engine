@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -844,8 +846,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         updateUsbNativeMessageVisibility(object);
     }
 
+    /**
+     * This raises a warning for USB devices that won't persist a VM migration when using Native USB with SPICE in
+     * certain, configurable cluster version.
+     */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        nativeUsbWarningMessage.setVisible(object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE);
+        VDSGroup vdsGroup = (VDSGroup) object.getCluster().getSelectedItem();
+        nativeUsbWarningMessage.setVisible(object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
+                && vdsGroup != null
+                && vdsGroup.getcompatibility_version() != null
+                && !(Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
+                        vdsGroup.getcompatibility_version().getValue()));
     }
 
     private void addDiskAllocation(UnitVmModel model) {

@@ -1361,6 +1361,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     TunnelMigrationEnabled(416),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MigrationSupportForNativeUsb(416),
+
     Invalid(65535);
 
     private int intValue;
