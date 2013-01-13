@@ -52,7 +52,7 @@ class Step(object):
             if color in alignedTitle:
                 alignedTitle = string.replace(alignedTitle, color, '')
         spaceLen = basedefs.SPACE_LEN - len(alignedTitle)
-        print "%s..."%(self.getTitle()),
+        sys.stdout.write("%s..." % self.getTitle())
         sys.stdout.flush()
         for function in self.getFunctions():
             try:

@@ -393,7 +393,7 @@ def stopNotifier():
         notifier.stop(True)
 
 def runFunc(funcs, dispString):
-    print "%s..." % (dispString),
+    sys.stdout.write("%s..." % dispString)
     sys.stdout.flush()
     spaceLen = basedefs.SPACE_LEN - len(dispString)
     try:

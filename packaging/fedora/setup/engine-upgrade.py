@@ -583,7 +583,7 @@ def runPost():
     logging.debug("Post script completed successfully")
 
 def runFunc(funcList, dispString):
-    print "%s..."%(dispString),
+    sys.stdout.write("%s..." % dispString)
     sys.stdout.flush()
     spaceLen = basedefs.SPACE_LEN - len(dispString)
     try:
