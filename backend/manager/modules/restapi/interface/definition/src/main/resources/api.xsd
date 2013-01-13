@@ -2142,14 +2142,18 @@
   <xs:element name="reported_devices" type="ReportedDevices"/>
 
   <xs:complexType name="ReportedDevices">
-    <xs:sequence>
-      <xs:annotation>
-        <xs:appinfo>
-          <jaxb:property name="ReportedDevices"/>
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="ReportedDevices"/>
             </xs:appinfo>
-        </xs:annotation>
-      <xs:element ref="device" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
+          </xs:annotation>
+          <xs:element ref="device" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="device" type="Device"/>
