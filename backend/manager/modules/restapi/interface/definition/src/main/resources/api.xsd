@@ -2151,15 +2151,15 @@
                 <jaxb:property name="ReportedDevices"/>
             </xs:appinfo>
           </xs:annotation>
-          <xs:element ref="device" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="reported_device" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="device" type="Device"/>
+  <xs:element name="reported_device" type="ReportedDevice"/>
 
-  <xs:complexType name="Device">
+  <xs:complexType name="ReportedDevice">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>

@@ -7,7 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.VmReportedDeviceResource;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmReportedDevicesResource extends AbstractBackendCollectionResource<Device, VmGuestAgentInterface> implements VmReportedDevicesResource {
+public class BackendVmReportedDevicesResource extends AbstractBackendCollectionResource<ReportedDevice, VmGuestAgentInterface> implements VmReportedDevicesResource {
 
     private Guid vmId;
 
@@ -27,12 +27,12 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     public BackendVmReportedDevicesResource(Guid vmId) {
-        super(Device.class, VmGuestAgentInterface.class);
+        super(ReportedDevice.class, VmGuestAgentInterface.class);
         this.vmId = vmId;
     }
 
     @Override
-    protected Device addParents(Device model) {
+    protected ReportedDevice addParents(ReportedDevice model) {
         model.setVm(new VM());
         model.getVm().setId(vmId.toString());
         return model;
@@ -43,7 +43,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     public ReportedDevices list() {
         ReportedDevices model = new ReportedDevices();
         for (VmGuestAgentInterface device : getCollection()) {
-            model.getReportedDevices().add(addLinks(ReportedDeviceMapper.map(device, new Device())));
+            model.getReportedDevices().add(addLinks(ReportedDeviceMapper.map(device, new ReportedDevice())));
         }
         return model;
     }
@@ -63,12 +63,12 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
         return getBackendCollection(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(asGuid(vmId)));
     }
 
-    public Device lookupReportedDevice(Guid deviceId) {
+    public ReportedDevice lookupReportedDevice(Guid deviceId) {
         VmGuestAgentInterface device = getReportedDeviceByDeviceId(deviceId);
         if (device == null) {
             return notFound();
         }
-        return addLinks(ReportedDeviceMapper.map(device, new Device()));
+        return addLinks(ReportedDeviceMapper.map(device, new ReportedDevice()));
     }
 
     private VmGuestAgentInterface getReportedDeviceByDeviceId(Guid deviceId) {
@@ -81,7 +81,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     @Override
-    protected Device doPopulate(Device model, VmGuestAgentInterface entity) {
+    protected ReportedDevice doPopulate(ReportedDevice model, VmGuestAgentInterface entity) {
         return model;
     }
 }

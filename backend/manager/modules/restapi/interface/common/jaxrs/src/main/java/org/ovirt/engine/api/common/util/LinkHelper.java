@@ -33,7 +33,7 @@ import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DetailedLink;
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
@@ -192,7 +192,7 @@ public class LinkHelper {
         TYPES.put(CdRom.class, map);
 
         map = new ParentToCollectionMap(VmReportedDeviceResource.class, VmReportedDevicesResource.class, VM.class);
-        TYPES.put(Device.class, map);
+        TYPES.put(ReportedDevice.class, map);
 
         map = new ParentToCollectionMap(ClusterResource.class, ClustersResource.class);
         TYPES.put(Cluster.class, map);

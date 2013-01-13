@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollectionResourceTest<Device, VmGuestAgentInterface, BackendVmReportedDevicesResource> {
+public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollectionResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDevicesResource> {
 
     protected final static Guid PARENT_ID = GUIDS[1];
     protected static final String[] ADDRESSES = { "10.11.12.13", "13.12.11.10", "10.01.10.01" };
@@ -22,19 +22,19 @@ public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollect
     }
 
     @Override
-    protected List<Device> getCollection() {
+    protected List<ReportedDevice> getCollection() {
         return collection.list().getReportedDevices();
     }
 
     @Override
-    protected void verifyModel(Device model, int index) {
+    protected void verifyModel(ReportedDevice model, int index) {
         assertEquals(NAMES[index], model.getName());
         assertEquals(PARENT_ID.toString(), model.getVm().getId());
         verifyIps(model);
         verifyLinks(model);
     }
 
-    private void verifyIps(Device device) {
+    private void verifyIps(ReportedDevice device) {
         List<IP> ips = device.getIps().getIPs();
         assertEquals(ADDRESSES.length, ips.size());
         for (int i = 0; i < ADDRESSES.length; i++) {

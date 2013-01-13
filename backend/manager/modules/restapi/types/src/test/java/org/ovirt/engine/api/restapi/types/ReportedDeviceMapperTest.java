@@ -1,18 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 
-public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Device, VmGuestAgentInterface, VmGuestAgentInterface> {
+public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<ReportedDevice, VmGuestAgentInterface, VmGuestAgentInterface> {
 
     public ReportedDeviceMapperTest() {
-        super(Device.class, VmGuestAgentInterface.class, VmGuestAgentInterface.class);
+        super(ReportedDevice.class, VmGuestAgentInterface.class, VmGuestAgentInterface.class);
     }
 
     @Override
-    protected Device postPopulate(Device model) {
+    protected ReportedDevice postPopulate(ReportedDevice model) {
         model.setType(MappingTestHelper.shuffle(ReportedDeviceType.class).value());
         for (IP ip : model.getIps().getIPs()) {
             ip.setVersion(MappingTestHelper.shuffle(IpVersion.class).value());
@@ -23,7 +23,7 @@ public class ReportedDeviceMapperTest extends AbstractInvertibleMappingTest<Devi
     }
 
     @Override
-    protected void verify(Device model, Device transform) {
+    protected void verify(ReportedDevice model, ReportedDevice transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
         assertNotNull(transform.getVm());

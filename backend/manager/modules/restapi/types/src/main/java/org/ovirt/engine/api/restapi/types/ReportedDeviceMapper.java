@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.MAC;
@@ -15,9 +15,9 @@ import org.ovirt.engine.core.compat.NGuid;
 
 public class ReportedDeviceMapper {
 
-    @Mapping(from = VmGuestAgentInterface.class, to = Device.class)
-    public static Device map(VmGuestAgentInterface entity, Device model) {
-        model = model == null ? new Device() : model;
+    @Mapping(from = VmGuestAgentInterface.class, to = ReportedDevice.class)
+    public static ReportedDevice map(VmGuestAgentInterface entity, ReportedDevice model) {
+        model = model == null ? new ReportedDevice() : model;
 
         if (entity.getVmId() != null) {
             model.setVm(new VM());
@@ -36,8 +36,8 @@ public class ReportedDeviceMapper {
         return model;
     }
 
-    @Mapping(from = Device.class, to = VmGuestAgentInterface.class)
-    public static VmGuestAgentInterface map(Device model, VmGuestAgentInterface template) {
+    @Mapping(from = ReportedDevice.class, to = VmGuestAgentInterface.class)
+    public static VmGuestAgentInterface map(ReportedDevice model, VmGuestAgentInterface template) {
         VmGuestAgentInterface entity = template != null ? template : new VmGuestAgentInterface();
         if (model.isSetVm() && model.getVm().isSetId()) {
             entity.setVmId(new Guid(model.getVm().getId()));
@@ -80,7 +80,7 @@ public class ReportedDeviceMapper {
         return null;
     }
 
-    private static void mapIps(VmGuestAgentInterface vmGuestAgentInterface, Device model) {
+    private static void mapIps(VmGuestAgentInterface vmGuestAgentInterface, ReportedDevice model) {
         List<String> ipv4 = vmGuestAgentInterface.getIpv4Addresses();
         List<String> ipv6 = vmGuestAgentInterface.getIpv6Addresses();
 

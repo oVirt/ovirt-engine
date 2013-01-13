@@ -11,9 +11,9 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.LinkHelper;
-import org.ovirt.engine.api.model.Device;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.NIC;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.ReportedDevices;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
@@ -145,7 +145,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     void addReportedDevices(NIC model, VmNetworkInterface entity) {
-        List<Device> devices = getDevices(entity.getVmId().getValue(), entity.getMacAddress());
+        List<ReportedDevice> devices = getDevices(entity.getVmId().getValue(), entity.getMacAddress());
         if (!devices.isEmpty()) {
             ReportedDevices reportedDevices = new ReportedDevices();
             reportedDevices.getReportedDevices().addAll(devices);
@@ -153,11 +153,11 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
         }
     }
 
-    public List<Device> getDevices(Guid vmId, String mac) {
-        List<Device> devices = new ArrayList<Device>();
+    public List<ReportedDevice> getDevices(Guid vmId, String mac) {
+        List<ReportedDevice> devices = new ArrayList<ReportedDevice>();
         for (VmGuestAgentInterface iface : getDevicesCollection(vmId)) {
             if (StringUtils.equals(iface.getMacAddress(), mac)) {
-                devices.add(LinkHelper.addLinks(getUriInfo(), ReportedDeviceMapper.map(iface, new Device())));
+                devices.add(LinkHelper.addLinks(getUriInfo(), ReportedDeviceMapper.map(iface, new ReportedDevice())));
             }
         }
         return devices;

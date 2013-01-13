@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.api.model.Device;
+import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResourceTest<Device, VmGuestAgentInterface, BackendVmReportedDeviceResource> {
+public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDeviceResource> {
 
     protected static final Guid DEVICE_ID = new Guid("7365646e-6131-302e-3131-2e31322e3133");
     protected static final String ADDRESS = "10.11.12.13";
@@ -26,6 +26,7 @@ public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResou
         return new BackendVmReportedDevicesResource(PARENT_ID);
     }
 
+    @Override
     protected void init() {
         super.init();
         initResource(resource.getParent());
@@ -66,7 +67,7 @@ public class BackendVmReportedDeviceResourceTest extends AbstractBackendSubResou
         setUpEntityQueryExpectations(1);
         control.replay();
 
-        Device device = resource.get();
+        ReportedDevice device = resource.get();
         assertEquals(DEVICE_ID.toString(), device.getId());
         verifyLinks(device);
     }
