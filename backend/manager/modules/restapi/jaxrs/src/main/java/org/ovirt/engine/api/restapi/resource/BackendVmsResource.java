@@ -363,7 +363,7 @@ public class BackendVmsResource extends
         boolean forceRemove = action != null && action.isSetForce() ? action.isForce() : false;
         RemoveVmParameters params = new RemoveVmParameters(asGuid(id), forceRemove);
         // If detach only is set we do not remove the VM disks
-        if (action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDetachOnly()) {
+        if (action != null && action.isSetVm() && action.getVm().isSetDisks() && action.getVm().getDisks().isSetDetachOnly()) {
             params.setRemoveDisks(false);
         }
         return performAction(VdcActionType.RemoveVm, params);
