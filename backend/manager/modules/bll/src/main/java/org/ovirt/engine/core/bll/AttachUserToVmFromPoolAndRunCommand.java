@@ -183,9 +183,7 @@ VmPoolUserCommandBase<T> {
             ctx.setMonitored(true);
             ctx.setShouldEndJob(true);
         } catch (RuntimeException e) {
-            log.errorFormat("Error when creating executing context for running stateless VM. Error is: {0} ",
-                    e.getMessage());
-            log.debug("", e);
+            log.error("Error when creating executing context for running stateless VM", e);
         }
         return ctx;
     }

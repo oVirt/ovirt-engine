@@ -21,7 +21,6 @@ public class PasswordValueHelper implements ValueHelper {
     private static String keyStorePass;
     private static final Logger log = Logger.getLogger(PasswordValueHelper.class);
     public static final String INTERACTIVE_MODE = "Interactive";
-    public static final String ADMIN_PASS_FILE = "admin-pass-file";
     private EngineConfigCLIParser parser;
 
     static {
@@ -67,7 +66,7 @@ public class PasswordValueHelper implements ValueHelper {
                 returnedValue = "Set";
             } catch (Exception e) {
                 String msg = "Failed to decrypt the current value";
-                Logger.getLogger(EngineConfig.class).debug(msg, e);
+                log.error(msg, e);
                 throw new GeneralSecurityException(msg);
             }
         }
@@ -94,7 +93,7 @@ public class PasswordValueHelper implements ValueHelper {
             returnedValue = encrypt(password);
         } catch (Throwable e) {
             String msg = "Failed to encrypt the current value";
-            Logger.getLogger(EngineConfig.class).debug(msg, e);
+            log.error(msg, e);
             throw new GeneralSecurityException(msg);
         }
 

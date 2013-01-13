@@ -413,7 +413,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             } catch (RuntimeException ex) {
                 log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getVmName(),
                         vm.getmigrating_to_vds(), ex.getMessage());
-                // intentionally ingnored
+                // intentionally ignored
             }
         }
     }

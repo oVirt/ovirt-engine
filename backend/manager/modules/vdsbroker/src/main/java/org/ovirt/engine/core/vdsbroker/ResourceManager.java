@@ -334,10 +334,10 @@ public class ResourceManager {
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
-                log.debug("CreateCommand failed", e.getCause());
+                log.error("CreateCommand failed", e.getCause());
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
-            log.debug("CreateCommand failed", e);
+            log.error("CreateCommand failed", e);
         }
         return null;
     }
@@ -356,10 +356,10 @@ public class ResourceManager {
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
-                log.debug("CreateCommand failed", e.getCause());
+                log.error("CreateFutureCommand failed", e.getCause());
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
-            log.debug("CreateCommand failed", e);
+            log.error("CreateFutureCommand failed", e);
         }
         return null;
 

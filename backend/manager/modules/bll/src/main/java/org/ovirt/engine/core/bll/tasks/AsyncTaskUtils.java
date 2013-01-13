@@ -29,7 +29,7 @@ public class AsyncTaskUtils {
 
     /**
      * Saves async task in DB
-     * @param dbAsyncTask
+     * @param asyncTask
      *            async task entity to be saved in DB
      */
     public static void saveAsyncTaskInDB(SPMAsyncTask asyncTask) {
@@ -39,7 +39,7 @@ public class AsyncTaskUtils {
 
     /**
      * Updates existing task in DB
-     * @param dbAsyncTask async task entity to be updated in DB
+     * @param asyncTask async task entity to be updated in DB
      */
     public static void updateAsyncTaskInDB(SPMAsyncTask asyncTask) {
         DbFacade.getInstance().getAsyncTaskDao().update(asyncTask.getParameters().getDbAsyncTask());

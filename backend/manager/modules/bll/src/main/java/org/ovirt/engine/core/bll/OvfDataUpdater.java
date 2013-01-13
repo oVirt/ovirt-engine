@@ -109,10 +109,7 @@ public class OvfDataUpdater {
                         pool.getname());
             } catch (Exception ex) {
                 addAuditLogError(pool.getname());
-                log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}, the exception is {1}",
-                        pool.getname(),
-                        ex.getMessage());
-                log.debug(ex.getStackTrace());
+                log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}.", pool.getname(), ex);
             }
         }
         proccessedIdsInfo = null;

@@ -266,7 +266,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         } catch (RuntimeException e) {
             // Set the try again of task to false, to prevent log spam and audit log spam.
             getReturnValue().setEndActionTryAgain(false);
-            log.errorFormat("Encounter a problem removing template from DB, Setting the action, not to try again.");
+            log.error("Encountered a problem removing template from DB, setting the action not to retry.");
         }
     }
 
