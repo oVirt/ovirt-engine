@@ -83,18 +83,16 @@ public class DbUserCacheManager {
      *
      * @param dbUser
      *            DB user
-     * @param adUser
+     * @param ldapUser
      *            LDAP user
      * @param updatedUsers
      *            list of changed users.
      */
-    private void updateDBUserFromADUser(DbUser dbUser, LdapUser adUser, HashSet<Guid> updatedUsers) {
+    private void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
         boolean succeded = false;
-        // AdUser adUser =
-        // LdapFactory.Instance.GetAdUserByUserIdAndDomain(dbUser.user_id,
-        // dbUser.domain);
-        if ((adUser == null) || (adUser.getUserId().equals(Guid.Empty))
-                || (!adUser.getUserId().equals(dbUser.getuser_id()))) {
+
+        if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
+                || (!ldapUser.getUserId().equals(dbUser.getuser_id()))) {
             if (dbUser.getstatus() != 0) {
                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                         dbUser.getname());
@@ -108,41 +106,41 @@ public class DbUserCacheManager {
                 dbUser.setstatus(1);
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getname(), adUser.getName())) {
-                dbUser.setname(adUser.getName());
+            if (!StringUtils.equals(dbUser.getname(), ldapUser.getName())) {
+                dbUser.setname(ldapUser.getName());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getsurname(), adUser.getSurName())) {
-                dbUser.setsurname(adUser.getSurName());
+            if (!StringUtils.equals(dbUser.getsurname(), ldapUser.getSurName())) {
+                dbUser.setsurname(ldapUser.getSurName());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getdomain(), adUser.getDomainControler())) {
-                dbUser.setdomain(adUser.getDomainControler());
+            if (!StringUtils.equals(dbUser.getdomain(), ldapUser.getDomainControler())) {
+                dbUser.setdomain(ldapUser.getDomainControler());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getusername(), adUser.getUserName())) {
-                dbUser.setusername(adUser.getUserName());
+            if (!StringUtils.equals(dbUser.getusername(), ldapUser.getUserName())) {
+                dbUser.setusername(ldapUser.getUserName());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getgroups(), adUser.getGroup())) {
-                dbUser.setgroups(adUser.getGroup());
+            if (!StringUtils.equals(dbUser.getgroups(), ldapUser.getGroup())) {
+                dbUser.setgroups(ldapUser.getGroup());
                 succeded = true;
                 updatedUsers.add(dbUser.getuser_id());
             }
-            if (!StringUtils.equals(dbUser.getdepartment(), adUser.getDepartment())) {
-                dbUser.setdepartment(adUser.getDepartment());
+            if (!StringUtils.equals(dbUser.getdepartment(), ldapUser.getDepartment())) {
+                dbUser.setdepartment(ldapUser.getDepartment());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getrole(), adUser.getTitle())) {
-                dbUser.setrole(adUser.getTitle());
+            if (!StringUtils.equals(dbUser.getrole(), ldapUser.getTitle())) {
+                dbUser.setrole(ldapUser.getTitle());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getemail(), adUser.getEmail())) {
-                dbUser.setemail(adUser.getEmail());
+            if (!StringUtils.equals(dbUser.getemail(), ldapUser.getEmail())) {
+                dbUser.setemail(ldapUser.getEmail());
                 succeded = true;
             }
-            if (!StringUtils.equals(dbUser.getGroupIds(), adUser.getGroupIds())) {
-                dbUser.setGroupIds(adUser.getGroupIds());
+            if (!StringUtils.equals(dbUser.getGroupIds(), ldapUser.getGroupIds())) {
+                dbUser.setGroupIds(ldapUser.getGroupIds());
                 succeded = true;
             }
             if (succeded) {
