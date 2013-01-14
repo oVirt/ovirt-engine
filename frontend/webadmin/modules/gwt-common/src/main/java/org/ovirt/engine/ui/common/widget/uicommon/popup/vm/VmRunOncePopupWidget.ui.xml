@@ -29,6 +29,10 @@
 			width: 100%;
 		}
 
+        .runHostPanel {
+
+        }
+
 		.attachImageSelectBoxLabel {
 			display: none;
 		}
@@ -43,7 +47,7 @@
 		.attachImageSelectbox {
 		}
 
-		.attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel {
+		.attachImagePanel,.linuxBootOptionsPanel,.initialRunPanel,.hostPanel {
 			margin-top: 5px;
 			width: 98%;
 		}
@@ -110,6 +114,19 @@
 		.panelStyle a[class=header] {
 			font-weight: bold;
 		}
+
+       .sectionLabel {
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .radioButton {
+        }
+
+        .radioButtonSpecificHost {
+            margin-left: 5px;
+        }
 	</ui:style>
 
 	<g:FlowPanel>
@@ -163,6 +180,20 @@
 				<e:EntityModelTextBoxEditor ui:field="sysPrepPasswordEditor" addStyleNames="{style.sysprepOption}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
+
+        <g:DisclosurePanel ui:field="hostPanel" label="{constants.hostVmPopup}" addStyleNames="{style.panelStyle}">
+            <g:FlowPanel>
+                <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
+                <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
+                    <e:EntityModelRadioButtonEditor width="150px" ui:field="isAutoAssignEditor" addStyleNames="{style.radioButton}" />
+                    <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
+                        <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
+                        <g:Label text="{constants.specificVmPopup}" />
+                        <e:ListModelListBoxEditor ui:field="defaultHostEditor" />
+                    </g:HorizontalPanel>
+                </g:VerticalPanel>
+            </g:FlowPanel>
+        </g:DisclosurePanel>
 
 		<g:DisclosurePanel ui:field="displayProtocolPanel" label="{constants.runOncePopupDisplayProtocolLabel}" addStyleNames="{style.panelStyle}">
 			<g:VerticalPanel>

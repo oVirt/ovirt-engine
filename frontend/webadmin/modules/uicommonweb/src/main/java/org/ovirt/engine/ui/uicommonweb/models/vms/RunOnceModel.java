@@ -335,6 +335,40 @@ public class RunOnceModel extends Model
         }
     }
 
+    private boolean isHostTabVisible = false;
+
+    public boolean getIsHostTabVisible() {
+        return isHostTabVisible;
+    }
+
+    public void setIsHostTabVisible(boolean value) {
+        if (isHostTabVisible != value) {
+            isHostTabVisible = value;
+            OnPropertyChanged(new PropertyChangedEventArgs("IsHostTabVisible")); //$NON-NLS-1$
+        }
+    }
+
+    // host tab
+    private ListModel defaultHost;
+
+    public ListModel getDefaultHost() {
+        return defaultHost;
+    }
+
+    private void setDefaultHost(ListModel value) {
+        this.defaultHost = value;
+    }
+
+    private EntityModel isAutoAssign;
+
+    public EntityModel getIsAutoAssign() {
+        return isAutoAssign;
+    }
+
+    public void setIsAutoAssign(EntityModel value) {
+        this.isAutoAssign = value;
+    }
+
     // The "sysprep" option was moved from a standalone check box to a
     // pseudo floppy disk image. In order not to change the back-end
     // interface, the Reinitialize variable was changed to a read-only
@@ -422,6 +456,15 @@ public class RunOnceModel extends Model
         getDisplayConsole_Vnc_IsSelected().getEntityChangedEvent().addListener(this);
 
         setIsLinuxOptionsAvailable(new EntityModel());
+
+        // host tab
+        setDefaultHost(new ListModel());
+        getDefaultHost().getSelectedItemChangedEvent().addListener(this);
+
+        setIsAutoAssign(new EntityModel());
+        getIsAutoAssign().getEntityChangedEvent().addListener(this);
+
+        setIsHostTabVisible(true);
     }
 
     @Override
@@ -466,6 +509,10 @@ public class RunOnceModel extends Model
             {
                 getDisplayConsole_Vnc_IsSelected().setEntity(false);
             }
+            else if (sender == getIsAutoAssign())
+            {
+                IsAutoAssign_EntityChanged(sender, args);
+            }
         }
     }
 
@@ -505,6 +552,12 @@ public class RunOnceModel extends Model
     private void SysPrepDomainName_SelectedItemChanged()
     {
         getSysPrepSelectedDomainName().setEntity(getSysPrepDomainName().getSelectedItem());
+    }
+
+    private void IsAutoAssign_EntityChanged(Object sender, EventArgs args) {
+        if ((Boolean) getIsAutoAssign().getEntity() == false) {
+            getDefaultHost().setIsChangable(true);
+        }
     }
 
     // Sysprep section is displayed only when VM's OS-type is 'Windows'
@@ -585,7 +638,18 @@ public class RunOnceModel extends Model
             getKernel_path().getInvalidityReasons().add(msg);
         }
 
+        if (getIsAutoAssign().getEntity() != null && (Boolean) getIsAutoAssign().getEntity() == false)
+        {
+            getDefaultHost().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        }
+        else
+        {
+            getDefaultHost().setIsValid(true);
+        }
+
         return getIsoImage().getIsValid() && getFloppyImage().getIsValid() && getKernel_path().getIsValid()
+                && getDefaultHost().getIsValid()
                 && customPropertyValidation;
     }
+
 }

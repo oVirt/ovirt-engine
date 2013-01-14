@@ -1975,7 +1975,7 @@ public class UnitVmModel extends Model {
             }
         }
 
-        if ((Boolean) getIsAutoAssign().getEntity() == false) {
+        if (getIsAutoAssign().getEntity() != null && ((Boolean) getIsAutoAssign().getEntity()) == false) {
             getDefaultHost().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         } else {
             getDefaultHost().setIsValid(true);

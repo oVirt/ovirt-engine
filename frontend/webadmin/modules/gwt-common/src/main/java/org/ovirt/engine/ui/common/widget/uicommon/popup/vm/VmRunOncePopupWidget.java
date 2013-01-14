@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -14,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
@@ -26,6 +29,9 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -37,6 +43,7 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
@@ -75,6 +82,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @UiField
     @WithElementId
     DisclosurePanel initialRunPanel;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel hostPanel;
 
     @UiField
     @WithElementId
@@ -192,6 +203,21 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("bootSequence")
     ListBox bootSequenceBox;
 
+    @UiField(provided = true)
+    @Path(value = "isAutoAssign.entity")
+    @WithElementId("isAutoAssign")
+    public EntityModelRadioButtonEditor isAutoAssignEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId("specificHost")
+    public RadioButton specificHost;
+
+    @UiField(provided = true)
+    @Path(value = "defaultHost.selectedItem")
+    @WithElementId("defaultHost")
+    public ListModelListBoxEditor<Object> defaultHostEditor;
+
     private BootSequenceModel bootSequenceModel;
 
     private CommonApplicationResources resources;
@@ -243,6 +269,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         // Display Protocol
         displayConsoleVncEditor.setLabel(constants.runOncePopupDisplayConsoleVncLabel());
         displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
+
+        // Host Tab
+        isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
     }
 
     void initCheckBoxEditors() {
@@ -256,6 +285,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void initRadioButtonEditors() {
         displayConsoleVncEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         displayConsoleSpiceEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+
+        // host tab
+        specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
+        isAutoAssignEditor = new EntityModelRadioButtonEditor("runVmOnHostGroup"); //$NON-NLS-1$
     }
 
     void initComboBox() {
@@ -263,6 +296,13 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         sysPrepDomainNameTextBoxEditor = new EntityModelTextBoxEditor();
 
         sysPrepDomainNameComboBox = new ComboBox(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
+
+        defaultHostEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((VDS) object).getvds_name();
+            }
+        });
     }
 
     void initBootSequenceBox() {
@@ -281,6 +321,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void addStyles() {
         linuxBootOptionsPanel.setVisible(false);
         initialRunPanel.setVisible(true);
+        hostPanel.setVisible(true);
         attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         floppyImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
@@ -294,7 +335,6 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         Driver.driver.edit(object);
 
         object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 customPropertiesSheetEditor.edit(object.getCustomPropertySheet());
@@ -308,6 +348,52 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean toShow = (Boolean) isLinuxOptionsAvailable.getEntity();
                 linuxBootOptionsPanel.setVisible(toShow);
+            }
+        });
+
+        // Update Host combo
+        object.getIsAutoAssign().getPropertyChangedEvent()
+                .addListener(new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        boolean isAutoAssign = (Boolean) object.getIsAutoAssign().getEntity();
+                        defaultHostEditor.setEnabled(!isAutoAssign);
+                        // only this is not bind to the model, so needs to
+                        // listen to the change explicitly
+                        specificHost.setValue(!isAutoAssign);
+                    }
+        });
+
+        specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                defaultHostEditor.setEnabled(specificHost.getValue());
+                ValueChangeEvent.fire(isAutoAssignEditor.asRadioButton(), false);
+            }
+        });
+
+        isAutoAssignEditor.addDomHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                defaultHostEditor.setEnabled(false);
+            }
+        }, ClickEvent.getType());
+
+        object.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (!isAutoAssignEditor.asRadioButton().getValue())
+                    specificHost.setValue(true, true);
+            }
+        });
+
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
+                    hostPanel.setVisible(object.getIsHostTabVisible());
+                }
             }
         });
 

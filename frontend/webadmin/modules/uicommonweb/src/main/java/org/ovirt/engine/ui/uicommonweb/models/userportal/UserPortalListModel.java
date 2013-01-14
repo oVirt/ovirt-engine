@@ -720,6 +720,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         model.getRunAsStateless().setEntity(vm.isStateless());
         model.getRunAndPause().setEntity(false);
         model.setHwAcceleration(true);
+        // disable Host tab
+        model.setIsHostTabVisible(false);
 
         fillIsoList(vm);
         fillFloppyImages(vm);

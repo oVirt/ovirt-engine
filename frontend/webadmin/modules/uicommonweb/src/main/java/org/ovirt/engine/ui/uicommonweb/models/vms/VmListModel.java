@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -92,7 +93,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext
 {
-
     private UICommand privateNewServerCommand;
 
     public UICommand getNewServerCommand()
@@ -1350,6 +1350,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         RunOnceUpdateImages(vm);
         RunOnceUpdateDomains();
         RunOnceUpdateBootSequence(vm);
+        RunOnceLoadHosts(vm);
 
         UICommand tempVar = new UICommand("OnRunOnce", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1359,6 +1360,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
+
+        model.getIsAutoAssign().setEntity(true);
     }
 
     private void RunOnceUpdateDisplayProtocols(VM vm)
@@ -1509,6 +1512,37 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     }
 
+    /**
+     * Load active hosts bound to active cluster.
+     *
+     */
+    private void RunOnceLoadHosts(VM vm) {
+        RunOnceModel model = (RunOnceModel) getWindow();
+
+        // append just active hosts
+        AsyncDataProvider.GetHostListByCluster(new AsyncQuery(model,
+                new INewAsyncCallback() {
+                    @Override
+                    public void OnSuccess(Object target, Object returnValue) {
+                        final RunOnceModel model = (RunOnceModel) target;
+                        final List<VDS> hosts = (ArrayList<VDS>) returnValue;
+                        final List<VDS> activeHosts = new ArrayList<VDS>();
+                        for(VDS host : hosts) {
+                            if(VDSStatus.Up.equals(host.getstatus())) {
+                                activeHosts.add(host);
+                            }
+                        }
+
+                        model.getDefaultHost().setItems(activeHosts);
+
+                        // hide host tab when no active host is available
+                        if(activeHosts.isEmpty()) {
+                            model.setIsHostTabVisible(false);
+                        }
+                    }
+                }), vm.getVdsGroupName());
+    }
+
     private void OnRunOnce()
     {
         VM vm = (VM) getSelectedItem();
@@ -1539,6 +1573,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setRunAsStateless((Boolean) model.getRunAsStateless().getEntity());
         tempVar.setReinitialize(model.getReinitialize());
         tempVar.setCustomProperties(model.getCustomPropertySheet().getEntity());
+
+        // set destination host if specified
+        VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
+
+        if ((Boolean) model.getIsAutoAssign().getEntity()) {
+            tempVar.setDestinationVdsId(null);
+        } else {
+            tempVar.setDestinationVdsId(defaultHost != null ? defaultHost.getId() : null);
+        }
+
         RunVmOnceParams param = tempVar;
 
         // kernel params
@@ -2888,4 +2932,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
     }
+
+
 }
