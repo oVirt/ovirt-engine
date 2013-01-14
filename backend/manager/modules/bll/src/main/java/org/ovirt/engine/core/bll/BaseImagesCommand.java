@@ -24,6 +24,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Base class for all image handling commands
@@ -330,6 +332,18 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void lockImage() {
         setImageStatus(ImageStatus.LOCKED);
+    }
+
+    protected void lockImageWithCompensation() {
+        final DiskImage diskImage = getRelevantDiskImage();
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), diskImage.getimageStatus());
+                getCompensationContext().stateChanged();
+                setImageStatus(ImageStatus.LOCKED);
+                return null;
+            }});
     }
 
     protected void unLockImage() {

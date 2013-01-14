@@ -12,12 +12,12 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @SuppressWarnings("serial")
 @InternalCommandAttribute
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
     private EngineLock snapshotsEngineLock;
 
@@ -46,6 +46,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         initImage();
         initStoragePoolId();
         initStorageDomainId();
+    }
+
+    protected RemoveImageCommand(Guid commandId) {
+        super(commandId);
     }
 
     protected void initImage() {
@@ -280,24 +284,20 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         boolean isShouldBeLocked = getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
                 && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport;
         if (isShouldBeLocked) {
-            lockImage();
+            // the image status should be set to ILLEGAL, so that in case compensation runs the image status will
+            // be revert to be ILLEGAL, as we can't tell whether the task started on vdsm side or not.
+            getDiskImage().setimageStatus(ImageStatus.ILLEGAL);
+            lockImageWithCompensation();
         }
         // Releasing the lock for cases it was set by the parent command. The lock can be released because the image
         // status was already changed to lock.
         freeLock();
-        try {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
-                            getStorageDomainId().getValue(), getDiskImage().getId()
-                                    .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
-                                    .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
-            return returnValue;
-        } catch (VdcBLLException e) {
-            if (isShouldBeLocked) {
-                unLockImage();
-            }
-            throw e;
-        }
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+                new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
+                        getStorageDomainId().getValue(), getDiskImage().getId()
+                                .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
+                                .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
+        return returnValue;
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
