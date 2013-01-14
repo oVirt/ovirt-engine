@@ -120,12 +120,12 @@ class Config(configobj.ConfigObj):
 
 def loadConfig():
     # Locate the defaults file:
-    engineDefaultsFile = os.getenv("ENGINE_DEFAULTS", "/usr/share/ovirt-engine/conf/engine.conf.defaults")
+    engineDefaultsFile = os.getenv("ENGINE_DEFAULTS", "@ENGINE_DEFAULTS@")
     if not os.path.exists(engineDefaultsFile):
         raise Exception("The engine configuration defaults file \"%s\" doesn't exist." % engineDefaultsFile)
 
     # Locate the configuration file:
-    engineConfigFile = os.getenv("ENGINE_VARS", "/etc/sysconfig/ovirt-engine")
+    engineConfigFile = os.getenv("ENGINE_VARS", "@ENGINE_VARS@")
     if not os.path.exists(engineConfigFile):
         raise Exception("The engine configuration file \"%s\" doesn't exist." % engineConfigFile)
 

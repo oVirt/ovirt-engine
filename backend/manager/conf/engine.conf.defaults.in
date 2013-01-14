@@ -19,14 +19,14 @@ JBOSS_HOME=/usr/share/jboss-as
 #
 # Important directories used by the engine:
 #
-ENGINE_ETC=/etc/ovirt-engine
-ENGINE_PKI=/etc/pki/ovirt-engine
-ENGINE_LOG=/var/log/ovirt-engine
-ENGINE_TMP=/var/tmp/ovirt-engine
-ENGINE_USR=/usr/share/ovirt-engine
-ENGINE_VAR=/var/lib/ovirt-engine
-ENGINE_LOCK=/var/lock/ovirt-engine
-ENGINE_CACHE=/var/cache/ovirt-engine
+ENGINE_ETC=@ENGINE_ETC@
+ENGINE_PKI=@ENGINE_PKI@
+ENGINE_LOG=@ENGINE_LOG@
+ENGINE_TMP=@ENGINE_TMP@
+ENGINE_USR=@ENGINE_USR@
+ENGINE_VAR=@ENGINE_VAR@
+ENGINE_LOCK=@ENGINE_LOCK@
+ENGINE_CACHE=@ENGINE_CACHE@
 
 #
 # Resource limits:
@@ -42,7 +42,7 @@ ENGINE_STOP_INTERVAL=1
 #
 # Location of the PID file used by the engine:
 #
-ENGINE_PID=/var/run/ovirt-engine.pid
+ENGINE_PID=@ENGINE_PID@
 
 #
 # The names of the user and group that will execute the java

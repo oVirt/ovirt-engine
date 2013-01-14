@@ -18,6 +18,7 @@
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_lock %{_localstatedir}/lock/%{engine_name}
 %global engine_cache %{_localstatedir}/cache/%{engine_name}
+%global engine_tmp %{_localstatedir}/tmp/%{engine_name}
 
 %global restapi_war %{engine_ear}/restapi.war
 %global root_war %{engine_ear}/root.war
@@ -67,6 +68,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PREFIX=%{_prefix} \\\
 	SYSCONF_DIR=%{_sysconfdir} \\\
 	BIN_DIR=%{_bindir} \\\
+	PID_DIR=%{_localstatedir}/run \\\
 	DATAROOT_DIR=%{_datadir} \\\
 	MAN_DIR=%{_mandir} \\\
 	PYTHON=%{__python} \\\
@@ -78,6 +80,10 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_EAR_DIR=%{engine_ear} \\\
 	PKG_PKI_DIR=%{engine_pki} \\\
 	PKG_JBOSS_MODULES=%{engine_jboss_modules} \\\
+	PKG_CACHE_DIR=%{engine_cache} \\\
+	PKG_LOCK_DIR=%{engine_lock} \\\
+	PKG_LOG_DIR=%{engine_log} \\\
+	PKG_TMP_DIR=%{engine_tmp} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 

@@ -30,6 +30,7 @@ PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
 ENGINE_STATE=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 BIN_DIR=$(PREFIX)/bin
+PID_DIR=$(LOCALSTATE_DIR)/run
 SYSCONF_DIR=$(PREFIX)/etc
 DATAROOT_DIR=$(PREFIX)/share
 MAN_DIR=$(DATAROOT_DIR)/man
@@ -41,6 +42,10 @@ PKG_SYSCONF_DIR=$(SYSCONF_DIR)/$(ENGINE_NAME)
 PKG_PKI_DIR=$(SYSCONF_DIR)/pki/$(ENGINE_NAME)
 PKG_EAR_DIR=$(DATA_DIR)/engine.ear
 PKG_JBOSS_MODULES=$(DATA_DIR)/modules
+PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
+PKG_LOCK_DIR=$(LOCALSTATE_DIR)/lock/$(ENGINE_NAME)
+PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
+PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
 RPMBUILD=rpmbuild
 PYTHON=python
 PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
@@ -109,7 +114,39 @@ OWN_JAR_FIXUPS = \
 	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend \
 	$(NULL)
 
-all: $(BUILD_FILE)
+# Don't use any of the bultin rules, in particular don't use the rule
+# for .sh files, as that means that we can't generate .sh files from
+# templates:
+.SUFFIXES:
+.SUFFIXES: .in
+
+# Rule to generate files from templates:
+.in:
+	sed \
+	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|" \
+	-e "s|@ENGINE_VARS@|$(SYSCONF_DIR)/sysconfig/$(ENGINE_NAME)|" \
+	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|" \
+	-e "s|@ENGINE_PKI@|$(PKG_PKI_DIR)|" \
+	-e "s|@ENGINE_LOG@|$(PKG_LOG_DIR)|" \
+	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|" \
+	-e "s|@ENGINE_USR@|$(DATA_DIR)|" \
+	-e "s|@ENGINE_VAR@|$(ENGINE_STATE)|" \
+	-e "s|@ENGINE_LOCK@|$(PKG_LOCK_DIR)|" \
+	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|" \
+	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|" \
+	$< > $@
+
+# List of files that will be generated from templates:
+GENERATED = \
+	backend/manager/conf/engine.conf.defaults \
+	backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh \
+	packaging/fedora/engine-service.py \
+	$(NULL)
+
+all: \
+	$(BUILD_FILE) \
+	$(GENERATED) \
+	$(NULL)
 
 $(BUILD_FILE):
 	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
@@ -396,4 +433,3 @@ install_service:
 
 	# Install the links:
 	ln -s $(DATA_DIR)/service/engine-service.py $(DESTDIR)$(BIN_DIR)/engine-service
-

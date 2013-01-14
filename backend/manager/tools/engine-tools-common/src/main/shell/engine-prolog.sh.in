@@ -6,7 +6,7 @@ die() {
 
 load_config() {
     # Load the defaults file:
-    ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-/usr/share/ovirt-engine/conf/engine.conf.defaults}"
+    ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-@ENGINE_DEFAULTS@}"
     if [ ! -r "${ENGINE_DEFAULTS}" ]
     then
         die "Can't load defaults file \"${ENGINE_DEFAULTS}\"."
@@ -14,7 +14,7 @@ load_config() {
     . "${ENGINE_DEFAULTS}"
 
     # Load the configuration file:
-    ENGINE_VARS="${ENGINE_VARS:-/etc/sysconfig/ovirt-engine}"
+    ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
     if [ ! -r "${ENGINE_VARS}" ]
     then
         die "Can't load configuration file \"${ENGINE_VARS}\"."
