@@ -209,7 +209,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 false,
                 false,
                 true,
-                Collections.emptyList());
+                Collections.<Disk> emptyList());
     }
 
     private double getRequestDiskSpace() {

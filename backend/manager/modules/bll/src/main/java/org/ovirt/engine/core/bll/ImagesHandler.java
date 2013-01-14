@@ -467,7 +467,7 @@ public final class ImagesHandler {
             boolean checkVmInPreview,
             boolean checkVmIsDown,
             boolean checkStorageDomain,
-            boolean checkIsValid, Collection diskImageList) {
+            boolean checkIsValid, Collection<? extends Disk> diskImageList) {
 
         boolean returnValue = true;
 
@@ -538,7 +538,7 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    private static List<DiskImage> getImages(VM vm, Collection<Disk> diskImageList) {
+    private static List<DiskImage> getImages(VM vm, Collection<? extends Disk> diskImageList) {
         if (diskImageList == null) {
             return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()), true, false);
         }
@@ -642,7 +642,7 @@ public final class ImagesHandler {
      * @param filterAllowSnapshotDisks - Indication whether to filter disks which are allowed to be snapshot.
      * @return - List filtered of disk images.
      */
-    public static List<DiskImage> filterImageDisks(Collection<Disk> listOfDisks,
+    public static List<DiskImage> filterImageDisks(Collection<? extends Disk> listOfDisks,
             boolean filterNotShareableDisks,
             boolean filterAllowSnapshotDisks) {
         List<DiskImage> diskImages = new ArrayList<DiskImage>();
