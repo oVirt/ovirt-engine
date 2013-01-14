@@ -65,7 +65,8 @@ MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
 MAVEN_OUTPUT_DIR=$(MAVEN_OUTPUT_DIR_DEFAULT)
 
 ARTIFACTS = \
-	backend bll \
+	backend \
+	bll \
 	common \
 	compat \
 	dal \
@@ -88,7 +89,8 @@ ARTIFACTS = \
 	scheduler \
 	searchbackend \
 	utils \
-	vdsbroker
+	vdsbroker \
+	$(NULL)
 
 # avoid duplicate jars, remove 1st component
 # link to 2nd component
@@ -104,7 +106,8 @@ OWN_JAR_FIXUPS = \
 	$(PKG_EAR_DIR)/lib/engine-tools-common,engine-tools-common \
 	$(PKG_EAR_DIR)/lib/engine-utils,utils \
 	$(PKG_EAR_DIR)/lib/engine-vdsbroker,vdsbroker \
-	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend
+	$(PKG_EAR_DIR)/lib/searchbackend,searchbackend \
+	$(NULL)
 
 all: $(BUILD_FILE)
 
@@ -132,7 +135,8 @@ test:
 
 install: \
 	all \
-	install_without_maven
+	install_without_maven \
+	$(NULL)
 
 install_without_maven: \
 	create_dirs \
@@ -146,7 +150,8 @@ install_without_maven: \
 	install_sec \
 	install_aio_plugin \
 	install_jboss_modules \
-	install_service
+	install_service \
+	$(NULL)
 
 tarball:
 	sed -e 's/@PACKAGE_VERSION@/$(RPM_VERSION)/g' \
