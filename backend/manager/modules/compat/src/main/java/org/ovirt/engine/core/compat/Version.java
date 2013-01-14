@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Version in .Net style: a.b.c.d when a: major version, b: minor version , c: major revision, d: minor revision
+ */
 public class Version implements Comparable<Version>, Serializable {
     private static final long serialVersionUID = -3938214651005908651L;
 

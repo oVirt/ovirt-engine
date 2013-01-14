@@ -55,30 +55,20 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public VM() {
-        vmStatic = new VmStatic();
-        vmDynamic = new VmDynamic();
-        vmStatistics = new VmStatistics();
-        setImages(new ArrayList<DiskImage>());
-        setInterfaces(new ArrayList<VmNetworkInterface>());
-        diskMap = new HashMap<Guid, Disk>();
-        cdPath = "";
-        floppyPath = "";
-        runAndPause = false;
-        diskSize = 0;
+        this(new VmStatic(), new VmDynamic(), new VmStatistics());
     }
 
     public VM(VmStatic vmStatic, VmDynamic vmDynamic, VmStatistics vmStatistics) {
-        diskMap = new HashMap<Guid, Disk>();
-        cdPath = "";
-        floppyPath = "";
-        runAndPause = false;
-        diskSize = 0;
-
-        this.vmStatic = (vmStatic == null) ? new VmStatic() : vmStatic;
-        this.vmDynamic = vmDynamic;
-        this.vmStatistics = vmStatistics;
-        setImages(new ArrayList<DiskImage>());
-        setInterfaces(new ArrayList<VmNetworkInterface>());
+        this.setStaticData(vmStatic);
+        this.setDynamicData(vmDynamic);
+        this.setStatisticsData(vmStatistics);
+        this.setImages(new ArrayList<DiskImage>());
+        this.setInterfaces(new ArrayList<VmNetworkInterface>());
+        this.setDiskMap(new HashMap<Guid, Disk>());
+        this.setCdPath("");
+        this.setFloppyPath("");
+        this.setRunAndPause(false);
+        this.setDiskSize(0);
     }
 
     public VM(Guid vm_guid, String vm_name, int vm_mem_size_mb, Guid vmt_guid, VmOsType vm_os, String vm_description,
@@ -99,16 +89,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
             Integer display_secure_port, Integer utc_diff, boolean is_stateless, String vds_cpu_name,
             boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
             int minAllocatedMem) {
-        vmStatic = new VmStatic();
-        vmDynamic = new VmDynamic();
-        vmStatistics = new VmStatistics();
-        setImages(new ArrayList<DiskImage>());
-        setInterfaces(new ArrayList<VmNetworkInterface>());
-        diskMap = new HashMap<Guid, Disk>();
-        cdPath = "";
-        floppyPath = "";
-        runAndPause = false;
-        diskSize = 0;
+        this();
 
         this.setId(vm_guid);
         this.setVmName(vm_name);
@@ -119,16 +100,16 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.setVmCreationDate(vm_creation_date);
         this.setVmDescription(vm_description);
         this.setVdsGroupId(vds_group_id);
-        this.vdsGroupName = vds_group_name;
-        this.vdsGroupDescription = vds_group_description;
-        this.vmtName = vmt_name;
-        this.vmtMemSizeMb = vmt_mem_size_mb;
-        this.vmtOs = vmt_os;
-        this.vmtCreationDate = vmt_creation_date;
-        this.vmtchildCount = vmt_child_count;
-        this.vmtNumOfCpus = vmt_num_of_cpus;
-        this.vmtDescription = vmt_description;
-        this.vmtTimeZone = vmt_time_zone;
+        this.setVdsGroupName(vds_group_name);
+        this.setVdsGroupDescription(vds_group_description);
+        this.setVmtName(vmt_name);
+        this.setVmtMemSizeMb(vmt_mem_size_mb);
+        this.setVmtOs(vmt_os);
+        this.setVmtCreationDate(vmt_creation_date);
+        this.setVmtChildCount(vmt_child_count);
+        this.setVmtNumOfCpus(vmt_num_of_cpus);
+        this.setVmtDescription(vmt_description);
+        this.setVmtTimeZone(vmt_time_zone);
         this.setStatus(VMStatus.forValue(status));
         this.setVmIp(vm_ip);
         this.setVmHost(vm_host);
@@ -148,7 +129,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.setMigratingToVds(migrating_to_vds);
         this.setAppList(app_list);
         this.setDisplay(display);
-        this.runOnVdsName = run_on_vds_name;
+        this.setRunOnVdsName(run_on_vds_name);
         this.setTimeZone(time_zone);
         this.setAcpiEnable(acpi_enable);
         this.setSession(SessionState.forValue(session));
@@ -1042,7 +1023,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     private Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
 
-    // even this field has no setter, it can not have the final modifier because the GWT serialization mechanizm
+    // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
     // ignores the final fields
     private String cdPath = "";
     private String floppyPath = "";
@@ -1127,12 +1108,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public void setStaticData(final VmStatic value) {
-        // TODO this null protection is here for historical reasons, it may not be needed anymore
-        if (value == null) {
-            vmStatic = new VmStatic();
-        } else {
-            vmStatic = value;
-        }
+        vmStatic = value == null ? new VmStatic() : value;
     }
 
     public VmStatistics getStatisticsData() {
@@ -1311,11 +1287,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return false;
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
     public String getVmPoolName() {
         return vmPoolName;
     }
@@ -1332,13 +1303,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmPoolId = value;
     }
 
-    /**
-     * Version in .Net style: a.b.c.d when a: major version, b: minor version , c: major revision, d: minor revision
-     * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version, received
-     * from vds in format : a.b.d there is no major revision received from vds - always 0
-     */
     private Version privateGuestAgentVersion;
 
+    /**
+     * assumption: Qumranet Agent version stored in app_list by "Qumranet Agent" name. Qumranet Agent version,
+     * received from vds in format : a.b.d there is no major revision received from vds - always 0
+     * @see {@link Version}
+     */
     public Version getGuestAgentVersion() {
         return privateGuestAgentVersion;
     }
@@ -1395,11 +1366,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return getId();
     }
 
-    /**
-     * Return true if vm has at least one Disk and one Interface
-     */
     private Boolean configured;
 
+    /**
+     * @return true if vm has at least one Disk and one Interface
+     */
     public boolean isConfigured() {
         if (configured == null) {
             configured =
