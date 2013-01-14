@@ -245,7 +245,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private boolean isTemplateInDestStorageDomain(Guid imageId, Guid sourceDomainId) {
         Guid templateId = getDiskImageById(imageId).getit_guid();
 
-        if (!ImagesHandler.BlankImageTemplateId.equals(templateId)) {
+        if (!Guid.Empty.equals(templateId)) {
             DiskImage templateImage = getDiskImageDao().get(templateId);
             if (!templateImage.getstorage_ids().contains(sourceDomainId)) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
