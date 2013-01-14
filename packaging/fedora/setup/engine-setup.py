@@ -922,7 +922,7 @@ def _configFirewall():
         # Inform user how he can configure firewall
         controller.MESSAGES.append(output_messages.INFO_IPTABLES_PORTS % (controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]))
         controller.MESSAGES.append(output_messages.INFO_IPTABLES_FILE % (basedefs.FILE_IPTABLES_EXAMPLE))
-        controller.MESSAGES.append(output_messages.INFO_FIREWALLD_FILE % (basedefs.FILE_FIREWALLD_SERVICE))
+        controller.MESSAGES.append(output_messages.INFO_FIREWALLD_INSTRUCTIONS)
 
 def _createFirewalldConfig():
     logging.debug("Creating firewalld configuration")
