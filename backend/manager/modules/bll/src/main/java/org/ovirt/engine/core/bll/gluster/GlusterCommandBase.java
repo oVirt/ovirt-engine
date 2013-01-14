@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -56,6 +59,17 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         return Collections.singletonList(new PermissionSubject(getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = new HashMap<String, String>();
+            VDSGroup vdsGroup = getVdsGroup();
+            jobProperties.put(GlusterConstants.CLUSTER, vdsGroup == null ? null : vdsGroup.getname());
+        }
+
+        return jobProperties;
     }
 
     /**

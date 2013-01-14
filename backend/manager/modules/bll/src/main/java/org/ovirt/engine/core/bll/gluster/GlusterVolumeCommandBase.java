@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 
@@ -55,5 +57,15 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
                         getParameters().getVolumeId(),
                         VdcObjectType.GlusterVolume,
                         getActionType().getActionGroup()));
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(GlusterConstants.VOLUME, getGlusterVolumeName());
+        }
+
+        return jobProperties;
     }
 }
