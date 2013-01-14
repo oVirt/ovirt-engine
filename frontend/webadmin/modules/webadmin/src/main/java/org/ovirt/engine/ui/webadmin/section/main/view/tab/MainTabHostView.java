@@ -136,10 +136,10 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             TextColumnWithTooltip<VDS> vmCountColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    return object.getvm_active() != null ? object.getvm_active().toString() : "0";//$NON-NLS-1$
+                    return String.valueOf(object.getvm_count());
                 }
             };
-            getTable().addColumn(vmCountColumn, constants.runningVms(), "80px"); //$NON-NLS-1$
+            getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
         }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
