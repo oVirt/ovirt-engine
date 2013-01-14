@@ -81,7 +81,7 @@ public class OvfDataUpdater {
     @OnTimerMethodAnnotation("ovfUpdate_timer")
     public void ovfUpdate_timer() {
         itemsCountPerUpdate = reloadConfigValue();
-        log.info("OvfDataUpdater: Attempting to update VMs/Templates Ovf.");
+        log.info("Attempting to update VMs/Templates Ovf.");
         List<storage_pool> storagePools = getStoragePoolDao().getAllByStatus(StoragePoolStatus.Up);
         for (storage_pool pool : storagePools) {
             try {

@@ -871,7 +871,7 @@ public class VdsUpdateRunTimeInfo {
             }
             throw command.getVDSReturnValue().getExceptionObject();
         } else {
-            log.errorFormat("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
+            log.error("GetCapabilitiesVDSCommand failed with no exception!");
         }
     }
 
@@ -976,7 +976,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * gets VM full information for the given list of VMs
-     * @param vmIds
+     * @param vmsToUpdate
      * @return
      */
     protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
@@ -1011,7 +1011,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void processVmDevices(XmlRpcStruct vm) {
         if (vm == null || vm.getItem(VdsProperties.vm_guid) == null) {
-            log.errorFormat("Received NULL VM or VM id when processing VM devices, abort.");
+            log.error("Received NULL VM or VM id when processing VM devices, abort.");
             return;
         }
         Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
@@ -1324,7 +1324,7 @@ public class VdsUpdateRunTimeInfo {
                         if (runningVm.getdisplay() != null) {
                             _poweringUpVms.add(runningVm);
                         } else {
-                            log.errorFormat("VdsBroker.VdsUpdateRunTimeInfo.updateRepository - runningVm.display is null, cannot start spice for it");
+                            log.error("UpdateRepository - runningVm.display is null, cannot start spice for it");
                         }
                     }
 
@@ -1473,7 +1473,7 @@ public class VdsUpdateRunTimeInfo {
         if (runningVm.getstatus() == VMStatus.MigratingTo) {
             // in migration
             log.infoFormat(
-                    "vds::refreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
+                    "RefreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
                     _vds.getvds_name());
             returnValue = true;
@@ -1483,7 +1483,7 @@ public class VdsUpdateRunTimeInfo {
             if (vmDynamic != null && vmDynamic.getrun_on_vds() != null
                     && !vmDynamic.getrun_on_vds().equals(_vds.getId()) && runningVm.getstatus() != VMStatus.Up) {
                 log.infoFormat(
-                        "vds::refreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh until migration is done",
+                        "RefreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh until migration is done",
                         runningVm.getId(),
                         runningVm.getstatus(),
                         _vds.getvds_name());
@@ -1498,7 +1498,7 @@ public class VdsUpdateRunTimeInfo {
 
         if (oldVmStatus == VMStatus.MigratingFrom && runningVm.getstatus().isGuestUp()) {
             _vmsToRerun.add(runningVm.getId());
-            log.infoFormat("adding VM {0} to re-run list", runningVm.getId());
+            log.infoFormat("Adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);
         }
     }
@@ -1541,7 +1541,7 @@ public class VdsUpdateRunTimeInfo {
             _saveVdsDynamic = true;
             _saveVdsStatistics = true;
             log.infoFormat(
-                    "vds::Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
+                    "Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
                     _vds.getId(),
                     _vds.getvds_name());
         }
@@ -1698,7 +1698,7 @@ public class VdsUpdateRunTimeInfo {
     /**
      * Add or update vmStatistics to save list
      *
-     * @param vmDynamic
+     * @param vmStatistics
      */
     private void addVmStatisticsToList(VmStatistics vmStatistics) {
         _vmStatisticsToSave.put(vmStatistics.getId(), vmStatistics);
@@ -1714,7 +1714,7 @@ public class VdsUpdateRunTimeInfo {
     /**
      * Add or update vmDynamic to save list
      *
-     * @param vmDynamic
+     * @param vmDevice
      */
     private void addVmDeviceToList(VmDevice vmDevice) {
         vmDeviceToSave.put(vmDevice.getId(), vmDevice);
