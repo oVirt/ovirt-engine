@@ -408,6 +408,7 @@ public final class ImagesHandler {
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     image.getImageId())).getReturnValue();
         } catch (Exception e) {
+            log.debug("Unable to get image info from from storage.", e);
         }
         return fromIrs;
     }
