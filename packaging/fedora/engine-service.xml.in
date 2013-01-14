@@ -96,7 +96,11 @@
             <prefill>true</prefill>
           </pool>
           <security>
-            <security-domain>EncryptDBPassword</security-domain>
+            #if $getString('ENGINE_DB_PASSWORD')
+              <security-domain>EncryptDBPassword</security-domain>
+            #else
+              <user-name><![CDATA[$getString('ENGINE_DB_USER')]]></user-name>
+            #end if
           </security>
           <statement>
             <prepared-statement-cache-size>100</prepared-statement-cache-size>
@@ -215,15 +219,17 @@
           </authentication>
         </security-domain>
 
-        <security-domain name="EncryptDBPassword">
-          <authentication>
-            <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
-              <module-option name="username" value="$getString('ENGINE_DB_USER')"/>
-              <module-option name="password" value="$getString('ENGINE_DB_PASSWORD')"/>
-              <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
-            </login-module>
-          </authentication>
-        </security-domain>
+        #if $getString('ENGINE_DB_PASSWORD')
+          <security-domain name="EncryptDBPassword">
+            <authentication>
+              <login-module code="org.picketbox.datasource.security.SecureIdentityLoginModule" flag="required">
+                <module-option name="username" value="$getString('ENGINE_DB_USER')"/>
+                <module-option name="password" value="$getString('ENGINE_DB_PASSWORD')"/>
+                <module-option name="managedConnectionFactoryName" value="jboss.jca:name=ENGINEDataSource,service=LocalTxCM"/>
+              </login-module>
+            </authentication>
+          </security-domain>
+        #end if
 
       </security-domains>
     </subsystem>
