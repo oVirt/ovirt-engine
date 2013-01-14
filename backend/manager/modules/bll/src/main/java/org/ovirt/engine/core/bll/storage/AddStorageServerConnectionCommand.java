@@ -55,7 +55,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected boolean canDoAction() {
         boolean returnValue = true;
         StorageServerConnections paramConnection = getParameters().getStorageServerConnection();
-        if (returnValue && paramConnection.getstorage_type() == StorageType.NFS
+        if (paramConnection.getstorage_type() == StorageType.NFS
                 && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
