@@ -205,7 +205,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // we will want this info
             VdcUser currentUser = new VdcUser(ldapUser);
             boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(currentUser);
-            log.infoFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
+            log.debugFormat("Checking if user {0} is an admin, result {1}", currentUser.getUserName(), isAdmin);
             currentUser.setAdmin(isAdmin);
             setCurrentUser(currentUser);
         }
