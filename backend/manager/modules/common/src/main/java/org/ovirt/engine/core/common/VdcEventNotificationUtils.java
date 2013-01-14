@@ -29,6 +29,11 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_SET_NONOPERATIONAL_DOMAIN);
         AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_MEM_USE);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_NETWORK_USE);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_CPU_USE);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_HIGH_SWAP_USE);
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_LOW_SWAP);
 
         // VM
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_FAILURE);

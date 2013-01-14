@@ -616,4 +616,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___VDS_SET_NONOPERATIONAL_DOMAIN();
 
     String AuditLogType___SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM();
+
+    String AuditLogType___VDS_HIGH_MEM_USE();
+
+    String AuditLogType___VDS_HIGH_NETWORK_USE();
+
+    String AuditLogType___VDS_HIGH_CPU_USE();
+
+    String AuditLogType___VDS_HIGH_SWAP_USE();
+
+    String AuditLogType___VDS_LOW_SWAP();
 }
