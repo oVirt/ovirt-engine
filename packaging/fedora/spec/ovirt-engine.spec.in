@@ -531,7 +531,7 @@ then
 
     if [[ -f %{_sysconfdir}/yum/pluginconf.d/versionlock.list ]]
     then
-        sed -i '/ovirt/d' %{_sysconfdir}/yum/pluginconf.d/versionlock.list
+        sed -i '/%{name}/d' %{_sysconfdir}/yum/pluginconf.d/versionlock.list
     fi
 fi
 
