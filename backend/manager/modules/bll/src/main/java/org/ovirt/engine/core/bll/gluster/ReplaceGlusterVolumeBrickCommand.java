@@ -27,6 +27,8 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
         case START:
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
             break;
+        default:
+            break;
         }
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_BRICK);
     }

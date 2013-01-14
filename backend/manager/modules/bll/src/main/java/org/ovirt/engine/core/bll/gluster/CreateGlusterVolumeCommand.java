@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
@@ -299,6 +298,8 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
                 return false;
             }
             break;
+        default:
+            break;
         }
 
         return updateBrickServerNames(bricks, true);
@@ -314,7 +315,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         // volume fetched from VDSM doesn't contain cluster id as
         // GlusterFS is not aware of multiple clusters
         createdVolume.setClusterId(getVdsGroupId());
-        DbFacade.getInstance().getGlusterVolumeDao().save(createdVolume);
+        getGlusterVolumeDao().save(createdVolume);
     }
 
     @Override
