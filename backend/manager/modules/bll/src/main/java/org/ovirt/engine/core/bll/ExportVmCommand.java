@@ -220,7 +220,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
         for (Disk disk : vm.getDiskMap().values()) {
-            if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+            if (DiskStorageType.IMAGE == disk.getDiskStorageType() && !disk.isShareable()) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 diskImage.setit_guid(VmTemplateHandler.BlankVmTemplateId);
