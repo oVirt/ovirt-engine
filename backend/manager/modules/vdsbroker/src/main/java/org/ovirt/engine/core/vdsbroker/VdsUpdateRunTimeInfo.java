@@ -1495,8 +1495,11 @@ public class VdsUpdateRunTimeInfo {
 
     private void afterMigrationFrom(VmDynamic runningVm, VM vmToUpdate) {
         VMStatus oldVmStatus = vmToUpdate.getStatus();
+        VMStatus currentVmStatus = runningVm.getstatus();
 
-        if (oldVmStatus == VMStatus.MigratingFrom && runningVm.getstatus().isGuestUp()) {
+        // if the VM's status on source host was MigratingFrom and now the VM is running and its status
+        // is not MigratingFrom, it means the migration failed
+        if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom && currentVmStatus.isRunning()) {
             _vmsToRerun.add(runningVm.getId());
             log.infoFormat("Adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);

@@ -45,15 +45,6 @@ public enum VMStatus implements Identifiable {
     }
 
     /**
-     * This method reflects whether it's a VM status in which the guest is up
-     *
-     * @return true if this status indicates that the guest is up, otherwise false
-     */
-    public boolean isGuestUp() {
-        return this == Up || this == PoweringDown || this == PoweredDown || this == PoweringUp;
-    }
-
-    /**
      * This method reflects whether the VM is surely not running in this status
      *
      * <p>Note: There might be cases in which the VM is not running and this method
