@@ -384,9 +384,9 @@ public final class ImagesHandler {
             if (fromIrs == null) {
                 returnValue = false;
                 break;
-            } else {
-                irsImages.add(fromIrs);
             }
+
+            irsImages.add(fromIrs);
         }
         return returnValue;
     }
@@ -540,9 +540,9 @@ public final class ImagesHandler {
     private static List<DiskImage> getImages(VM vm, Collection<Disk> diskImageList) {
         if (diskImageList == null) {
             return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()), true, false);
-        } else {
-            return filterImageDisks(diskImageList, true, false);
         }
+
+        return filterImageDisks(diskImageList, true, false);
     }
 
     private static boolean checkDiskImages(List<String> messages,
