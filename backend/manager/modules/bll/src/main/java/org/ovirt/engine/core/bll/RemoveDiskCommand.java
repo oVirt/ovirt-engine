@@ -72,23 +72,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
-
         if (getDisk() == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        if (retValue) {
-            buildSharedLockMap();
-            retValue = acquireLockInternal();
+        buildSharedLockMap();
+        if (!acquireLockInternal()) {
+            return false;
         }
 
-        retValue =
-                retValue
-                        && (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ? canRemoveDiskBasedOnImageStorageCheck()
-                                : canRemoveLunDisk());
-        return retValue;
+        return (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
+                canRemoveDiskBasedOnImageStorageCheck() : canRemoveLunDisk());
     }
 
     private boolean canRemoveLunDisk() {
