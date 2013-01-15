@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -26,12 +27,12 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -151,7 +152,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             return false;
         }
 
-        if (!(checkVmInStorageDomain() && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+        if (!(checkVmInStorageDomain()
+                && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && validate(new VmValidator(getVm()).vmDown())
                 && ImagesHandler.PerformImagesChecks(getVm(),
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
@@ -161,7 +164,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         false,
                         false,
                         true,
-                        true,
+                        false,
                         true,
                         true,
                         getDisksBasedOnImage()))) {
