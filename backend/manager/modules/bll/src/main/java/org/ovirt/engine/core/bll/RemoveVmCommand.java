@@ -151,7 +151,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 false,
                 false,
                 getParameters().getForce(),
-                false,
                 !getVm().getDiskMap().values().isEmpty(),
                 true,
                 getVm().getDiskMap().values())) {

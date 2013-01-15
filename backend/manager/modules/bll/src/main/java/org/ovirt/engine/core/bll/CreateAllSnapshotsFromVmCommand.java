@@ -300,8 +300,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            false,
-                            true, true, disksList);
+                            true,
+                            true,
+                            disksList);
         }
 
         return result;

@@ -84,7 +84,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 true,
                                 true,
                                 false,
-                                false,
                                 true,
                                 diskImages);
         setStoragePoolId(getVm().getStoragePoolId());

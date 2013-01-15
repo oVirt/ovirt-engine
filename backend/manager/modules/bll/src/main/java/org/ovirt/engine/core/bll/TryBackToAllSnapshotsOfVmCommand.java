@@ -225,8 +225,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     false,
                                     true,
-                                    false,
-                                    true, true, getVm().getDiskMap().values());
+                                    true,
+                                    true,
+                                    getVm().getDiskMap().values());
         }
         if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override

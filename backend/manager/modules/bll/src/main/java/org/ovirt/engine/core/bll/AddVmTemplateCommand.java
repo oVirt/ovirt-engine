@@ -209,7 +209,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     true,
                     true,
                     false,
-                    false,
                     true, checkIsValid, sourceImageDomainsImageMap.get(srcStorageDomainId))) {
                 return false;
             }

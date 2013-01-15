@@ -208,7 +208,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean validateImagesAndVMStates() {
         return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
-                hasImages(), hasImages(), hasImages(), hasImages(), true, false, true, true, null);
+                hasImages(), hasImages(), hasImages(), hasImages(), true, true, true, null);
     }
 
     protected boolean validateImageNotInTemplate() {

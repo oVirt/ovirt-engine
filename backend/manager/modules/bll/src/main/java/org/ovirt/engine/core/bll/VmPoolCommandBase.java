@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -207,8 +207,9 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                                 false,
                                 false,
                                 true,
-                                false,
-                                !Guid.Empty.equals(storageDomainId), true, disks);
+                                !Guid.Empty.equals(storageDomainId),
+                                true,
+                                disks);
             }
 
             if (!returnValue) {

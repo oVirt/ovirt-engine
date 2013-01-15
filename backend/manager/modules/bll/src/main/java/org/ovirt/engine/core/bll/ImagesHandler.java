@@ -465,7 +465,6 @@ public final class ImagesHandler {
             boolean checkImagesIllegal,
             boolean checkImagesExist,
             boolean checkVmInPreview,
-            boolean checkVmIsDown,
             boolean checkStorageDomain,
             boolean checkIsValid, Collection<? extends Disk> diskImageList) {
 
@@ -479,11 +478,6 @@ public final class ImagesHandler {
         List<DiskImage> images = getImages(vm, diskImageList);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(vm, messages, images);
-        }
-
-        if (returnValue && checkVmIsDown && !vm.isDown()) {
-            returnValue = false;
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString());
         }
 
         if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
