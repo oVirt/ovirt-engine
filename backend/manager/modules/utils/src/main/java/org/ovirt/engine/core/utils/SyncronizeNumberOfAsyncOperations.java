@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.utils;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public final class SyncronizeNumberOfAsyncOperations {
@@ -14,36 +16,32 @@ public final class SyncronizeNumberOfAsyncOperations {
         _factory.initialize(parameters);
     }
 
-    private class AsyncOpThread implements Runnable {
-        private CountDownLatch latch;
+    public void Execute() {
+
+        List<AsyncOpThread> operations = new ArrayList<AsyncOpThread>();
+        for (int i = 0; i < _numberOfOperations; i++) {
+            operations.add(new AsyncOpThread(i));
+        }
+
+        if (_numberOfOperations > 0) {
+            ThreadPoolUtil.invokeAll(operations);
+        }
+    }
+
+    private class AsyncOpThread implements Callable<Void> {
+
         private int currentEventId;
 
-        public AsyncOpThread(CountDownLatch latch, int currentEventId) {
-            this.latch = latch;
+        public AsyncOpThread(int currentEventId) {
             this.currentEventId = currentEventId;
         }
 
         @Override
-        public void run() {
-            try {
-                ISingleAsyncOperation operation = _factory.createSingleAsyncOperation();
-                operation.execute(currentEventId);
-            } finally {
-                latch.countDown();
-            }
+        public Void call() {
+            ISingleAsyncOperation operation = _factory.createSingleAsyncOperation();
+            operation.execute(currentEventId);
+            return null;
         }
     }
 
-    public void Execute() {
-        CountDownLatch latch = new CountDownLatch(_numberOfOperations);
-
-        for (int i = 0; i < _numberOfOperations; i++) {
-            ThreadPoolUtil.execute(new AsyncOpThread(latch, i));
-        }
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-        }
-    }
 }

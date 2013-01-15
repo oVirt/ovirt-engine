@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -104,34 +104,28 @@ public class IsoDomainListSyncronizer {
                         StorageDomainStatus.Active,
                         VDSStatus.Up);
 
-        // Set count down latch to size of map for multiple threaded.
-        final CountDownLatch latch = new CountDownLatch(repofileList.size());
-
         resetProblematicList();
         // Iterate for each storage domain.
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
         for (final RepoFileMetaData repoFileMetaData : repofileList) {
             // If the list should be refreshed and the refresh from the VDSM was succeeded, fetch the file list again
             // from the DB.
             if (shouldRefreshIsoDomain(repoFileMetaData.getLastRefreshed())) {
-                ThreadPoolUtil.execute(new Runnable() {
+                tasks.add(new Callable<Void>() {
                     @Override
-                    public void run() {
-                        updateCachedIsoFileListFromVdsm(repoFileMetaData, latch);
+                    public Void call() {
+                        updateCachedIsoFileListFromVdsm(repoFileMetaData);
+                        return null;
                     }
                 });
             } else {
-                latch.countDown();
                 log.debugFormat("Automatic refresh process for {0} file type in storage domain id {1} was not performed since refresh time out did not passed yet.",
                         repoFileMetaData.getFileType(),
                         repoFileMetaData.getRepoDomainId());
             }
         }
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            log.error("Automatic refresh process encounter a problem.", e);
-        }
+        ThreadPoolUtil.invokeAll(tasks);
 
         // After refresh for all Iso domains finished, handle the log.
         handleErrorLog(problematicRepoFileList);
@@ -522,7 +516,7 @@ public class IsoDomainListSyncronizer {
      * If refresh from VDSM has encounter problems, we update the problematic domain list.
      * @param repoFileMetaData
      */
-    private void updateCachedIsoFileListFromVdsm(RepoFileMetaData repoFileMetaData, final CountDownLatch latch)
+    private void updateCachedIsoFileListFromVdsm(RepoFileMetaData repoFileMetaData)
     {
         boolean isRefreshed = false;
         try {
@@ -533,8 +527,6 @@ public class IsoDomainListSyncronizer {
                             repoFileMetaData.getFileType());
             addRepoFileToProblematicList(problematicRepoFileList);
         } finally {
-            // At any case count down the latch, and print log message.
-            latch.countDown();
             log.infoFormat("Finished automatic refresh process for {0} file type with {1}, for storage domain id {2}.",
                     repoFileMetaData.getFileType(),
                     isRefreshed ? "success"

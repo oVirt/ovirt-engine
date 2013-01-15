@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.thread.LatchedRunnableWrapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 

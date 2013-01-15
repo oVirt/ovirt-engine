@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.thread;
+package org.ovirt.engine.core.dao;
 
 import java.util.concurrent.CountDownLatch;
 

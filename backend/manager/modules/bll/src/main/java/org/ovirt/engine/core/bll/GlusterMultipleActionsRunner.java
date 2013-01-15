@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -17,10 +14,9 @@ public class GlusterMultipleActionsRunner extends MultipleActionsRunner {
     }
 
     @Override
-    protected void runCanDoActionOnly(final ArrayList<VdcReturnValueBase> returnValues,
-            final int currentCanDoActionId, final int totalSize, final CountDownLatch latch) {
+    protected VdcReturnValueBase runCanDoActionOnly(final int currentCanDoActionId, final int totalSize) {
         try {
-            super.runCanDoActionOnly(returnValues, currentCanDoActionId, totalSize, latch);
+            return super.runCanDoActionOnly(currentCanDoActionId, totalSize);
         } finally {
             // free the lock so that canDoActionOnly() on next command doesn't block
             getCommands().get(currentCanDoActionId).freeLock();

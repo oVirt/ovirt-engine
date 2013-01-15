@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -113,73 +113,49 @@ public class MultipleActionsRunner {
      * the same time the number of threads is managed by java
      *
      * @param returnValues
-     * @param executorService
      */
     private void CheckCanDoActionsAsyncroniousely(
-                                                  ArrayList<VdcReturnValueBase> returnValues) {
+            ArrayList<VdcReturnValueBase> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
-            CountDownLatch latch = new CountDownLatch(handleSize);
 
             int fixedSize = i + handleSize;
+            List<Callable<VdcReturnValueBase>> canDoActionTasks = new ArrayList<Callable<VdcReturnValueBase>>();
             for (int j = i; j < fixedSize; j++) {
-                RunCanDoActionAsyncroniousely(returnValues, j, fixedSize, latch);
+                canDoActionTasks.add(buildCanDoActionAsynchronously(j, fixedSize));
             }
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-            }
+            returnValues.addAll(ThreadPoolUtil.invokeAll(canDoActionTasks));
         }
     }
 
-    protected void runCanDoActionOnly(final ArrayList<VdcReturnValueBase> returnValues,
-            final int currentCanDoActionId,
-            final int totalSize,
-            final CountDownLatch latch) {
-        CommandBase<?> command = getCommands().get(currentCanDoActionId);
-        if (command != null) {
-            String actionType = command.getActionType().toString();
-            try {
-                log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
-                        new Date(),
-                        currentCanDoActionId + 1,
-                        totalSize,
-                        actionType);
-                VdcReturnValueBase returnValue = command.canDoActionOnly();
-                synchronized (returnValues) {
-                    returnValues.add(returnValue);
-                }
-            } catch (RuntimeException e) {
-                log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1} (Command type: {2}), Error: {3}",
-                        currentCanDoActionId + 1,
-                        totalSize,
-                        actionType,
-                        e);
-            } finally {
-                latch.countDown();
-                log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
-                        new Date(),
-                        currentCanDoActionId + 1,
-                        totalSize,
-                        actionType);
-            }
-        }
-        else {
-            log.errorFormat("Failed to execute CanDoAction() for command number {0}/{1}. Command is null.",
-                    currentCanDoActionId + 1,
-                    totalSize);
-        }
-    }
+    private Callable<VdcReturnValueBase> buildCanDoActionAsynchronously(
+            final int currentCanDoActionId, final int totalSize) {
+        return new Callable<VdcReturnValueBase>() {
 
-    private void RunCanDoActionAsyncroniousely(
-                                               final ArrayList<VdcReturnValueBase> returnValues,
-                                               final int currentCanDoActionId, final int totalSize, final CountDownLatch latch) {
-        ThreadPoolUtil.execute(new Runnable() {
             @Override
-            public void run() {
-                runCanDoActionOnly(returnValues, currentCanDoActionId, totalSize, latch);
+            public VdcReturnValueBase call() {
+                return runCanDoActionOnly(currentCanDoActionId, totalSize);
             }
-        });
+        };
+    }
+
+    protected VdcReturnValueBase runCanDoActionOnly(final int currentCanDoActionId, final int totalSize) {
+        CommandBase<?> command = getCommands().get(currentCanDoActionId);
+        String actionType = command.getActionType().toString();
+        try {
+            log.infoFormat("Start time: {0}. Start running CanDoAction for command number {1}/{2} (Command type: {3})",
+                    new Date(),
+                    currentCanDoActionId + 1,
+                    totalSize,
+                    actionType);
+            return command.canDoActionOnly();
+        } finally {
+            log.infoFormat("End time: {0}. Finish handling CanDoAction for command number {1}/{2} (Command type: {3})",
+                    new Date(),
+                    currentCanDoActionId + 1,
+                    totalSize,
+                    actionType);
+        }
     }
 
     protected void RunCommands() {

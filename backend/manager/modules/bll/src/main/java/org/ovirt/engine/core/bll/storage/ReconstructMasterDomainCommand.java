@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -28,7 +29,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.thread.LatchedRunnableExecutor;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @SuppressWarnings("serial")
@@ -208,11 +209,12 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         final boolean isPerformConnectOps = !_isLastMaster && commandSucceeded;
         final boolean isPerformDisconnect = !getParameters().isInactive();
         if (isPerformConnectOps || isPerformDisconnect) {
-            List<Runnable> tasks = new LinkedList<Runnable>();
+            List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
             for (final VDS vds : getAllRunningVdssInPool()) {
-                tasks.add(new Runnable() {
+                tasks.add(new Callable<Void>() {
+
                     @Override
-                    public void run() {
+                    public Void call() {
                         try {
                             if (isPerformConnectOps && connectVdsToNewMaster(vds)) {
                                 try {
@@ -256,10 +258,11 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                     vds.getId(),
                                     e.getMessage());
                         }
+                        return null;
                     }
                 });
             }
-            new LatchedRunnableExecutor(tasks).execute();
+            ThreadPoolUtil.invokeAll(tasks);
         }
     }
 
