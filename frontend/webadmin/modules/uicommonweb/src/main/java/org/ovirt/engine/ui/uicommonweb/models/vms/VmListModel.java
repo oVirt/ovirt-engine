@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -47,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -75,7 +75,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -83,7 +82,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
-import org.ovirt.engine.ui.uicompat.Assembly;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -91,7 +89,6 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ResourceManager;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext
 {
@@ -308,22 +305,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void setAssignTagsCommand(UICommand value)
     {
         privateAssignTagsCommand = value;
-    }
-
-    private Model errorWindow;
-
-    public Model getErrorWindow()
-    {
-        return errorWindow;
-    }
-
-    public void setErrorWindow(Model value)
-    {
-        if (errorWindow != value)
-        {
-            errorWindow = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("ErrorWindow")); //$NON-NLS-1$
-        }
     }
 
     private ConsoleModel defaultConsoleModel;
@@ -743,10 +724,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             if (!cachedConsoleModels.containsKey(vm.getId()))
             {
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
-                spiceConsoleModel.getErrorEvent().addListener(this);
+                spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
                 vncConsoleModel.setModel(this);
+
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
+                rdpConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
 
                 cachedConsoleModels.put(vm.getId(),
                         new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {
@@ -951,7 +934,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     for (int i = 0; i < result.getReturnValues().size(); i++) {
                         if (result.getReturnValues().get(i).getSucceeded()) {
                             Guid vmId = ((GetAllDisksByVmIdParameters) result.getParameters().get(i)).getVmId();
-                            initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues().get(i).getReturnValue());
+                            initRemoveDisksChecboxesPost(vmId, (List<Disk>) result.getReturnValues()
+                                    .get(i)
+                                    .getReturnValue());
                         }
                     }
                 }
@@ -2648,11 +2633,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setConfirmWindow(null);
     }
 
-    public void CancelError()
-    {
-        setErrorWindow(null);
-    }
-
     @Override
     protected void OnSelectedItemChanged()
     {
@@ -2748,35 +2728,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             changeCD(sender, args);
         }
-        else if (ev.equals(ConsoleModel.ErrorEventDefinition) && sender instanceof SpiceConsoleModel)
-        {
-            SpiceConsoleModel_Error(sender, (ErrorCodeEventArgs) args);
-        }
-    }
-
-    private void SpiceConsoleModel_Error(Object sender, ErrorCodeEventArgs e)
-    {
-        ResourceManager rm =
-                new ResourceManager("UICommon.Resources.RdpErrors.RdpErrors", Assembly.GetExecutingAssembly()); //$NON-NLS-1$
-
-        ConfirmationModel model = new ConfirmationModel();
-        if (getErrorWindow() == null)
-        {
-            setErrorWindow(model);
-        }
-        model.setTitle(ConstantsManager.getInstance().getConstants().consoleDisconnectedTitle());
-        model.setHashName("console_disconnected"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance()
-                .getMessages()
-                .errConnectingVmUsingSpiceMsg(rm.GetString("E" + e.getErrorCode()))); //$NON-NLS-1$
-
-        rm.ReleaseAllResources();
-
-        UICommand tempVar = new UICommand("CancelError", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-        tempVar.setIsDefault(true);
-        tempVar.setIsCancel(true);
-        model.getCommands().add(tempVar);
     }
 
     @Override
@@ -2879,10 +2830,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else if (StringHelper.stringsEqual(command.getName(), "CancelConfirmation")) //$NON-NLS-1$
         {
             CancelConfirmation();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelError")) //$NON-NLS-1$
-        {
-            CancelError();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRunOnce")) //$NON-NLS-1$
         {

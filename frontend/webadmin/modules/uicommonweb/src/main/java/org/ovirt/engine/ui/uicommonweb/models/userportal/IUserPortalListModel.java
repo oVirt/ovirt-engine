@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleSelectionContext;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -174,9 +175,13 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.getErrorEvent().addListener(this);
                 spiceConsoleModel.setModel(this);
+                spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
+
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
                 vncConsoleModel.setModel(this);
+
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
+                rdpConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
 
                 cachedConsoleModels.put(vm.getId(),
                         new ArrayList<ConsoleModel>(Arrays.asList(new ConsoleModel[] {

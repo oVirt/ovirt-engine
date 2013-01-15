@@ -99,6 +99,9 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Error connecting to Virtual Machine using Spice:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);
 
+    @DefaultMessage("Error connecting to Virtual Machine using RPD:\n{0}")
+    String errConnectingVmUsingRdpMsg(Object errCode);
+
     @DefaultMessage("Are you sure you want to delete snapshot from {0} with description ''{1}''?")
     String areYouSureYouWantToDeleteSanpshot(Date from, Object description);
 
