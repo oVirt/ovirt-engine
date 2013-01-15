@@ -29,6 +29,8 @@ import org.ovirt.engine.ui.webadmin.widget.tree.SystemTree;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -40,6 +42,8 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainSectionView extends AbstractView implements MainSectionPresenter.ViewDef {
+
+    private static final int BOOKMARK_INDEX = 1;
 
     interface ViewUiBinder extends UiBinder<Widget, MainSectionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -125,7 +129,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     StackLayoutPanel createWestStackPanel(SystemTreeModelProvider treeModelProvider,
-            BookmarkModelProvider bookmarkModelProvider, TagModelProvider tagModelProvider) {
+            final BookmarkModelProvider bookmarkModelProvider, TagModelProvider tagModelProvider) {
         final StackLayoutPanel panel = new StackLayoutPanel(Unit.PX) {
             @Override
             public void onResize() {
@@ -136,6 +140,20 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                 }
             }
         };
+        panel.addSelectionHandler(new SelectionHandler<Integer>() {
+
+            @Override
+            public void onSelection(SelectionEvent<Integer> event) {
+                if (event == null) {
+                    return;
+                }
+                if (event.getSelectedItem() == BOOKMARK_INDEX) {
+                    bookmarkModelProvider.getModel().executeBookmarksSearch();
+                } else {
+                    bookmarkModelProvider.getModel().EnsureAsyncSearchStopped();
+                }
+            }
+        });
 
         return panel;
     }

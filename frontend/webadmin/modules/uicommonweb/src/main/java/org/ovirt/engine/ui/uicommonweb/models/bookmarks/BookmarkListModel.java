@@ -121,13 +121,15 @@ public class BookmarkListModel extends SearchableListModel
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
-        setIsBookmarkInitiated(true);
-        getSearchCommand().Execute();
-        setIsBookmarkInitiated(false);
-
         setIsTimerDisabled(true);
 
         UpdateActionAvailability();
+    }
+
+    public void executeBookmarksSearch() {
+        setIsBookmarkInitiated(true);
+        getSearchCommand().Execute();
+        setIsBookmarkInitiated(false);
     }
 
     @Override
