@@ -16,6 +16,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -47,6 +50,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -247,6 +253,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 case Done: // should never get here with errorCode = 'Done' though
                 case exist:
                 case VDS_NETWORK_ERROR: // probably wrong xml format sent.
+                case PROVIDER_FAILURE:
                     throw e;
                 default:
                 }
@@ -486,6 +493,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected CreateVmVDSCommandParameters initCreateVmParams() {
         VM vmToBeCreated = getVm();
 
+        if (!vmToBeCreated.getInterfaces().isEmpty()) {
+            initParametersForExternalNetworks();
+        }
+
         if (vmToBeCreated.getStatus() == VMStatus.Suspended) {
             return new CreateVmVDSCommandParameters(getVdsId(), vmToBeCreated);
         }
@@ -503,6 +514,27 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // the create verb is finished (unlike hibernation volume that is created by hibernate command)
         parameters.setClearHibernationVolumes(true);
         return parameters;
+    }
+
+    protected void initParametersForExternalNetworks() {
+        Map<String, Network> clusterNetworks =
+                Entities.entitiesByName(getDbFacade().getNetworkDao().getAllForCluster(getVm().getVdsGroupId()));
+        Map<VmDeviceId, VmDevice> nicDevices =
+                Entities.businessEntitiesById(getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(),
+                        VmDeviceGeneralType.INTERFACE));
+
+        for (VmNetworkInterface iface : getVm().getInterfaces()) {
+            String networkName = iface.getNetworkName();
+            Network network = (networkName == null) ? null : clusterNetworks.get(networkName);
+            VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
+            if (network != null && network.getProvidedBy() != null && vmDevice.getIsPlugged()) {
+                Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
+                NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+                Map<String, String> deviceProperties = providerProxy.allocate(network, iface);
+
+                getVm().getRuntimeDeviceCustomProperties().put(vmDevice, deviceProperties);
+            }
+        }
     }
 
     @Override

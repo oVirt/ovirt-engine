@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.provider.network.openstack;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
@@ -78,6 +80,17 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         }
 
         return networks;
+    }
+
+    @Override
+    public Map<String, String> allocate(Network network, VmNetworkInterface nic) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void deallocate(VmNetworkInterface nic) {
+        // TODO Auto-generated method stub
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

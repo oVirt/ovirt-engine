@@ -301,6 +301,7 @@ public class RunVmCommandTest {
         command = spy(new RunVmCommand<RunVmParams>(param));
         mockIsoDomainListSyncronizer();
         mockSuccessfulRunVmValidator();
+        doNothing().when(command).initParametersForExternalNetworks();
         mockSuccessfulSnapshotValidator();
         mockBackend();
     }
