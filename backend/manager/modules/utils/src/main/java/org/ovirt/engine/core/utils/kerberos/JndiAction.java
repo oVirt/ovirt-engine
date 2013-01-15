@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.kerberos;
 import java.net.URI;
 import java.security.PrivilegedAction;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.naming.AuthenticationException;
 import javax.naming.CommunicationException;
@@ -19,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.ldap.RootDSEData;
-import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.core.utils.ipa.RHDSUserContextMapper;
 
 /**
@@ -32,15 +32,17 @@ public class JndiAction implements PrivilegedAction {
     private final String domainName;
     private final LdapProviderType ldapProviderType;
     private final StringBuffer userGuid;
-    private DnsSRVResult ldapDnsResult;
+    private List<String> ldapServers;
+    private String defaultLdapServerPort;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
-    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, DnsSRVResult ldapDnsResult) {
+    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers, String defaultLdapServerPort) {
         this.userName = userName;
         this.domainName = domainName;
         this.ldapProviderType = ldapProviderType;
         this.userGuid = userGuid;
-        this.ldapDnsResult = ldapDnsResult;
+        this.ldapServers = ldapServers;
+        this.defaultLdapServerPort = defaultLdapServerPort;
     }
 
     @Override
@@ -53,9 +55,9 @@ public class JndiAction implements PrivilegedAction {
 
         // Send an SRV record DNS query to retrieve all the LDAP servers in the domain
         LdapSRVLocator locator = new LdapSRVLocator();
-        if (ldapDnsResult == null || !ldapDnsResult.getDomainName().equals(domainName)) {
+        if (ldapServers == null ) {
             try {
-                ldapDnsResult = locator.getLdapServers(domainName);
+                ldapServers = locator.getServersList(locator.getLdapServers(domainName));
             } catch (Exception ex) {
                 return KerberosUtils.convertDNSException(ex);
             }
@@ -65,20 +67,19 @@ public class JndiAction implements PrivilegedAction {
 
         String currentLdapServer = null;
 
-        if (ldapDnsResult == null || ldapDnsResult.getNumOfValidAddresses() == 0) {
+        if (ldapServers == null || ldapServers.size() == 0) {
             return AuthenticationResult.CANNOT_FIND_LDAP_SERVER_FOR_DOMAIN;
         }
 
         // Goes over all the retrieved LDAP servers
-        for (int counter = 0; counter < ldapDnsResult.getNumOfValidAddresses(); counter++) {
-            String address = ldapDnsResult.getAddresses()[counter];
+        for (String address : ldapServers) {
             try {
                 // Constructs an LDAP url in a format of ldap://hostname:port (based on the data in the SRV record
                 // This URL is not enough in order to query for user - as for querying users, we should also provide a
                 // base dn, for example: ldap://hostname:389/DC=abc,DC=com . However, this URL (ldap:hostname:port)
                 // suffices for
                 // getting the rootDSE information, which includes the baseDN.
-                URI uri = locator.constructURI("LDAP", address);
+                URI uri = locator.constructURI("LDAP", address, defaultLdapServerPort);
                 env.put(Context.PROVIDER_URL, uri.toString());
                 ctx = new InitialDirContext(env);
 

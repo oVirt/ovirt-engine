@@ -12,8 +12,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.utils.CLIParser;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.LdapTemplate;
@@ -30,65 +30,38 @@ public class SimpleAuthenticationCheck {
         ldapProviderType
     }
 
-    private void printUsage() {
-        System.out.println("Usage:");
-        System.out
-                .println("SimpleAuthenticationCheck: -domain=<domains> -user=<user> -password=<password> -ldapProviderType=<ldapProviderType>");
-    }
 
     private String getLdapUrl(String ldapServer) {
         return "ldap://" + ldapServer;
     }
 
-    private boolean validate(CLIParser parser) {
-        Arguments[] argsToValidate =
-                { Arguments.domain, Arguments.user, Arguments.password };
-        for (Arguments argument : argsToValidate) {
-            if (!parser.hasArg(argument.name())) {
-                System.out.println(argument.name() + " is required");
-                return false;
-            }
-        }
-        if (LdapProviderType.valueOf(parser.getArg(Arguments.ldapProviderType.name())) == null) {
-            System.out.println(Arguments.ldapProviderType.name() + " must be one of ");
-            for (LdapProviderType type : LdapProviderType.values()) {
-                System.out.println(type.name());
-            }
-        }
-        return true;
-    }
 
-    public static void main(String[] args) {
-        SimpleAuthenticationCheck util = new SimpleAuthenticationCheck();
-        CLIParser parser = new CLIParser(args);
-        if (!util.validate(parser)) {
-            util.printUsage();
-            System.exit(ReturnStatus.INPUT_VALIDATION_FAILURE.ordinal());
-        }
-        String username = parser.getArg(Arguments.user.name());
-        String password = parser.getArg(Arguments.password.name());
-        String domain = parser.getArg(Arguments.domain.name());
-        LdapProviderType ldapProviderType = LdapProviderType.valueOf(parser.getArg(Arguments.ldapProviderType.name()));
-        StringBuffer userGuid = new StringBuffer();
-
-        ReturnStatus status =
-                util.printUserGuid(domain, username, password, "localhost:389", userGuid, ldapProviderType);
-
-        System.exit(status.ordinal());
-    }
-
-    public ReturnStatus printUserGuid(String domain,
+    public Pair<ReturnStatus,String> printUserGuid(String domain,
             String username,
             String password,
-            String ldapServerUrl,
-            StringBuffer userGuid, LdapProviderType ldapProviderType) {
+            StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers) {
 
+        Pair<ReturnStatus,String> status = null;
+        for (String ldapServerUrl : ldapServers) {
+            status = checkSimpleLdapServer(domain, username, password, userGuid, ldapProviderType, ldapServerUrl);
+            if (status.getFirst().getExitCode() == ReturnStatus.OK.getExitCode()) {
+                return status;
+            }
+        }
+        return status;
+    }
+
+    private Pair<ReturnStatus,String> checkSimpleLdapServer(String domain,
+            String username,
+            String password,
+            StringBuffer userGuid,
+            LdapProviderType ldapProviderType,
+            String ldapServerUrl) {
         LdapContextSource contextSource = getContextSource(domain, ldapProviderType, username, password, ldapServerUrl);
         try {
             contextSource.afterPropertiesSet();
         } catch (Exception e) {
-            System.err.println(ERROR_PREFIX + "Failed setting LDAP context for domain " + domain);
-            return ReturnStatus.LDAP_CONTEXT_FAILURE;
+            return new Pair(ReturnStatus.LDAP_CONTEXT_FAILURE,ERROR_PREFIX + "Failed setting LDAP context for domain " + domain);
         }
 
         LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
@@ -115,8 +88,7 @@ public class SimpleAuthenticationCheck {
             List searchResult =
                     ldapTemplate.search("", query, contextMapper);
             if (searchResult == null) {
-                System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain);
-                return ReturnStatus.CANNOT_QUERY_USER;
+                return new Pair(ReturnStatus.CANNOT_QUERY_USER, ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain);
             } else {
                 userGuid.append((String) searchResult.get(0));
                 System.out.println("User guid is: " + userGuid.toString());
@@ -124,12 +96,11 @@ public class SimpleAuthenticationCheck {
         } catch (org.springframework.ldap.AuthenticationException authEx) {
             return authenticationReturnStatus(authEx, username, domain);
         } catch (Exception ex) {
-            System.err.println(ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain
+            return new Pair(ReturnStatus.CANNOT_QUERY_USER, ERROR_PREFIX + "Cannot query user " + username + " from domain " + domain
                     + ", details: " + ex.getMessage());
-            return ReturnStatus.CANNOT_QUERY_USER;
         }
 
-        return ReturnStatus.OK;
+        return new Pair(ReturnStatus.OK,"");
     }
 
     /***
@@ -138,20 +109,21 @@ public class SimpleAuthenticationCheck {
      *
      * @param authEx
      */
-    private ReturnStatus authenticationReturnStatus(AuthenticationException authEx, String userName, String domain) {
+    private Pair<ReturnStatus,String> authenticationReturnStatus(AuthenticationException authEx, String userName, String domain) {
         ReturnStatus returnStatus = ReturnStatus.CANNOT_AUTHENTICATE_USER;
         String authExMessage = authEx.getMessage();
 
         // Using contains() since the AuthenticationException does not have an error code property
+        String msg = null;
         if (authExMessage != null && authExMessage.contains(INVALID_CREDENTIALS_ERROR_CODE)) {
-            System.err.println(ERROR_PREFIX + "Invalid credentials for " + userName + " and domain " + domain
-                    + ", details: " + authEx.getMessage());
+            msg = ERROR_PREFIX + "Invalid credentials for " + userName + " and domain " + domain
+                    + ", details: " + authEx.getMessage();
             returnStatus = ReturnStatus.INVALID_CREDENTIALS;
         } else {
-            System.err.println(ERROR_PREFIX + "Cannot authenticate user " + userName + " to domain " + domain
-                    + ", details: " + authEx.getMessage());
+            msg = ERROR_PREFIX + "Cannot authenticate user " + userName + " to domain " + domain
+                    + ", details: " + authEx.getMessage();
         }
-        return returnStatus;
+        return new Pair(returnStatus, msg);
     }
 
     private static String domainToDN(String domain) {

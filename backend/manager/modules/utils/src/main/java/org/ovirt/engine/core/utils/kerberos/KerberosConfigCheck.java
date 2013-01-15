@@ -2,6 +2,8 @@ package org.ovirt.engine.core.utils.kerberos;
 
 import static org.ovirt.engine.core.utils.kerberos.InstallerConstants.ERROR_PREFIX;
 
+import java.util.List;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -14,7 +16,6 @@ import javax.security.auth.login.LoginException;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.CLIParser;
-import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
 
 /**
  * Utility to verify Kerberos installation
@@ -22,7 +23,8 @@ import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
  */
 public class KerberosConfigCheck {
     private LoginContext lc;
-    private final DnsSRVResult ldapDnsResult;
+    private final List<String> ldapServers;
+    private String defaultLdapServerPort;
     private final static Logger log = Logger.getLogger(KerberosConfigCheck.class);
 
     public enum Arguments {
@@ -35,12 +37,13 @@ public class KerberosConfigCheck {
         ldapProviderType;
     }
 
-    public KerberosConfigCheck(DnsSRVResult ldapDnsResult) {
-        this.ldapDnsResult = ldapDnsResult;
+    public KerberosConfigCheck(List<String> ldapServers, String defaultLdapServerPort) {
+        this.ldapServers = ldapServers;
+        this.defaultLdapServerPort =  defaultLdapServerPort;
     }
 
     public KerberosConfigCheck() {
-        this(null);
+        this(null, null);
     }
 
     // This function gets the username and adjusts it doing the following:
@@ -118,28 +121,6 @@ public class KerberosConfigCheck {
         return true;
     }
 
-    public static void main(String[] args) {
-        KerberosConfigCheck util = new KerberosConfigCheck();
-        CLIParser parser = new CLIParser(args);
-        if (!util.validate(parser)) {
-            util.printUsage();
-            System.exit(1);
-        }
-        String username = adjustUserName(parser.getArg(Arguments.user.name()));
-        String password = parser.getArg(Arguments.password.name());
-        String jaasFile = parser.getArg(Arguments.jaas_file.name());
-        String krb5ConfFile = parser.getArg(Arguments.krb5_conf_path.name());
-        String domains = parser.getArg(Arguments.domains.name());
-        StringBuffer userGuid = new StringBuffer();
-        LdapProviderType ldapProviderType = LdapProviderType.valueOf(Arguments.ldapProviderType.name());
-        try {
-            util.checkInstallation(domains, username, password, jaasFile, krb5ConfFile, userGuid, ldapProviderType);
-        } catch (AuthenticationException e) {
-            System.err.println(ERROR_PREFIX + e.getMessage());
-            System.exit(e.getAuthResult().getExitCode());
-        }
-    }
-
     public void checkInstallation(String domains,
             String username,
             String password,
@@ -193,7 +174,7 @@ public class KerberosConfigCheck {
             authResult =
                     (AuthenticationResult) Subject.doAs(lc.getSubject(), new JndiAction(username,
                             realm.toLowerCase(),
-                            userGuid, ldapProviderType,ldapDnsResult));
+                            userGuid, ldapProviderType,ldapServers,defaultLdapServerPort));
 
         } finally {
             if (lc != null) {

@@ -7,6 +7,8 @@ import static org.ovirt.engine.core.common.config.ConfigValues.DomainName;
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPProviderTypes;
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPSecurityAuthentication;
 import static org.ovirt.engine.core.common.config.ConfigValues.LdapServers;
+import static org.ovirt.engine.core.common.config.ConfigValues.LDAPServerPort;
+
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -32,7 +34,7 @@ public class ConfigurationProvider {
             String adUserId,
             String ldapProviderTypes,
             String engineConfigExecutable,
-            String engineConfigProperties) {
+            String engineConfigProperties, String ldapServerPort) {
         super();
         configVals.put(AdUserName, adUserName);
         configVals.put(AdUserPassword, adUserPassword);
@@ -41,6 +43,7 @@ public class ConfigurationProvider {
         configVals.put(LdapServers, ldapServers);
         configVals.put(AdUserId, adUserId);
         configVals.put(LDAPProviderTypes, ldapProviderTypes);
+        configVals.put(LDAPServerPort, ldapServerPort);
         this.engineConfigExecutable = engineConfigExecutable;
         this.engineConfigProperties = engineConfigProperties;
     }

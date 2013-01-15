@@ -85,6 +85,10 @@ public class DomainsConfigurationEntry {
         return valuePerDomain.entrySet();
     }
 
+    public boolean contains(String domain) {
+        return valuePerDomain.containsKey(domain);
+    }
+
     public Set<String> getDomainNames() {
         return valuePerDomain.keySet();
     }

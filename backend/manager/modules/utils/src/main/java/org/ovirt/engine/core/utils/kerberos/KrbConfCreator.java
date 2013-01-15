@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.log4j.Logger;
@@ -33,6 +35,8 @@ public class KrbConfCreator {
             " Usage: \n\t-domains=<comma seperated list>\n\t-destinationFile<file>" +
                     "\n\t-m mixed mode. Will add a flag to support AD in 2003/2008 mixed mode will be added";
     private boolean useDnsLookup;
+    private Map<String, List<String>> ldapServersPerGSSAPIDomains;
+
     private final static Logger log = Logger.getLogger(KrbConfCreator.class);
 
     public KrbConfCreator(String... args) throws Exception {
@@ -41,8 +45,9 @@ public class KrbConfCreator {
         extractRealmsFromDomains();
     }
 
-    public KrbConfCreator(String domains, boolean useDnsLookup) throws Exception {
+    public KrbConfCreator(String domains, boolean useDnsLookup, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws Exception {
         this.useDnsLookup = useDnsLookup;
+        this.ldapServersPerGSSAPIDomains = ldapServersPerGSSAPIDomains;
         loadSourceFile();
         extractRealmsFromDomains(domains);
     }
@@ -169,17 +174,21 @@ public class KrbConfCreator {
         StringBuffer text = new StringBuffer(" [realms]");
         KDCLocator locator = new KDCLocator();
         for (String realm : realms) {
-            DnsSRVResult kdc;
             try {
-                kdc = locator.getKdc(KDCLocator.TCP, realm);
-                String[] addresses = kdc.getAddresses();
-                if (addresses.length == 0) { // kdc not found for this realm
-                    throw new IllegalArgumentException(InstallerConstants.ERROR_PREFIX
-                            + " there are no KDCs for for realm " + realm +
-                            ". Realm name may not be valid");
+                List<String> ldapServers = ldapServersPerGSSAPIDomains.get(realm.toLowerCase());
+                if (ldapServers == null || ldapServers.size() == 0) {
+                    DnsSRVResult kdc = locator.getKdc(KDCLocator.TCP, realm);
+                    String[] addresses = kdc.getAddresses();
+                    if (addresses.length == 0) { // kdc not found for this realm
+                        throw new IllegalArgumentException(InstallerConstants.ERROR_PREFIX
+                                + " there are no KDCs for for realm " + realm +
+                                ". Realm name may not be valid");
+                    }
+                    ldapServers = Arrays.asList(addresses);
                 }
+
                 text.append(seperator + "\t" + realm + " = {" + seperator); // output REALM = {
-                for (String address : addresses) {
+                for (String address : ldapServers) {
                     text.append("\t\tkdc = " + address + seperator); // output kdc = address
                 }
                 text.append("\t}" + seperator); // append line}

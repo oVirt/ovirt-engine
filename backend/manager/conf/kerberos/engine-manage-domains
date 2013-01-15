@@ -44,7 +44,7 @@ fi
 usage () {
         printf "engine-manage-domains: add/edit/delete/validate/list domains\n"
         printf "USAGE:\n"
-        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete] -report\n"
+        printf "\tengine-manage-domains -action=ACTION [-domain=DOMAIN -provider=PROVIDER -user=USER -passwordFile=PASSWORD_FILE -interactive -configFile=PATH -addPermissions -forceDelete -ldapServers=LDAP_SERVERS] -report\n"
         printf "Where:\n"
         printf "\tACTION             action to perform (add/edit/delete/validate/list). See details below.\n"
         printf "\tDOMAIN             	(mandatory for add, edit and delete) the domain you wish to perform the action on.\n"
@@ -53,6 +53,7 @@ usage () {
         printf "\tPASSWORD_FILE   		 (optional for edit, mandatory for add) a file containing the password in the first line.\n"
 	printf "\tinteractive        alternative for using -passwordFile - read the password interactively.\n"
         printf "\tPATH               (optional) use the given alternate configuration file.\n"
+        printf "\tLDAP_SERVERS              (optional) a comma delimited list of LDAP servers to be set to the domain.\n"
         printf "\n"
         printf "\tAvailable actions:\n"
         printf "\tadd\n"
@@ -79,7 +80,7 @@ usage () {
         return 0
 }
 
-if [ "$#" -gt 6 -o "$#" -lt 1 ]; then
+if [ "$#" -gt 7 -o "$#" -lt 1 ]; then
         usage
 		exit 1
 fi

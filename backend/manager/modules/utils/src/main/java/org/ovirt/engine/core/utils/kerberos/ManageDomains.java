@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
@@ -21,6 +25,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.ldap.LdapSRVLocator;
 import org.ovirt.engine.core.utils.CLIParser;
@@ -60,6 +65,7 @@ public class ManageDomains {
     private boolean useDnsLookup;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
+    private static final String DEFAULT_LDAP_SERVER_PORT = "389";
 
     public enum Arguments {
         action,
@@ -73,7 +79,8 @@ public class ManageDomains {
         interactive,
         addPermissions,
         provider,
-        forceDelete
+        forceDelete,
+        ldapServers,
     }
 
     public enum ActionType {
@@ -206,6 +213,12 @@ public class ManageDomains {
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LdapServers);
             String ldapProviderTypes =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPProviderTypes);
+            String ldapPort =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPServerPort);
+            if (ldapPort == null)
+            {
+                ldapPort = DEFAULT_LDAP_SERVER_PORT;
+            }
 
             configurationProvider =
                     new ConfigurationProvider(adUserName,
@@ -216,7 +229,7 @@ public class ManageDomains {
                             adUserId,
                             ldapProviderTypes,
                             utilityConfiguration.getEngineConfigExecutablePath(),
-                            engineConfigProperties);
+                            engineConfigProperties, ldapPort);
 
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
@@ -248,26 +261,6 @@ public class ManageDomains {
 
     private boolean foundSrvRecords(DnsSRVResult result) {
         return result != null && result.getNumOfValidAddresses() > 0;
-    }
-
-    private DnsSRVResult validateLdapServers(String domainName) throws ManageDomainsResult {
-        LdapSRVLocator locator = new LdapSRVLocator();
-        DnsSRVResult ldapDnsResult = null;
-        boolean foundServers = true;
-        try {
-            ldapDnsResult = locator.getLdapServers(domainName);
-            if (!foundSrvRecords(ldapDnsResult)) {
-                foundServers = false;
-            }
-        } catch (Exception ex) {
-            foundServers = false;
-        }
-        if (!foundServers) {
-            throw new ManageDomainsResult("Could not locate LDAP servers to be used to validate the input of the utility",
-                    ManageDomainsResultEnum.NO_LDAP_SERVERS_FOR_DOMAIN, domainName);
-
-        }
-        return ldapDnsResult;
     }
 
     private void runCommand(CLIParser parser) throws ManageDomainsResult {
@@ -377,6 +370,9 @@ public class ManageDomains {
         String currentAuthModeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPSecurityAuthentication);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLdapProviderTypesEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
+        String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
+        String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
+
 
         DomainsConfigurationEntry domainNameEntry =
                 new DomainsConfigurationEntry(currentDomainNameEntry, DOMAIN_SEPERATOR, null);
@@ -391,6 +387,10 @@ public class ManageDomains {
         DomainsConfigurationEntry ldapProviderTypeEntry =
                 new DomainsConfigurationEntry(currentLdapProviderTypesEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
 
+        DomainsConfigurationEntry ldapServersEntry =
+                new DomainsConfigurationEntry(currentLdapServersEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
+
+
         testConfiguration(null,
                 domainNameEntry,
                 adUserNameEntry,
@@ -398,6 +398,8 @@ public class ManageDomains {
                 authModeEntry,
                 adUserIdEntry,
                 ldapProviderTypeEntry,
+                ldapServersEntry,
+                ldapServerPort,
                 false,
                 true,
                 null);
@@ -423,6 +425,34 @@ public class ManageDomains {
         }
     }
 
+    protected List<String> getLdapServers(CLIParser parser, String domainName) throws ManageDomainsResult {
+        String argValue = parser.getArg(Arguments.ldapServers.toString().toLowerCase());
+        if (StringUtils.isEmpty(argValue)) {
+            LdapSRVLocator locator = new LdapSRVLocator();
+            DnsSRVResult ldapDnsResult = null;
+            boolean foundServers = true;
+            try {
+                ldapDnsResult = locator.getLdapServers(domainName);
+                if (!foundSrvRecords(ldapDnsResult)) {
+                    foundServers = false;
+                }
+            } catch (Exception ex) {
+                foundServers = false;
+            }
+            if (!foundServers) {
+                throw new ManageDomainsResult("Could not locate LDAP servers to be used to validate the input of the utility",
+                        ManageDomainsResultEnum.NO_LDAP_SERVERS_FOR_DOMAIN, domainName);
+
+            }
+            ArrayList<String> result = new ArrayList<String>();
+            for (int counter = 0; counter < ldapDnsResult.getNumOfValidAddresses(); counter++) {
+                result.add(ldapDnsResult.getAddresses()[counter]);
+            }
+            return result;
+        }
+        return new ArrayList<String>(Arrays.asList(argValue.split(",")));
+    }
+
     public void addDomain(CLIParser parser) throws ManageDomainsResult {
         String authMode = LdapAuthModeEnum.GSSAPI.name();
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
@@ -433,7 +463,7 @@ public class ManageDomains {
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
-        DnsSRVResult ldapDnsResult = validateLdapServers(domainName);
+        List<String> ldapServers = getLdapServers(parser, domainName);
         validateKdcServers(authMode,domainName);
         domainNameEntry.setValueForDomain(domainName, null);
 
@@ -443,6 +473,7 @@ public class ManageDomains {
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLDAPProviderTypes = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
+        String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -463,9 +494,14 @@ public class ManageDomains {
         authModeEntry.setValueForDomain(domainName, authMode);
         ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
 
-        if (authMode.equalsIgnoreCase(LdapAuthModeEnum.SIMPLE.name())) {
-            ldapServersEntry.setValueForDomain(domainName, utilityConfiguration.getLocalHostEntry());
+        String ldapServersStr = parser.getArg(Arguments.ldapServers.name());
+        if (!StringUtils.isEmpty(ldapServersStr)) {
+            //Replacing "," with ";" - from user perspective of the utility, passing comma delimited string makes more sense and more natural
+            //But "," is used as domain separate character when storing to DB.
+            ldapServersStr = ldapServersStr.replace(',',';');
+            ldapServersEntry.setValueForDomain(domainName, ldapServersStr);
         }
+
 
         testConfiguration(domainName,
                 domainNameEntry,
@@ -474,9 +510,11 @@ public class ManageDomains {
                 authModeEntry,
                 adUserIdEntry,
                 ldapProviderTypesEntry,
+                ldapServersEntry,
+                ldapServerPort,
                 true,
                 false,
-                ldapDnsResult);
+                ldapServers);
 
         handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
 
@@ -529,7 +567,7 @@ public class ManageDomains {
         String authMode;
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
-        DnsSRVResult ldapDnsResult = validateLdapServers(domainName);
+        List<String> ldapServers = getLdapServers(parser, domainName);
         validateKdcServers(authMode,domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         String userName  = parser.getArg(Arguments.user.toString());
@@ -549,6 +587,8 @@ public class ManageDomains {
         String currentLdapServersEntry = configurationProvider.getConfigValue(ConfigValues.LdapServers);
         String currentAdUserIdEntry = configurationProvider.getConfigValue(ConfigValues.AdUserId);
         String currentLdapProviderTypeEntry = configurationProvider.getConfigValue(ConfigValues.LDAPProviderTypes);
+        String ldapServerPort = configurationProvider.getConfigValue(ConfigValues.LDAPServerPort);
+
 
         DomainsConfigurationEntry adUserNameEntry =
                 new DomainsConfigurationEntry(currentAdUserNameEntry, DOMAIN_SEPERATOR, VALUE_SEPERATOR);
@@ -586,9 +626,11 @@ public class ManageDomains {
                 authModeEntry,
                 adUserIdEntry,
                 ldapProviderTypeEntry,
+                ldapServersEntry,
+                ldapServerPort,
                 true,
                 false,
-                ldapDnsResult);
+                ldapServers);
 
         handleAddPermissions(domainName,adUserNameEntry, adUserIdEntry);
 
@@ -603,7 +645,7 @@ public class ManageDomains {
         printSuccessMessage(domainName,"edited");
     }
 
-    private void createKerberosConfiguration(DomainsConfigurationEntry gssapiDomains) throws ManageDomainsResult {
+    private void createKerberosConfiguration(DomainsConfigurationEntry gssapiDomains, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws ManageDomainsResult {
         if (!gssapiDomains.isEntryEmpty()) {
             String gssapiDomainsString = gssapiDomains.getDomainsConfigurationEntry();
 
@@ -611,7 +653,7 @@ public class ManageDomains {
             try {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
-                krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup);
+                krbConfCreator = new KrbConfCreator(gssapiDomainsString, useDnsLookup, ldapServersPerGSSAPIDomains);
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
                 krbConfCreator.toFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX, buffer);
@@ -632,9 +674,11 @@ public class ManageDomains {
             DomainsConfigurationEntry gssapiDomains,
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderTypes,
+            Map<String,List<String>> ldapServersPerDomainMap,
             String kerberosConfigFile,
+            String ldapServerPort,
             boolean isValidate,
-            DnsSRVResult ldapDnsResult) throws ManageDomainsResult {
+            List<String> ldapServers) throws ManageDomainsResult {
 
         Set<Entry<String, String>> gssapiDomainValues = gssapiDomains.getValues();
 
@@ -645,7 +689,8 @@ public class ManageDomains {
             users.setValueForDomain(domain, constructUPN(currUserName, domain));
             try {
                 log.info("Testing kerberos configuration for domain: " + domain);
-                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapDnsResult);
+                List<String> ldapServersPerDomain = ldapServersPerDomainMap.get(ldapServers);
+                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapServersPerDomain, ldapServerPort);
                 StringBuffer userGuid = new StringBuffer();
                 kerberosConfigCheck.checkInstallation(domain,
                         users.getValueForDomain(domain),
@@ -696,15 +741,15 @@ public class ManageDomains {
     private ManageDomainsResult checkSimple(String domain,
             String userName,
             String password,
-            String address,
-            StringBuffer userGuid, LdapProviderType ldapProviderType) {
+            StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers) {
         log.info("Testing domain " + domain);
         SimpleAuthenticationCheck simpleAuthenticationCheck = new SimpleAuthenticationCheck();
-        ReturnStatus returnStatus =
-                simpleAuthenticationCheck.printUserGuid(domain, userName, password, address, userGuid, ldapProviderType);
-        if (!returnStatus.equals(ReturnStatus.OK)) {
+        Pair<ReturnStatus,String> simpleCheckResult =
+                simpleAuthenticationCheck.printUserGuid(domain, userName, password, userGuid, ldapProviderType, ldapServers);
+        if (!simpleCheckResult.getFirst().equals(ReturnStatus.OK)) {
+            System.err.println(simpleCheckResult.getSecond());
             return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
-                    new String[] { domain, returnStatus.getDetailedMessage() });
+                    new String[] { domain, simpleCheckResult.getFirst().getDetailedMessage() });
         }
         log.info("Successfully tested domain " + domain);
         return OK_RESULT;
@@ -716,18 +761,18 @@ public class ManageDomains {
             DomainsConfigurationEntry simpleDomains,
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderType,
-            String address,
+            Map<String,List<String>>  ldapServersMapPerDomainMap,
             boolean isValidate) throws ManageDomainsResult {
 
         Set<Entry<String, String>> simpleDomainValues = simpleDomains.getValues();
         StringBuffer userGuid = new StringBuffer();
         for (Entry<String, String> currDomain : simpleDomainValues) {
             String domain = currDomain.getKey();
+            List<String> domainLdapServers = ldapServersMapPerDomainMap.get(domain);
             ManageDomainsResult result = checkSimple(domain,
                     users.getValueForDomain(domain),
                     passwords.getValueForDomain(domain),
-                    address,
-                    userGuid, LdapProviderType.valueOf(ldapProviderType.getValueForDomain(domain)));
+                    userGuid, LdapProviderType.valueOf(ldapProviderType.getValueForDomain(domain)), domainLdapServers);
             if (!result.isSuccessful()) {
                 if (isValidate || ((domainName != null) && !domain.equals(domainName))) {
                     if (reportAllErrors) {
@@ -757,14 +802,17 @@ public class ManageDomains {
             DomainsConfigurationEntry authModes,
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderType,
+            DomainsConfigurationEntry ldapServersEntry,
+            String ldapServerPort,
             boolean reconfigure,
             boolean isValidate,
-            DnsSRVResult ldapDnsResult) throws ManageDomainsResult {
+            List<String> ldapServers) throws ManageDomainsResult {
 
         Set<Entry<String, String>> domainValues = domains.getValues();
 
         DomainsConfigurationEntry gssapiDomains = new DomainsConfigurationEntry("", DOMAIN_SEPERATOR, null);
         DomainsConfigurationEntry simpleDomains = new DomainsConfigurationEntry("", DOMAIN_SEPERATOR, null);
+
 
         for (Entry<String, String> currDomain : domainValues) {
             String domain = currDomain.getKey();
@@ -779,13 +827,29 @@ public class ManageDomains {
             }
         }
 
+        Map<String,List<String>> ldapServersPerSimpleDomains = new HashMap<String, List<String>>();
+        Map<String,List<String>> ldapServersPerGSSAPIDomains = new HashMap<String, List<String>>();
+
+
+        for (Entry<String,String> currLdapServerEntry: ldapServersEntry.getValues()) {
+            if (gssapiDomains.contains(currLdapServerEntry.getKey())) {
+                ldapServersPerGSSAPIDomains.put(currLdapServerEntry.getKey(),
+                        new ArrayList<String>(Arrays.asList(currLdapServerEntry.getValue().split(";"))));
+            } else
+            {
+                ldapServersPerSimpleDomains.put(currLdapServerEntry.getKey(),
+                        new ArrayList<String>(Arrays.asList(currLdapServerEntry.getValue().split(";"))));
+
+            }
+        }
+
         checkSimpleDomains(domainName,
                 users,
                 passwords,
                 simpleDomains,
                 userIds,
                 ldapProviderType,
-                utilityConfiguration.getLocalHostEntry(),
+                ldapServersPerSimpleDomains,
                 isValidate);
 
         boolean domainIsGssapi = gssapiDomains.doesDomainExist(domainName);
@@ -794,7 +858,7 @@ public class ManageDomains {
             String kerberosConfigFile = utilityConfiguration.getkrb5confFilePath();
 
             if (domainIsGssapi && reconfigure) {
-                createKerberosConfiguration(gssapiDomains);
+                createKerberosConfiguration(gssapiDomains, ldapServersPerGSSAPIDomains);
                 kerberosConfigFile += TESTING_KRB5_CONF_SUFFIX;
             }
 
@@ -804,9 +868,11 @@ public class ManageDomains {
                     gssapiDomains,
                     userIds,
                     ldapProviderType,
+                    ldapServersPerGSSAPIDomains,
                     kerberosConfigFile,
+                    ldapServerPort,
                     isValidate,
-                    ldapDnsResult);
+                    ldapServers);
             if (domainIsGssapi && reconfigure) {
                 applyKerberosConfiguration();
             }
