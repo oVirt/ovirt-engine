@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -198,17 +199,19 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected boolean canDoAction() {
-        VmHandler.updateDisksFromDb(getVm());
+        updateVmDisksFromDb();
         Collection<DiskImage> diskImages =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
         DiskImage vmDisk = LinqUtils.first(diskImages);
-        boolean result = true;
 
         Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        result = result && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
-                && validate(snapshotsValidator.snapshotExists(snapshot))
-                && validate(snapshotsValidator.snapshotNotBroken(snapshot));
+        VmValidator vmValidator = new VmValidator(getVm());
+        boolean result =
+                validate(vmValidator.vmDown())
+                        && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                        && validate(snapshotsValidator.snapshotExists(snapshot))
+                        && validate(snapshotsValidator.snapshotNotBroken(snapshot));
 
         if (vmDisk != null) {
             result =
@@ -222,7 +225,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     false,
                                     true,
-                                    true,
+                                    false,
                                     true, true, getVm().getDiskMap().values());
         }
         if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
@@ -240,6 +243,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         }
         return result;
+    }
+
+    protected void updateVmDisksFromDb() {
+        VmHandler.updateDisksFromDb(getVm());
     }
 
     @Override
