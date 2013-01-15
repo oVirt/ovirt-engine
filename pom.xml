@@ -67,8 +67,8 @@
     <cxf.version>2.2.7</cxf.version>
     <mina-core.version>2.0.1</mina-core.version>
     <sshd-core.version>0.7.0</sshd-core.version>
-    <otopi.version>0.0.0-master-SNAPSHOT</otopi.version>
-    <ovirt-host-deploy.version>0.0.0-master-SNAPSHOT</ovirt-host-deploy.version>
+    <otopi.version>1.0.0</otopi.version>
+    <ovirt-host-deploy.version>1.0.0</ovirt-host-deploy.version>
     <slf4j-jdk14.version>1.5.11</slf4j-jdk14.version>
     <gwt.version>2.3.0</gwt.version>
     <findbugs.version>2.5.1</findbugs.version>
@@ -330,14 +330,6 @@
       <url>http://repository.codehaus.org/</url>
       <snapshots>
         <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <!-- temporary until otopi/ovirt-host-deploy released -->
-      <id>sonatype-snapshots</id>
-      <url>http://oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
       </snapshots>
     </repository>
   </repositories>
