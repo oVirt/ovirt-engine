@@ -165,7 +165,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        if (!validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))) {
+        if (!validateVmNotDuringSnapshot()) {
             return false;
         }
 
@@ -208,7 +208,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     true,
                     true,
                     true,
-                    true,
+                    false,
                     false,
                     true, checkIsValid, sourceImageDomainsImageMap.get(srcStorageDomainId))) {
                 return false;
@@ -262,6 +262,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                         .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+    }
+
+    protected boolean validateVmNotDuringSnapshot() {
+        return validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
     }
 
     private Set<Guid> getStorageGuidSet() {
