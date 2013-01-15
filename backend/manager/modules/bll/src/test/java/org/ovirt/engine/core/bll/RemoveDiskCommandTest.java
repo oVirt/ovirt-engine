@@ -16,12 +16,16 @@ import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -39,9 +43,13 @@ public class RemoveDiskCommandTest {
     @Mock
     private VmDAO vmDao;
 
+    @Mock
+    private VmDeviceDAO vmDeviceDao;
+
     private RemoveDiskCommand<RemoveDiskParameters> cmd;
     private DiskImage disk;
     private VM vm;
+    private VmDevice vmDevice;
 
     @Before
     public void setUp() {
@@ -55,12 +63,19 @@ public class RemoveDiskCommandTest {
         vm = new VM();
         vm.setId(vmId);
 
+        VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
+        vmDevice = new VmDevice();
+        vmDevice.setId(vmDeviceId);
+        vmDevice.setIsPlugged(true);
+
         when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.singletonList(vm));
+        when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
         RemoveDiskParameters params = new RemoveDiskParameters(diskId);
 
         cmd = spy(new RemoveDiskCommand<RemoveDiskParameters>(params));
         doReturn(disk).when(cmd).getDisk();
+        doReturn(vmDeviceDao).when(cmd).getVmDeviceDAO();
         AuditLogableBaseMockUtils.mockVmDao(cmd, vmDao);
     }
 
@@ -82,5 +97,12 @@ public class RemoveDiskCommandTest {
         lockManager.acquireLock(lock);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+    }
+
+    @Test
+    public void testCanDoActionVmUp() {
+        vm.setStatus(VMStatus.Up);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 }

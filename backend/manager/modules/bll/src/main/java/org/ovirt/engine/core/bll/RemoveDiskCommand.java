@@ -77,15 +77,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         }
 
         buildSharedLockMap();
-        if (!acquireLockInternal()) {
-            return false;
-        }
 
-        return (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
-                canRemoveDiskBasedOnImageStorageCheck() : canRemoveLunDisk());
+        return acquireLockInternal() &&
+                validateAllVmsForDiskAreDown() &&
+                canRemoveDiskBasedOnStorageTypeCheck();
     }
 
-    private boolean canRemoveLunDisk() {
+    private boolean validateAllVmsForDiskAreDown() {
         if (getDisk().getVmEntityType() == VmEntityType.VM) {
             for (VM vm : getVmsForDiskId()) {
                 if (vm.getStatus() != VMStatus.Down) {
@@ -96,6 +94,17 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     }
                 }
             }
+        }
+
+        return true;
+    }
+
+    private boolean canRemoveDiskBasedOnStorageTypeCheck() {
+        // currently, only images have specific checks.
+        // In the future, if LUNs get specific checks,
+        // or additional storage types are added, other else-if clauses should be added.
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            return canRemoveDiskBasedOnImageStorageCheck();
         }
 
         return true;
@@ -228,7 +237,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     false,
                     false,
                     vmDevice.getIsPlugged() && getDisk().isAllowSnapshot(),
-                    vmDevice.getIsPlugged(),
+                    false,
                     false,
                     firstTime,
                     diskList)) {
