@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
@@ -25,6 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -512,8 +515,14 @@ public class VdsManager {
         vdsBrokerCommand.Execute();
         if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
             // Verify version capabilities
-            if (Config.<Boolean> GetValue(ConfigValues.HardwareInfoEnabled, vds.getvds_group_compatibility_version()
-                    .getValue())) {
+            HashSet<Version> hostVersions = null;
+            Version clusterCompatibility = vds.getvds_group_compatibility_version();
+            if (FeatureSupported.hardwareInfo(clusterCompatibility) &&
+                // If the feature is enabled in cluster level, we continue by verifying that this VDS also
+                // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the
+                // host and an exception will be raised by vdsm.
+                (hostVersions = vds.getSupportedClusterVersionsSet()) != null &&
+                hostVersions.contains(clusterCompatibility)) {
                 VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(VDSCommandType.GetHardwareInfo,
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                 if (!ret.getSucceeded()) {

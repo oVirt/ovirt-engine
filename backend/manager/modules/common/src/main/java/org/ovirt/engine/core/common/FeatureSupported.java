@@ -59,4 +59,13 @@ public class FeatureSupported {
     public static boolean antiMacSpoofing(Version version) {
         return supportedInConfig(ConfigValues.EnableMACAntiSpoofingFilterRules, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if get hardware information is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean hardwareInfo(Version version) {
+        return supportedInConfig(ConfigValues.HardwareInfoEnabled, version);
+    }
 }
