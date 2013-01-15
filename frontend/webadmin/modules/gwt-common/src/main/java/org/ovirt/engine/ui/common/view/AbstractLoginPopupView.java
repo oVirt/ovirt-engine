@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.ListBox;
  */
 public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBoxWithKeyHandlers> {
 
+    private static final String DEFAULT_LOCALE = "default"; //$NON-NLS-1$
+
     @UiField(provided = true)
     @Ignore
     public ListBox localeBox;
@@ -56,17 +58,23 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         String[] localeNames = LocaleInfo.getAvailableLocaleNames();
 
+        // Populate the locale list box with available locales
+        boolean foundDefaultLocale = false;
         for (String localeName : localeNames) {
-            String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
-            if (localeName.equals("default")) { //$NON-NLS-1$
-                nativeName = "English"; //$NON-NLS-1$
-            }
+            if (!DEFAULT_LOCALE.equals(localeName)) {
+                String nativeName = LocaleInfo.getLocaleNativeDisplayName(localeName);
+                localeBox.addItem(nativeName, localeName);
 
-            localeBox.addItem(nativeName, localeName);
-            if (localeName.equals(currentLocale)) {
-                localeBox.setSelectedIndex(localeBox.getItemCount() - 1);
-                selectedLocale.setText(localeBox.getItemText(localeBox.getSelectedIndex()));
+                if (localeName.equals(currentLocale)) {
+                    setSelectedLocale(localeBox.getItemCount() - 1);
+                    foundDefaultLocale = true;
+                }
             }
+        }
+
+        // When no available locale matches the current locale, select the first available locale
+        if (!foundDefaultLocale && localeNames.length > 0) {
+            setSelectedLocale(0);
         }
 
         if (clientAgentType.isIE8OrBelow()) {
@@ -76,15 +84,16 @@ public abstract class AbstractLoginPopupView extends AbstractPopupView<DialogBox
         localeBox.addChangeHandler(new ChangeHandler() {
             @Override
             public void onChange(ChangeEvent event) {
-                String localeName = localeBox.getValue(localeBox.getSelectedIndex());
-                String localeString = ""; //$NON-NLS-1$
-
-                if (!localeName.equals("default")) { //$NON-NLS-1$
-                    localeString = "?locale=" + localeName; //$NON-NLS-1$
-                }
+                String localeQueryParam = LocaleInfo.getLocaleQueryParam();
+                String localeString = "?" + localeQueryParam + "=" + localeBox.getValue(localeBox.getSelectedIndex()); //$NON-NLS-1$ //$NON-NLS-2$
                 Window.open(FrontendUrlUtils.getCurrentPageURL() + localeString, "_self", ""); //$NON-NLS-1$ //$NON-NLS-2$
             }
         });
+    }
+
+    void setSelectedLocale(int index) {
+        localeBox.setSelectedIndex(index);
+        selectedLocale.setText(localeBox.getItemText(index));
     }
 
     @Override
