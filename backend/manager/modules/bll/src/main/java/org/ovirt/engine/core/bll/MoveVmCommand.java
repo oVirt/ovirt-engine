@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -64,9 +65,11 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             setDescription(getVmName());
         }
 
-        retValue = retValue && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()));
+        retValue = retValue
+                && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && validate(new VmValidator(getVm()).vmDown());
 
-        // check that vm is down and images are ok
+        // check that images are ok
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
@@ -80,7 +83,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 true,
                                 true,
                                 true,
-                                true,
+                                false,
                                 false,
                                 true,
                                 diskImages);
