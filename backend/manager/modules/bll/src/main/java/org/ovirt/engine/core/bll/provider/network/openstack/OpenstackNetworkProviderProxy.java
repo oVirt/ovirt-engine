@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.provider.network.openstack;
 
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +21,14 @@ import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Networks;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.PortForCreate;
 
 public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
     private static final String API_VERSION = "/v2.0";
+
+    private static final String DEVICE_OWNER = "oVirt";
 
     private Provider<OpenstackNetworkProviderProperties> provider;
 
@@ -84,13 +89,44 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
 
     @Override
     public Map<String, String> allocate(Network network, VmNetworkInterface nic) {
-        // TODO Auto-generated method stub
-        return null;
+        deallocate(nic);
+        try {
+            com.woorea.openstack.quantum.model.Network externalNetwork =
+                    getClient().networks().show(network.getProvidedBy().getExternalId()).execute();
+            PortForCreate port = new PortForCreate();
+            port.setAdminStateUp(true);
+            port.setName(nic.getName());
+            port.setTenantId(externalNetwork.getTenantId());
+            port.setMacAddress(nic.getMacAddress());
+            port.setNetworkId(externalNetwork.getId());
+            port.setDeviceOwner(DEVICE_OWNER);
+            port.setDeviceId(nic.getId().toString());
+
+            Port createdPort = getClient().ports().create(port).execute();
+
+            Map<String, String> runtimeProperties = new HashMap<>();
+            runtimeProperties.put("vnic_id", createdPort.getId());
+            runtimeProperties.put("provider_type", provider.getType().name());
+            runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType().name());
+
+            return runtimeProperties;
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
     }
 
     @Override
     public void deallocate(VmNetworkInterface nic) {
-        // TODO Auto-generated method stub
+        try {
+            List<Port> ports = getClient().ports().list().execute().getList();
+            for (Port port : ports) {
+                if (DEVICE_OWNER.equals(port.getDeviceOwner()) && nic.getId().toString().equals(port.getDeviceId())) {
+                    getClient().ports().delete(port.getId()).execute();
+                }
+            }
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
