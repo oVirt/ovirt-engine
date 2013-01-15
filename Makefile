@@ -163,9 +163,13 @@ $(BUILD_FILE):
 	touch $(BUILD_FILE)
 
 clean:
+	# Clean maven generated stuff:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
 	rm -rf $(OUTPUT_RPMBUILD) $(SPEC_FILE) $(OUTPUT_DIR) $(BUILD_FILE)
 	[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
+
+	# Clean files generated from templates:
+	rm -rf $(GENERATED)
 
 test:
 	$(MVN) install $(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
