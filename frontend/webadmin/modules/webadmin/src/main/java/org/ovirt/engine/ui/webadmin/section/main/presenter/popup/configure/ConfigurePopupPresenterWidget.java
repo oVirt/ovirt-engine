@@ -34,8 +34,8 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
     }
 
     @Override
-    protected void onBind() {
-        super.onBind();
+    protected void onReveal() {
+        super.onReveal();
         roleModelProvider.getModel().Search();
         systemPermissionModelProvider.getModel().Search();
     }
