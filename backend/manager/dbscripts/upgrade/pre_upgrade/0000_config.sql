@@ -136,6 +136,10 @@ select fn_db_add_config_value('NetworkLinkingSupported','true','3.2');
 select fn_db_add_config_value('DisconnectPoolOnReconstruct','0,2','general');
 select fn_db_add_config_value('HotPlugUnsupportedOsList','','general');
 select fn_db_add_config_value('InitStorageSparseSizeInGB','1','general');
+select fn_db_add_config_value('TunnelMigrationEnabled','false','3.0');
+select fn_db_add_config_value('TunnelMigrationEnabled','false','3.1');
+select fn_db_add_config_value('TunnelMigrationEnabled','false','3.2');
+select fn_db_add_config_value('TunnelMigrationEnabled','true','3.3');
 --Handling Install virtualization software on Add Host
 
 select fn_db_add_config_value('InstallVds','true','general');

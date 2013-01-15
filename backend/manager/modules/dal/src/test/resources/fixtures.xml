@@ -481,6 +481,7 @@
         <column>virt_service</column>
         <column>gluster_service</column>
         <column>count_threads_as_cores</column>
+        <column>tunnel_migration</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -497,6 +498,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
             <value>false</value>
         </row>
@@ -518,6 +520,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -535,6 +538,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
             <value>false</value>
         </row>
@@ -556,6 +560,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -573,6 +578,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
             <value>false</value>
         </row>
@@ -594,6 +600,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -611,6 +618,7 @@
             <value>2.3</value>
             <value>0</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
             <value>false</value>
         </row>
@@ -631,6 +639,7 @@
             <value>0</value>
             <value>false</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
     </table>
@@ -1001,7 +1010,7 @@
         <column>predefined_properties</column>
         <column>quota_id</column>
         <column>db_generation</column>
-
+		<column>tunnel_migration</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -1045,6 +1054,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1088,6 +1098,7 @@
             <null />
             <null />
             <value>1</value>
+            <value>false</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1131,6 +1142,7 @@
             <null />
             <null />
             <value>1</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -1174,6 +1186,7 @@
             <null />
             <null />
             <value>1</value>
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -1217,6 +1230,7 @@
             <null />
             <null />
             <value>1</value>
+            <null />
         </row>
 
         <!-- VMS -->
@@ -1262,6 +1276,7 @@
             <null />
             <null />
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -1305,6 +1320,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -1348,6 +1364,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -1391,6 +1408,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -1434,6 +1452,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -1477,6 +1496,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -1520,6 +1540,7 @@
             <null />
             <value>88296e00-0cad-4e5a-9291-008a7b7f4399</value>
             <value>1</value>
+            <null />
         </row>
     </table>
 

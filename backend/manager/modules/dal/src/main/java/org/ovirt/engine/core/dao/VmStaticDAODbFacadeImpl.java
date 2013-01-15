@@ -83,7 +83,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("quota_id", vm.getQuotaId())
                 .addValue("allow_console_reconnect", vm.isAllowConsoleReconnect())
                 .addValue("cpu_pinning", vm.getCpuPinning())
-                .addValue("host_cpu_flags", vm.isUseHostCpuFlags());
+                .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
+                .addValue("tunnel_migration", vm.getTunnelMigration());
     }
 
     @Override
@@ -199,6 +200,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
+            entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
 
             return entity;
         }

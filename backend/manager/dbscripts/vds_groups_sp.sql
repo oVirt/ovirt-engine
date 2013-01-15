@@ -23,16 +23,17 @@ Create or replace FUNCTION InsertVdsGroups(
 	v_transparent_hugepages BOOLEAN ,
 	v_migrate_on_error INTEGER,
 	v_virt_service BOOLEAN,
-	v_gluster_service BOOLEAN)
+	v_gluster_service BOOLEAN,
+	v_tunnel_migration BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
       INSERT INTO vds_groups(vds_group_id,description, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
 	cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
-    transparent_hugepages, migrate_on_error, virt_service, gluster_service)
+    transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration)
 	VALUES(v_vds_group_id,v_description, v_name, v_cpu_name, v_selection_algorithm, v_high_utilization, v_low_utilization,
 	v_cpu_over_commit_duration_minutes, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
-    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service);
+    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -55,7 +56,8 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
 	v_transparent_hugepages BOOLEAN ,
 	v_migrate_on_error INTEGER,
 	v_virt_service BOOLEAN,
-	v_gluster_service BOOLEAN)
+	v_gluster_service BOOLEAN,
+	v_tunnel_migration BOOLEAN)
 RETURNS VOID
 
 	--The [vds_groups] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -70,7 +72,7 @@ BEGIN
       count_threads_as_cores = v_count_threads_as_cores,
       compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages,
       migrate_on_error = v_migrate_on_error,
-      virt_service = v_virt_service, gluster_service = v_gluster_service
+      virt_service = v_virt_service, gluster_service = v_gluster_service, tunnel_migration = v_tunnel_migration
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;

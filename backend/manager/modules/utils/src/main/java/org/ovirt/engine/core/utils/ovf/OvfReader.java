@@ -417,6 +417,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("TunnelMigration");
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
+                vmBase.setTunnelMigration(Boolean.parseBoolean(node.InnerText));
+            }
+        }
+
         readGeneralData(content);
     }
 

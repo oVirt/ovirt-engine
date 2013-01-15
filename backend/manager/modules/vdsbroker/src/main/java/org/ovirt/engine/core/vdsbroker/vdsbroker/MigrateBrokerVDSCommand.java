@@ -18,6 +18,9 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         migrationInfo.put(VdsProperties.src, String.format("%1$s", parameters.getSrcHost()));
         migrationInfo.put(VdsProperties.dst, String.format("%1$s", parameters.getDstHost()));
         migrationInfo.put(VdsProperties.method, migMethod);
+        if (parameters.getTunnelMigration() != null) {
+            migrationInfo.put(VdsProperties.TUNNELED, parameters.getTunnelMigration().toString());
+        }
     }
 
     @Override

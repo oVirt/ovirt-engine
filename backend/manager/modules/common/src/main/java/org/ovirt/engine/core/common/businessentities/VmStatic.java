@@ -85,7 +85,8 @@ public class VmStatic extends VmBase {
                 vmStatic.getInitrdUrl(),
                 vmStatic.getQuotaId(),
                 vmStatic.isSmartcardEnabled(),
-                vmStatic.isDeleteProtected());
+                vmStatic.isDeleteProtected(),
+                vmStatic.getTunnelMigration());
         name = vmStatic.getVmName();
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
@@ -106,7 +107,8 @@ public class VmStatic extends VmBase {
             int numOfMonitors,
             UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
             BootSequence default_boot_sequence, VmType vm_type,
-            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled, boolean deleteProtected, boolean useHostCpuFlags) {
+            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled, boolean deleteProtected, boolean useHostCpuFlags,
+            Boolean tunnelMigration) {
         super(vm_guid,
                 vds_group_id,
                 os,
@@ -134,7 +136,8 @@ public class VmStatic extends VmBase {
                 null,
                 quotaGuid,
                 smartcardEnabled,
-                deleteProtected);
+                deleteProtected,
+                tunnelMigration);
 
         this.name = vm_name;
         this.vmtGuid = vmt_guid;

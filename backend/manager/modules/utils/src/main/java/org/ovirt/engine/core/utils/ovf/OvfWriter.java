@@ -234,6 +234,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement("VmType");
         _writer.WriteRaw(String.valueOf(vmBase.getVmType().getValue()));
         _writer.WriteEndElement();
+
+        if (vmBase.getTunnelMigration() != null) {
+            _writer.WriteStartElement("TunnelMigration");
+            _writer.WriteRaw(String.valueOf(vmBase.getTunnelMigration()));
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void WriteAppList();

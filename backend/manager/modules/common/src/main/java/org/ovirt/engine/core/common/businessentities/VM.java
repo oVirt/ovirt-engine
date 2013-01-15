@@ -1493,4 +1493,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     public boolean isNotRunning() {
         return getStatus().isNotRunning();
     }
+
+    public Boolean getTunnelMigration() {
+        return vmStatic.getTunnelMigration();
+    }
+
+    public void setTunnelMigration(Boolean value) {
+        vmStatic.setTunnelMigration(value);
+    }
 }

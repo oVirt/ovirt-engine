@@ -108,6 +108,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private boolean allowConsoleReconnect;
 
     /**
+     * if this field is null then value should be taken from cluster
+     */
+    private Boolean tunnelMigration;
+
+    /**
      * this field is used to save the ovf version,
      * in case the vm object was built from ovf.
      * not persisted to db.
@@ -165,7 +170,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
             String initrdUrl,
             Guid quotaId,
             boolean smartcardEnabled,
-            boolean deleteProtected) {
+            boolean deleteProtected,
+            Boolean tunnelMigration) {
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
@@ -194,6 +200,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.initrdUrl = initrdUrl;
         this.smartcardEnabled = smartcardEnabled;
         this.deleteProtected = deleteProtected;
+        this.tunnelMigration = tunnelMigration;
         setQuotaId(quotaId);
     }
 
@@ -523,6 +530,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + (allowConsoleReconnect ? 1231 : 1237);
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((dedicatedVmForVds == null) ? 0 : dedicatedVmForVds.hashCode());
+        result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
 
         return result;
     }
@@ -680,6 +688,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         if (migrationSupport != other.migrationSupport) {
             return false;
         }
+        if (tunnelMigration == null) {
+            if (other.tunnelMigration != null) {
+                return false;
+            }
+        } else if (!tunnelMigration.equals(other.tunnelMigration)) {
+            return false;
+        }
         return true;
     }
 
@@ -745,5 +760,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setOvfVersion(String ovfVersion) {
         this.ovfVersion = ovfVersion;
+    }
+
+    public Boolean getTunnelMigration() {
+        return tunnelMigration;
+    }
+
+    public void setTunnelMigration(Boolean value) {
+        tunnelMigration = value;
     }
 }

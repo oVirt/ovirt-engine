@@ -1357,6 +1357,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("95")
     LogMaxSwapUsedThresholdInPercentage(415),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    TunnelMigrationEnabled(416),
+
     Invalid(65535);
 
     private int intValue;

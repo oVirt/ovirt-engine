@@ -67,6 +67,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean glusterService = false;
 
+    private boolean tunnelMigration = false;
+
     public VDSGroup() {
         selection_algorithm = VdsSelectionAlgorithm.None;
         high_utilization = -1;
@@ -232,6 +234,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         return glusterService;
     }
 
+    public boolean isTunnelMigration() {
+        return tunnelMigration;
+    }
+
+    public void setTunnelMigration(boolean value) {
+        tunnelMigration = value;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -257,6 +267,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (transparentHugepages ? 1231 : 1237);
         result = prime * result + (virtService ? 1231 : 1237);
         result = prime * result + (glusterService ? 1231 : 1237);
+        result = prime * result + (tunnelMigration ? 1231 : 1237);
         return result;
     }
 
@@ -331,6 +342,9 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
             return false;
         }
         if (glusterService != other.glusterService) {
+            return false;
+        }
+        if (tunnelMigration != other.tunnelMigration) {
             return false;
         }
         return true;

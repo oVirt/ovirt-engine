@@ -88,7 +88,8 @@ public class VmHandler {
                 "images", // images list is relational entity - ignore value changes
                 "interfaces", // interfaces is relational entity - ignore value changes
                 "useHostCpuFlags",
-                "quotaDefault"
+                "quotaDefault",
+                "tunnelMigration"
         });
         mUpdateVmsStatic.AddFields(
                 Arrays.asList(new Enum<?>[] { VMStatus.Down }),

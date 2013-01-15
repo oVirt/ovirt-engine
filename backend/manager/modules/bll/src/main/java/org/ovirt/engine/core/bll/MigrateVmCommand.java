@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -116,6 +117,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         String srcVdsHost = getVds().gethost_name();
         String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().gethost_name(), getDestinationVds()
                 .getport());
+        Boolean tunnelMigration = null;
+        if (FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
+            // if vm has no override for tunnel migration (its null),
+            // use cluster's setting
+            tunnelMigration =
+                    getVm().getTunnelMigration() != null ? getVm().getTunnelMigration()
+                            : getVdsGroup().isTunnelMigration();
+        }
         // Starting migration at src VDS
         boolean connectToLunDiskSuccess = connectLunDisks(_vdsDestinationId);
         if (connectToLunDiskSuccess) {
@@ -125,7 +134,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     .RunAsyncVdsCommand(
                             VDSCommandType.Migrate,
                             new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, _vdsDestinationId,
-                                    dstVdsHost, MigrationMethod.ONLINE), this).getReturnValue());
+                                    dstVdsHost, MigrationMethod.ONLINE, tunnelMigration), this).getReturnValue());
         }
         if (!connectToLunDiskSuccess || (VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
             getVm().setMigreatingToPort(0);

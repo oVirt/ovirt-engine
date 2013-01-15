@@ -68,4 +68,13 @@ public class FeatureSupported {
     public static boolean hardwareInfo(Version version) {
         return supportedInConfig(ConfigValues.HardwareInfoEnabled, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if tunnel migration is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean tunnelMigration(Version version) {
+        return supportedInConfig(ConfigValues.TunnelMigrationEnabled, version);
+    }
 }
