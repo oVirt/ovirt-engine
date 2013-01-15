@@ -24,6 +24,15 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    /** @return Validation result that indicates if the VM is down or not. */
+    public ValidationResult vmDown() {
+        if (!vm.isDown()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotRunningStateless() {
         if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
             VdcBllMessages message = vm.isRunning() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -160,17 +161,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean canDoAction() {
         initializeObjectState();
 
-        if (!validateVmNotDuringSnapshot()) {
-            handleCanDoActionFailure();
-            return false;
-        }
-
-        if (!validateSnapshotExists()) {
-            handleCanDoActionFailure();
-            return false;
-        }
-
-        if (!validateImagesAndVMStates()) {
+        if (!validateVmNotDuringSnapshot() ||
+                !validateSnapshotExists() ||
+                !validate(new VmValidator(getVm()).vmDown()) ||
+                !validateImagesAndVMStates()) {
             handleCanDoActionFailure();
             return false;
         }
@@ -214,7 +208,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean validateImagesAndVMStates() {
         return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
-                hasImages(), hasImages(), hasImages(), hasImages(), true, true, true, true, null);
+                hasImages(), hasImages(), hasImages(), hasImages(), true, false, true, true, null);
     }
 
     protected boolean validateImageNotInTemplate() {
