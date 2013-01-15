@@ -35,6 +35,9 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     private List<Snapshot> snapshots = new ArrayList<Snapshot>();
     private boolean runOnce = false;
 
+    private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties =
+            new HashMap<VmDevice, Map<String, String>>();
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }
@@ -57,6 +60,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     public void setPredefinedProperties(String predefinedProperties) {
         vmStatic.setPredefinedProperties(predefinedProperties);
+    }
+
+    public Map<VmDevice, Map<String, String>> getRuntimeDeviceCustomProperties() {
+        return runtimeDeviceCustomProperties;
+    }
+
+    public void setRuntimeDeviceCustomProperties(Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties) {
+        this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
     }
 
     public VM() {

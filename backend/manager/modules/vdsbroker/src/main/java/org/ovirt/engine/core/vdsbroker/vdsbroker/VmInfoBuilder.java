@@ -476,7 +476,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    private static void addNetworkInterfaceProperties(Map<String, Object> struct,
+    private void addNetworkInterfaceProperties(Map<String, Object> struct,
             VmNetworkInterface vmInterface,
             VmDevice vmDevice,
             String nicModel,
@@ -504,7 +504,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
-            struct.put(VdsProperties.Custom, vmDevice.getCustomProperties());
+            Map<String, String> customProperties = new HashMap<>(vmDevice.getCustomProperties());
+
+            Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice);
+            if (runtimeCustomProperties != null) {
+                customProperties.putAll(runtimeCustomProperties);
+            }
+
+            struct.put(VdsProperties.Custom, customProperties);
         }
 
         addNetworkFiltersToNic(struct, clusterVersion);
