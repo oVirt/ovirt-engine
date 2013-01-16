@@ -88,6 +88,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volumes")
     String volumeMainTabLabel();
 
+    @DefaultStringValue("Providers")
+    String providerMainTabLabel();
+
     @DefaultStringValue("Summary")
     String volumeGeneralSubTabLabel();
 
@@ -2639,4 +2642,23 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Unknown")
     String unknown();
+
+    // Provider
+    @DefaultStringValue("Name")
+    String nameProvider();
+
+    @DefaultStringValue("Description")
+    String descriptionProvider();
+
+    @DefaultStringValue("URL")
+    String urlProvider();
+
+    @DefaultStringValue("Add")
+    String addProvider();
+
+    @DefaultStringValue("Remove")
+    String removeProvider();
+
+    @DefaultStringValue("General")
+    String providerGeneralSubTabLabel();
 }

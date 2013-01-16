@@ -409,6 +409,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Networks")
     String networksTitle();
 
+    @DefaultStringValue("Providers")
+    String providersTitle();
+
     @DefaultStringValue("VMs")
     String vmsTitle();
 
@@ -1841,4 +1844,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Eject")
     String eject();
+
+    // Provider
+    @DefaultStringValue("Networks")
+    String providerNetworksTitle();
 }

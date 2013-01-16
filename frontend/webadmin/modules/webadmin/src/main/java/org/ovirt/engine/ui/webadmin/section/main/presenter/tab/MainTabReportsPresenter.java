@@ -43,7 +43,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().reportsMainTabLabel(), 13,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().reportsMainTabLabel(), 14,
                 ginjector.getMainTabReportsModelProvider(), Align.RIGHT);
     }
 

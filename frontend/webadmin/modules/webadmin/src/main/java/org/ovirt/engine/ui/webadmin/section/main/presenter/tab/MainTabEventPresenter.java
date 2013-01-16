@@ -42,7 +42,7 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().eventMainTabLabel(), 12,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().eventMainTabLabel(), 13,
                 ginjector.getMainTabEventModelProvider(), Align.RIGHT);
     }
 

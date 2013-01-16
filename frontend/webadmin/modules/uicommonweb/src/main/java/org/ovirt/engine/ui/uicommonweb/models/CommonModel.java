@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -433,6 +434,7 @@ public class CommonModel extends ListModel
         eventList.setIsAvailable(!getHasSelectedTags());
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
         networkList.setIsAvailable(!getHasSelectedTags());
+        providerList.setIsAvailable(!getHasSelectedTags());
 
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
@@ -589,6 +591,8 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.Networks
                 || model.getType() == SystemTreeItemType.System || model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host);
+
+        providerList.setIsAvailable(model.getType() == SystemTreeItemType.System);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -765,6 +769,7 @@ public class CommonModel extends ListModel
     private SearchableListModel volumeList;
     private SearchableListModel diskList;
     private SearchableListModel networkList;
+    private SearchableListModel providerList;
 
     private void initItems()
     {
@@ -806,6 +811,9 @@ public class CommonModel extends ListModel
 
         networkList = new NetworkListModel();
         list.add(networkList);
+
+        providerList = new ProviderListModel();
+        list.add(providerList);
 
         setItems(list);
 

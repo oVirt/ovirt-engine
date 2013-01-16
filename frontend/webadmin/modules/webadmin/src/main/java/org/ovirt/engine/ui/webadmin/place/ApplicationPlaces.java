@@ -39,6 +39,8 @@ public class ApplicationPlaces {
 
     public static final String networkMainTabPlace = "networks"; //$NON-NLS-1$
 
+    public static final String providerMainTabPlace = "providers"; //$NON-NLS-1$
+
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
@@ -292,6 +294,8 @@ public class ApplicationPlaces {
             + "permissions"; //$NON-NLS-1$
 
 
+    // Provider
+    public static final String providerGeneralSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
 
     // Default places
