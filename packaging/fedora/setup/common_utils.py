@@ -1353,7 +1353,7 @@ def lockRpmVersion(miniyum, patterns):
 
     # Create RPM lock list
     with open(basedefs.FILE_YUM_VERSION_LOCK, 'a') as yumlock:
-        yumlock.write("\n".join(pkgs))
+        yumlock.write("\n".join(pkgs) + "\n")
 
 def setHttpPortsToNonProxyDefault(controller):
     logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8700 & 8701)")
