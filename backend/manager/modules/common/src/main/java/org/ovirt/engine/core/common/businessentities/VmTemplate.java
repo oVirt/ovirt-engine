@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -136,6 +137,7 @@ public class VmTemplate extends VmBase implements Nameable {
         this.childCount = value;
     }
 
+    @JsonProperty
     public String getname() {
         return this.name;
     }
@@ -260,6 +262,7 @@ public class VmTemplate extends VmBase implements Nameable {
         return getId().hashCode();
     }
 
+    @JsonIgnore
     @Override
     public String getName() {
         return getname();
