@@ -970,6 +970,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameCluster();
 
+    @DefaultStringValue("Data Center")
+    String dcCluster();
+
     @DefaultStringValue("Attached Network")
     String attachedNetworkCluster();
 
