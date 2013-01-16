@@ -282,13 +282,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     @Override
     protected boolean canDoAction() {
         boolean result = true;
+        if (!canDoSnapshot(getVm())) {
+            return false;
+        }
         List<DiskImage> disksList = getDisksList();
         if (disksList.size() > 0) {
             VmValidator vmValidator = new VmValidator(getVm());
             result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())
-                    && canDoSnapshot(getVm())
                     && ImagesHandler.PerformImagesChecks(getVm(),
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getStoragePoolId(),
