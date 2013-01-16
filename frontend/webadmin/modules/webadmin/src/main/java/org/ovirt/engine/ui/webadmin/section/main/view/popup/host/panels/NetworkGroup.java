@@ -73,7 +73,7 @@ public class NetworkGroup extends DnDPanel {
             flexCellFormatter.setRowSpan(0, 0, networkSize);
             FlexTable networkTable = new FlexTable();
             for (int i = 0; i < networkSize; i++) {
-                networkTable.setWidget(i, 0 ,new NetworkPanel(networks.get(i), style));
+                networkTable.setWidget(i, 0, new NetworkPanel(networks.get(i), style));
             }
             networkTable.setWidth("100%"); //$NON-NLS-1$
             table.setWidget(0, 2, networkTable);
@@ -127,7 +127,7 @@ public class NetworkGroup extends DnDPanel {
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
         HostSetupNetworksModel setupModel = nicModel.getSetupModel();
-        String dragDropEventData = event.getData("Text"); //$NON-NLS-1$
+        String dragDropEventData = NetworkItemPanel.getDragDropEventData(event, isDrop);
         String type = NetworkItemPanel.getType(dragDropEventData);
         String data = NetworkItemPanel.getData(dragDropEventData);
         if (data != null) {

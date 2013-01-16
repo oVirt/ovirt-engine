@@ -132,7 +132,7 @@ public class UnassignedNetworksPanel extends DnDPanel{
     }
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
-        String dragDropEventData = event.getData("Text"); //$NON-NLS-1$
+        String dragDropEventData = NetworkItemPanel.getDragDropEventData(event, isDrop);
         String type = NetworkItemPanel.getType(dragDropEventData);
         String data = NetworkItemPanel.getData(dragDropEventData);
         if (data != null) {

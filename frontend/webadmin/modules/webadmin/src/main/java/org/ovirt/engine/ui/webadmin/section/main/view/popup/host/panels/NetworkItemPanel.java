@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -50,6 +51,8 @@ public abstract class NetworkItemPanel extends DnDPanel {
     private static final PopupPanel menuPopup = new PopupPanel(true);
 
     private static final ItemInfoPopup infoPopup = new ItemInfoPopup();
+
+    private static String lastDragData = ""; //$NON-NLS-1$
 
     public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, Boolean draggable) {
         super(draggable);
@@ -134,7 +137,8 @@ public abstract class NetworkItemPanel extends DnDPanel {
             public void onDragStart(DragStartEvent event) {
                 NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
                 // Required: set data for the event.
-                event.setData("Text", sourcePanel.item.getType() + " " + sourcePanel.item.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+                lastDragData = sourcePanel.item.getType() + " " + sourcePanel.item.getName(); //$NON-NLS-1$
+                event.setData("Text", lastDragData); //$NON-NLS-1$
 
                 // show a ghost of the widget under cursor.
                 NativeEvent nativeEvent = event.getNativeEvent();
@@ -229,5 +233,16 @@ public abstract class NetworkItemPanel extends DnDPanel {
             return ""; //$NON-NLS-1$
         }
         return dragDropEventData.substring(0, split);
+    }
+
+    public static String getDragDropEventData(DragDropEventBase<?> event, boolean isDrop) {
+        if (isDrop) {
+            return event.getData("Text"); //$NON-NLS-1$
+        } else
+        {
+            // On most of the browsers drag, dragenter, dragleave, dragover and dragend don't have access to event's
+            // data
+            return lastDragData;
+        }
     }
 }
