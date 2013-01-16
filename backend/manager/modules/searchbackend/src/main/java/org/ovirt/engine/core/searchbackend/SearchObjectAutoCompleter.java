@@ -198,7 +198,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "vm_name ASC "));
                     put(SearchObjects.VDC_CLUSTER_OBJ_NAME, new EntitySearchInfo(new ClusterCrossRefAutoCompleter(),
                             new ClusterConditionFieldAutoCompleter(),
-                            "vds_groups",
+                            "vds_groups_view",
                             "vds_groups_storage_domain",
                             "vds_group_id",
                             "name ASC "));

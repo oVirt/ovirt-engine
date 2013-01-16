@@ -79,8 +79,10 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     @Column(name = "storage_pool_id")
     @Type(type = "guid")
-    private NGuid storagePool;
+    private NGuid storagePoolId;
 
+    @Column(name = "storage_pool_name")
+    private String storagePoolName;
 
     @Column(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commit = 0;
@@ -195,14 +197,21 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     @Override
     public NGuid getStoragePoolId() {
-        return storagePool;
+        return storagePoolId;
     }
 
     @Override
     public void setStoragePoolId(NGuid storagePool) {
-        this.storagePool = storagePool;
+        this.storagePoolId = storagePool;
     }
 
+    public String getStoragePoolName() {
+        return this.storagePoolName;
+    }
+
+    public void setStoragePoolName(String value) {
+        this.storagePoolName = value;
+    }
 
     public int getmax_vds_memory_over_commit() {
         return this.max_vds_memory_over_commit;
@@ -286,7 +295,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + ((migrateOnError == null) ? 0 : migrateOnError.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((selection_algorithm == null) ? 0 : selection_algorithm.hashCode());
-        result = prime * result + ((storagePool == null) ? 0 : storagePool.hashCode());
+        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result = prime * result + (transparentHugepages ? 1231 : 1237);
         result = prime * result + (virtService ? 1231 : 1237);
         result = prime * result + (glusterService ? 1231 : 1237);
@@ -348,10 +358,15 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 return false;
         } else if (!selection_algorithm.equals(other.selection_algorithm))
             return false;
-        if (storagePool == null) {
-            if (other.storagePool != null)
+        if (storagePoolId == null) {
+            if (other.storagePoolId != null)
                 return false;
-        } else if (!storagePool.equals(other.storagePool))
+        } else if (!storagePoolId.equals(other.storagePoolId))
+            return false;
+        if (storagePoolName == null) {
+            if (other.storagePoolName != null)
+                return false;
+        } else if (!storagePoolName.equals(other.storagePoolName))
             return false;
         if (transparentHugepages != other.transparentHugepages)
             return false;

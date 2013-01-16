@@ -175,6 +175,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                     .getInt("cpu_over_commit_duration_minutes"));
             entity.setStoragePoolId(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
+            entity.setStoragePoolName(rs
+                    .getString("storage_pool_name"));
             entity.setmax_vds_memory_over_commit(rs
                     .getInt("max_vds_memory_over_commit"));
             entity.setCountThreadsAsCores(rs

@@ -909,9 +909,17 @@ SELECT     vds_groups.vds_group_id, vds_groups.name, vds_groups.description, vds
                       vds_groups.cpu_over_commit_duration_minutes, vds_groups.storage_pool_id,
                       vds_groups.max_vds_memory_over_commit, vds_groups.count_threads_as_cores, vds_groups.compatibility_version,
                       vds_groups.transparent_hugepages, vds_groups.migrate_on_error,
-                      storage_pool_iso_map.storage_id
-FROM         vds_groups LEFT JOIN
-storage_pool_iso_map ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id;
+                      storage_pool_iso_map.storage_id, storage_pool.name AS storage_pool_name
+FROM vds_groups
+LEFT JOIN storage_pool_iso_map ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id
+LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id;
+
+CREATE OR REPLACE VIEW vds_groups_view
+AS
+SELECT vds_groups.*,
+       storage_pool.name AS storage_pool_name
+FROM vds_groups
+LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id;
 
 CREATE OR REPLACE VIEW storage_domains_with_hosts_view
 
