@@ -176,10 +176,6 @@ test:
 
 install: \
 	all \
-	install_without_maven \
-	$(NULL)
-
-install_without_maven: \
 	create_dirs \
 	install_artifacts \
 	install_config \
