@@ -35,7 +35,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
@@ -360,44 +359,42 @@ public class EngineMonitorService implements Runnable {
             if (isResponsive) {
                 // if server is up, report only if its status was changed from non-responsive.
                 if (statusChanged) {
-                    try {
-                        insertEventIntoAuditLog(AuditLogType.VDC_START.name(),
-                                AuditLogType.VDC_START.getValue(),
-                                AuditLogSeverity.NORMAL.getValue(),
-                                ENGINE_RESPONDING_MESSAGE);
-                    } catch (Exception e) {
-                        log.warn(ENGINE_RESPONDING_MESSAGE);
-                        log.error("Failed auditing event down (for responsive server).", e);
-                    }
+                    insertEventIntoAuditLogSafe(AuditLogType.VDC_START,
+                            AuditLogSeverity.NORMAL,
+                            ENGINE_RESPONDING_MESSAGE,
+                            "Failed auditing event down (for responsive server).");
                 }
             } else {
                 // reports an error for non-responsive server
                 if(new File(pidFile).exists()) {
-                    //assumed crash, since the pid file is still there
-                    try {
-                        insertEventIntoAuditLog(AuditLogType.VDC_STOP.name(),
-                                AuditLogType.VDC_STOP.getValue(),
-                                AuditLogSeverity.ERROR.getValue(),
-                                ENGINE_NOT_RESPONDING_ERROR);
-                    } catch (Exception e) {
-                        log.warn(ENGINE_NOT_RESPONDING_ERROR);
-                        log.error("Failed auditing event up (for crashed non-responsive server).", e);
-                    }
+                    // assumed crash, since the pid file is still there
+                    insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
+                            AuditLogSeverity.ERROR,
+                            ENGINE_NOT_RESPONDING_ERROR,
+                            "Failed auditing event up (for crashed non-responsive server).");
                 } else {
-                    //assumed normal shutdown, pid file is removed
-                    try {
-                        insertEventIntoAuditLog(AuditLogType.VDC_STOP.name(),
-                                AuditLogType.VDC_STOP.getValue(),
-                                AuditLogSeverity.WARNING.getValue(),
-                                ENGINE_NOT_RESPONDING_ERROR);
-                    } catch (Exception e) {
-                        log.warn(ENGINE_NOT_RESPONDING_ERROR);
-                        log.error("Failed auditing event up (for stopped non-responsive server).", e);
-                    }
+                    insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
+                            AuditLogSeverity.WARNING,
+                            ENGINE_NOT_RESPONDING_ERROR,
+                            "Failed auditing event up (for stopped non-responsive server).");
                 }
             }
         }
     }
+
+    private void insertEventIntoAuditLogSafe(AuditLogType eventType, AuditLogSeverity severity, String message, String logMessage) {
+        try {
+            insertEventIntoAuditLog(eventType.name(),
+                    eventType.getValue(),
+                    severity.getValue(),
+                    message);
+        } catch (Exception e) {
+            log.warn(message);
+            log.error(logMessage, e);
+        }
+
+    }
+
 
     /**
      * Examines the status of the backend engine server
