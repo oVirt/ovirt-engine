@@ -54,7 +54,7 @@ public class EventQueueMonitor implements EventQueue {
                 return task.get();
             } catch (Exception e) {
                 log.errorFormat("Failed at submitEventSync, for pool {0} with exception {1}",
-                        event.getStoragePoolId(), e.getMessage());
+                        event.getStoragePoolId(), e);
             }
         }
         return null;
