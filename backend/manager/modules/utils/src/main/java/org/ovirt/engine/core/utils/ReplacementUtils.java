@@ -34,7 +34,7 @@ public class ReplacementUtils {
         List<String> printedItems = new ArrayList<String>(size);
 
         for (int i = 0; i < size; i++) {
-            printedItems.add(String.format("\t%s", items.get(i).toString()));
+            printedItems.add(String.format("\t%s", String.valueOf(items.get(i))));
         }
 
         if (items.size() > MAX_NUMBER_OF_PRINTED_ITEMS) {

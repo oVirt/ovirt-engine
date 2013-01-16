@@ -27,6 +27,14 @@ public class ReplacementUtilsTest {
     }
 
     @Test
+    public void replaceWithNullItem() {
+        List<Object> items = Collections.<Object> singletonList(null);
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items);
+        validateReplacementsContainsExpectedProperties(replacements, items);
+        assertTrue(validateReplacementContains(replacements, "null"));
+    }
+
+    @Test
     public void replaceWithNameableCollection() {
         Nameable item = new Nameable() {
 
