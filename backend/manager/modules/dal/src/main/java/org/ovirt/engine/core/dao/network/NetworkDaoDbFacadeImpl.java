@@ -3,13 +3,11 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -24,14 +22,9 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
 
     @Override
     public Network getByName(String name) {
-        Map<String, Object> dbResults = dialect.createJdbcCallForQuery(jdbcTemplate)
-                .withProcedureName("GetnetworkByName")
-                .returningResultSet("RETURN_VALUE", NetworkRowMapper.instance)
-                .execute(getCustomMapSqlParameterSource()
-                        .addValue("networkName", name));
-
-        return (Network) DbFacadeUtils.asSingleResult((List<?>) (dbResults
-                .get("RETURN_VALUE")));
+        return getCallsHandler().executeRead("GetnetworkByName",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("networkName", name));
     }
 
     @Override
