@@ -1412,7 +1412,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Error in fetching the brick details, please try again.")
     String errorInFetchingBrickAdvancedDetails();
 
-    @DefaultStringValue("Are you sure want to remove the following Brick(s)?")
+    @DefaultStringValue("Are you sure you want to remove the following Brick(s)?")
     String removeBricksMessage();
 
     @DefaultStringValue("NOTE:\n -Removing brick(s) can result in data loss.")

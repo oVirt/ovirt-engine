@@ -388,7 +388,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         setWindow(model);
         model.setEntity(removeBrickModel.isReduceReplica());
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
-        model.setHashName("remove_bricks"); //$NON-NLS-1$
+        model.setHashName("volume_remove_bricks"); //$NON-NLS-1$
         if (removeBrickModel.isReduceReplica())
         {
             model.setMessage(ConstantsManager.getInstance()
