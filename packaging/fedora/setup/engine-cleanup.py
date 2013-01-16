@@ -183,27 +183,9 @@ def cleanPgpass():
     try:
         backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
         logging.debug("Found %s file, backing current to %s" % (basedefs.DB_PASS_FILE, backupFile))
-        shutil.copyfile(basedefs.DB_PASS_FILE, backupFile)
-
-        lines = []
-        with open(basedefs.DB_PASS_FILE, 'r') as f:
-            lines = f.read().split('\n')
-            inEngine = None
-            newLines = lines[:]
-            for line in newLines:
-                if basedefs.PGPASS_FILE_HEADER_LINE.split('\n')[0] in line:
-                    inEngine=True
-
-                if basedefs.PGPASS_FILE_CLOSING_LINE in line:
-                    lines.remove(line)
-                    inEngine=False
-
-                if inEngine:
-                    lines.remove(line)
-
-        with open(basedefs.DB_PASS_FILE, 'w') as f:
-            for line in lines:
-                f.write("%s\n" % line)
+        # Remove file as not needed after cleanup
+        # It is our file, so we can just rename it.
+        shutil.move(basedefs.DB_PASS_FILE, backupFile)
 
     except:
         logging.error("Failed to clean %s" % basedefs.DB_PASS_FILE)
