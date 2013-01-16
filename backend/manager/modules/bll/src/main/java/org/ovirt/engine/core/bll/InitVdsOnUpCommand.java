@@ -189,7 +189,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                         Backend.getInstance()
                                 .runInternalAction(VdcActionType.ReconstructMasterDomain,
                                         new ReconstructMasterParameters(vds.getStoragePoolId(),
-                                                masterDomainIdFromDb, vds.getId(), false)).getSucceeded();
+                                                masterDomainIdFromDb, vds.getId(), true)).getSucceeded();
                 result = new EventResult(returnValue, EventType.RECONSTRUCT);
             } else {
                 log.errorFormat("Could not connect host {0} to pool {1}", vds.getvds_name(), storagePool
