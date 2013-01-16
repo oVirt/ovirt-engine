@@ -1285,10 +1285,13 @@ class Service():
         cmd = [
             basedefs.EXEC_SYSTEMCTL,
             "show",
-            self.name
+            "%s.service" % self.name
         ]
-        out, rc = execCmd(cmdList=cmd)
-        sysd = "LoadState=loaded" in out
+        if os.path.exists(basedefs.EXEC_SYSTEMCTL):
+            out, rc = execCmd(cmdList=cmd)
+            sysd = "LoadState=loaded" in out
+        else:
+            sysd = False
 
         # Checks if systemV service available
         sysv = os.path.exists("/etc/init.d/%s" % self.name)
