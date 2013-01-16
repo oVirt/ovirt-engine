@@ -144,7 +144,10 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 // currently this method is used for both templates and vms.
                 getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
             }
-            setSucceeded(reconstructOpSucceeded);
+            if(_isLastMaster) {
+                getCompensationContext().resetCompensation();
+            }
+            setSucceeded(!_isLastMaster && reconstructOpSucceeded);
         } finally {
             // reset cache and mark reconstruct for pool as finished
             Backend.getInstance()
