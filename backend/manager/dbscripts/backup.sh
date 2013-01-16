@@ -5,7 +5,7 @@
 ################################################################################
 
 #include db general functions
-pushd $(dirname ${0})
+pushd $(dirname ${0})>/dev/null
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -26,7 +26,7 @@ usage() {
     printf "\t-h            - This help text.\n"
     printf "\n"
     printf "for more options please run pg_dump --help"
-    popd
+    popd>/dev/null
     exit 0
 }
 
@@ -86,7 +86,7 @@ fi
 
 if [ $? -eq 0 ];then
     echo "Backup of database $DATABASE to $file completed."
-    popd
+    popd>/dev/null
     exit 0
 else
     usage

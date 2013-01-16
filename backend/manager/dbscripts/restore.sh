@@ -5,7 +5,7 @@
 ################################################################################
 
 #include db general functions
-pushd $(dirname ${0})
+pushd $(dirname ${0})>/dev/null
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -31,7 +31,7 @@ usage() {
     printf "\t3) Edit JBOSS standalone.xml to run the new restored database instance\n"
     printf "\t4) Verify that all tasks in the application are completed\n"
     printf "\t5) Restart JBOSS\n"
-    popd
+    popd>/dev/null
     exit 0
 }
 
@@ -77,7 +77,7 @@ if [ $? -eq 0 ];then
          echo "Upgrading restored database..."
          ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -d ${DATABASE} -u ${USERNAME} -c
      fi
-    popd
+    popd>/dev/null
     exit 0
 else
     usage

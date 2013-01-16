@@ -20,7 +20,7 @@
 
 #!/bin/bash
 #include db general functions
-pushd $(dirname ${0})
+pushd $(dirname ${0})>/dev/null
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -40,7 +40,7 @@ usage() {
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-    popd
+    popd>/dev/null
     exit $ret
 }
 
@@ -73,12 +73,12 @@ if [ "${FIXIT}" = "true" ]; then
 
     if [ "${answer}" = "n" ]; then
        echo "Please contact support for further assistance."
-       popd
+       popd>/dev/null
        exit 1
     fi
 fi
 
 validate_db_fks ${FIXIT}
 
-popd
+popd>/dev/null
 exit $?
