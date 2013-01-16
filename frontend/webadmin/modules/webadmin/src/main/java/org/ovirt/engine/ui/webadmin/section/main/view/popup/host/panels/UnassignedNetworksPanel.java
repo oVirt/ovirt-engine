@@ -74,6 +74,7 @@ public class UnassignedNetworksPanel extends DnDPanel{
 
             @Override
             public void onDrop(DropEvent event) {
+                event.preventDefault();
                 doDrag(event, true);
                 animatedPanel.getElement().removeClassName(style.networkGroupDragOver());
             }
@@ -131,18 +132,19 @@ public class UnassignedNetworksPanel extends DnDPanel{
     }
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
-        String data = event.getData(NetworkItemPanel.SETUP_NETWORKS_DATA);
-        String type = event.getData(NetworkItemPanel.SETUP_NETWORKS_TYPE);
+        String dragDropEventData = event.getData("Text"); //$NON-NLS-1$
+        String type = NetworkItemPanel.getType(dragDropEventData);
+        String data = NetworkItemPanel.getData(dragDropEventData);
         if (data != null) {
             if (setupModel.candidateOperation(data, type, null, null, isDrop)) {
-               animatedPanel.getElement().addClassName(style.networkGroupDragOver());
+                animatedPanel.getElement().addClassName(style.networkGroupDragOver());
                 // allow drag/drop (look at http://www.w3.org/TR/html5/dnd.html#dndevents)
                 event.preventDefault();
             }
         }
     }
 
-    public void setSetupModel(HostSetupNetworksModel setupModel){
+    public void setSetupModel(HostSetupNetworksModel setupModel) {
         this.setupModel = setupModel;
     }
 }

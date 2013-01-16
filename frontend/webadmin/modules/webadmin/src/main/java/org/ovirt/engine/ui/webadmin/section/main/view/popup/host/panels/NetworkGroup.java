@@ -117,6 +117,7 @@ public class NetworkGroup extends DnDPanel {
 
             @Override
             public void onDrop(DropEvent event) {
+                event.preventDefault();
                 doDrag(event, true);
                 table.getElement().removeClassName(style.networkGroupDragOver());
             }
@@ -126,8 +127,9 @@ public class NetworkGroup extends DnDPanel {
 
     private void doDrag(DragDropEventBase<?> event, boolean isDrop) {
         HostSetupNetworksModel setupModel = nicModel.getSetupModel();
-        String data = event.getData(NetworkItemPanel.SETUP_NETWORKS_DATA);
-        String type = event.getData(NetworkItemPanel.SETUP_NETWORKS_TYPE); //$NON-NLS-1$
+        String dragDropEventData = event.getData("Text"); //$NON-NLS-1$
+        String type = NetworkItemPanel.getType(dragDropEventData);
+        String data = NetworkItemPanel.getData(dragDropEventData);
         if (data != null) {
             if (setupModel.candidateOperation(data, type, nicModel.getName(), HostSetupNetworksModel.NIC, isDrop)) {
                 table.getElement().addClassName(style.networkGroupDragOver());

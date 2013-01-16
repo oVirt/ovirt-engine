@@ -134,8 +134,7 @@ public abstract class NetworkItemPanel extends DnDPanel {
             public void onDragStart(DragStartEvent event) {
                 NetworkItemPanel sourcePanel = (NetworkItemPanel) event.getSource();
                 // Required: set data for the event.
-                event.setData(SETUP_NETWORKS_DATA, sourcePanel.item.getName());
-                event.setData(SETUP_NETWORKS_TYPE, sourcePanel.item.getType());
+                event.setData("Text", sourcePanel.item.getType() + " " + sourcePanel.item.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 
                 // show a ghost of the widget under cursor.
                 NativeEvent nativeEvent = event.getNativeEvent();
@@ -208,5 +207,27 @@ public abstract class NetworkItemPanel extends DnDPanel {
 
     public NetworkItemModel<?> getItem() {
         return item;
+    }
+
+    public static String getData(String dragDropEventData) {
+        if (dragDropEventData == null) {
+            return ""; //$NON-NLS-1$
+        }
+        int split = dragDropEventData.indexOf(" "); //$NON-NLS-1$
+        if (split == -1 || dragDropEventData.length() == split + 1) {
+            return ""; //$NON-NLS-1$
+        }
+        return dragDropEventData.substring(split + 1);
+    }
+
+    public static String getType(String dragDropEventData) {
+        if (dragDropEventData == null) {
+            return ""; //$NON-NLS-1$
+        }
+        int split = dragDropEventData.indexOf(" "); //$NON-NLS-1$
+        if (split == -1 || split == 0) {
+            return ""; //$NON-NLS-1$
+        }
+        return dragDropEventData.substring(0, split);
     }
 }
