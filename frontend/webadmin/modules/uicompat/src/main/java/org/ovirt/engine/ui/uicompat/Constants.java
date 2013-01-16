@@ -1848,4 +1848,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     // Provider
     @DefaultStringValue("Networks")
     String providerNetworksTitle();
+
+    @DefaultStringValue("Add Provider")
+    String addProviderTitle();
 }

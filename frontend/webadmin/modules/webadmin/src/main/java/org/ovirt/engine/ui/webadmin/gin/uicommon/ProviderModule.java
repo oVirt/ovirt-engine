@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -24,8 +25,8 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getNetworkListProvider(ClientGinjector ginjector,
-            // final Provider<AddProviderPopupPresenterWidget> newNetworkPopupProvider,
+    public MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getProviderListProvider(ClientGinjector ginjector,
+            final Provider<ProviderPopupPresenterWidget> providerPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(ginjector,
                 ProviderListModel.class) {
@@ -33,11 +34,11 @@ public class ProviderModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
 
-                // if (lastExecutedCommand == getModel().getAddCommand()) {
-                // return editNetworkPopupProvider.get();
-                // } else {
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                // }
+                if (lastExecutedCommand == getModel().getAddCommand()) {
+                    return providerPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
             }
 
             @Override

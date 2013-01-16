@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ProviderParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -45,9 +47,17 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     }
 
     public void add() {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        final ProviderModel providerModel = new ProviderModel(this);
+        setWindow(providerModel);
     }
 
     public void remove() {
+        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()));
     }
 
     @Override
