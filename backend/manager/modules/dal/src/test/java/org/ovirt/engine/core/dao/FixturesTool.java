@@ -388,5 +388,7 @@ public class FixturesTool {
      */
     public static final String PROVIDER_NAME = "provider";
 
+    public static final Guid PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
+
     public static final ProviderType PROVIDER_TYPE = ProviderType.OPENSTACK_NETWORK;
 }

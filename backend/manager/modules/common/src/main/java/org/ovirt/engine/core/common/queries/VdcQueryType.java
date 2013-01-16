@@ -245,6 +245,7 @@ public enum VdcQueryType implements Serializable {
 
     // Providers
     GetAllProviders,
+    GetAllNetworksForProvider,
 
     GetWatchdog(VdcQueryAuthType.User),
 

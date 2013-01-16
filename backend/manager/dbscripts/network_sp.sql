@@ -226,6 +226,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllNetworkViewsByNetworkProviderId(v_id UUID)
+RETURNS SETOF network_view
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   network_view
+    WHERE  provider_network_provider_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 --The GetByFK stored procedure cannot be created because the [network] table doesn't have at least one foreign key column or the foreign keys are also primary keys.
 
 ----------------------------------------------------------------

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -30,5 +31,20 @@ public class NetworkViewDaoTest extends BaseDAOTestCase {
 
         assertFalse(result.isEmpty());
         assertEquals(FixturesTool.NETWORK_ENGINE, result.get(0).getId());
+    }
+
+    /**
+     * Ensures the right set of networks are returned for the given provider.
+     */
+    @Test
+    public void testGetAllForProvider() {
+        List<NetworkView> result = dao.getAllForProvider(FixturesTool.PROVIDER_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (NetworkView network : result) {
+            assertEquals(FixturesTool.PROVIDER_ID, network.getProvidedBy().getProviderId());
+            assertEquals(FixturesTool.PROVIDER_NAME, network.getProviderName());
+        }
     }
 }
