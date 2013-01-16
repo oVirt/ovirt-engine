@@ -54,7 +54,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -4520874214339816607L;
-    private final Disk disk;
+    private Disk disk;
     private Map<String, String> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
@@ -62,7 +62,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public RemoveDiskCommand(T parameters) {
         super(parameters);
         setStorageDomainId(getParameters().getStorageDomainId());
-        disk = getDiskDao().get((Guid) getParameters().getEntityId());
     }
 
     @Override
@@ -75,7 +74,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected boolean canDoAction() {
         boolean retValue = true;
 
-        if (disk == null) {
+        if (getDisk() == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
@@ -87,16 +86,16 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         retValue =
                 retValue
-                        && (disk.getDiskStorageType() == DiskStorageType.IMAGE ? canRemoveDiskBasedOnImageStorageCheck()
+                        && (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ? canRemoveDiskBasedOnImageStorageCheck()
                                 : canRemoveLunDisk());
         return retValue;
     }
 
     private boolean canRemoveLunDisk() {
-        if (disk.getVmEntityType() == VmEntityType.VM) {
+        if (getDisk().getVmEntityType() == VmEntityType.VM) {
             for (VM vm : getVmsForDiskId()) {
                 if (vm.getStatus() != VMStatus.Down) {
-                    VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
+                    VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(getDisk().getId(), vm.getId()));
                     if (vmDevice.getIsPlugged()) {
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
                         return false;
@@ -110,7 +109,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
-        DiskImage diskImage = (DiskImage) disk;
+        DiskImage diskImage = getDiskImage();
         if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
             diskImage.setstorage_ids(getDiskImageDao().get(diskImage.getImageId()).getstorage_ids());
@@ -134,9 +133,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }
         if (retValue) {
-            if (disk.getVmEntityType() == VmEntityType.VM) {
+            if (getDisk().getVmEntityType() == VmEntityType.VM) {
                 retValue = canRemoveVmImageDisk();
-            } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+            } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
                 retValue = canRemoveTemplateDisk();
             }
         }
@@ -145,7 +144,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private void buildSharedLockMap() {
-        if (disk.getVmEntityType() == VmEntityType.VM) {
+        if (getDisk().getVmEntityType() == VmEntityType.VM) {
             List<VM> listVms = getVmsForDiskId();
             if (!listVms.isEmpty()) {
                 sharedLockMap = new HashMap<String, String>();
@@ -153,7 +152,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     sharedLockMap.put(vm.getId().toString(), LockingGroup.VM.name());
                 }
             }
-        } else if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+        } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
             setVmTemplateIdParameter();
             sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
         }
@@ -165,7 +164,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void setVmTemplateIdParameter() {
         Map<Boolean, VmTemplate> templateMap =
                 // Disk image is the only disk type that can be part of the template disks.
-                getDbFacade().getVmTemplateDao().getAllForImage(((DiskImage) disk).getImageId());
+                getDbFacade().getVmTemplateDao().getAllForImage(getDiskImage().getImageId());
 
         if (!templateMap.isEmpty()) {
             setVmTemplateId(templateMap.values().iterator().next().getId());
@@ -185,7 +184,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private boolean canRemoveTemplateDisk() {
         boolean retValue = true;
-        DiskImage diskImage = (DiskImage) disk;
+        DiskImage diskImage = getDiskImage();
         if (getVmTemplate().getstatus() == VmTemplateStatus.Locked) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
@@ -223,9 +222,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveVmImageDisk() {
         boolean firstTime = true;
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-        List<Disk> diskList = Arrays.asList(disk);
+        List<Disk> diskList = Arrays.asList(getDisk());
         for (VM vm : listVms) {
-            VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(disk.getId(), vm.getId()));
+            VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(getDisk().getId(), vm.getId()));
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) || !ImagesHandler.PerformImagesChecks(vm,
                     getReturnValue().getCanDoActionMessages(),
                     vm.getStoragePoolId(),
@@ -234,7 +233,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     firstTime,
                     false,
                     false,
-                    vmDevice.getIsPlugged() && disk.isAllowSnapshot(),
+                    vmDevice.getIsPlugged() && getDisk().isAllowSnapshot(),
                     vmDevice.getIsPlugged(),
                     false,
                     firstTime,
@@ -261,8 +260,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage) disk;
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = getDiskImage();
             RemoveImageParameters p = new RemoveImageParameters(diskImage.getImageId());
             p.setTransactionScopeOption(TransactionScopeOption.Suppress);
             p.setDiskImage(diskImage);
@@ -294,7 +293,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                ImagesHandler.removeLunDisk((LunDisk) disk);
+                ImagesHandler.removeLunDisk((LunDisk) getDisk());
                 return null;
             }
         });
@@ -334,9 +333,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        if (permsList == null && disk != null) {
+        if (permsList == null && getDisk() != null) {
             permsList = new ArrayList<PermissionSubject>();
-            permsList.add(new PermissionSubject(disk.getId(),
+            permsList.add(new PermissionSubject(getDisk().getId(),
                     VdcObjectType.Disk,
                     ActionGroup.DELETE_DISK));
         }
@@ -353,9 +352,21 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return sharedLockMap;
     }
 
+    protected Disk getDisk() {
+        if (disk == null) {
+            disk = getDiskDao().get((Guid) getParameters().getEntityId());
+        }
+
+        return disk;
+    }
+
+    protected DiskImage getDiskImage() {
+        return (DiskImage) getDisk();
+    }
+
     public String getDiskAlias() {
-        if (disk != null) {
-            return disk.getDiskAlias();
+        if (getDisk() != null) {
+            return getDisk().getDiskAlias();
         }
         return "";
     }
@@ -372,8 +383,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
-        if (disk != null
-                && DiskStorageType.IMAGE == disk.getDiskStorageType()
+        if (getDisk() != null
+                && DiskStorageType.IMAGE == getDisk().getDiskStorageType()
                 && getQuotaId() != null
                 && !Guid.Empty.equals(getQuotaId())) {
             list.add(new QuotaStorageConsumptionParameter(
@@ -381,15 +392,15 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                     null,
                     QuotaConsumptionParameter.QuotaAction.RELEASE,
                     getStorageDomainId().getValue(),
-                    (double)((DiskImage) disk).getSizeInGigabytes()));
+                    (double) getDiskImage().getSizeInGigabytes()));
         }
         return list;
     }
 
     private Guid getQuotaId() {
-        if (disk != null
-                && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-            return ((DiskImage) disk).getQuotaId();
+        if (getDisk() != null
+                && DiskStorageType.IMAGE == getDisk().getDiskStorageType()) {
+            return getDiskImage().getQuotaId();
         }
         return null;
     }
@@ -397,5 +408,4 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
     }
-
 }
