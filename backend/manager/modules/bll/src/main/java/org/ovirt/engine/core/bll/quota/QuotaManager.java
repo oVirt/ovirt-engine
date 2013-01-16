@@ -34,7 +34,7 @@ public class QuotaManager {
     private static HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
 
     private static final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
-    private List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
+    private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
 
     public static QuotaManager getInstance() {
         return INSTANCE;
@@ -318,15 +318,13 @@ public class QuotaManager {
         long memLimit = quotaVdsGroup.getMemSizeMB();
         int cpuLimit = quotaVdsGroup.getVirtualCpu();
         boolean requestIsApproved;
-        if (memLimit == QuotaVdsGroup.UNLIMITED_MEM && cpuLimit == QuotaVdsGroup.UNLIMITED_VCPU) { // if both cpu and                                                                                                   // mem are unlimited
-            // cache
-            cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+        if (memLimit == QuotaVdsGroup.UNLIMITED_MEM && cpuLimit == QuotaVdsGroup.UNLIMITED_VCPU) {
+            // if both cpu and
+            // mem are unlimited
             requestIsApproved = true;
         } else if ((newVcpuPercent <= quota.getThresholdVdsGroupPercentage() // if cpu and mem usages are under the limit
                 && newMemoryPercent <= quota.getThresholdVdsGroupPercentage())
                 || (vcpuToAdd <= 0 && memToAdd <= 0)) {
-            // cache
-            cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
             requestIsApproved = true;
         } else if (newVcpuPercent <= 100
                 && newMemoryPercent <= 100) { // passed the threshold (not the quota limit)
@@ -371,7 +369,9 @@ public class QuotaManager {
             }
         }
         // cache
-        cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+        if(requestIsApproved) {
+            cacheNewValues(quotaVdsGroup, newMemory, newVcpu);
+        }
         return requestIsApproved;
     }
 
