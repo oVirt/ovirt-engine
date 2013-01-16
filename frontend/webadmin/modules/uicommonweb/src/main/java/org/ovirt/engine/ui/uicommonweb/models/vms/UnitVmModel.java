@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;

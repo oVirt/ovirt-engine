@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
