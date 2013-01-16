@@ -5,13 +5,9 @@
 ################################################################################
 
 #include db general functions
-if [ -e ./dbfunctions.sh ]; then
-    source ./dbfunctions.sh
-    source ./dbcustomfunctions.sh
-else
-    printf "backup script should be run from database scripts directory\n"
-    exit 1
-fi
+pushd $(dirname ${0})
+source ./dbfunctions.sh
+source ./dbcustomfunctions.sh
 
 #setting defaults
 set_defaults
@@ -35,7 +31,7 @@ usage() {
     printf "\t3) Edit JBOSS standalone.xml to run the new restored database instance\n"
     printf "\t4) Verify that all tasks in the application are completed\n"
     printf "\t5) Restart JBOSS\n"
-
+    popd
     exit 0
 }
 
@@ -81,6 +77,7 @@ if [ $? -eq 0 ];then
          echo "Upgrading restored database..."
          ./upgrade.sh -s ${SERVERNAME} -p ${PORT} -d ${DATABASE} -u ${USERNAME} -c
      fi
+    popd
     exit 0
 else
     usage

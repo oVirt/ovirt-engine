@@ -1,5 +1,6 @@
 #!/bin/bash
 #include db general functions
+pushd $(dirname ${0})
 source ./dbfunctions.sh
 
 SERVERNAME="localhost"
@@ -18,7 +19,7 @@ usage() {
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-
+    popd
     exit $ret
 }
 
@@ -42,10 +43,12 @@ printf "Running original create_db script...\n"
 if [ $? -ne 0 ]
     then
       printf "Failed to create database ${DATABASE}\n"
+      popd
       exit 1;
 fi
 printf "Setting development configuration values ...\n"
 execute_file "config_devel.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
 ret=$?
 printf "Development setting done.\n"
+popd
 exit $?

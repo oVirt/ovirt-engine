@@ -1,5 +1,6 @@
 #!/bin/bash
 #include db general functions
+pushd $(dirname ${0})
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -17,7 +18,7 @@ usage() {
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-
+    popd
     exit $ret
 }
 
@@ -47,6 +48,7 @@ createdb --username=${USERNAME} --host=${SERVERNAME} --port=${PORT} ${DATABASE} 
 if [ $? -ne 0 ]
     then
       printf "Failed to create database ${DATABASE}\n"
+      popd
       exit 1;
 fi
 createlang --host=${SERVERNAME} --port=${PORT} --dbname=${DATABASE} --echo --username=${USERNAME} plpgsql >& /dev/null
@@ -75,4 +77,5 @@ rm -f .${DATABASE}.scripts.md5 >& /dev/null
 printf "Running upgrade scripts...\n"
 run_upgrade_files
 
+popd
 exit $?

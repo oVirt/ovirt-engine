@@ -5,13 +5,9 @@
 ################################################################################
 
 #include db general functions
-if [ -e ./dbfunctions.sh ]; then
-    source ./dbfunctions.sh
-    source ./dbcustomfunctions.sh
-else
-    printf "backup script should be run from database scripts directory\n"
-    exit 1
-fi
+pushd $(dirname ${0})
+source ./dbfunctions.sh
+source ./dbcustomfunctions.sh
 
 #setting defaults
 set_defaults
@@ -30,7 +26,7 @@ usage() {
     printf "\t-h            - This help text.\n"
     printf "\n"
     printf "for more options please run pg_dump --help"
-
+    popd
     exit 0
 }
 
@@ -90,6 +86,7 @@ fi
 
 if [ $? -eq 0 ];then
     echo "Backup of database $DATABASE to $file completed."
+    popd
     exit 0
 else
     usage

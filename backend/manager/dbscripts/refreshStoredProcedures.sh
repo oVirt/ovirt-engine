@@ -1,5 +1,6 @@
 #!/bin/bash
 #include db general functions
+pushd $(dirname ${0})
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -16,7 +17,7 @@ usage() {
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-
+    popd
     exit $ret
 }
 
@@ -47,4 +48,5 @@ refresh_views
 refresh_sps
 
 printf "Done.\n"
+popd
 exit 0

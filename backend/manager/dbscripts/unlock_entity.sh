@@ -1,5 +1,6 @@
 #!/bin/bash
 #include db general functions
+pushd $(dirname ${0})
 source ./dbfunctions.sh
 source ./dbcustomfunctions.sh
 
@@ -22,6 +23,7 @@ usage() {
     printf "\t-h            - This help text.\n"
     printf "\n"
 
+    popd
     exit $ret
 }
 
@@ -55,6 +57,7 @@ if [ ! -n "${QUERY}" ]; then
 
     if [ "${answer}" = "n" ]; then
        echo "Please contact support for further assistance."
+       popd
        exit 1
     fi
 fi
@@ -67,4 +70,5 @@ else
     usage
 fi
 
+popd
 exit $?

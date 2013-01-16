@@ -31,13 +31,9 @@
 ################################################################################
 
 #include db general functions
-if [ -e ./dbfunctions.sh ]; then
-    source ./dbfunctions.sh
-    source ./dbcustomfunctions.sh
-else
-    printf "upgrade script should be run from database scripts directory\n"
-    exit 1
-fi
+pushd $(dirname ${0})
+source ./dbfunctions.sh
+source ./dbcustomfunctions.sh
 
 #setting defaults
 set_defaults
@@ -55,7 +51,7 @@ usage() {
     printf "\t-v            - Turn on verbosity (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-
+    popd
     exit $ret
 }
 
@@ -84,4 +80,5 @@ run_upgrade_files
 
 ret=$?
 printf "Done.\n"
+popd
 exit $ret
