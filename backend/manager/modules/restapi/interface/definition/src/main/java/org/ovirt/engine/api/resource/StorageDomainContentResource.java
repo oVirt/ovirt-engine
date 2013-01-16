@@ -45,4 +45,7 @@ public interface StorageDomainContentResource<R extends BaseResource> {
     @Actionable
     @Path("import")
     public Response doImport(Action action);
+
+    @Path("disks")
+    public StorageDomainContentDisksResource getDisksResource();
 }

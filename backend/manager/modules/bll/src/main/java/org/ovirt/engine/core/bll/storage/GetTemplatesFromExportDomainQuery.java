@@ -53,6 +53,10 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                         template = new VmTemplate();
                         ovfManager.ImportTemplate(ovf, template, diskImages, interfaces);
                         template.setInterfaces(interfaces);
+                        // add disk map
+                        for (DiskImage disk : diskImages) {
+                            template.getDiskMap().put(disk.getId(), disk);
+                        }
                         templates.put(template, new DiskImageList(diskImages));
                     }
                 } catch (OvfReaderException ex) {

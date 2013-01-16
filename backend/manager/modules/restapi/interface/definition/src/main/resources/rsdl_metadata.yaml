@@ -859,6 +859,20 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
   request:
     body:
@@ -905,6 +919,20 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
+- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/clusters/{cluster:id}|rel=get
   request:
     body:

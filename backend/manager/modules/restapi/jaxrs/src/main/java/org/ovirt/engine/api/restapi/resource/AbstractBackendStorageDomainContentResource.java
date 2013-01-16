@@ -24,8 +24,9 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     public AbstractBackendStorageDomainContentResource(String id,
                                                        AbstractBackendStorageDomainContentsResource<C, R, Q>  parent,
                                                        Class<R> modelType,
-                                                       Class<Q> entityType) {
-        super(id, modelType, entityType);
+                                                       Class<Q> entityType,
+                                                       String... subCollection) {
+        super(id, modelType, entityType, subCollection);
         this.parent = parent;
     }
 
@@ -48,6 +49,8 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     }
 
     protected abstract R getFromDataDomain();
+
+    protected abstract java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> getDiskMap();
 
     protected R getFromExportDomain() {
         for (R model : parent.getCollection(StorageDomainType.ImportExport)) {

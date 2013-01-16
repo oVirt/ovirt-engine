@@ -6,9 +6,11 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,13 +19,21 @@ public class BackendStorageDomainVmResource
     extends AbstractBackendStorageDomainContentResource<VMs, VM, org.ovirt.engine.core.common.businessentities.VM>
     implements StorageDomainContentResource<VM> {
 
+    org.ovirt.engine.core.common.businessentities.VM vm;
+
     public BackendStorageDomainVmResource(BackendStorageDomainVmsResource parent, String vmId) {
-        super(vmId, parent, VM.class, org.ovirt.engine.core.common.businessentities.VM.class);
+        super(vmId, parent, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, "disks");
     }
 
     @Override
     protected VM getFromDataDomain() {
         return performGet(VdcQueryType.GetVmByVmId, new GetVmByVmIdParameters(guid));
+    }
+
+    @Override
+    protected VM getFromExportDomain() {
+        org.ovirt.engine.core.common.businessentities.VM entity = getEntity();
+        return addLinks(populate(map(entity, null), entity), null, new String[0]);
     }
 
     @Override
@@ -61,18 +71,32 @@ public class BackendStorageDomainVmResource
     }
 
     @Override
+    public StorageDomainContentDisksResource getDisksResource() {
+        return inject(new BackendExportDomainDisksResource(this));
+    }
+
+    @Override
     protected VM addParents(VM vm) {
         vm.setStorageDomain(parent.getStorageDomainModel());
         return vm;
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getEntity() {
+        if (vm != null) {
+            return vm;
+        }
         for (org.ovirt.engine.core.common.businessentities.VM entity : parent.getEntitiesFromExportDomain()) {
             if (guid.equals(entity.getId())) {
+                vm = entity;
                 return entity;
             }
         }
         return entityNotFound();
+    }
+
+    @Override
+    public java.util.Map<Guid, Disk> getDiskMap() {
+        return getEntity().getDiskMap();
     }
 
     @Override

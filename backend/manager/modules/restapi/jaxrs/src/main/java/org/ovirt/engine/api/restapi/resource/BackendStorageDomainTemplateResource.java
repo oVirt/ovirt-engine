@@ -5,9 +5,12 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -17,13 +20,21 @@ public class BackendStorageDomainTemplateResource
     extends AbstractBackendStorageDomainContentResource<Templates, Template, VmTemplate>
     implements StorageDomainContentResource<Template> {
 
+    VmTemplate template;
+
     public BackendStorageDomainTemplateResource(BackendStorageDomainTemplatesResource parent, String templateId) {
-        super(templateId, parent, Template.class, VmTemplate.class);
+        super(templateId, parent, Template.class, VmTemplate.class, "disks");
     }
 
     @Override
     protected Template getFromDataDomain() {
         return performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+    }
+
+    @Override
+    protected Template getFromExportDomain() {
+        org.ovirt.engine.core.common.businessentities.VmTemplate entity = getEntity();
+        return addLinks(populate(map(entity, null), entity), null, new String[0]);
     }
 
     @Override
@@ -62,8 +73,12 @@ public class BackendStorageDomainTemplateResource
     }
 
     protected VmTemplate getEntity() {
+        if (template != null) {
+            return template;
+        }
         for (VmTemplate entity : parent.getEntitiesFromExportDomain()) {
             if (guid.equals(entity.getId())) {
+                template = entity;
                 return entity;
             }
         }
@@ -71,7 +86,21 @@ public class BackendStorageDomainTemplateResource
     }
 
     @Override
+    public java.util.Map<Guid, Disk> getDiskMap() {
+        java.util.Map<Guid, Disk> diskMap = new java.util.HashMap<Guid, Disk>();
+        for (java.util.Map.Entry<Guid, DiskImage> entry : getEntity().getDiskMap().entrySet()) {
+            diskMap.put(entry.getKey(), entry.getValue());
+        }
+        return diskMap;
+    }
+
+    @Override
     protected Template doPopulate(Template model, VmTemplate entity) {
         return model;
+    }
+
+    @Override
+    public StorageDomainContentDisksResource getDisksResource() {
+        return inject(new BackendExportDomainDisksResource(this));
     }
 }
