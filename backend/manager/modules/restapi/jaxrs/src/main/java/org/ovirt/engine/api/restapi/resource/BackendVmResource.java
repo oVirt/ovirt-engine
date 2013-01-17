@@ -46,17 +46,20 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
+import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
+import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -231,6 +234,34 @@ public class BackendVmResource extends
         return doAction(VdcActionType.RebootVm,
                         new VmOperationParameterBase(guid),
                         action);
+    }
+
+    @Override
+    public Response undoSnapshot(Action action) {
+        RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(guid, SnapshotActionEnum.UNDO);
+        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+                restoreParams,
+                action);
+        return response;
+    }
+
+    @Override
+    public Response commitSnapshot(Action action) {
+        RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(guid, SnapshotActionEnum.COMMIT);
+        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+                restoreParams,
+                action);
+        return response;
+    }
+
+    @Override
+    public Response previewSnapshot(Action action) {
+        TryBackToAllSnapshotsOfVmParameters tryBackParams =
+                new TryBackToAllSnapshotsOfVmParameters(guid, asGuid(action.getSnapshot().getId()));
+        Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+                tryBackParams,
+                action);
+        return response;
     }
 
     @Override

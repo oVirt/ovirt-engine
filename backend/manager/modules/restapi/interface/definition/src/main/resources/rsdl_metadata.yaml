@@ -365,6 +365,34 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/preview_snapshot|rel=preview_snapshot
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.snapshot.id: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/commit_snapshot|rel=commit_snapshot
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vms/{vm:id}/undo_snapshot|rel=undo_snapshot
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /vms/{vm:id}/detach|rel=detach
   description: detach a virtual machine in the system identified by the given id from the storage domain
   request:

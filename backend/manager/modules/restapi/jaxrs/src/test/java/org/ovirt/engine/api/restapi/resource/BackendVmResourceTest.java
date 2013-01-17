@@ -44,12 +44,14 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
+import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
+import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -57,6 +59,8 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -646,6 +650,49 @@ public class BackendVmResourceTest
         action.setHost(new Host());
         action.getHost().setId(GUIDS[1].toString());
         verifyActionResponse(resource.migrate(action));
+    }
+
+    @Test
+    public void testPreviewSnapshot() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.TryBackToAllSnapshotsOfVm,
+                                           TryBackToAllSnapshotsOfVmParameters.class,
+                                           new String[] { "VmId", "DstSnapshotId" },
+                                           new Object[] { GUIDS[0], GUIDS[1] }));
+        Action action = new Action();
+        Snapshot snapshot = new Snapshot();
+        snapshot.setId(GUIDS[1].toString());
+        action.setSnapshot(snapshot);
+        Response response = resource.previewSnapshot(action);
+        verifyActionResponse(response);
+        Action actionResponse = (Action)response.getEntity();
+        assertTrue(actionResponse.isSetStatus());
+        assertEquals(CreationStatus.COMPLETE.value(), actionResponse.getStatus().getState());
+    }
+
+    @Test
+    public void testUndoSnapshot() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
+                                           RestoreAllSnapshotsParameters.class,
+                                           new String[] { "VmId", "SnapshotAction" },
+                                           new Object[] { GUIDS[0], SnapshotActionEnum.UNDO }));
+        Response response = resource.undoSnapshot(new Action());
+        verifyActionResponse(response);
+        Action action = (Action)response.getEntity();
+        assertTrue(action.isSetStatus());
+        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
+    }
+
+    @Test
+    public void testCommitSnapshot() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
+                                           RestoreAllSnapshotsParameters.class,
+                                           new String[] { "VmId", "SnapshotAction" },
+                                           new Object[] { GUIDS[0], SnapshotActionEnum.COMMIT }));
+        Response response = resource.commitSnapshot(new Action());
+        verifyActionResponse(response);
+        Action action = (Action)response.getEntity();
+        assertTrue(action.isSetStatus());
+        assertEquals(CreationStatus.COMPLETE.value(), action.getStatus().getState());
     }
 
     @Test
