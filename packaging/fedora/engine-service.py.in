@@ -49,10 +49,8 @@ engineConfigFile = None
 engineConfig = None
 
 # The name of the user and group that should run the service:
-engineUser = None
-engineGroup = None
-engineUid = 0
-engineGid = 0
+engineUid = None
+engineGid = None
 
 # Java home directory:
 javaHomeDir = None
@@ -152,22 +150,26 @@ def loadConfig():
     engineConfig = Config(engineConfigFiles)
 
     # Get the id of the engine user:
-    global engineUser
     global engineUid
     engineUser = engineConfig.getString("ENGINE_USER")
-    try:
-        engineUid = pwd.getpwnam(engineUser).pw_uid
-    except:
-        raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
+    if engineUser:
+        try:
+            engineUid = pwd.getpwnam(engineUser).pw_uid
+        except:
+            raise Exception("The engine user \"%s\" doesn't exist." % engineUser)
+    else:
+        engineUid = os.getuid()
 
     # Get id of the engine group:
-    global engineGroup
     global engineGid
     engineGroup = engineConfig.getString("ENGINE_GROUP")
-    try:
-        engineGid = grp.getgrnam(engineGroup).gr_gid
-    except:
-        raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
+    if engineGroup:
+        try:
+            engineGid = grp.getgrnam(engineGroup).gr_gid
+        except:
+            raise Exception("The engine group \"%s\" doesn't exist." % engineGroup)
+    else:
+        engineGid = os.getgid()
 
     # Java home directory:
     global javaHomeDir
@@ -514,8 +516,10 @@ def startEngine():
 
     # This is the child process, first thing we do is assume the engine
     # identity:
-    os.setgid(engineGid)
-    os.setuid(engineUid)
+    if engineGid != os.getgid():
+        os.setgid(engineGid)
+    if engineUid != os.getuid():
+        os.setuid(engineUid)
 
     # Then close standard input and some other security measures:
     os.close(0)
