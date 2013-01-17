@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -556,6 +557,12 @@ public class GlusterManager {
             }
 
             @Override
+            public String getVdsGroupName() {
+                setVdsGroupId(clusterId);
+                return super.getVdsGroupName();
+            }
+
+            @Override
             protected GlusterVolumeEntity getGlusterVolume() {
                 return volume;
             }
@@ -785,15 +792,18 @@ public class GlusterManager {
             break;
         }
 
-        if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
-            existingVolume.setStatus(fetchedVolume.getStatus());
-            changed = true;
-        }
-
         if (changed) {
             log.infoFormat("Updating volume {0} with fetched properties.", existingVolume.getName());
             getVolumeDao().updateGlusterVolume(existingVolume);
             logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
+        }
+
+        if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
+            existingVolume.setStatus(fetchedVolume.getStatus());
+            GlusterUtils.getInstance().updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
+            logVolumeMessage(existingVolume,
+                    fetchedVolume.getStatus() == GlusterStatus.UP ? AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI
+                            : AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI);
         }
     }
 
@@ -807,12 +817,14 @@ public class GlusterManager {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
         for (VDSGroup cluster : getClusterDao().getAll()) {
-            try {
-                refreshClusterHeavyWeightData(cluster);
-            } catch (Exception e) {
-                log.errorFormat("Error while refreshing Gluster heavyweight data of cluster {0}!",
-                        cluster.getname(),
-                        e);
+            if (cluster.supportsGlusterService()) {
+                try {
+                    refreshClusterHeavyWeightData(cluster);
+                } catch (Exception e) {
+                    log.errorFormat("Error while refreshing Gluster heavyweight data of cluster {0}!",
+                            cluster.getname(),
+                            e);
+                }
             }
         }
     }
@@ -824,11 +836,12 @@ public class GlusterManager {
             return;
         }
 
-        if (cluster.supportsGlusterService()) {
-            for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
-                log.debugFormat("Refreshing brick statuses for volume {0} of cluster {1}",
-                        volume.getName(),
-                        cluster.getname());
+        for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
+            log.debugFormat("Refreshing brick statuses for volume {0} of cluster {1}",
+                    volume.getName(),
+                    cluster.getname());
+            // brick statuses can be fetched only for started volumes
+            if (volume.isOnline()) {
                 acquireLock(cluster.getId());
                 try {
                     refreshBrickStatuses(upServer, volume);

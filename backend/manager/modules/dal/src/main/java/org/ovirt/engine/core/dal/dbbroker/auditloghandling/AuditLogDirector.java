@@ -97,6 +97,8 @@ public final class AuditLogDirector {
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI, AuditLogSeverity.WARNING);
         mSeverities.put(AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI, AuditLogSeverity.WARNING);
+        mSeverities.put(AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI, AuditLogSeverity.WARNING);
     }
 
     private static void initDefaultSeverities() {

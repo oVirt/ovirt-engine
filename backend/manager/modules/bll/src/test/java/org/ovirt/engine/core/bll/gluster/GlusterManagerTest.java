@@ -198,6 +198,7 @@ public class GlusterManagerTest {
         vol.setId(id);
         vol.setName(volName);
         vol.setClusterId(CLUSTER_ID);
+        vol.setStatus(GlusterStatus.UP);
         return vol;
     }
 
