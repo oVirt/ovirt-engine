@@ -5,10 +5,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             currConnection.setid(Guid.NewGuid().toString());
             getDbFacade().getStorageServerConnectionDao().save(currConnection);
         }
-       getReturnValue().setActionReturnValue(getConnection().getid());
+        getReturnValue().setActionReturnValue(getConnection().getid());
         setSucceeded(true);
     }
 
@@ -82,12 +82,9 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             if (returnValue) {
                 IStorageHelper storageHelper = StorageHelperDirector.getInstance().getItem(
                         paramConnection.getstorage_type());
-                if (!storageHelper.validateStoragePoolConnectionsInHost(
-                        getVds(),
-                        new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
-                                .asList(new StorageServerConnections[] { paramConnection })), Guid.Empty))
-
-                {
+                if (!storageHelper.validateStoragePoolConnectionsInHost(getVds(),
+                        new java.util.ArrayList<StorageServerConnections>(java.util.Arrays.asList(paramConnection)),
+                        Guid.Empty)) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
                 }
