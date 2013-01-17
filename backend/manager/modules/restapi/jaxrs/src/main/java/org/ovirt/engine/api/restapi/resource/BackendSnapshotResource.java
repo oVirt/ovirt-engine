@@ -69,6 +69,33 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     }
 
     @Override
+    public Response undo(Action action) {
+        RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, guid);
+        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+                restoreParams,
+                action);
+        return response;
+    }
+
+    @Override
+    public Response commit(Action action) {
+        RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, guid);
+        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+                restoreParams,
+                action);
+        return response;
+    }
+
+    @Override
+    public Response preview(Action action) {
+        TryBackToAllSnapshotsOfVmParameters tryBackParams = new TryBackToAllSnapshotsOfVmParameters(parentId, guid);
+        Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+                tryBackParams,
+                action);
+        return response;
+    }
+
+    @Override
     public CreationResource getCreationSubresource(String ids) {
         return inject(new BackendCreationResource(ids));
     }

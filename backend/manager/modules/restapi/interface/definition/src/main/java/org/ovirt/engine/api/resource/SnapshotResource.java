@@ -37,7 +37,7 @@ public interface SnapshotResource extends AsynchronouslyCreatedResource {
     @Formatted
     public Snapshot get();
 
-    @Path("{action: (restore)}/{oid}")
+    @Path("{action: (restore|preview|commit|undo)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @POST
@@ -46,6 +46,27 @@ public interface SnapshotResource extends AsynchronouslyCreatedResource {
     @Actionable
     @Path("restore")
     public Response restore(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("preview")
+    public Response preview(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("commit")
+    public Response commit(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("undo")
+    public Response undo(Action action);
 
     @Path("cdroms")
     public SnapshotCdRomsResource getSnapshotCdRomsResource();
