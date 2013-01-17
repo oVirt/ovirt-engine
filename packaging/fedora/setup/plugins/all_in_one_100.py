@@ -56,7 +56,7 @@ starting it manually and rerun the setup."
 ERROR_LIBVIRT_STATUS = "Error: Could not get status of the libvirt service"
 ERROR_JBOSS_STATUS = "Error: There's a problem with JBoss service.\
 Check that it's up and rerun setup."
-
+ERROR_SSHD_START = "Error: sshd service could not be started. Cannot continue"
 # PARAMS
 PAUSE = 10
 SLEEP_PERIOD = 25 # period in seconds, this is waiting until JBoss is up
@@ -267,6 +267,12 @@ def createHost():
     global controller
     logging.debug("Adding the local host")
     try:
+        sshd = utils.Service("sshd")
+        if sshd.available():
+            sshd.autoStart()
+            sshd.start()
+        else:
+            raise Exception(ERROR_SSHD_START)
         controller.CONF["API_OBJECT"].hosts.add(params.Host(name=LOCAL_HOST,
                                                                address=controller.CONF["HOST_FQDN"],
                                                                reboot_after_installation=False,

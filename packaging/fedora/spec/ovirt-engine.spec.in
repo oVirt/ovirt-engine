@@ -339,6 +339,7 @@ Requires: %{name}-setup
 Requires: %{name}-sdk
 Requires: vdsm
 Requires: ovirt-host-deploy-offline
+Requires: openssh
 
 %description setup-plugin-allinone
 All-in-one plugin for %{product_name_short}'s setup
