@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.EJB;
+import javax.ejb.DependsOn;
 import javax.ejb.Local;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -63,7 +63,6 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 // Here we use a Singleton Bean
@@ -73,6 +72,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 // to all the business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state
 // of the singleton is synchronized across all clients.
+@DependsOn("Scheduler")
 @Local({ BackendLocal.class, BackendInternal.class })
 @Interceptors({ ThreadLocalSessionCleanerInterceptor.class })
 @Singleton
@@ -80,10 +80,6 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Backend implements BackendInternal {
-
-    @SuppressWarnings("unused")
-    @EJB
-    private SchedulerUtil scheduler;
 
     private ITagsHandler mTagsHandler;
     private ErrorTranslator errorsTranslator;
