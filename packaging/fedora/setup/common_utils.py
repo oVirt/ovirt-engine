@@ -1495,23 +1495,24 @@ def configureTasksTimeout(timeout,
     # If everything went fine, return the original value
     return originalTimeout
 
+
 def configureEngineForMaintenance():
     # Try to reconfigure the engine and raise an exception if it fails
     try:
-        if not os.path.exists(basedefs.DIR_ENGINE_SYSCONFIG):
-            os.mkdir(basedefs.DIR_ENGINE_SYSCONFIG)
-        with open(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE, "w") as configFile:
-            configFile.write("ENGINE_HTTP_ENABLED=false\n")
-            configFile.write("ENGINE_HTTPS_ENABLED=false\n")
-            configFile.write("ENGINE_AJP_ENABLED=false\n")
+        updateVDCOption(key="EngineMode", value="MAINTENANCE")
     except:
         logging.error(traceback.format_exc())
         restoreEngineFromMaintenance()
         raise
 
+
 def restoreEngineFromMaintenance():
-    if os.path.exists(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE):
-        os.remove(basedefs.FILE_ENGINE_SYSCONFIG_MAINTENANCE)
+    try:
+        # Try to restore the regular state.
+        updateVDCOption(key="EngineMode", value="ACTIVE")
+    except:
+        logging.error(traceback.format_exc())
+        raise
 
 # Returns db size in MB
 def getDbSize(dbname):

@@ -455,3 +455,8 @@ MSG_ENABLE_SELINUX = "Error: it seems that SELINUX is currently disabled. It is 
 possible to configure ports redirection without enabling SELINUX first. To enable SELINUX:\n\
 \t1. Edit /etc/selinux/config file, and set the SELINUX mode to permissive or enforcing\n\
 \t2. Restart the system.\n"
+
+# Async tasks Errors
+MSG_CLEAN_ASYNC = "Cleaning async tasks"
+ERR_CANT_GET_ZOMBIE_TASKS = "Error: failed to get async tasks status"
+ERR_CANT_CLEAR_ZOMBIE_TASKS = "Error: failed to clear stale async tasks"

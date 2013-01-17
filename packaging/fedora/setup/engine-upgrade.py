@@ -749,6 +749,54 @@ def modifyUUIDs():
             MSG_ERROR_CONNECT_DB
         )
 
+
+def zombieTasksFound():
+    """
+    Fetching and cleaning zombie async tasks
+    """
+    cmd = [
+        basedefs.EXEC_TASK_CLEANER,
+        "-u", SERVER_ADMIN,
+        "-d", basedefs.DB_NAME,
+        "-z",
+    ]
+
+    tasks, rc = utils.execCmd(cmdList=cmd,
+                              failOnError=False,
+                              msg="Can't get zombie async tasks",
+                             )
+
+    if rc > 1:
+        raise Exception(output_messages.ERR_CANT_GET_ZOMBIE_TASKS)
+
+    # If tasks has content and exit status 0, return True
+    return (tasks and not rc)
+
+
+def clearZombieTasks():
+    """
+    Clear zombie tasks, raise Exception if it fails.
+    """
+    cmd = [
+        basedefs.EXEC_TASK_CLEANER,
+        "-u", SERVER_ADMIN,
+        "-d", basedefs.DB_NAME,
+        "-z",
+        "-R",
+        "-C",
+        "-J",
+        "-q",
+    ]
+
+    out, rc = utils.execCmd(cmdList=cmd,
+                  failOnError=False,
+                  msg="Can't clear zombie tasks",
+                 )
+
+    if rc > 1:
+        raise Exception(output_messages.ERR_CANT_CLEAR_ZOMBIE_TASKS)
+
+
 def deployDbAsyncTasks(dbName=basedefs.DB_NAME):
     # Deploy DB functionality first
     cmd = [
@@ -1020,6 +1068,10 @@ def main(options):
                 if not options.ignore_tasks:
                     # Check that there are no running tasks/compensations
                     try:
+                        if zombieTasksFound():
+                        # Now, clean zombie tasks. We assume that the tool works.
+                            runFunc([clearZombieTasks], output_messages.MSG_CLEAN_ASYNC)
+
                         checkRunningTasks()
                     # If something went wrong, restart DB services and the engine
                     except:
