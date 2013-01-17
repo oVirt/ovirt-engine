@@ -19,6 +19,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -57,7 +59,15 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     }
 
     public void remove() {
-        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()));
+        Frontend.RunAction(VdcActionType.RemoveProvider, new ProviderParameters((Provider) getSelectedItem()),
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        getSearchCommand().execute();
+                    }
+
+                });
     }
 
     @Override

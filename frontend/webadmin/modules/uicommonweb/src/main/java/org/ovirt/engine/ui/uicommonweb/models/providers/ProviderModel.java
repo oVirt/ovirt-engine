@@ -11,15 +11,17 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ProviderModel extends Model
 {
     private EntityModel privateName;
     private EntityModel privateDescription;
     private EntityModel privateUrl;
-    private final ListModel sourceListModel;
+    private final ProviderListModel sourceListModel;
 
-    public ProviderModel(ListModel sourceListModel)
+    public ProviderModel(ProviderListModel sourceListModel)
     {
         this.sourceListModel = sourceListModel;
 
@@ -103,7 +105,14 @@ public class ProviderModel extends Model
         provider.setName((String) privateName.getEntity());
         provider.setDescription((String) privateDescription.getEntity());
         provider.setUrl((String) privateUrl.getEntity());
-        Frontend.RunAction(VdcActionType.AddProvider, new ProviderParameters(provider));
+        Frontend.RunAction(VdcActionType.AddProvider, new ProviderParameters(provider),
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        sourceListModel.getSearchCommand().execute();
+                    }
+                });
         cancel();
     }
 
