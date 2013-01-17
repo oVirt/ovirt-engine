@@ -44,6 +44,8 @@ from Cheetah.Template import Template
 engineName = "engine-service"
 
 # The engine system configuration variables:
+engineDefaultsFile = None
+engineConfigFile = None
 engineConfig = None
 
 # The name of the user and group that should run the service:
@@ -78,8 +80,6 @@ engineDeploymentsDir = None
 
 # Engine files:
 enginePidFile = None
-engineConfigTemplateFile = None
-engineConfigFile = None
 engineLogFile = None
 engineConsoleLogFile = None
 engineServerLogFile = None
@@ -120,11 +120,13 @@ class Config(configobj.ConfigObj):
 
 def loadConfig():
     # Locate the defaults file:
+    global engineDefaultsFile
     engineDefaultsFile = os.getenv("ENGINE_DEFAULTS", "@ENGINE_DEFAULTS@")
     if not os.path.exists(engineDefaultsFile):
         raise Exception("The engine configuration defaults file \"%s\" doesn't exist." % engineDefaultsFile)
 
     # Locate the configuration file:
+    global engineConfigFile
     engineConfigFile = os.getenv("ENGINE_VARS", "@ENGINE_VARS@")
     if not os.path.exists(engineConfigFile):
         raise Exception("The engine configuration file \"%s\" doesn't exist." % engineConfigFile)
@@ -530,6 +532,8 @@ def startEngine():
     engineEnv = {
         "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin",
         "LANG": "en_US.UTF-8",
+        "ENGINE_DEFAULTS": engineDefaultsFile,
+        "ENGINE_VARS": engineConfigFile,
         "ENGINE_ETC": engineEtcDir,
         "ENGINE_LOG": engineLogDir,
         "ENGINE_TMP": engineTmpDir,
