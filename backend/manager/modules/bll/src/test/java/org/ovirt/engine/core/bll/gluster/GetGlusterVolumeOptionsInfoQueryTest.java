@@ -84,7 +84,7 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
 
     private void setupMock() {
         vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
-        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendInstance();
+        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendResourceManager();
 
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setSucceeded(true);

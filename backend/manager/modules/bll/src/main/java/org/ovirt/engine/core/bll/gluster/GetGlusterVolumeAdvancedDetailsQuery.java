@@ -3,12 +3,9 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -74,19 +71,4 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
         return volumeName;
     }
 
-    private Guid getUpServerId(Guid clusterId) {
-        VDS vds = getClusterUtils().getUpServer(clusterId);
-        if (vds == null) {
-            throw new RuntimeException("No up server found");
-        }
-        return vds.getId();
-    }
-
-    protected ClusterUtils getClusterUtils() {
-        return ClusterUtils.getInstance();
-    }
-
-    protected VDSBrokerFrontend getBackendResourceManager() {
-        return getBackend().getResourceManager();
-    }
 }
