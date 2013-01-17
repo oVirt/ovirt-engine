@@ -55,6 +55,8 @@ public class UnitVmModel extends Model {
 
     public static final int WINDOWS_VM_NAME_MAX_LIMIT = 15;
     public static final int NON_WINDOWS_VM_NAME_MAX_LIMIT = 64;
+    public static final int VM_TEMPLATE_NAME_MAX_LIMIT = 40;
+    public static final int DESCRIPTION_MAX_LIMIT = 255;
 
     private boolean privateIsNew;
 
@@ -1926,17 +1928,6 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private LengthValidation createNameLengthValidation(VmOsType osType) {
-        // for template dialog, name max length is 40 chars
-        if (this.getBehavior() instanceof TemplateVmModelBehavior) {
-            return new LengthValidation(40);
-        }
-
-        // for VM it depends on the OS type
-        return new LengthValidation(AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT
-                : NON_WINDOWS_VM_NAME_MAX_LIMIT);
-    }
-
     public boolean Validate()
     {
         getDataCenter().ValidateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -1961,14 +1952,15 @@ public class UnitVmModel extends Model {
             getName().ValidateEntity(
                     new IValidation[] {
                             new NotEmptyValidation(),
-                            new LengthValidation(this.getBehavior() instanceof TemplateVmModelBehavior ? 40 :
-                                AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
+                            new LengthValidation(
+                                (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
+                                    ? VM_TEMPLATE_NAME_MAX_LIMIT : AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
                             new I18NNameValidation()
                     });
 
             getDescription().ValidateEntity(
                     new IValidation[] {
-                            new LengthValidation(255),
+                            new LengthValidation(DESCRIPTION_MAX_LIMIT),
                             new SpecialAsciiI18NOrNoneValidation()
                     });
 
