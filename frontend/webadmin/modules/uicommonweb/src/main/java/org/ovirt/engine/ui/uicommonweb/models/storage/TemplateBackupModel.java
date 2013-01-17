@@ -34,10 +34,12 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -148,20 +150,21 @@ public class TemplateBackupModel extends VmBackupModel
 
     @Override
     protected boolean validateName(String newVmName, Object object, EntityModel entity) {
-        String nameExpr;
-        String nameMsg;
-        nameExpr = "^[0-9a-zA-Z-_]{1," + 49 + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
-        nameMsg =
-                ConstantsManager.getInstance()
-                        .getMessages()
-                        .newNameWithSuffixCannotContainBlankOrSpecialChars(40);
         EntityModel temp = new EntityModel();
         temp.setIsValid(true);
         temp.setEntity(newVmName);
         temp.ValidateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
-                        new RegexValidation(nameExpr, nameMsg)
+                        new LengthValidation(UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT),
+                        new I18NNameValidation() {
+                            @Override
+                            protected String composeMessage() {
+                                return ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT);
+                            };
+                        }
                 });
         if (!temp.getIsValid()) {
             entity.setInvalidityReasons(temp.getInvalidityReasons());

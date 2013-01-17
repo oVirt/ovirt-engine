@@ -37,9 +37,10 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -292,33 +293,25 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     protected boolean validateName(String newVmName, Object object, EntityModel entity) {
-        String nameExpr;
-        String nameMsg;
         VM vm = (VM) object;
         VmOsType osType = vm.getOs();
-        if (AsyncDataProvider.IsWindowsOsType(osType))
-        {
-            nameExpr = "^[0-9a-zA-Z-_]{1," + UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
-            nameMsg =
-                    ConstantsManager.getInstance()
-                            .getMessages()
-                            .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT);
-        }
-        else
-        {
-            nameExpr = "^[-\\w]{1," + UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT + "}$"; //$NON-NLS-1$ //$NON-NLS-2$
-            nameMsg =
-                    ConstantsManager.getInstance()
-                            .getMessages()
-                            .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT);
-        }
         EntityModel temp = new EntityModel();
         temp.setIsValid(true);
         temp.setEntity(newVmName);
+        final int length = AsyncDataProvider.IsWindowsOsType(osType) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
+                : UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
         temp.ValidateEntity(
                 new IValidation[] {
                         new NotEmptyValidation(),
-                        new RegexValidation(nameExpr, nameMsg)
+                        new LengthValidation(length),
+                        new I18NNameValidation() {
+                            @Override
+                            protected String composeMessage() {
+                                return ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .newNameWithSuffixCannotContainBlankOrSpecialChars(length);
+                            };
+                        }
                 });
         if (!temp.getIsValid()) {
             entity.setInvalidityReasons(temp.getInvalidityReasons());
