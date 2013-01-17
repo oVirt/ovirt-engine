@@ -58,6 +58,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.DiscoverNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
@@ -250,6 +251,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksMa
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.DiscoverNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
@@ -1215,5 +1217,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ProviderPopupPresenterWidget.class,
                 ProviderPopupPresenterWidget.ViewDef.class,
                 ProviderPopupView.class);
+
+        bindPresenterWidget(DiscoverNetworkPopupPresenterWidget.class,
+                DiscoverNetworkPopupPresenterWidget.ViewDef.class,
+                DiscoverNetworkPopupView.class);
     }
 }

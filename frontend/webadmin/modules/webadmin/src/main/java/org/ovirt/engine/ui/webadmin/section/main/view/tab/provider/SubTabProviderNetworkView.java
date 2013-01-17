@@ -6,12 +6,14 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider, Network, ProviderListModel, ProviderNetworkListModel>
         implements SubTabProviderNetworkPresenter.ViewDef {
@@ -48,6 +50,13 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
                     }
                 };
         getTable().addColumn(externalIdColumn, constants.externalIdProviderNetwork(), "300px"); //$NON-NLS-1$
+
+        getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.discoverProviderNetwork()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getDiscoverCommand();
+            }
+        });
     }
 
 }

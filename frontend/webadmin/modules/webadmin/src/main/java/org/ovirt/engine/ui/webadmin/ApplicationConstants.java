@@ -2825,4 +2825,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     // Provider Network
     @DefaultStringValue("External ID")
     String externalIdProviderNetwork();
+
+    @DefaultStringValue("Discover")
+    String discoverProviderNetwork();
+
+    @DefaultStringValue("Name")
+    String nameNetworkHeader();
+
+    @DefaultStringValue("ID")
+    String idNetworkHeader();
+
+    @DefaultStringValue("All Networks Public")
+    String publicAllNetworks();
+
+    @DefaultStringValue("Public Network")
+    String publicNetwork();
 }

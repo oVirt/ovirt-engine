@@ -3148,4 +3148,21 @@ public final class AsyncDataProvider {
             return ConstantsManager.getInstance().getConstants().vmUnknownPriority();
         }
     }
+
+    public static void GetExternalNetworkList(AsyncQuery aQuery, Guid providerId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new ArrayList<Network>();
+                }
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
+                new IdQueryParameters(providerId),
+                aQuery);
+    }
 }

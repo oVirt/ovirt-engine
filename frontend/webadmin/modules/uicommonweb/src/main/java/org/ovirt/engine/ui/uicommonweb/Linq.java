@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -39,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
@@ -1118,6 +1120,15 @@ public final class Linq
 
             return lexoNumeric.compare(model1.getNetworkName(), model2.getNetworkName());
         }
+    }
+
+    public final static class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
+        private NameableComparator comparator = new NameableComparator();
+
+        @Override
+        public int compare(ExternalNetwork net1, ExternalNetwork net2) {
+            return comparator.compare(net1.getNetwork(), net2.getNetwork());
+        };
     }
 
 }

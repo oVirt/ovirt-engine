@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.DiscoverNetworkPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -78,7 +79,8 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector,
+            final Provider<DiscoverNetworkPopupPresenterWidget> discoverNetworkPopupProvider) {
         return new SearchableDetailTabModelProvider<Network, ProviderListModel, ProviderNetworkListModel>(ginjector,
                 ProviderListModel.class,
                 ProviderNetworkListModel.class) {
@@ -86,7 +88,11 @@ public class ProviderModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderNetworkListModel source,
                     UICommand lastExecutedCommand,
                     Model windowModel) {
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                if (lastExecutedCommand == getModel().getDiscoverCommand()) {
+                    return discoverNetworkPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
             }
 
             @Override

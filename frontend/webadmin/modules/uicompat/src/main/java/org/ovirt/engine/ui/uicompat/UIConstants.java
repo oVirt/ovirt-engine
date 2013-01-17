@@ -1910,6 +1910,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Provider(s)")
     String providersMsg();
 
+    @DefaultStringValue("Discover Networks")
+    String discoverNetworksTitle();
+
+    @DefaultStringValue("Import")
+    String importNetworksTitle();
+
     // Gluster Hook
     @DefaultStringValue("Please select a resolve action to continue")
     String noResolveActionSelectedGlusterHook();
