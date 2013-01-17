@@ -760,7 +760,6 @@ public class VmDeviceUtils {
 
     private static void updateMemoryBalloon(VmBase oldVm, VmBase newVm, boolean shouldHaveBalloon) {
         Guid id = newVm.getId();
-        VM vm = vmDao.get(id);
         boolean hasBalloon = dao.isMemBalloonEnabled(id);
         if (hasBalloon != shouldHaveBalloon) {
             if (!hasBalloon && shouldHaveBalloon) {
