@@ -132,6 +132,8 @@ run_pre_upgrade() {
     drop_views
     drop_sps
     install_common_func
+    #update sequence numers
+    execute_file "update_sequence_numbers.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
     #run pre upgrade scripts
     execute_commands_in_dir 'pre_upgrade' 'pre-upgrade'
     install_materialized_views_func
