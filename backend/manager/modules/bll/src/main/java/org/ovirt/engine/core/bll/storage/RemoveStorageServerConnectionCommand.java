@@ -47,8 +47,4 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         return returnValue;
     }
 
-    protected String getStorageConnection() {
-        return getConnection().getconnection();
-    }
-
 }
