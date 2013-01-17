@@ -45,7 +45,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     @Override
     protected void executeCommand() {
-        Pair<Boolean, Integer> result = Connect(getVds().getId());
+        Pair<Boolean, Integer> result = connect(getVds().getId());
         setSucceeded(result.getFirst());
         if (!result.getFirst()) {
             setErrorMessageAtReturn(result);
@@ -64,7 +64,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         getReturnValue().setFault(fault);
     }
 
-    protected Pair<Boolean, Integer> Connect(Guid vdsId) {
+    protected Pair<Boolean, Integer> connect(Guid vdsId) {
         java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) Backend
                 .getInstance()
                 .getResourceManager()

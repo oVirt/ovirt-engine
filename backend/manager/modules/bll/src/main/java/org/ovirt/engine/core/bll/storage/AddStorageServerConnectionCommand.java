@@ -27,7 +27,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected void executeCommand() {
         StorageServerConnections currConnection = getConnection();
         boolean isValidConnection = true;
-        isValidConnection = Connect(getVds().getId()).getFirst();
+        isValidConnection = connect(getVds().getId()).getFirst();
 
         // Add storage Connection to the database.
         if (isValidConnection && (StringUtils.isNotEmpty(currConnection.getid())
