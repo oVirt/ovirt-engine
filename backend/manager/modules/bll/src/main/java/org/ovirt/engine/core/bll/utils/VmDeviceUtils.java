@@ -272,7 +272,7 @@ public class VmDeviceUtils {
     }
 
     private static void addVideoDevice(VM vm) {
-        VmDevice entity = addManagedDevice(
+        addManagedDevice(
                 new VmDeviceId(Guid.NewGuid(),vm.getId()),
                 VmDeviceType.VIDEO,
                 vm.getDefaultDisplayType().getVmDeviceType(),
@@ -442,26 +442,6 @@ public class VmDeviceUtils {
             cd.getSpecParams()
                     .put(VdsProperties.Path, (newVmBase.getIsoPath() == null) ? "" : newVmBase.getIsoPath());
             dao.update(cd);
-        }
-    }
-
-    /**
-     * updates new VM CD ROM in vm_device
-     * @param newVmBase
-     */
-
-    private static void updateCdInVmDevice(VmBase newVmBase) {
-        if (StringUtils.isNotEmpty(newVmBase.getIsoPath())) {
-            // new CD was added
-            VmDevice cd = new VmDevice(new VmDeviceId(Guid.NewGuid(),
-                    newVmBase.getId()), VmDeviceType.DISK.getName(),
-                    VmDeviceType.CDROM.getName(), "", 0,
-                            Collections.<String, Object> singletonMap(VdsProperties.Path, newVmBase.getIsoPath()),
-                            true,
-                            null,
-                            false,
-                            "");
-            dao.save(cd);
         }
     }
 
