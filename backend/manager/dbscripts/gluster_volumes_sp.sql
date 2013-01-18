@@ -213,7 +213,7 @@ Create or replace FUNCTION DeleteGlusterVolumesByGuids(v_volume_ids VARCHAR(5000
     AS $procedure$
 BEGIN
     DELETE FROM gluster_volumes
-    WHERE id in (select ID from fnSplitterUuid(v_volume_ids));
+    WHERE id in (select * from fnSplitterUuid(v_volume_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -252,7 +252,7 @@ Create or replace FUNCTION DeleteGlusterVolumeBricks(v_ids VARCHAR(5000))
     AS $procedure$
 BEGIN
     DELETE FROM gluster_volume_bricks
-    WHERE id in (select ID from fnSplitterUuid(v_ids));
+    WHERE id in (select * from fnSplitterUuid(v_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -270,7 +270,7 @@ Create or replace FUNCTION DeleteGlusterVolumeOptions(v_ids VARCHAR(5000))
     AS $procedure$
 BEGIN
     DELETE FROM gluster_volume_options
-    WHERE id in (select ID from fnSplitterUuid(v_ids));
+    WHERE id in (select * from fnSplitterUuid(v_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
