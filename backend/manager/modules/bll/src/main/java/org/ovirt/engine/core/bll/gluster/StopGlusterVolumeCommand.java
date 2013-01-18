@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -9,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
@@ -54,8 +54,8 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
                                         new GlusterVolumeActionVDSParameters(upServer.getId(),
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
-        if(getSucceeded()) {
-            updateVolumeStatusInDb(getParameters().getVolumeId());
+        if (getSucceeded()) {
+            GlusterUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.DOWN);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_STOP_FAILED, returnValue.getVdsError().getMessage());
             return;
@@ -70,10 +70,4 @@ public class StopGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVo
             return errorType == null ? AuditLogType.GLUSTER_VOLUME_STOP_FAILED : errorType;
         }
     }
-
-    private void updateVolumeStatusInDb(Guid volumeId) {
-        getGlusterVolumeDao().updateVolumeStatus(volumeId, GlusterStatus.DOWN);
-        updateBrickStatus(GlusterStatus.DOWN);
-    }
-
 }
