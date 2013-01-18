@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -67,9 +68,9 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         }
 
         LoginUserParameters params = new LoginUserParameters(principal.getUser(),
-                                                             principal.getSecret(),
-                                                             principal.getDomain(),
-                                                             null, null, null);
+                principal.getSecret(),
+                principal.getDomain(),
+                null, null, null);
         params.setActionType(VdcActionType.LoginUser);
         sessionHelper.setSessionId(sessionId);
         VdcReturnValueBase ret = backend.Login(sessionHelper.sessionize(params));
@@ -114,7 +115,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
 
     private ApplicationMode getApplicationMode() {
         VdcQueryReturnValue result = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode));
+                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode, ConfigCommon.defaultConfigurationVersion));
         ApplicationMode appMode = null;
         if (result.getSucceeded())
         {
@@ -166,7 +167,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
                     }
                 } else if (httpSession != null && httpSession.isNew()) {
                     response.getMetadata().add(SessionUtils.JSESSIONID_HEADER,
-                                               httpSession.getId());
+                            httpSession.getId());
                 }
             }
         }

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -230,8 +231,15 @@ public class BackendResource extends BaseBackendResource {
     protected <T> T getConfigurationValue(Class<T> clz, ConfigurationValues config, final Version version) {
         return getEntity(clz,
                          VdcQueryType.GetConfigurationValue,
-                         new GetConfigurationValueParameters(config){{setVersion(asString(version));}},
+                         new GetConfigurationValueParameters(config, asString(version)),
                          config.toString());
+    }
+
+    protected <T> T getConfigurationValueDefault(Class<T> clz, ConfigurationValues config) {
+        return getEntity(clz,
+                VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion),
+                config.toString());
     }
 
     private static final String VERSION_FORMAT = "{0}.{1}";

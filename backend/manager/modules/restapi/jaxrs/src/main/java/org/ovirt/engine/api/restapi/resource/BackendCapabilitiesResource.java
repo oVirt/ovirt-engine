@@ -274,9 +274,8 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private Version getCurrentVersion() {
         if (currentVersion == null) {
-            currentVersion = VersionHelper.parseVersion(getConfigurationValue(String.class,
-                                                                              ConfigurationValues.VdcVersion,
-                                                                              null));
+            currentVersion = VersionHelper.parseVersion(getConfigurationValueDefault(String.class,
+                                                                              ConfigurationValues.VdcVersion));
         }
         return currentVersion;
     }
@@ -431,7 +430,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     public List<Version> getSupportedClusterLevels() {
         List<Version> versions = new ArrayList<Version>();
         for (org.ovirt.engine.core.compat.Version v :
-                    (Set<org.ovirt.engine.core.compat.Version>)getConfigurationValue(Set.class, ConfigurationValues.SupportedClusterLevels, null)){
+                    (Set<org.ovirt.engine.core.compat.Version>)getConfigurationValueDefault(Set.class, ConfigurationValues.SupportedClusterLevels)){
             Version version = new Version();
             version.setMajor(v.getMajor());
             version.setMinor(v.getMinor());

@@ -344,7 +344,7 @@ public class BackendApiResource
     }
 
     private RSDL addSystemVersion(RSDL rsdl) {
-            rsdl.setVersion(VersionHelper.parseVersion(getConfigurationValue(String.class, ConfigurationValues.VdcVersion, null)));
+            rsdl.setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
             return rsdl;
     }
 
@@ -367,7 +367,7 @@ public class BackendApiResource
         api.setProductInfo(new ProductInfo());
         api.getProductInfo().setName("oVirt Engine");
         api.getProductInfo().setVendor("ovirt.org");
-        api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValue(String.class, ConfigurationValues.VdcVersion, null)));
+        api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
         return api;
     }
 
