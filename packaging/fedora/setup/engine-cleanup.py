@@ -437,6 +437,10 @@ def main(options):
 
 if __name__ == '__main__':
     try:
+        # Change to the root directory to avoid problems if our current
+        # working directory is deleted:
+        os.chdir("/")
+
         # Must run as root
         _verifyUserPermissions()
 
