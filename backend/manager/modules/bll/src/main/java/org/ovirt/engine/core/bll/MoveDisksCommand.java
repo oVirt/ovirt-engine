@@ -113,8 +113,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     }
 
     private boolean isVmRunning(VM vm) {
-        return vm.getStatus() == VMStatus.Up &&
-                vm.getRunOnVds() != null && !vm.getRunOnVds().equals(Guid.Empty);
+        return vm.getStatus().isUpOrPaused() && vm.getRunOnVds() != null && !vm.getRunOnVds().equals(Guid.Empty);
     }
 
     private boolean isVmDown(VM vm) {

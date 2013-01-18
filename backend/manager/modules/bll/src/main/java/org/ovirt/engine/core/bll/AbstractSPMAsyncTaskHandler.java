@@ -75,6 +75,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
 
     @Override
     public void endWithFailure() {
+        getEnclosingCommand().getParameters().setTaskGroupSuccess(false);
         getReturnValue().setSucceeded(true);
     }
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
@@ -36,7 +35,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
-        getParameters().setTaskGroupSuccess(VMStatus.Up == getVm().getStatus() && getParameters().getTaskGroupSuccess());
+        getParameters().setTaskGroupSuccess(getParameters().getTaskGroupSuccess() && getVm().getStatus().isUpOrPaused());
     }
 
     /* Overridden CommandBase Methods */

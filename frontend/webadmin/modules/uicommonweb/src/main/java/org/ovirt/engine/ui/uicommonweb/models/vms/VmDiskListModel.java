@@ -1003,7 +1003,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         VM vm = getEntity();
-        if (vm == null || vm.getStatus() != VMStatus.Up) {
+        if (vm == null || !vm.getStatus().isUpOrPaused()) {
             return false;
         }
 
