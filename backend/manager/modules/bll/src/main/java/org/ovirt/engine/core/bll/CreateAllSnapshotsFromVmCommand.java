@@ -120,7 +120,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     getVm(),
                     getCompensationContext());
 
-            freeLock();
             for (DiskImage image : getDisksList()) {
                 ImagesActionsParametersBase tempVar = new ImagesActionsParametersBase(image.getImageId());
                 tempVar.setDescription(getParameters().getDescription());
