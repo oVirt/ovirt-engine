@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -451,7 +450,7 @@ public final class ImagesHandler {
     }
 
 
-    public static boolean PerformImagesChecks(VM vm,
+    public static boolean PerformImagesChecks(Guid vmId,
             List<String> messages,
             Guid storagePoolId,
             Guid storageDomainId,
@@ -470,7 +469,7 @@ public final class ImagesHandler {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
         }
 
-        List<DiskImage> images = getImages(vm.getId(), diskImageList);
+        List<DiskImage> images = getImages(vmId, diskImageList);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(messages, images);
         }
@@ -485,7 +484,6 @@ public final class ImagesHandler {
                                 checkImagesIllegal,
                                 checkImagesExist,
                                 checkStorageDomain,
-                                vm,
                                 images);
             } else if (checkImagesExist) {
                 returnValue = false;
@@ -533,7 +531,6 @@ public final class ImagesHandler {
             boolean checkImagesIllegal,
             boolean checkImagesExist,
             boolean checkStorageDomain,
-            VM vm,
             List<DiskImage> images) {
         boolean returnValue = true;
         ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
@@ -574,30 +571,25 @@ public final class ImagesHandler {
             }
         }
         if (returnValue && checkImagesIllegal) {
-            returnValue = CheckImagesLegality(messages, images, vm, irsImages);
+            returnValue = CheckImagesLegality(messages, images, irsImages);
         }
         return returnValue;
     }
 
-    private static boolean CheckImagesLegality(List<String> messages,
-            List<DiskImage> images, VM vm, List<DiskImage> irsImages) {
+    private static boolean CheckImagesLegality
+            (List<String> messages, List<DiskImage> images, List<DiskImage> irsImages) {
         boolean returnValue = true;
-        if (vm.getStatus() == VMStatus.ImageIllegal) {
-            returnValue = false;
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
-        } else {
-            int i = 0;
-            for (DiskImage diskImage : images) {
-                if (diskImage != null) {
-                    DiskImage image = irsImages.get(i++);
-                    if (image.getimageStatus() != ImageStatus.OK) {
-                        diskImage.setimageStatus(image.getimageStatus());
-                        DbFacade.getInstance().getImageDao().update(diskImage.getImage());
-                        returnValue = false;
-                        ListUtils.nullSafeAdd(messages,
-                                VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
-                        break;
-                    }
+        int i = 0;
+        for (DiskImage diskImage : images) {
+            if (diskImage != null) {
+                DiskImage image = irsImages.get(i++);
+                if (image.getimageStatus() != ImageStatus.OK) {
+                    diskImage.setimageStatus(image.getimageStatus());
+                    DbFacade.getInstance().getImageDao().update(diskImage.getImage());
+                    returnValue = false;
+                    ListUtils.nullSafeAdd(messages,
+                            VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL.toString());
+                    break;
                 }
             }
         }

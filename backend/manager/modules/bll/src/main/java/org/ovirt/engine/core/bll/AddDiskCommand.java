@@ -200,7 +200,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean performImagesChecks(VM vm) {
-        return ImagesHandler.PerformImagesChecks(vm,
+        return ImagesHandler.PerformImagesChecks(vm.getId(),
                 getReturnValue().getCanDoActionMessages(),
                 vm.getStoragePoolId(),
                 getStorageDomainId().getValue(),

@@ -326,7 +326,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     protected boolean performImagesChecks() {
         return ImagesHandler.PerformImagesChecks
-                (getVm(),
+                (getVmId(),
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
                         Guid.Empty,

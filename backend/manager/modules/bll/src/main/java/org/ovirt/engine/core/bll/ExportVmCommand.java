@@ -157,7 +157,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
-                && ImagesHandler.PerformImagesChecks(getVm(),
+                && ImagesHandler.PerformImagesChecks(getVmId(),
                         getReturnValue().getCanDoActionMessages(),
                         getVm().getStoragePoolId(),
                         Guid.Empty,

@@ -76,7 +76,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
         List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
-        retValue = retValue && ImagesHandler.PerformImagesChecks(getVm(),
+        retValue = retValue && ImagesHandler.PerformImagesChecks(getVmId(),
                                 getReturnValue().getCanDoActionMessages(),
                                 getVm().getStoragePoolId(),
                                 Guid.Empty,

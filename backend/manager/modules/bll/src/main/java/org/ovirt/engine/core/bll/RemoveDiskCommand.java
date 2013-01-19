@@ -229,7 +229,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         for (VM vm : listVms) {
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) ||
                     !validate(snapshotsValidator.vmNotInPreview(vm.getId())) ||
-                    !ImagesHandler.PerformImagesChecks(vm,
+                    !ImagesHandler.PerformImagesChecks(vm.getId(),
                             getReturnValue().getCanDoActionMessages(),
                             vm.getStoragePoolId(),
                             getParameters().getStorageDomainId(),

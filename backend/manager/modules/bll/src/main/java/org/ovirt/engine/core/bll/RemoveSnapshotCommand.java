@@ -211,7 +211,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     // TODO: this is a temporary method used until ImagesHandler.PerformImagesChecks will get decoupeld to several tests
     // Until then, this method is called and passes hasImages() onwards so the VM validations are done even for diskless VMs
     protected boolean validateImagesAndVMStates() {
-        return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
+        return ImagesHandler.PerformImagesChecks(getVmId(), getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
                 hasImages(), hasImages(), hasImages(), hasImages(), true, true, null);
     }

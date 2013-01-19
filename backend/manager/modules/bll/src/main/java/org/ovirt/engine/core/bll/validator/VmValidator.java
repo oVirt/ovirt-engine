@@ -41,6 +41,14 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotIlegal() {
+        if (vm.getStatus() == VMStatus.ImageIllegal) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotRunningStateless() {
         if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
             VdcBllMessages message = vm.isRunning() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :
