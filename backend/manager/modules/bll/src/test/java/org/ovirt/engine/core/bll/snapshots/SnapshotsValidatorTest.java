@@ -52,6 +52,19 @@ public class SnapshotsValidatorTest {
     }
 
     @Test
+    public void vmNotInPreviewReturnsInvalidResultWhenInSnapshot() throws Exception {
+        when(snapshotDao.exists(vmId, SnapshotStatus.IN_PREVIEW)).thenReturn(true);
+        validateInvalidResult(validator.vmNotInPreview(vmId),
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+    }
+
+    @Test
+    public void vmNotInPreviewReturnsValidForNoSnapshotInProgress() throws Exception {
+        when(snapshotDao.exists(vmId, SnapshotStatus.IN_PREVIEW)).thenReturn(false);
+        validateValidResult(validator.vmNotInPreview(vmId));
+    }
+
+    @Test
     public void snapshotExistsByGuidReturnsInvalidResultWhenNoSnapshot() throws Exception {
         when(snapshotDao.exists(vmId, snapshotId)).thenReturn(false);
         validateInvalidResult(validator.snapshotExists(vmId, snapshotId),

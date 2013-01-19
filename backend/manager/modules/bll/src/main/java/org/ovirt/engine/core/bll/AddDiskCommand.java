@@ -141,7 +141,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (returnValue && vm != null) {
             returnValue = isStoragePoolMatching(vm) &&
                     performImagesChecks(vm) &&
-                    validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()));
+                    validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())) &&
+                    validate(getSnapshotValidator().vmNotInPreview(vm.getId()));
         }
 
         return returnValue;
@@ -205,7 +206,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 true,
                 false,
                 false,
-                true,
+                false,
                 false,
                 true,
                 Collections.<Disk> emptyList());

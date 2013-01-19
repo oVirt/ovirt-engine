@@ -14,15 +14,42 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class SnapshotsValidator {
 
     /**
-     * Return if the VM is during a snapshot operation (running currently on the VM).
+     * Return whether the VM is during a snapshot operation (running currently on the VM).
      *
      * @param vmId
      *            The VM to check for.
      * @return Is the VM during a snapshot operation or not.
      */
     public ValidationResult vmNotDuringSnapshot(Guid vmId) {
-        if (getSnapshotDao().exists(vmId, SnapshotStatus.LOCKED)) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+        return vmNotInStatus(vmId, SnapshotStatus.LOCKED, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+    }
+
+    /**
+     * Return whether the VM is in preview (running currently on a snapshot other than the active one).
+     *
+     * @param vmId
+     *            The VM to check for.
+     * @return Is the VM is preview or not.
+     */
+    public ValidationResult vmNotInPreview(Guid vmId) {
+        return vmNotInStatus(vmId, SnapshotStatus.IN_PREVIEW, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+    }
+
+    /**
+     * Return whether the VM has a snapshot in the given status.
+     *
+     * @param vmId
+     *            The VM to check for.
+     * @param status
+     *            The status of a snapshot to look for
+     * @param msg
+     *            The validation error to return if the snapshot exists
+     *
+     * @return <code>true</code> if the VM dons't habe a snapshot in the given status.
+     */
+    private ValidationResult vmNotInStatus(Guid vmId, SnapshotStatus status, VdcBllMessages msg) {
+        if (getSnapshotDao().exists(vmId, status)) {
+            return new ValidationResult(msg);
         }
 
         return ValidationResult.VALID;
