@@ -371,6 +371,9 @@ install_config:
 	install -m 750 backend/manager/conf/kerberos/engine-manage-domains $(DESTDIR)$(DATA_DIR)/bin/engine-manage-domains.sh
 	ln -s $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
 
+	# Install man pages
+	install -m 644 packaging/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
+
 install_sysprep:
 	@echo "*** Deploying sysperp"
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
