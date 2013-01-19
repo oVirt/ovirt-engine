@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -16,9 +17,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetVmConfigurationBySnapshotQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -274,7 +275,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
-        if (!ImagesHandler.checkImagesLocked(getSourceVmFromDb(), getReturnValue().getCanDoActionMessages())) {
+        if (!ImagesHandler.checkImagesLocked(getSourceVmFromDb().getId(), getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
+        if (!validate(new VmValidator(getSourceVmFromDb()).vmNotLocked())) {
             return false;
         }
 

@@ -33,6 +33,14 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotLocked() {
+        if (vm.getStatus() == VMStatus.ImageLocked) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotRunningStateless() {
         if (DbFacade.getInstance().getSnapshotDao().exists(vm.getId(), SnapshotType.STATELESS)) {
             VdcBllMessages message = vm.isRunning() ? VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS :

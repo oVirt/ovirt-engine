@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
@@ -159,10 +160,19 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        // we cannot force remove if there is running task
-        if (getParameters().getForce() && getVm().getStatus() == VMStatus.ImageLocked
-                && AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
+        // Handle VM status with ImageLocked
+        VmValidator vmValidator = new VmValidator(getVm());
+        ValidationResult vmLockedValidatorResult = vmValidator.vmNotLocked();
+        if (!vmLockedValidatorResult.isValid()) {
+            // without force remove, we can't remove the VM
+            if (!getParameters().getForce()) {
+                return failCanDoAction(vmLockedValidatorResult.getMessage());
+            }
+
+            // If it is force, we cannot remove if there are task
+            if (AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
+                return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
+            }
         }
 
         return true;

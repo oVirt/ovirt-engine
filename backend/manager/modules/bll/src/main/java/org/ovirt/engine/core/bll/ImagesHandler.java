@@ -470,9 +470,9 @@ public final class ImagesHandler {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
         }
 
-        List<DiskImage> images = getImages(vm, diskImageList);
+        List<DiskImage> images = getImages(vm.getId(), diskImageList);
         if (returnValue && checkImagesLocked) {
-            returnValue = checkImagesLocked(vm, messages, images);
+            returnValue = checkImagesLocked(messages, images);
         }
 
         if (returnValue && checkIsValid) {
@@ -495,11 +495,11 @@ public final class ImagesHandler {
         return returnValue;
     }
 
-    public static boolean checkImagesLocked(VM vm, List<String> messages) {
-        return checkImagesLocked(vm, messages, getImages(vm, null));
+    public static boolean checkImagesLocked(Guid vmId, List<String> messages) {
+        return checkImagesLocked(messages, getImages(vmId, null));
     }
 
-    private static boolean checkImagesLocked(VM vm, List<String> messages, List<DiskImage> images) {
+    private static boolean checkImagesLocked(List<String> messages, List<DiskImage> images) {
         boolean returnValue = true;
         List<String> lockedDisksAliases = new ArrayList<String>();
         for (DiskImage diskImage : images) {
@@ -515,16 +515,12 @@ public final class ImagesHandler {
                     String.format("$%1$s %2$s", "diskAliases", StringUtils.join(lockedDisksAliases, ", ")));
         }
 
-        if (returnValue && vm.getStatus() == VMStatus.ImageLocked) {
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED.toString());
-            returnValue = false;
-        }
         return returnValue;
     }
 
-    private static List<DiskImage> getImages(VM vm, Collection<? extends Disk> diskImageList) {
+    private static List<DiskImage> getImages(Guid vmId, Collection<? extends Disk> diskImageList) {
         if (diskImageList == null) {
-            return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()), true, false);
+            return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId), true, false);
         }
 
         return filterImageDisks(diskImageList, true, false);

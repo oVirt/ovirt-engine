@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -142,7 +143,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             returnValue = isStoragePoolMatching(vm) &&
                     performImagesChecks(vm) &&
                     validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())) &&
-                    validate(getSnapshotValidator().vmNotInPreview(vm.getId()));
+                    validate(getSnapshotValidator().vmNotInPreview(vm.getId())) &&
+                    validate(new VmValidator(vm).vmNotLocked());
         }
 
         return returnValue;

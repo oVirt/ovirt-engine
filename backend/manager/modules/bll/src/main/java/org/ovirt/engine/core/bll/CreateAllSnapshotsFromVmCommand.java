@@ -302,7 +302,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            disksList);
+                            disksList)
+                    && validate(vmValidator.vmNotLocked());
         }
 
         return result;

@@ -218,7 +218,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean checkImagesStatus() {
-        return ImagesHandler.checkImagesLocked(getVm(), getReturnValue().getCanDoActionMessages());
+        return ImagesHandler.checkImagesLocked(getVmId(), getReturnValue().getCanDoActionMessages());
     }
 
     private boolean isLiveMigrationEnabled() {
