@@ -6,9 +6,10 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SnapshotsValidatorTest {
 
     /**
@@ -29,8 +31,6 @@ public class SnapshotsValidatorTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
         doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 
@@ -105,7 +105,7 @@ public class SnapshotsValidatorTest {
      * @param validationResult
      *            The result.
      */
-    private void validateValidResult(ValidationResult validationResult) {
+    private static void validateValidResult(ValidationResult validationResult) {
         validateResult(validationResult, true, null);
     }
 
@@ -117,7 +117,7 @@ public class SnapshotsValidatorTest {
      * @param message
      *            The error to expect.
      */
-    private void validateInvalidResult(ValidationResult validationResult, VdcBllMessages message) {
+    private static void validateInvalidResult(ValidationResult validationResult, VdcBllMessages message) {
         validateResult(validationResult, false, message);
     }
 
@@ -131,7 +131,7 @@ public class SnapshotsValidatorTest {
      * @param message
      *            The error to expect.
      */
-    private void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
+    private static void validateResult(ValidationResult validationResult, boolean isValid, VdcBllMessages message) {
         assertEquals(isValid, validationResult.isValid());
         assertEquals(message, validationResult.getMessage());
     }

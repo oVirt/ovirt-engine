@@ -71,7 +71,7 @@ public class SnapshotsValidator {
      *            Does the snapshot exist?
      * @return Result that either contains the suitable error or not.
      */
-    private ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
+    private static ValidationResult createSnapshotExistsResult(boolean snapshotExists) {
         return snapshotExists
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
