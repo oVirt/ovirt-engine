@@ -152,8 +152,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             return false;
         }
 
+        SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         if (!(checkVmInStorageDomain()
-                && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())
                 && ImagesHandler.PerformImagesChecks(getVm(),
                         getReturnValue().getCanDoActionMessages(),
@@ -163,7 +165,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         true,
                         false,
                         false,
-                        true,
+                        false,
                         true,
                         true,
                         getDisksBasedOnImage()))) {
