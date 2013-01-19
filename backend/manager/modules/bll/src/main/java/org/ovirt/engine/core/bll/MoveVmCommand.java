@@ -65,8 +65,10 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             setDescription(getVmName());
         }
 
+        SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         retValue = retValue
-                && validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+                && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown());
 
         // check that images are ok
@@ -82,7 +84,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 true,
                                 true,
                                 true,
-                                true,
+                                false,
                                 false,
                                 true,
                                 diskImages);
