@@ -210,6 +210,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         boolean result =
                 validate(vmValidator.vmDown())
                         && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                        && validate(snapshotsValidator.vmNotInPreview(getVmId()))
                         && validate(snapshotsValidator.snapshotExists(snapshot))
                         && validate(snapshotsValidator.snapshotNotBroken(snapshot));
 
@@ -224,7 +225,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     true,
                                     false,
                                     false,
-                                    true,
+                                    false,
                                     true,
                                     true,
                                     getVm().getDiskMap().values());
