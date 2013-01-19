@@ -210,7 +210,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                                 true,
                                 false,
                                 false,
-                                false,
                                 !Guid.Empty.equals(storageDomainId),
                                 true,
                                 disks);

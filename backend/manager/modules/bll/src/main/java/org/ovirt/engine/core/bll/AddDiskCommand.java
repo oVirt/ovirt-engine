@@ -207,7 +207,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 false,
                 false,
                 false,
-                false,
                 true,
                 Collections.<Disk> emptyList());
     }

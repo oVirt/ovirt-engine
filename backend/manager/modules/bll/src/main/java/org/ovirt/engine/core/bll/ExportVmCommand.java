@@ -165,7 +165,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         true,
                         false,
                         false,
-                        false,
                         true,
                         true,
                         getDisksBasedOnImage()))) {

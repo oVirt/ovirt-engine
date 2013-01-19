@@ -238,7 +238,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                             false,
                             false,
                             false,
-                            false,
                             firstTime,
                             diskList)) {
                 return false;

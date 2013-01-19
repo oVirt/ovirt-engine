@@ -327,7 +327,6 @@ public class RunVmCommandTest {
                 anyListOf(String.class),
                 any(RunVmParams.class),
                 anyListOf(Disk.class));
-        doReturn(false).when(vmRunHandler).isVmInPreview(any(VM.class));
     }
 
     @Test
@@ -484,6 +483,7 @@ public class RunVmCommandTest {
     private SnapshotsValidator mockSuccessfulSnapshotValidator() {
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         when(snapshotsValidator.vmNotDuringSnapshot(any(Guid.class))).thenReturn(ValidationResult.VALID);
+        when(snapshotsValidator.vmNotInPreview(any(Guid.class))).thenReturn(ValidationResult.VALID);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         return snapshotsValidator;
     }

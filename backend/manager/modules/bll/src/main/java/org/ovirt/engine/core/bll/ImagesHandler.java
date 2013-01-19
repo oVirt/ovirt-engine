@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -413,10 +412,6 @@ public final class ImagesHandler {
         return fromIrs;
     }
 
-    public static boolean isVmInPreview(Guid vmId) {
-        return DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotStatus.IN_PREVIEW);
-    }
-
     public static boolean CheckImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
         boolean result = true;
@@ -464,9 +459,9 @@ public final class ImagesHandler {
             boolean checkImagesLocked,
             boolean checkImagesIllegal,
             boolean checkImagesExist,
-            boolean checkVmInPreview,
             boolean checkStorageDomain,
-            boolean checkIsValid, Collection<? extends Disk> diskImageList) {
+            boolean checkIsValid,
+            Collection<? extends Disk> diskImageList) {
 
         boolean returnValue = true;
 
@@ -478,11 +473,6 @@ public final class ImagesHandler {
         List<DiskImage> images = getImages(vm, diskImageList);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(vm, messages, images);
-        }
-
-        if (returnValue && checkVmInPreview && isVmInPreview(vm.getId())) {
-            returnValue = false;
-            ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString());
         }
 
         if (returnValue && checkIsValid) {

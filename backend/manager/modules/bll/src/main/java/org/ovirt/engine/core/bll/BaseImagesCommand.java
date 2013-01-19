@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.context.CompensationContext;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -71,10 +72,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return mImage;
     }
 
+    @Override
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
     }
 
+    @Override
     protected SnapshotDao getSnapshotDao() {
         return getDbFacade().getSnapshotDao();
     }
@@ -196,7 +199,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     // TODO: Should be moved to another class in the hierarchy
     protected boolean canCreateSnapshot() {
-        if (ImagesHandler.isVmInPreview(getVmId())) {
+        if (!new SnapshotsValidator().vmNotDuringSnapshot(getVmId()).isValid()) {
             log.error("Cannot create snapshot. Vm is in preview status");
             return false;
         }
@@ -326,6 +329,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         return false;
     }
 
+    @Override
     protected BaseDiskDao getBaseDiskDao() {
         return getDbFacade().getBaseDiskDao();
     }

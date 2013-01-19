@@ -334,7 +334,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                         true,
                         false,
                         false,
-                        false,
                         true,
                         true,
                         getImagesList());

@@ -225,7 +225,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     true,
                                     false,
                                     false,
-                                    false,
                                     true,
                                     true,
                                     getVm().getDiskMap().values());

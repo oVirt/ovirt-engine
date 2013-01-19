@@ -136,7 +136,7 @@ public class VmRunHandler {
 
                             boolean isStatelessVm = shouldVmRunAsStateless(runParams, vm);
 
-                            if (retValue && isStatelessVm && isVmInPreview(vm)) {
+                            if (retValue && isStatelessVm && !snapshotsValidator.vmNotInPreview(vm.getId()).isValid()) {
                                 retValue = false;
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_WHILE_IN_PREVIEW.toString());
                             }
@@ -215,14 +215,10 @@ public class VmRunHandler {
             (VM vm, List<String> message, RunVmParams runParams, List<Disk> vmDisks) {
         return ImagesHandler.PerformImagesChecks(vm, message,
                 vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
-                true, false, false, false,
+                true, false, false,
                 !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
                 !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),
                 vmDisks);
-    }
-
-    protected boolean isVmInPreview(VM vm) {
-        return ImagesHandler.isVmInPreview(vm.getId());
     }
 
     /**
