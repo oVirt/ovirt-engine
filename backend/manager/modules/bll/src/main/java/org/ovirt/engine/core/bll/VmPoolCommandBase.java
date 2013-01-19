@@ -187,10 +187,14 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
         // check vm images:
         else {
-            ValidationResult vmDuringSnapshotResult =
-                    new SnapshotsValidator().vmNotDuringSnapshot(vmId);
+            SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+            ValidationResult vmDuringSnapshotResult = snapshotsValidator.vmNotDuringSnapshot(vmId);
+            ValidationResult vmInPreviewResult = snapshotsValidator.vmNotInPreview(vmId);
             if (!vmDuringSnapshotResult.isValid()) {
                 messages.add(vmDuringSnapshotResult.getMessage().name());
+                returnValue = false;
+            } else if (!vmInPreviewResult.isValid()) {
+                messages.add(vmInPreviewResult.getMessage().name());
                 returnValue = false;
             } else {
                 List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
@@ -206,7 +210,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                                 true,
                                 false,
                                 false,
-                                true,
+                                false,
                                 !Guid.Empty.equals(storageDomainId),
                                 true,
                                 disks);
