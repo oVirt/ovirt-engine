@@ -136,10 +136,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         // enable to remove vms without images
-        ValidationResult vmDuringSnapshotResult =
-                new SnapshotsValidator().vmNotDuringSnapshot(getVm().getId());
-        if (!vmDuringSnapshotResult.isValid()) {
-            return failCanDoAction(vmDuringSnapshotResult.getMessage());
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        if (!validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))) {
+            return false;
+        }
+
+        if (getParameters().getForce() && !validate(snapshotsValidator.vmNotInPreview(getVmId()))) {
+            return false;
         }
 
         if (!ImagesHandler.PerformImagesChecks(getVm(),
@@ -150,7 +153,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 !getParameters().getForce(),
                 false,
                 false,
-                getParameters().getForce(),
+                false,
                 !getVm().getDiskMap().values().isEmpty(),
                 true,
                 getVm().getDiskMap().values())) {
