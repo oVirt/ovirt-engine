@@ -85,6 +85,7 @@ public class RemoveSnapshotCommandTest {
 
         cmd.setSnapshotName("someSnapshot");
         doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotDuringSnapshot(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotInPreview(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(Guid.class), any(Guid.class));
         doReturn(true).when(cmd).validateImagesAndVMStates();
         doReturn(vm).when(cmd).getVm();

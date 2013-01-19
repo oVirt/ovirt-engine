@@ -162,6 +162,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         initializeObjectState();
 
         if (!validateVmNotDuringSnapshot() ||
+                !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validate(new VmValidator(getVm()).vmDown()) ||
                 !validateImagesAndVMStates()) {
@@ -199,6 +200,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return validate(createSnapshotValidator().vmNotDuringSnapshot(getVmId()));
     }
 
+    protected boolean validateVmNotInPreview() {
+        return validate(createSnapshotValidator().vmNotInPreview(getVmId()));
+    }
+
     protected boolean validateSnapshotExists() {
         return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
@@ -208,7 +213,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean validateImagesAndVMStates() {
         return ImagesHandler.PerformImagesChecks(getVm(), getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
-                hasImages(), hasImages(), hasImages(), hasImages(), true, true, true, null);
+                hasImages(), hasImages(), hasImages(), hasImages(), false, true, true, null);
     }
 
     protected boolean validateImageNotInTemplate() {
