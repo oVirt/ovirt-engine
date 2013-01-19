@@ -288,7 +288,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         List<DiskImage> disksList = getDisksList();
         if (disksList.size() > 0) {
             VmValidator vmValidator = new VmValidator(getVm());
-            result = validate(new SnapshotsValidator().vmNotDuringSnapshot(getVmId()))
+            SnapshotsValidator snapshotValidator = new SnapshotsValidator();
+            result = validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+                    && validate(snapshotValidator.vmNotInPreview(getVmId()))
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())
                     && ImagesHandler.PerformImagesChecks(getVm(),
@@ -299,7 +301,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                             true,
                             true,
                             true,
-                            true,
+                            false,
                             true,
                             true,
                             disksList);
