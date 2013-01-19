@@ -227,19 +227,20 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         List<Disk> diskList = Arrays.asList(getDisk());
         for (VM vm : listVms) {
-            VmDevice vmDevice = getVmDeviceDAO().get(new VmDeviceId(getDisk().getId(), vm.getId()));
-            if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) || !ImagesHandler.PerformImagesChecks(vm,
-                    getReturnValue().getCanDoActionMessages(),
-                    vm.getStoragePoolId(),
-                    getParameters().getStorageDomainId(),
-                    false,
-                    firstTime,
-                    false,
-                    false,
-                    vmDevice.getIsPlugged() && getDisk().isAllowSnapshot(),
-                    false,
-                    firstTime,
-                    diskList)) {
+            if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) ||
+                    !validate(snapshotsValidator.vmNotInPreview(vm.getId())) ||
+                    !ImagesHandler.PerformImagesChecks(vm,
+                            getReturnValue().getCanDoActionMessages(),
+                            vm.getStoragePoolId(),
+                            getParameters().getStorageDomainId(),
+                            false,
+                            firstTime,
+                            false,
+                            false,
+                            false,
+                            false,
+                            firstTime,
+                            diskList)) {
                 return false;
             }
             firstTime = false;
