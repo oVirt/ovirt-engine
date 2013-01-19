@@ -28,49 +28,39 @@ public class SnapshotsValidatorTest {
 
     @Mock
     private SnapshotDao snapshotDao;
+    private Guid vmId;
+    private Guid snapshotId;
 
     @Before
     public void setUp() {
+        vmId = Guid.NewGuid();
+        snapshotId = Guid.NewGuid();
         doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 
     @Test
     public void vmNotDuringSnapshotReturnsInvalidResultWhenInSnapshot() throws Exception {
-        Guid vmId = new Guid();
-
         when(snapshotDao.exists(vmId, SnapshotStatus.LOCKED)).thenReturn(true);
-
         validateInvalidResult(validator.vmNotDuringSnapshot(vmId),
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
     }
 
     @Test
     public void vmNotDuringSnapshotReturnsValidForNoSnapshotInProgress() throws Exception {
-        Guid vmId = new Guid();
-
         when(snapshotDao.exists(vmId, SnapshotStatus.LOCKED)).thenReturn(false);
-
         validateValidResult(validator.vmNotDuringSnapshot(vmId));
     }
 
     @Test
     public void snapshotExistsByGuidReturnsInvalidResultWhenNoSnapshot() throws Exception {
-        Guid vmId = Guid.NewGuid();
-        Guid snapshotId = Guid.NewGuid();
-
         when(snapshotDao.exists(vmId, snapshotId)).thenReturn(false);
-
         validateInvalidResult(validator.snapshotExists(vmId, snapshotId),
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
     public void snapshotExistsByGuidReturnsValidResultWhenSnapshotExists() throws Exception {
-        Guid vmId = Guid.NewGuid();
-        Guid snapshotId = Guid.NewGuid();
-
         when(snapshotDao.exists(vmId, snapshotId)).thenReturn(true);
-
         validateValidResult(validator.snapshotExists(vmId, snapshotId));
     }
 
