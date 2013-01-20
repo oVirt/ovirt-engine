@@ -1671,6 +1671,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("VLAN tag")
     String vlanNetwork();
 
+    @DefaultStringValue("Provider")
+    String providerNetwork();
+
     @DefaultStringValue("MTU")
     String mtuNetwork();
 

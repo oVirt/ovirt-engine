@@ -140,6 +140,14 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<NetworkView> providerColumn = new TextColumnWithTooltip<NetworkView>() {
+            @Override
+            public String getValue(NetworkView object) {
+                return object.getProvidedBy() == null ? "-" : object.getProviderName(); // $NON-NLS-1$
+            }
+        };
+        getTable().addColumn(providerColumn, constants.providerNetwork(), "200px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override
             protected UICommand resolveCommand() {
