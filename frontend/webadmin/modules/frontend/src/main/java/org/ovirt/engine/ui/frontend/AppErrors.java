@@ -2031,9 +2031,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type} to a Snapshot that is not being previewed. Please select the correct Snapshot to restore to: Either the one being previewed, or the one before the preview.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW();
 
-    @DefaultStringValue("Cannot ${action} a floating ${type} (${diskAliases}). This operation is not supported.")
-    String ACTION_TYPE_FAILED_FLOATING_DISK_NOT_SUPPORTED();
-
     @DefaultStringValue("Cannot ${action} a shareable ${type} (${diskAliases}). This operation is not supported.")
     String ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED();
 
