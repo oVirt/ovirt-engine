@@ -951,7 +951,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot connect server to Storage.  ")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Internal error, Storage Connection doesn't exist.")
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Connection parameters are invalid for this storage type.")
