@@ -8,6 +8,7 @@ public class NetworkView extends Network {
 
     private String dataCenterName;
     private Version compatibilityVersion;
+    private String providerName;
 
     public String getDataCenterName() {
         return dataCenterName;
@@ -23,6 +24,14 @@ public class NetworkView extends Network {
 
     public void setCompatabilityVersion(Version compatibilityVersion) {
         this.compatibilityVersion = compatibilityVersion;
+    }
+
+    public String getProviderName() {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
     }
 
     @Override

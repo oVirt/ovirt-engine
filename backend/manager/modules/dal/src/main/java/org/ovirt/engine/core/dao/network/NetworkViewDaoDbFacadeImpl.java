@@ -24,6 +24,7 @@ public class NetworkViewDaoDbFacadeImpl extends BaseDAODbFacade implements Netwo
             NetworkView entity = super.mapRow(rs, rowNum);
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setCompatabilityVersion(new Version(rs.getString("compatibility_version")));
+            entity.setProviderName(rs.getString("provider_name"));
             return entity;
         }
 

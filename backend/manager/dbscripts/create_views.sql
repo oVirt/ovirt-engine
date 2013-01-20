@@ -1110,9 +1110,11 @@ SELECT network.id AS id,
    network.provider_network_provider_id AS provider_network_provider_id,
    network.provider_network_external_id AS provider_network_external_id,
    storage_pool.name AS storage_pool_name,
-   storage_pool.compatibility_version AS compatibility_version
+   storage_pool.compatibility_version AS compatibility_version,
+   providers.name AS provider_name
 FROM network
-INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
+INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id
+LEFT JOIN providers ON network.provider_network_provider_id = providers.id;
 
 ----------------------------------------------
 -- Query Permissions
