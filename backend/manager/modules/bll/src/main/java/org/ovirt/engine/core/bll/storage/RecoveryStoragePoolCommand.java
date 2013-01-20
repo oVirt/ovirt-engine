@@ -4,7 +4,6 @@ import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -27,7 +26,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
+public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<RecoveryStoragePoolParameters> {
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -42,11 +41,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
         super(parameters);
     }
 
-    private RecoveryStoragePoolParameters getRecoveryStoragePoolParametersData() {
-        VdcActionParametersBase tempVar = getParameters();
-        return (RecoveryStoragePoolParameters) ((tempVar instanceof RecoveryStoragePoolParameters) ? tempVar : null);
-    }
-
     @Override
     public NGuid getStorageDomainId() {
         super.setStorageDomainId(getMasterDomainIdFromDb());
@@ -56,10 +50,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction() && checkStoragePool();
-        getReturnValue().getCanDoActionMessages().remove(VdcBllMessages.VAR__ACTION__RECONSTRUCT_MASTER.toString());
 
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECOVER_POOL);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
         if (returnValue) {
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
@@ -87,6 +78,12 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
         return returnValue;
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__RECOVER_POOL);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+    }
+
     protected void executeReconstruct(){
         super.executeCommand();
     }
@@ -96,8 +93,8 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
         try {
             if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
                     .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
-                getRecoveryStoragePoolParametersData().setStorageDomainId(getStorageDomainId().getValue());
-                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                getParameters().setStorageDomainId(getStorageDomainId().getValue());
+                ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getParameters().getStoragePoolId(),
                         _newMasterStorageDomainId,
                         null,
                         EventType.RECOVERY),
@@ -105,9 +102,9 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                             @Override
                             public EventResult call() {
                                 StoragePoolIsoMap domainPoolMap =
-                                        new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
+                                        new StoragePoolIsoMap(getParameters()
                                                 .getNewMasterDomainId(),
-                                                getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                                                getParameters().getStoragePoolId(),
                                                 StorageDomainStatus.Active);
                                 DbFacade.getInstance()
                                         .getStoragePoolIsoMapDao()
@@ -125,8 +122,8 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
             }
         } finally {
             if (!reconstructOpSucceeded) {
-                getStoragePoolIsoMapDAO().remove(new StoragePoolIsoMapId(getRecoveryStoragePoolParametersData()
-                        .getNewMasterDomainId(), getRecoveryStoragePoolParametersData().getStoragePoolId()));
+                getStoragePoolIsoMapDAO().remove(new StoragePoolIsoMapId(getParameters()
+                        .getNewMasterDomainId(), getParameters().getStoragePoolId()));
             }
         }
     }
