@@ -141,7 +141,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         if (returnValue && vm != null) {
             returnValue = isStoragePoolMatching(vm) &&
-                    performImagesChecks(vm) &&
+                    performImagesChecks(vm.getStoragePoolId()) &&
                     validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())) &&
                     validate(getSnapshotValidator().vmNotInPreview(vm.getId())) &&
                     validate(new VmValidator(vm).vmNotLocked());
@@ -199,10 +199,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean performImagesChecks(VM vm) {
-        return ImagesHandler.PerformImagesChecks(vm.getId(),
+    protected boolean performImagesChecks(Guid spId) {
+        return ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
-                vm.getStoragePoolId(),
+                spId,
                 getStorageDomainId().getValue(),
                 false,
                 true,

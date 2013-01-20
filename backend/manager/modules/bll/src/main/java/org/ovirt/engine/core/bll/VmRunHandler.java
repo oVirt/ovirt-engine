@@ -221,7 +221,7 @@ public class VmRunHandler {
      */
     protected boolean performImageChecksForRunningVm
             (VM vm, List<String> message, RunVmParams runParams, List<Disk> vmDisks) {
-        return ImagesHandler.PerformImagesChecks(vm.getId(), message,
+        return ImagesHandler.PerformImagesChecks(message,
                 vm.getStoragePoolId(), Guid.Empty, !vm.isAutoStartup(),
                 true, false, false,
                 !vm.isAutoStartup() || !runParams.getIsInternal() && vm.isAutoStartup(),

@@ -146,7 +146,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (!ImagesHandler.PerformImagesChecks(getVmId(),
+        if (!ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
                 Guid.Empty,

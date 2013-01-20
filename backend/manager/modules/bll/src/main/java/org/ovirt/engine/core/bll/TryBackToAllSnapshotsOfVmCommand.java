@@ -217,7 +217,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (vmDisk != null) {
             result =
                     result
-                            && ImagesHandler.PerformImagesChecks(getVmId(),
+                            && ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),
                                     Guid.Empty,

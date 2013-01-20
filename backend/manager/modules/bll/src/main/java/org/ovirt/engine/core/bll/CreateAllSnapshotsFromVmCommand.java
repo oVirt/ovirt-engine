@@ -293,7 +293,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())
                     && validate(vmValidator.vmNotIlegal())
-                    && ImagesHandler.PerformImagesChecks(getVmId(),
+                    && ImagesHandler.PerformImagesChecks(
                             getReturnValue().getCanDoActionMessages(),
                             getVm().getStoragePoolId(),
                             Guid.Empty,

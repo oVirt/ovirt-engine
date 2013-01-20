@@ -450,7 +450,7 @@ public final class ImagesHandler {
     }
 
 
-    public static boolean PerformImagesChecks(Guid vmId,
+    public static boolean PerformImagesChecks(
             List<String> messages,
             Guid storagePoolId,
             Guid storageDomainId,
@@ -469,7 +469,7 @@ public final class ImagesHandler {
                 ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
         }
 
-        List<DiskImage> images = getImages(vmId, diskImageList);
+        List<DiskImage> images = filterImageDisks(diskImageList, true, false);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(messages, images);
         }

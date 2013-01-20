@@ -200,7 +200,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {
             boolean checkIsValid = true;
-            if (!ImagesHandler.PerformImagesChecks(getVmId(),
+            if (!ImagesHandler.PerformImagesChecks(
                     getReturnValue().getCanDoActionMessages(),
                     getVm().getStoragePoolId(),
                     srcStorageDomainId,

@@ -203,7 +203,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
                 VM vm = DbFacade.getInstance().getVmDao().get(vmId);
                 returnValue =
-                        ImagesHandler.PerformImagesChecks(vmId,
+                        ImagesHandler.PerformImagesChecks(
                                 messages,
                                 vm.getStoragePoolId(),
                                 storageDomainId,

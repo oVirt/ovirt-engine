@@ -370,7 +370,7 @@ public class AddDiskToVmCommandTest {
         AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
-        doReturn(true).when(command).performImagesChecks(any(VM.class));
+        doReturn(true).when(command).performImagesChecks(any(Guid.class));
         doReturn(true).when(command).isStorageDomainBelowThresholds(any(storage_domains.class));
         doReturn(mockSnapshotValidator()).when(command).getSnapshotValidator();
     }
