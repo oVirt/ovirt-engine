@@ -860,12 +860,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Templates")
     String quotaTemplateSubTabLabel();
 
-    @DefaultStringValue("Source")
-    String sourceStorage();
-
-    @DefaultStringValue("Destination")
-    String destinationStorage();
-
     @DefaultStringValue("Disks")
     String diskMainTabLabel();
 
