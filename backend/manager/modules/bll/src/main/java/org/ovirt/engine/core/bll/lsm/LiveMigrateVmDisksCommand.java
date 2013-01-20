@@ -291,7 +291,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             storage_domains destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
             if (!StorageDomainSpaceChecker.isBelowThresholds(destDomain)) {
-                addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", getStorageDomain().getstorage_name()));
+                addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", destDomain.getstorage_name()));
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
             }
 
