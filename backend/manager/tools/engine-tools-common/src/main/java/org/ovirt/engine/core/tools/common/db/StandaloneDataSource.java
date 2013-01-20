@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -147,15 +146,8 @@ public class StandaloneDataSource implements DataSource {
     }
 
     private void checkConnection () throws SQLException {
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            statement.executeQuery("select null");
-        }
-        finally {
-            if (statement != null) {
-                statement.close();
-            }
+        if (!connection.isValid(0)) {
+            throw new SQLException("The connection has been closed or invalid.");
         }
     }
 
