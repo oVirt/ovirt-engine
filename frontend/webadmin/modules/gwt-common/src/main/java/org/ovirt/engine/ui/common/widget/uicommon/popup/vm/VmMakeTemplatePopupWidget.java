@@ -169,8 +169,8 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         clusterEditor.setTabIndex(nextTabIndex++);
-        nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
         quotaEditor.setTabIndex(nextTabIndex++);
+        nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
         isTemplatePublicEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
