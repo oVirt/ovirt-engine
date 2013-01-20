@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
@@ -33,6 +36,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+@LockIdNameAttribute
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOperationCommandBase<T> {
@@ -273,12 +277,18 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                 }
             }
         }
-
-        if (!retValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HIBERNATE);
-        }
         return retValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__HIBERNATE);
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
     }
 
     @Override
