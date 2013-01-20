@@ -241,6 +241,25 @@
         <artifactId>log4j</artifactId>
         <version>${log4j.version}</version>
       </dependency>
+      <!--GWT dependencies-->
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-user</artifactId>
+        <version>${gwt.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-dev</artifactId>
+        <version>${gwt.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-servlet</artifactId>
+        <version>${gwt.version}</version>
+        <scope>runtime</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -434,11 +453,6 @@
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>1.4</version>
         </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <version>${gwt.plugin.version}</version>
-        </plugin>
         <!-- Create a test jar, so other modules can depend on the test utilities -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -451,6 +465,11 @@
               </goals>
             </execution>
            </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>gwt-maven-plugin</artifactId>
+          <version>${gwt.plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>

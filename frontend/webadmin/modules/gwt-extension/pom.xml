@@ -12,21 +12,15 @@
   <properties>
     <sourceDir>${project.basedir}/src/main/java</sourceDir>
     <gwt-plugin.extraJvmArgs>-Xms1024M -Xmx1024M -XX:PermSize=256M -XX:MaxPermSize=256M</gwt-plugin.extraJvmArgs>
-    <!-- Versions need to be inherited -->
-    <gwt.version>2.3.0</gwt.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.aspectj</groupId>

@@ -9,23 +9,15 @@
   <artifactId>gwt-common</artifactId>
   <packaging>jar</packaging>
   <name>oVirt GWT UI common infrastructure</name>
-  <properties>
-    <!--TODO: Will be inherited from top module -->
-    <gwt.version>2.3.0</gwt.version>
-  </properties>
   <dependencies>
     <!-- Google Web Toolkit dependencies -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <!-- GWTP MVP component -->
     <dependency>
@@ -89,7 +81,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>${gwt.plugin.version}</version>
         <executions>
           <!-- GWT version should be detected from dependencyManagement -->
           <execution>

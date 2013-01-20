@@ -19,12 +19,10 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
-      <version>${gwt.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
@@ -64,7 +62,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>${gwt.plugin.version}</version>
         <configuration>
           <servicePattern>**/gwtservices/*GWTService.java</servicePattern>
         </configuration>

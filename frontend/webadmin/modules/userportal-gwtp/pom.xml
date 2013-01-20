@@ -11,9 +11,6 @@
   <name>UserPortal</name>
   <description>oVirt Engine User Portal GUI</description>
   <properties>
-    <!--TODO: Will be inherited from top module -->
-    <gwt.version>2.3.0</gwt.version>
-    <gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
     <!-- Activate load time weaving of the aspects -->
     <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
     <!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
@@ -31,20 +28,14 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
-      <version>${gwt.version}</version>
-      <scope>runtime</scope>
     </dependency>
     <!-- GWTP MVP component -->
     <dependency>
@@ -237,7 +228,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
-            <version>${gwt-maven-plugin.version}</version>
             <dependencies>
               <dependency>
                 <groupId>com.google.gwt</groupId>

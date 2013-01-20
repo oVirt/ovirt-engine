@@ -11,9 +11,6 @@
   <name>WebAdmin</name>
   <description>oVirt Web based Administration GUI</description>
   <properties>
-    <!--TODO: Will be inherited from top module -->
-    <gwt.version>2.3.0</gwt.version>
-    <gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
     <!-- Activate load time weaving of the aspects -->
     <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
     <!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
@@ -25,26 +22,19 @@
     <gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
     <gwt.locale>default</gwt.locale>
   </properties>
-  <!-- TODO: Define SCM -->
   <dependencies>
     <!-- Google Web Toolkit dependencies -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
-      <version>${gwt.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
-      <version>${gwt.version}</version>
-      <scope>runtime</scope>
     </dependency>
     <!-- GWTP MVP component -->
     <dependency>
@@ -205,22 +195,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId>
-				<executions> <execution> <goals> <goal>compile</goal> <goal>test</goal> </goals>
-				</execution> </executions> <configuration> <runTarget>webadmin/Application.html</runTarget>
-				<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs> <debugSuspend>false</debugSuspend>
-				</configuration> </plugin> -->
-      <!-- ====================================================================== -->
-      <!-- It's possible to use the target/web.xml file mergewebxml produces,
-				by -->
-      <!-- making the war plugin to use it. It's possible to exclude what -->
-      <!-- neccessary from the final artifact here. -->
-      <!-- ====================================================================== -->
-      <!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
-				<webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
-				</configuration> </plugin> <plugin> <artifactId>maven-compiler-plugin</artifactId>
-				<configuration> <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target>
-				</configuration> </plugin> -->
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
@@ -237,7 +211,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
-            <version>${gwt-maven-plugin.version}</version>
             <dependencies>
               <dependency>
                 <groupId>com.google.gwt</groupId>
