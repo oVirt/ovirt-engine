@@ -58,11 +58,10 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             // nothing to do
             setSucceeded(true);
         } else {
+            orderListOfRunningVmsOnVds(getVdsId());
             setSucceeded(MigrateAllVms(getExecutionContext()));
 
-            /**
-             * if non responsive move directly to maintenance
-             */
+            // if non responsive move directly to maintenance
             if (getVds().getstatus() == VDSStatus.NonResponsive
                     || getVds().getstatus() == VDSStatus.Connecting
                     || getVds().getstatus() == VDSStatus.Down) {
@@ -72,9 +71,15 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                                 new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Maintenance));
             }
         }
-        if (vms != null && !vms.isEmpty()) {
+        // if there's VM(s) in this VDS which is migrating, mark this command as async
+        // as the migration(s) is a step of this job, so this job must not be cleaned yet
+        if (isVmsExist()) {
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);
         }
+    }
+
+    protected boolean isVmsExist() {
+        return vms != null && !vms.isEmpty();
     }
 
     protected void orderListOfRunningVmsOnVds(Guid vdsId) {
@@ -82,12 +87,17 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         Collections.sort(vms, Collections.reverseOrder(new VmsComparer()));
     }
 
+    /**
+     * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
+     */
     protected boolean MigrateAllVms(ExecutionContext parentContext) {
         return MigrateAllVms(parentContext, false);
     }
 
+    /**
+     * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
+     */
     protected boolean MigrateAllVms(ExecutionContext parentContext, boolean HAOnly) {
-        orderListOfRunningVmsOnVds(getVdsId());
 
         boolean succeeded = true;
 

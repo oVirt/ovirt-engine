@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -37,6 +38,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
 
         // if host failed to recover, no point in sending migrate, as it would fail.
         if (getParameters().getNonOperationalReason() != NonOperationalReason.TIMEOUT_RECOVERING_FROM_CRASH) {
+            orderListOfRunningVmsOnVds(getVdsId());
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -57,7 +59,14 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
                     getVds().getvds_name(), getParameters().getCustomLogValues().get("Networks"));
         }
+
         setSucceeded(true);
+
+        // if there's VM(s) in this VDS which is migrating, mark this command as async
+        // as the migration(s) is a step of this job, so this job must not be cleaned yet
+        if (isVmsExist()) {
+            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+        }
     }
 
     @Override
