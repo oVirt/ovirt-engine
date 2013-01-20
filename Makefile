@@ -241,6 +241,7 @@ create_dirs:
 	@echo "*** Creating Directories"
 	@install -dm 755 $(DESTDIR)$(BIN_DIR)
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/bin
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ui-plugins
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/conf
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos

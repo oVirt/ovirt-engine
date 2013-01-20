@@ -611,6 +611,8 @@ fi
 
 # Directory for binaries and scripts:
 %dir %{engine_data}/bin
+# Directory for ui plugins
+%dir %{engine_data}/ui-plugins
 
 # Jar files:
 %{engine_java}/bll.jar
