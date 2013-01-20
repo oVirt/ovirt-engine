@@ -104,29 +104,17 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand {
                         new Callable<EventResult>() {
                             @Override
                             public EventResult call() {
-                                // set those to null in order to reload them during canDoAction -
-                                // canDo checks should be performed on updated values and not staled ones.
-                                // canDoAction checks are needed here as Recovery operations aren't cleared from the event queue
-                                // after reconstruct, in order to provide the user ability to recover from the state of non working pool
-                                // without him to be in a race with automatic triggered reconstruct. because of that, we don't want to run
-                                // the recovery operation if it's unneeded so we need to re-check the canDoAction result. canDoAction() method was
-                                // as is in order to provide the user immediate response whether it's possible to initiate the command when
-                                // he attempts to run recovery.
-                                setStorageDomain(null);
-                                setStoragePool(null);
-                                if (canDoAction()) {
-                                    StoragePoolIsoMap domainPoolMap =
-                                            new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
-                                                    .getNewMasterDomainId(),
-                                                    getRecoveryStoragePoolParametersData().getStoragePoolId(),
-                                                    StorageDomainStatus.Active);
-                                    DbFacade.getInstance()
-                                            .getStoragePoolIsoMapDao()
-                                            .save(domainPoolMap);
+                                StoragePoolIsoMap domainPoolMap =
+                                        new StoragePoolIsoMap(getRecoveryStoragePoolParametersData()
+                                                .getNewMasterDomainId(),
+                                                getRecoveryStoragePoolParametersData().getStoragePoolId(),
+                                                StorageDomainStatus.Active);
+                                DbFacade.getInstance()
+                                        .getStoragePoolIsoMapDao()
+                                        .save(domainPoolMap);
 
-                                    getStoragePool().setstatus(StoragePoolStatus.Problematic);
-                                    executeReconstruct();
-                                }
+                                getStoragePool().setstatus(StoragePoolStatus.Problematic);
+                                executeReconstruct();
                                 return new EventResult(reconstructOpSucceeded, EventType.RECONSTRUCT);
                             }
                         });

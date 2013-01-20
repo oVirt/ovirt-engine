@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.eventqueue;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -37,8 +36,8 @@ public class EventQueueMonitor implements EventQueue {
     private static Log log = LogFactory.getLog(EventQueueMonitor.class);
 
     private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<Guid, ReentrantLock>();
-    private static final Map<Guid, Queue<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =
-            new HashMap<Guid, Queue<Pair<Event, FutureTask<EventResult>>>>();
+    private static final Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =
+            new HashMap<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>>();
     private static final Map<Guid, Event> poolCurrentEventMap = new HashMap<Guid, Event>();
 
     @Override
@@ -72,18 +71,18 @@ public class EventQueueMonitor implements EventQueue {
                 switch (currentEvent.getEventType()) {
                 case RECONSTRUCT:
                     if (event.getEventType() == EventType.VDSCONNECTTOPOOL || event.getEventType() == EventType.RECOVERY) {
-                        task = addTaskToQueue(event, callable, storagePoolId);
+                        task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
                         log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
                                 storagePoolId, event);
                     }
                     break;
                 default:
-                    task = addTaskToQueue(event, callable, storagePoolId);
+                    task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     break;
                 }
             } else {
-                task = addTaskToQueue(event, callable, storagePoolId);
+                task = addTaskToQueue(event, callable, storagePoolId, false);
                 poolCurrentEventMap.put(storagePoolId, event);
                 ThreadPoolUtil.execute(new InternalEventQueueThread(storagePoolId, lock,
                         poolsEventsMap, poolCurrentEventMap));
@@ -94,14 +93,30 @@ public class EventQueueMonitor implements EventQueue {
         return task;
     }
 
-    private FutureTask<EventResult> addTaskToQueue(Event event, Callable<EventResult> callable, Guid storagePoolId) {
+    /**
+     * The following method should decide if we want that the event will be first for executing, before all other events
+     * already submitted to queue
+     * @param event
+     *            - submitted event
+     * @return
+     */
+    private boolean isEventShouldBeFirst(Event event) {
+        return event.getEventType() == EventType.RECOVERY;
+    }
+
+    private FutureTask<EventResult> addTaskToQueue(Event event, Callable<EventResult> callable, Guid storagePoolId, boolean addFirst) {
         FutureTask<EventResult> task = new FutureTask<EventResult>(callable);
-        getEventQueue(storagePoolId).add(new Pair<Event, FutureTask<EventResult>>(event, task));
+        Pair<Event, FutureTask<EventResult>> queueEvent = new Pair<Event, FutureTask<EventResult>>(event, task);
+        if (addFirst) {
+            getEventQueue(storagePoolId).addFirst(queueEvent);
+        } else {
+            getEventQueue(storagePoolId).add(queueEvent);
+        }
         return task;
     }
 
-    private Queue<Pair<Event, FutureTask<EventResult>>> getEventQueue(Guid storagePoolId) {
-        Queue<Pair<Event, FutureTask<EventResult>>> queue = poolsEventsMap.get(storagePoolId);
+    private LinkedList<Pair<Event, FutureTask<EventResult>>> getEventQueue(Guid storagePoolId) {
+        LinkedList<Pair<Event, FutureTask<EventResult>>> queue = poolsEventsMap.get(storagePoolId);
         if (queue == null) {
             queue = new LinkedList<Pair<Event, FutureTask<EventResult>>>();
             poolsEventsMap.put(storagePoolId, queue);
@@ -121,11 +136,11 @@ public class EventQueueMonitor implements EventQueue {
         private Guid storagePoolId;
         private ReentrantLock lock;
         private Map<Guid, Event> poolCurrentEventMap;
-        private Map<Guid, Queue<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap;
+        private Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap;
 
         public InternalEventQueueThread(Guid storagePoolId,
                 ReentrantLock lock,
-                Map<Guid, Queue<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap,
+                Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap,
                 Map<Guid, Event> poolCurrentEventMap) {
             this.storagePoolId = storagePoolId;
             this.lock = lock;
@@ -159,11 +174,11 @@ public class EventQueueMonitor implements EventQueue {
                             log.infoFormat("Finished reconstruct for pool {0}. Clearing event queue", storagePoolId);
                             lock.lock();
                             try {
-                                Queue<Pair<Event, FutureTask<EventResult>>> queue =
+                                LinkedList<Pair<Event, FutureTask<EventResult>>> queue =
                                         new LinkedList<Pair<Event, FutureTask<EventResult>>>();
                                 for (Pair<Event, FutureTask<EventResult>> task : poolsEventsMap.get(storagePoolId)) {
                                     EventType eventType = task.getFirst().getEventType();
-                                    if (eventType == EventType.VDSCONNECTTOPOOL || eventType == EventType.RECOVERY) {
+                                    if (eventType == EventType.VDSCONNECTTOPOOL || (eventType == EventType.RECOVERY && !result.isSuccess())) {
                                         queue.add(task);
                                     } else {
                                         log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",
