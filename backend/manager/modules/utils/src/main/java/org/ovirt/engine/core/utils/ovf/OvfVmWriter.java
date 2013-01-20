@@ -17,13 +17,12 @@ import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
 
-    public OvfVmWriter(XmlDocument document, VM vm, List<DiskImage> images) {
-        super(document, vm.getStaticData(), images);
+    public OvfVmWriter(VM vm, List<DiskImage> images) {
+        super(vm.getStaticData(), images);
         _vm = vm;
     }
 

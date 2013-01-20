@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.ovf;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -16,15 +15,12 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
-import org.ovirt.engine.core.compat.Formatting;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
 
 public abstract class OvfWriter implements IOvfBuilder {
-    protected String _fileName;
     protected int _instanceId;
     protected List<DiskImage> _images;
     protected XmlTextWriter _writer;
@@ -32,19 +28,16 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected VM _vm;
     protected VmBase vmBase;
 
-    public OvfWriter(XmlDocument document, VmBase vmBase, List<DiskImage> images) {
-        _fileName = Path.GetTempFileName();
-        _document = document;
+    public OvfWriter(VmBase vmBase, List<DiskImage> images) {
+        _document = new XmlDocument();
         _images = images;
-        _writer = new XmlTextWriter(_fileName, Encoding.UTF8);
+        _writer = new XmlTextWriter(Encoding.UTF8);
         this.vmBase = vmBase;
         WriteHeader();
     }
 
     private void WriteHeader() {
         _instanceId = 0;
-        _writer.Formatting = Formatting.Indented;
-        _writer.Indentation = 4;
         _writer.WriteStartDocument(false);
 
         _writer.SetPrefix(OVF_PREFIX, OVF_URI);
@@ -60,10 +53,6 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         // Setting the OVF version according to ENGINE (in 2.2 , version was set to "0.9")
         _writer.WriteAttributeString(OVF_URI, "version", Config.<String> GetValue(ConfigValues.VdcVersion));
-    }
-
-    private void CloseElements() {
-        _writer.WriteEndElement();
     }
 
     protected long BytesToGigabyte(long bytes) {
@@ -114,7 +103,9 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteStartElement("Disk");
             _writer.WriteAttributeString(OVF_URI, "diskId", image.getImageId().toString());
             _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getsize())));
-            _writer.WriteAttributeString(OVF_URI, "actual_size", String.valueOf(BytesToGigabyte(image.getactual_size())));
+            _writer.WriteAttributeString(OVF_URI,
+                    "actual_size",
+                    String.valueOf(BytesToGigabyte(image.getactual_size())));
             _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getvm_snapshot_id() != null) ? image
                     .getvm_snapshot_id().getValue().toString() : "");
 
@@ -251,12 +242,6 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected abstract void WriteContentItems();
 
-    @Override
-    protected void finalize() throws Throwable {
-        dispose();
-        super.finalize();
-    }
-
     protected void writeManagedDeviceInfo(VmBase vmBase, XmlTextWriter writer, Guid deviceId) {
         VmDevice vmDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
@@ -337,25 +322,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    public void deleteTmpFile() {
-        try {
-            File tmpFile = new File(_fileName);
-            if (tmpFile.exists()) {
-                tmpFile.delete();
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    public void dispose() {
-        if (_writer != null) {
-            CloseElements();
-            _writer.close();
-            _document.Load(_fileName);
-        }
-        deleteTmpFile();
-    }
-
     private void writeVmDeviceInfo(VmDevice vmDevice) {
         _writer.WriteStartElement(OvfProperties.VMD_TYPE);
         _writer.WriteRaw(String.valueOf(vmDevice.getType()));
@@ -383,5 +349,10 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteMap(vmDevice.getSpecParams());
             _writer.WriteEndElement();
         }
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return _writer.getStringXML();
     }
 }

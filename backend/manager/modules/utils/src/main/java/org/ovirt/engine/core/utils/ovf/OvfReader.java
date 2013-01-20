@@ -555,7 +555,7 @@ public abstract class OvfReader implements IOvfBuilder {
                     if (valueNode.getNodeType() == Node.TEXT_NODE) {
                         returnValue.put(currNode.getNodeName(), valueNode.getNodeValue());
                     }
-                } else if (childNodes.getLength() > 1){
+                } else if (childNodes.getLength() > 1) {
                     // In this case, we have a nested map, so we parse it
                     returnValue.put(currNode.getNodeName(), getMapNode(new XmlNode(currNode)));
                 }
@@ -563,5 +563,10 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         return returnValue;
+    }
+
+    @Override
+    public String getStringRepresentation() {
+        return _document.getOuterXml();
     }
 }

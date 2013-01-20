@@ -20,4 +20,6 @@ public interface IOvfBuilder {
     void buildDisk();
 
     void buildVirtualSystem();
+
+    String getStringRepresentation();
 }

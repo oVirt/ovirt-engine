@@ -9,13 +9,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate _vmTemplate;
 
-    public OvfTemplateWriter(XmlDocument document, VmTemplate vmTemplate, List<DiskImage> images) {
-        super(document, vmTemplate, images);
+    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images) {
+        super(vmTemplate, images);
         _vmTemplate = vmTemplate;
     }
 

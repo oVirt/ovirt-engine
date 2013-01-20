@@ -11,36 +11,19 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 
 public class OvfManager {
-    /**
-     * EINAV TODO: DateTimeFormat is currently not in use. Need to find a way the DateTime.Parse/TryParse will surely
-     * work.
-     */
-    public static String DateTimeFormat = "dd/MM/yyy HH:mm:ss";
 
     public String ExportVm(VM vm, ArrayList<DiskImage> images) {
-        XmlDocument document = new XmlDocument();
-        OvfWriter ovf = new OvfVmWriter(document, vm, images);
-        try {
-            BuildOvf(ovf);
-        } finally {
-            ovf.dispose();
-        }
-        // document.outerxml will be valid only out of the using block
-        // because the Dispose closing the document
-        return document.OuterXml;
+        OvfWriter ovf = new OvfVmWriter(vm, images);
+        BuildOvf(ovf);
+
+        return ovf.getStringRepresentation();
     }
 
     public String ExportTemplate(VmTemplate vmTemplate, List<DiskImage> images) {
-        XmlDocument document = new XmlDocument();
-        OvfWriter ovf = new OvfTemplateWriter(document, vmTemplate, images);
-        try {
-            BuildOvf(ovf);
-        } finally {
-            ovf.dispose();
-        }
-        // document.outerxml will be valid only out of the using block
-        // because the Dispose closing the document
-        return document.OuterXml;
+        OvfWriter ovf = new OvfTemplateWriter(vmTemplate, images);
+        BuildOvf(ovf);
+
+        return ovf.getStringRepresentation();
     }
 
     public void ImportVm(String ovfstring,

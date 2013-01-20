@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.compat.backendcompat;
 
-import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,18 +12,16 @@ import org.ovirt.engine.core.compat.Encoding;
 
 public class XmlTextWriter {
 
-    public Object Formatting;
-    public int Indentation;
+    private XMLStreamWriter writer;
+    private StringWriter stream = new StringWriter();
 
-    XMLStreamWriter writer;
-
-    public XmlTextWriter(String name, Encoding utf8) {
+    public XmlTextWriter(Encoding encoding) {
         try {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
-            writer = factory.createXMLStreamWriter(new FileOutputStream(name), "UTF-8");
-            writer.writeStartDocument("UTF-8", "1.0");
+            writer = factory.createXMLStreamWriter(stream);
+            writer.writeStartDocument(encoding.name(), "1.0");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize xml writer: " + name, e);
+            throw new RuntimeException("Failed to initialize xml writer: ", e);
         }
     }
 
@@ -125,17 +123,19 @@ public class XmlTextWriter {
         WriteEndElement();
     }
 
-    public void close() {
-        try {
-            writer.flush();
-            writer.close();
-        } catch (XMLStreamException e) {
-            throw new RuntimeException("Failed to close xml writer", e);
-        }
-    }
-
     public void WriteAttributeString(String namespaceURI, String localName, int value) {
         WriteAttributeString(namespaceURI, localName, Integer.toString(value));
+    }
+
+    public String getStringXML() {
+        try {
+            writer.writeEndElement();
+            writer.flush();
+            writer.close();
+            return stream.getBuffer().toString();
+        } catch (XMLStreamException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
