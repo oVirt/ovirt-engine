@@ -386,6 +386,10 @@ public enum VdcBllErrors {
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session
+
+    // migration cancel failed, VM doesn't exist
+    MIGRATION_CANCEL_ERROR_NO_VM(5100),
+
     SESSION_ERROR(9999), ;
 
     private int intValue;
