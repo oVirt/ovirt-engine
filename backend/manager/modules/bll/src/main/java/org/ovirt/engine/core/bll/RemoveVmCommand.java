@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -294,6 +295,13 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         // If the VM still has disk images related to it, change their status to Illegal.
         if (!diskImages.isEmpty()) {
             for (DiskImage diskImage : diskImages) {
+                if (diskImage.getimageStatus() != ImageStatus.ILLEGAL) {
+                    log.errorFormat("Disk {0} which is part of VM {1} was not at ILLEGAL state.",
+                            diskImage.getDiskAlias(),
+                            getVm().getVmName());
+                    ImagesHandler.updateImageStatus(diskImage.getImage().getId(), ImageStatus.ILLEGAL);
+                }
+
                 disksLeftInVm.add(diskImage.getDiskAlias());
             }
             AddCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
