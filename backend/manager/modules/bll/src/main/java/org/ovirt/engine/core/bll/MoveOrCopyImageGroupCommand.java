@@ -190,12 +190,16 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
     @Override
     protected void revertTasks() {
         // Revert should be performed only for AddVmFromSnapshot at this point.
-        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
+        if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot || getParameters().getParentCommand() == VdcActionType.ImportVm) {
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
-            removeImageParams.setParentParameters(getParameters());
-            removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
+            removeImageParams.setParentParameters(removeImageParams);
+            removeImageParams.setParentCommand(VdcActionType.RemoveImage);
+            if (getParameters().getParentCommand() == VdcActionType.ImportVm) {
+                removeImageParams.setRemoveDuringExecution(false);
+                removeImageParams.setRemoveFromDB(true);
+            }
             removeImageParams.setEntityId(getDestinationImageId());
             // Setting the image as the monitored entity, so there will not be dependency
             VdcReturnValueBase returnValue =

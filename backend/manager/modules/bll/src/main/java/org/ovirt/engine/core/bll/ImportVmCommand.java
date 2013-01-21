@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -931,21 +932,20 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
+    protected void endActionOnAllImageGroups() {
+        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+            getBackend().EndAction(getImagesActionType(), p);
+        }
+    }
+
+    @Override
     protected void endWithFailure() {
         setVm(null); // Going to try and refresh the VM by re-loading
         // it form DB
         VM vmFromParams = getParameters().getVm();
         if (getVm() != null) {
-            VmHandler.UnLockVm(getVm());
-            for (DiskImage disk : imageList) {
-                getDiskImageDynamicDAO().remove(disk.getImageId());
-                getImageDao().remove(disk.getImageId());
-
-                List<DiskImage> imagesForDisk = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
-                if (imagesForDisk == null || imagesForDisk.isEmpty()) {
-                    getBaseDiskDao().remove(disk.getId());
-                }
-            }
+            endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
             new SnapshotsManager().removeSnapshots(getVm().getId());
             getVmDynamicDAO().remove(getVmId());
