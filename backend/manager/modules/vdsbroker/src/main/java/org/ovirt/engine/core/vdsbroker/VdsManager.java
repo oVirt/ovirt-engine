@@ -125,12 +125,13 @@ public class VdsManager {
     private final Guid _vdsId;
 
     private VdsManager(VDS vds) {
+        log.info("Entered VdsManager constructor");
         _vds = vds;
         _vdsId = vds.getId();
         monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
-        log.info("Eneterd VdsManager:constructor");
+
         if (_vds.getstatus() == VDSStatus.PreparingForMaintenance) {
             _vds.setprevious_status(_vds.getstatus());
         } else {
@@ -171,7 +172,7 @@ public class VdsManager {
     }
 
     private void InitVdsBroker() {
-        log.infoFormat("vdsBroker({0},{1})", _vds.gethost_name(), _vds.getport());
+        log.infoFormat("Initialize vdsBroker ({0},{1})", _vds.gethost_name(), _vds.getport());
         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
         Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(_vds.gethost_name(),
@@ -231,12 +232,8 @@ public class VdsManager {
                     HandleVdsRecoveringException(ex);
                 } catch (IRSErrorException ex) {
                     logFailureMessage(ex);
-                    if (log.isDebugEnabled()) {
-                        logException(ex);
-                    }
                 } catch (RuntimeException ex) {
                     logFailureMessage(ex);
-                    logException(ex);
                 }
                 try {
                     if (_vdsUpdater != null) {
@@ -279,10 +276,10 @@ public class VdsManager {
 
     private void logFailureMessage(RuntimeException ex) {
         log.warnFormat(
-                "VdsManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
+                "Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
                 _vds.getId(),
                 _vds.getvds_name(),
-                ExceptionUtils.getMessage(ex));
+                ex);
     }
 
     private static void logException(final RuntimeException ex) {
@@ -291,7 +288,7 @@ public class VdsManager {
 
     private void logAfterRefreshFailureMessage(RuntimeException ex) {
         log.warnFormat(
-                "ResourceManager::refreshVdsRunTimeInfo::Failed to AfterRefreshTreatment VDS  error = '{0}', continuing.",
+                "Failed to AfterRefreshTreatment VDS  error = '{0}', continuing.",
                 ExceptionUtils.getMessage(ex));
     }
 
@@ -312,7 +309,7 @@ public class VdsManager {
             logable.AddCustomValue("ErrorMessage", ex.getMessage());
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
             log.warnFormat(
-                    "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
+                    "Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
                     _vds.getId(),
                     _vds.getvds_name(),
                     ex.getMessage());
@@ -370,11 +367,9 @@ public class VdsManager {
         VDS vds = null;
         try {
             // refresh vds from db in case changed while was down
-            if (log.isDebugEnabled()) {
-                log.debugFormat(
-                        "ResourceManager::activateVds - trying to activate host {0} , meanwhile setting status to Unassigned meanwhile",
+            log.debugFormat(
+                        "Trying to activate host {0} , meanwhile setting status to Unassigned.",
                         getVdsId());
-            }
             vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             /**
              * refresh capabilities
@@ -382,14 +377,13 @@ public class VdsManager {
             VDSStatus newStatus = refreshCapabilities(new AtomicBoolean(), vds);
             if (log.isDebugEnabled()) {
                 log.debugFormat(
-                        "ResourceManager::activateVds - success to refreshCapabilities for host {0} , new status will be {1} ",
+                        "Succeeded to refreshCapabilities for host {0} , new status will be {1} ",
                         getVdsId(),
                         newStatus);
             }
         } catch (java.lang.Exception e) {
-            log.infoFormat("ResourceManager::activateVds - failed to get VDS = {0} capabilities with error: {1}.",
+            log.infoFormat("Failed to activate VDS = {0} with error: {1}.",
                     getVdsId(), e.getMessage());
-            log.infoFormat("ResourceManager::activateVds - failed to activate VDS = {0}", getVdsId());
 
         } finally {
             if (vds != null) {
@@ -477,7 +471,7 @@ public class VdsManager {
                 setStatus(VDSStatus.Up, vds);
                 UpdateDynamicData(vds.getDynamicData());
             }
-            log.infoFormat("OnVdsDuringFailureTimer of vds {0} entered. Time:{1}. Attemts after{2}", vds.getvds_name(),
+            log.infoFormat("OnVdsDuringFailureTimer of vds {0} entered. Time:{1}. Attempts after {2}", vds.getvds_name(),
                     new java.util.Date(), mFailedToRunVmAttempts);
         }
     }
@@ -494,7 +488,7 @@ public class VdsManager {
             logable.AddCustomValue("Time", Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
-            log.infoFormat("Vds {0} moved to Error mode after {1} attemts. Time: {2}", vds.getvds_name(),
+            log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getvds_name(),
                     mFailedToRunVmAttempts, new java.util.Date());
         }
     }
@@ -507,7 +501,7 @@ public class VdsManager {
     }
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
-        log.debug("refreshCapabilities:GetCapabilitiesVDSCommand started method");
+        log.debug("GetCapabilitiesVDSCommand started method");
         MonitoringStrategy vdsMonitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
@@ -540,7 +534,7 @@ public class VdsManager {
             if (isSetNonOperational && returnStatus != VDSStatus.NonOperational) {
                 if (log.isDebugEnabled()) {
                     log.debugFormat(
-                            "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} networks  not match it's cluster networks, vds will be moved to NonOperational",
+                            "refreshCapabilities:GetCapabilitiesVDSCommand vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
                             vds.getStaticData().getId());
                 }
                 vds.setstatus(VDSStatus.NonOperational);
@@ -598,13 +592,12 @@ public class VdsManager {
             }
 
             if (vds.getstatus() == VDSStatus.NonResponsive || vds.getstatus() == VDSStatus.Maintenance) {
-                // clearNotRespondingVds();
                 setStatus(VDSStatus.NonResponsive, vds);
                 return true;
             }
             setStatus(VDSStatus.NonResponsive, vds);
             log.errorFormat(
-                    "VDS::handleNetworkException Server failed to respond,  vds_id = {0}, vds_name = {1}, error = {2}",
+                    "Server failed to respond, vds_id = {0}, vds_name = {1}, error = {2}",
                     vds.getId(), vds.getvds_name(), ex.getMessage());
 
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
@@ -632,14 +625,14 @@ public class VdsManager {
             break;
         case NonResponsive:
             log.debugFormat(
-                    "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
+                    "Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
                     _vds.getId(),
                     _vds.getvds_name(),
                     e.getMessage());
             break;
         default:
             log.warnFormat(
-                    "ResourceManager::refreshVdsRunTimeInfo::Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
+                    "Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
                     _vds.getId(),
                     _vds.getvds_name(),
                     e.getMessage());
