@@ -144,9 +144,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
         else {
             addCanDoActionMessage(VdcBllMessages.VDS_FENCE_DISABLED);
+            handleNonRespondingTreatmentFailure();
         }
         getReturnValue().setSucceeded(retValue);
         return retValue;
+    }
+
+    protected void handleNonRespondingTreatmentFailure() {
     }
 
     @Override

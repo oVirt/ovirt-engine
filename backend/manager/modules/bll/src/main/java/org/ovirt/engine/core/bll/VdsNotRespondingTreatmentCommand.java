@@ -24,6 +24,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private boolean _vmsMovedToUnknown;
+    private final String RESTART = "Restart";
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
         super(parameters);
@@ -62,7 +63,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Override
     protected void HandleError() {
-        final String RESTART = "Restart";
         MoveVMsToUnknown();
         // if fence failed on spm, move storage pool to non operational
         if (getVds().getspm_status() != VdsSpmStatus.None) {
@@ -85,6 +85,11 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         return getSucceeded() ? _vmsMovedToUnknown ? AuditLogType.VDS_RECOVER_FAILED_VMS_UNKNOWN
                 : AuditLogType.VDS_RECOVER : AuditLogType.VDS_RECOVER_FAILED;
     }
+
+    @Override
+    protected void handleNonRespondingTreatmentFailure() {
+        AlertIfPowerManagementOperationSkipped(RESTART);
+    };
 
     /**
      * Determine if the status is legal for actually fence the VDS.
