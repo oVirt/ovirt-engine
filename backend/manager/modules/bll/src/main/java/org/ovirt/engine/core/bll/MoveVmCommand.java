@@ -42,6 +42,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         setVmId(parameters.getContainerId());
         parameters.setEntityId(getVmId());
         setStoragePoolId(getVm().getStoragePoolId());
+        setDescription(getVmName());
     }
 
     @Override
@@ -57,17 +58,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
-        if (getVm() == null) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-        } else {
-            setDescription(getVmName());
-        }
-
         SnapshotsValidator snapshotValidator = new SnapshotsValidator();
-        retValue = retValue
-                && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+        boolean retValue =
+                validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown());
 
@@ -87,7 +80,6 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                                 false,
                                 true,
                                 diskImages);
-        setStoragePoolId(getVm().getStoragePoolId());
 
         ensureDomainMap(diskImages, getParameters().getStorageDomainId());
         for(DiskImage disk : diskImages) {
