@@ -42,6 +42,7 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
      */
     @Test
     public void testGet() {
+        setUriInfo(setUpBasicUriExpectations());
         resource.setParent(getCollectionResourceMock());
         control.replay();
         Hook hook = resource.get();

@@ -1611,6 +1611,7 @@
         <xs:sequence>
           <xs:element name="event_name" type="xs:string" minOccurs="0"/>
           <xs:element name="md5" type="xs:string" minOccurs="0"/>
+          <xs:element ref="host" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

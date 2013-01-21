@@ -52,6 +52,7 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
 
     @Test
     public void testList() throws Exception {
+        resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetVdsHooksById2,
                 GetVdsHooksByIdParameters.class,
                 new String[] { "VdsId" },
