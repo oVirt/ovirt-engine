@@ -141,7 +141,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
      */
     public void create() {
 
-        log.infoFormat("UsersDomainsCacheManager: {0}", new java.util.Date());
+        log.info("Start initializing " + getClass().getSimpleName());
         String authMethod = Config.<String> GetValue(ConfigValues.AuthenticationMethod);
         if (!authMethod.equalsIgnoreCase("LDAP")) {
             return;
@@ -170,7 +170,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
         }
 
         DbUserCacheManager.getInstance().init();
-        log.infoFormat("DbUserCacheManager: {0}", new java.util.Date());
+        log.info("Finished initializing " + getClass().getSimpleName());
 
     }
 

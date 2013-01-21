@@ -62,6 +62,7 @@ public class DbUserCacheManager {
 
     public void init() {
         if (!initialized) {
+            log.info("Start initializing " + getClass().getSimpleName());
             // clean all user sessions in DB
             DbFacade.getInstance().getDbUserDao().removeAllSessions();
 
@@ -69,6 +70,7 @@ public class DbUserCacheManager {
             jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this, "OnTimer", new Class[] {},
                     new Object[] {}, 0, mRefreshRate, TimeUnit.SECONDS);
             initialized = true;
+            log.info("Finished initializing " + getClass().getSimpleName());
 
         }
     }
