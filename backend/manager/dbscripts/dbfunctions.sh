@@ -453,9 +453,8 @@ query_locked_entities() {
             (select device_id from vm_device where is_plugged);"
        psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
    elif [ "${object_type}" = "template" ]; then
-       CMD="select vm_name as template_name from vm_static a ,vm_dynamic b
-            where a.vm_guid = b.vm_guid and
-                  template_status = ${TEMPLATE_LOCKED};"
+       CMD="select vm_name as template_name from vm_static
+                  where template_status = ${TEMPLATE_LOCKED};"
        psql -c "${CMD}" -U ${USERNAME} -d "${DATABASE}" -h "${SERVERNAME}" -p "${PORT}"
        CMD="select vm_name as template_name, image_group_id as disk_id
             from images a,vm_static b,vm_device c
