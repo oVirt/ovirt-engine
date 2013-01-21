@@ -233,17 +233,12 @@ public class UserPortalLoginModel extends LoginModel
 
     private void ChangePassword()
     {
-        VdcReturnValueBase returnValue =
-                Frontend.RunAction(VdcActionType.ChangeUserPassword,
+        // TODO: Invoke the async query and handle failure correctly
+        Frontend.RunAction(VdcActionType.ChangeUserPassword,
                         new ChangeUserPasswordParameters((String) getUserName().getEntity(),
                                 (String) getPassword().getEntity(),
                                 (String) getNewPassword().getEntity(),
                                 (String) getDomain().getSelectedItem()));
-
-        if (returnValue != null && returnValue.getSucceeded())
-        {
-            // TODO:
-        }
     }
 
     @Override

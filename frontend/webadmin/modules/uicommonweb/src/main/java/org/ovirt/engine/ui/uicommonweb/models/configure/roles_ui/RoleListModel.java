@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -591,14 +591,14 @@ public class RoleListModel extends ListWithDetailsModel
                                     ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
                                     tempVar2.setActionGroups(roleListModel.detachActionGroup);
                                     tempVar2.setRoleId(roleListModel.role.getId());
-                                    retVal = Frontend.RunAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
+                                    Frontend.RunAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
                                 }
                                 if (roleListModel.attachActionGroup.size() > 0)
                                 {
                                     ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
                                     tempVar3.setActionGroups(roleListModel.attachActionGroup);
                                     tempVar3.setRoleId(roleListModel.role.getId());
-                                    retVal = Frontend.RunAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
+                                    Frontend.RunAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
                                 }
                                 roleListModel.getWindow().StopProgress();
                                 roleListModel.Cancel();

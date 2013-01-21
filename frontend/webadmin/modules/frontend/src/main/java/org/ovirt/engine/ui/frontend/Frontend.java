@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -78,8 +76,6 @@ public class Frontend {
             return queryKey;
         }
     }
-
-    private static final String RPC_TIMEOUT_EXCEPTION_STATUS_CODE_PREFIX = "120"; //$NON-NLS-1$
 
     private static Logger logger = Logger.getLogger(Frontend.class.getName());
     private static IFrontendEventsHandler eventsHandler;
@@ -282,11 +278,6 @@ public class Frontend {
                 queryWrapper.getParameters() instanceof SearchParameters;
     }
 
-    public static VdcQueryReturnValue RunQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
-        logger.fine("Sync RunQuery is invoked, this is not supported! replace the call with the async method!"); //$NON-NLS-1$
-        return null;
-    }
-
     public static void RunPublicQuery(final VdcQueryType queryType,
             final VdcQueryParametersBase parameters,
             final AsyncQuery callback) {
@@ -341,11 +332,6 @@ public class Frontend {
                 }
             }
         });
-    }
-
-    public static VdcQueryReturnValue RunPublicQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
-        logger.warning("Frontend: RunPublicQuery -sync- was executed, this method is not supported!"); //$NON-NLS-1$
-        return null;
     }
 
     public static void RunMultipleQueries(final ArrayList<VdcQueryType> queryTypeList,
@@ -487,7 +473,11 @@ public class Frontend {
         });
     }
 
-    public static VdcReturnValueBase RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
+    /**
+     * @deprecated Please use async runAction instead, sync operations are not supported
+     */
+    @Deprecated
+    public static void RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters) {
         logger.warning("Sync RunAction is invoked, this is not supported! replace the call with the async method!"); //$NON-NLS-1$
         dumpActionDetails(actionType, parameters);
 
@@ -510,8 +500,6 @@ public class Frontend {
                 handleActionResult(actionType, parameters, result, null, null);
             }
         });
-
-        return new VdcReturnValueBase();
     }
 
     public static void RunMultipleAction(final VdcActionType actionType,
@@ -567,10 +555,13 @@ public class Frontend {
         });
     }
 
-    public static ArrayList<VdcReturnValueBase> RunMultipleAction(VdcActionType actionType,
+    /**
+     * @deprecated Please use async RunMultipleAction instead, sync operations are not supported
+     */
+    @Deprecated
+    public static void RunMultipleAction(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
         RunMultipleAction(actionType, parameters, null, null);
-        return null;
     }
 
     public static void RunMultipleActions(final ArrayList<VdcActionType> actionTypes,
@@ -608,10 +599,6 @@ public class Frontend {
                         }
                     }
                 }, state);
-    }
-
-    public static void UnregisterQuery(Guid asyncSearchId) {
-        throw new NotImplementedException("UnregisterQuery is not implemented!"); //$NON-NLS-1$
     }
 
     public static void LoginAsync(final String userName, final String password, final String domain, final AsyncQuery callback) {
@@ -798,12 +785,20 @@ public class Frontend {
         }
     }
 
+    /**
+     * @deprecated Not supported
+     */
+    @Deprecated
     public static RegistrationResult RegisterQuery(VdcQueryType queryType,
             VdcQueryParametersBase paramenters) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * @deprecated Not supported
+     */
+    @Deprecated
     public static RegistrationResult RegisterSearch(String searchString,
             SearchType entityType, int searchPageSize) {
         // TODO Auto-generated method stub

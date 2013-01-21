@@ -816,7 +816,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         getTimer().stop();
         if (getAsyncResult() != null && !getAsyncResult().getId().equals(NGuid.Empty))
         {
-            Frontend.UnregisterQuery(getAsyncResult().getId());
             setAsyncResult(null);
         }
     }
