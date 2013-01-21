@@ -10,11 +10,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterHookSyncStatusColumn;
 
 public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>
@@ -74,5 +76,12 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                     }
                 };
         getTable().addColumn(contentTypeColumn, constants.contentTypeHook());
+
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.enableHook()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getEnableHookCommand();
+            }
+        });
     }
 }
