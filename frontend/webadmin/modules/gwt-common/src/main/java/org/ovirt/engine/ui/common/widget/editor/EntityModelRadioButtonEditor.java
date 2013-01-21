@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.user.client.ui.RadioButton;
 
@@ -37,6 +38,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         // align content widget container to the left and hide the LabelElement
         if (useRadioButtonWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
+            getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
             getLabelElement().getStyle().setDisplay(Display.NONE);
         }
     }

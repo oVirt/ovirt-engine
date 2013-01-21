@@ -2436,9 +2436,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Clone Only Duplicated Templates")
     String importTemplate_cloneOnlyDuplicateTemplates();
 
-    @DefaultStringValue("Suffix:")
-    String import_cloneSuffix();
-
     @DefaultStringValue("New Name:")
     String import_newName();
 
@@ -2478,11 +2475,20 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Don't import")
     String cloneDontImport();
 
-    @DefaultStringValue("Clone")
-    String clone();
+    @DefaultStringValue("Import as cloned")
+    String cloneImportVm();
 
-    @DefaultStringValue("Please select a name for the cloned VM(s)")
-    String sameVmNameExists();
+    @DefaultStringValue("Changing name, MAC addresses, and cloning all disks removing all snapshots")
+    String cloneImportVmDetails();
+
+    @DefaultStringValue("Clone")
+    String cloneImportTemplate();
+
+    @DefaultStringValue("Suffix to add to the cloned VMs:")
+    String cloneImportSuffixVm();
+
+    @DefaultStringValue("Suffix to add to the cloned Templates:")
+    String cloneImportSuffixTemplate();
 
     @DefaultStringValue("Please select a name for the cloned Template(s)")
     String sameTemplateNameExists();

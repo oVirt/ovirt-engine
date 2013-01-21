@@ -4,20 +4,27 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
-	
+
 <ui:style>
+    .innerPanel {
+        padding-left: 30px;
+    }
 </ui:style>
-<d:SimpleDialogPanel height="400px" width="500px">
-	<d:content>
-		<g:VerticalPanel>
-			<g:Label ui:field="dialogLabelEditor"/>
-			<g:Label ui:field="selectLabelEditor"/>
-			<e:EntityModelRadioButtonEditor ui:field="noCloneEditor"/>
-			<e:EntityModelRadioButtonEditor ui:field="cloneEditor"/>
-			<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-			<e:EntityModelCheckBoxEditor ui:field="applyToAllEditor" />
-			<e:EntityModelTextBoxEditor ui:field="suffixEditor" />
-		</g:VerticalPanel>
-	</d:content>
+<d:SimpleDialogPanel height="400px" width="540px">
+    <d:content>
+        <g:VerticalPanel>
+            <g:Label ui:field="dialogLabelEditor"/>
+            <g:Label ui:field="selectLabelEditor"/>
+            <e:EntityModelRadioButtonEditor ui:field="noCloneEditor"/>
+            <e:EntityModelRadioButtonEditor ui:field="cloneEditor"/>
+            <g:FlowPanel addStyleNames="{style.innerPanel}">
+                <e:EntityModelTextBoxEditor ui:field="nameEditor" />
+            </g:FlowPanel>
+            <e:EntityModelCheckBoxEditor ui:field="applyToAllEditor" />
+            <g:FlowPanel addStyleNames="{style.innerPanel}">
+                <e:EntityModelTextBoxEditor ui:field="suffixEditor" />
+            </g:FlowPanel>
+        </g:VerticalPanel>
+    </d:content>
 </d:SimpleDialogPanel>
 </ui:UiBinder>

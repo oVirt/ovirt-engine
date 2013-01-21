@@ -10,7 +10,9 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -32,6 +34,10 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
     }
 
     private ApplicationConstants constants;
+
+    private ApplicationMessages messages;
+
+    private ApplicationTemplates templates;
 
     @UiField
     @Path(value = "name.entity")
@@ -63,9 +69,13 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
     @Inject
     public ImportCloneDialogPopupView(EventBus eventBus,
             ApplicationResources resources,
-            ApplicationConstants constants) {
+            ApplicationConstants constants,
+            ApplicationMessages messages,
+            ApplicationTemplates templates) {
         super(eventBus, resources);
         this.constants = constants;
+        this.messages = messages;
+        this.templates = templates;
         initSelectWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -80,21 +90,23 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
 
     private void localize(ApplicationConstants constants) {
         nameEditor.setLabel(constants.import_newName());
-        suffixEditor.setLabel(constants.import_cloneSuffix());
         selectLabelEditor.setText(constants.cloneSelect());
         applyToAllEditor.setLabel(constants.cloneApplyToAll());
         noCloneEditor.setLabel(constants.cloneDontImport());
-        cloneEditor.setLabel(constants.clone()); //$NON-NLS-1$
     }
 
     @Override
     public void edit(ImportCloneModel object) {
         if (object.getEntity() instanceof VM) {
-            dialogLabelEditor.setText(constants.sameVmNameExists()
-                    + " (" + ((VM) object.getEntity()).getVmName() + ")");//$NON-NLS-1$ //$NON-NLS-2$
+            dialogLabelEditor.setText(messages.sameVmNameExists(((VM) object.getEntity()).getVmName()));
+            cloneEditor.asRadioButton().setHTML(templates.twoLinesRadioButtonLabel(
+                    constants.cloneImportVm(),constants.cloneImportVmDetails()).asString());
+            suffixEditor.setLabel(constants.cloneImportSuffixVm());
         } else {
             dialogLabelEditor.setText(constants.sameTemplateNameExists()
                     + " (" + ((VmTemplate) object.getEntity()).getname() + ")");//$NON-NLS-1$ //$NON-NLS-2$
+            cloneEditor.setLabel(constants.cloneImportTemplate());
+            suffixEditor.setLabel(constants.cloneImportSuffixTemplate());
         }
         Driver.driver.edit(object);
     }
