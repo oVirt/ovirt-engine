@@ -15,12 +15,17 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class ClusterGlusterHookListModel extends SearchableListModel {
 
     private UICommand enableHookCommand;
+
+    private UICommand disableHookCommand;
 
     public UICommand getEnableHookCommand() {
         return enableHookCommand;
@@ -28,6 +33,14 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
     public void setEnableHookCommand(UICommand enableHookCommand) {
         this.enableHookCommand = enableHookCommand;
+    }
+
+    public UICommand getDisableHookCommand() {
+        return disableHookCommand;
+    }
+
+    public void setDisableHookCommand(UICommand disableHookCommand) {
+        this.disableHookCommand = disableHookCommand;
     }
 
     @Override
@@ -41,8 +54,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         setAvailableInModes(ApplicationMode.GlusterOnly);
 
         setEnableHookCommand(new UICommand("EnableHook", this)); //$NON-NLS-1$
-
         getEnableHookCommand().setIsExecutionAllowed(false);
+        setDisableHookCommand(new UICommand("DisableHook", this)); //$NON-NLS-1$
+        getDisableHookCommand().setIsExecutionAllowed(false);
     }
 
     private void enableHook() {
@@ -58,6 +72,74 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         Frontend.RunMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
     }
 
+    private void disableHook() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setConfirmWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().confirmDisableGlusterHooks());
+        model.setHashName("disable_hooks"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().disableGlusterHooksMessage());
+
+        ArrayList<String> list = new ArrayList<String>();
+        for (Object item : getSelectedItems()) {
+            GlusterHookEntity hook = (GlusterHookEntity) item;
+            list.add(hook.getName());
+        }
+        model.setItems(list);
+
+        UICommand okCommand = new UICommand("OnDisableHook", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("OnCancelConfirmation", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onDisableHook() {
+        if (getConfirmWindow() == null) {
+            return;
+        }
+
+        ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
+
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+
+        for (Object item : getSelectedItems()) {
+            GlusterHookEntity hook = (GlusterHookEntity) item;
+            list.add(new GlusterHookParameters(getEntity().getId(), hook.getId()));
+        }
+
+        model.StartProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.DisableGlusterHook, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendMultipleActionAsyncResult result) {
+
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.StopProgress();
+                        cancelConfirmation();
+                    }
+                }, model);
+    }
+
+    private void cancelConfirmation() {
+        setConfirmWindow(null);
+    }
+
     @Override
     protected void SelectedItemsChanged() {
         super.SelectedItemsChanged();
@@ -65,20 +147,29 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     }
 
     private void updateActionAvailability() {
-        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
-            getEnableHookCommand().setIsExecutionAllowed(false);
-            return;
-        }
-
         boolean allowEnable = true;
-        for (Object item : getSelectedItems()) {
-            GlusterHookEntity hook = (GlusterHookEntity) item;
-            if (hook.getStatus() == GlusterHookStatus.ENABLED) {
-                allowEnable = false;
-                break;
+        boolean allowDisable = true;
+
+        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
+            allowEnable = false;
+            allowDisable = false;
+        }
+        else {
+            for (Object item : getSelectedItems()) {
+                GlusterHookEntity hook = (GlusterHookEntity) item;
+                if (hook.getStatus() == GlusterHookStatus.ENABLED) {
+                    allowEnable = false;
+                }
+                else if (hook.getStatus() == GlusterHookStatus.DISABLED) {
+                    allowDisable = false;
+                }
+                if (!allowEnable && !allowDisable) {
+                    break;
+                }
             }
         }
         getEnableHookCommand().setIsExecutionAllowed(allowEnable);
+        getDisableHookCommand().setIsExecutionAllowed(allowDisable);
     }
 
     @Override
@@ -126,6 +217,15 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         super.ExecuteCommand(command);
         if (command.equals(getEnableHookCommand())) {
             enableHook();
+        }
+        else if (command.equals(getDisableHookCommand())) {
+            disableHook();
+        }
+        else if (command.getName().equals("OnDisableHook")) { //$NON-NLS-1$
+            onDisableHook();
+        }
+        else if (command.getName().equals("OnCancelConfirmation")) { //$NON-NLS-1$
+            cancelConfirmation();
         }
     }
 }

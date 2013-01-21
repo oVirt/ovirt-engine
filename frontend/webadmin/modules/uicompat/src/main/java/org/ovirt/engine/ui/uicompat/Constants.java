@@ -1537,6 +1537,12 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot choose Volume's Cluster in tree context")
     String cannotChooseVolumesClusterinTreeContect();
 
+    @DefaultStringValue("Disable Gluster Hooks")
+    String confirmDisableGlusterHooks();
+
+    @DefaultStringValue("Are you sure you want to disable the following Hook(s)?")
+    String disableGlusterHooksMessage();
+
     @DefaultStringValue("VMs already exist")
     String vmAlreadyExistsMsg();
 
