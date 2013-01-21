@@ -1,13 +1,15 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -16,8 +18,16 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StoragePoolValidatorTest {
+
+    @ClassRule
+    public static MockConfigRule mce = new MockConfigRule
+            (mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.toString(), true),
+                    mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0.toString(), false),
+                    mockConfig(ConfigValues.PosixStorageEnabled, Version.v2_2.toString(), false),
+                    mockConfig(ConfigValues.PosixStorageEnabled, "general", false));
 
     private StoragePoolValidator validator = null;
     private storage_pool storagePool = null;
@@ -31,14 +41,6 @@ public class StoragePoolValidatorTest {
                         StorageType.UNKNOWN.getValue(),
                         StoragePoolStatus.Up.getValue());
         validator = spy(new StoragePoolValidator(storagePool, new ArrayList<String>()));
-        mockPosixStorageEnabledConfigValue();
-    }
-
-    protected void mockPosixStorageEnabledConfigValue() {
-        doReturn(true).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, Version.v3_1.toString());
-        doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, Version.v3_0.toString());
-        doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, Version.v2_2.toString());
-        doReturn(false).when(validator).getConfigValue(ConfigValues.PosixStorageEnabled, "general");
     }
 
     @Test

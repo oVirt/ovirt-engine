@@ -23,9 +23,6 @@ public class StoragePoolValidator {
         this.canDoActionMessages = canDoActionMessages;
     }
 
-    protected <T> T getConfigValue(ConfigValues configValue, String version) {
-        return Config.<T> GetValue(configValue, version);
-    }
     /**
      * Checks in case the DC is of POSIX type that the compatibility version matches. In case there is mismatch, a
      * proper canDoAction message will be added
@@ -34,9 +31,8 @@ public class StoragePoolValidator {
      */
     public boolean isPosixDcAndMatchingCompatiblityVersion() {
         if (storagePool.getstorage_pool_type() == StorageType.POSIXFS
-                && !this.<Boolean> getConfigValue(ConfigValues.PosixStorageEnabled,
-                        storagePool.getcompatibility_version()
-                        .toString())) {
+                && !Config.<Boolean> GetValue
+                        (ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
             canDoActionMessages.add(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION.toString());
             return false;
         }
