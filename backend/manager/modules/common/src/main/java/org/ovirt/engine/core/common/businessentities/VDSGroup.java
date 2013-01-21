@@ -82,6 +82,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private NGuid storagePoolId;
 
     @Column(name = "storage_pool_name")
+    @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
 
     @Column(name = "max_vds_memory_over_commit")
