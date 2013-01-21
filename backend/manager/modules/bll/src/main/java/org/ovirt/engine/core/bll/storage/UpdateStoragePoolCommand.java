@@ -10,12 +10,12 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
@@ -192,10 +192,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         StoragePoolValidator validator = createStoragePoolValidator();
         if (returnValue) {
-            returnValue = validator.isNotLocalfsWithDefaultCluster();
+            returnValue = validate(validator.isNotLocalfsWithDefaultCluster());
         }
         if (returnValue) {
-            returnValue = validator.isPosixDcAndMatchingCompatiblityVersion();
+            returnValue = validate(validator.isPosixDcAndMatchingCompatiblityVersion());
         }
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         return returnValue;
@@ -223,7 +223,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected StoragePoolValidator createStoragePoolValidator() {
-        return new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
+        return new StoragePoolValidator(getStoragePool());
     }
 
     protected boolean isStoragePoolVersionSupported() {

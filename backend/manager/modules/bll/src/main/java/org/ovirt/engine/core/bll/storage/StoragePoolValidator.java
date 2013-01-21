@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -16,43 +17,35 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
  */
 public class StoragePoolValidator {
     private storage_pool storagePool;
-    private List<String> canDoActionMessages;
 
-    public StoragePoolValidator(storage_pool storagePool, List<String> canDoActionMessages) {
+    public StoragePoolValidator(storage_pool storagePool) {
         this.storagePool = storagePool;
-        this.canDoActionMessages = canDoActionMessages;
     }
 
     /**
      * Checks in case the DC is of POSIX type that the compatibility version matches. In case there is mismatch, a
      * proper canDoAction message will be added
      *
-     * @return true if the version matches
+     * @return The result of the validation
      */
-    public boolean isPosixDcAndMatchingCompatiblityVersion() {
+    public ValidationResult isPosixDcAndMatchingCompatiblityVersion() {
         if (storagePool.getstorage_pool_type() == StorageType.POSIXFS
                 && !Config.<Boolean> GetValue
                         (ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
-            canDoActionMessages.add(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION.toString());
-            return false;
+            return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
-        return true;
-    }
-
-    public List<String> getCanDoActionMessages() {
-        return canDoActionMessages;
+        return ValidationResult.VALID;
     }
 
     protected VdsGroupDAO getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
 
-    public boolean isNotLocalfsWithDefaultCluster() {
+    public ValidationResult isNotLocalfsWithDefaultCluster() {
         if (storagePool.getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
-            canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS.toString());
-            return false;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
         }
-        return true;
+        return ValidationResult.VALID;
     }
 
     protected boolean containsDefaultCluster() {

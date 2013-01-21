@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -58,8 +58,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
         boolean result = super.canDoAction();
 
-        StoragePoolValidator storagePoolValidator =
-                new StoragePoolValidator(getStoragePool(), getReturnValue().getCanDoActionMessages());
+        StoragePoolValidator storagePoolValidator = new StoragePoolValidator(getStoragePool());
         if (result && DbFacade.getInstance().getStoragePoolDao().getByName(getStoragePool().getname()) != null) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
@@ -69,7 +68,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
                 )) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
-        } else if (!storagePoolValidator.isPosixDcAndMatchingCompatiblityVersion()) {
+        } else if (!validate(storagePoolValidator.isPosixDcAndMatchingCompatiblityVersion())) {
             result = false;
         }
         return result;
