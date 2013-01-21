@@ -612,9 +612,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED) {
             promptNoQuotaInDCMessage();
         }
-        else if (getSelectedItem() != null
-                && !((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version()))
-        {
+        else if (!model.getIsNew()
+                && getSelectedItem() != null
+                && !((Version) model.getVersion().getSelectedItem()).equals(((storage_pool) getSelectedItem()).getcompatibility_version())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
