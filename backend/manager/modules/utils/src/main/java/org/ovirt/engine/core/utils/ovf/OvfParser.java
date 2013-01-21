@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -33,7 +35,7 @@ public class OvfParser {
         String id2 = "2";
 
         XmlNode node = _document.SelectSingleNode("//*/Content/TemplateId");
-        if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+        if (!StringUtils.isBlank(node.InnerText)) {
             id1 = node.InnerText;
         }
 
@@ -41,20 +43,20 @@ public class OvfParser {
         for (XmlNode section : list) {
             String value = section.Attributes.get("xsi:type").getValue();
 
-            if (StringHelper.EqOp(value, "ovf:OperatingSystemSection_Type")) {
+            if (StringUtils.equals(value, "ovf:OperatingSystemSection_Type")) {
                 id2 = section.Attributes.get("ovf:id").getValue();
             }
         }
 
-        return StringHelper.EqOp(id1, id2);
+        return StringUtils.equals(id1, id2);
     }
 
     // imageFile is: [image group id]/[image id]
     // 7D1FE0AA-A153-4AAF-95B3-3654A54443BE/7D1FE0AA-A153-4AAF-95B3-3654A54443BE
     public static String CreateImageFile(DiskImage image) {
         String retVal = "";
-        if (image.getimage_group_id() != null) {
-            retVal += image.getimage_group_id().getValue().toString();
+        if (image.getId() != null) {
+            retVal += image.getId().toString();
         } else {
             retVal += Guid.Empty;
         }
@@ -63,18 +65,8 @@ public class OvfParser {
     }
 
     public static Guid GetImageGrupIdFromImageFile(String imageFile) {
-        if (!StringHelper.isNullOrEmpty(imageFile)) {
-            return new Guid(imageFile.split("[/]", -1)[0]);
-        }
-        return null;
-    }
-
-    public static NGuid GetImageIdFromImageFile(String imageFile) {
-        if (!StringHelper.isNullOrEmpty(imageFile)) {
-            String[] all = imageFile.split("[/]", -1);
-            if (all.length > 1) {
-                return new Guid(imageFile.split("[/]", -1)[1]);
-            }
+        if (!StringUtils.isBlank(imageFile)) {
+            return Guid.createGuidFromString(imageFile.split("[/]", -1)[0]);
         }
         return null;
     }
@@ -84,8 +76,8 @@ public class OvfParser {
     }
 
     private static DateFormat getDateFormat(final String format) {
-        final DateFormat utcDateTimeFormat = new java.text.SimpleDateFormat(format);
-        utcDateTimeFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        final DateFormat utcDateTimeFormat = new SimpleDateFormat(format);
+        utcDateTimeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return utcDateTimeFormat;
     }
 
@@ -96,16 +88,16 @@ public class OvfParser {
      * @return the date or null if parse failed
      */
     public static Date UtcDateStringToLocaDate(String str) {
-        if (StringHelper.isNullOrEmpty(str)) {
+        if (StringUtils.isBlank(str)) {
             return null;
         }
 
         try {
             return getDateFormat(utcDateFormatStr).parse(str);
-        } catch (java.text.ParseException e1) {
+        } catch (ParseException e1) {
             try {
                 return getDateFormat(utcFallbackDateFormatStr).parse(str);
-            } catch (java.text.ParseException e) {
+            } catch (ParseException e) {
                 log.error("OVF DateTime format Error, Expected: yyyy/M/dd hh:mm:ss", e);
                 return null;
             }

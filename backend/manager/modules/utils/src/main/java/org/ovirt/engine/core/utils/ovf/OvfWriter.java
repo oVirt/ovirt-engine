@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
 
@@ -213,17 +212,17 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(String.valueOf(vmBase.getDefaultBootSequence().getValue()));
         _writer.WriteEndElement();
 
-        if (!StringHelper.isNullOrEmpty(vmBase.getInitrdUrl())) {
+        if (!StringUtils.isBlank(vmBase.getInitrdUrl())) {
             _writer.WriteStartElement("initrd_url");
             _writer.WriteRaw(vmBase.getInitrdUrl());
             _writer.WriteEndElement();
         }
-        if (!StringHelper.isNullOrEmpty(vmBase.getKernelUrl())) {
+        if (!StringUtils.isBlank(vmBase.getKernelUrl())) {
             _writer.WriteStartElement("kernel_url");
             _writer.WriteRaw(vmBase.getKernelUrl());
             _writer.WriteEndElement();
         }
-        if (!StringHelper.isNullOrEmpty(vmBase.getKernelParams())) {
+        if (!StringUtils.isBlank(vmBase.getKernelParams())) {
             _writer.WriteStartElement("kernel_params");
             _writer.WriteRaw(vmBase.getKernelParams());
             _writer.WriteEndElement();

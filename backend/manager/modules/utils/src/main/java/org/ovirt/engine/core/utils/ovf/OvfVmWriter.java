@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
@@ -47,7 +47,7 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("Origin");
         _writer.WriteRaw(String.valueOf(_vm.getOrigin().getValue()));
         _writer.WriteEndElement();
-        if (!StringHelper.isNullOrEmpty(_vm.getAppList())) {
+        if (!StringUtils.isBlank(_vm.getAppList())) {
             _writer.WriteStartElement("app_list");
             _writer.WriteRaw(_vm.getAppList());
             _writer.WriteEndElement();
@@ -84,7 +84,7 @@ public class OvfVmWriter extends OvfWriter {
     @Override
     protected void WriteAppList() {
         if (_images.size() > 0) {
-            if (StringHelper.isNullOrEmpty(_images.get(0).getappList())) {
+            if (StringUtils.isBlank(_images.get(0).getappList())) {
                 return;
             }
 
