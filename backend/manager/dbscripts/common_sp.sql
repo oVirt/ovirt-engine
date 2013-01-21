@@ -482,24 +482,20 @@ begin
     TEMPLATE_OK:=0;
     TEMPLATE_LOCKED:=1;
     IMAGE_LOCKED:=15;
-    if (v_recursive) then
-        v_id := vm_guid from vm_static where vm_name = v_name and entity_type ilike v_object_type;
-        update images set imagestatus = OK where imagestatus = LOCKED and
-        image_group_id in (select device_id from vm_device where vm_id = v_id and is_plugged);
-    end if;
+    v_id := vm_guid from vm_static where vm_name = v_name and entity_type ilike v_object_type;
     -- set VM status to DOWN
     if (v_object_type = 'vm') then
-        update vm_dynamic set status = DOWN where status = IMAGE_LOCKED and
-        vm_guid in
-            (select vm_guid from vm_static where vm_name = v_name);
+        update vm_dynamic set status = DOWN where status = IMAGE_LOCKED and vm_guid  = v_id;
     -- set Template status to OK
     else
         if (v_object_type = 'template') then
-            update vm_static set template_status = TEMPLATE_OK
-            where template_status = TEMPLATE_LOCKED and
-            vm_guid in
-                (select vm_guid from vm_static where vm_name = v_name);
+            update vm_static set template_status = TEMPLATE_OK where template_status = TEMPLATE_LOCKED and vm_guid  = v_id;
         end if;
+    end if;
+    --unlock images if recursive flag is set
+    if (v_recursive) then
+        update images set imagestatus = OK where imagestatus = LOCKED and
+        image_group_id in (select device_id from vm_device where vm_id = v_id and is_plugged);
     end if;
 END; $procedure$
 LANGUAGE plpgsql;
