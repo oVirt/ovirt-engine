@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -84,6 +85,7 @@ public class GlusterManagerTest {
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     private GlusterManager glusterManager;
+    private GlusterAuditLogUtil logUtil;
 
     private static final String OPTION_AUTH_ALLOW = "auth.allow";
     private static final String OPTION_AUTH_REJECT = "auth.reject";
@@ -206,19 +208,23 @@ public class GlusterManagerTest {
         return new GlusterBrickEntity(existingVolDistId, server.getStaticData(), brickDir, GlusterStatus.UP);
     }
 
+    @SuppressWarnings("unchecked")
     private void setupMocks() throws Exception {
+        logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
         glusterManager = Mockito.spy(GlusterManager.getInstance());
+        glusterManager.setLogUtil(logUtil);
         mockDaos();
 
         doReturn(clusterUtils).when(glusterManager).getClusterUtils();
         doReturn(existingServer1).when(clusterUtils).getUpServer(any(Guid.class));
 
-        doNothing().when(glusterManager).logAuditMessage(any(Guid.class),
+        doNothing().when(logUtil).logServerMessage(any(VDS.class), any(AuditLogType.class));
+        doNothing().when(logUtil).logVolumeMessage(any(GlusterVolumeEntity.class), any(AuditLogType.class));
+        doNothing().when(logUtil).logAuditMessage(any(Guid.class),
                 any(GlusterVolumeEntity.class),
                 any(VDS.class),
                 any(AuditLogType.class),
-                any(String.class),
-                any(String.class));
+                any(HashMap.class));
 
         doReturn(getFetchedServersList()).when(glusterManager).fetchServers(any(VDS.class));
         doReturn(getFetchedVolumesList()).when(glusterManager).fetchVolumes(any(VDS.class));

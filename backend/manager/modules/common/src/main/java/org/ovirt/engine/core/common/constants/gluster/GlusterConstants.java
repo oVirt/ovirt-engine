@@ -16,6 +16,9 @@ public class GlusterConstants {
     // Keep the values lowercase to avoid call to String#toLowerCase()
     public static final String CLUSTER = "cluster";
     public static final String VOLUME = "glustervolume";
+    public static final String BRICK = "brick";
     public static final String OPTION_KEY = "key";
     public static final String OPTION_VALUE = "value";
+    public static final String OPTION_OLD_VALUE = "oldvalue";
+    public static final String OPTION_NEW_VALUE = "newvalue";
 }

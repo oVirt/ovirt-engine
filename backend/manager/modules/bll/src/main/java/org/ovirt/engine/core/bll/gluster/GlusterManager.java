@@ -47,8 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDet
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -75,10 +74,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * engine as well.
  */
 public class GlusterManager {
-    private final String ENTITY_BRICK = "brick";
-    private final String ENTITY_OPTION = "option";
     private final Log log = LogFactory.getLog(GlusterManager.class);
     private final LockManager lockManager = LockManagerFactory.getLockManager();
+    private GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
     private static final GlusterManager instance = new GlusterManager();
 
     private GlusterManager() {
@@ -86,6 +84,13 @@ public class GlusterManager {
 
     public static GlusterManager getInstance() {
         return instance;
+    }
+
+    /**
+     * Required so that the log util can be mocked in the JUnit test
+     */
+    protected void setLogUtil(GlusterAuditLogUtil logUtil) {
+        this.logUtil = logUtil;
     }
 
     public void init() {
@@ -229,7 +234,7 @@ public class GlusterManager {
             if (isRemovableStatus(server.getstatus()) && serverDetached(server, fetchedServers)) {
                 log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         server.getvds_name());
-                logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
+                logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
 
                 try {
                     removeServerFromDb(server);
@@ -360,7 +365,7 @@ public class GlusterManager {
         while (fetchedServers == null && !existingServers.isEmpty()) {
             fetchedServers = fetchServers(upServer);
             if (fetchedServers == null) {
-                logServerMessage(upServer, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
+                logUtil.logServerMessage(upServer, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
                 // Couldn't fetch servers from the up server. Mark it as non-operational
                 setNonOperational(upServer);
                 existingServers.remove(upServer);
@@ -442,7 +447,7 @@ public class GlusterManager {
             fetchedVolumes = fetchVolumes(upServer);
             if (fetchedVolumes == null) {
                 // Couldn't fetch volumes from the up server. Mark it as non-operational
-                logServerMessage(upServer, AuditLogType.GLUSTER_VOLUME_INFO_FAILED);
+                logUtil.logServerMessage(upServer, AuditLogType.GLUSTER_VOLUME_INFO_FAILED);
                 setNonOperational(upServer);
                 existingServers.remove(upServer);
                 upServer = getNewUpServer(existingServers, upServer);
@@ -467,7 +472,7 @@ public class GlusterManager {
                 idsToRemove.add(volume.getId());
                 log.debugFormat("Volume {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         volume.getName());
-                logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_DELETED_FROM_CLI);
+                logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_DELETED_FROM_CLI);
             }
         }
 
@@ -525,63 +530,10 @@ public class GlusterManager {
             }
         }
 
-        logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
+        logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
         log.debugFormat("Volume {0} has been created directly using the gluster CLI. Creating it in engine as well.",
                 volume.getName());
         getVolumeDao().save(volume);
-    }
-
-    private void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
-        logAuditMessage(volume.getClusterId(), volume, null, logType, null, null);
-    }
-
-    protected void logServerMessage(final VDS server, final AuditLogType logType) {
-        logAuditMessage(null, null, server, logType, null, null);
-    }
-
-    @SuppressWarnings("serial")
-    protected void logAuditMessage(final Guid clusterId,
-            final GlusterVolumeEntity volume,
-            final VDS server,
-            final AuditLogType logType,
-            final String entityName,
-            final String entityValue) {
-        AuditLogDirector.log(new AuditLogableBase() {
-            @Override
-            protected VDS getVds() {
-                return server;
-            }
-
-            @Override
-            public Guid getVdsGroupId() {
-                return clusterId;
-            }
-
-            @Override
-            public String getVdsGroupName() {
-                setVdsGroupId(clusterId);
-                return super.getVdsGroupName();
-            }
-
-            @Override
-            protected GlusterVolumeEntity getGlusterVolume() {
-                return volume;
-            }
-
-            @Override
-            public AuditLogType getAuditLogTypeValue() {
-                return logType;
-            }
-
-            @Override
-            public Map<String, String> getCustomValues() {
-                if (entityName != null && entityValue != null) {
-                    return Collections.singletonMap(entityName, entityValue);
-                } else {
-                    return new HashMap<String, String>();
-                }
-            }
-        });
     }
 
     private void updateVolume(GlusterVolumeEntity existingVolume, GlusterVolumeEntity fetchedVolume) {
@@ -631,18 +583,19 @@ public class GlusterManager {
         updateExistingAndNewBricks(existingVolume, fetchedBricks);
     }
 
+    @SuppressWarnings("serial")
     private void removeDeletedBricks(GlusterVolumeEntity existingVolume, List<GlusterBrickEntity> fetchedBricks) {
         List<Guid> idsToRemove = new ArrayList<Guid>();
-        for (GlusterBrickEntity existingBrick : existingVolume.getBricks()) {
+        for (final GlusterBrickEntity existingBrick : existingVolume.getBricks()) {
             if (!GlusterCoreUtil.containsBrick(fetchedBricks, existingBrick)) {
                 idsToRemove.add(existingBrick.getId());
-                log.infoFormat("Brick {0} removed from volume {1} from CLI. Removing it from engine DB as well.",
+                log.infoFormat("Detected brick {0} removed from Volume {1}. Removing it from engine DB as well.",
                         existingBrick.getQualifiedName(),
                         existingVolume.getName());
-                logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                         AuditLogType.GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI,
-                        ENTITY_BRICK,
-                        existingBrick.getQualifiedName());
+                        new HashMap<String, String>() {{
+                            put(GlusterConstants.BRICK, existingBrick.getQualifiedName()); }});
             }
         }
         if (!idsToRemove.isEmpty()) {
@@ -654,8 +607,9 @@ public class GlusterManager {
         }
     }
 
+    @SuppressWarnings("serial")
     private void updateExistingAndNewBricks(GlusterVolumeEntity existingVolume, List<GlusterBrickEntity> fetchedBricks) {
-        for (GlusterBrickEntity fetchedBrick : fetchedBricks) {
+        for (final GlusterBrickEntity fetchedBrick : fetchedBricks) {
             GlusterBrickEntity existingBrick = GlusterCoreUtil.findBrick(existingVolume.getBricks(), fetchedBrick);
             if (existingBrick == null) {
                 // server id could be null if the new brick resides on a server that is not yet added in the engine
@@ -666,10 +620,9 @@ public class GlusterManager {
                             existingVolume.getName());
                     fetchedBrick.setStatus(existingVolume.isOnline() ? GlusterStatus.UP : GlusterStatus.DOWN);
                     getBrickDao().save(fetchedBrick);
-                    logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                    logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                             AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI,
-                            ENTITY_BRICK,
-                            fetchedBrick.getQualifiedName());
+                            new HashMap<String, String>(){{ put(GlusterConstants.BRICK, fetchedBrick.getQualifiedName()); }});
                 }
             } else {
                 // brick found. update it if required. Only property that could be different is the brick order
@@ -692,22 +645,22 @@ public class GlusterManager {
         removeDeletedOptions(fetchedVolume, existingOptions);
     }
 
+    @SuppressWarnings("serial")
     private void removeDeletedOptions(GlusterVolumeEntity fetchedVolume,
             Collection<GlusterVolumeOptionEntity> existingOptions) {
         List<Guid> idsToRemove = new ArrayList<Guid>();
-        for (GlusterVolumeOptionEntity existingOption : existingOptions) {
+        for (final GlusterVolumeOptionEntity existingOption : existingOptions) {
             if (fetchedVolume.getOption(existingOption.getKey()) == null) {
                 idsToRemove.add(existingOption.getId());
-                log.infoFormat("Option {0} unset on volume {1} from CLI. Removing it from engine DB as well.",
+                log.infoFormat("Detected option {0} reset on volume {1}. Removing it from engine DB as well.",
                         existingOption.getKey(),
                         fetchedVolume.getName());
                 // The option "group" gets implicitly replaced with a set of options defined in the group file
                 // Hence it is not required to log it as a removed option, as that would be misleading.
                 if (!GlusterConstants.OPTION_GROUP.equals(existingOption.getKey())) {
-                    logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
+                    logUtil.logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
                             AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI,
-                            ENTITY_OPTION,
-                            existingOption.getKey());
+                            new HashMap<String, String>(){{ put(GlusterConstants.OPTION_KEY, existingOption.getKey()); }});
                 }
             }
         }
@@ -720,15 +673,20 @@ public class GlusterManager {
         }
     }
 
+    @SuppressWarnings("serial")
     private void updateExistingAndNewOptions(GlusterVolumeEntity existingVolume,
             Collection<GlusterVolumeOptionEntity> fetchedOptions) {
-        for (GlusterVolumeOptionEntity fetchedOption : fetchedOptions) {
-            GlusterVolumeOptionEntity existingOption = existingVolume.getOption(fetchedOption.getKey());
+        for (final GlusterVolumeOptionEntity fetchedOption : fetchedOptions) {
+            final GlusterVolumeOptionEntity existingOption = existingVolume.getOption(fetchedOption.getKey());
             if (existingOption == null) {
-                logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                         AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI,
-                        ENTITY_OPTION,
-                        fetchedOption.toString());
+                        new HashMap<String, String>() {
+                            {
+                                put(GlusterConstants.OPTION_KEY, fetchedOption.getKey());
+                                put(GlusterConstants.OPTION_VALUE, fetchedOption.getValue());
+                            }
+                        });
                 log.infoFormat("New option {0}={1} set on volume {2} from gluster CLI. Updating engine DB accordingly.",
                         fetchedOption.getKey(),
                         fetchedOption.getValue(),
@@ -742,11 +700,16 @@ public class GlusterManager {
                             e);
                 }
             } else if (!existingOption.getValue().equals(fetchedOption.getValue())) {
-                logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
-                        AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI,
-                        ENTITY_OPTION,
-                        fetchedOption.toString());
-                log.infoFormat("Value of option {0} of volume {1} changed from {2} to {3} from CLI. Updating engine DB accordingly.",
+                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                        AuditLogType.GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI,
+                        new HashMap<String, String>() {
+                            {
+                                put(GlusterConstants.OPTION_KEY, existingOption.getKey());
+                                put(GlusterConstants.OPTION_OLD_VALUE, existingOption.getValue());
+                                put(GlusterConstants.OPTION_NEW_VALUE, fetchedOption.getValue());
+                            }
+                        });
+                log.infoFormat("Detected change in value of option {0} of volume {1} from {2} to {3}. Updating engine DB accordingly.",
                         existingOption.getKey(),
                         existingVolume.getName(),
                         existingOption.getValue(),
@@ -800,13 +763,13 @@ public class GlusterManager {
         if (changed) {
             log.infoFormat("Updating volume {0} with fetched properties.", existingVolume.getName());
             getVolumeDao().updateGlusterVolume(existingVolume);
-            logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
+            logUtil.logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
         }
 
         if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
             existingVolume.setStatus(fetchedVolume.getStatus());
             GlusterUtils.getInstance().updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
-            logVolumeMessage(existingVolume,
+            logUtil.logVolumeMessage(existingVolume,
                     fetchedVolume.getStatus() == GlusterStatus.UP ? AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI
                             : AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI);
         }
