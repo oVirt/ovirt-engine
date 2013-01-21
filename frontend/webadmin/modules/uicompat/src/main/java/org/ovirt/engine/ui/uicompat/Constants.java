@@ -84,6 +84,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Services")
     String servicesTitle();
 
+    @DefaultStringValue("Gluster Hooks")
+    String glusterHooksTitle();
+
     @DefaultStringValue("Edit Policy")
     String editPolicyTitle();
 

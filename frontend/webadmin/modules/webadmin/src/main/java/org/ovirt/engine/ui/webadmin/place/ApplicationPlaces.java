@@ -114,6 +114,9 @@ public class ApplicationPlaces {
     public static final String clusterServiceSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "services"; //$NON-NLS-1$
 
+    public static final String clusterGlusterHookSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
+            + "gluster_hooks"; //$NON-NLS-1$
+
     public static final String clusterPermissionSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

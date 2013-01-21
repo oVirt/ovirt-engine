@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -1148,6 +1149,17 @@ public final class AsyncDataProvider {
             }
         };
         GetUpHostListByCluster(aQuery, clusterName, 1);
+    }
+
+    public static void getGlusterHooks(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? source : new ArrayList<GlusterHookEntity>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetGlusterHooks,  new GlusterParameters(clusterId), aQuery);
     }
 
     public static void GetRpmVersionViaPublic(AsyncQuery aQuery) {

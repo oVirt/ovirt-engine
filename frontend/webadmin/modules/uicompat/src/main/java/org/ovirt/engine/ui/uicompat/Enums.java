@@ -345,16 +345,38 @@ public interface Enums extends LocalizedEnums {
 
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
+
     String GlusterVolumeType___REPLICATE();
+
     String GlusterVolumeType___DISTRIBUTED_REPLICATE();
+
     String GlusterVolumeType___STRIPE();
+
     String GlusterVolumeType___DISTRIBUTED_STRIPE();
+
     String GlusterStatus___UP();
+
     String GlusterStatus___DOWN();
+
     String TransportType___TCP();
+
     String TransportType___RDMA();
 
     String ServiceType___NFS();
 
     String ServiceType___SHD();
+
+    String GlusterHookStage___PRE();
+
+    String GlusterHookStage___POST();
+
+    String GlusterHookStatus___ENABLED();
+
+    String GlusterHookStatus___DISABLED();
+
+    String GlusterHookStatus___MISSING();
+
+    String GlusterHookContentType___TEXT();
+
+    String GlusterHookContentType___BINARY();
 }

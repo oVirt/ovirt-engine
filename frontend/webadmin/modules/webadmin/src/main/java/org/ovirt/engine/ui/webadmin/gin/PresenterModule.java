@@ -99,6 +99,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMac
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPermissionPresenter;
@@ -124,9 +125,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
@@ -281,6 +282,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGlusterHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterHostView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterPermissionView;
@@ -306,9 +308,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePa
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermissionView;
@@ -580,6 +582,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterServicePresenter.ViewDef.class,
                 SubTabClusterServiceView.class,
                 SubTabClusterServicePresenter.ProxyDef.class);
+        bindPresenter(SubTabClusterGlusterHookPresenter.class,
+                SubTabClusterGlusterHookPresenter.ViewDef.class,
+                SubTabClusterGlusterHookView.class,
+                SubTabClusterGlusterHookPresenter.ProxyDef.class);
         bindPresenter(SubTabClusterPermissionPresenter.class,
                 SubTabClusterPermissionPresenter.ViewDef.class,
                 SubTabClusterPermissionView.class,

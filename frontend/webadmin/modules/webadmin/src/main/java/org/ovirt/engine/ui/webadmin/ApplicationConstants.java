@@ -310,6 +310,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Services")
     String clusterServiceSubTabLabel();
 
+    @DefaultStringValue("Gluster Hooks")
+    String clusterGlusterHooksSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String clusterPermissionSubTabLabel();
 
@@ -1672,6 +1675,25 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Display Address Overridden")
     String overriddenConsoleAddress();
+
+    // Cluster Gluster Hooks
+    @DefaultStringValue("Name")
+    String nameHook();
+
+    @DefaultStringValue("Gluster Volume Command")
+    String glusterCommandHook();
+
+    @DefaultStringValue("Stage")
+    String stageHook();
+
+    @DefaultStringValue("Status")
+    String statusHook();
+
+    @DefaultStringValue("In Sync?")
+    String isInSyncHook();
+
+    @DefaultStringValue("Content Type")
+    String contentTypeHook();
 
     // Interface
     @DefaultStringValue("Empty")
