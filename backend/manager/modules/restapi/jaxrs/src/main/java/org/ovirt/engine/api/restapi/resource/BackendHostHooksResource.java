@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.HostHookResource;
 import org.ovirt.engine.api.resource.HostHooksResource;
 import org.ovirt.engine.core.common.queries.GetVdsHooksByIdParameters;
@@ -34,7 +35,10 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     }
 
     private Hooks mapCollection(HashMap<String, HashMap<String, HashMap<String, String>>> hooksMap) {
-        Hooks hooks = mappingLocator.getMapper(HashMap.class, Hooks.class).map(hooksMap, null);
+        Hooks hooks = getMapper(HashMap.class, Hooks.class).map(hooksMap, null);
+        for (Hook hook : hooks.getHooks()) {
+            addLinks(hook);
+        }
         return hooks;
     }
 
@@ -45,9 +49,11 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
     }
 
     @Override
-    protected Response performRemove(String id) {
-        // not in use
-        return null;
+    protected Hook addParents(Hook model) {
+        Host host = new Host();
+        host.setId(hostId);
+        model.setHost(host);
+        return super.addParents(model);
     }
 
     @Override
@@ -55,4 +61,8 @@ public class BackendHostHooksResource extends AbstractBackendCollectionResource<
         return model;
     }
 
+    @Override
+    protected Response performRemove(String id) {
+        return null;
+    }
 }

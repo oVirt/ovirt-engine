@@ -33,7 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
         HostsResource {
 
-    static final String[] SUB_COLLECTIONS = { "storage", "nics", "tags", "permissions", "statistics" };
+    static final String[] SUB_COLLECTIONS = { "storage", "nics", "tags", "permissions", "statistics", "hooks" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
