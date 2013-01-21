@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -700,10 +701,14 @@ public class GlusterManager {
                 log.infoFormat("Option {0} unset on volume {1} from CLI. Removing it from engine DB as well.",
                         existingOption.getKey(),
                         fetchedVolume.getName());
-                logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
-                        AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI,
-                        ENTITY_OPTION,
-                        existingOption.getKey());
+                // The option "group" gets implicitly replaced with a set of options defined in the group file
+                // Hence it is not required to log it as a removed option, as that would be misleading.
+                if (!GlusterConstants.OPTION_GROUP.equals(existingOption.getKey())) {
+                    logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
+                            AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI,
+                            ENTITY_OPTION,
+                            existingOption.getKey());
+                }
             }
         }
         if (!idsToRemove.isEmpty()) {
