@@ -166,32 +166,26 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateSnapshotExists() ||
                 !validate(new VmValidator(getVm()).vmDown()) ||
                 !validateImagesAndVMStates()) {
-            handleCanDoActionFailure();
             return false;
         }
 
         if (hasImages()) {
             // check that we are not deleting the template
             if (!validateImageNotInTemplate()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
-                handleCanDoActionFailure();
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
             }
 
             // check that we are not deleting the vm working snapshot
             if (!validateImageNotActive()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
-                handleCanDoActionFailure();
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
             }
         }
 
-        getReturnValue().setCanDoAction(true);
         return true;
     }
 
-    private void handleCanDoActionFailure() {
-        getReturnValue().setCanDoAction(false);
+    @Override
+    protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
     }
