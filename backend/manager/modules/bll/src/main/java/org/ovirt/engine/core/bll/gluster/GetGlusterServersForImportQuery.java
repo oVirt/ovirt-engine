@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.AuthenticationException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +55,8 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         // Check whether the given server is already part of the cluster
         if (getVdsStaticDao().getAllForHost(getParameters().getServerName()).size() > 0
                 || getVdsStaticDao().getAllWithIpAddress(getParameters().getServerName()).size() > 0) {
-            setReturnMessage();
+            setReturnMessage(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
+            return;
         }
 
         SSHClient client = null;
@@ -69,10 +71,13 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
 
             // Check if any of the server in the map is already part of some other cluster.
             if (!validateServers(serverFingerPrint.keySet())) {
-                setReturnMessage();
+                setReturnMessage(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
             }
             getQueryReturnValue().setReturnValue(serverFingerPrint);
-        } catch (Exception e) {
+        } catch (AuthenticationException ae) {
+            setReturnMessage(VdcBllMessages.SSH_AUTHENTICATION_FAILED.toString());
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (client != null) {
@@ -81,10 +86,9 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         }
     }
 
-    private void setReturnMessage() {
+    private void setReturnMessage(String errorMessage) {
         getQueryReturnValue().setSucceeded(false);
-        getQueryReturnValue().setExceptionString(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
-        return;
+        getQueryReturnValue().setExceptionString(errorMessage);
     }
 
     /*
