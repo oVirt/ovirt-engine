@@ -173,7 +173,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected void endWithFailure() {
-        unLockImage();
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
             if (getParameters().getAddImageDomainMapping()) {
                 // remove image-storage mapping
@@ -182,6 +181,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                 getParameters().getStorageDomainId()));
             }
             revertTasks();
+        } else {
+            unLockImage();
         }
         setSucceeded(true);
     }
@@ -204,6 +205,8 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                 // which adds the taskId on the internal task ID list
                 startPollingAsyncTasks(returnValue.getInternalTaskIdList());
             }
+        } else {
+            unLockImage();
         }
     }
 
