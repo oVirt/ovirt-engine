@@ -562,7 +562,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             p.setSourceDomainId(getParameters().getSourceDomainId());
             p.setStoragePoolId(getParameters().getStoragePoolId());
             p.setImportEntity(true);
-            p.setEntityId(disk.getImageId());
+            p.setEntityId(getVm().getId());
             p.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
             if (getParameters().getVm().getDiskMap() != null
                     && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
