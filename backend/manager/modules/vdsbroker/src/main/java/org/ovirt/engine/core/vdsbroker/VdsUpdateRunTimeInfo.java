@@ -524,7 +524,8 @@ public class VdsUpdateRunTimeInfo {
             } else {
                 // refresh dynamic data
                 final AtomicBoolean processHardwareNeededAtomic = new AtomicBoolean();
-                VDSStatus refreshReturnStatus = _vdsManager.refreshCapabilities(processHardwareNeededAtomic, _vds);
+                VDSStatus refreshReturnStatus =
+                        _vdsManager.refreshCapabilities(processHardwareNeededAtomic, _vds, false);
                 processHardwareCapsNeeded = processHardwareNeededAtomic.get();
                 refreshedCapabilities = true;
                 if (refreshReturnStatus != VDSStatus.NonOperational) {
@@ -890,7 +891,7 @@ public class VdsUpdateRunTimeInfo {
         if (_vdsManager.getbeforeFirstRefresh()) {
             boolean flagsChanged = false;
             final AtomicBoolean processHardwareCapsNeededTemp = new AtomicBoolean();
-            _vdsManager.refreshCapabilities(processHardwareCapsNeededTemp, _vds);
+            _vdsManager.refreshCapabilities(processHardwareCapsNeededTemp, _vds, false);
             flagsChanged = processHardwareCapsNeededTemp.get();
             _vdsManager.setbeforeFirstRefresh(false);
             refreshedCapabilities = true;

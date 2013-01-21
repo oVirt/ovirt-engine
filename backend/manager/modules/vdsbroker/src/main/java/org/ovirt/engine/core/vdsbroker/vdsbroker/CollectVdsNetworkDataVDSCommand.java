@@ -5,6 +5,7 @@ import static org.ovirt.engine.core.common.businessentities.network.NetworkStatu
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -41,7 +44,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
         updateNetConfigDirtyFlag();
 
         // update to db
-        persistAndEnforceNetworkCompliance(getVds());
+        persistAndEnforceNetworkCompliance(getVds(), false);
 
         ProceedProxyReturnValue();
     }
@@ -72,15 +75,29 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
      * <li>All VM networks must be implemented with bridges.
      *
      * @param vds
+     * @param skipManagementNetwork
+     *            if <code>true</code> skip validations for the management network (existence on the host or configured
+     *            properly)
      * @return
      */
-    public static boolean persistAndEnforceNetworkCompliance(VDS vds) {
+    public static boolean persistAndEnforceNetworkCompliance(VDS vds, boolean skipManagementNetwork) {
         persistTopology(vds);
 
         if (vds.getStatus() != VDSStatus.Maintenance) {
 
             List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao()
                     .getAllForCluster(vds.getVdsGroupId());
+            if (skipManagementNetwork) {
+                String managementNetworkName = Config.GetValue(ConfigValues.ManagementNetwork);
+                for (Iterator<Network> iterator = clusterNetworks.iterator(); iterator.hasNext();) {
+                    Network network = iterator.next();
+                    if (managementNetworkName.equals(network.getName())) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+
             Map<String, String> customLogValues;
 
             // here we check if the vds networks match it's cluster networks
