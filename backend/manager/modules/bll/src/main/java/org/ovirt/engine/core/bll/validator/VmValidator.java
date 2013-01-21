@@ -41,6 +41,14 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult vmNotSavingRestoring() {
+        if (vm.getStatus() == VMStatus.SavingState || vm.getStatus() == VMStatus.RestoringState) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
+        }
+
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult vmNotIlegal() {
         if (vm.getStatus() == VMStatus.ImageIllegal) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_IS_ILLEGAL);

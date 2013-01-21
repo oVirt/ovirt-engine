@@ -280,13 +280,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected boolean canDoAction() {
-        boolean result = true;
-        if (!canDoSnapshot(getVm())) {
-            return false;
-        }
+        VmValidator vmValidator = new VmValidator(getVm());
+        boolean result = validateVM(vmValidator);
         List<DiskImage> disksList = getDisksList();
-        if (disksList.size() > 0) {
-            VmValidator vmValidator = new VmValidator(getVm());
+        if (result && disksList.size() > 0) {
             SnapshotsValidator snapshotValidator = new SnapshotsValidator();
             result = validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                     && validate(snapshotValidator.vmNotInPreview(getVmId()))
@@ -308,6 +305,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         return result;
+    }
+
+    private boolean validateVM(VmValidator vmValidator) {
+        return canDoSnapshot(getVm()) &&
+                validate(vmValidator.vmNotSavingRestoring());
     }
 
     @Override
