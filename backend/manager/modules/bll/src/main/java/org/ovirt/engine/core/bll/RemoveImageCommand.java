@@ -80,9 +80,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));
 
-            if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
-                    && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport
-                    && getParameters().getParentCommand() != VdcActionType.RemoveDisk) {
+            if (getParameters().isRemoveDuringExecution()
+                    && getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
+                    && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport) {
                 removeImageFromDB(false);
             }
         } else {
@@ -268,13 +268,15 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void endCommand() {
-        if (getParameters().getRemoveFromDB()) {
-            removeImageFromDB(true);
-        } else {
-            getImageStorageDomainMapDao().remove(
-                    new ImageStorageDomainMapId(getParameters().getImageId(),
-                            getParameters().getStorageDomainId()));
-            unLockImage();
+        if (!getParameters().isRemoveDuringExecution()) {
+            if (getParameters().getRemoveFromDB()) {
+                removeImageFromDB(true);
+            } else {
+                getImageStorageDomainMapDao().remove(
+                        new ImageStorageDomainMapId(getParameters().getImageId(),
+                                getParameters().getStorageDomainId()));
+                unLockImage();
+            }
         }
         setSucceeded(true);
     }

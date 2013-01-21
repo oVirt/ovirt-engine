@@ -268,6 +268,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             p.setTransactionScopeOption(TransactionScopeOption.Suppress);
             p.setDiskImage(diskImage);
             p.setParentCommand(VdcActionType.RemoveDisk);
+            p.setRemoveDuringExecution(false);
             p.setEntityId(getParameters().getEntityId());
             p.setParentParameters(getParameters());
             p.setStorageDomainId(getParameters().getStorageDomainId());

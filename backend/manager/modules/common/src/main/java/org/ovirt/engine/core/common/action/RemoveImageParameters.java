@@ -8,6 +8,7 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
 
     private DiskImage diskImage;
     private boolean removeFromDB;
+    private boolean removeDuringExecution = true;
 
     public RemoveImageParameters(Guid imageId) {
         super(imageId, null);
@@ -24,6 +25,14 @@ public class RemoveImageParameters extends ImagesContainterParametersBase implem
 
     public void setDiskImage(DiskImage value) {
         diskImage = value;
+    }
+
+    public boolean isRemoveDuringExecution() {
+        return removeDuringExecution;
+    }
+
+    public void setRemoveDuringExecution(boolean removeDuringExecution) {
+        this.removeDuringExecution = removeDuringExecution;
     }
 
     public void setRemoveFromDB(boolean removeFromDB) {
