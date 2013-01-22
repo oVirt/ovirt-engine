@@ -12,6 +12,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class InstallerMessages {
     private VDS _vds;
+    private String _correlationId;
     private int _sequence = 0;
 
     public enum Severity {
@@ -24,9 +25,14 @@ public class InstallerMessages {
         _vds = vds;
     }
 
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
     public void post(Severity severity, String text) {
         AuditLogType logType;
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
+        logable.setCorrelationId(_correlationId);
         logable.AddCustomValue("Message", text);
         switch (severity) {
         case INFO:

@@ -119,6 +119,10 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
         close();
     }
 
+    public void setCorrelationId(String correlationId) {
+        _messages.setCorrelationId(correlationId);
+    }
+
     /**
      * Free resources.
      */

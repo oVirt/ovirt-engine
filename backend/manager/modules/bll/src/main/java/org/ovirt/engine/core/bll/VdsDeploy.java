@@ -86,6 +86,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     private VDS _vds;
     private boolean _isNode = false;
     private boolean _reboot = false;
+    private String _correlationId = null;
     private Exception _failException = null;
     private boolean _resultError = false;
     private boolean _goingToReboot = false;
@@ -290,6 +291,13 @@ public class VdsDeploy implements SSHDialog.Sink {
      * tick.
      */
     private final Callable[] _customizationDialog = new Callable[] {
+        new Callable<Object>() { public Object call() throws Exception {
+            _parser.cliEnvironmentSet(
+                "OVIRT_ENGINE/correlationId",
+                _correlationId
+            );
+            return null;
+        }},
         new Callable<Object>() { public Object call() throws Exception {
             if (
                 (Boolean)_parser.cliEnvironmentGet(
@@ -560,13 +568,14 @@ public class VdsDeploy implements SSHDialog.Sink {
             File logFile = new File(
                 LocalConfig.getInstance().getLogDir(),
                 String.format(
-                    "%1$s%2$sovirt-%3$s-%4$s.log",
+                    "%1$s%2$sovirt-%3$s-%4$s-%5$s.log",
                     "host-deploy",
                     File.separator,
                     new SimpleDateFormat("yyyyMMddHHmmss").format(
                         Calendar.getInstance().getTime()
                     ),
-                    _vds.gethost_name()
+                    _vds.gethost_name(),
+                    _correlationId
                 )
             );
             _messages.post(
@@ -818,6 +827,11 @@ public class VdsDeploy implements SSHDialog.Sink {
      */
     public void setReboot(boolean reboot) {
         _reboot = reboot;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+        _messages.setCorrelationId(_correlationId);
     }
 
     /**

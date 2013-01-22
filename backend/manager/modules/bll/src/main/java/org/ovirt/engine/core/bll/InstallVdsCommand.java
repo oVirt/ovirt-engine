@@ -86,6 +86,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     getVds(),
                     parameters.getoVirtIsoFile()
                 );
+                upgrade.setCorrelationId(getCorrelationId());
                 log.infoFormat(
                     "Execute upgrade host {0}, {1}",
                     getVds().getId(),
@@ -132,6 +133,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
                 T parameters = getParameters();
                 installer = new VdsDeploy(getVds());
+                installer.setCorrelationId(getCorrelationId());
                 installer.setReboot(parameters.isRebootAfterInstallation());
                 switch (getVds().getvds_type()) {
                 case VDS:
