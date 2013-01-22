@@ -182,7 +182,6 @@ Requires: %{name}-setup >= %{version}-%{release}
 # main package is installed:
 Requires: %{name}-backend = %{version}-%{release}
 Requires: %{name}-restapi = %{version}-%{release}
-Requires: %{name}-genericapi = %{version}-%{release}
 Requires: %{name}-userportal = %{version}-%{release}
 Requires: %{name}-config = %{version}-%{release}
 Requires: %{name}-notification-service = %{version}-%{release}
@@ -194,6 +193,10 @@ Requires: ovirt-iso-uploader
 Requires: ovirt-image-uploader
 Requires: ovirt-log-collector
 
+# genericapi package has been deleted, so we need to
+# obsolete it in order to make sure that it is removed when
+# the new version of ovirt-engine is installed:
+Obsoletes: %{name}-genericapi
 
 %description
 %{product_name} is a feature-rich server virtualization management
@@ -251,15 +254,6 @@ Requires: %{name} = %{version}-%{release}
 
 %description restapi
 The RESTful API for %{product_name_short}
-
-
-%package genericapi
-Summary: Generic API for %{product_name_short}
-Group: Virtualization/Management
-Requires: %{name} = %{version}-%{release}
-
-%description genericapi
-The generic API for %{product_name_short}
 
 
 %package setup
@@ -759,20 +753,6 @@ fi
 # Everything inside of the web application is owned by this
 # subpackage:
 %{restapi_war}
-
-
-%files genericapi
-
-# Jar files:
-%{engine_java}/genericapi.jar
-
-# POM files:
-%if %{install_poms}
-%{_mavenpomdir}/JPP.%{name}-genericapi.pom
-%endif
-
-# Link to the jar file inside the ear:
-%{engine_ear}/engine-genericapi.jar
 
 
 %files userportal

@@ -29,15 +29,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>genericapi</artifactId>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>${aspectj.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>common</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjrt</artifactId>
-      <version>${aspectj.version}</version>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

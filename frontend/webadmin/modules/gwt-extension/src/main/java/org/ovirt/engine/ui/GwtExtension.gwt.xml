@@ -3,9 +3,5 @@
 <module>
 	<inherits name='com.google.gwt.core.Core' />
 
-	<source path="">
-    		<include name="genericapi/returnvalues/*.java"/>
-	</source>
-     
 	<super-source path="uioverrides" />
 </module>

@@ -203,7 +203,6 @@ RPM_LOCK_LIST = """
 {name}-backend
 {name}-config
 {name}-dbscripts
-{name}-genericapi
 {name}-notification-service
 {name}-restapi
 {name}-tools-common

@@ -94,13 +94,6 @@
 
     <!-- ** EJB-JARs -->
     <dependency>
-      <groupId>org.ovirt.engine.ui</groupId>
-      <artifactId>genericapi</artifactId>
-      <version>${engine.version}</version>
-      <type>ejb</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>scheduler</artifactId>
       <version>${engine.version}</version>
@@ -242,13 +235,6 @@
             </webModule>
 
             <!-- ** EJB-JARs -->
-            <ejbModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>genericapi</artifactId>
-              <bundleFileName>engine-genericapi.jar</bundleFileName>
-              <unpack>true</unpack>
-            </ejbModule>
-
             <ejbModule>
               <groupId>org.ovirt.engine.core</groupId>
               <artifactId>scheduler</artifactId>

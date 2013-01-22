@@ -93,12 +93,6 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>genericapi</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
       <artifactId>frontend</artifactId>
       <version>${engine.version}</version>
     </dependency>
@@ -106,6 +100,12 @@
       <groupId>${engine.groupId}</groupId>
       <artifactId>gwt-extension</artifactId>
       <version>${engine.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>javax.xml.bind</groupId>

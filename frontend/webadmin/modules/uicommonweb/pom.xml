@@ -31,13 +31,6 @@
 			<artifactId>uicompat</artifactId>
 			<version>${engine.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>${engine.groupId}</groupId>
-			<artifactId>genericapi</artifactId>
-			<version>${engine.version}</version>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 
 	<build>

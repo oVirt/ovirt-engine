@@ -81,7 +81,6 @@ ARTIFACTS = \
 	engine-notifier-service \
 	engine-tools-common \
 	engineencryptutils \
-	genericapi \
 	interface-common-jaxrs \
 	manager \
 	manager-modules \
@@ -102,7 +101,6 @@ ARTIFACTS = \
 # no convention yet...
 OWN_JAR_FIXUPS = \
 	$(PKG_EAR_DIR)/engine-bll,bll \
-	$(PKG_EAR_DIR)/engine-genericapi,genericapi \
 	$(PKG_EAR_DIR)/engine-scheduler,scheduler \
 	$(PKG_EAR_DIR)/lib/engine-common,common \
 	$(PKG_EAR_DIR)/lib/engine-compat,compat \

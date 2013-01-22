@@ -17,12 +17,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>genericapi</artifactId>
-      <version>${engine.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <version>${gwt.version}</version>
@@ -36,6 +30,18 @@
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+        <artifactId>common</artifactId>
+        <version>${engine.version}</version>
+        <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
