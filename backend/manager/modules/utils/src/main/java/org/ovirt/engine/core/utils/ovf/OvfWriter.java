@@ -240,6 +240,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(String.valueOf(vmBase.getTunnelMigration()));
             _writer.WriteEndElement();
         }
+
+        if (vmBase.getVncKeyboardLayout() != null) {
+            _writer.WriteStartElement("VncKeyboardLayout");
+            _writer.WriteRaw(vmBase.getVncKeyboardLayout());
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void WriteAppList();

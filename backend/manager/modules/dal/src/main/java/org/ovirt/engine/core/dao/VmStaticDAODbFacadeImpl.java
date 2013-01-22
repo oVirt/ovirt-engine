@@ -84,7 +84,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("allow_console_reconnect", vm.isAllowConsoleReconnect())
                 .addValue("cpu_pinning", vm.getCpuPinning())
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
-                .addValue("tunnel_migration", vm.getTunnelMigration());
+                .addValue("tunnel_migration", vm.getTunnelMigration())
+                .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout());
     }
 
     @Override
@@ -201,6 +202,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
+            entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
 
             return entity;
         }

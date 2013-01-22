@@ -299,7 +299,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         .getMasterVm().getVmType(),
                 getParameters().getMasterVm().isSmartcardEnabled(),
                 getParameters().getMasterVm().isDeleteProtected(),
-                getParameters().getMasterVm().getTunnelMigration()));
+                getParameters().getMasterVm().getTunnelMigration(),
+                getParameters().getMasterVm().getVncKeyboardLayout()));
         getVmTemplate().setAutoStartup(getParameters().getMasterVm().isAutoStartup());
         getVmTemplate().setPriority(getParameters().getMasterVm().getPriority());
         getVmTemplate().setDefaultDisplayType(getParameters().getMasterVm().getDefaultDisplayType());

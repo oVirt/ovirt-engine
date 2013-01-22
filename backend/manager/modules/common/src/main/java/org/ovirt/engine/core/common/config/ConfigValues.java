@@ -1369,6 +1369,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("9")
     PgMajorRelease(418),
 
+    @TypeConverterAttribute(java.util.List.class)
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    @DefaultValueAttribute("ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr")
+    VncKeyboardLayoutValidValues(419),
+
     Invalid(65535);
 
     private int intValue;

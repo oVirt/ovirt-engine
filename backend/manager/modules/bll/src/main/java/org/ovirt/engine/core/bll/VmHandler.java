@@ -95,7 +95,8 @@ public class VmHandler {
                 Arrays.asList(new Enum<?>[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vdsGroupId", "timeZone", "stateless", "niceLevel", "memSizeMb",
                         "numOfSockets", "cpuPerSocket", "isoPath", "userDefinedProperties",
-                        "predefinedProperties", "customProperties", "defaultDisplayType", "numOfMonitors" }));
+                        "predefinedProperties", "customProperties", "defaultDisplayType", "numOfMonitors",
+                        "vncKeyboardLayout"  }));
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {

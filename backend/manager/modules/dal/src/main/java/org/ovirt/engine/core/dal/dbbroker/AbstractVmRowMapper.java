@@ -42,6 +42,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements Parameter
         entity.setSmartcardEnabled(rs.getBoolean("is_smartcard_enabled"));
         entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
         entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
+        entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
     }
 
 }

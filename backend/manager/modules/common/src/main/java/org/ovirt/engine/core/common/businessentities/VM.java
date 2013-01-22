@@ -310,6 +310,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return vmStatic.isDeleteProtected();
     }
 
+    public String getVncKeyboardLayout() {
+        return vmStatic.getVncKeyboardLayout();
+    }
+
+    public void setVncKeyboardLayout(String vncKeyboardLayout) {
+        vmStatic.setVncKeyboardLayout(vncKeyboardLayout);
+    }
+
     public DisplayType getDefaultDisplayType() {
         return vmStatic.getDefaultDisplayType();
     }

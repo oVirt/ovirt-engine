@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
+import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.DesktopVM;
@@ -143,6 +144,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
 
     protected DisplayType defaultDisplayType = DisplayType.qxl;
 
+    @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
+        groups = { CreateEntity.class, UpdateEntity.class },
+        message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
+    private String vncKeyboardLayout;
+
     public VmBase(Guid id,
             Guid vdsGroupId,
             VmOsType os,
@@ -171,7 +177,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
             Guid quotaId,
             boolean smartcardEnabled,
             boolean deleteProtected,
-            Boolean tunnelMigration) {
+            Boolean tunnelMigration,
+            String vncKeyboardLayout) {
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
@@ -201,6 +208,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.smartcardEnabled = smartcardEnabled;
         this.deleteProtected = deleteProtected;
         this.tunnelMigration = tunnelMigration;
+        this.vncKeyboardLayout = vncKeyboardLayout;
         setQuotaId(quotaId);
     }
 
@@ -496,6 +504,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         this.deleteProtected = deleteProtected;
     }
 
+    public String getVncKeyboardLayout() {
+        return vncKeyboardLayout;
+    }
+
+    public void setVncKeyboardLayout(String vncKeyboardLayout) {
+        this.vncKeyboardLayout = vncKeyboardLayout;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -531,6 +547,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((dedicatedVmForVds == null) ? 0 : dedicatedVmForVds.hashCode());
         result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
+        result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
 
         return result;
     }
@@ -693,6 +710,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
                 return false;
             }
         } else if (!tunnelMigration.equals(other.tunnelMigration)) {
+            return false;
+        }
+        if (vncKeyboardLayout == null) {
+            if (other.vncKeyboardLayout != null) {
+                return false;
+            }
+        } else if (!vncKeyboardLayout.equals(other.vncKeyboardLayout)) {
             return false;
         }
         return true;

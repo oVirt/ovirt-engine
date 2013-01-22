@@ -66,7 +66,7 @@ public class VmTemplate extends VmBase implements Nameable {
             int num_of_sockets, int cpu_per_socket, VmOsType os, Guid vds_group_id, Guid vmt_guid, String domain,
             int num_of_monitors, int status, int usb_policy, String time_zone, boolean is_auto_suspend, int nice_level,
             boolean fail_back, BootSequence default_boot_sequence, VmType vm_type,
-            boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration) {
+            boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout) {
         super(vmt_guid,
                 vds_group_id,
                 os,
@@ -95,7 +95,8 @@ public class VmTemplate extends VmBase implements Nameable {
                 null,
                 smartcardEnabled,
                 deleteProtected,
-                tunnelMigration);
+                tunnelMigration,
+                vncKeyboardLayout);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 

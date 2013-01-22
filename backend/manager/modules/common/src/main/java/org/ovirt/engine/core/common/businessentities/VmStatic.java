@@ -84,7 +84,8 @@ public class VmStatic extends VmBase {
                 vmStatic.getQuotaId(),
                 vmStatic.isSmartcardEnabled(),
                 vmStatic.isDeleteProtected(),
-                vmStatic.getTunnelMigration());
+                vmStatic.getTunnelMigration(),
+                vmStatic.getVncKeyboardLayout());
         name = vmStatic.getVmName();
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());

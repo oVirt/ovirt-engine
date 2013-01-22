@@ -489,6 +489,7 @@ select fn_db_add_config_value('VmPoolMonitorMaxAttempts','3','general');
 select fn_db_add_config_value('VmPriorityMaxValue','100','general');
 --Handling Keyboard Layout configuration for VNC
 select fn_db_add_config_value('VncKeyboardLayout','en-us','general');
+select fn_db_add_config_value('VncKeyboardLayoutValidValues','ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr','general');
 select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 --The default network connectivity check timeout
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');

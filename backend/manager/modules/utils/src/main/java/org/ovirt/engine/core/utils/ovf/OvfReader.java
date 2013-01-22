@@ -424,6 +424,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("VncKeyboardLayout");
+        if (node != null) {
+            if (!StringUtils.isEmpty(node.InnerText)) {
+                vmBase.setVncKeyboardLayout(node.InnerText);
+            }
+        }
+
         readGeneralData(content);
     }
 
