@@ -1868,17 +1868,21 @@ def _addFinalInfoMsg():
 def _stopEngine(configFile):
     logging.debug("stopping %s service" % basedefs.ENGINE_SERVICE_NAME)
     jservice = utils.Service(basedefs.ENGINE_SERVICE_NAME)
+    (status, rc) = jservice.status()
 
     #if we don't use an answer file, we need to ask the user if to stop engine
+    #if the engine is not already stopped (3, service not running)
     if not configFile:
-        print output_messages.INFO_NEED_STOP_ENGINE
-        answer = utils.askYesNo(output_messages.INFO_Q_STOP_ENGINE)
-        if answer:
-            print output_messages.INFO_STOP_ENGINE,
-            jservice.stop(True)
-        else:
-            logging.debug("User chose not to stop engine")
-            return False
+        if rc != 3:
+            logging.debug("engine is in status %d: %s" % (rc, status))
+            print output_messages.INFO_NEED_STOP_ENGINE
+            answer = utils.askYesNo(output_messages.INFO_Q_STOP_ENGINE)
+            if answer:
+                print output_messages.INFO_STOP_ENGINE,
+                jservice.stop(True)
+            else:
+                logging.debug("User chose not to stop engine")
+                return False
     else:
         #we stop the ovirt-engine service on a silent install
         print output_messages.INFO_STOP_ENGINE,
