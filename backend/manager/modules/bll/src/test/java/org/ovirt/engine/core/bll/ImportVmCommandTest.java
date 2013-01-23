@@ -8,6 +8,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +78,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).canAddVm();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
         doReturn(Collections.<VM> singletonList(createVM())).when(cmd).getVmsFromExportDomain();
@@ -205,6 +208,37 @@ public class ImportVmCommandTest {
         doReturn(new Snapshot()).when(cmd).addActiveSnapshot(any(Guid.class));
         cmd.addVmImagesAndSnapshots();
         assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
+    }
+
+    @Test
+    public void testValidateNoDuplicateDiskImagesShouldCheckWhenExist() {
+        ImportVmParameters params = createParameters();
+        params.setImportAsNewEntity(false);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        doReturn(true).when(cmd).isDiskExists(any(Guid.class));
+        assertFalse(params.getVm().getImages().isEmpty());
+        assertFalse(cmd.validateNoDuplicateDiskImages(params.getVm().getImages()));
+    }
+
+    @Test
+    public void testValidateNoDuplicateDiskImagesShouldCheckWhenNotExist() {
+        ImportVmParameters params = createParameters();
+        params.setImportAsNewEntity(false);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        doReturn(false).when(cmd).isDiskExists(any(Guid.class));
+        assertFalse(params.getVm().getImages().isEmpty());
+        assertTrue(cmd.validateNoDuplicateDiskImages(params.getVm().getImages()));
+    }
+
+    @Test
+    public void testValidateNoDuplicateDiskImagesWhenAsNewEntity() {
+        ImportVmParameters params = createParameters();
+        params.setImportAsNewEntity(true);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        doReturn(true).when(cmd).isDiskExists(any(Guid.class));
+        assertFalse(params.getVm().getImages().isEmpty());
+        assertTrue(cmd.validateNoDuplicateDiskImages(params.getVm().getImages()));
+        verify(cmd, never()).isDiskExists(any(Guid.class));
     }
 
     @Test

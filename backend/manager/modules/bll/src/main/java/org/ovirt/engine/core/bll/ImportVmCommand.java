@@ -291,6 +291,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return false;
         }
 
+        if (!validateNoDuplicateDiskImages(imageList)) {
+            return false;
+        }
+
         setVmTemplateId(getVm().getVmtGuid());
         if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
             return false;
@@ -362,6 +366,31 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getVmName()));
             return false;
         }
+        return true;
+    }
+
+    protected boolean isDiskExists(Guid id) {
+        return getBaseDiskDao().exists(id);
+    }
+
+    protected boolean validateNoDuplicateDiskImages(Iterable<DiskImage> images) {
+        if (!getParameters().isImportAsNewEntity()) {
+            List<String> existingDisksAliases = new ArrayList<String>();
+            for (DiskImage diskImage : images) {
+                if (isDiskExists(diskImage.getId())) {
+                    existingDisksAliases.add(diskImage.getDiskAlias());
+                }
+            }
+
+            if (!existingDisksAliases.isEmpty()) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST);
+                addCanDoActionMessage(String.format("$%1$s %2$s",
+                        "diskAliases",
+                        StringUtils.join(existingDisksAliases, ", ")));
+                return false;
+            }
+        }
+
         return true;
     }
 

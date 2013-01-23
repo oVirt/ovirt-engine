@@ -323,6 +323,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}: The following disks are locked: ${diskAliases}. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_DISKS_LOCKED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following disks already exist: ${diskAliases}. Please import as a clone.")
+    String ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}: VM is locked. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_VM_IS_LOCKED();
 
