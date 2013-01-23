@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -154,6 +155,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         if (!(checkVmInStorageDomain()
+                && validate(new StoragePoolValidator(getStoragePool()).isUp())
                 && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
                 && validate(new VmValidator(getVm()).vmDown())

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -217,6 +218,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         if (vmDisk != null) {
             result =
                     result
+                            && validate(new StoragePoolValidator(getStoragePool()).isUp())
                             && ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),

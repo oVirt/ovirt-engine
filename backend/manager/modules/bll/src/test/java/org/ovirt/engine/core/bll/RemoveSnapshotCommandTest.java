@@ -17,12 +17,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 
 /** A test case for the {@link RemoveSnapshotCommand} class. */
@@ -39,6 +42,9 @@ public class RemoveSnapshotCommandTest {
     private DiskImageDAO diskImageDAO;
 
     @Mock
+    private StoragePoolDAO spDao;
+
+    @Mock
     private SnapshotsValidator snapshotValidator;
 
     @Before
@@ -48,6 +54,7 @@ public class RemoveSnapshotCommandTest {
 
         RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
         cmd = spy(new RemoveSnapshotCommand<RemoveSnapshotParameters>(params));
+        doReturn(spDao).when(cmd).getStoragePoolDAO();
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
         doReturn(diskImageDAO).when(cmd).getDiskImageDao();
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
@@ -79,9 +86,15 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testCanDoActionVmUp() {
+        Guid spId = Guid.NewGuid();
         VM vm = new VM();
         vm.setId(Guid.NewGuid());
         vm.setStatus(VMStatus.Up);
+        vm.setStoragePoolId(spId);
+
+        storage_pool sp = new storage_pool();
+        sp.setId(spId);
+        sp.setstatus(StoragePoolStatus.Up);
 
         cmd.setSnapshotName("someSnapshot");
         doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotDuringSnapshot(any(Guid.class));
@@ -89,6 +102,7 @@ public class RemoveSnapshotCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(Guid.class), any(Guid.class));
         doReturn(true).when(cmd).validateImagesAndVMStates();
         doReturn(vm).when(cmd).getVm();
+        doReturn(sp).when(spDao).get(spId);
         doReturn(Collections.emptyList()).when(cmd).getSourceImages();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }

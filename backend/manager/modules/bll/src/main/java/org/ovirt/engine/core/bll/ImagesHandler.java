@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -440,16 +438,6 @@ public final class ImagesHandler {
         return result;
     }
 
-
-    public static boolean isStoragePoolValid(Guid storagePoolId) {
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
-        if (pool == null || pool.getstatus() != StoragePoolStatus.Up) {
-             return false;
-        }
-        return true;
-    }
-
-
     public static boolean PerformImagesChecks(
             List<String> messages,
             Guid storagePoolId,
@@ -463,12 +451,6 @@ public final class ImagesHandler {
             Collection<? extends Disk> diskImageList) {
 
         boolean returnValue = true;
-
-        if (checkIsValid && !isStoragePoolValid(storagePoolId)) {
-                returnValue = false;
-                ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND.toString());
-        }
-
         List<DiskImage> images = filterImageDisks(diskImageList, true, false);
         if (returnValue && checkImagesLocked) {
             returnValue = checkImagesLocked(messages, images);

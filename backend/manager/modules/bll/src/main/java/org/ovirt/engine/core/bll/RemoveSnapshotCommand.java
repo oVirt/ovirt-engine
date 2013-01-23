@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -50,6 +51,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 setSnapshotName(snapshot.getDescription());
             }
         }
+        setStoragePoolId(getVm().getStoragePoolId());
     }
 
     @Override
@@ -161,7 +163,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean canDoAction() {
         initializeObjectState();
 
-        if (!validateVmNotDuringSnapshot() ||
+        if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
+                !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validate(new VmValidator(getVm()).vmDown()) ||

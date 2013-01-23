@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -105,6 +108,15 @@ public class VmRunHandler {
                         if (!vmDuringSnapshotResult.isValid()) {
                             message.add(vmDuringSnapshotResult.getMessage().name());
                             retValue = false;
+                        }
+
+                        if (retValue) {
+                            storage_pool sp = getStoragePoolDAO().get(vm.getStoragePoolId());
+                            ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+                            if (!spUpResult.isValid()) {
+                                message.add(spUpResult.getMessage().name());
+                                retValue = false;
+                            }
                         }
 
                         if (retValue && !performImageChecksForRunningVm(vm, message, runParams, vmDisks)) {
@@ -355,5 +367,9 @@ public class VmRunHandler {
 
     protected StorageDomainDAO getStorageDomainDAO() {
         return DbFacade.getInstance().getStorageDomainDao();
+    }
+
+    protected StoragePoolDAO getStoragePoolDAO() {
+        return DbFacade.getInstance().getStoragePoolDao();
     }
 }

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -425,6 +426,7 @@ public class AddDiskToVmCommandTest {
         storage_pool storagePool = new storage_pool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);
+        storagePool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -140,7 +142,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 canAddShareableDisk();
 
         if (returnValue && vm != null) {
-            returnValue = isStoragePoolMatching(vm) &&
+            storage_pool sp = getStoragePool(); // Note this is done according to the VM's spId.
+            returnValue =
+                    validate(new StoragePoolValidator(sp).isUp()) &&
+                    isStoragePoolMatching(vm) &&
                     performImagesChecks(vm.getStoragePoolId()) &&
                     validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId())) &&
                     validate(getSnapshotValidator().vmNotInPreview(vm.getId())) &&

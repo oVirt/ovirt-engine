@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
@@ -174,7 +176,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise, <c>false</c>.
      */
     protected static boolean isVmFree(Guid vmId, java.util.ArrayList<String> messages) {
-        boolean returnValue;
+        boolean returnValue = true;
 
         // check that there isn't another user already attached to this VM:
         if (vmAssignedToUser(vmId, messages)) {
@@ -202,7 +204,16 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
                 Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
                 VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-                returnValue =
+                storage_pool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
+
+                ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+                if (!spUpResult.isValid()) {
+                    messages.add(spUpResult.getMessage().name());
+                    returnValue = false;
+                }
+
+                if (returnValue) {
+                    returnValue =
                         ImagesHandler.PerformImagesChecks(
                                 messages,
                                 vm.getStoragePoolId(),
@@ -214,6 +225,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                                 !Guid.Empty.equals(storageDomainId),
                                 true,
                                 disks);
+                }
 
                 if (returnValue) {
                     ValidationResult vmNotLockResult = new VmValidator(vm).vmNotLocked();

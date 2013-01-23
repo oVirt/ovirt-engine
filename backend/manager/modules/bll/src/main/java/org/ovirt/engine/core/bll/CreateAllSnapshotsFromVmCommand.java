@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -284,8 +285,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         boolean result = validateVM(vmValidator);
         List<DiskImage> disksList = getDisksList();
         if (result && disksList.size() > 0) {
+            StoragePoolValidator spValidator = new StoragePoolValidator(getStoragePool());
             SnapshotsValidator snapshotValidator = new SnapshotsValidator();
-            result = validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
+            result = validate(spValidator.isUp())
+                    && validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                     && validate(snapshotValidator.vmNotInPreview(getVmId()))
                     && validate(vmValidator.vmNotDuringMigration())
                     && validate(vmValidator.vmNotRunningStateless())

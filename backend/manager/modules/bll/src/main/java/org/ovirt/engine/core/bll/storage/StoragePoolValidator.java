@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -58,6 +59,14 @@ public class StoragePoolValidator {
             }
         }
         return hasDefaultCluster;
+    }
+
+    public ValidationResult isUp() {
+        if (storagePool == null || storagePool.getstatus() != StoragePoolStatus.Up) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        }
+
+        return ValidationResult.VALID;
     }
 
 }

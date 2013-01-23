@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -196,6 +197,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 image.setstorage_ids(storageIds);
                 diskInfoDestinationMap.put(image.getId(), image);
             }
+        }
+
+        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+            return false;
         }
 
         for (Guid srcStorageDomainId : sourceImageDomainsImageMap.keySet()) {

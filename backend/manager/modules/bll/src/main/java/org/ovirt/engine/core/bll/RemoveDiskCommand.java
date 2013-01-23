@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -226,6 +228,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         boolean firstTime = true;
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         List<Disk> diskList = Arrays.asList(getDisk());
+
+        if (!listVms.isEmpty()) {
+            storage_pool sp = getStoragePoolDAO().get(listVms.get(0).getStoragePoolId());
+            if (!validate(new StoragePoolValidator(sp).isUp())) {
+                return false;
+            }
+        }
+
         for (VM vm : listVms) {
             if (!validate(snapshotsValidator.vmNotDuringSnapshot(vm.getId())) ||
                     !validate(snapshotsValidator.vmNotInPreview(vm.getId())) ||

@@ -82,6 +82,17 @@ public class StoragePoolValidatorTest {
         assertMessage(result, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
     }
 
+    @Test
+    public void testIsUpdValid() {
+        assertTrue("Storage pool should be up", validator.isUp().isValid());
+    }
+
+    @Test
+    public void testIsUpdInvalid() {
+        storagePool.setstatus(StoragePoolStatus.Problematic);
+        assertMessage(validator.isUp(), VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+    }
+
     private static void assertMessage(ValidationResult result, VdcBllMessages bllMsg) {
         assertEquals("Wrong canDoAction message is returned", bllMsg, result.getMessage());
     }

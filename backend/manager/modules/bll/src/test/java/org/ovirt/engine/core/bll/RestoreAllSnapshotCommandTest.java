@@ -26,10 +26,12 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,6 +40,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockU
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -71,6 +74,9 @@ public class RestoreAllSnapshotCommandTest {
     private StorageDomainDAO storageDomainDAO;
 
     @Mock
+    private StoragePoolDAO storagePoolDAO;
+
+    @Mock
     private SnapshotDao snapshotDao;
 
     @Mock
@@ -80,6 +86,7 @@ public class RestoreAllSnapshotCommandTest {
     private Guid diskImageId = Guid.NewGuid();
     private Guid storageDomainId = Guid.NewGuid();
     private Guid dstSnapshotId = Guid.NewGuid();
+    private Guid spId = Guid.NewGuid();
     private VmDynamic mockDynamicVm;
     private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
@@ -148,6 +155,7 @@ public class RestoreAllSnapshotCommandTest {
     private void mockDaos() {
         mockDiskImageDao();
         mockStorageDomainDao();
+        mockStoragePoolDao();
         mockDynamicVmDao();
         doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
         doReturn(vmNetworkInterfaceDAO).when(spyCommand).getVmNetworkInterfaceDao();
@@ -183,12 +191,21 @@ public class RestoreAllSnapshotCommandTest {
         when(storageDomainDAO.get(storageDomainId)).thenReturn(storageDomains);
     }
 
+    private void mockStoragePoolDao() {
+        storage_pool sp = new storage_pool();
+        sp.setId(spId);
+        sp.setstatus(StoragePoolStatus.Up);
+        when(storagePoolDAO.get(spId)).thenReturn(sp);
+        doReturn(storagePoolDAO).when(spyCommand).getStoragePoolDAO();
+    }
+
     /**
      * Mock a VM.
      */
     private VM mockVm() {
         VM vm = new VM();
         vm.setId(vmId);
+        vm.setStoragePoolId(spId);
         vm.setStatus(VMStatus.Down);
         AuditLogableBaseMockUtils.mockVmDao(spyCommand, vmDAO);
         when(vmDAO.get(vmId)).thenReturn(vm);
