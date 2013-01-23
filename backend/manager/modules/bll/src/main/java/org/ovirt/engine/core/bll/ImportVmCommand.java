@@ -609,6 +609,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                     disk.setvolume_format(diskImageBase.getvolume_format());
                     disk.setvolume_type(diskImageBase.getvolume_type());
                 }
+                setDiskStorageDomainInfo(disk);
+
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
                 if (getParameters().isImportAsNewEntity()) {
@@ -634,6 +636,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
                 disk.setactive(false);
+                setDiskStorageDomainInfo(disk);
+
                 saveImage(disk);
                 snapshotId = disk.getvm_snapshot_id().getValue();
                 saveSnapshotIfNotExists(snapshotId, disk);
@@ -653,6 +657,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             // Update active snapshot's data, since it was inserted as a regular snapshot.
             updateActiveSnapshot(snapshotId);
         }
+    }
+
+    private void setDiskStorageDomainInfo(DiskImage disk) {
+        ArrayList<Guid> storageDomain = new ArrayList<Guid>();
+        storageDomain.add(imageToDestinationDomainMap.get(disk.getId()));
+        disk.setstorage_ids(storageDomain);
     }
 
     /** Saves the base disk object */
