@@ -450,3 +450,8 @@ MSG_ERROR_SPACE = "Not enough free space available."
 MSG_STOP_UPGRADE_SPACE = "Not enough free space available for the upgrade operation.\
 Stopping upgrade.\nIf you would like to perform an upgrade and ignore the space check,\n\
 run the upgrade with --no-space-check option"
+
+MSG_ENABLE_SELINUX = "Error: it seems that SELINUX is currently disabled. It is not \n\
+possible to configure ports redirection without enabling SELINUX first. To enable SELINUX:\n\
+\t1. Edit /etc/selinux/config file, and set the SELINUX mode to permissive or enforcing\n\
+\t2. Restart the system.\n"

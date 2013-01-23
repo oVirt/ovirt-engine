@@ -203,6 +203,18 @@ def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
         controller = Controller()
         utils.setHttpPortsToNonProxyDefault(controller)
     elif retval:
+        # check if selinux enabled. If not - ask a user to enable it first, and
+        # exit if user doesn't want to.
+        logging.debug("Checking SELINUX status")
+        cmd = [
+            basedefs.EXEC_GETENFORCE,
+        ]
+        (out, rc) = utils.execCmd(cmdList=cmd, failOnError=True)
+        if "Disabled" in out:
+            logging.debug("SELINUX was found in disabled mode")
+            print output_messages.MSG_ENABLE_SELINUX
+            return False
+
         #stopping httpd service (in case it's up) when the configuration can be overridden
         logging.debug("stopping httpd service")
         utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()
@@ -581,7 +593,7 @@ def validateIpaAndHttpdStatus(conf):
         paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
         paramToChange.setKey("DEFAULT_VALUE", "no")
     else:
-        if wereHttpdConfFilesChanged:
+        if wereHttpdConfFilesChanged():
             # If conf files were changed, the user should be asked if he really wants to use ports 80/443
             paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
             paramToChange.setKey("USE_DEFAULT", False)
