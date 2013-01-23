@@ -17,7 +17,7 @@
 ###############################################################################################################
 
 #!/bin/bash
-pushd $(dirname ${0})
+pushd $(dirname ${0})>/dev/null
 
 #include db general functions
 source ./dbfunctions.sh
@@ -45,7 +45,7 @@ usage() {
     printf "\t-v            - Turn on verbosity                         (WARNING: lots of output)\n"
     printf "\t-h            - This help text.\n"
     printf "\n"
-    popd
+    popd>/dev/null
     exit $ret
 }
 
@@ -97,7 +97,7 @@ caution() {
         read answer
         if [ "${answer}" = "n" ]; then
            echo "Please contact support for further assistance."
-           popd
+           popd>/dev/null
            exit 1
         fi
     fi
@@ -230,5 +230,5 @@ fi
 
 psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE}
 
-popd
+popd>/dev/null
 exit $?
