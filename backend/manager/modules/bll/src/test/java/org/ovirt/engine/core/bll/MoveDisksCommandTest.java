@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 public class MoveDisksCommandTest {
 
     private final Guid diskImageId = Guid.NewGuid();
+    private final Guid templateDiskImageId = Guid.NewGuid();
     private final Guid srcStorageId = Guid.NewGuid();
     private final Guid dstStorageId = Guid.NewGuid();
 
@@ -126,6 +127,17 @@ public class MoveDisksCommandTest {
     }
 
     @Test
+    public void liveMigrateDiskBasedOnTemplate() {
+        command.getParameters().setParametersList(createMoveDisksParameters());
+
+        initDiskImageBasedOnTemplate(diskImageId);
+        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+
+        assertTrue(command.canDoAction());
+        assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
+    }
+
+    @Test
     public void moveDiskAndLiveMigrateDisk() {
         Guid diskImageId1 = Guid.NewGuid();
         Guid diskImageId2 = Guid.NewGuid();
@@ -156,9 +168,21 @@ public class MoveDisksCommandTest {
     }
 
     private void initDiskImage(Guid diskImageId) {
+        DiskImage diskImage = mockDiskImage(diskImageId);
+        when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
+    }
+
+    private void initDiskImageBasedOnTemplate(Guid diskImageId) {
+        DiskImage diskImage = mockDiskImage(diskImageId);
+        diskImage.setParentId(templateDiskImageId);
+        when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
+    }
+
+    private DiskImage mockDiskImage(Guid diskImageId) {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(diskImageId);
-        when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
+
+        return diskImage;
     }
 
     /** Mock DAOs */

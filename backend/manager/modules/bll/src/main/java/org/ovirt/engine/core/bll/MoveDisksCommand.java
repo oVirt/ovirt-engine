@@ -87,7 +87,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
      */
     private boolean updateParameters() {
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageDao().getAncestor(moveDiskParameters.getImageId());
+            DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
             if (diskImage == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
             }
