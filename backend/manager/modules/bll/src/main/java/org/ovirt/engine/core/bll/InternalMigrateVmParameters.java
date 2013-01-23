@@ -11,7 +11,7 @@ public class InternalMigrateVmParameters extends VmOperationParameterBase {
     }
 
     public InternalMigrateVmParameters(Guid vmId) {
-        super(vmId);
-        setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+        this();
+        setVmId(vmId);
     }
 }
