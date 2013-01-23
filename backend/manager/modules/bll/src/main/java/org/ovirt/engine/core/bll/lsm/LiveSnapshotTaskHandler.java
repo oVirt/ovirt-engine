@@ -48,7 +48,6 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
         for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
             updateDestinationImageId(parameters);
-            ImagesHandler.updateImageStatus(parameters.getDestinationImageId(), ImageStatus.LOCKED);
         }
 
         ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), true);

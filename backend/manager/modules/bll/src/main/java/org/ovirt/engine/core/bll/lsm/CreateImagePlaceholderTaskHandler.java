@@ -22,7 +22,8 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
 
     @Override
     protected void beforeTask() {
-        // No-op before the sync image command in the database side
+        ImagesHandler.updateImageStatus(
+                getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.LOCKED);
     }
 
     @Override
