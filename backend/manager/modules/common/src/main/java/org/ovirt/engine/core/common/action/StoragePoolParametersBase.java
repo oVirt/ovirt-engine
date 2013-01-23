@@ -16,6 +16,11 @@ public class StoragePoolParametersBase extends VdcActionParametersBase {
         setStoragePoolId(storagePoolId);
     }
 
+    public StoragePoolParametersBase(Guid storagePoolId, Guid vdsId) {
+        this(storagePoolId);
+        this.vdsId = vdsId;
+    }
+
     public Guid getVdsId() {
         return vdsId;
     }

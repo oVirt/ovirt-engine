@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.MaintananceVdsParameters;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmsComparer;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -189,21 +189,19 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         if (!Guid.Empty.equals(vds.getStoragePoolId())) {
             clearDomainCache(vds);
 
-            if (StoragePoolStatus.Uninitialized != DbFacade.getInstance()
+            storage_pool storage_pool = DbFacade.getInstance()
                     .getStoragePoolDao()
-                    .get(vds.getStoragePoolId())
-                    .getstatus()
-                    && Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.DisconnectStoragePool,
-                                    new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                            vds.getStoragePoolId(), vds.getvds_spm_id())).getSucceeded()) {
-                StoragePoolParametersBase tempVar = new StoragePoolParametersBase(vds.getStoragePoolId());
-                tempVar.setVdsId(vds.getId());
-                tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, tempVar);
+                    .get(vds.getStoragePoolId());
+            if (StoragePoolStatus.Uninitialized != storage_pool
+                    .getstatus()) {
+                Backend.getInstance().getResourceManager()
+                        .RunVdsCommand(
+                                VDSCommandType.DisconnectStoragePool,
+                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                        vds.getStoragePoolId(), vds.getvds_spm_id()));
+                HostStoragePoolParametersBase params =
+                        new HostStoragePoolParametersBase(storage_pool, vds);
+                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
             }
         }
     }

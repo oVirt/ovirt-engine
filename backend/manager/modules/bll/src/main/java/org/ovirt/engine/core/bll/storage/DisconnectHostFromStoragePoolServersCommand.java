@@ -4,18 +4,21 @@ import java.util.HashMap;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 @InternalCommandAttribute
-public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolParametersBase> extends
-        ConnectHostToStoragePooServerCommandBase<T> {
-    public DisconnectHostFromStoragePoolServersCommand(T parameters) {
+@NonTransactiveCommandAttribute
+public class DisconnectHostFromStoragePoolServersCommand extends
+        ConnectHostToStoragePooServerCommandBase<HostStoragePoolParametersBase> {
+
+    public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
+        setStoragePool(parameters.getStoragePool());
+        setVds(parameters.getVds());
     }
 
     @Override
@@ -66,15 +69,5 @@ public class DisconnectHostFromStoragePoolServersCommand<T extends StoragePoolPa
                                 getExportConnections());
             }
         }
-    }
-
-    @Override
-    protected boolean canDoAction() {
-        boolean returnValue = checkStoragePool()
-                && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Uninitialized,
-                                                  VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
-                && InitializeVds();
-        return returnValue;
-
     }
 }

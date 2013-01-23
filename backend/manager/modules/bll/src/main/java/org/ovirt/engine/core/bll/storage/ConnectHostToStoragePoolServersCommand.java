@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
@@ -19,11 +19,13 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  */
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class ConnectHostToStoragePoolServersCommand<T extends StoragePoolParametersBase> extends
-        ConnectHostToStoragePooServerCommandBase<T> {
+public class ConnectHostToStoragePoolServersCommand extends
+        ConnectHostToStoragePooServerCommandBase<HostStoragePoolParametersBase> {
 
-    public ConnectHostToStoragePoolServersCommand(T parameters) {
+    public ConnectHostToStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
+        setStoragePool(parameters.getStoragePool());
+        setVds(parameters.getVds());
     }
 
     @Override
