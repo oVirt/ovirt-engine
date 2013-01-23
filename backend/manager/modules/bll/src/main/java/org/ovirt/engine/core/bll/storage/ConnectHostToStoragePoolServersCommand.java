@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -10,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.VdcBllMessages;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -30,56 +31,27 @@ public class ConnectHostToStoragePoolServersCommand extends
 
     @Override
     protected void executeCommand() {
-        setSucceeded(ConnectStorageServer(getStoragePool().getstorage_pool_type(), getConnections()));
+        InitConnectionList();
+        setSucceeded(connectStorageServer(getStoragePool().getstorage_pool_type(), getConnections()));
 
         if (getNeedToConnectIso()) {
-            if (!ConnectStorageServer(getIsoType(), getIsoConnections())) {
+            if (!connectStorageServer(getIsoType(), getIsoConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Iso domain/s connections", getVds()
                         .getvds_name(), getStoragePool().getname());
             }
         }
         if (getNeedToConnectExport()) {
-            if (!ConnectStorageServer(getExportType(), getExportConnections())) {
+            if (!connectStorageServer(getExportType(), getExportConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Export domain/s connections", getVds()
                         .getvds_name(), getStoragePool().getname());
             }
         }
     }
 
-    @Override
-    protected boolean canDoAction() {
-        boolean returnValue = true;
-        InitConnectionList();
-        if (!ValidConnection(getStoragePool().getstorage_pool_type(), getConnections())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
-            returnValue = false;
-        } else {
-            if (getIsoConnections() != null && getIsoConnections().size() != 0) {
-                setNeedToConnectIso(ValidConnection(getIsoType(), getIsoConnections()));
-                if (!getNeedToConnectIso()) {
-                    log.infoFormat(
-                            "Failed to validated connections for host {0} to StoragePool {1} Iso domain/s connections",
-                            getVds().getvds_name(),
-                            getStoragePool().getname());
-                }
-            }
-            if (getExportConnections() != null && getExportConnections().size() != 0) {
-                setNeedToConnectExport(ValidConnection(getExportType(), getExportConnections()));
-                if (!getNeedToConnectExport()) {
-                    log.infoFormat(
-                            "Failed to validated connections for host {0} to StoragePool {1} Export domain/s connections",
-                            getVds().getvds_name(),
-                            getStoragePool().getname());
-                }
-            }
-        }
-        return returnValue;
-    }
-
-    protected boolean ConnectStorageServer(StorageType type, List<StorageServerConnections> connections) {
+    private boolean connectStorageServer(StorageType type, List<StorageServerConnections> connections) {
         boolean connectSucceeded = true;
         if (connections != null && connections.size() > 0) {
-            java.util.HashMap<String, String> retValues = (java.util.HashMap<String, String>) Backend
+            Map<String, String> retValues = (HashMap<String, String>) Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
@@ -93,10 +65,4 @@ public class ConnectHostToStoragePoolServersCommand extends
         }
         return connectSucceeded;
     }
-
-    protected boolean ValidConnection(StorageType type, List<StorageServerConnections> connections) {
-        return (connections != null && (connections.isEmpty() || StorageHelperDirector.getInstance().getItem(type)
-                .validateStoragePoolConnectionsInHost(getVds(), connections, getStoragePool().getId())));
-    }
-
 }
