@@ -53,7 +53,7 @@ public class JndiAction implements PrivilegedAction {
 
         // Send an SRV record DNS query to retrieve all the LDAP servers in the domain
         LdapSRVLocator locator = new LdapSRVLocator();
-        if (ldapDnsResult == null) {
+        if (ldapDnsResult == null || !ldapDnsResult.getDomainName().equals(domainName)) {
             try {
                 ldapDnsResult = locator.getLdapServers(domainName);
             } catch (Exception ex) {

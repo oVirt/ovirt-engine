@@ -15,9 +15,7 @@ public class KDCLocator extends DnsSRVLocator {
 
     }
 
-    public DnsSRVResult getKdc(String[] records) {
-        return getSRVResult(records);
-
+    public DnsSRVResult getKdc(String[] records, String realmName) {
+        return getSRVResult(realmName, records);
     }
-
 }

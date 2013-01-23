@@ -20,9 +20,8 @@ public class LdapSRVLocator extends DnsSRVLocator {
 
     }
 
-    public DnsSRVResult getLdapServers(String[] records) {
-        return getSRVResult(records);
-
+    public DnsSRVResult getLdapServers(String[] records, String domainName) {
+        return getSRVResult(domainName, records);
     }
 
 }

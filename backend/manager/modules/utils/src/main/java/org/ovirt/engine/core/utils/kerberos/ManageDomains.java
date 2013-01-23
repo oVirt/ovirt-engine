@@ -57,7 +57,6 @@ public class ManageDomains {
     private ManageDomainsDAOImpl daoImpl;
     private boolean reportAllErrors;
     private boolean addPermissions;
-    private DnsSRVResult ldapDnsResult;
     private boolean useDnsLookup;
 
     private final static Logger log = Logger.getLogger(ManageDomains.class);
@@ -400,7 +399,8 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypeEntry,
                 false,
-                true);
+                true,
+                null);
     }
 
     public void getConfiguration() {
@@ -433,7 +433,7 @@ public class ManageDomains {
         if (domainNameEntry.doesDomainExist(domainName)) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_ALREADY_EXISTS_IN_CONFIGURATION, domainName);
         }
-        ldapDnsResult = validateLdapServers(domainName);
+        DnsSRVResult ldapDnsResult = validateLdapServers(domainName);
         validateKdcServers(authMode,domainName);
         domainNameEntry.setValueForDomain(domainName, null);
 
@@ -475,7 +475,8 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypesEntry,
                 true,
-                false);
+                false,
+                ldapDnsResult);
 
         handleAddPermissions(domainName, adUserNameEntry, adUserIdEntry);
 
@@ -528,7 +529,7 @@ public class ManageDomains {
         String authMode;
         String domainName = parser.getArg(Arguments.domain.toString()).toLowerCase();
         authMode = getDomainAuthMode(domainName);
-        ldapDnsResult = validateLdapServers(domainName);
+        DnsSRVResult ldapDnsResult = validateLdapServers(domainName);
         validateKdcServers(authMode,domainName);
         String currentDomains = configurationProvider.getConfigValue(ConfigValues.DomainName);
         String userName  = parser.getArg(Arguments.user.toString());
@@ -586,7 +587,8 @@ public class ManageDomains {
                 adUserIdEntry,
                 ldapProviderTypeEntry,
                 true,
-                false);
+                false,
+                ldapDnsResult);
 
         handleAddPermissions(domainName,adUserNameEntry, adUserIdEntry);
 
@@ -631,7 +633,8 @@ public class ManageDomains {
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderTypes,
             String kerberosConfigFile,
-            boolean isValidate) throws ManageDomainsResult {
+            boolean isValidate,
+            DnsSRVResult ldapDnsResult) throws ManageDomainsResult {
 
         Set<Entry<String, String>> gssapiDomainValues = gssapiDomains.getValues();
 
@@ -755,7 +758,8 @@ public class ManageDomains {
             DomainsConfigurationEntry userIds,
             DomainsConfigurationEntry ldapProviderType,
             boolean reconfigure,
-            boolean isValidate) throws ManageDomainsResult {
+            boolean isValidate,
+            DnsSRVResult ldapDnsResult) throws ManageDomainsResult {
 
         Set<Entry<String, String>> domainValues = domains.getValues();
 
@@ -801,7 +805,8 @@ public class ManageDomains {
                     userIds,
                     ldapProviderType,
                     kerberosConfigFile,
-                    isValidate);
+                    isValidate,
+                    ldapDnsResult);
             if (domainIsGssapi && reconfigure) {
                 applyKerberosConfiguration();
             }

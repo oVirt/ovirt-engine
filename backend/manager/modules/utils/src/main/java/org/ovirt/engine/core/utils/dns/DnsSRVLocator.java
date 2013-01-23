@@ -149,12 +149,18 @@ public class DnsSRVLocator {
     }
 
     public static class DnsSRVResult {
+        String domainName;
         private int numOfValidAddresses;
         private String[] addresses;
 
-        public DnsSRVResult(int numOfValidAddresses, String[] addresses) {
+        public DnsSRVResult(String domainName, int numOfValidAddresses, String[] addresses) {
+            this.domainName = domainName;
             this.numOfValidAddresses = numOfValidAddresses;
             this.addresses = addresses;
+        }
+
+        public String getDomainName() {
+            return domainName;
         }
 
         public int getNumOfValidAddresses() {
@@ -171,7 +177,7 @@ public class DnsSRVLocator {
         dnsQuery.append(service).append(".").append(protocol).append(".").append(domain);
 
         try {
-            return getService(dnsQuery.toString());
+            return getService(domain, dnsQuery.toString());
         } catch (Exception ex) {
             log.errorFormat("Error: could not find DNS SRV record name: {0}.{1}.{2}.\nException message is: {3}\n" +
                     "Possible causes: missing DNS entries in the DNS server or DNS resolving" +
@@ -185,7 +191,7 @@ public class DnsSRVLocator {
         }
     }
 
-    private DnsSRVResult getService(String dnsUrl) throws NamingException {
+    private DnsSRVResult getService(String domainName, String dnsUrl) throws NamingException {
         Context ctx = NamingManager.getURLContext("dns", new Hashtable(0));
 
         if (!(ctx instanceof DirContext)) {
@@ -211,10 +217,10 @@ public class DnsSRVLocator {
             records[counter] = (String) attr.get(counter);
         }
 
-        return getSRVResult(records);
+        return getSRVResult(domainName, records);
     }
 
-    public DnsSRVResult getSRVResult(String[] recordsList) {
+    public DnsSRVResult getSRVResult(String domainName, String[] recordsList) {
         int numOfRecords = recordsList.length;
         if (recordsList == null || numOfRecords == 0) {
             return null;
@@ -267,7 +273,7 @@ public class DnsSRVLocator {
         // addresses array
         // Increase it by 1 in order to truely reflect the number of valid
         // addresses
-        return new DnsSRVResult(numOfAddreses + 1, addresses);
+        return new DnsSRVResult(domainName, numOfAddreses + 1, addresses);
     }
 
     private int fillServiceAddress(SrvRecord[] records,
@@ -321,6 +327,11 @@ public class DnsSRVLocator {
             int weight = s.nextInt();
             String port = s.next();
             String host = s.next();
+            //Remove the "root DNS" part from the host name
+            //if exists as "." at the end of the host name
+            if (host.lastIndexOf(".") == host.length() -1) {
+                host = host.substring(0, host.length() - 1);
+            }
             StringBuilder sb = new StringBuilder(host);
             sb.append(":").append(port);
             return new SrvRecord(priority, weight, sb.toString());
@@ -334,7 +345,7 @@ public class DnsSRVLocator {
     }
 
     public URI constructURI(String protocol, String address) throws URISyntaxException {
-        String[] parts = address.split("\\.:");
+        String[] parts = address.split("\\:");
         if (parts.length != 2) {
             throw new IllegalArgumentException("the address in SRV record should contain host and port");
         }

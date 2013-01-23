@@ -15,7 +15,7 @@ public class KDCLocatorTest {
         String[] recordsList =
                 { "0 100 88 example.com.", "0 100 88 comp1.example.com",
                         "1 100 88 comp1.example.com." };
-        DnsSRVResult result = locator.getKdc(recordsList);
+        DnsSRVResult result = locator.getKdc(recordsList, "example.com");
         int numOfEntries = result.getNumOfValidAddresses();
         Assert.assertEquals(numOfEntries, 3);
         String[] entries = result.getAddresses();
