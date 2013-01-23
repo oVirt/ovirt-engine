@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
@@ -94,6 +95,11 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
             List<VM> allVms = getVmDAO().getVmsListForDisk(diskImage.getId());
             VM vm = !allVms.isEmpty() ? allVms.get(0) : null;
+            SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+
+            if (vm != null && !validate(snapshotsValidator.vmNotInPreview(vm.getId()))) {
+                return false;
+            }
 
             if (vm == null || isVmDown(vm)) {
                 moveParametersList.add(moveDiskParameters);
