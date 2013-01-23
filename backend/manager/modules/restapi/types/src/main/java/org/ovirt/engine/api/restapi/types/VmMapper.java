@@ -99,6 +99,7 @@ public class VmMapper {
         staticVm.setPriority(entity.getPriority());
         staticVm.setUsbPolicy(entity.getUsbPolicy());
         staticVm.setTunnelMigration(entity.getTunnelMigration());
+        staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
         return staticVm;
     }
 
@@ -201,6 +202,13 @@ public class VmMapper {
             }
             if (vm.getDisplay().isSetSmartcardEnabled()) {
                 staticVm.setSmartcardEnabled(vm.getDisplay().isSmartcardEnabled());
+            }
+            if (vm.getDisplay().isSetKeyboardLayout()) {
+                String layout = vm.getDisplay().getKeyboardLayout();
+                if (layout.isEmpty()) {
+                    layout = null;  // uniquely represent unset keyboard layout as null
+                }
+                staticVm.setVncKeyboardLayout(layout);
             }
         }
         if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetAffinity()) {
@@ -369,6 +377,7 @@ public class VmMapper {
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
+            model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
         }
         model.setType(map(entity.getVmType(), null));
         model.setStateless(entity.isStateless());

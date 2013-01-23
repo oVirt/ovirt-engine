@@ -65,6 +65,7 @@ public class TemplateMapperTest
         assertEquals(model.getDisplay().getType(), transform.getDisplay().getType());
         assertEquals(model.getDisplay().getMonitors(), transform.getDisplay().getMonitors());
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());
+        assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());

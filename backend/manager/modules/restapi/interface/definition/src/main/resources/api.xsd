@@ -1978,6 +1978,7 @@
       <xs:element name="allow_override" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="certificate" minOccurs="0" maxOccurs="1"/>
       <xs:element name="smartcard_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="keyboard_layout" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

@@ -113,6 +113,13 @@ public class TemplateMapper {
             if (model.getDisplay().isSetSmartcardEnabled()) {
                 entity.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
             }
+            if (model.getDisplay().isSetKeyboardLayout()) {
+                String layout = model.getDisplay().getKeyboardLayout();
+                if (layout.isEmpty()) {
+                    layout = null;  // uniquely represent unset keyboard layout as null
+                }
+                entity.setVncKeyboardLayout(layout);
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             entity.setDomain(model.getDomain().getName());
@@ -211,6 +218,13 @@ public class TemplateMapper {
             if (model.getDisplay().isSmartcardEnabled()) {
                 staticVm.setSmartcardEnabled(model.getDisplay().isSmartcardEnabled());
             }
+            if (model.getDisplay().isSetKeyboardLayout()) {
+                String layout = model.getDisplay().getKeyboardLayout();
+                if (layout.isEmpty()) {
+                    layout = null;  // uniquely represent unset keyboard layout as null
+                }
+                staticVm.setVncKeyboardLayout(layout);
+            }
         }
         if (model.isSetDomain() && model.getDomain().isSetName()) {
             staticVm.setDomain(model.getDomain().getName());
@@ -283,6 +297,7 @@ public class TemplateMapper {
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setAllowOverride(entity.isAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
+            model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
         }
         if (entity.getCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));

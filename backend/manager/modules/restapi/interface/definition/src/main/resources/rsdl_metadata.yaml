@@ -56,6 +56,7 @@ actions:
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
+          vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
@@ -97,6 +98,7 @@ actions:
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
+          vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.memory: xs:long
@@ -2161,6 +2163,7 @@ actions:
           template.display.monitors: xs:int
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
+          template.display.keyboard_layout: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
@@ -2198,6 +2201,7 @@ actions:
           template.display.monitors: xs:int
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
+          template.display.keyboard_layout: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string

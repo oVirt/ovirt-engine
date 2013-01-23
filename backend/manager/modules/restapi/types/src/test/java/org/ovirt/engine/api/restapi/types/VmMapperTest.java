@@ -110,6 +110,7 @@ public class VmMapperTest extends
         assertEquals(model.getDomain().getName(), transform.getDomain().getName());
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
+        assertEquals(model.getDisplay().getKeyboardLayout(), transform.getDisplay().getKeyboardLayout());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
         assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
     }
