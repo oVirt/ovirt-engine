@@ -2,11 +2,9 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.Map;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
@@ -16,15 +14,15 @@ public class Domain {
 
     private String name; // domain name
     private RootDSE rootDSE; // rootDSE for domain
-    private Map<URI, ScorableLDAPServer> ldapServers = new HashMap<URI, ScorableLDAPServer>(); // LDAP servers that match
+    private List<URI> ldapServers = new LinkedList<URI>(); // LDAP servers that match
     private LdapProviderType ldapProviderType;
     private LDAPSecurityAuthentication ldapSecurityAuthentication;
     private String userName;
     private String password;
-    private ReentrantLock lock = new ReentrantLock();
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     // for this
-    private final static Log log = LogFactory.getLog(ScorableLDAPServer.class);
+    private final static Log log = LogFactory.getLog(Domain.class);
 
     public Domain(String domainName) {
         name = domainName;
@@ -51,37 +49,27 @@ public class Domain {
     }
 
     public void setLdapServers(List<URI> ldapServersURIs) {
-        for (URI uri : ldapServersURIs) {
-            ldapServers.put(uri, new ScorableLDAPServer(uri));
+        lock.writeLock().lock();
+        try {
+            this.ldapServers = ldapServersURIs;
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     public List<URI> getLdapServers() {
-        List<ScorableLDAPServer> ldapServersCopy = new ArrayList<ScorableLDAPServer>(ldapServers.values());
-        Collections.sort(ldapServersCopy);
-
-        List<URI> servers = new ArrayList<URI>();
-        for (ScorableLDAPServer server : ldapServersCopy) {
-            servers.add(server.getURI());
-        }
-        return servers;
-    }
-
-    public void scoreLdapServer(URI ldapURI, Score score) {
-        ScorableLDAPServer server = ldapServers.get(ldapURI);
-        if (server != null) {
-            server.setScore(score.getValue());
-            if (log.isDebugEnabled()) {
-                log.debug("LDAP server " + ldapURI.toString() + " has been scored " + score);
-            }
+        lock.readLock().lock();
+        try {
+            return new ArrayList<URI>(ldapServers);
+        } finally {
+            lock.readLock().unlock();
         }
     }
 
     public void addLDAPServer(URI uri) {
-        if (uri != null) {
-            ldapServers.put(uri, new ScorableLDAPServer(uri));
-        }
+        ldapServers.add(uri);
     }
+
 
     public LDAPSecurityAuthentication getLdapSecurityAuthentication() {
         return ldapSecurityAuthentication;
@@ -107,7 +95,7 @@ public class Domain {
         this.password = password;
     }
 
-    public ReentrantLock getLock() {
+    public ReentrantReadWriteLock getLock() {
         return lock;
     }
 

@@ -1,16 +1,14 @@
 package org.ovirt.engine.core.bll.adbroker;
 
+import org.ovirt.engine.core.bll.adbroker.serverordering.OrderingAlgorithmType;
+
 public class LdapSearchExceptionHandlingResponse {
     private boolean tryNextServer;
-    private Score serverScore;
     private Exception translatedException;
+    private OrderingAlgorithmType orderingAlgorithm;
 
     public boolean isTryNextServer() {
         return tryNextServer;
-    }
-
-    public Score getServerScore() {
-        return serverScore;
     }
 
     public Exception getTranslatedException() {
@@ -22,13 +20,18 @@ public class LdapSearchExceptionHandlingResponse {
         return this;
     }
 
-    public LdapSearchExceptionHandlingResponse setServerScore(Score serverScore) {
-        this.serverScore = serverScore;
-        return this;
-    }
 
     public LdapSearchExceptionHandlingResponse setTranslatedException(Exception translatedException) {
         this.translatedException = translatedException;
+        return this;
+    }
+
+    public OrderingAlgorithmType getOrderingAlgorithm() {
+        return orderingAlgorithm;
+    }
+
+    public LdapSearchExceptionHandlingResponse setOrderingAlgorithm(OrderingAlgorithmType orderingAlgorithm) {
+        this.orderingAlgorithm = orderingAlgorithm;
         return this;
     }
 }

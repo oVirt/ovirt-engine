@@ -6,6 +6,7 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.adbroker.serverordering.OrderingAlgorithmType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
@@ -50,11 +51,11 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     private void handleGeneralException(LdapSearchExceptionHandlingResponse response, Exception e) {
         response.setTranslatedException(e)
                 .setTryNextServer(true)
-                .setServerScore(Score.LOW);
+                .setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST);
     }
 
     private void handleSaslException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
-        response.setServerScore(Score.LOW)
+        response.setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST)
                 .setTranslatedException(new AuthenticationResultException(AuthenticationResult.CONNECTION_ERROR,
                         "General connection problem due to " + cause))
                 .setTryNextServer(true);
@@ -62,7 +63,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
 
     private void handleOperationException(LdapSearchExceptionHandlingResponse response,
             Throwable throwable, LdapCredentials credentials) {
-        response.setServerScore(Score.HIGH)
+        response.setOrderingAlgorithm(OrderingAlgorithmType.NO_OP)
                 .setTranslatedException(new AuthenticationResultException(AuthenticationResult.USER_ACCOUNT_DISABLED_OR_LOCKED,
                         throwable))
                 .setTryNextServer(false);
@@ -72,21 +73,21 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     }
 
     private void handleInterruptException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
-        response.setServerScore(Score.HIGH)
+        response.setOrderingAlgorithm(OrderingAlgorithmType.NO_OP)
                 .setTranslatedException((Exception) cause)
                 .setTryNextServer(false);
     }
 
     private void handleCommunicationException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
         log.error("Error in communicating with LDAP server " + cause.getMessage());
-        response.setServerScore(Score.LOW).setTryNextServer(true).setTranslatedException((Exception) cause);
+        response.setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST).setTryNextServer(true).setTranslatedException((Exception) cause);
     }
 
     private void handleAuthenticationException(LdapSearchExceptionHandlingResponse response) {
         log.error("Ldap authentication failed. Please check that the login name , password and path are correct. ");
         AuthenticationResultException ex =
                 new AuthenticationResultException(AuthenticationResult.OTHER);
-        response.setServerScore(Score.HIGH)
+        response.setOrderingAlgorithm(OrderingAlgorithmType.NO_OP)
                 .setTranslatedException(ex)
                 .setTryNextServer(false);
     }
@@ -98,10 +99,10 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
         case CONNECTION_ERROR:
         case CONNECTION_TIMED_OUT:
         case CLOCK_SKEW_TOO_GREAT:
-            response.setServerScore(Score.LOW).setTryNextServer(true);
+            response.setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST).setTryNextServer(true);
             break;
         default:
-            response.setServerScore(Score.HIGH).setTryNextServer(false);
+            response.setOrderingAlgorithm(OrderingAlgorithmType.NO_OP).setTryNextServer(false);
             break;
         }
     }
@@ -111,7 +112,7 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
                 .setTranslatedException(
                         new AuthenticationResultException(AuthenticationResult.CONNECTION_TIMED_OUT,
                                 "Connection to to server has timed out."))
-                .setServerScore(Score.LOW);
+                .setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST);
     }
 
 }

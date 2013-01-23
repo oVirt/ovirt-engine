@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             new HashMap<String, ConcurrentHashMap<String, UserDomainInfo>>();
     private Map<String, ConcurrentHashMap<String, LdapGroup>> groupsPerDomain =
             new HashMap<String, ConcurrentHashMap<String, LdapGroup>>();
-    private Map<String, URI> ldapServerPerDomain = new HashMap<String, URI>();
+    private Map<String, List<URI>> ldapServerPerDomain = new HashMap<String, List<URI>>();
     private final String DEFAULT_SECURITY_AUTHENTICATION_KEY = "default";
     private Map<String, LDAPSecurityAuthentication> ldapSecurityAuthenticationPerDomain =
             new HashMap<String, LDAPSecurityAuthentication>();
@@ -81,8 +82,16 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
                 URI ldapURI;
 
                 try {
-                    ldapURI = new URI("ldap://" + parts[1].trim() + ":" + ldapPort);
-                    ldapServerPerDomain.put(domain, ldapURI);
+                    String[] ldapServers = parts[1].trim().split(";");
+                    List<URI> uris = ldapServerPerDomain.get(domain);
+                    if (uris == null) {
+                        uris = new ArrayList<URI>();
+                        ldapServerPerDomain.put(domain,uris);
+                    }
+                    for (String ldapServer : ldapServers) {
+                        ldapURI = new URI("ldap://" + ldapServer.trim() + ":" + ldapPort);
+                        uris.add(ldapURI);
+                    }
                 } catch (URISyntaxException e) {
                     log.errorFormat("Failed constructing LDAP server URL for domain {0}", domain);
                 }
@@ -212,10 +221,12 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
 
     private void obtainLDAPServersForDomain(Domain domain) {
 
-        URI ldapServerURI = ldapServerPerDomain.get(domain.getName());
+        List<URI> ldapServers = ldapServerPerDomain.get(domain.getName());
 
-        if (ldapServerURI != null) {
-            domain.addLDAPServer(ldapServerURI);
+        if (ldapServers != null) {
+            for (URI ldapServerURI : ldapServers) {
+                domain.addLDAPServer(ldapServerURI);
+            }
             return;
         }
 
@@ -232,7 +243,7 @@ public class UsersDomainsCacheManagerService implements UsersDomainsCacheManager
             for (int counter = 0; counter < results.getNumOfValidAddresses(); counter++) {
                 String address = results.getAddresses()[counter];
                 try {
-                    URI ldapURI = locator.constructURI("LDAP", address);
+                    URI ldapURI = locator.constructURI("LDAP", address, null);
                     domain.addLDAPServer(ldapURI);
                 } catch (URISyntaxException e) {
                     log.errorFormat("Error in getting LDAP url based on srv record for address {0}", address);

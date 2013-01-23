@@ -54,7 +54,7 @@ public class GetRootDSETask implements Callable<Boolean> {
             // construct a rootDSE object and provide a baseDN that assumes
             // that all users will be under "cn=users"
             if (rootDSE == null) {
-                domainObject.getLock().lock();
+                domainObject.getLock().writeLock().lock();
                 try {
                     rootDSE = domainObject.getRootDSE();
                     if (rootDSE == null) {
@@ -77,7 +77,7 @@ public class GetRootDSETask implements Callable<Boolean> {
                         baseDNExist = true;
                     }
                 } finally {
-                    domainObject.getLock().unlock();
+                    domainObject.getLock().writeLock().unlock();
                 }
             } else {
                 baseDNExist = true;

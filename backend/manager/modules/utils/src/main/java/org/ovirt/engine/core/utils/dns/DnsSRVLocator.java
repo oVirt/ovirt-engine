@@ -5,9 +5,11 @@ package org.ovirt.engine.core.utils.dns;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -333,6 +335,11 @@ public class DnsSRVLocator {
                 host = host.substring(0, host.length() - 1);
             }
             StringBuilder sb = new StringBuilder(host);
+            //Remove the "root DNS" part from the host name
+            //if exists as "." at the end of the host name
+            if (host.lastIndexOf(".") == host.length() -1) {
+                host = host.substring(0, host.length() - 1);
+            }
             sb.append(":").append(port);
             return new SrvRecord(priority, weight, sb.toString());
         } catch (InputMismatchException ex) {
@@ -344,14 +351,32 @@ public class DnsSRVLocator {
         }
     }
 
-    public URI constructURI(String protocol, String address) throws URISyntaxException {
+    public List<String> getServersList(DnsSRVResult result) {
+        List<String> results = new ArrayList<String>();
+        if (result == null) {
+            return null;
+        }
+        for (int counter = 0 ; counter <result.getNumOfValidAddresses(); counter++) {
+            results.add(result.getAddresses()[counter]);
+        }
+        return results;
+    }
+
+    public URI constructURI(String protocol, String address, String defaultLdapSeverPort) throws URISyntaxException {
         String[] parts = address.split("\\:");
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("the address in SRV record should contain host and port");
+        String hostname = address;
+        String port = defaultLdapSeverPort;
+        if (parts.length == 2) {
+                hostname = parts[0];
+                port = parts[1];
+        } else {
+            if (port == null) {
+                throw new IllegalArgumentException("the address in SRV record should contain host and port");
+            }
         }
 
         StringBuilder uriSB = new StringBuilder(protocol);
-        uriSB.append("://").append(parts[0]).append(":").append(parts[1]);
+        uriSB.append("://").append(hostname).append(":").append(port);
         return new URI(uriSB.toString());
     }
 
