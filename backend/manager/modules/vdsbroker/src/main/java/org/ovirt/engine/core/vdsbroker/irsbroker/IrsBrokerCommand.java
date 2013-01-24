@@ -359,7 +359,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         || (domainPoolMap.getstatus() != StorageDomainStatus.InActive && data.getstatus() == StorageDomainStatus.Active)) {
                     DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
                     if (data.getavailable_disk_size() != null && data.getused_disk_size() != null) {
-                        int freePercent = data.getStorageDynamicData().getfreeDiskPercent();
+                        double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
                         int freeDiskInGB = data.getStorageDynamicData().getfreeDiskInGB();
                         AuditLogType type = AuditLogType.UNASSIGNED;
                         boolean spaceThresholdMet =

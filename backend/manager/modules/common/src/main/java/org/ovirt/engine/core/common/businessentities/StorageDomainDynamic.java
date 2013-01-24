@@ -46,15 +46,11 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.usedDiskSize = value;
     }
 
-    public int getfreeDiskPercent() {
-        Integer usedDiskSizeObj = getused_disk_size();
-        Integer availableDiskSizeObj = getavailable_disk_size();
-        int usedDiskSize = usedDiskSizeObj == null ? 0 : usedDiskSizeObj;
-        int availableDiskSize = availableDiskSizeObj == null ? 0 : availableDiskSizeObj;
-
-        int sum = usedDiskSize + availableDiskSize;
-        int val = (sum == 0) ? 0 : (100 - (usedDiskSize * 100) / sum);
-        return val;
+    public double getfreeDiskPercent() {
+        int usedDiskSize = getused_disk_size() == null ? 0 : getused_disk_size();
+        int availableDiskSize = getavailable_disk_size() == null ? 0 : getavailable_disk_size();
+        double totalSize = usedDiskSize + availableDiskSize;
+        return totalSize != 0 ? (availableDiskSize / totalSize) * 100 : 0.0;
     }
 
     public int getfreeDiskInGB() {
