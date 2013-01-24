@@ -18,11 +18,8 @@ def updateProductVersion():
     table from rpm version
     """
     try:
-        # Get rpm version
-        rpmVersion = utils.getRpmVersion(basedefs.ENGINE_RPM_NAME)
-
         # Update new version in vdc_option
-        utils.updateVDCOption("ProductRPMVersion", rpmVersion)
+        utils.updateVDCOption("ProductRPMVersion", utils.getEngineVersion())
 
     except:
         logging.error(traceback.format_exc())

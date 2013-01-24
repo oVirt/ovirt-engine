@@ -62,6 +62,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PACKAGE_NAME=%{name} \\\
 	RPM_VERSION=%{version} \\\
 	RPM_RELEASE_VERSION=%{release} \\\
+	APP_VERSION_DISPLAY=%{version}-%{release} \\\
 	ENGINE_NAME=%{engine_name} \\\
 	LOCALSTATE_DIR=%{_localstatedir} \\\
 	ENGINE_STATE=%{engine_state} \\\
@@ -569,6 +570,7 @@ fi
 # Engine configuration files:
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_etc}/engine.conf
+%{engine_data}/conf/version
 
 # Files needed by the service:
 %config(noreplace) %{_sysconfdir}/security/limits.d/10-ovirt-engine.conf

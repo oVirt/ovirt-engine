@@ -1334,6 +1334,11 @@ def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
 
     return "%s-%s" % (res[0]['version'], res[0]['release'])
 
+def getEngineVersion():
+    # Just read the info from the file
+    with open(basedefs.FILE_ENGINE_VERSION) as version:
+        return version.readline().rstrip('\n')
+
 def installed(rpm):
     try:
         getRpmVersion(rpmName=rpm)

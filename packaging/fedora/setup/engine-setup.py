@@ -1179,7 +1179,7 @@ def _upgradeDB():
         currentDbName = basedefs.DB_NAME
 
         # Update rpm version in vdc options
-        utils.updateVDCOption("ProductRPMVersion", utils.getRpmVersion(basedefs.ENGINE_RPM_NAME))
+        utils.updateVDCOption("ProductRPMVersion", utils.getEngineVersion())
     except:
         # Upgrade failed! we need to restore the old db
         logging.debug("DB upgrade failed, restoring it to a previous state. DB was backed up to %s", dbBackupFile)
@@ -1243,7 +1243,7 @@ def _updateVDCOptions():
             "DataDir":["/usr/share/ovirt-engine", 'text'],
             "SignScriptName":["SignReq.sh", 'text'],
             "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
-            "ProductRPMVersion":[utils.getRpmVersion(basedefs.ENGINE_RPM_NAME), 'text'],
+            "ProductRPMVersion":[utils.getEngineVersion(), 'text'],
             "AdminPassword":[controller.CONF["AUTH_PASS"], 'pass']
         }
     )

@@ -54,6 +54,9 @@ PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib
 APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
 RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
+# Display version
+APP_VERSION_DISPLAY=$(APP_VERSION)
+
 # Release Version; used to create y in <x.x.x-y> numbering.
 # Should be used to create releases.
 RPM_RELEASE_VERSION=1
@@ -408,6 +411,9 @@ install_misc:
 
 	# USB filter:
 	install -m 644 frontend/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
+
+	# Create a version file
+	echo $(APP_VERSION_DISPLAY) > $(DESTDIR)$(DATA_DIR)/conf/version
 
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"

@@ -104,6 +104,7 @@ FILE_OVIRT_HTTPD_CONF="/etc/httpd/conf.d/ovirt-engine.conf"
 FILE_HTTPD_SSL_CONFIG="/etc/httpd/conf.d/ssl.conf"
 FILE_HTTPD_CONF="/etc/httpd/conf/httpd.conf"
 FILE_IMAGE_UPLOADER_CONF="/etc/ovirt-engine/imageuploader.conf"
+FILE_ENGINE_VERSION = "%s/version" % DIR_CONFIG
 
 # File containing the local configuration of the engine:
 FILE_ENGINE_SYSCONFIG="/etc/sysconfig/ovirt-engine"
