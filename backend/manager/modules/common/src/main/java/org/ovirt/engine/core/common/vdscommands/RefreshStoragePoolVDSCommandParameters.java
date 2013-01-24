@@ -35,7 +35,7 @@ public class RefreshStoragePoolVDSCommandParameters extends GetStorageConnection
 
     @Override
     public String toString() {
-        return String.format("%s, masterStorageDomainId=%s, msterVersion=%s",
+        return String.format("%s, masterStorageDomainId=%s, masterVersion=%s",
                 super.toString(),
                 getMasterStorageDomainId(),
                 getMasterVersion());
