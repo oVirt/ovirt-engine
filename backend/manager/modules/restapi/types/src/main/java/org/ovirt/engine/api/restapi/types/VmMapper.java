@@ -98,6 +98,7 @@ public class VmMapper {
         staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
         staticVm.setPriority(entity.getPriority());
         staticVm.setUsbPolicy(entity.getUsbPolicy());
+        staticVm.setTunnelMigration(entity.getTunnelMigration());
         return staticVm;
     }
 
@@ -226,6 +227,9 @@ public class VmMapper {
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
+        }
+        if (vm.isSetTunnelMigration()) {
+            staticVm.setTunnelMigration(vm.isTunnelMigration());
         }
         return staticVm;
     }
@@ -415,6 +419,7 @@ public class VmMapper {
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
         }
+        model.setTunnelMigration(entity.getTunnelMigration());
         return model;
     }
 

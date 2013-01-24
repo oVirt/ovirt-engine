@@ -70,6 +70,7 @@ actions:
           vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
           vm.os.kernel: xs:string
+          vm.tunnel_migration: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
@@ -111,6 +112,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.disks.clone: xs:boolean
+          vm.tunnel_migration: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
@@ -929,7 +931,7 @@ actions:
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
-        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean'}
+        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -942,7 +944,8 @@ actions:
       - mandatoryArguments: {cluster.data_center.id|name: 'xs:string', cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
-        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean'}
+        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
+        cluster.tunnel_migration: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2106,6 +2109,7 @@ actions:
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
+          template.tunnel_migration: xs:boolean
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2142,6 +2146,7 @@ actions:
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
+          template.tunnel_migration: xs:boolean
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}

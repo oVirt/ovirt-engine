@@ -5,7 +5,6 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmType;
-
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
@@ -70,5 +69,6 @@ public class TemplateMapperTest
         assertEquals(model.getTimezone(), transform.getTimezone());
         assertEquals(model.getDisplay().isSmartcardEnabled(), transform.getDisplay().isSmartcardEnabled());
         assertEquals(model.isDeleteProtected(), transform.isDeleteProtected());
+        assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
     }
 }

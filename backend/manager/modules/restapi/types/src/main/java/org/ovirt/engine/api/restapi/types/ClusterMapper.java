@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
+
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -12,14 +14,11 @@ import org.ovirt.engine.api.model.SchedulingPolicyThresholds;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
-
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
 public class ClusterMapper {
 
@@ -67,6 +66,9 @@ public class ClusterMapper {
         if (model.isSetThreadsAsCores()) {
             entity.setCountThreadsAsCores(model.isThreadsAsCores());
         }
+        if (model.isSetTunnelMigration()) {
+            entity.setTunnelMigration(model.isTunnelMigration());
+        }
         return entity;
     }
 
@@ -97,6 +99,7 @@ public class ClusterMapper {
         model.setVirtService(entity.supportsVirtService());
         model.setGlusterService(entity.supportsGlusterService());
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
+        model.setTunnelMigration(entity.isTunnelMigration());
         return model;
     }
 

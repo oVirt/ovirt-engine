@@ -48,6 +48,7 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
                 .isEnabled());
         assertEquals(model.isVirtService(), transform.isVirtService());
         assertEquals(model.isGlusterService(), transform.isGlusterService());
+        assertEquals(model.isTunnelMigration(), transform.isTunnelMigration());
     }
 
     private Mapper<Cluster, VDSGroup> getMapper() {

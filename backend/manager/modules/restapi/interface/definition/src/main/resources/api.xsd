@@ -1072,6 +1072,7 @@
           <xs:element name="virt_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="gluster_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="threads_as_cores" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -1905,6 +1906,7 @@
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics" links, see Devices below -->
         </xs:sequence>
       </xs:extension>
@@ -2107,6 +2109,7 @@
           <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
 
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>

@@ -120,6 +120,9 @@ public class TemplateMapper {
         if (model.isSetTimezone()) {
             entity.setTimeZone(TimeZoneMapping.getWindows(model.getTimezone()));
         }
+        if (model.isSetTunnelMigration()) {
+            entity.setTunnelMigration(model.isTunnelMigration());
+        }
         return entity;
     }
 
@@ -215,6 +218,9 @@ public class TemplateMapper {
         if (model.isSetTimezone()) {
             staticVm.setTimeZone(TimeZoneMapping.getWindows(model.getTimezone()));
         }
+        if (model.isSetTunnelMigration()) {
+            staticVm.setTunnelMigration(model.isTunnelMigration());
+        }
         return staticVm;
     }
 
@@ -296,6 +302,7 @@ public class TemplateMapper {
             model.setUsb(usb);
         }
         model.setTimezone(TimeZoneMapping.getJava(entity.getTimeZone()));
+        model.setTunnelMigration(entity.getTunnelMigration());
         return model;
     }
 
