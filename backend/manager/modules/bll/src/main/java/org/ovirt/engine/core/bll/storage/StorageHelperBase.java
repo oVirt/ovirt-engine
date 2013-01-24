@@ -42,7 +42,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public boolean disconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId,
-                VdcActionType.RemoveStorageServerConnection.getValue());
+                VdcActionType.DisconnectStorageServerConnection.getValue());
     }
 
     @Override
@@ -57,7 +57,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public boolean disconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
         return runConnectionStorageToDomain(storageDomain, vdsId,
-                VdcActionType.RemoveStorageServerConnection.getValue(), lun, Guid.Empty);
+                VdcActionType.DisconnectStorageServerConnection.getValue(), lun, Guid.Empty);
     }
 
     @Override

@@ -700,7 +700,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void CleanConnection(StorageServerConnections connection, Guid hostId) {
 
-        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId), new IFrontendActionAsyncCallback() {
+        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId), new IFrontendActionAsyncCallback() {
             @Override
             public void Executed(FrontendActionAsyncResult result) {
 
@@ -1344,7 +1344,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
-        actionTypes.add(VdcActionType.RemoveStorageServerConnection);
+        actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
@@ -1685,7 +1685,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (nfsConnection != null)
         {
             // Clean nfs connection
-            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+            Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(nfsConnection, hostId),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1846,7 +1846,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     public void PostImportNfsStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message)
     {
-        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
             new StorageServerConnectionParametersBase(nfsConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override

@@ -12,9 +12,9 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
-public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
+public class DisconnectStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
-    public RemoveStorageServerConnectionCommand(T parameters) {
+    public DisconnectStorageServerConnectionCommand(T parameters) {
         super(parameters);
     }
 

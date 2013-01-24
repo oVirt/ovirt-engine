@@ -202,7 +202,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageServerConnectionParametersBase parameter =
                     new StorageServerConnectionParametersBase(context.connection, context.host.getId());
             parameter.setCorrelationId(getCorrelationId());
-            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+            Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
                     parameter,
                     new IFrontendActionAsyncCallback() {
                         @Override
@@ -234,87 +234,6 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             enlistment.Prepared();
         }
     }
-
-    // @Override
-    // public void Prepare(PreparingEnlistment enlistment)
-    // {
-    // VDS host = (VDS) getModel().getSelectedItem();
-    // ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) getModel().getWindow();
-    //
-    // // Activate host.
-    // VdcReturnValueBase returnValue =
-    // Frontend.RunAction(VdcActionType.ActivateVds, new VdsActionParameters(host.getvds_id()));
-    //
-    // if (returnValue == null || !returnValue.getSucceeded())
-    // {
-    // enlistment.ForceRollback();
-    // return;
-    // }
-    //
-    // // Wait for a host to be Up.
-    // for (int i = 0; i <= MaxWaitTries; i++)
-    // {
-    // if (i == MaxWaitTries)
-    // {
-    // enlistment.ForceRollback();
-    // return;
-    // }
-    //
-    // VDS tmpHost = DataProvider.GetHostById(host.getvds_id());
-    // if (tmpHost.getstatus() != VDSStatus.Up)
-    // {
-    // // Wrap Thread.Sleep with try/catch to pass conversion to Java.
-    // try
-    // {
-    // Thread.sleep(WaitInterval);
-    // } catch (InterruptedException e)
-    // {
-    // }
-    // }
-    // else
-    // {
-    // break;
-    // }
-    // }
-    //
-    // // Add storage domain.
-    // storage_server_connections tempVar = new storage_server_connections();
-    // tempVar.setconnection((String) model.getStorage().getPath().getEntity());
-    // tempVar.setstorage_type(StorageType.LOCALFS);
-    // storage_server_connections connection = tempVar;
-    //
-    // storage_domain_static storageDomain = new storage_domain_static();
-    // storageDomain.setstorage_type(StorageType.LOCALFS);
-    // storageDomain.setstorage_domain_type(StorageDomainType.Data);
-    // storageDomain.setstorage_name((String) model.getFormattedStorageName().getEntity());
-    //
-    // returnValue =
-    // Frontend.RunAction(VdcActionType.AddStorageServerConnection,
-    // new StorageServerConnectionParametersBase(connection, host.getvds_id()));
-    //
-    // if (returnValue == null || !returnValue.getSucceeded())
-    // {
-    // // Don't rollback, just throw exception to indicate failure at this step.
-    // enlistment.Done();
-    // }
-    //
-    // storageDomain.setstorage((String) returnValue.getActionReturnValue());
-    //
-    // StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
-    // tempVar2.setVdsId(host.getvds_id());
-    // returnValue = Frontend.RunAction(VdcActionType.AddLocalStorageDomain, tempVar2);
-    //
-    // // Clean up connection.
-    // if (returnValue == null || !returnValue.getSucceeded())
-    // {
-    // Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
-    // new StorageServerConnectionParametersBase(connection, host.getvds_id()));
-    //
-    // enlistment.Done();
-    // }
-    //
-    // enlistment.Prepared();
-    // }
 
     @Override
     public void commit(Enlistment enlistment) {

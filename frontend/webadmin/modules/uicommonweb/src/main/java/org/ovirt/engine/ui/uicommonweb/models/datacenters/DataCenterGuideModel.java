@@ -869,7 +869,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private void CleanConnection(StorageServerConnections connection, Guid hostId)
     {
-        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection,
+        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -966,7 +966,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         actionTypes.add(VdcActionType.AddStorageServerConnection);
         actionTypes.add(VdcActionType.AddNFSStorageDomain);
-        actionTypes.add(VdcActionType.RemoveStorageServerConnection);
+        actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
