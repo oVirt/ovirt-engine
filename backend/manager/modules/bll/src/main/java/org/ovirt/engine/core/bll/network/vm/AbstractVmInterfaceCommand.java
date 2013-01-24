@@ -1,19 +1,34 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
+import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 
 @SuppressWarnings("serial")
-public abstract class AbstractVmInterfaceCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
+@CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
+public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
     public AbstractVmInterfaceCommand(T parameters) {
         super(parameters);
@@ -57,5 +72,61 @@ public abstract class AbstractVmInterfaceCommand<T extends VmOperationParameterB
         } else {
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
         }
+    }
+
+    protected ValidationResult macAvailable() {
+        Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
+        return MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs
+                ? new ValidationResult(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE)
+                : ValidationResult.VALID;
+    }
+
+    protected ValidationResult macAddressValid() {
+        return Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())
+                ? new ValidationResult(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS)
+                : ValidationResult.VALID;
+    }
+
+    protected boolean uniqueInterfaceName(List<VmNetworkInterface> interfaces) {
+        return VmHandler.IsNotDuplicateInterfaceName(interfaces, getInterfaceName(),
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    protected boolean pciAndIdeWithinLimit(VmStatic vm, List<VmNetworkInterface> allInterfaces) {
+        List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
+
+        return checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks,
+                getReturnValue().getCanDoActionMessages());
+    }
+
+    protected ValidationResult vmTemplateEmpty() {
+        return getInterface().getVmTemplateId() != null
+                ? new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
+                : ValidationResult.VALID;
+    }
+
+    protected Network getNetworkFromDb(Guid vdsGroupId) {
+        for (Network network : getNetworkDAO().getAllForCluster(vdsGroupId)) {
+            if (network.getName().equals(getNetworkName())) {
+                return network;
+            }
+        }
+        return null;
+    }
+
+    protected String getMacAddress() {
+        return getInterface().getMacAddress();
+    }
+
+    protected VmNetworkInterface getInterface() {
+        return getParameters().getInterface();
+    }
+
+    protected String getInterfaceName() {
+        return getInterface().getName();
+    }
+
+    protected String getNetworkName() {
+        return getInterface().getNetworkName();
     }
 }

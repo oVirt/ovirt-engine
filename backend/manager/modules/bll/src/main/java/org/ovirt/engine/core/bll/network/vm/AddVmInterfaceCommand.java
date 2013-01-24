@@ -2,11 +2,9 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -16,29 +14,20 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@CustomLogFields({ @CustomLogField("InterfaceName") })
 public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
     private static final long serialVersionUID = -835005784345476993L;
@@ -47,14 +36,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         super(parameters);
     }
 
-    public String getInterfaceName() {
-        return getParameters().getInterface().getName();
-    }
-
     @Override
     protected void executeVmCommand() {
         AddCustomValue("InterfaceType",
-                (VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription()).toString());
+                (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
         this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getVmName());
 
         boolean succeeded = false;
@@ -62,31 +47,28 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         try {
             if (StringUtils.isEmpty(getMacAddress())) {
-                getParameters().getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
+                getInterface().setMacAddress(MacPoolManager.getInstance().allocateNewMac());
                 macAddedToPool = true;
             } else {
                 macAddedToPool = addMacToPool(getMacAddress());
             }
 
-            getParameters().getInterface().setSpeed(
-                    VmInterfaceType.forValue(
-                            getParameters().getInterface().getType()).getSpeed());
-
-            getParameters().getInterface().setId(Guid.NewGuid());
-            getParameters().getInterface().setVmId(getParameters().getVmId());
+            getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
+            getInterface().setId(Guid.NewGuid());
+            getInterface().setVmId(getParameters().getVmId());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    addInterfaceToDb(getParameters().getInterface());
+                    addInterfaceToDb(getInterface());
                     addInterfaceDeviceToDb();
                     getCompensationContext().stateChanged();
                     return null;
                 }
             });
 
-            if (getParameters().getInterface().isPlugged()) {
-                succeeded = activateOrDeactivateNic(getParameters().getInterface().getId(), PlugAction.PLUG);
+            if (getInterface().isPlugged()) {
+                succeeded = activateOrDeactivateNic(getInterface().getId(), PlugAction.PLUG);
             } else {
                 succeeded = true;
             }
@@ -100,8 +82,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
     private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
-                new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmId()),
-                getParameters().getInterface().isPlugged());
+                new VmDeviceId(getInterface().getId(), getParameters().getVmId()),
+                getInterface().isPlugged());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 
@@ -133,28 +115,24 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getParameters().getVmId());
 
-        if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
-                getParameters().getInterface().getName(),
-                getReturnValue().getCanDoActionMessages())) {
+        if (!uniqueInterfaceName(interfaces)) {
             return false;
         }
 
-        if (getParameters().getInterface().getVmTemplateId() != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET);
+        if (!validate(vmTemplateEmpty())) {
             return false;
         }
 
         // check that not exceeded PCI and IDE limit
         List<VmNetworkInterface> allInterfaces = new ArrayList<VmNetworkInterface>(interfaces);
-        allInterfaces.add(getParameters().getInterface());
+        allInterfaces.add(getInterface());
 
-        List<Disk> allDisks = getDiskDao().getAllForVm(getParameters().getVmId());
-        if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks, getReturnValue().getCanDoActionMessages())) {
+        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
             return false;
         }
 
         Version compatibilityVersion = getVm().getVdsGroupCompatibilityVersion();
-        VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), compatibilityVersion);
+        VmNicValidator nicValidator = new VmNicValidator(getInterface(), compatibilityVersion);
 
         if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())
                 || !validate(nicValidator.networkProvidedForPortMirroring())) {
@@ -163,14 +141,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         if (getNetworkName() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getVdsGroupId());
-
-            Network interfaceNetwork = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network network) {
-                    return network.getName().equals(getNetworkName());
-                }
-            });
+            Network interfaceNetwork = getNetworkFromDb(vm.getVdsGroupId());
 
             if (interfaceNetwork == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
@@ -183,14 +154,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         if (!StringUtils.isEmpty(getMacAddress())) {
-            if (Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
-                return false;
-            }
-
-            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            if (MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
+            if (!validate(macAddressValid()) || !validate(macAvailable())) {
                 return false;
             }
         } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) // check
@@ -207,10 +171,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         return true;
-    }
-
-    private String getMacAddress() {
-        return getParameters().getInterface().getMacAddress();
     }
 
     @Override
@@ -242,11 +202,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
+        if (getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
 
             Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
 
-            if (getParameters().getInterface().isPortMirroring()) {
+            if (getInterface().isPortMirroring()) {
                 permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
                         VdcObjectType.Network,
                         ActionGroup.PORT_MIRRORING));
@@ -257,9 +217,5 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
         }
         return permissionList;
-    }
-
-    private String getNetworkName() {
-        return getParameters().getInterface().getNetworkName();
     }
 }

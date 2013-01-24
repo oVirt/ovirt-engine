@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -16,7 +14,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -24,23 +21,17 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@CustomLogFields({ @CustomLogField("NetworkName"), @CustomLogField("InterfaceName") })
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
     private static final long serialVersionUID = -2404956975945588597L;
@@ -52,18 +43,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     public UpdateVmInterfaceCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
-    }
-
-    private VmNetworkInterface getInterface() {
-        return getParameters().getInterface();
-    }
-
-    public String getInterfaceName() {
-        return getInterface().getName();
-    }
-
-    public String getNetworkName() {
-        return getInterface().getNetworkName();
     }
 
     private RequiredAction getRequiredAction() {
@@ -175,12 +154,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!StringUtils.equals(oldIface.getName(), getInterface().getName())) {
-            if (!VmHandler.IsNotDuplicateInterfaceName(interfaces,
-                    getInterface().getName(),
-                    getReturnValue().getCanDoActionMessages())) {
+        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(interfaces)) {
                 return false;
-            }
         }
 
         // check that not exceeded PCI and IDE limit
@@ -189,16 +164,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         allInterfaces.add(getInterface());
         VmStatic vm = getVmStaticDAO().get(getVmId());
 
-        List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
-        if (!checkPciAndIdeLimit(vm.getNumOfMonitors(),
-                allInterfaces,
-                allDisks,
-                getReturnValue().getCanDoActionMessages())) {
+        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
             return false;
         }
 
-        if (getInterface().getVmTemplateId() != null) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET);
+        if (!validate(vmTemplateEmpty())) {
             return false;
         }
 
@@ -212,38 +182,20 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (getInterface().getNetworkName() != null) {
+        if (getNetworkName() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(vm.getVdsGroupId());
-            if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network n) {
-                    return n.getName().equals(getInterface().getNetworkName());
-                }
-            })) {
+            if (getNetworkFromDb(vm.getVdsGroupId()) == null) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
             }
         }
 
         macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
-        if (macShouldBeChanged) {
-            if (Pattern.matches(ValidationUtils.INVALID_NULLABLE_MAC_ADDRESS, getMacAddress())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INVALID_MAC_ADDRESS);
-                return false;
-            }
-
-            Boolean allowDupMacs = Config.<Boolean> GetValue(ConfigValues.AllowDuplicateMacAddresses);
-            if (MacPoolManager.getInstance().isMacInUse(getMacAddress()) && !allowDupMacs) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_MAC_ADDRESS_IN_USE);
-                return false;
-            }
+        if (macShouldBeChanged && (!validate(macAddressValid()) || !validate(macAvailable()))) {
+            return false;
         }
-        return true;
-    }
 
-    private String getMacAddress() {
-        return getInterface().getMacAddress();
+        return true;
     }
 
     @Override
@@ -346,7 +298,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
             return (!oldIface.getType().equals(getInterface().getType()))
-                    || (!oldIface.getMacAddress().equals(getInterface().getMacAddress()))
+                    || (!oldIface.getMacAddress().equals(getMacAddress()))
                     || (oldIface.isPortMirroring() != getInterface().isPortMirroring());
         }
     }
