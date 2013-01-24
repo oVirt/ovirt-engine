@@ -268,16 +268,17 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void endCommand() {
-        if (!getParameters().isRemoveDuringExecution()) {
-            if (getParameters().getRemoveFromDB()) {
+        if (getParameters().getRemoveFromDB()) {
+            if (!getParameters().isRemoveDuringExecution()) {
                 removeImageFromDB(true);
-            } else {
-                getImageStorageDomainMapDao().remove(
-                        new ImageStorageDomainMapId(getParameters().getImageId(),
-                                getParameters().getStorageDomainId()));
-                unLockImage();
             }
+        } else {
+            getImageStorageDomainMapDao().remove(
+                    new ImageStorageDomainMapId(getParameters().getImageId(),
+                            getParameters().getStorageDomainId()));
+            unLockImage();
         }
+
         setSucceeded(true);
     }
 
