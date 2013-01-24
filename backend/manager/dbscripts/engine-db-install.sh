@@ -142,13 +142,17 @@ _verifyRC()
 
 initLogFile()
 {
-    if [[ ! -d $LOG_PATH ]]
+    # check if relative
+    if [[ "${LOGFILE}" == "${LOGFILE#/}" ]]
     then
-        mkdir  $LOG_PATH > /dev/null
-    fi
-     _verifyRC $? "error, failed creating log dir $LOG_PATH"
+        if [[ ! -d $LOG_PATH ]]
+        then
+            mkdir  $LOG_PATH > /dev/null
+        fi
+         _verifyRC $? "error, failed creating log dir $LOG_PATH"
 
-    LOGFILE="$LOG_PATH/$LOGFILE"
+        LOGFILE="$LOG_PATH/$LOGFILE"
+    fi
     echo "#engine db installer log file on $HOST" > $LOGFILE
 }
 
