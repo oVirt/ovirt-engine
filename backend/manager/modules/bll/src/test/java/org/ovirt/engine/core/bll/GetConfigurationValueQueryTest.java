@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -39,8 +40,8 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
 
     private void assertQueryExecution(ConfigurationValues configValue, boolean isFiltered, boolean shouldSucceed) {
         // Mock the parameters
-        String version = RandomUtils.instance().nextNumericString(2);
-        when(getQueryParameters().getVersion()).thenReturn(version);
+        Version version = RandomUtils.instance().pickRandom(Version.ALL);
+        when(getQueryParameters().getVersion()).thenReturn(version.toString());
         when(getQueryParameters().getConfigValue()).thenReturn(configValue);
         when(getQueryParameters().isFiltered()).thenReturn(isFiltered);
 
@@ -62,7 +63,7 @@ public class GetConfigurationValueQueryTest extends AbstractUserQueryTest<GetCon
      * Mocks a call to {@link Config#GetValue(ConfigValues)) and returns the value it should return.
      * @return The mocked value
      */
-    private static String mockConfig(String version, ConfigurationValues configurationValues) {
+    private static String mockConfig(Version version, ConfigurationValues configurationValues) {
         String returnValue = RandomUtils.instance().nextString(10, true);
 
         ConfigValues configValues = ConfigValues.valueOf(configurationValues.name());

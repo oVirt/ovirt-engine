@@ -62,7 +62,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      * Test query execution when LUNs filtering is enabled
      */
     public void testExecuteQueryWithFilteringLUNsEnabled() {
-        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1.toString(), true);
+        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, true);
 
         // Create expected result
         lunsExpected = Collections.emptyList();
@@ -75,7 +75,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      * Test query execution when LUNs filtering is disabled
      */
     public void testExecuteQueryWithFilteringLUNsDisabled() {
-        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1.toString(), false);
+        mcr.mockConfigValue(ConfigValues.FilteringLUNsEnabled, Version.v3_1, false);
 
         // Create expected result
         lunsExpected = lunsInput;

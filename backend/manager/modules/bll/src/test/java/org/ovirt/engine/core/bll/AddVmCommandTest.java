@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -477,8 +478,8 @@ public class AddVmCommandTest {
     }
 
     private void mockConfig() {
-        mcr.mockConfigValue(ConfigValues.PredefinedVMProperties, "3.0", "");
-        mcr.mockConfigValue(ConfigValues.UserDefinedVMProperties, "3.0", "");
+        mcr.mockConfigValue(ConfigValues.PredefinedVMProperties, Version.v3_0, "");
+        mcr.mockConfigValue(ConfigValues.UserDefinedVMProperties, Version.v3_0, "");
         mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
     }
 

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * This rule is used to mock {@link Config} values in an easy fashion, without having to resort to Power Mocking.
@@ -81,7 +82,11 @@ public class MockConfigRule extends TestWatcher {
         mockConfigValue(value, ConfigCommon.defaultConfigurationVersion, returnValue);
     }
 
-    public <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {
+    public <T> void mockConfigValue(ConfigValues value, Version version, T returnValue) {
+        mockConfigValue(value, version.getValue(), returnValue);
+    }
+
+    private static <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {
         when(Config.getConfigUtils().GetValue(value, version)).thenReturn(returnValue);
     }
 

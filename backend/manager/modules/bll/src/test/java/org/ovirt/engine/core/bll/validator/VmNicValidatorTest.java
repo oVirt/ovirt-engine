@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -26,11 +25,13 @@ public class VmNicValidatorTest {
     @Mock
     private VmNetworkInterface nic;
 
+    @Mock
+    private Version version;
+
     private VmNicValidator validator;
 
     @Before
     public void setup() {
-        Version version = mock(Version.class);
         when(version.getValue()).thenReturn(null);
 
         validator = new VmNicValidator(nic, version);
@@ -97,14 +98,14 @@ public class VmNicValidatorTest {
     }
 
     private void unlinkingTest(ValidationResult expected, boolean networkLinkingSupported, boolean nicLinked) {
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, null, networkLinkingSupported);
+        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
         when(nic.isLinked()).thenReturn(nicLinked);
 
         assertEquals(expected, validator.linkedCorrectly());
     }
 
     private void networkNameTest(ValidationResult expected, boolean networkLinkingSupported, String networkName) {
-        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, null, networkLinkingSupported);
+        mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
         when(nic.getNetworkName()).thenReturn(networkName);
 
         assertEquals(expected, validator.networkNameValid());
