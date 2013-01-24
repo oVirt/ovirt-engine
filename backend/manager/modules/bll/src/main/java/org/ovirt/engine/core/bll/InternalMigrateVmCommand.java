@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,7 +10,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> extends MigrateVmCommand<MigrateVmParameters> {
 
     public InternalMigrateVmCommand(T parameters) {
-        super(convertInternalMigrateParamsToMigrateParams(parameters));
+        super(new MigrateVmParameters(parameters));
     }
 
     @Override
@@ -36,15 +37,5 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
         else {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
         }
-    }
-
-    private static MigrateVmParameters convertInternalMigrateParamsToMigrateParams(InternalMigrateVmParameters internalMigrateVmParameters) {
-        MigrateVmParameters migrateVmParameters = new MigrateVmParameters();
-
-        migrateVmParameters.setVmId(internalMigrateVmParameters.getVmId());
-        migrateVmParameters.setForceMigrationForNonMigratableVM(false);
-        migrateVmParameters.setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
-
-        return migrateVmParameters;
     }
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
@@ -16,16 +13,24 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     public MigrateVmParameters() {
     }
 
+    public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId) {
+        super(vmId);
+
+        setForceMigrationForNonMigratableVM(forceMigrationForNonMigratableVM);
+    }
+
+    public MigrateVmParameters(InternalMigrateVmParameters internalMigrateVmParameters) {
+        this(false, internalMigrateVmParameters.getVmId());
+
+        setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
+        setCorrelationId(internalMigrateVmParameters.getCorrelationId());
+    }
+
     public boolean isForceMigrationForNonMigratableVM() {
         return forceMigrationForNonMigratableVM;
     }
 
     public void setForceMigrationForNonMigratableVM(boolean forceMigrationForNonMigratableVM) {
-        this.forceMigrationForNonMigratableVM = forceMigrationForNonMigratableVM;
-    }
-
-    public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId) {
-        super(vmId);
         this.forceMigrationForNonMigratableVM = forceMigrationForNonMigratableVM;
     }
 
