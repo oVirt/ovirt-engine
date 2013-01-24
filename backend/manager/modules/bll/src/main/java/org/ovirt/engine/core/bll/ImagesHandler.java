@@ -523,7 +523,7 @@ public final class ImagesHandler {
                 domainsIds.add(storageDomainId);
             } else {
                 for (DiskImage image : images) {
-                    domainsIds.add(image.getstorage_ids().get(0));
+                    domainsIds.addAll(image.getstorage_ids());
                 }
             }
             for (Guid domainId : domainsIds) {
