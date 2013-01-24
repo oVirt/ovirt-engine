@@ -24,6 +24,7 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
         setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
         setCorrelationId(internalMigrateVmParameters.getCorrelationId());
+        setParentCommand(internalMigrateVmParameters.getParentCommand());
     }
 
     public boolean isForceMigrationForNonMigratableVM() {

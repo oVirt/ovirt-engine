@@ -107,8 +107,8 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
                 VdcReturnValueBase result =
                         Backend.getInstance().runInternalAction(VdcActionType.InternalMigrateVm,
-                                new InternalMigrateVmParameters(vm.getId()),
-                                new CommandContext(createMigrateVmContext(parentContext, vm)));
+                                new InternalMigrateVmParameters(vm.getId(), getActionType()),
+                                createMigrateVmContext(parentContext, vm));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
                     AppendCustomValue("failedVms", vm.getVmName(), ",");
@@ -119,7 +119,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         return succeeded;
     }
 
-    private ExecutionContext createMigrateVmContext(ExecutionContext parentContext,VM vm) {
+    protected CommandContext createMigrateVmContext(ExecutionContext parentContext,VM vm) {
         ExecutionContext ctx = new ExecutionContext();
         try {
             Map<String, String> values = new HashMap<String, String>();
@@ -134,7 +134,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         } catch (RuntimeException e) {
             log.error("Failed to create ExecutionContext for MigrateVmCommand", e);
         }
-        return ctx;
+        return new CommandContext(ctx);
     }
 
     @Override

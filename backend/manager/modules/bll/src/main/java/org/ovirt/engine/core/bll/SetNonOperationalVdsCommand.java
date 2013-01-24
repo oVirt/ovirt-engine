@@ -2,10 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -22,6 +26,10 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         setStorageDomainId(parameters.getStorageDomainId());
     }
 
+    /**
+     * Note: it's ok that this method isn't marked as async command even though it triggers
+     * migrations as sub-commands, because those migrations are executed as different jobs
+     */
     @Override
     protected void executeCommand() {
         if (getParameters().getSaveToDb()) {
@@ -58,6 +66,11 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
+        return ExecutionHandler.createInternalJobContext();
     }
 
     @Override
