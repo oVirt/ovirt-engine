@@ -78,8 +78,7 @@ public final class ImagesHandler {
         Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
         for (storage_domains storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-            ArrayList<String> messages = new ArrayList<String>();
-            if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)
+            if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
                     && (notCheckSize || StorageDomainSpaceChecker.isBelowThresholds(storageDomain))) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
@@ -532,9 +531,10 @@ public final class ImagesHandler {
                 if (checkStorageDomain) {
                     StorageDomainValidator storageDomainValidator =
                             new StorageDomainValidator(domain);
-                    returnValue = storageDomainValidator.isDomainExistAndActive(messages);
+                    ValidationResult res = storageDomainValidator.isDomainExistAndActive();
+                    returnValue = res.isValid();
                     if (!returnValue) {
-                        break;
+                        messages.add(res.getMessage().toString());
                     }
                 }
                 if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isBelowThresholds(domain)) {

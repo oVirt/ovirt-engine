@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -88,8 +88,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             // set the source domain and check that it is ImportExport type and active
             setSourceDomainId(getParameters().getSourceDomainId());
             StorageDomainValidator sourceDomainValidator = new StorageDomainValidator(getSourceDomain());
-            retVal = sourceDomainValidator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+            retVal = validate(sourceDomainValidator.isDomainExistAndActive());
         }
+
         if (retVal && getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
@@ -121,8 +122,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     storage_domains storageDomain =
                             getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
                     StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-                    retVal = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages()) &&
-                            validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
+                    retVal = validate(validator.isDomainExistAndActive()) &&
+                            validate(validator.domainIsValidDestination());
                     if (!retVal) {
                         break;
                     }

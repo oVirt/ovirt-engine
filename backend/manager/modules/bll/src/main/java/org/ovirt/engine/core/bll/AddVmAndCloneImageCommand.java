@@ -197,8 +197,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
             for (storage_domains storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-                ArrayList<String> messages = new ArrayList<String>();
-                if (validator.isDomainExistAndActive(messages) && validator.domainIsValidDestination(messages)) {
+                if (validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination())) {
                     storageDomainsMap.put(storageDomain.getId(), storageDomain);
                 }
             }

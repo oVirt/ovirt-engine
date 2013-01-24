@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -21,25 +21,22 @@ public class StorageDomainValidator {
         storageDomain = domain;
     }
 
-    public boolean isDomainExistAndActive(List<String> messages) {
+    public ValidationResult isDomainExistAndActive() {
         if (storageDomain == null) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST.toString());
-            return false;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
         if (storageDomain.getstatus() == null || storageDomain.getstatus() != StorageDomainStatus.Active) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
-            return false;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
-        return true;
+        return ValidationResult.VALID;
     }
 
-    public boolean domainIsValidDestination(List<String> messages) {
+    public ValidationResult domainIsValidDestination() {
         if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO
                 || storageDomain.getstorage_domain_type() == StorageDomainType.ImportExport) {
-            messages.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString());
-            return false;
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
-        return true;
+        return ValidationResult.VALID;
     }
 
     public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,

@@ -76,7 +76,11 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             StorageDomainValidator storageDomainValidator =
                     new StorageDomainValidator(DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                             storageDomainId, vmTemplate.getstorage_pool_id()));
-            returnValue = storageDomainValidator.isDomainExistAndActive(reasons);
+            ValidationResult res = storageDomainValidator.isDomainExistAndActive();
+            returnValue = res.isValid();
+            if (!returnValue) {
+                reasons.add(res.getMessage().toString());
+            }
         }
         if (returnValue && checkImagesExists) {
             if (vmtImages == null) {

@@ -40,8 +40,6 @@ import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -52,6 +50,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
@@ -174,8 +174,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         for (Guid destGuid : destGuids) {
             storage_domains storageDomain = getStorageDomain(destGuid);
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-            if (!validator.isDomainExistAndActive(canDoActionMessages)
-                    || !validator.domainIsValidDestination(canDoActionMessages)) {
+            if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
                 return false;
             }
 
@@ -188,7 +187,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         setSourceDomainId(getParameters().getSourceDomainId());
         StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
-        if (validator.isDomainExistAndActive(canDoActionMessages) &&
+        if (validator.isDomainExistAndActive().isValid() &&
                 getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }

@@ -134,8 +134,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         // vm agnostic checks
         returnValue =
-                new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
-                        &&
+                validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive()) &&
                 checkImageConfiguration() &&
                 checkFreeSpace() &&
                 checkExceedingMaxBlockDiskSize() &&

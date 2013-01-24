@@ -130,8 +130,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
         retValue =
-                retValue && validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
-                        && validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
+                retValue && validate(validator.isDomainExistAndActive())
+                        && validate(validator.domainIsValidDestination());
 
         if (retValue && diskImage.getimageStatus() == ImageStatus.LOCKED) {
             retValue = false;

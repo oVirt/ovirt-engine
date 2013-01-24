@@ -88,7 +88,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
             setDescription(getVmTemplateName());
         }
         StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
-        boolean retVal = storageDomainValidator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+        boolean retVal = validate(storageDomainValidator.isDomainExistAndActive());
 
         if (retVal) {
             // export must be to export domain

@@ -65,7 +65,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
 
         if (retVal) {
             StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-            retVal = validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+            retVal = validate(validator.isDomainExistAndActive());
         }
         if (retVal && getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);

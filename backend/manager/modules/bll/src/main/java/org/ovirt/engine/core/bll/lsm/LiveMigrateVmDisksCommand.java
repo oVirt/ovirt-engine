@@ -258,14 +258,14 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private boolean validateSourceStorageDomain(Guid imageId, Guid sourceDomainId) {
         StorageDomainValidator validator = getValidator(imageId, sourceDomainId);
 
-        return validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages());
+        return validate(validator.isDomainExistAndActive());
     }
 
     private boolean validateDestStorage(Guid imageId, Guid destDomainId) {
         StorageDomainValidator validator = getValidator(imageId, destDomainId);
 
         return validateSourceStorageDomain(imageId, destDomainId)
-                && validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages());
+                && validate(validator.domainIsValidDestination());
     }
 
     private StorageDomainValidator getValidator(Guid imageId, Guid domainId) {

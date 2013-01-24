@@ -74,8 +74,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && acquireLockInternal()
                 && isImageNotLocked()
                 && isSourceAndDestTheSame()
-                && validateSourceStorageDomain(canDoActionMessages)
-                && validateDestStorage(canDoActionMessages)
+                && validateSourceStorageDomain()
+                && validateDestStorage()
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
                 && checkImageConfiguration(canDoActionMessages)
@@ -136,10 +136,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return retValue;
     }
 
-    protected boolean validateDestStorage(ArrayList<String> canDoActionMessages) {
+    protected boolean validateDestStorage() {
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-        return validator.isDomainExistAndActive(canDoActionMessages)
-                && validator.domainIsValidDestination(canDoActionMessages);
+        return validate(validator.isDomainExistAndActive())
+                && validate(validator.domainIsValidDestination());
     }
 
     /**
@@ -188,10 +188,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     /**
      * Validate a source storage domain of image, when a source storage domain is not provided
      * any of the domains image will be used
-     * @param canDoActionMessages
-     * @return
      */
-    protected boolean validateSourceStorageDomain(ArrayList<String> canDoActionMessages) {
+    protected boolean validateSourceStorageDomain() {
         NGuid sourceDomainId = getParameters().getSourceDomainId();
         if (sourceDomainId == null || Guid.Empty.equals(sourceDomainId)) {
             sourceDomainId = getImage().getstorage_ids().get(0);
@@ -200,7 +198,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         StorageDomainValidator validator =
                 new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId.getValue(),
                         getImage().getstorage_pool_id()));
-        return validator.isDomainExistAndActive(canDoActionMessages);
+        return validate(validator.isDomainExistAndActive());
     }
 
     protected boolean checkImageConfiguration(List<String> canDoActionMessages) {

@@ -385,8 +385,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         storageDomainId, getStoragePoolId());
                 StorageDomainValidator validator =
                         new StorageDomainValidator(storage);
-                if (!validator.isDomainExistAndActive(getReturnValue().getCanDoActionMessages())
-                        || !validator.domainIsValidDestination(getReturnValue().getCanDoActionMessages())) {
+                if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
                     return false;
                 }
                 destStorages.put(storage.getId(), storage);

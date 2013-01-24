@@ -88,8 +88,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check that target domain exists
         StorageDomainValidator targetstorageDomainValidator = new StorageDomainValidator(getStorageDomain());
-        if (!targetstorageDomainValidator.isDomainExistAndActive(getReturnValue()
-                .getCanDoActionMessages())) {
+        if (!validate(targetstorageDomainValidator.isDomainExistAndActive())) {
             return false;
         }
 
