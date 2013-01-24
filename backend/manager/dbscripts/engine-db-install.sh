@@ -153,7 +153,7 @@ initLogFile()
 
         LOGFILE="$LOG_PATH/$LOGFILE"
     fi
-    echo "#engine db installer log file on $HOST" > $LOGFILE
+    echo "#engine db installer log file on $HOST" >> $LOGFILE
 }
 
 
