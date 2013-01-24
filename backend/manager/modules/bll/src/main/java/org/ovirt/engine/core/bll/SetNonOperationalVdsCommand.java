@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -61,12 +60,6 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         }
 
         setSucceeded(true);
-
-        // if there's VM(s) in this VDS which is migrating, mark this command as async
-        // as the migration(s) is a step of this job, so this job must not be cleaned yet
-        if (isVmsExist()) {
-            ExecutionHandler.setAsyncJob(getExecutionContext(), true);
-        }
     }
 
     @Override
