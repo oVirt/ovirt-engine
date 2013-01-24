@@ -11,15 +11,11 @@ public class StorageDomainSpaceChecker {
         return isBelowSpaceThreshold(domain) && isBelowPctThreshold(domain);
     }
 
-    private static boolean isBelowSpaceThreshold(final storage_domains domain) {
-        Integer availableDiskSize = domain.getavailable_disk_size() == null ? 0 : domain.getavailable_disk_size();
-        Integer usedDiskSize = domain.getused_disk_size() == null ? 0 : domain.getused_disk_size();
-        double totalSize = availableDiskSize + usedDiskSize;
-        return totalSize != 0
-                && (availableDiskSize / totalSize) * (double) 100 > getLowDiskPercentThreshold();
+    private static boolean isBelowPctThreshold(final storage_domains domain) {
+        return domain.getStorageDynamicData().getfreeDiskPercent() > getLowDiskPercentThreshold();
     }
 
-    private static boolean isBelowPctThreshold(final storage_domains domain) {
+    private static boolean isBelowSpaceThreshold(final storage_domains domain) {
         StorageDomainDynamic dynamic = domain.getStorageDynamicData();
         return (dynamic != null
                                && dynamic.getfreeDiskInGB() > Config
