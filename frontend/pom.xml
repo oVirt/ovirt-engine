@@ -17,6 +17,7 @@
   </modules>
   <properties>
     <engine.groupId>org.ovirt.engine.ui</engine.groupId>
+    <engine.core.groupId>org.ovirt.engine.core</engine.core.groupId>
     <engine.version>3.2.0</engine.version>
     <aspectj.version>1.6.11</aspectj.version>
   </properties>

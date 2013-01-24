@@ -15,7 +15,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.ovirt.engine.core</groupId>
+			<groupId>${engine.core.groupId}</groupId>
 			<artifactId>searchbackend</artifactId>
 			<version>${project.version}</version>
 		</dependency>

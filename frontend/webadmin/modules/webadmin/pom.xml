@@ -119,7 +119,7 @@
       <version>${aspectj.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>utils</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>

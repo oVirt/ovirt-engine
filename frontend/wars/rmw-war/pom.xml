@@ -14,14 +14,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>bll</artifactId>
       <version>${engine.version}</version>
       <scope>provided</scope>

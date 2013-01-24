@@ -11,24 +11,24 @@
   <name>UI Utils Compatibility (for UICommon)</name>
   <dependencies>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>common</artifactId>
       <classifier>sources</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>compat</artifactId>
       <classifier>sources</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.ovirt.engine.core</groupId>
+      <groupId>${engine.core.groupId}</groupId>
       <artifactId>searchbackend</artifactId>
       <classifier>sources</classifier>
       <version>${project.version}</version>
