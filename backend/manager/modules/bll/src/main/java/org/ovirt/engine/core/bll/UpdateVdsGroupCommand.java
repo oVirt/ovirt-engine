@@ -60,17 +60,15 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 && !oldGroup.getStoragePoolId().equals(getVdsGroup().getStoragePoolId()))
                 || (oldGroup.getStoragePoolId() == null
                 && getVdsGroup().getStoragePoolId() != null)) {
-            VdsActionParameters parameters = new VdsActionParameters();
             for (VDS vds : allForVdsGroup) {
+                VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
-                if (getVdsGroup().getStoragePoolId() != null) {
-                    VdcReturnValueBase addVdsSpmIdReturn =
-                            getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
-                    if (!addVdsSpmIdReturn.getSucceeded()) {
-                        setSucceeded(false);
-                        getReturnValue().setFault(addVdsSpmIdReturn.getFault());
-                        return;
-                    }
+                VdcReturnValueBase addVdsSpmIdReturn =
+                        getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
+                if (!addVdsSpmIdReturn.getSucceeded()) {
+                    setSucceeded(false);
+                    getReturnValue().setFault(addVdsSpmIdReturn.getFault());
+                    return;
                 }
             }
 
