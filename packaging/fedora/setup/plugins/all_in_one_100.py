@@ -68,12 +68,24 @@ LOCAL_CLUSTER = "local_cluster"
 LOCAL_DATA_CENTER = "local_datacenter"
 LOCAL_HOST = "local_host"
 LOCAL_STORAGE = "local_storage"
+LOCAL_STORAGE_PATH = "/var/lib/images"
 
 # PATH PARAMS
 VDSM_PATH = "/usr/share/vdsm"
 SHADOW_FILE = "/etc/shadow"
 
 logging.debug("plugin %s loaded", __name__)
+
+
+def generateLocalStorageDomainPath():
+    '''
+    Generates name for local storage domain
+    '''
+    if os.path.exists(LOCAL_STORAGE_PATH):
+        return "%s_%s" % (LOCAL_STORAGE_PATH,
+                          utils.getCurrentDateTime())
+    else:
+        return LOCAL_STORAGE_PATH
 
 
 def initConfig(controllerObject):
@@ -99,7 +111,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : INFO_CONF_PARAMS_LOCAL_STORAGE,
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validateStoragePath,
-                   "DEFAULT_VALUE"   : "",
+                   "DEFAULT_VALUE"   : generateLocalStorageDomainPath(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "STORAGE_PATH",
@@ -439,4 +451,3 @@ def getUrlContent(url):
         return None
 
     return urlContent
-

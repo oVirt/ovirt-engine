@@ -81,9 +81,9 @@ NFS_IPTABLES_PORTS = [ {"port"     : "111",
                         "protocol" : ["udp"]},
 ]
 
-def generateIsoDomainName():
+def generateIsoDomainPath():
     '''
-    Generates name for iso domain
+    Generates path for iso domain
     '''
 
     if os.path.exists(basedefs.DEFAULT_ISO_EXPORT_PATH):
@@ -433,7 +433,7 @@ def initConfig():
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
                 "OPTION_LIST"     :[],
                 "VALIDATION_FUNC" :validate.validateNFSMountPoint,
-                "DEFAULT_VALUE"   :generateIsoDomainName(),
+                "DEFAULT_VALUE"   : generateIsoDomainPath(),
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
                 "CONF_NAME"       : "NFS_MP",
