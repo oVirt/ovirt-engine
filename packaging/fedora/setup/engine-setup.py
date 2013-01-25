@@ -920,11 +920,13 @@ def _changeCaPermissions():
 
 def _updateCaCrtTemplate():
     for file in [basedefs.FILE_CA_CRT_TEMPLATE, basedefs.FILE_CERT_TEMPLATE]:
-        logging.debug("updating %s" % (file))
-        fileHandler = utils.TextConfigFileHandler(file)
-        fileHandler.open()
-        fileHandler.editParam("authorityInfoAccess", " caIssuers;URI:http://%s:%s/ca.crt" % (controller.CONF["HOST_FQDN"], controller.CONF["HTTP_PORT"]))
-        fileHandler.close()
+        utils.processTemplate(
+            file + '.in',
+            file,
+            {
+                '@AIA@': 'http://%(HOST_FQDN)s:%(HTTP_PORT)s/ca.crt' % controller.CONF,
+            }
+        )
 
 def getFirewalls():
     firewalls = ["None"]

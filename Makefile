@@ -341,8 +341,8 @@ install_sec:
 
 	# Configuration files:
 	install -m 644 backend/manager/conf/ca/openssl.conf $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/cacert.template $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 backend/manager/conf/ca/cert.template $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 backend/manager/conf/ca/cacert.template.in $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 backend/manager/conf/ca/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
 
 	# Certificate database:
 	install -m 644 backend/manager/conf/ca/database.txt $(DESTDIR)$(PKG_PKI_DIR)

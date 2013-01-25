@@ -675,8 +675,8 @@ fi
 
 # PKI configuration files:
 %config(noreplace) %{engine_pki}/openssl.conf
-%config(noreplace) %{engine_pki}/cacert.template
-%config(noreplace) %{engine_pki}/cert.template
+%config(noreplace) %{engine_pki}/cacert.template.in
+%config(noreplace) %{engine_pki}/cert.template.in
 
 # The certificate database files:
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/database.txt

@@ -13,7 +13,7 @@ output_password = NoSoup4U
 
 [ v3_ca ]
 subjectKeyIdentifier=hash
-authorityInfoAccess = caIssuers;URI:http://my.ca/ca.crt
+authorityInfoAccess = caIssuers;URI:@AIA@
 authorityKeyIdentifier=keyid:always,issuer:always
 basicConstraints = CA:false
 keyUsage=critical,digitalSignature,keyEncipherment

@@ -78,6 +78,19 @@ class Enum(object):
         #Enum doesn't know this value
         raise ValueError(output_messages.ERR_EXP_VALUE_ERR%(value))
 
+def processTemplate(template, name, subst):
+    logging.debug(
+        'Processing template %s to %s vars %s',
+        template, name, subst,
+    )
+    content = ''
+    with open(template, 'r') as f:
+        content = f.read()
+    for k, v in subst.items():
+        content =  content.replace(k, v)
+    with open(name, 'w') as f:
+        f.write(content)
+
 class ConfigFileHandler:
     def __init__(self, filepath):
         self.filepath = filepath
