@@ -335,8 +335,8 @@ install_aio_plugin:
 
 install_sec:
 	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/certs
-	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/keys
-	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/private
+	install -dm 750 $(DESTDIR)$(PKG_PKI_DIR)/keys
+	install -dm 750 $(DESTDIR)$(PKG_PKI_DIR)/private
 	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/requests
 
 	# Configuration files:
