@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.model.GlusterState;
@@ -43,6 +44,10 @@ public class GlusterBrickMapper {
 
         if(fromBrick.getServerId() != null) {
             brick.setServerId(fromBrick.getServerId().toString());
+        }
+
+        if(StringUtils.isNotEmpty(fromBrick.getQualifiedName())) {
+           brick.setName(fromBrick.getQualifiedName());
         }
 
         if(fromBrick.getBrickDirectory() != null) {

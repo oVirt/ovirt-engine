@@ -19,13 +19,17 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGlusterBricksResource
         extends AbstractBackendCollectionResource<GlusterBrick, GlusterBrickEntity>
         implements GlusterBricksResource {
+    static final String[] SUB_COLLECTIONS = {"statistics"};
 
     private BackendGlusterVolumeResource parent;
 
@@ -34,7 +38,7 @@ public class BackendGlusterBricksResource
     }
 
     public BackendGlusterBricksResource(BackendGlusterVolumeResource parent) {
-        super(GlusterBrick.class, GlusterBrickEntity.class);
+        super(GlusterBrick.class, GlusterBrickEntity.class,SUB_COLLECTIONS);
         setParent(parent);
     }
 
@@ -49,7 +53,7 @@ public class BackendGlusterBricksResource
     private GlusterBricks mapCollection(List<GlusterBrickEntity> entities) {
         GlusterBricks collection = new GlusterBricks();
         for (GlusterBrickEntity entity : entities) {
-            collection.getGlusterBricks().add(addLinks(populate(map(entity), entity)));
+            collection.getGlusterBricks().add(addLinks(populate(map(entity), entity),Cluster.class));
         }
         return collection;
     }
@@ -57,18 +61,9 @@ public class BackendGlusterBricksResource
     @Override
     protected GlusterBrick addParents(GlusterBrick glusterBrick) {
         GlusterVolume volume = new GlusterVolume();
-        volume.setId(getVolumeId());
-
-        Cluster cluster = new Cluster();
-        cluster.setId(getClusterId());
-        volume.setCluster(cluster);
-
+        parent.addParents(volume);
         glusterBrick.setGlusterVolume(volume);
         return glusterBrick;
-    }
-
-    private String getClusterId() {
-        return parent.getParent().getParent().get().getId();
     }
 
     private List<GlusterBrickEntity> mapBricks(Guid volumeId, GlusterBricks glusterBricks) {
@@ -178,7 +173,30 @@ public class BackendGlusterBricksResource
 
     @Override
     protected GlusterBrick doPopulate(GlusterBrick model, GlusterBrickEntity entity) {
+        return populateAdvancedDetails(model, entity);
+    }
+
+    private GlusterBrick populateAdvancedDetails(GlusterBrick model, GlusterBrickEntity entity) {
+
+        GlusterVolumeEntity volumeEntity = getEntity(GlusterVolumeEntity.class,
+                                                     VdcQueryType.GetGlusterVolumeById,
+                                                     new IdQueryParameters(entity.getVolumeId()),
+                                                     null,
+                                                     true);
+
+        GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
+                                                VdcQueryType.GetGlusterVolumeAdvancedDetails,
+                                                new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
+                                                                                           volumeEntity.getName(),
+                                                                                           entity.getQualifiedName(),true),
+                                                null,
+                                                true);
+
+        model = getMapper(GlusterVolumeAdvancedDetails.class, GlusterBrick.class)
+                                                        .map(detailsEntity, model);
+
         return model;
+
     }
 
 }

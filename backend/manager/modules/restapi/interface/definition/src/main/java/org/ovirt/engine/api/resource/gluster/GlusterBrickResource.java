@@ -13,13 +13,14 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.resource.ActionResource;
+import org.ovirt.engine.api.resource.MeasurableResource;
 import org.ovirt.engine.api.resource.MediaType;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks/{brick_id}" resource
  */
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
-public interface GlusterBrickResource {
+public interface GlusterBrickResource extends MeasurableResource{
 
     @Path("{action: (replace)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);

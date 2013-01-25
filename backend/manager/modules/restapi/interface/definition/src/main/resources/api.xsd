@@ -305,13 +305,14 @@
         <xs:sequence>
           <xs:element ref="values" minOccurs="1" maxOccurs="1"/>
           <xs:element name="type" type="StatisticType" minOccurs="1" maxOccurs="1"/>
-		  <xs:element name="unit" type="StatisticUnit" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="unit" type="StatisticUnit" minOccurs="1" maxOccurs="1"/>
           <!-- only one of the following entity references is set -->
           <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="nic" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="brick" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2916,10 +2917,95 @@
         <xs:sequence>
           <xs:annotation>
             <xs:appinfo>
-                <jaxb:property name="GlusterVolumes"/>
+              <jaxb:property name="GlusterVolumes"/>
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="gluster_client" type="GlusterClient"/>
+  <xs:complexType name="GlusterClient">
+    <xs:sequence>
+      <xs:element name="host_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="client_port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="bytes_read" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="bytes_written" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="gluster_clients" type="GlusterClients"/>
+  <xs:complexType name="GlusterClients">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="GlusterClients"/>
+            </xs:appinfo>
+          </xs:annotation>
+        <xs:element ref="gluster_client" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="memory_pool" type="GlusterMemoryPool"/>
+  <xs:complexType name="GlusterMemoryPool">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="hot_count" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="cold_count" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="padded_size" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="alloc_count" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="max_alloc" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="pool_misses" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="max_stdalloc" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="memory_pools" type="GlusterMemoryPools"/>
+  <xs:complexType name="GlusterMemoryPools">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="GlusterMemoryPools"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="memory_pool" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="brick_memoryinfo" type="GlusterBrickMemoryInfo"/>
+  <xs:complexType name="GlusterBrickMemoryInfo">
+    <xs:sequence>
+     <xs:element ref="memory_pools" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="brick_details" type="GlusterBrickAdvancedDetails" />
+  <xs:complexType name="GlusterBrickAdvancedDetails">
+    <xs:annotation>
+      <xs:appinfo>
+        <jaxb:class name="GlusterBrickAdvancedDetails"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="pid" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="device" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="mnt_options" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="fs_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="gluster_clients" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="memory_pools" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2929,17 +3015,17 @@
   <xs:complexType name="GlusterBrick">
     <xs:annotation>
       <xs:appinfo>
-         <jaxb:class name="GlusterBrick"/>
+        <jaxb:class name="GlusterBrick"/>
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="BaseResource">
+      <xs:extension base="GlusterBrickAdvancedDetails">
         <xs:sequence>
           <xs:element ref="gluster_volume" minOccurs="0" maxOccurs="1"/>
           <xs:element name="server_id" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="brick_dir" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
-        </xs:sequence>
+         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -2981,7 +3067,7 @@
   <xs:element name="pm_proxy" type="PmProxy"/>
   <xs:complexType name="PmProxy">
    <xs:sequence>
-	<xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+     <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
    </xs:sequence>
   </xs:complexType>
-  </xs:schema>
+</xs:schema>

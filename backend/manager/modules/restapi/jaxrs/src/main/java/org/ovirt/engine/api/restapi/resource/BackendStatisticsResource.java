@@ -18,7 +18,7 @@ public class BackendStatisticsResource<R extends BaseResource, Q>
     private Guid subjectId;
     private AbstractStatisticalQuery<R, Q> query;
 
-    protected BackendStatisticsResource(Class<Q> entityType, Guid subjectId, AbstractStatisticalQuery<R, Q> query) {
+    public BackendStatisticsResource(Class<Q> entityType, Guid subjectId, AbstractStatisticalQuery<R, Q> query) {
         super(Statistic.class, entityType);
         this.query = query;
         this.subjectId = subjectId;

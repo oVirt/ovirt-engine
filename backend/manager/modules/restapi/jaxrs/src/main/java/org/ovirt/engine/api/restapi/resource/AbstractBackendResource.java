@@ -10,8 +10,10 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.BaseResource;
-import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.api.restapi.types.Mapper;
+import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.job.Job;
@@ -23,8 +25,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.api.restapi.types.Mapper;
-import org.ovirt.engine.api.restapi.types.MappingLocator;
 
 public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
     extends BackendResource {
@@ -223,8 +223,9 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected R addLinks(R model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
         model = addParents(model);
-        model = LinkHelper.addLinks(getUriInfo(), model, suggestedParent);
+        // linkSubCollections called first as addLinks unsets the grandparent model
         model = linkSubCollections(model, suggestedParent, subCollectionMembersToExclude);
+        model = LinkHelper.addLinks(getUriInfo(), model, suggestedParent);
         return model;
     }
 
@@ -394,6 +395,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
         public abstract Q lookupEntity(T id) throws BackendFailureException;
 
+        @Override
         public Q resolve(T id) throws BackendFailureException {
             Q entity = lookupEntity(id);
             if (entity == null) {
@@ -403,10 +405,10 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         }
     }
 
-    protected class QueryIdResolver<T> extends EntityIdResolver<T> {
+    public class QueryIdResolver<T> extends EntityIdResolver<T> {
 
-        private VdcQueryType query;
-        private Class<? extends VdcQueryParametersBase> queryParamsClass;
+        private final VdcQueryType query;
+        private final Class<? extends VdcQueryParametersBase> queryParamsClass;
 
         public QueryIdResolver(VdcQueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
             this.query = query;

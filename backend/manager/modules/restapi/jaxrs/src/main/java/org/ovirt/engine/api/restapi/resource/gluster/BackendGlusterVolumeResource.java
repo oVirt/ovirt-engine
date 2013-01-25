@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
-import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
@@ -38,9 +37,8 @@ public class BackendGlusterVolumeResource
 
     @Override
     protected GlusterVolume addParents(GlusterVolume model) {
-        Cluster cluster = new Cluster();
-        cluster.setId(parent.getParent().get().getId());
-        model.setCluster(cluster);
+        model.setId(id);
+        parent.addParents(model);
         return model;
     }
 
@@ -118,5 +116,9 @@ public class BackendGlusterVolumeResource
     @Override
     protected GlusterVolume doPopulate(GlusterVolume model, GlusterVolumeEntity entity) {
         return model;
+    }
+
+    public String getId() {
+       return this.id;
     }
 }

@@ -34,10 +34,10 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     private static final String defaultClusterName = "Default";
     private static final String defaultQuery = "cluster = " + defaultClusterName;
     private static final String volumesQueryPrefix = "Volumes : ";
-    private ClusterResource parentMock;
+    private static ClusterResource parentMock;
 
     public BackendGlusterVolumesResourceTest() {
-        super(new BackendGlusterVolumesResource(),
+        super(new BackendGlusterVolumesResource(parentMock, clusterId.toString()),
                 SearchType.GlusterVolume,
                 volumesQueryPrefix);
     }

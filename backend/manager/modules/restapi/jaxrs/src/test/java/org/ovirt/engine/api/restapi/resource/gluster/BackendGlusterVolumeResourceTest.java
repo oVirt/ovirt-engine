@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.gluster;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 import static org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResourceTest.setUpEntityExpectations;
 
 import java.net.URI;
@@ -233,5 +234,15 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
         volumesResourceMock = control.createMock(BackendGlusterVolumesResource.class);
         expect(volumesResourceMock.getParent()).andReturn(clusterResourceMock).anyTimes();
+        expect(volumesResourceMock.addParents(isA(GlusterVolume.class))).andDelegateTo(
+                new BackendGlusterVolumesResource() {
+                    @Override
+                    protected GlusterVolume addParents(GlusterVolume model) {
+                        Cluster cluster = new Cluster();
+                        cluster.setId(clusterId.toString());
+                        model.setCluster(cluster);
+                        return model;
+                    }
+                }).anyTimes();
     }
 }

@@ -14,7 +14,7 @@ public class BackendStatisticResource<R extends BaseResource, Q>
         extends AbstractBackendSubResource<Statistic, Q>
         implements StatisticResource {
 
-    private Guid subjectId;
+    private final Guid subjectId;
     private AbstractStatisticalQuery<R, Q> query;
 
     protected BackendStatisticResource(String id, Class<Q> entityType, Guid subjectId, AbstractStatisticalQuery<R, Q> query) {

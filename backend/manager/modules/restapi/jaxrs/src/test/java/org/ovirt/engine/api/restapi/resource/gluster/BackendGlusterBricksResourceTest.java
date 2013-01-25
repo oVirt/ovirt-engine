@@ -4,6 +4,7 @@ package org.ovirt.engine.api.restapi.resource.gluster;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.ovirt.engine.api.model.GlusterBricks;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -27,12 +29,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionResourceTest<GlusterBrick, GlusterBrickEntity, BackendGlusterBricksResource> {
-    private static final Guid clusterId = GUIDS[0];
-    private static final Guid volumeId = GUIDS[1];
-    private static final Guid serverId = GUIDS[2];
+
+    private static final Guid clusterId = GlusterTestHelper.clusterId;
+    private static final Guid volumeId = GlusterTestHelper.volumeId;
+    private static final Guid serverId = GlusterTestHelper.serverId;
     private static final String serverName = "testServer";
     private static final String brickDir = "/tmp/vol1/brick1";
     private BackendGlusterVolumeResource parentMock;
@@ -69,6 +73,17 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     @Test
     public void testList() throws Exception {
         setUpBricksQueryExpectations(null);
+        UriInfo uriInfo = setUpUriExpectations(null);
+        collection.setUriInfo(uriInfo);
+        control.replay();
+
+        verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testListAllDetails() throws Exception {
+        setUpBricksQueryExpectations(null);
+        setUpGetEntityExpectationsAllContent(false);
         UriInfo uriInfo = setUpUriExpectations(null);
         collection.setUriInfo(uriInfo);
         control.replay();
@@ -135,11 +150,12 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
 
     @Test
-    public void testAdd() {
+    public void testAdd() throws Exception {
         UriInfo uriInfo = setUpBasicUriExpectations();
         expect(uriInfo.getPath()).andReturn("clusters/" + clusterId + "/glustervolumes/" + volumeId + "/bricks")
                 .anyTimes();
         setUriInfo(uriInfo);
+        setupEntityExpectationAdvancedDetails(1,false);
         setUpCreationExpectations(VdcActionType.AddBricksToGlusterVolume,
                                   GlusterVolumeBricksActionParameters.class,
                                   new String[] { "VolumeId", "Bricks" },
@@ -152,7 +168,6 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
                                   getEntity(0));
-
         Response response = collection.add(createModel());
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof GlusterBricks);
@@ -239,8 +254,10 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         expect(entity.getServerId()).andReturn(serverId).anyTimes();
         expect(entity.getServerName()).andReturn(serverName).anyTimes();
         expect(entity.getBrickDirectory()).andReturn(brickDir).anyTimes();
+        expect(entity.getQualifiedName()).andReturn(serverName + ":" + brickDir).anyTimes();
         return entity;
     }
+
 
     /**
      * The method {@link BackendGlusterBricksResource#list()} internally
@@ -267,6 +284,22 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         expect(parentMock.get()).andReturn(volume).anyTimes();
 
         collection.setParent(parentMock);
+
+        expect(parentMock.addParents(isA(GlusterVolume.class))).andDelegateTo(
+                new BackendGlusterVolumeResource(volumeId.toString()) {
+
+                    @Override
+                    protected GlusterVolume addParents(GlusterVolume model) {
+                        Cluster cluster = new Cluster();
+                        cluster.setId(clusterId.toString());
+                        model.setCluster(cluster);
+                        model.setId(volumeId.toString());
+                        return model;
+                    }
+
+
+                }).anyTimes();
+
     }
 
     private void setUpBricksQueryExpectations(Object failure) {
@@ -291,4 +324,31 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         expect(backend.RunQuery(eq(VdcQueryType.GetGlusterVolumeBricks), anyObject(IdQueryParameters.class))).andReturn(
                 queryResult);
     }
+
+    private void setUpGetEntityExpectationsAllContent(boolean notFound) throws Exception {
+        List<String> populateValue = new ArrayList<String>();
+        populateValue.add("true");
+        expect(httpHeaders.getRequestHeader(AbstractBackendResource.POPULATE)).andReturn(populateValue).anyTimes();
+
+        setupEntityExpectationAdvancedDetails(NAMES.length, notFound);
+    }
+
+    private void setupEntityExpectationAdvancedDetails(int times, boolean notFound) throws Exception {
+        GlusterTestHelper helper = new GlusterTestHelper(control);
+        while (times-- > 0) {
+
+             setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { volumeId },
+                    helper.getVolumeEntity(0));
+
+            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeAdvancedDetails,
+                    GlusterVolumeAdvancedDetailsParameters.class,
+                    new String[] { "ClusterId", "VolumeName", "BrickName", "DetailRequired" },
+                    new Object[] { clusterId, GlusterTestHelper.volumeName,serverName + ":" + brickDir, true },
+                    notFound ? null : helper.getVolumeAdvancedDetailsEntity(0));
+        }
+    }
+
 }

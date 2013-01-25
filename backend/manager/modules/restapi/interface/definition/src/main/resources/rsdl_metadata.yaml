@@ -2960,6 +2960,14 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
   request:
     body:
@@ -2974,6 +2982,14 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
   request:
     body:
@@ -2997,6 +3013,21 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics/{statistic:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks|rel=get
   request:
     body:
@@ -3115,4 +3146,3 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-

@@ -35,6 +35,7 @@ public class BackendGlusterVolumesResource
 
     public static final String[] SUB_COLLECTIONS = { "bricks" };
     private ClusterResource parent;
+    private String clusterId;
 
     public BackendGlusterVolumesResource() {
         super(GlusterVolume.class, GlusterVolumeEntity.class, SUB_COLLECTIONS);
@@ -43,6 +44,12 @@ public class BackendGlusterVolumesResource
     public BackendGlusterVolumesResource(ClusterResource parent) {
         this();
         setParent(parent);
+    }
+
+    public BackendGlusterVolumesResource(ClusterResource parent, String clusterId) {
+        this();
+        setParent(parent);
+        this.clusterId = clusterId;
     }
 
     public ClusterResource getParent() {
@@ -71,7 +78,7 @@ public class BackendGlusterVolumesResource
     @Override
     protected GlusterVolume addParents(GlusterVolume volume) {
         volume.setCluster(new Cluster());
-        volume.getCluster().setId(parent.get().getId());
+        volume.getCluster().setId(clusterId);
         return volume;
     }
 

@@ -41,6 +41,8 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
 
     private Integer brickOrder;
 
+    private BrickDetails brickDetails;
+
     public GlusterBrickEntity() {
     }
 
@@ -177,4 +179,13 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
     public void setBrickOrder(Integer brickOrder) {
         this.brickOrder = brickOrder;
     }
+
+    public BrickDetails getBrickDetails() {
+        return brickDetails;
+    }
+
+    public void setBrickDetails(BrickDetails brickDetails) {
+        this.brickDetails = brickDetails;
+    }
+
 }
