@@ -211,7 +211,9 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.ticket.value: 'xs:string'}
     urlparams: {}
     headers:
       Correlation-Id: {value: 'any string', required: false}
