@@ -284,6 +284,8 @@ install_artifacts:
 		ln -s "$(PKG_JAVA_DIR)/$${jar}.jar" "$(DESTDIR)$${path}.jar"; \
 	done
 
+	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
+
 install_setup:
 	@echo "*** Deploying setup executables"
 
@@ -327,8 +329,6 @@ install_setup:
 
 	# Backups folder
 	install -dm 750 $(DESTDIR)$(ENGINE_STATE)/backups
-
-	sed -i "s/MYVERSION/$(RPM_VERSION)-$(RPM_RELEASE_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
 
 install_aio_plugin:
 	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
