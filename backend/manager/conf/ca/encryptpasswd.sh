@@ -27,7 +27,7 @@ if [[ "x${JAVA_HOME}" != "x" ]] ;then
 fi
 
 
-pushd  $JBOSS_HOME
+#pushd  $JBOSS_HOME
 #if [ -e "common/lib/jbosssx.jar" ]; then
 #    $JAVA_BIN -cp client/jboss-logging-spi.jar:common/lib/jbosssx.jar org.jboss.resource.security.SecureIdentityLoginModule $1
 #elif [ -e "lib/jbosssx.jar" ]; then
@@ -36,9 +36,8 @@ pushd  $JBOSS_HOME
 #        echo "unable to find jbosssx jar..."
 #        exit 1
 #fi
+#popd
 
 $JAVA_BIN -cp `build-classpath jboss-logging picketbox/picketbox` org.picketbox.datasource.security.SecureIdentityLoginModule "$1"
-
-popd
 
 exit $?
