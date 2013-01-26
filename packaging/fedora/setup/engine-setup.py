@@ -117,11 +117,11 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_CONFIG_OVIRT_ENGINE,
                                                 'functions' : [setMaxSharedMemory] },
                                               { 'title'     : output_messages.INFO_FIND_JAVA,
-                                                'functions' : [_findJavaHome]},
+                                                'functions' : [_findJavaHome, _editSysconfigJava]},
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA]},
                                               { 'title'     : output_messages.INFO_UPD_ENGINE_CONF,
-                                                'functions' : [_editSysconfig] },
+                                                'functions' : [_editSysconfigProtocols] },
                                               { 'title'     : output_messages.INFO_SET_DB_CONFIGURATION,
                                                 'functions' : [_updatePgPassFile]}]
                        },
@@ -129,7 +129,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [True],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, _configEncryptedPass] },
+                                                'functions' : [_encryptDBPass, _editSysconfigDatabase] },
                                               {  'title'     : output_messages.INFO_UPGRADE_DB,
                                                 'functions' : [stopRhevmDbRelatedServices, _upgradeDB, _setApplicationMode, startRhevmDbRelatedServices]} ]
                        },
@@ -137,7 +137,7 @@ def initSequences():
                         'condition'       : [_isDbAlreadyInstalled],
                         'condition_match' : [False],
                         'steps'           : [ { 'title'     : output_messages.INFO_SET_DB_SECURITY,
-                                                'functions' : [_encryptDBPass, _configEncryptedPass]},
+                                                'functions' : [_encryptDBPass, _editSysconfigDatabase]},
                                               { 'title'     : output_messages.INFO_CREATE_DB,
                                                 'functions' : [_createDB,  _updateVDCOptions, _setApplicationMode]},
                                               { 'title'     : output_messages.INFO_UPD_DC_TYPE,
@@ -2068,33 +2068,33 @@ def stopRhevmDbRelatedServices():
         logging.warn("Failed to start rhevm-notifierd")
         controller.MESSAGES.append(output_messages.ERR_FAILED_START_SERVICE % "rhevm-notifierd")
 
-def _configEncryptedPass():
+def _editSysconfigDatabase():
     """
     Push the encrypted password into the local configuration file.
     """
     try:
-        utils.configEncryptedPass(controller.CONF["ENCRYPTED_DB_PASS"])
+        dbUrl = "jdbc:postgresql://" + getDbHostName() + ":" + getDbPort() + "/" + basedefs.DB_NAME
+        if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
+            dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+
+        utils.editEngineSysconfigDatabase(dbUrl=dbUrl, password=controller.CONF["ENCRYPTED_DB_PASS"])
     except:
         logging.error("ERROR Editing engine local configuration file.")
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_CONFIG_ENGINE)
 
-def _editSysconfig():
+def _editSysconfigProtocols():
     """
     Update the local configuration file.
     """
-    dbUrl = "jdbc:postgresql://" + getDbHostName() + ":" + getDbPort() + "/" + basedefs.DB_NAME
-    if "DB_SECURE_CONNECTION" in controller.CONF.keys() and controller.CONF["DB_SECURE_CONNECTION"] == "yes":
-        dbUrl = dbUrl + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory"
-
     proxyEnabled = utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_HTTPD_CONFIG"], "yes")
-    utils.editEngineSysconfig(proxyEnabled=proxyEnabled,
-                              dbUrl=dbUrl,
-                              dbUser=utils.getDbUser(),
+    utils.editEngineSysconfigProtocols(proxyEnabled=proxyEnabled,
                               fqdn=controller.CONF["HOST_FQDN"],
                               http=controller.CONF["HTTP_PORT"],
-                              https=controller.CONF["HTTPS_PORT"],
-                              javaHome=controller.CONF["JAVA_HOME"])
+                              https=controller.CONF["HTTPS_PORT"])
+
+def _editSysconfigJava():
+    utils.editEngineSysconfigJava(javaHome=controller.CONF["JAVA_HOME"])
 
 def startRhevmDbRelatedServices():
     """

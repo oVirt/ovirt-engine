@@ -104,16 +104,18 @@ class ConfigFileHandler:
         pass
 
 class TextConfigFileHandler(ConfigFileHandler):
-    def __init__(self, filepath, sep="=", comment="#"):
+    def __init__(self, filepath, sep="=", comment="#", readExisting=True):
         ConfigFileHandler.__init__(self, filepath)
         self.data = []
         self.sep = sep
         self.comment = comment
+        self.readExisting = readExisting
 
     def open(self):
-        fd = file(self.filepath)
-        self.data = fd.readlines()
-        fd.close()
+        if self.readExisting:
+            fd = file(self.filepath)
+            self.data = fd.readlines()
+            fd.close()
 
     def close(self):
         fd = file(self.filepath, 'w')
@@ -1170,18 +1172,11 @@ def generateMacRange():
         return basedefs.CONST_DEFAULT_MAC_RANGE
 
 
-def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https, javaHome):
+def editEngineSysconfigProtocols(proxyEnabled, fqdn, http, https):
     # Load the file:
     logging.debug("Loading text file handler")
-    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF)
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_PROTOCOLS, readExisting=False)
     handler.open()
-
-    # Save the Java home:
-    handler.editParam("JAVA_HOME", javaHome)
-
-    handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
-    handler.editParam("ENGINE_DB_URL", dbUrl)
-    handler.editParam("ENGINE_DB_USER", dbUser)
 
     # Put FQDN for use by other components
     handler.editParam("ENGINE_FQDN", fqdn)
@@ -1202,6 +1197,19 @@ def editEngineSysconfig(proxyEnabled, dbUrl, dbUser, fqdn, http, https, javaHome
         handler.editParam("ENGINE_HTTPS_ENABLED", "true")
         handler.editParam("ENGINE_HTTPS_PORT", https)
         handler.editParam("ENGINE_AJP_ENABLED", "false")
+
+    # Save and close the file:
+    logging.debug("Engine has been configured")
+    handler.close()
+
+def editEngineSysconfigJava(javaHome):
+    # Load the file:
+    logging.debug("Loading text file handler")
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_JAVA, readExisting=False)
+    handler.open()
+
+    # Save the Java home:
+    handler.editParam("JAVA_HOME", javaHome)
 
     # Save and close the file:
     logging.debug("Engine has been configured")
@@ -1228,15 +1236,18 @@ def encryptEngineDBPass(password, maskList):
     else:
         raise Exception(output_messages.ERR_ENCRYPT_TOOL_NOT_FOUND)
 
-def configEncryptedPass(password):
+def editEngineSysconfigDatabase(dbUrl, password):
     """
     Push the encrypted password into the local configuration file.
     """
     logging.debug("Encrypting database password.")
-    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF)
+    handler = TextConfigFileHandler(basedefs.FILE_ENGINE_CONF_DATABASE, readExisting=False)
     handler.open()
     handler.editParam("ENGINE_DB_USER", getDbUser())
     handler.editParam("ENGINE_DB_PASSWORD", password)
+    handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
+    handler.editParam("ENGINE_DB_URL", dbUrl)
+
     handler.close()
 
 # TODO: Support SystemD services

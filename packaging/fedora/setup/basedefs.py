@@ -116,6 +116,15 @@ DIR_ENGINE_SYSCONFIG="%s.d" % FILE_ENGINE_SYSCONFIG
 FILE_ENGINE_CONF="/etc/ovirt-engine/engine.conf"
 DIR_ENGINE_CONF="%s.d" % FILE_ENGINE_CONF
 
+# File containing the setup generated database configuration of the engine:
+FILE_ENGINE_CONF_DATABASE="%s/50-setup-database.conf" % DIR_ENGINE_CONF
+
+# File containing the setup generated protocols configuration of the engine:
+FILE_ENGINE_CONF_PROTOCOLS="%s/50-setup-protocols.conf" % DIR_ENGINE_CONF
+
+# File containing the setup generated java configuration of the engine:
+FILE_ENGINE_CONF_JAVA="%s/50-setup-java.conf" % DIR_ENGINE_CONF
+
 # This file will be automatically created when the engine goes into
 # maintenance mode during upgrades and automatically removed when the
 # engine goes back into normal mode once the upgrade is finished:
