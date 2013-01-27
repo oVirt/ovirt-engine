@@ -669,3 +669,17 @@ begin
     return v_8_part || v_4_part || v_4_part || v_4_part || v_12_part;
 end; $procedure$
 language plpgsql;
+
+-- This function turns a string of IP addresses to an array of IP
+-- addreses, in order to correct sorting.
+CREATE OR REPLACE FUNCTION fn_get_comparable_ip_list(text) RETURNS inet[]
+AS $procedure$
+BEGIN
+CASE
+    WHEN ($1 IS NULL) OR ($1 ~ '^\s*$') THEN
+        RETURN NULL;
+    ELSE
+        RETURN regexp_split_to_array(trim(both from $1), '\s+')::inet[];
+END CASE;
+END; $procedure$
+LANGUAGE plpgsql;
