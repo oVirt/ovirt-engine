@@ -121,7 +121,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
-            if (!getEntity().getVmOs().isWindows() || getEntity().getSpiceDriverVersion() == null) {
+            if (!getEntity().getVmOs().isWindows() || !getEntity().getHasSpiceDriver()) {
                 getspice().setIsWanOptionsEnabled(false);
             }
 
@@ -377,8 +377,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
-        getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true
-                : getEntity().getSpiceDriverVersion() != null ? false : true);
+        getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
 
         // Update 'UsbListenPort' value
         getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled()
@@ -543,7 +542,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
-        if (!getConfigurator().getIsAdmin() && getEntity().getGuestAgentVersion() != null
+        if (!getConfigurator().getIsAdmin() && getEntity().getHasAgent()
                 && getEntity().getStatus() == VMStatus.Up) {
             getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getVmName());
