@@ -110,6 +110,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             network.setVmNetwork(true);
             network.setProvidedBy(new ProviderNetwork(provider.getId(), externalNetwork.getId()));
             network.setName(externalNetwork.getName());
+            network.setLabel(externalNetwork.getProviderPhyNet());
+            if (VLAN_NETWORK.equals(externalNetwork.getNetType())) {
+                network.setVlanId(Integer.valueOf(externalNetwork.getProviderSegID()));
+            }
             networks.add(network);
         }
 
