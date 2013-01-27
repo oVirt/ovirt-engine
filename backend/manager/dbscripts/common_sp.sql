@@ -148,7 +148,7 @@ create or replace function fn_db_create_constraint (
 returns void
 AS $procedure$
 begin
-    if  NOT EXISTS (SELECT 1 from pg_constraint where conname = v_constraint) then
+    if  NOT EXISTS (SELECT 1 from pg_constraint where conname ilike v_constraint) then
         execute 'ALTER TABLE ' || v_table ||  ' ADD CONSTRAINT ' || v_constraint || ' ' || v_constraint_sql;
     end if;
 END; $procedure$
@@ -159,7 +159,7 @@ create or replace function fn_db_drop_constraint (
 returns void
 AS $procedure$
 begin
-    if  EXISTS (SELECT 1 from pg_constraint where conname = v_constraint) then
+    if  EXISTS (SELECT 1 from pg_constraint where conname ilike v_constraint) then
         execute 'ALTER TABLE ' || v_table ||  ' DROP CONSTRAINT ' || v_constraint || ' CASCADE';
     end if;
 END; $procedure$
