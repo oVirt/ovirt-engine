@@ -44,7 +44,7 @@ public class FenceVdsBaseCommandTest {
         command = new StopVdsCommand<FenceVdsActionParameters>(createParameters()) {
             // These methods are protected in AuditLoggableBase, and thus not accessible for spying.
             @Override
-            protected VmDAO getVmDAO() {
+            public VmDAO getVmDAO() {
                 return vmDAO;
             }
 

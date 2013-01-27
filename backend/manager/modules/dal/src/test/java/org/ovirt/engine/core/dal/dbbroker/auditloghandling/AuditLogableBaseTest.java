@@ -1067,7 +1067,7 @@ public class AuditLogableBaseTest {
         }
 
         @Override
-        protected VmDAO getVmDAO() {
+        public VmDAO getVmDAO() {
             final VmDAO v = mock(VmDAO.class);
             when(v.get(GUID)).thenReturn(new VM());
             when(v.get(GUID3)).thenThrow(new RuntimeException());

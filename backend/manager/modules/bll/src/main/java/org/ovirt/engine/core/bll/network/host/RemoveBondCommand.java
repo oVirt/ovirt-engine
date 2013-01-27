@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -16,11 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.SearchReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -140,32 +134,22 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         }
 
         // check if network in use by vm
-        String query = "Vms: cluster = " + vds.getvds_group_name();
-        SearchParameters searchParams = new SearchParameters(query, SearchType.VM);
-
-        searchParams.setMaxCount(Integer.MAX_VALUE);
-        VdcQueryReturnValue tempVar = Backend.getInstance().runInternalQuery(VdcQueryType.Search, searchParams);
-        SearchReturnValue ret = (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar : null);
-        if (ret != null && ret.getSucceeded()) {
-            @SuppressWarnings("unchecked")
-            Iterable<IVdcQueryable> vmList = (Iterable<IVdcQueryable>) ret.getReturnValue();
-            for (IVdcQueryable vm_helper : vmList) {
-                VM vm = (VM) vm_helper;
-                if (vm.getStatus() != VMStatus.Down) {
-                    List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-                    VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
-                        @Override
-                        public boolean eval(VmNetworkInterface i) {
-                            if (i.getNetworkName() != null) {
-                                return i.getNetworkName().equals(bond.getNetworkName());
-                            }
-                            return false;
+        List<VM> vmList = getVmDAO().getAllForVdsGroup(vds.getvds_group_id());
+        for (VM vm : vmList) {
+            if (vm.getStatus() != VMStatus.Down) {
+                List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+                VmNetworkInterface iface = LinqUtils.firstOrNull(vmInterfaces, new Predicate<VmNetworkInterface>() {
+                    @Override
+                    public boolean eval(VmNetworkInterface i) {
+                        if (i.getNetworkName() != null) {
+                            return i.getNetworkName().equals(bond.getNetworkName());
                         }
-                    });
-                    if (iface != null) {
-                        addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
                         return false;
                     }
+                });
+                if (iface != null) {
+                    addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
+                    return false;
                 }
             }
         }

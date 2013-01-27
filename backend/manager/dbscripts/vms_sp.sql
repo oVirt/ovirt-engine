@@ -1081,5 +1081,15 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vms.*
+      FROM vms
+      WHERE vds_group_id = v_vds_group_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 

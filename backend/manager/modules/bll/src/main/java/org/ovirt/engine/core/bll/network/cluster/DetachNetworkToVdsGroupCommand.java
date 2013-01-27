@@ -4,24 +4,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.SearchReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -74,23 +67,12 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         }
 
         // check if network in use by vm
-        String query = "Vms: cluster = " + getVdsGroup().getname();
-        SearchParameters searchParams = new SearchParameters(query, SearchType.VM);
-        searchParams.setMaxCount(Integer.MAX_VALUE);
-        VdcQueryReturnValue tempVar = Backend.getInstance().runInternalQuery(VdcQueryType.Search,
-                searchParams);
-        SearchReturnValue ret = (SearchReturnValue) ((tempVar instanceof SearchReturnValue) ? tempVar
-                : null);
-        if (ret != null && ret.getSucceeded()) {
-            @SuppressWarnings("unchecked")
-            List<IVdcQueryable> vmList = (List<IVdcQueryable>) ret.getReturnValue();
-            for (IVdcQueryable vm_helper : vmList) {
-                VM vm = (VM) vm_helper;
-                List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
-                if (networkUsedByAnInterface(interfaces)) {
-                    addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
-                    return false;
-                }
+        List<VM> vmList = getVmDAO().getAllForVdsGroup(getVdsGroup().getId());
+        for (VM vm : vmList) {
+            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+            if (networkUsedByAnInterface(interfaces)) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_IN_USE_BY_VM);
+                return false;
             }
         }
 

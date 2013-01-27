@@ -534,7 +534,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVmTemplateDao();
     }
 
-    protected VmDAO getVmDAO() {
+    public VmDAO getVmDAO() {
         return getDbFacade().getVmDao();
     }
 

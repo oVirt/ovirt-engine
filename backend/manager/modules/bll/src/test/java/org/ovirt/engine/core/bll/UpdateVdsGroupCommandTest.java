@@ -4,9 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -19,10 +17,8 @@ import java.util.Set;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -33,17 +29,13 @@ import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -63,11 +55,11 @@ public class UpdateVdsGroupCommandTest {
     @Mock
     private VdsDAO vdsDAO;
     @Mock
-    private BackendInternal backendInternal;
-    @Mock
     private StoragePoolDAO storagePoolDAO;
     @Mock
     private GlusterVolumeDao glusterVolumeDao;
+    @Mock
+    private VmDAO vmDao;
 
     private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
 
@@ -152,7 +144,7 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        allQueriesEmpty();
+        allQueriesForVms();
         storagePoolAlreadyHasCluster();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
     }
@@ -164,7 +156,7 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        allQueriesEmpty();
+        allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
     }
 
@@ -175,7 +167,7 @@ public class UpdateVdsGroupCommandTest {
         storagePoolIsLocalFS();
         cpuExists();
         cpuManufacturersMatch();
-        allQueriesEmpty();
+        allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE);
     }
 
@@ -185,7 +177,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         when(glusterVolumeDao.getByClusterId(any(Guid.class))).thenReturn(new ArrayList<GlusterVolumeEntity>());
-        allQueriesEmpty();
+        allQueriesForVms();
         assertTrue(cmd.canDoAction());
     }
 
@@ -195,7 +187,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
-        allQueriesEmpty();
+        allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_AT_LEAST_ONE_SERVICE_MUST_BE_ENABLED);
     }
 
@@ -206,7 +198,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         mcr.mockConfigValue(ConfigValues.AllowClusterWithVirtGlusterEnabled, Boolean.FALSE);
         cpuExists();
-        allQueriesEmpty();
+        allQueriesForVms();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
     }
 
@@ -230,7 +222,7 @@ public class UpdateVdsGroupCommandTest {
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createVdsGroupWithNoCpuName());
         cpuExists();
         cpuFlagsNotMissing();
-        allQueriesEmpty();
+        allQueriesForVms();
         clusterHasGlusterVolumes();
 
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
@@ -288,12 +280,11 @@ public class UpdateVdsGroupCommandTest {
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 
-        doReturn(backendInternal).when(cmd).getBackend();
-
         doReturn(vdsGroupDAO).when(cmd).getVdsGroupDAO();
         doReturn(vdsDAO).when(cmd).getVdsDAO();
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
+        doReturn(vmDao).when(cmd).getVmDAO();
 
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
@@ -402,11 +393,8 @@ public class UpdateVdsGroupCommandTest {
         when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
     }
 
-    private void allQueriesEmpty() {
-        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), any(SearchParameters.class)))
-                .thenReturn(returnValue);
-        when(returnValue.getReturnValue()).thenReturn(Collections.emptyList());
+    private void allQueriesForVms() {
+        when(vmDao.getAllForVdsGroup(any(Guid.class))).thenReturn(Collections.<VM> emptyList());
     }
 
     private void vdsGroupHasVds() {
@@ -436,17 +424,7 @@ public class UpdateVdsGroupCommandTest {
         List<VM> vmList = new ArrayList<VM>();
         vmList.add(vm);
 
-        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), argThat(
-                new ArgumentMatcher<VdcQueryParametersBase>() {
-                    @Override
-                    public boolean matches(final Object o) {
-                        SearchParameters param = (SearchParameters) o;
-                        return param.getSearchTypeValue().equals(SearchType.VM);
-                    }
-                })))
-                .thenReturn(returnValue);
-        when(returnValue.getReturnValue()).thenReturn(vmList);
+        when(vmDao.getAllForVdsGroup(any(Guid.class))).thenReturn(vmList);
     }
 
     private void cpuFlagsMissing() {

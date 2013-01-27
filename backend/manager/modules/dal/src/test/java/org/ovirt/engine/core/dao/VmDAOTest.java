@@ -314,6 +314,18 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensure that all VMS are belongs to VdsGroup return correct
+     */
+    @Test
+    public void testGetAllForVdsGroup() {
+        List<VM> result = dao.getAllForVdsGroup(VDS_GROUP_ID);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+
+    /**
      * Ensures the VMs related to the specified template are returned.
      */
     @Test

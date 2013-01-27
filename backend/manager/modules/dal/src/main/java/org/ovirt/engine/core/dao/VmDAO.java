@@ -211,4 +211,11 @@ public interface VmDAO extends DAO {
      * @return the list of VMs
      */
     List<VM> getAllForNetwork(Guid networkId);
+
+    /**
+     * Retrieves all VMS that belong to the provided vds group
+     * @param vds_group_id
+     * @return
+     */
+    List<VM> getAllForVdsGroup(Guid vds_group_id);
 }

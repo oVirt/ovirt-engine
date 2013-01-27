@@ -24,9 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -202,33 +199,21 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
             if (result) {
-                SearchParameters searchParams = new SearchParameters("vms: cluster = "
-                        + oldGroup.getname(), SearchType.VM);
-                searchParams.setMaxCount(Integer.MAX_VALUE);
-
-                @SuppressWarnings("unchecked")
-                List<VM> vmList =
-                        (List<VM>) getBackend().runInternalQuery(VdcQueryType.Search, searchParams)
-                                .getReturnValue();
+                List<VM> vmList = getVmDAO().getAllForVdsGroup(oldGroup.getId());
                 boolean notDownVms = false;
                 boolean suspendedVms = false;
-                for (VM vm : vmList) {
-                    // the search can return vm from cluster with similar name
-                    // so it's critical to check that
-                    // the vm cluster id is the same as the cluster.id
-                    if (!vm.getVdsGroupId().equals(oldGroup.getId())) {
-                        continue;
-                    } else {
-                        hasVms = true;
-                    }
-                    if (vm.getStatus() == VMStatus.Suspended) {
-                        suspendedVms = true;
-                    } else if (vm.getStatus() != VMStatus.Down) {
-                        notDownVms = true;
-                    }
-                }
+                hasVms = vmList.size() > 0;
                 boolean sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
                 if (!sameCpuNames) {
+                    for (VM vm : vmList) {
+                        if (vm.getStatus() == VMStatus.Suspended) {
+                            suspendedVms = true;
+                            break;
+                        } else if (vm.getStatus() != VMStatus.Down) {
+                            notDownVms = true;
+                            break;
+                        }
+                    }
                     if (suspendedVms) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_WITH_SUSPENDED_VMS);
                         result = false;
