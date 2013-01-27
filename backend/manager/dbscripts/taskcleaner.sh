@@ -1,3 +1,4 @@
+#!/bin/bash
 ###############################################################################################################
 # The purpose of this utility is to display and clean asynchronous tasks and corresponding
 # Job steps/Compensation data.
@@ -16,7 +17,6 @@
 #  should be cleaned as well.
 ###############################################################################################################
 
-#!/bin/bash
 pushd $(dirname ${0})>/dev/null
 
 #include db general functions
