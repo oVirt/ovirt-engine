@@ -35,7 +35,6 @@ public enum VDSCommandType {
     SetSafeNetworkConfig("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ConnectStorageServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DisconnectStorageServer("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    ValidateStorageServerConnection("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetStorageConnectionsList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ConnectStoragePool("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     DisconnectStoragePool("org.ovirt.engine.core.vdsbroker.vdsbroker"),

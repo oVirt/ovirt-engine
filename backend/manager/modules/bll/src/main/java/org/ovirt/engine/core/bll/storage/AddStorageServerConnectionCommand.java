@@ -79,16 +79,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_LOCAL_STORAGE_TO_NON_LOCAL_HOST);
                 }
             }
-            if (returnValue) {
-                IStorageHelper storageHelper = StorageHelperDirector.getInstance().getItem(
-                        paramConnection.getstorage_type());
-                if (!storageHelper.validateStoragePoolConnectionsInHost(getVds(),
-                        new java.util.ArrayList<StorageServerConnections>(java.util.Arrays.asList(paramConnection)),
-                        Guid.Empty)) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION);
-                }
-            }
         }
         return returnValue;
     }

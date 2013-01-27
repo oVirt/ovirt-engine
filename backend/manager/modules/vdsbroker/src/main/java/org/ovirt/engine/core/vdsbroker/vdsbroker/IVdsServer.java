@@ -95,6 +95,7 @@ public interface IVdsServer {
 
     ServerConnectionStatusReturnForXmlRpc connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 
+    @Deprecated
     ServerConnectionStatusReturnForXmlRpc validateStorageServerConnection(int serverType, String spUUID,
             Map<String, String>[] args);
 

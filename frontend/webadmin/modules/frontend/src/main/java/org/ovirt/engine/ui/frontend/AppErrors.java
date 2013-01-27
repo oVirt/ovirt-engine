@@ -951,9 +951,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network name already exists.")
     String NETWORK_NAME_ALREADY_EXISTS();
 
-    @DefaultStringValue("Cannot connect server to Storage.  ")
-    String ACTION_TYPE_FAILED_STORAGE_CONNECTION();
-
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
 

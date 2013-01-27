@@ -8,10 +8,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,28 +23,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public abstract class StorageHelperBase implements IStorageHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
-
-    @Override
-    public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return runForSingleConnectionInHost(storageDomain, storagePoolId, VdcActionType.ConnectStorageToVds.getValue());
-    }
-
-    public boolean runForSingleConnectionInHost(storage_domains storageDomain, Guid storagePoolId, int type) {
-        boolean returnValue = false;
-        storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
-        Guid vdsId = pool.getspm_vds_id() != null ? pool.getspm_vds_id().getValue() : Guid.Empty;
-
-        if (!vdsId.equals(Guid.Empty)) {
-            returnValue = runConnectionStorageToDomain(storageDomain, vdsId, type);
-        }
-        return returnValue;
-    }
-
-    @Override
-    public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return runForSingleConnectionInHost(storageDomain, storagePoolId,
-                VdcActionType.RemoveStorageServerConnection.getValue());
-    }
 
     protected abstract boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
 
@@ -104,12 +80,6 @@ public abstract class StorageHelperBase implements IStorageHelper {
     protected List<StorageServerConnections> filterConnectionsUsedByOthers(
             List<StorageServerConnections> connections, String vgId, final String lunId) {
         return Collections.emptyList();
-    }
-
-    @Override
-    public boolean validateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
-            Guid storagePoolId) {
-        return true;
     }
 
     @Override

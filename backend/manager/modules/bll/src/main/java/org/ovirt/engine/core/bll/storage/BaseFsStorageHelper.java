@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,12 +9,9 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -36,20 +32,6 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
                     + " because connection for connectionId:" + storageDomain.getstorage() + " is null.");
         }
         return returnValue;
-    }
-
-    @Override
-    public boolean validateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
-            Guid storagePoolId) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, String> validateConnections = (HashMap<String, String>) Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.ValidateStorageServerConnection,
-                        new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId, getType(),
-                                connections)).getReturnValue();
-        return isConnectSucceeded(validateConnections, connections);
     }
 
     @Override

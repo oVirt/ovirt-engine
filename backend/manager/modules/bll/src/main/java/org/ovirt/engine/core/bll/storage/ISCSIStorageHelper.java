@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -118,24 +117,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean validateStoragePoolConnectionsInHost(VDS vds, List<StorageServerConnections> connections,
-            Guid storagePoolId) {
-        if (connections.size() > 0) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> validateConnections = (Map<String, String>) Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.ValidateStorageServerConnection,
-                            new ConnectStorageServerVDSCommandParameters(vds.getId(), storagePoolId,
-                                    StorageType.ISCSI, connections)).getReturnValue();
-
-            return isConnectSucceeded(validateConnections, connections);
-        }
-        return true;
-    }
-
-    @Override
     public boolean isConnectSucceeded(final Map<String, String> returnValue,
             List<StorageServerConnections> connections) {
         boolean result = true;
@@ -197,18 +178,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             }
         }
         return true;
-    }
-
-    @Override
-    public boolean connectStorageToDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return runForSingleConnectionInHost(storageDomain, storagePoolId,
-                VDSCommandType.ConnectStorageServer.getValue());
-    }
-
-    @Override
-    public boolean disconnectStorageFromDomainByStoragePoolId(storage_domains storageDomain, Guid storagePoolId) {
-        return runForSingleConnectionInHost(storageDomain, storagePoolId,
-                VDSCommandType.DisconnectStorageServer.getValue());
     }
 
     @Override
