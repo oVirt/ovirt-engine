@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,28 +17,12 @@ import org.ovirt.engine.core.dao.VmPoolDAO;
  * A test class for the {@link GetAllVmPoolsAttachedToUserQuery} class.
  * It mocks the DAO and tests the flow of the query itself.
  */
-public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractUserQueryTest<GetAllVmPoolsAttachedToUserParameters, GetAllVmPoolsAttachedToUserQuery<GetAllVmPoolsAttachedToUserParameters>> {
+public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractQueryTest<GetAllVmPoolsAttachedToUserParameters, GetAllVmPoolsAttachedToUserQuery<GetAllVmPoolsAttachedToUserParameters>> {
 
-    /** Tests that executing a query with the same user works */
-    @Test
-    public void testQueryWithSameUser() {
-        assertExecuteQueryCommandResult(getUser().getUserId(), true);
-    }
-
-    /** Tests that executing a query with a different user returns an empty list */
-    @Test
-    public void testQueryWithOtherUser() {
-        assertExecuteQueryCommandResult(Guid.NewGuid(), false);
-    }
-
-    /** Tests that executing a query with a different user works when the query is run in admin mode */
+    /** Tests that executing a query returns the expected result */
     @Test
     public void testAdminQueryWithOtherUserWithDisks() {
-        when(getQueryParameters().isFiltered()).thenReturn(false);
-        assertExecuteQueryCommandResult(Guid.NewGuid(), true);
-    }
-
-    public void assertExecuteQueryCommandResult(Guid requestedUser, boolean expectedResults) {
+        Guid requestedUser = Guid.NewGuid();
         mockQueryParameters(requestedUser);
 
         // Mock the result of the DAO
@@ -49,13 +32,9 @@ public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractUserQueryTest<
 
         @SuppressWarnings("unchecked")
         List<vm_pools> actualPools = (List<vm_pools>) getQuery().getQueryReturnValue().getReturnValue();
-        if (!expectedResults) {
-            assertTrue("no VMs should have been returned", actualPools.isEmpty());
-        } else {
-            assertEquals("wrong number of VMs returned", 1, actualPools.size());
-            vm_pools actualPool = actualPools.get(0);
-            assertEquals("wrong VMs returned", expectedPool, actualPool);
-        }
+        assertEquals("wrong number of VMs returned", 1, actualPools.size());
+        vm_pools actualPool = actualPools.get(0);
+        assertEquals("wrong VMs returned", expectedPool, actualPool);
     }
 
     /**
