@@ -64,7 +64,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    AuditLogAgingThreashold(20),
+    AuditLogAgingThreshold(20),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("drac5,ilo,ipmilan,rsa,bladecenter,alom,apc,eps,wti,rsb")

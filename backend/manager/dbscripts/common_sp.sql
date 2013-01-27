@@ -143,6 +143,22 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+--renames an existing config key name, custome option_value modifications are preserved
+create or replace FUNCTION fn_db_rename_config_key(v_old_option_name varchar(100),v_new_option_name varchar(100),v_version varchar(40))
+returns void
+AS $procedure$
+DECLARE
+    v_current_option_value varchar(4000);
+begin
+    if (exists (select 1 from vdc_options where option_name ilike v_old_option_name and version = v_version)) then
+       v_current_option_value:=option_value from vdc_options where option_name ilike v_old_option_name and version = v_version;
+       update vdc_options set option_name = v_new_option_name, option_value = v_current_option_value
+           where  option_name ilike v_old_option_name and version = v_version;
+    end if;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 create or replace function fn_db_create_constraint (
     v_table varchar(128), v_constraint varchar(128), v_constraint_sql text)
 returns void

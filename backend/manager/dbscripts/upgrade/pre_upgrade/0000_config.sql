@@ -17,11 +17,15 @@ PLEASE NOTE THAT THIS SCRIPT MUST REMAIN RE-ENTRANT!
 
 ************************************************************************************/
 
+------------------------------------------------------------------------------------
+-- Rename existing configuration key names, values modifications are preserved
+------------------------------------------------------------------------------------
+select fn_db_rename_config_key('AuditLogAgingThreashold', 'AuditLogAgingThreshold', 'general');
+
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
 ------------------------------------------------------------------------------------
-
 select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
@@ -44,7 +48,7 @@ select fn_db_add_config_value('AsyncTaskPollingRate','10','general');
 select fn_db_add_config_value('AsyncTaskStatusCacheRefreshRateInSeconds','30','general');
 select fn_db_add_config_value('AsyncTaskStatusCachingTimeInMinutes','1','general');
 select fn_db_add_config_value('AsyncTaskZombieTaskLifeInMinutes','300','general');
-select fn_db_add_config_value('AuditLogAgingThreashold','30','general');
+select fn_db_add_config_value('AuditLogAgingThreshold','30','general');
 select fn_db_add_config_value('AuditLogCleanupTime','03:35:35','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
 --Handling Authentication Method
@@ -653,6 +657,7 @@ select fn_db_delete_config_value('SupportStorageFormat','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('UseRtl8139_pv','2.2,3.0,3.1,3.2');
 select fn_db_delete_config_value('VdsFenceOptions','general');
 select fn_db_delete_config_value('VirtualMachineDomainName','general');
+select fn_db_delete_config_value('AuditLogAgingThreashold','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
