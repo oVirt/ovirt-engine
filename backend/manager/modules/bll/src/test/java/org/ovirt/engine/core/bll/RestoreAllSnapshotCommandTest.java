@@ -51,7 +51,6 @@ public class RestoreAllSnapshotCommandTest {
     @ClassRule
     public static MockConfigRule mcr =
             new MockConfigRule(
-                    mockConfig(ConfigValues.FreeSpaceLow, 5),
                     mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 5)
             );
 

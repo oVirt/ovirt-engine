@@ -52,14 +52,4 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
     }
-
-    @Test
-    public void validateNoFreeSpacePctOnDomains() {
-        mockGetImageDomainsListVdsCommand(2, 2);
-        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, 50);
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
-    }
 }

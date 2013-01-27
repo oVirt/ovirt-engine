@@ -58,13 +58,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 @RunWith(MockitoJUnitRunner.class)
 public class AddDiskToVmCommandTest {
     private static int MAX_BLOCK_SIZE = 8192;
-    private static int FREE_SPACE_LOW = 10;
     private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxBlockDiskSize, MAX_BLOCK_SIZE),
-            mockConfig(ConfigValues.FreeSpaceLow, FREE_SPACE_LOW),
             mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, FREE_SPACE_CRITICAL_LOW_IN_GB),
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
             );
@@ -189,24 +187,6 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void canDoActionThinProvisioningSpaceCheckFailsPct() {
-        final int availableSize = 9;
-        final int usedSize = 191;
-        Guid sdid = Guid.NewGuid();
-        initializeCommand(sdid, VolumeType.Sparse);
-
-        mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
-        mockStoragePoolIsoMap();
-        mockStorageDomainSpaceChecker(domains, false);
-
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
-    }
-
-    @Test
     public void canDoActionPreallocatedSpaceCheckSucceeds() {
         final int availableSize = 12;
         final int usedSize = 8;
@@ -224,24 +204,6 @@ public class AddDiskToVmCommandTest {
     public void canDoActionPreallocatedSpaceCheckFailsSize() {
         final int availableSize = 8;
         final int usedSize = 7;
-        Guid sdid = Guid.NewGuid();
-        initializeCommand(sdid, VolumeType.Preallocated);
-
-        mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
-        mockStoragePoolIsoMap();
-        mockStorageDomainSpaceCheckerRequest(domains, false);
-
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
-    }
-
-    @Test
-    public void canDoActionPreallocatedSpaceCheckFailsPct() {
-        final int availableSize = 9;
-        final int usedSize = 191;
         Guid sdid = Guid.NewGuid();
         initializeCommand(sdid, VolumeType.Preallocated);
 

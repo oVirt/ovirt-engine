@@ -58,7 +58,6 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
             mockConfig(ConfigValues.MaxVmsInPool, 87),
             mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 2048),
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 262144),
-            mockConfig(ConfigValues.FreeSpaceLow, 10),
             mockConfig(ConfigValues.FreeSpaceCriticalLowInGB, 1),
             mockConfig(ConfigValues.InitStorageSparseSizeInGB, 1)
             );

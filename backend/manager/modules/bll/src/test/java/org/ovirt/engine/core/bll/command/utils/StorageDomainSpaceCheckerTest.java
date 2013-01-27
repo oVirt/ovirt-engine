@@ -16,34 +16,11 @@ public class StorageDomainSpaceCheckerTest {
     public static MockConfigRule mcr = new MockConfigRule();
 
     @Test
-    public void enoughSpaceAndPct() {
-        SpaceTestSettings settings = new SpaceTestSettings();
-        settings.diskSpaceFree = 6;
-        settings.diskSpaceUsed = 4;
-        settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 10;
-        storage_domains domain = setupForSpaceTest(settings);
-        assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
-    }
-
-    @Test
     public void notEnoughSpace() {
         SpaceTestSettings settings = new SpaceTestSettings();
         settings.diskSpaceFree = 4;
         settings.diskSpaceUsed = 6;
         settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 10;
-        storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
-    }
-
-    @Test
-    public void tooLowPct() {
-        SpaceTestSettings settings = new SpaceTestSettings();
-        settings.diskSpaceFree = 6;
-        settings.diskSpaceUsed = 4;
-        settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 70;
         storage_domains domain = setupForSpaceTest(settings);
         assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
@@ -54,18 +31,6 @@ public class StorageDomainSpaceCheckerTest {
         settings.diskSpaceFree = 5;
         settings.diskSpaceUsed = 5;
         settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 10;
-        storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
-    }
-
-    @Test
-    public void equalPctThreshold() {
-        SpaceTestSettings settings = new SpaceTestSettings();
-        settings.diskSpaceFree = 5;
-        settings.diskSpaceUsed = 5;
-        settings.spaceThresholdGB = 1;
-        settings.spaceThresholdPct = 50;
         storage_domains domain = setupForSpaceTest(settings);
         assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
@@ -76,7 +41,6 @@ public class StorageDomainSpaceCheckerTest {
         settings.diskSpaceFree = 0;
         settings.diskSpaceUsed = 0;
         settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
         assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
@@ -87,31 +51,8 @@ public class StorageDomainSpaceCheckerTest {
         settings.diskSpaceFree = 2;
         settings.diskSpaceUsed = 0;
         settings.spaceThresholdGB = -5;
-        settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
         assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
-    }
-
-    @Test
-    public void PctThresholdLessThanZero() {
-        SpaceTestSettings settings = new SpaceTestSettings();
-        settings.diskSpaceFree = 10;
-        settings.diskSpaceUsed = 0;
-        settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = -10;
-        storage_domains domain = setupForSpaceTest(settings);
-        assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
-    }
-
-    @Test
-    public void PctThresholdMoreThan100() {
-        SpaceTestSettings settings = new SpaceTestSettings();
-        settings.diskSpaceFree = 10;
-        settings.diskSpaceUsed = 0;
-        settings.spaceThresholdGB = 5;
-        settings.spaceThresholdPct = 110;
-        storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     public storage_domains setupForSpaceTest(final SpaceTestSettings settings) {
@@ -120,19 +61,17 @@ public class StorageDomainSpaceCheckerTest {
         dynamic.setused_disk_size(settings.diskSpaceUsed);
         storage_domains domain = new storage_domains();
         domain.setStorageDynamicData(dynamic);
-        mockConfig(settings.spaceThresholdGB, settings.spaceThresholdPct);
+        mockConfig(settings.spaceThresholdGB);
         return domain;
     }
 
-    private static void mockConfig(final int lowGB, final int lowPct) {
+    private static void mockConfig(final int lowGB) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, lowGB);
-        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, lowPct);
     }
 
     final class SpaceTestSettings {
         public int diskSpaceUsed;
         public int diskSpaceFree;
         public int spaceThresholdGB;
-        public int spaceThresholdPct;
     }
 }

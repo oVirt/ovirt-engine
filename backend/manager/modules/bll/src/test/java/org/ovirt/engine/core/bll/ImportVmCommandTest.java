@@ -51,8 +51,7 @@ public class ImportVmCommandTest {
     @Test
     public void insufficientDiskSpace() {
         final int lotsOfSpace = 1073741824;
-        final int diskSpacePct = 0;
-        final ImportVmCommand c = setupDiskSpaceTest(lotsOfSpace, diskSpacePct);
+        final ImportVmCommand c = setupDiskSpaceTest(lotsOfSpace);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
@@ -62,14 +61,12 @@ public class ImportVmCommandTest {
     @Test
     public void sufficientDiskSpace() {
         final int extraDiskSpaceRequired = 0;
-        final int diskSpacePct = 0;
-        final ImportVmCommand c = setupDiskSpaceTest(extraDiskSpaceRequired, diskSpacePct);
+        final ImportVmCommand c = setupDiskSpaceTest(extraDiskSpaceRequired);
         assertTrue(c.canDoAction());
     }
 
-    private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired, final int diskSpacePct) {
+    private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
-        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, diskSpacePct);
 
         ImportVmCommand cmd = spy(new ImportVmCommand(createParameters()));
         doReturn(true).when(cmd).validateNoDuplicateVm();

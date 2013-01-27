@@ -53,9 +53,8 @@ public class ImportVmTemplateCommandTest {
     @Test
     public void insufficientDiskSpace() {
         final int lotsOfSpaceRequired = 1073741824;
-        final int pctOfSpaceRequired = 0;
         final ImportVmTemplateCommand c =
-                setupDiskSpaceTest(lotsOfSpaceRequired, pctOfSpaceRequired);
+                setupDiskSpaceTest(lotsOfSpaceRequired);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
@@ -64,9 +63,8 @@ public class ImportVmTemplateCommandTest {
 
     @Test
     public void sufficientDiskSpace() {
-        final int pctOfSpaceRequired = 0;
         final ImportVmTemplateCommand c =
-                setupDiskSpaceTest(0, pctOfSpaceRequired);
+                setupDiskSpaceTest(0);
         assertTrue(c.canDoAction());
     }
 
@@ -138,7 +136,6 @@ public class ImportVmTemplateCommandTest {
             VolumeType volumeType,
             StorageType storageType) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, 0);
-        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, 0);
 
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(createParameters()));
@@ -217,10 +214,8 @@ public class ImportVmTemplateCommandTest {
         doReturn(dao).when(command).getStorageDomainStaticDAO();
     }
 
-    private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired,
-            final int pctOfSpaceRequired) {
+    private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, extraDiskSpaceRequired);
-        mcr.mockConfigValue(ConfigValues.FreeSpaceLow, pctOfSpaceRequired);
         return new TestHelperImportVmTemplateCommand(createParameters());
     }
 
