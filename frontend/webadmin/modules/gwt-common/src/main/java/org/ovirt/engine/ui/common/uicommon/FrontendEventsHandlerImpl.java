@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
+import org.ovirt.engine.ui.frontend.Message;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.inject.Inject;
@@ -56,19 +57,27 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
             List<VdcReturnValueBase> returnValues, List<VdcFault> faults) {
         String actionStr = EnumTranslator.createAndTranslate(action);
 
-        List<String> errors = new ArrayList<String>();
+        List<Message> errors = new ArrayList<Message>();
 
         for (VdcReturnValueBase v : returnValues) {
             if (isRaiseErrorModalPanel(action, v.getFault()))
-                errors.add(messages.uiCommonRunActionFailed(v.getCanDoActionMessages().iterator().next()));
+            {
+                for (String canDo : v.getCanDoActionMessages()) {
+                    Message msg = new Message(v.getDescription(), canDo);
+                    errors.add(msg);
+                }
+            }
         }
 
         for (VdcFault fault : faults) {
             if (isRaiseErrorModalPanel(action, fault))
-                errors.add(messages.uiCommonRunActionExecutionFailed(actionStr, fault.getMessage()));
+            {
+                Message msg = new Message(actionStr, fault.getMessage());
+                errors.add(msg);
+            }
         }
 
-        errorPopupManager.show(ErrorMessageFormatter.formatErrorMessages(errors));
+        errorPopupManager.show(ErrorMessageFormatter.formatMessages(errors));
     }
 
     @Override
