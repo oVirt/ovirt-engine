@@ -86,7 +86,7 @@ public class MoveDisksCommandTest {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImage(diskImageId);
-        initVm(VMStatus.Paused, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Unknown, Guid.NewGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
