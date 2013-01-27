@@ -10,6 +10,15 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 public interface NetworkProviderProxy extends ProviderProxy {
 
     /**
+     * Add the network to the provider, who is responsible to provide the requested network.
+     *
+     * @param network
+     *            The network to add to the provider.
+     * @return The external ID of the added network.
+     */
+    String add(Network network);
+
+    /**
      * Retrieve a list of all the networks that this provider can provide.
      *
      * @return A list of the networks available from the provider.

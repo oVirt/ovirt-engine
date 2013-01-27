@@ -252,6 +252,7 @@ public enum VdcActionType {
     RemoveProvider(1602, false, QuotaDependency.NONE),
     TestProviderConnectivity(1603, false, QuotaDependency.NONE),
     ImportProviderCertificateChain(1604, false, QuotaDependency.NONE),
+    AddNetworkOnProvider(1605, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
 
     AddWatchdog(1700, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),

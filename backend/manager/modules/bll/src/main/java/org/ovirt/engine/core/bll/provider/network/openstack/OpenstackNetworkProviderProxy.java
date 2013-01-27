@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.quantum.Quantum;
+import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Port;
 import com.woorea.openstack.quantum.model.PortForCreate;
@@ -29,6 +30,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     private static final String API_VERSION = "/v2.0";
 
     private static final String DEVICE_OWNER = "oVirt";
+
+    private static final String FLAT_NETWORK = "flat";
+
+    private static final String VLAN_NETWORK = "vlan";
 
     private Provider<OpenstackNetworkProviderProperties> provider;
 
@@ -44,6 +49,30 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
         }
 
         return client;
+    }
+
+    @Override
+    public String add(Network network) {
+        NetworkForCreate networkForCreate = new NetworkForCreate();
+        networkForCreate.setAdminStateUp(true);
+        networkForCreate.setName(network.getName());
+        if (network.getLabel() != null) {
+            networkForCreate.setProviderPhysicalNetwork(network.getLabel());
+            if (network.getVlanId() == null) {
+                networkForCreate.setProviderNetworkType(FLAT_NETWORK);
+            } else {
+                networkForCreate.setProviderNetworkType(VLAN_NETWORK);
+                networkForCreate.setProviderSegmentationId(network.getVlanId());
+            }
+        }
+
+        try {
+            com.woorea.openstack.quantum.model.Network createdNetwork =
+                    getClient().networks().create(networkForCreate).execute();
+            return createdNetwork.getId();
+        } catch (RuntimeException e) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
+        }
     }
 
     @Override
