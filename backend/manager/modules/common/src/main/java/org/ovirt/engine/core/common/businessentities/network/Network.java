@@ -60,6 +60,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     private ProviderNetwork providedBy;
 
+    private String label;
+
     @MTU
     private int mtu;
 
@@ -180,6 +182,14 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         this.providedBy = providedBy;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -213,6 +223,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 .append(getCluster())
                 .append(", providedBy=")
                 .append(getProvidedBy())
+                .append(", label=")
+                .append(getLabel())
                 .append("}");
         return builder.toString();
     }
@@ -238,6 +250,7 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         result = prime * result + (mtu);
         result = prime * result + ((vmNetwork) ? 11 : 13);
         result = prime * result + ((providedBy == null) ? 0 : providedBy.hashCode());
+        result = prime * result + ((label == null) ? 0 : label.hashCode());
         return result;
     }
 
@@ -314,6 +327,11 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
             if (other.providedBy != null)
                 return false;
         } else if (!providedBy.equals(other.providedBy))
+            return false;
+        if (label == null) {
+            if (other.label != null)
+                return false;
+        } else if (!label.equals(other.label))
             return false;
         return true;
     }
