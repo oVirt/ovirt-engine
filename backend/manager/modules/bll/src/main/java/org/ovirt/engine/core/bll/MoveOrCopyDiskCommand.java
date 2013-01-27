@@ -148,7 +148,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected boolean validateSpaceRequirements() {
         boolean retValue = true;
-        if (!isStorageDomainSpaceBelowThresholds()) {
+        if (!isStorageDomainSpaceWithinThresholds()) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
             addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", getStorageDomain().getstorage_name()));
@@ -164,8 +164,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return retValue;
     }
 
-    protected boolean isStorageDomainSpaceBelowThresholds() {
-        return StorageDomainSpaceChecker.isBelowThresholds(getStorageDomain());
+    protected boolean isStorageDomainSpaceWithinThresholds() {
+        return StorageDomainSpaceChecker.isWithinThresholds(getStorageDomain());
     }
 
     protected List<DiskImage> getAllImageSnapshots() {

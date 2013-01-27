@@ -206,7 +206,7 @@ public class MoveOrCopyDiskCommandTest {
                 operation)));
 
         // Spy away the storage domain checker methods
-        doReturn(true).when(command).isStorageDomainSpaceBelowThresholds();
+        doReturn(true).when(command).isStorageDomainSpaceWithinThresholds();
         doReturn(true).when(command).doesStorageDomainHaveSpaceForRequest(anyLong());
 
         // Spy away the image handler methods

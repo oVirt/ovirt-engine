@@ -233,15 +233,15 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getDiskImageInfo().getvolume_type() == VolumeType.Preallocated) {
             return doesStorageDomainhaveSpaceForRequest(storageDomain);
         }
-        return isStorageDomainBelowThresholds(storageDomain);
+        return isStorageDomainWithinThresholds(storageDomain);
     }
 
     protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain) {
         return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, getDiskImageInfo().getSizeInGigabytes());
     }
 
-    protected boolean isStorageDomainBelowThresholds(storage_domains storageDomain) {
-        return StorageDomainSpaceChecker.isBelowThresholds(storageDomain);
+    protected boolean isStorageDomainWithinThresholds(storage_domains storageDomain) {
+        return StorageDomainSpaceChecker.isWithinThresholds(storageDomain);
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */

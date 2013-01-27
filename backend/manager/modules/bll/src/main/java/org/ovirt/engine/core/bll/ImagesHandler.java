@@ -79,7 +79,7 @@ public final class ImagesHandler {
         for (storage_domains storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
-                    && (notCheckSize || StorageDomainSpaceChecker.isBelowThresholds(storageDomain))) {
+                    && (notCheckSize || StorageDomainSpaceChecker.isWithinThresholds(storageDomain))) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
@@ -537,7 +537,7 @@ public final class ImagesHandler {
                         messages.add(res.getMessage().toString());
                     }
                 }
-                if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isBelowThresholds(domain)) {
+                if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isWithinThresholds(domain)) {
                     returnValue = false;
                     ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
                     break;

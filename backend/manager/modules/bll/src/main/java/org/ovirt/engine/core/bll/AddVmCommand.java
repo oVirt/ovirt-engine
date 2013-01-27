@@ -173,7 +173,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue = false;
             } else {
                 for (storage_domains domain : destStorages) {
-                    if (!StorageDomainSpaceChecker.isBelowThresholds(domain)) {
+                    if (!StorageDomainSpaceChecker.isWithinThresholds(domain)) {
                         returnValue = false;
                         reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
                         break;

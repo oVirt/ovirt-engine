@@ -371,7 +371,7 @@ public class AddDiskToVmCommandTest {
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(true).when(command).performImagesChecks(any(Guid.class));
-        doReturn(true).when(command).isStorageDomainBelowThresholds(any(storage_domains.class));
+        doReturn(true).when(command).isStorageDomainWithinThresholds(any(storage_domains.class));
         doReturn(mockSnapshotValidator()).when(command).getSnapshotValidator();
     }
 
@@ -665,7 +665,7 @@ public class AddDiskToVmCommandTest {
     }
 
     private void mockStorageDomainSpaceChecker(storage_domains domain, boolean succeeded) {
-        doReturn(succeeded).when(command).isStorageDomainBelowThresholds(domain);
+        doReturn(succeeded).when(command).isStorageDomainWithinThresholds(domain);
     }
 
     private void mockStorageDomainSpaceCheckerRequest(storage_domains domain, boolean succeeded) {

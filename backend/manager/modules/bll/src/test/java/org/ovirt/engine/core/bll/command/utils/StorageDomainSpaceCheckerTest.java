@@ -23,7 +23,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertTrue(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 70;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 1;
         settings.spaceThresholdPct = 50;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = -5;
         settings.spaceThresholdPct = 10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertTrue(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = -10;
         storage_domains domain = setupForSpaceTest(settings);
-        assertTrue(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertTrue(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class StorageDomainSpaceCheckerTest {
         settings.spaceThresholdGB = 5;
         settings.spaceThresholdPct = 110;
         storage_domains domain = setupForSpaceTest(settings);
-        assertFalse(StorageDomainSpaceChecker.isBelowThresholds(domain));
+        assertFalse(StorageDomainSpaceChecker.isWithinThresholds(domain));
     }
 
     public storage_domains setupForSpaceTest(final SpaceTestSettings settings) {
