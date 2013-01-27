@@ -593,7 +593,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private List<QuotaConsumptionParameter> consumptionParameters;
 
-    private List<QuotaConsumptionParameter> getQuotaConsumptionParameters() {
+    protected List<QuotaConsumptionParameter> getQuotaConsumptionParameters() {
 
         // This a double marking mechanism which was created to ensure Quota dependencies would not be inherited
         // by descendants commands. Each Command is both marked by the QuotaDependency and implements the required
@@ -945,14 +945,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        // if quota enforcement is not in HARD_ENFORCEMENT the quota may be null.
         if (!isInternalExecution() && getStoragePool() != null
-                && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED
+                && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT) {
 
             List<QuotaConsumptionParameter> consumptionParameters = getQuotaConsumptionParameters();
 
             if (consumptionParameters != null) {
                 for (QuotaConsumptionParameter parameter : getQuotaConsumptionParameters()) {
-                    if (parameter.getQuotaGuid() != null && parameter.getQuotaGuid() != Guid.Empty) {
+                    if (parameter.getQuotaGuid() != null && !Guid.Empty.equals(parameter.getQuotaGuid())) {
                         quotaPermissionList.add(new PermissionSubject(parameter.getQuotaGuid(), VdcObjectType.Quota, ActionGroup.CONSUME_QUOTA));
                     }
                 }

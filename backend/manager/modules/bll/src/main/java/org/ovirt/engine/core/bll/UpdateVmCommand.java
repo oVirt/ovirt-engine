@@ -52,6 +52,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private static final long serialVersionUID = -2444359305003244168L;
     private VM oldVm;
+    private boolean quotaSanityOnly = false;
 
     public UpdateVmCommand(T parameters) {
         super(parameters);
@@ -359,6 +360,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 || getVm().getStatus() == VMStatus.ImageLocked
                 || getVm().getStatus() == VMStatus.PoweringDown) {
             list.add(new QuotaSanityParameter(getParameters().getVmStaticData().getQuotaId(), null));
+            quotaSanityOnly = true;
         } else {
             if (getParameters().getVmStaticData().getQuotaId() == null
                     || getParameters().getVmStaticData().getQuotaId().equals(NGuid.Empty)
@@ -399,5 +401,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Override
     public void setEntityId(AuditLogableBase logable) {
        logable.setVmId(oldVm.getId());
+    }
+    public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+        // if only quota sanity is checked the user may use a quota he cannot consume
+        // (it will be consumed only when the vm will run)
+        if (!quotaSanityOnly) {
+            super.addQuotaPermissionSubject(quotaPermissionList);
+        }
     }
 }
