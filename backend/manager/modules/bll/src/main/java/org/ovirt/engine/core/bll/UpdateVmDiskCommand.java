@@ -285,7 +285,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean isQuotaValidationNeeded() {
-        return DiskStorageType.IMAGE == oldDisk.getDiskStorageType();
+        return oldDisk != null && newDisk != null && oldDisk instanceof DiskImage &&
+                newDisk instanceof DiskImage && DiskStorageType.IMAGE == oldDisk.getDiskStorageType();
     }
 
     private Guid getQuotaId() {
@@ -302,23 +303,28 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (isQuotaValidationNeeded()) {
             DiskImage oldDiskImage = (DiskImage) oldDisk;
             DiskImage newDiskImage = (DiskImage) newDisk;
-            if (oldDiskImage.getQuotaId() == null || !oldDiskImage.getQuotaId().equals(newDiskImage.getQuotaId())) {
-                if (oldDiskImage.getQuotaId() != null && !Guid.Empty.equals(oldDiskImage.getQuotaId())) {
-                    list.add(new QuotaStorageConsumptionParameter(
-                            oldDiskImage.getQuotaId(),
-                            null,
-                            QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                            //TODO: Shared Disk?
-                            oldDiskImage.getstorage_ids().get(0),
-                            (double)oldDiskImage.getSizeInGigabytes()));
-                }
+
+            boolean emptyOldQuota = oldDiskImage.getQuotaId() == null || Guid.Empty.equals(oldDiskImage.getQuotaId());
+            boolean differentNewQuota = !emptyOldQuota && !oldDiskImage.getQuotaId().equals(newDiskImage.getQuotaId());
+
+            if (emptyOldQuota || differentNewQuota) {
                 list.add(new QuotaStorageConsumptionParameter(
-                        newDiskImage.getQuotaId(),
-                        null,
-                        QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
-                        //TODO: Shared Disk?
-                        newDiskImage.getstorage_ids().get(0),
-                        (double)newDiskImage.getSizeInGigabytes()));
+                    newDiskImage.getQuotaId(),
+                    null,
+                    QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
+                    //TODO: Shared Disk?
+                    newDiskImage.getstorage_ids().get(0),
+                    (double)newDiskImage.getSizeInGigabytes()));
+            }
+
+            if (differentNewQuota) {
+                list.add(new QuotaStorageConsumptionParameter(
+                    oldDiskImage.getQuotaId(),
+                    null,
+                    QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                    //TODO: Shared Disk?
+                    oldDiskImage.getstorage_ids().get(0),
+                    (double)oldDiskImage.getSizeInGigabytes()));
             }
         }
         return list;
