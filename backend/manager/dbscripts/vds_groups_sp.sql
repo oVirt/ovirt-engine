@@ -190,7 +190,7 @@ Create or replace FUNCTION fn_perms_get_vds_groups_with_permitted_action(v_user_
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
       FROM vds_groups_view
-      WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vds_groups.vds_group_id, 9)) IS NOT NULL;
+      WHERE (SELECT 1 from get_entity_permissions(v_user_id, v_action_group_id, vds_groups_view.vds_group_id, 9)) IS NOT NULL;
 END; $procedure$
 LANGUAGE plpgsql;
 
