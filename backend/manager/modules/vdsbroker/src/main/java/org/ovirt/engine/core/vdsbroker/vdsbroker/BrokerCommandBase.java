@@ -132,6 +132,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case VolumeGroupAlreadyExistsError:
         case VolumeGroupUninitialized:
         case VolumeGroupHasDomainTag:
+        case CannotRemoveLogicalVolume:
         case CannotDeactivateLogicalVolume:
         case CannotActivateLogicalVolume:
         case LogicalVolumePermissionsError:
