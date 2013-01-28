@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -98,6 +96,4 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
             return (getSucceeded()) ? AuditLogType.VDS_SET_NONOPERATIONAL : AuditLogType.VDS_SET_NONOPERATIONAL_FAILED;
         }
     }
-
-    private static Log log = LogFactory.getLog(SetNonOperationalVdsCommand.class);
 }

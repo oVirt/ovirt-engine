@@ -7,8 +7,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.VdcCommandBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
@@ -120,6 +118,4 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     protected abstract void ExecuteVDSCommand();
-
-    private static Log log = LogFactory.getLog(VDSCommandBase.class);
 }

@@ -7,8 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -94,6 +92,4 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
             log.error("Exception in Rollback ExecuteVdsBrokerCommand", ex);
         }
     }
-
-    private static final Log log = LogFactory.getLog(AddNetworkVDSCommand.class);
 }

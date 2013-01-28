@@ -4,8 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.VDSCommandBase;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNoMasterDomainException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNonOperationalException;
@@ -241,6 +239,4 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
             }
         }
     }
-
-    private static final Log log = LogFactory.getLog(BrokerCommandBase.class);
 }

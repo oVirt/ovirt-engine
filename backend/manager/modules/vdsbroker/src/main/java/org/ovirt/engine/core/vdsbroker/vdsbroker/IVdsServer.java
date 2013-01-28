@@ -64,6 +64,7 @@ public interface IVdsServer {
 
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);
 
+    @Deprecated
     StatusOnlyReturnForXmlRpc heartBeat();
 
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);

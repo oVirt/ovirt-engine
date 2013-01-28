@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.vdscommands.SpmStartVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -80,6 +78,4 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
     protected Object getReturnValueFromBroker() {
         return _result;
     }
-
-    private static Log log = LogFactory.getLog(SpmStartVDSCommand.class);
 }

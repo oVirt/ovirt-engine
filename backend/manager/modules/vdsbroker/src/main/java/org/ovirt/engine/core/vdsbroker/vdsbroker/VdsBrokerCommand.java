@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.ApplicationException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
@@ -135,6 +133,4 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     protected abstract void ExecuteVdsBrokerCommand();
-
-    private static Log log = LogFactory.getLog(VdsBrokerCommand.class);
 }

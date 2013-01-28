@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> extends VdsBrokerCommand<P> {
     private Map<String, String> migrationInfo;
@@ -27,6 +25,4 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
         status = getBroker().migrate(migrationInfo);
         ProceedProxyReturnValue();
     }
-
-    private static Log log = LogFactory.getLog(MigrateBrokerVDSCommand.class);
 }

@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -99,6 +97,4 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             break;
         }
     }
-
-    private static Log log = LogFactory.getLog(SpmStopVDSCommand.class);
 }

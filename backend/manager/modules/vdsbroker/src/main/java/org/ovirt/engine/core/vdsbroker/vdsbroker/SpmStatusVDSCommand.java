@@ -5,8 +5,6 @@ import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.SpmStatusVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSNonOperationalException;
@@ -85,6 +83,4 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     protected boolean getIsPrintReturnValue() {
         return false;
     }
-
-    private static Log log = LogFactory.getLog(SpmStatusVDSCommand.class);
 }
