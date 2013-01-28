@@ -84,6 +84,10 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("TYPE", "vm_type");
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("_VM_ID", "vm_guid");
+
+        // Override field names for purpose of sorting, if needed
+        sortableFieldDict.put("IP", StringFormat.format("fn_get_comparable_ip_list(%s)", getDbFieldName("IP")));
+
         /**
          */
         notFreeTextSearchableFieldsList.add("APPS");
