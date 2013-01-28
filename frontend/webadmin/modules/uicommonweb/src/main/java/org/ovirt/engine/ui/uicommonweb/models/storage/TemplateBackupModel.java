@@ -260,7 +260,7 @@ public class TemplateBackupModel extends VmBackupModel
                                         .getConstants()
                                         .importTemplatesTitle());
                                 confirmModel.setHashName("import_template"); //$NON-NLS-1$
-                                StringHelper.trimEnd(importedTemplates.trim(), ',');
+                                importedTemplates = StringHelper.trimEnd(importedTemplates.trim(), ',');
                                 confirmModel.setMessage(ConstantsManager.getInstance()
                                         .getMessages()
                                         .importProcessHasBegunForTemplates(importedTemplates));
