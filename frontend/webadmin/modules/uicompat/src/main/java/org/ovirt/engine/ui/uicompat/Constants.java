@@ -1740,4 +1740,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No disks selected")
     String noDisksSelected();
+
+    @DefaultStringValue("Alerts")
+    String alertsTitle();
 }

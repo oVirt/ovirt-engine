@@ -5,9 +5,6 @@ import java.util.List;
 
 public interface Messages extends com.google.gwt.i18n.client.Messages {
 
-    @DefaultMessage("{0} Alerts")
-    String alertsTitle(String num);
-
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
     String customPropertyOneOfTheParamsIsntSupported(String parameters);
 
