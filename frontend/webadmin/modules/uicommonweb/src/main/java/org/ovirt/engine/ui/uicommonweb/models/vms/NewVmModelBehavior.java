@@ -45,6 +45,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
                     }
                 }, getModel().getHash()));
+        InitPriority(0);
     }
 
     @Override
