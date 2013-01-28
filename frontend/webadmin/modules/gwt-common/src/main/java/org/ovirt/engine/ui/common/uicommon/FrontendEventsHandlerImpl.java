@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
 import org.ovirt.engine.ui.frontend.Message;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.inject.Inject;
@@ -31,7 +32,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     @Override
     public Boolean isRaiseErrorModalPanel(VdcActionType actionType, VdcFault fault) {
         return (actionType != VdcActionType.LoginUser) &&
-               !(actionType == VdcActionType.VmLogon && fault.getError() == VdcBllErrors.nonresp);
+                !(actionType == VdcActionType.VmLogon && fault.getError() == VdcBllErrors.nonresp);
     }
 
     @Override
@@ -59,11 +60,15 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
         List<Message> errors = new ArrayList<Message>();
 
+        int actionNum = 0;
         for (VdcReturnValueBase v : returnValues) {
+            ++actionNum;
             if (isRaiseErrorModalPanel(action, v.getFault()))
             {
                 for (String canDo : v.getCanDoActionMessages()) {
-                    Message msg = new Message(v.getDescription(), canDo);
+                    String description =
+                            (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$
+                    Message msg = new Message(description, canDo);
                     errors.add(msg);
                 }
             }

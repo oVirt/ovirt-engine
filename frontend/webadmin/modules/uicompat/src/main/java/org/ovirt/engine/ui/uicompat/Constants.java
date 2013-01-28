@@ -27,6 +27,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not Specified")
     String notSpecifiedLabel();
 
+    @DefaultStringValue("Action")
+    String action();
+
     // Titles
     @DefaultStringValue("")
     String empty();
