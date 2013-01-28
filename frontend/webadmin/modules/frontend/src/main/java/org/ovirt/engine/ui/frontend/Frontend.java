@@ -42,21 +42,18 @@ public class Frontend {
 
         private String queryKey;
 
-        public QueryWrapper(VdcQueryType queryType,
-                VdcQueryParametersBase parameters,
-                AsyncQuery callback) {
+        public QueryWrapper(VdcQueryType queryType, VdcQueryParametersBase parameters, AsyncQuery callback) {
             this.queryType = queryType;
             this.parameters = parameters;
             this.callback = callback;
             String sender = callback.getModel() == null ? "" : callback.getModel().toString();
 
             if (queryType == VdcQueryType.Search && parameters instanceof SearchParameters) {
-                queryKey = queryType.toString() + ((SearchParameters) parameters).getSearchPattern()
-                        + parameters.getClass().toString() +
-                        sender;
+                queryKey =
+                        queryType.toString() + ((SearchParameters) parameters).getSearchPattern()
+                                + parameters.getClass().toString() + sender;
             } else {
-                queryKey = queryType.toString() + parameters.getClass().toString() +
-                        sender;
+                queryKey = queryType.toString() + parameters.getClass().toString() + sender;
             }
         }
 
@@ -142,11 +139,13 @@ public class Frontend {
     private static void failureEventHandler(Throwable caught) {
         String errorMessage;
         if (caught instanceof StatusCodeException) {
+            errorMessage = ConstantsManager.getInstance().getConstants().requestToServerFailedWithCode() + ": " //$NON-NLS-1$
+                    + ((StatusCodeException) caught).getStatusCode();
+        }
+        else {
             errorMessage =
-                    ConstantsManager.getInstance().getConstants().requestToServerFailedWithCode()+": " //$NON-NLS-1$
-                            + ((StatusCodeException) caught).getStatusCode();
-        } else {
-            errorMessage = ConstantsManager.getInstance().getConstants().requestToServerFailed() +": " + caught.getLocalizedMessage(); //$NON-NLS-1$
+                    ConstantsManager.getInstance().getConstants().requestToServerFailed()
+                            + ": " + caught.getLocalizedMessage(); //$NON-NLS-1$
         }
         failureEventHandler(errorMessage);
     }
@@ -516,51 +515,56 @@ public class Frontend {
             final Object state) {
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
 
-        service.RunMultipleActions(actionType, parameters, isRunOnlyIfAllCanDoPass, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
-            @Override
-            public void onFailure(Throwable caught) {
+        service.RunMultipleActions(actionType,
+                parameters,
+                isRunOnlyIfAllCanDoPass,
+                new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
                         if (ignoreFailure(caught)) {
                             return;
                         }
-                logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
-                failureEventHandler(caught);
+                        logger.log(Level.SEVERE, "Failed to execute RunAction: " + caught, caught); //$NON-NLS-1$
+                        failureEventHandler(caught);
 
-                if (callback != null) {
-                    callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
-                }
-            }
-
-            @Override
-            public void onSuccess(ArrayList<VdcReturnValueBase> result) {
-                logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-
-                ArrayList<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
-                ArrayList<VdcFault> faults = new ArrayList<VdcFault>();
-
-                for (VdcReturnValueBase v : result) {
-                    if (!v.getCanDoAction()) {
-                        failed.add(v);
+                        if (callback != null) {
+                            callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null, state));
+                        }
                     }
-                }
 
-                if (!failed.isEmpty()) {
-                    translateErrors(failed);
-                    getEventsHandler().runMultipleActionFailed(actionType, failed, faults);
-                }
+                    @Override
+                    public void onSuccess(ArrayList<VdcReturnValueBase> result) {
+                        logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
 
-                if (callback != null) {
-                    callback.Executed(new FrontendMultipleActionAsyncResult(actionType, parameters, result, state));
-                }
-            }
-        });
+                        ArrayList<VdcReturnValueBase> failed = new ArrayList<VdcReturnValueBase>();
+                        ArrayList<VdcFault> faults = new ArrayList<VdcFault>();
+
+                        for (VdcReturnValueBase v : result) {
+                            if (!v.getCanDoAction()) {
+                                failed.add(v);
+                            }
+                        }
+
+                        if (!failed.isEmpty()) {
+                            translateErrors(failed);
+                            getEventsHandler().runMultipleActionFailed(actionType, failed, faults);
+                        }
+
+                        if (callback != null) {
+                            callback.Executed(new FrontendMultipleActionAsyncResult(actionType,
+                                    parameters,
+                                    result,
+                                    state));
+                        }
+                    }
+                });
     }
 
     /**
      * @deprecated Please use async RunMultipleAction instead, sync operations are not supported
      */
     @Deprecated
-    public static void RunMultipleAction(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
+    public static void RunMultipleAction(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters) {
         RunMultipleAction(actionType, parameters, null, null);
     }
 
@@ -601,7 +605,10 @@ public class Frontend {
                 }, state);
     }
 
-    public static void LoginAsync(final String userName, final String password, final String domain, final AsyncQuery callback) {
+    public static void LoginAsync(final String userName,
+            final String password,
+            final String domain,
+            final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async Login."); //$NON-NLS-1$
 
         GenericApiGWTServiceAsync service = GenericApiGWTServiceAsync.Util.getInstance();
@@ -710,7 +717,7 @@ public class Frontend {
 
     private static void dumpQueryDetails(VdcQueryType queryType, VdcQueryParametersBase searchParameters) {
         StringBuffer sb = new StringBuffer();
-        sb.append("VdcQuery Type: '" + queryType + "', ");  //$NON-NLS-1$//$NON-NLS-2$
+        sb.append("VdcQuery Type: '" + queryType + "', "); //$NON-NLS-1$//$NON-NLS-2$
         if (searchParameters instanceof SearchParameters) {
             SearchParameters sp = (SearchParameters) searchParameters;
 
@@ -718,7 +725,7 @@ public class Frontend {
                 throw new RuntimeException("Search pattern is defined as 'Not implemented', probably because of a use of String.format()"); //$NON-NLS-1$
             }
 
-            sb.append("Type value: [" + sp.getSearchTypeValue() + "], Pattern: [" + sp.getSearchPattern() + "]");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            sb.append("Type value: [" + sp.getSearchTypeValue() + "], Pattern: [" + sp.getSearchPattern() + "]"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
         } else {
             sb.append("Search type is base or unknown"); //$NON-NLS-1$
         }
@@ -728,7 +735,7 @@ public class Frontend {
 
     private static void dumpActionDetails(VdcActionType actionType, VdcActionParametersBase parameters) {
         StringBuffer sb = new StringBuffer();
-        sb.append("actionType Type: '" + actionType + "', ");  //$NON-NLS-1$//$NON-NLS-2$
+        sb.append("actionType Type: '" + actionType + "', "); //$NON-NLS-1$//$NON-NLS-2$
         sb.append("Params: " + parameters); //$NON-NLS-1$
 
         logger.fine(sb.toString());
@@ -765,7 +772,8 @@ public class Frontend {
                 callback.Executed(f);
         }
 
-        if ((!success) && (getEventsHandler() != null) && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
+        if ((!success) && (getEventsHandler() != null)
+                && (getEventsHandler().isRaiseErrorModalPanel(actionType, result.getFault()))) {
             if (result.getCanDoActionMessages().size() <= 1) {
                 String errorMessage = !result.getCanDoAction() || !result.getCanDoActionMessages().isEmpty() ?
                         getRunActionErrorMessage(result.getCanDoActionMessages()) : result.getFault().getMessage();
