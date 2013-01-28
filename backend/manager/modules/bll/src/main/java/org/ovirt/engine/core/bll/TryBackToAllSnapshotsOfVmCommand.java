@@ -203,21 +203,20 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
-        boolean result =
-                validate(vmValidator.vmDown())
-                        && validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
-                        && validate(snapshotsValidator.vmNotInPreview(getVmId()))
-                        && validate(snapshotsValidator.snapshotExists(snapshot))
-                        && validate(snapshotsValidator.snapshotNotBroken(snapshot));
+        if (!validate(vmValidator.vmDown())
+                || !validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
+                || !validate(snapshotsValidator.vmNotInPreview(getVmId()))
+                || !validate(snapshotsValidator.snapshotExists(snapshot))
+                || !validate(snapshotsValidator.snapshotNotBroken(snapshot))) {
+            return false;
+        }
 
         updateVmDisksFromDb();
         Collection<DiskImage> diskImages =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
         if (!diskImages.isEmpty()) {
-            result =
-                    result
-                            && validate(new StoragePoolValidator(getStoragePool()).isUp())
-                            && ImagesHandler.PerformImagesChecks(
+          if (!validate(new StoragePoolValidator(getStoragePool()).isUp())
+                  || !ImagesHandler.PerformImagesChecks(
                                     getReturnValue().getCanDoActionMessages(),
                                     getVm().getStoragePoolId(),
                                     Guid.Empty,
@@ -227,23 +226,28 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     true,
                                     true,
-                                    diskImages);
+                                    diskImages)) {
+              return false;
+          }
         }
-        if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
+
+        List<Guid> snapshotIds = LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override
             public Guid eval(DiskImage disk) {
                 return disk.getvm_snapshot_id().getValue();
             }
-        }).contains(getParameters().getDstSnapshotId())) {
-            result = false;
-            addCanDoActionMessage(VdcBllMessages.CANNOT_PREIEW_CURRENT_IMAGE);
+        });
+        if (snapshotIds.contains(getParameters().getDstSnapshotId())) {
+            return failCanDoAction(VdcBllMessages.CANNOT_PREIEW_CURRENT_IMAGE);
         }
 
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__PREVIEW);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-        }
-        return result;
+        return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__PREVIEW);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
     }
 
     protected void updateVmDisksFromDb() {
