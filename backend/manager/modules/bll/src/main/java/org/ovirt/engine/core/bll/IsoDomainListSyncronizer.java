@@ -17,10 +17,10 @@ import org.ovirt.engine.core.common.businessentities.FileTypeExtension;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -288,34 +288,35 @@ public class IsoDomainListSyncronizer {
         while (iter.hasNext() && !refreshSucceeded) {
             StoragePoolIsoMap storagePoolIsoMap = iter.next();
             Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id().getValue();
-            if ((storagePoolIsoMap.getstatus() != null)
-                    && (storagePoolIsoMap.getstatus() == StorageDomainStatus.Active)) {
-                // Try to refresh the domain of the storage pool id.
+            StorageDomainStatus status = storagePoolIsoMap.getstatus();
+
+            if (status != StorageDomainStatus.Active) {
+                log.debugFormat("Storage domain id {0}, is not active, and therefore could not be refreshed for {1} file type (Iso domain status is {2}).",
+                        storageDomainId,
+                        fileTypeExt,
+                        status);
+            }
+            else {
+                // Try to refresh the domain of the storage pool id because its status is active.
                 refreshSucceeded =
                         refreshIsoDomainFileForStoragePool(storageDomainId,
                                 storagePoolId,
                                 fileTypeExt);
-            } else {
-                log.debugFormat("Storage domain id {0}, is not active, and there for could not be refreshed for {1} file type (Iso domain status is {2}).",
-                        storageDomainId,
-                        fileTypeExt,
-                        storagePoolIsoMap.getstatus());
-            }
+                if (!refreshSucceeded) {
+                    log.debugFormat("Failed refreshing Storage domain id {0}, for {1} file type in storage pool id {2}.",
+                            storageDomainId,
+                            fileTypeExt,
+                            storagePoolId);
+                    // set a mock repository file meta data with storage domain id and storage pool id.
+                    RepoFileMetaData repoFileMetaData = new RepoFileMetaData();
+                    repoFileMetaData.setStoragePoolId(storagePoolId);
+                    repoFileMetaData.setRepoDomainId(storageDomainId);
+                    repoFileMetaData.setFileType(fileTypeExt);
 
-            if (!refreshSucceeded) {
-                log.debugFormat("Failed refreshing Storage domain id {0}, for {1} file type in storage pool id {2}.",
-                        storageDomainId,
-                        fileTypeExt,
-                        storagePoolId);
+                    // Add the repository file to the list of problematic Iso domains.
+                    tempProblematicRepoFileList.add(repoFileMetaData);
 
-                // set a mock repository file meta data with storage domain id and storage pool id.
-                RepoFileMetaData repoFileMetaData = new RepoFileMetaData();
-                repoFileMetaData.setStoragePoolId(storagePoolId);
-                repoFileMetaData.setRepoDomainId(storageDomainId);
-                repoFileMetaData.setFileType(fileTypeExt);
-
-                // Add the repository file to the list of problematic Iso domains.
-                tempProblematicRepoFileList.add(repoFileMetaData);
+                }
             }
         }
 
@@ -395,7 +396,7 @@ public class IsoDomainListSyncronizer {
         problematicRepoFileList.addAll(repoFileMetaDataList);
     }
 
-    /**
+   /**
      * Reset the list of problematic repository files, before starting the refresh procedure.
      * uses for multy thread caching.
      * @see #addRepoFileToProblematicList()
@@ -490,7 +491,7 @@ public class IsoDomainListSyncronizer {
     /**
      * Returns String contains problematic iso domain name for audit log message.
      * @param repoFileMetaData
-     *                  - The problematic storage domain.
+     *            - The problematic storage domain.
      * @return
      */
     private static String buildDetailedAuditLogMessage(RepoFileMetaData repoFileMetaData) {
