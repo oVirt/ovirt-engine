@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -77,7 +78,7 @@ public class RestoreAllSnapshotCommandTest {
     private StoragePoolDAO storagePoolDAO;
 
     @Mock
-    private SnapshotDao snapshotDao;
+    protected SnapshotDao snapshotDao;
 
     @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
@@ -96,6 +97,7 @@ public class RestoreAllSnapshotCommandTest {
         initSpyCommand();
         mockBackend();
         mockDaos();
+        mockSnapshotValidator();
         mockVm();
     }
 
@@ -197,6 +199,17 @@ public class RestoreAllSnapshotCommandTest {
         sp.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(spId)).thenReturn(sp);
         doReturn(storagePoolDAO).when(spyCommand).getStoragePoolDAO();
+    }
+
+    private void mockSnapshotValidator() {
+        SnapshotsValidator validator = new SnapshotsValidator() {
+            @Override
+            protected SnapshotDao getSnapshotDao() {
+                return snapshotDao;
+            }
+
+        };
+        doReturn(validator).when(spyCommand).createSnapshotValidator();
     }
 
     /**

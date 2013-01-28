@@ -12,8 +12,10 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -298,31 +299,32 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected boolean canDoAction() {
-        boolean result = false;
-        if (!getSnapshotDao().exists(getVmId(), getParameters().getDstSnapshotId())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
-        } else {
-            result = validate(new StoragePoolValidator(getStoragePool()).isUp()) && performImagesChecks();
-            if (result && (getVm().getStatus() != VMStatus.Down)) {
-                result = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-            }
+        SnapshotsValidator snapshotValidator = createSnapshotValidator();
+        VmValidator vmValidator = new VmValidator(getVm());
+        if (!validate(snapshotValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId())) ||
+                !validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
+                !performImagesChecks() ||
+                !validate(vmValidator.vmDown())) {
+            return false;
         }
 
-        if (result) {
-            Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
-            if (snapshot.getType() == SnapshotType.REGULAR
-                    && snapshot.getStatus() != SnapshotStatus.IN_PREVIEW) {
-                result = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
-            }
+        Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+        if (snapshot.getType() == SnapshotType.REGULAR
+                && snapshot.getStatus() != SnapshotStatus.IN_PREVIEW) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_NOT_IN_PREVIEW);
         }
 
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REVERT_TO);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-        }
-        return result;
+        return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REVERT_TO);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
+    }
+
+    protected SnapshotsValidator createSnapshotValidator() {
+        return new SnapshotsValidator();
     }
 
     protected boolean performImagesChecks() {
