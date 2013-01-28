@@ -200,11 +200,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected boolean canDoAction() {
-        updateVmDisksFromDb();
-        Collection<DiskImage> diskImages =
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
-        DiskImage vmDisk = LinqUtils.first(diskImages);
-
         Snapshot snapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
@@ -215,7 +210,10 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                         && validate(snapshotsValidator.snapshotExists(snapshot))
                         && validate(snapshotsValidator.snapshotNotBroken(snapshot));
 
-        if (vmDisk != null) {
+        updateVmDisksFromDb();
+        Collection<DiskImage> diskImages =
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, true);
+        if (!diskImages.isEmpty()) {
             result =
                     result
                             && validate(new StoragePoolValidator(getStoragePool()).isUp())
@@ -229,7 +227,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                                     false,
                                     true,
                                     true,
-                                    getVm().getDiskMap().values());
+                                    diskImages);
         }
         if (result && LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override
