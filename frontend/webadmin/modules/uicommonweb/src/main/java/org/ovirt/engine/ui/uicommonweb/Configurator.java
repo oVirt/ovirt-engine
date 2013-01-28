@@ -34,7 +34,6 @@ public abstract class Configurator {
 
     public Configurator() {
         // Set default configuration values
-        setSpiceAdminConsole(true);
         setSpiceFullScreen(false);
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();

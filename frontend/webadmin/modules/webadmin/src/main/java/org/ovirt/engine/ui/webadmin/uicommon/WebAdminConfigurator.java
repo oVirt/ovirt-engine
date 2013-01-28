@@ -39,6 +39,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
         // This means that this is WebAdmin application.
         setIsAdmin(true);
+        setSpiceAdminConsole(true);
 
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);

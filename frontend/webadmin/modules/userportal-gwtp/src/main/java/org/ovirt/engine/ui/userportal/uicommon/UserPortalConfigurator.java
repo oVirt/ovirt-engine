@@ -52,6 +52,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         // This means that it is UserPortal application.
         setIsAdmin(false);
+        setSpiceAdminConsole(false);
 
         // Add event listeners
         spiceVersionFileFetchedEvent.addListener(this);
