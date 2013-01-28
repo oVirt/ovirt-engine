@@ -824,7 +824,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 case SORT_FIELD:
                     conditionFieldAC = mSearchObjectAC.getFieldAutoCompleter(searchObjStr);
                     sortByPhrase =
-                            StringFormat.format(" ORDER BY %1$s", conditionFieldAC.getDbFieldName(obj.getBody()));
+                            StringFormat.format(" ORDER BY %1$s", conditionFieldAC.getSortableDbField(obj.getBody()));
                     break;
                 case SORT_DIRECTION:
                     sortByPhrase = StringFormat.format("%1$s %2$s", sortByPhrase, obj.getBody());

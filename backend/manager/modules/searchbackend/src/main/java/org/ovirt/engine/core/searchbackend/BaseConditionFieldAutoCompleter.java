@@ -34,6 +34,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             new HashMap<String, List<ValueValidationFunction>>();
     private final Map<String, Class<?>> typeDict = new HashMap<String, Class<?>>();
     protected final Map<String, String> columnNameDict = new HashMap<String, String>();
+    protected final Map<String, String> sortableFieldDict = new HashMap<String, String>();
     protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<String>();
 
     /**
@@ -115,6 +116,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             retval = columnNameDict.get(fieldName);
         }
         return retval;
+    }
+
+    public String getSortableDbField(String fieldName) {
+        if (sortableFieldDict.containsKey(fieldName)) {
+            return sortableFieldDict.get(fieldName);
+        } else {
+            return getDbFieldName(fieldName);
+        }
     }
 
     public Class<?> getDbFieldType(String fieldName) {

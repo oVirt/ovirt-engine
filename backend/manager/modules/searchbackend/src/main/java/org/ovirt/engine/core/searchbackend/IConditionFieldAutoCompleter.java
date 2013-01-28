@@ -10,6 +10,8 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
 
     String getDbFieldName(String fieldName);
 
+    String getSortableDbField(String fieldName);
+
     Class<?> getDbFieldType(String fieldName);
 
     IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName);
