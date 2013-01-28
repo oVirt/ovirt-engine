@@ -319,7 +319,7 @@ public class VmGuideModel extends GuideModel
                 diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
                 diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
                 diskImage.setvolume_format(model.getVolumeFormat());
-                if (model.getQuota().getIsAvailable()) {
+                if (model.getQuota().getSelectedItem() != null && model.getQuota().getIsAvailable()) {
                     diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
                 }
 
