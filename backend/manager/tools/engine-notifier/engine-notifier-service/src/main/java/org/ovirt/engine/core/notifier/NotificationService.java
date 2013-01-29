@@ -50,6 +50,7 @@ public class NotificationService implements Runnable {
 
     public NotificationService(NotificationConfigurator notificationConf) throws NotificationServiceException {
         this.prop = notificationConf.getProperties();
+        initConnectivity();
         initConfigurationProperties();
     }
 
@@ -83,7 +84,6 @@ public class NotificationService implements Runnable {
                 throw new NotificationServiceException(err,e);
             }
         }
-        initConnectivity();
         initMethodMapper();
     }
 
@@ -93,7 +93,6 @@ public class NotificationService implements Runnable {
     public void run() {
         try {
             log.debug("Start event notification service iteration");
-            startup();
             processEvents();
             if (shouldDeleteHistory) {
                 deleteObseleteHistoryData();
@@ -103,20 +102,6 @@ public class NotificationService implements Runnable {
             if (!Thread.interrupted()) {
                 log.error(String.format("Failed to run the service: [%s]", e.getMessage()), e);
             }
-        }
-    }
-
-    /**
-     * Starts or verified that required resources for the service are available
-     * @throws NotificationServiceException
-     *             specifies which resource not available and a cause
-     */
-    private void startup() throws NotificationServiceException {
-        try {
-            ds = new StandaloneDataSource();
-        }
-        catch (SQLException exception) {
-            throw new NotificationServiceException("Failed to initialize the connection helper", exception);
         }
     }
 
