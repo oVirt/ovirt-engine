@@ -158,6 +158,7 @@ public class HostManagementPopupView extends AbstractModelBoundPopupView<HostMan
         // Set Styles
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         isToSync.setContentWidgetStyleName(style.syncInfo());
+        mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize
         nameEditor.setLabel(constants.networkNameInterface() + ":"); //$NON-NLS-1$
