@@ -37,18 +37,18 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("_VMT_ID", UUID.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "name");
-        mColumnNameDict.put("DOMAIN", "domain");
-        mColumnNameDict.put("OS", "os");
-        mColumnNameDict.put("CREATIONDATE", "creation_date");
-        mColumnNameDict.put("CHILDCOUNT", "child_count");
-        mColumnNameDict.put("MEM", "mem_size_mb");
-        mColumnNameDict.put("DESCRIPTION", "description");
-        mColumnNameDict.put("STATUS", "status");
-        mColumnNameDict.put("CLUSTER", "vds_group_name");
-        mColumnNameDict.put("DATACENTER", "storage_pool_name");
-        mColumnNameDict.put("QUOTA", "quota_name");
-        mColumnNameDict.put("_VMT_ID", "vmt_guid");
+        columnNameDict.put("NAME", "name");
+        columnNameDict.put("DOMAIN", "domain");
+        columnNameDict.put("OS", "os");
+        columnNameDict.put("CREATIONDATE", "creation_date");
+        columnNameDict.put("CHILDCOUNT", "child_count");
+        columnNameDict.put("MEM", "mem_size_mb");
+        columnNameDict.put("DESCRIPTION", "description");
+        columnNameDict.put("STATUS", "status");
+        columnNameDict.put("CLUSTER", "vds_group_name");
+        columnNameDict.put("DATACENTER", "storage_pool_name");
+        columnNameDict.put("QUOTA", "quota_name");
+        columnNameDict.put("_VMT_ID", "vmt_guid");
         // Building the validation dict
         buildBasicValidationTable();
     }

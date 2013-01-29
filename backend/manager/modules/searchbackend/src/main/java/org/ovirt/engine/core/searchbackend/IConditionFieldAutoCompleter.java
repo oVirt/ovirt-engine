@@ -18,7 +18,11 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
 
     String buildFreeTextConditionSql(String tableName, String relations, String value, boolean caseSensitive);
 
-    String buildConditionSql(String fieldName, String customizedValue, String customizedRelation, String tableName, boolean caseSensitive);
+    String buildConditionSql(String fieldName,
+            String customizedValue,
+            String customizedRelation,
+            String tableName,
+            boolean caseSensitive);
 
     void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive);
 }

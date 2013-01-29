@@ -62,31 +62,31 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("_VM_ID", UUID.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "vm_name");
-        mColumnNameDict.put("STATUS", "status");
-        mColumnNameDict.put("IP", "vm_ip");
-        mColumnNameDict.put("UPTIME", "elapsed_time");
-        mColumnNameDict.put("DOMAIN", "vm_domain");
-        mColumnNameDict.put("OS", "vm_os");
-        mColumnNameDict.put("CREATIONDATE", "vm_creation_date");
-        mColumnNameDict.put("ADDRESS", "vm_host");
-        mColumnNameDict.put("CPU_USAGE", "usage_cpu_percent");
-        mColumnNameDict.put("MEM_USAGE", "usage_mem_percent");
-        mColumnNameDict.put("NETWORK_USAGE", "usage_network_percent");
-        mColumnNameDict.put("MEMORY", "vm_mem_size_mb");
-        mColumnNameDict.put("APPS", "app_list");
-        mColumnNameDict.put("CLUSTER", "vds_group_name");
-        mColumnNameDict.put("POOL", "vm_pool_name");
+        columnNameDict.put("NAME", "vm_name");
+        columnNameDict.put("STATUS", "status");
+        columnNameDict.put("IP", "vm_ip");
+        columnNameDict.put("UPTIME", "elapsed_time");
+        columnNameDict.put("DOMAIN", "vm_domain");
+        columnNameDict.put("OS", "vm_os");
+        columnNameDict.put("CREATIONDATE", "vm_creation_date");
+        columnNameDict.put("ADDRESS", "vm_host");
+        columnNameDict.put("CPU_USAGE", "usage_cpu_percent");
+        columnNameDict.put("MEM_USAGE", "usage_mem_percent");
+        columnNameDict.put("NETWORK_USAGE", "usage_network_percent");
+        columnNameDict.put("MEMORY", "vm_mem_size_mb");
+        columnNameDict.put("APPS", "app_list");
+        columnNameDict.put("CLUSTER", "vds_group_name");
+        columnNameDict.put("POOL", "vm_pool_name");
         // mColumnNameDict.Add("NOTE", "note");
-        mColumnNameDict.put("LOGGEDINUSER", "guest_cur_user_name");
-        mColumnNameDict.put("TAG", "tag_name");
-        mColumnNameDict.put("DATACENTER", "storage_pool_name");
-        mColumnNameDict.put("TYPE", "vm_type");
-        mColumnNameDict.put("QUOTA", "quota_name");
-        mColumnNameDict.put("_VM_ID", "vm_guid");
+        columnNameDict.put("LOGGEDINUSER", "guest_cur_user_name");
+        columnNameDict.put("TAG", "tag_name");
+        columnNameDict.put("DATACENTER", "storage_pool_name");
+        columnNameDict.put("TYPE", "vm_type");
+        columnNameDict.put("QUOTA", "quota_name");
+        columnNameDict.put("_VM_ID", "vm_guid");
         /**
          */
-        mNotFreeTextSearchableFieldsList.add("APPS");
+        notFreeTextSearchableFieldsList.add("APPS");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -120,7 +120,10 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     }
 
     @Override
-    public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
+    public void formatValue(String fieldName,
+            RefObject<String> relations,
+            RefObject<String> value,
+            boolean caseSensitive) {
         if ("APPS".equals(fieldName)) {
             value.argvalue =
                     StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "'%%%1$s%%'",

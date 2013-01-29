@@ -27,16 +27,16 @@ public class AdUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCom
             getTypeDictionary().put("TITLE", String.class);
         }
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "$GIVENNAME");
-        mColumnNameDict.put("USERNAME", "$SAMACCOUNTNAME");
+        columnNameDict.put("NAME", "$GIVENNAME");
+        columnNameDict.put("USERNAME", "$SAMACCOUNTNAME");
         if (StringHelper.EqOp(SyntaxCheckerFactory.getConfigAuthenticationMethod().toUpperCase(), "LDAP")) {
-            mColumnNameDict.put("LASTNAME", "$SN");
-            mColumnNameDict.put("DEPARTMENT", "$DEPARTMENT");
-            mColumnNameDict.put("TITLE", "$TITLE");
+            columnNameDict.put("LASTNAME", "$SN");
+            columnNameDict.put("DEPARTMENT", "$DEPARTMENT");
+            columnNameDict.put("TITLE", "$TITLE");
         }
         // Building the validation dict
         for (String key : mVerbs.keySet()) {
-            mValidationDict.put(key, Collections.singletonList(validCharacters));
+            validationDict.put(key, Collections.singletonList(validCharacters));
         }
     }
 

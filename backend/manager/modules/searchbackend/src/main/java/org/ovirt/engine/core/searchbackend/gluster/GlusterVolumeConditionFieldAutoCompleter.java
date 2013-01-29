@@ -110,7 +110,7 @@ public class GlusterVolumeConditionFieldAutoCompleter extends BaseConditionField
 
         // Build the column name dictionary
         for (AutoCompletionField field : fields) {
-            mColumnNameDict.put(field.fieldName, field.columnName);
+            columnNameDict.put(field.fieldName, field.columnName);
         }
 
         // Build the validation dictionary

@@ -17,9 +17,9 @@ public class PoolConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("TYPE", VmPoolType.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "vm_pool_name");
-        mColumnNameDict.put("DESCRIPTION", "vm_pool_description");
-        mColumnNameDict.put("TYPE", "vm_pool_type");
+        columnNameDict.put("NAME", "vm_pool_name");
+        columnNameDict.put("DESCRIPTION", "vm_pool_description");
+        columnNameDict.put("TYPE", "vm_pool_type");
 
         // Building the validation dict
         buildBasicValidationTable();

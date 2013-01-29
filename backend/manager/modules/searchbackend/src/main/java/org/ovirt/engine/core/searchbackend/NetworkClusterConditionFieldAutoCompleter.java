@@ -18,8 +18,8 @@ public class NetworkClusterConditionFieldAutoCompleter extends BaseConditionFiel
         getTypeDictionary().put(CLUSTER_NAME, String.class);
 
         // building the ColumnName dict.
-        mColumnNameDict.put(NETWORK_NAME, "network_name");
-        mColumnNameDict.put(CLUSTER_NAME, "cluster_name");
+        columnNameDict.put(NETWORK_NAME, "network_name");
+        columnNameDict.put(CLUSTER_NAME, "cluster_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

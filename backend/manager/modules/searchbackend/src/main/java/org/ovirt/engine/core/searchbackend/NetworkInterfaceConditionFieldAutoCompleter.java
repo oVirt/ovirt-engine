@@ -15,7 +15,7 @@ public class NetworkInterfaceConditionFieldAutoCompleter extends BaseConditionFi
         getTypeDictionary().put(NETWORK_NAME, String.class);
 
         // building the ColumnName dict.
-        mColumnNameDict.put(NETWORK_NAME, "network_name");
+        columnNameDict.put(NETWORK_NAME, "network_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

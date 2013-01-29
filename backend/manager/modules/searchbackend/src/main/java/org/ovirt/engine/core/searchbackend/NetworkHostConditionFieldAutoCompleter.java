@@ -14,7 +14,7 @@ public class NetworkHostConditionFieldAutoCompleter extends BaseConditionFieldAu
         getTypeDictionary().put(HOST_NAME, String.class);
 
         // building the ColumnName dict.
-        mColumnNameDict.put(HOST_NAME, "vds_name");
+        columnNameDict.put(HOST_NAME, "vds_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

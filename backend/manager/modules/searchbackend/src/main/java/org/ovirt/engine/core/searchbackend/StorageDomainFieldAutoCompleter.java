@@ -26,13 +26,13 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("COMMITTED", Integer.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "storage_name");
-        mColumnNameDict.put("STATUS", "storage_domain_shared_status");
-        mColumnNameDict.put("DATACENTER", "storage_pool_name");
-        mColumnNameDict.put("TYPE", "storage_type");
-        mColumnNameDict.put("SIZE", "available_disk_size");
-        mColumnNameDict.put("USED", "used_disk_size");
-        mColumnNameDict.put("COMMITTED", "commited_disk_size");
+        columnNameDict.put("NAME", "storage_name");
+        columnNameDict.put("STATUS", "storage_domain_shared_status");
+        columnNameDict.put("DATACENTER", "storage_pool_name");
+        columnNameDict.put("TYPE", "storage_type");
+        columnNameDict.put("SIZE", "available_disk_size");
+        columnNameDict.put("USED", "used_disk_size");
+        columnNameDict.put("COMMITTED", "commited_disk_size");
 
         // Building the validation dict
         buildBasicValidationTable();

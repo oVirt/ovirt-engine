@@ -30,14 +30,15 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public static final int DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-    protected final Map<String, List<ValueValidationFunction>> mValidationDict =
+    protected final Map<String, List<ValueValidationFunction>> validationDict =
             new HashMap<String, List<ValueValidationFunction>>();
-    private final Map<String, Class<?>> mTypeDict = new HashMap<String, Class<?>>();
-    protected final Map<String, String> mColumnNameDict = new HashMap<String, String>();
-    protected final List<String> mNotFreeTextSearchableFieldsList = new ArrayList<String>();
+    private final Map<String, Class<?>> typeDict = new HashMap<String, Class<?>>();
+    protected final Map<String, String> columnNameDict = new HashMap<String, String>();
+    protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<String>();
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
+     *
      * @return the LIKE syntax according to current DBEngine.
      */
     public static String getLikeSyntax(boolean caseSensitive) {
@@ -51,6 +52,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     /**
      * Gets the I18N prefix used for value compare.
+     *
      * @return
      */
     public static String getI18NPrefix() {
@@ -65,13 +67,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public static ITagsHandler TagsHandler;
 
     public Map<String, Class<?>> getTypeDictionary() {
-        return mTypeDict;
+        return typeDict;
     }
 
     protected void buildBasicValidationTable() {
         for (String key : mVerbs.keySet()) {
             final List<ValueValidationFunction> curList = new ArrayList<ValueValidationFunction>();
-            final Class<?> curType = mTypeDict.get(key);
+            final Class<?> curType = typeDict.get(key);
             if (curType == java.math.BigDecimal.class) {
                 curList.add(validDecimal);
             } else if (curType == Integer.class) {
@@ -91,13 +93,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                     curList.add(validateFieldValueByValueAC);
                 }
             }
-            mValidationDict.put(key, curList);
+            validationDict.put(key, curList);
         }
     }
 
     public boolean validateFieldValue(String fieldName, String fieldValue) {
-        if (mValidationDict.containsKey(fieldName)) {
-            final List<ValueValidationFunction> validationList = mValidationDict.get(fieldName);
+        if (validationDict.containsKey(fieldName)) {
+            final List<ValueValidationFunction> validationList = validationDict.get(fieldName);
             for (ValueValidationFunction curValidationFunc : validationList) {
                 if (!curValidationFunc.isValid(fieldName, fieldValue)) {
                     return false;
@@ -109,23 +111,26 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     public String getDbFieldName(String fieldName) {
         String retval = null;
-        if (mColumnNameDict.containsKey(fieldName)) {
-            retval = mColumnNameDict.get(fieldName);
+        if (columnNameDict.containsKey(fieldName)) {
+            retval = columnNameDict.get(fieldName);
         }
         return retval;
     }
 
     public Class<?> getDbFieldType(String fieldName) {
         Class<?> retval = null;
-        if (mTypeDict.containsKey(fieldName)) {
-            retval = mTypeDict.get(fieldName);
+        if (typeDict.containsKey(fieldName)) {
+            retval = typeDict.get(fieldName);
         }
         return retval;
 
     }
 
     // FIXME Probably Not Hibernate Friendly
-    public final String buildFreeTextConditionSql(String tableName, String relations, String value, boolean caseSensitive) {
+    public final String buildFreeTextConditionSql(String tableName,
+            String relations,
+            String value,
+            boolean caseSensitive) {
         StringBuilder sb = new StringBuilder(" ( ");
         boolean firstTime = true;
         if (!StringHelper.isNullOrEmpty(value) && !"''".equals(value)) {
@@ -137,8 +142,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         } else if ("!=".equals(relations)) {
             relations = "NOT " + getLikeSyntax(caseSensitive);
         }
-        for (String field : mColumnNameDict.keySet()) {
-            if (mTypeDict.get(field) == String.class && !mNotFreeTextSearchableFieldsList.contains(field)) {
+        for (String field : columnNameDict.keySet()) {
+            if (typeDict.get(field) == String.class && !notFreeTextSearchableFieldsList.contains(field)) {
                 if (firstTime) {
                     firstTime = false;
                 } else {
@@ -146,7 +151,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 }
                 sb.append(StringFormat.format(" %1$s.%2$s %3$s %4$s",
                         tableName,
-                        mColumnNameDict.get(field),
+                        columnNameDict.get(field),
                         relations,
                         value));
             }
@@ -305,6 +310,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             }
         }
     }
+
     // private static final String DATE_FORMAT = "MMM dd,yyyy";
     private static DateTime DealWithDateEnum(String value) {
         DateTime formatedValue = new DateTime();

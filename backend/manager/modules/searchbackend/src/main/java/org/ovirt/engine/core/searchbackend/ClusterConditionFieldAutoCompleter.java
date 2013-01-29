@@ -17,8 +17,8 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("INITIALIZED", Boolean.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "name");
-        mColumnNameDict.put("DESCRIPTION", "description");
+        columnNameDict.put("NAME", "name");
+        columnNameDict.put("DESCRIPTION", "description");
         // mColumnNameDict.put("INITIALIZED", "is_initialized");
 
         // Building the validation dict

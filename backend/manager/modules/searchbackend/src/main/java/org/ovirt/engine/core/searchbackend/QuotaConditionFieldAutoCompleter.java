@@ -38,14 +38,14 @@ public class QuotaConditionFieldAutoCompleter extends BaseConditionFieldAutoComp
         getTypeDictionary().put(enforcementType, QuotaEnforcementTypeEnum.class);
 
         // building the ColumnName dict.
-        mColumnNameDict.put(name, "quota_name");
-        mColumnNameDict.put(storagePoolName, "storage_pool_name");
-        mColumnNameDict.put(description, "description");
-        mColumnNameDict.put(thresholdVdsGroupPercentage, "threshold_vds_group_percentage");
-        mColumnNameDict.put(thresholdStoragePercentage, "threshold_storage_percentage");
-        mColumnNameDict.put(graceStoragePercentage, "grace_storage_percentage");
-        mColumnNameDict.put(graceVdsGrouPercentage, "grace_vds_group_percentage");
-        mColumnNameDict.put(enforcementType, "quota_enforcement_type");
+        columnNameDict.put(name, "quota_name");
+        columnNameDict.put(storagePoolName, "storage_pool_name");
+        columnNameDict.put(description, "description");
+        columnNameDict.put(thresholdVdsGroupPercentage, "threshold_vds_group_percentage");
+        columnNameDict.put(thresholdStoragePercentage, "threshold_storage_percentage");
+        columnNameDict.put(graceStoragePercentage, "grace_storage_percentage");
+        columnNameDict.put(graceVdsGrouPercentage, "grace_vds_group_percentage");
+        columnNameDict.put(enforcementType, "quota_enforcement_type");
 
         // Building the validation dict.
         buildBasicValidationTable();

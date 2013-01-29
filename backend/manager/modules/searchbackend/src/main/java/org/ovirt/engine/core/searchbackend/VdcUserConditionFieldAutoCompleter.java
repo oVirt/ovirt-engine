@@ -40,17 +40,17 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("TYPE", UserOrGroup.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "name");
-        mColumnNameDict.put("LASTNAME", "surname");
-        mColumnNameDict.put("USRNAME", "username");
-        mColumnNameDict.put("DEPARTMENT", "department");
-        mColumnNameDict.put("TITLE", "role");
-        mColumnNameDict.put("GROUP", "groups");
-        mColumnNameDict.put("STATUS", "status");
-        mColumnNameDict.put("ROLE", "mla_role");
-        mColumnNameDict.put("TAG", "tag_name");
-        mColumnNameDict.put("POOL", "vm_pool_name");
-        mColumnNameDict.put("TYPE", "user_group");
+        columnNameDict.put("NAME", "name");
+        columnNameDict.put("LASTNAME", "surname");
+        columnNameDict.put("USRNAME", "username");
+        columnNameDict.put("DEPARTMENT", "department");
+        columnNameDict.put("TITLE", "role");
+        columnNameDict.put("GROUP", "groups");
+        columnNameDict.put("STATUS", "status");
+        columnNameDict.put("ROLE", "mla_role");
+        columnNameDict.put("TAG", "tag_name");
+        columnNameDict.put("POOL", "vm_pool_name");
+        columnNameDict.put("TYPE", "user_group");
         // Building the validation dict
         buildBasicValidationTable();
     }

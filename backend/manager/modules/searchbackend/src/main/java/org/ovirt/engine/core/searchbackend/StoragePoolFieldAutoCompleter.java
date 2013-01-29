@@ -20,10 +20,10 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("STATUS", StoragePoolStatus.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "name");
-        mColumnNameDict.put("DESCRIPTION", "description");
-        mColumnNameDict.put("TYPE", "storage_pool_type");
-        mColumnNameDict.put("STATUS", "status");
+        columnNameDict.put("NAME", "name");
+        columnNameDict.put("DESCRIPTION", "description");
+        columnNameDict.put("TYPE", "storage_pool_type");
+        columnNameDict.put("STATUS", "status");
 
         // Building the validation dict
         buildBasicValidationTable();

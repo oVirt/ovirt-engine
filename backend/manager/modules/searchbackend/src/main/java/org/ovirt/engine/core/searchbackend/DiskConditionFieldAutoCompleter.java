@@ -45,19 +45,19 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
 
         // building the ColumnName dict.
-        mColumnNameDict.put("ALIAS", "disk_alias");
-        mColumnNameDict.put("DESCRIPTION", "disk_description");
-        mColumnNameDict.put("PROVISIONED_SIZE", "size");
-        mColumnNameDict.put("SIZE", "size");
-        mColumnNameDict.put("ACTUAL_SIZE", "actual_size");
-        mColumnNameDict.put("CREATION_DATE", "creation_date");
-        mColumnNameDict.put("BOOTABLE", "boot");
-        mColumnNameDict.put("SHAREABLE", "shareable");
-        mColumnNameDict.put("STATUS", "imageStatus");
-        mColumnNameDict.put("DISK_TYPE", "disk_storage_type");
-        mColumnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
-        mColumnNameDict.put("VM_NAMES", "vm_names");
-        mColumnNameDict.put("QUOTA", "quota_name");
+        columnNameDict.put("ALIAS", "disk_alias");
+        columnNameDict.put("DESCRIPTION", "disk_description");
+        columnNameDict.put("PROVISIONED_SIZE", "size");
+        columnNameDict.put("SIZE", "size");
+        columnNameDict.put("ACTUAL_SIZE", "actual_size");
+        columnNameDict.put("CREATION_DATE", "creation_date");
+        columnNameDict.put("BOOTABLE", "boot");
+        columnNameDict.put("SHAREABLE", "shareable");
+        columnNameDict.put("STATUS", "imageStatus");
+        columnNameDict.put("DISK_TYPE", "disk_storage_type");
+        columnNameDict.put("NUMBER_OF_VMS", "number_of_vms");
+        columnNameDict.put("VM_NAMES", "vm_names");
+        columnNameDict.put("QUOTA", "quota_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

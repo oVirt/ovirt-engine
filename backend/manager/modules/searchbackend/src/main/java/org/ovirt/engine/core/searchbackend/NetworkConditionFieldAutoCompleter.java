@@ -34,13 +34,13 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(DATA_CENTER, String.class);
 
         // building the ColumnName dict.
-        mColumnNameDict.put(NAME, "name");
-        mColumnNameDict.put(DESCRIPTION, "description");
-        mColumnNameDict.put(VLAN_ID, "vlan_id");
-        mColumnNameDict.put(STP, "stp");
-        mColumnNameDict.put(MTU, "mtu");
-        mColumnNameDict.put(VM_NETWORK, "vm_network");
-        mColumnNameDict.put(DATA_CENTER, "storage_pool_name");
+        columnNameDict.put(NAME, "name");
+        columnNameDict.put(DESCRIPTION, "description");
+        columnNameDict.put(VLAN_ID, "vlan_id");
+        columnNameDict.put(STP, "stp");
+        columnNameDict.put(MTU, "mtu");
+        columnNameDict.put(VM_NETWORK, "vm_network");
+        columnNameDict.put(DATA_CENTER, "storage_pool_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

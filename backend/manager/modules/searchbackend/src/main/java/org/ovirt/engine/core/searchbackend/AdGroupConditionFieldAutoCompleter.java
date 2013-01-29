@@ -16,11 +16,11 @@ public class AdGroupConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("NAME", String.class);
 
         // building the ColumnName Dict
-        mColumnNameDict.put("NAME", "$CN");
+        columnNameDict.put("NAME", "$CN");
 
         // Building the validation dict
         for (String key : mVerbs.keySet()) {
-            mValidationDict.put(key, Collections.singletonList(validCharacters));
+            validationDict.put(key, Collections.singletonList(validCharacters));
         }
     }
 
