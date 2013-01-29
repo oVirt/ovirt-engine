@@ -6,9 +6,12 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -37,6 +40,32 @@ public class StorageDomainValidator {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult isDomainWithinThresholds() {
+        StorageDomainDynamic dynamic = storageDomain.getStorageDynamicData();
+        if (dynamic != null && dynamic.getfreeDiskInGB() < getLowDiskSpaceThreshold()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                    storageName());
+        }
+        return ValidationResult.VALID;
+    }
+
+    private String storageName() {
+        return String.format("$%1$s %2$s", "storageName", storageDomain.getstorage_name());
+    }
+
+    public ValidationResult isDomainHasSpaceForRequest(final long requestedSize) {
+        if (storageDomain.getavailable_disk_size() != null &&
+                storageDomain.getavailable_disk_size() - requestedSize < getLowDiskSpaceThreshold()) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                    storageName());
+        }
+        return ValidationResult.VALID;
+    }
+
+    private static Integer getLowDiskSpaceThreshold() {
+        return Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }
 
     public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
