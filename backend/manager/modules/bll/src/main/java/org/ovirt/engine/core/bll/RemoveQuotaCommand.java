@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class RemoveQuotaCommand extends QuotaCRUDCommand {
@@ -37,7 +38,7 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
         }
 
         // If the quota is in use by ether VM or image - return false
-        if (getQuotaDAO().isQuotaInUse(quota)) {
+        if (!QuotaEnforcementTypeEnum.DISABLED.equals(quota.getQuotaEnforcementType()) && getQuotaDAO().isQuotaInUse(quota)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IN_USE_BY_VM_OR_DISK);
             return false;
         }
