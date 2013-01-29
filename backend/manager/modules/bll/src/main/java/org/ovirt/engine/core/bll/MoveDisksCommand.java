@@ -95,9 +95,8 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
             List<VM> allVms = getVmDAO().getVmsListForDisk(diskImage.getId());
             VM vm = !allVms.isEmpty() ? allVms.get(0) : null;
-            SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
 
-            if (vm != null && !validate(snapshotsValidator.vmNotInPreview(vm.getId()))) {
+            if (vm != null && !validate(createSnapshotsValidator().vmNotInPreview(vm.getId()))) {
                 return false;
             }
 
@@ -174,5 +173,9 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     protected DiskImageDAO getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    protected SnapshotsValidator createSnapshotsValidator() {
+        return new SnapshotsValidator();
     }
 }

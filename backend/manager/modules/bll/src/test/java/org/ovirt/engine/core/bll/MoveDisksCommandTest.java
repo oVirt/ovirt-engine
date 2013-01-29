@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -17,9 +18,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,6 +30,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +47,9 @@ public class MoveDisksCommandTest {
     @Mock
     private VmDAO vmDao;
 
+    @Mock
+    protected SnapshotDao snapshotDao;
+
     /**
      * The command under test
      */
@@ -52,6 +59,7 @@ public class MoveDisksCommandTest {
     public void setupCommand() {
         initSpyCommand();
         mockDaos();
+        mockSnapshotValidator();
     }
 
     private void initSpyCommand() {
@@ -92,6 +100,20 @@ public class MoveDisksCommandTest {
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP.toString()));
+    }
+
+    @Test
+    public void canDoActionVmInPreview() {
+        command.getParameters().setParametersList(createMoveDisksParameters());
+
+        initDiskImage(diskImageId);
+        initVm(VMStatus.Down, null, diskImageId);
+        setVmInPreview(true);
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString()));
     }
 
     @Test
@@ -167,6 +189,10 @@ public class MoveDisksCommandTest {
         when(vmDao.getVmsListForDisk(diskImageId)).thenReturn(Collections.singletonList(vm));
     }
 
+    private void setVmInPreview(boolean isInPreview) {
+        when(snapshotDao.exists(any(Guid.class), eq(SnapshotStatus.IN_PREVIEW))).thenReturn(isInPreview);
+    }
+
     private void initDiskImage(Guid diskImageId) {
         DiskImage diskImage = mockDiskImage(diskImageId);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
@@ -183,6 +209,17 @@ public class MoveDisksCommandTest {
         diskImage.setId(diskImageId);
 
         return diskImage;
+    }
+
+    private void mockSnapshotValidator() {
+        SnapshotsValidator validator = new SnapshotsValidator() {
+            @Override
+            protected SnapshotDao getSnapshotDao() {
+                return snapshotDao;
+            }
+
+        };
+        doReturn(validator).when(command).createSnapshotsValidator();
     }
 
     /** Mock DAOs */
