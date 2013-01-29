@@ -119,7 +119,7 @@ public class AddVmCommandTest {
         assertTrue("canDoAction failed for the wrong reason",
                 cmd.getReturnValue()
                         .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     @Test
@@ -141,7 +141,9 @@ public class AddVmCommandTest {
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
         assertFalse("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for the wrong reason",
-                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                cmd.getReturnValue()
+                        .getCanDoActionMessages()
+                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     @Test
@@ -156,8 +158,9 @@ public class AddVmCommandTest {
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         assertFalse("Thin vm could not be added due to storage sufficient",
                 cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
-        assertTrue("canDoAction failed for insufficient disk size",
-                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+        assertTrue("canDoAction failed for insufficient disk size", cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     @Test
@@ -173,7 +176,9 @@ public class AddVmCommandTest {
         assertFalse("Clone vm could not be added due to storage sufficient",
                 cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
         assertTrue("canDoAction failed for insufficient disk size",
-                reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     @Test

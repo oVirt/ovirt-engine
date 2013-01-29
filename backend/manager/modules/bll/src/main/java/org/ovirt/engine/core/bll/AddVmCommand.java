@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -173,15 +172,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue = false;
             } else {
                 for (storage_domains domain : destStorages) {
-                    if (!StorageDomainSpaceChecker.isWithinThresholds(domain)) {
-                        returnValue = false;
-                        reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
-                        break;
-                    } else if (!StorageDomainSpaceChecker.hasSpaceForRequest(domain,
-                            getNeededDiskSize(domain.getId()))) {
-                        returnValue = false;
-                        reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
-                        break;
+                    StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
+                    if (!validate(storageDomainValidator.isDomainWithinThresholds())
+                            || !validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())))) {
+                        return false;
                     }
                 }
             }
