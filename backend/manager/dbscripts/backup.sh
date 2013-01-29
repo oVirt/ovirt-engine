@@ -12,6 +12,8 @@ source ./dbcustomfunctions.sh
 #setting defaults
 set_defaults
 
+ENGINE_PGPASS=${ENGINE_PGPASS:-/etc/ovirt-engine/.pgpass}
+
 usage() {
     printf "Usage: ${ME} [-h] [-s SERVERNAME] [-p PORT] [-d DATABASE] [-l DIR] [-f FILENAME] -u USERNAME [-c] [-v] \n"
     printf "\n"
@@ -79,10 +81,10 @@ cmd="pg_dump -C -E UTF8 ${column_inserts} --disable-dollar-quoting  --disable-tr
 echo "Backup of database $DATABASE to $file started..."
 
 if [  -n "${VERBOSE}" ]; then
-    ${cmd} -v
-else
-    ${cmd}
+    cmd="${cmd} -v"
 fi
+
+PGPASS_FILE="${ENGINE_PGPASS}" ${cmd}
 
 if [ $? -eq 0 ];then
     echo "Backup of database $DATABASE to $file completed."
