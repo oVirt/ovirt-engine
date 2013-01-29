@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.Formatting;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -36,7 +35,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _fileName = Path.GetTempFileName();
         _document = document;
         _images = images;
-        _writer = new XmlTextWriter(_fileName, Encoding.UTF8);
+        _writer = new XmlTextWriter(_fileName);
         this.vmBase = vmBase;
         WriteHeader();
     }

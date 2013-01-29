@@ -8,8 +8,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.ovirt.engine.core.compat.Encoding;
-
 public class XmlTextWriter {
 
     public Object Formatting;
@@ -17,7 +15,7 @@ public class XmlTextWriter {
 
     XMLStreamWriter writer;
 
-    public XmlTextWriter(String name, Encoding utf8) {
+    public XmlTextWriter(String name) {
         try {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             writer = factory.createXMLStreamWriter(new FileOutputStream(name), "UTF-8");
