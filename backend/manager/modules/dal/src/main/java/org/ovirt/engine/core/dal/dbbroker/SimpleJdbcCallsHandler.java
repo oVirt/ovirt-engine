@@ -37,19 +37,19 @@ public class SimpleJdbcCallsHandler {
         return executeImpl(procedureName, paramSource, createCallForModification(procedureName));
     }
 
-    public int executeModificationRowsAffected(final String procedureName, final MapSqlParameterSource paramSource) {
-        Integer numOfRows = null;
+    public int executeModificationReturnResult(final String procedureName, final MapSqlParameterSource paramSource) {
+        Integer procedureResult = null;
         Map<String, Object> result = executeImpl(procedureName, paramSource, createCallForModification(procedureName));
         if (!result.isEmpty()) {
             List<?> resultArray = (List<?>) result.values().iterator().next();
             if (resultArray != null && !resultArray.isEmpty()) {
                 Map<?, ?> resultMap = (Map<?, ?>) resultArray.get(0);
                 if (!resultMap.isEmpty()) {
-                    numOfRows = (Integer) resultMap.values().iterator().next();
+                    procedureResult = (Integer) resultMap.values().iterator().next();
                 }
             }
         }
-        return (numOfRows != null) ? numOfRows : 0;
+        return (procedureResult != null) ? procedureResult : 0;
     }
 
     public <T> T executeRead(final String procedureName,

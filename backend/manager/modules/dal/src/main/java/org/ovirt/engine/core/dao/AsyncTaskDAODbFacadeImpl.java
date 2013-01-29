@@ -175,7 +175,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("task_id", id);
 
-        return getCallsHandler().executeModificationRowsAffected("Deleteasync_tasks", parameterSource);
+        return getCallsHandler().executeModificationReturnResult("Deleteasync_tasks", parameterSource);
     }
 
     @Override

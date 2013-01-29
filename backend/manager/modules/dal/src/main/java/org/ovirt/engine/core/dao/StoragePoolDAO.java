@@ -16,6 +16,14 @@ import org.ovirt.engine.core.compat.Guid;
 public interface StoragePoolDAO extends GenericDao<storage_pool, Guid>, StatusAwareDao<Guid, StoragePoolStatus>, SearchDAO<storage_pool> {
 
     /**
+     * Increase master_domain_version of storage pool in DB and return a new value
+     * @param id
+     *            The id of storage pool
+     * @return The new value of master domain version
+     */
+    int increaseStoragePoolMasterVersion(Guid id);
+
+    /**
      * Retrieves the storage pool with the given ID, with optional filtering
      * @param ID
      *            The ID of the storage pool

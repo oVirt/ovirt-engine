@@ -266,8 +266,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                     @Override
                     public Object runInTransaction() {
                         StoragePoolIsoMap newMasterMap = newMaster.getStoragePoolIsoMapData();
-                        // We do not need to compensate storage pool, it will be committed if run during reconstruct
-                        getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
                         newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());
                         getCompensationContext().snapshotEntity(newMaster.getStorageStaticData());
                         newMaster.setstorage_domain_type(StorageDomainType.Master);
@@ -292,7 +290,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             } else {
                 _isLastMaster = true;
             }
-            updateStoragePoolInDiffTransaction();
+            updateStoragePoolMasterDomainVersionInDiffTransaction();
         }
     }
 

@@ -169,15 +169,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                             if (!staticDomainChanged) {
                                 getCompensationContext().snapshotEntity(staticDomain);
                             }
-                            // increase master domain version - no need to snapshot, as we would like
-                            // the master domain version to grow monotonously even if the wrapping transaction fails
-                            getStoragePool().setmaster_domain_version(getStoragePool().getmaster_domain_version() + 1);
                             storageDomain.setstorage_domain_type(StorageDomainType.Master);
                             staticDomainChanged = true;
                             masterStorageDomain = storageDomain;
                             // The update of storage pool should be without compensation,
                             // this is why we run it in a different SUPRESS transaction.
-                            updateStoragePoolInDiffTransaction();
+                            updateStoragePoolMasterDomainVersionInDiffTransaction();
                         }
                         if (staticDomainChanged) {
                             getStorageDomainStaticDAO().update(staticDomain);

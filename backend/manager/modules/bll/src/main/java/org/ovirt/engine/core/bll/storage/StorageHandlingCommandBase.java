@@ -65,11 +65,12 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(), VDSStatus.Up);
     }
 
-    protected void updateStoragePoolInDiffTransaction() {
-        executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Object>() {
+    protected void updateStoragePoolMasterDomainVersionInDiffTransaction() {
+        executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<Void>() {
             @Override
-            public Object runInTransaction() {
-                getStoragePoolDAO().update(getStoragePool());
+            public Void runInTransaction() {
+                int master_domain_version = getStoragePoolDAO().increaseStoragePoolMasterVersion(getStoragePool().getId());
+                getStoragePool().setmaster_domain_version(master_domain_version);
                 return null;
             }
         });

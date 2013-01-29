@@ -110,7 +110,6 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                                         .getStoragePoolIsoMapDao()
                                         .save(domainPoolMap);
 
-                                getStoragePool().setstatus(StoragePoolStatus.Problematic);
                                 executeReconstruct();
                                 return new EventResult(reconstructOpSucceeded, EventType.RECONSTRUCT);
                             }

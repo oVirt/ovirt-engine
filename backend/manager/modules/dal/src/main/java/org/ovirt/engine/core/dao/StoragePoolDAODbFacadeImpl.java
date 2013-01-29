@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -379,6 +378,13 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         return getCallsHandler().executeReadList(
                 "fn_perms_get_storage_pools_with_permitted_action_on_vds_groups",
                 mapper, parameterSource);
+    }
+
+    @Override
+    public int increaseStoragePoolMasterVersion(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("id", id);
+        return getCallsHandler().executeModificationReturnResult("IncreaseStoragePoolMasterVersion", parameterSource);
     }
 
 }

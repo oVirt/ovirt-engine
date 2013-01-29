@@ -279,6 +279,14 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         assertGetResult(result);
     }
 
+    @Test
+    public void testIncreaseStoragePoolMasterVersion() {
+        int result = dao.increaseStoragePoolMasterVersion(existingPool.getId());
+        storage_pool dbPool = dao.get(existingPool.getId());
+        assertEquals(result, existingPool.getmaster_domain_version() + 1);
+        assertEquals(result, dbPool.getmaster_domain_version());
+    }
+
     /**
      * Ensures that removing a storage pool works as expected.
      */

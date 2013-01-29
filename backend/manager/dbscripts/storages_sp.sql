@@ -83,6 +83,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION IncreaseStoragePoolMasterVersion(
+        v_id UUID)
+RETURNS INTEGER
+   AS $procedure$
+DECLARE v_master_domain_version INTEGER;
+BEGIN
+      UPDATE storage_pool
+      SET
+      master_domain_version = master_domain_version + 1
+      WHERE id = v_id
+      RETURNING master_domain_version into v_master_domain_version;
+
+      RETURN v_master_domain_version;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION Deletestorage_pool(v_id UUID)
 RETURNS VOID
    AS $procedure$
