@@ -17,11 +17,6 @@
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
     </dependency>
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
-      <artifactId>compat</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
