@@ -1737,7 +1737,9 @@ def _configNfsShare():
             logging.debug("creating directory %s " % (controller.CONF["NFS_MP"]))
             os.makedirs(controller.CONF["NFS_MP"])
         # Add export to exportfs
-        nfsutils.addNfsExport(controller.CONF["NFS_MP"], (("0.0.0.0", "0.0.0.0", ("rw",)),), "rhev installer")
+        nfsutils.addNfsExport(controller.CONF["NFS_MP"],
+                              (("0.0.0.0", "0.0.0.0", ("rw",)),),
+                              " %s installer" % basedefs.APP_NAME)
 
         # Add warning to user about nfs export permissions
         controller.MESSAGES.append(output_messages.WARN_ISO_DOMAIN_SECURITY % (controller.CONF["NFS_MP"]))
