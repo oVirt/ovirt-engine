@@ -12,7 +12,6 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.util.Enumeration;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -23,8 +22,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class EncryptionUtils {
     private static String algo = "RSA";
@@ -41,46 +38,11 @@ public class EncryptionUtils {
      * @return base64 encoded result.
      */
     private static String encrypt(String source, Certificate cert) throws GeneralSecurityException, UnsupportedEncodingException {
-        String result = null;
-        byte[] cipherbytes = source.trim().getBytes("UTF-8");
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.ENCRYPT_MODE, cert.getPublicKey());
-        byte[] cipher = rsa.doFinal(cipherbytes);
-        result = Base64.encodeBase64String(cipher);
-        return result;
-    }
-
-    /**
-     * Decrypts the specified source given a Private Key
-     *
-     * @param source
-     *            The source.
-     * @param key
-     *            The private key.
-     * @param error
-     *            The error.
-     * @return
-     */
-    private static String Decrypt(String source, Key key, RefObject<String> error) {
-        error.argvalue = "";
-        String result = "";
-        try {
-            {
-                byte[] cipherbytes = Base64.decodeBase64(source);
-                {
-                    Cipher rsa = Cipher.getInstance(algo);
-                    rsa.init(Cipher.DECRYPT_MODE, key);
-                    {
-                        byte[] plainbytes = rsa.doFinal(cipherbytes);
-                        result = new String(plainbytes, "US-ASCII");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error in the Decryption", e);
-            error.argvalue = e.getMessage();
-        }
-        return result;
+        return Base64.encodeBase64String(
+            rsa.doFinal(source.trim().getBytes("UTF-8"))
+        );
     }
 
     /**
@@ -92,7 +54,7 @@ public class EncryptionUtils {
      *            The certificate file.
      * @param passwd
      *            The passwd.
-     * @param alis
+     * @param alias
      *            The certificate alias.
      * @return
      *
@@ -102,18 +64,17 @@ public class EncryptionUtils {
      */
     public final static String encrypt(String source, String certificateFile, String passwd, String alias)
             throws Exception {
-        String result = "";
-        if (!StringHelper.isNullOrEmpty(source.trim())) {
-            try {
+        try {
+            String result = "";
+            if (source.trim().length() > 0) {
                 KeyStore store = EncryptionUtils.getKeyStore(certificateFile, passwd, certType);
-                Certificate cert = store.getCertificate(alias);
-                result = encrypt(source, cert);
-            } catch (Exception e) {
-                log.error("Error doing the encryption", e);
-                throw e;
+                result = encrypt(source, store.getCertificate(alias));
             }
+            return result;
+        } catch (Exception e) {
+            log.error("Error doing the encryption", e);
+            throw e;
         }
-        return result;
     }
 
     /**
@@ -134,78 +95,28 @@ public class EncryptionUtils {
      */
     public static String decrypt(String source, String keyFile, String passwd, String alias)
             throws Exception {
-        String result = source;
         try {
-            if (!StringHelper.isNullOrEmpty(source.trim())) {
+            String result = "";
+            if (source.trim().length() > 0) {
                 KeyStore store = EncryptionUtils.getKeyStore(keyFile, passwd, certType);
-                Key key = store.getKey(alias, passwd.toCharArray());
-                result = decrypt(source, key);
+                result = decrypt(source, store.getKey(alias, passwd.toCharArray()));
             }
+            return result;
         } catch (Exception e) {
             log.error("Failed to decrypt " + e.getMessage());
             log.debug("Failed to decrypt", e);
             throw e;
         }
-        return result;
     }
 
     private static String decrypt(String source, Key key) throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
-        String result = "";
-        byte[] cipherbytes = Base64.decodeBase64(source);
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.DECRYPT_MODE, key);
-        byte[] plainbytes = rsa.doFinal(cipherbytes);
-        result = new String(plainbytes, "UTF-8");
-        return result;
-    }
-
-    /**
-     * Decrypts the specified source using Store.
-     *
-     * @param source
-     *            The source.
-     * @param certificateFingerPrint
-     *            The certification finger print.
-     * @param error
-     *            The error.
-     * @return
-     */
-    public static final String Decrypt(String source, String keyFile, String passwd,
-            RefObject<String> error) {
-        error.argvalue = "";
-        String result = source;
-        if (!StringHelper.isNullOrEmpty(source.trim())) {
-            try {
-                KeyStore store = EncryptionUtils.getKeyStore(keyFile, passwd, certType);
-
-                // Get the first one.
-                String alias = "None";
-                Enumeration<String> aliases = store.aliases();
-                while (aliases.hasMoreElements()) {
-                    alias = aliases.nextElement();
-                    break;
-                }
-                Key key = store.getKey(alias, passwd.toCharArray());
-                result = Decrypt(source, key, error);
-            } catch (Exception e) {
-                log.error("Error doing the decryption", e);
-                error.argvalue = e.getMessage();
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Determines whether the specified name is a password holder.
-     *
-     * @param name
-     *            The name.
-     * @return <c>true</c> if the specified name is password; otherwise, <c>false</c>.
-     */
-    public static boolean IsPassword(String name) {
-        final String PASSWORD = "NoSoup4U";
-        return (name.toLowerCase().endsWith(PASSWORD));
+        return new String(
+            rsa.doFinal(Base64.decodeBase64(source)),
+            "UTF-8"
+        );
     }
 
     public static KeyStore getKeyStore(String path, String passwd, String storeType) {
