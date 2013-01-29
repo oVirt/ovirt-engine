@@ -147,25 +147,23 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean validateSpaceRequirements() {
-        boolean retValue = true;
         if (!isStorageDomainSpaceWithinThresholds()) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
-            addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", getStorageDomain().getstorage_name()));
+            return false;
         }
 
-        if (retValue) {
-            getImage().getSnapshots().addAll(getAllImageSnapshots());
-            if (!doesStorageDomainHaveSpaceForRequest(Math.round(getImage().getActualDiskWithSnapshotsSize()))) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
-                retValue = false;
-            }
+        getImage().getSnapshots().addAll(getAllImageSnapshots());
+        if (!isDomainHasStorageSpaceForRequest()) {
+            return false;
         }
-        return retValue;
+        return true;
+    }
+
+    private boolean isDomainHasStorageSpaceForRequest() {
+        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest(Math.round(getImage().getActualDiskWithSnapshotsSize())));
     }
 
     protected boolean isStorageDomainSpaceWithinThresholds() {
-        return StorageDomainSpaceChecker.isWithinThresholds(getStorageDomain());
+        return validate(new StorageDomainValidator(getStorageDomain()).isDomainWithinThresholds());
     }
 
     protected List<DiskImage> getAllImageSnapshots() {
