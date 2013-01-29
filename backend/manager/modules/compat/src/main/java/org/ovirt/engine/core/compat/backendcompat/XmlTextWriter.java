@@ -8,18 +8,16 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.ovirt.engine.core.compat.Encoding;
-
 public class XmlTextWriter {
 
     private XMLStreamWriter writer;
     private StringWriter stream = new StringWriter();
 
-    public XmlTextWriter(Encoding encoding) {
+    public XmlTextWriter() {
         try {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             writer = factory.createXMLStreamWriter(stream);
-            writer.writeStartDocument(encoding.name(), "1.0");
+            writer.writeStartDocument("UTF-8", "1.0");
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize xml writer: ", e);
         }

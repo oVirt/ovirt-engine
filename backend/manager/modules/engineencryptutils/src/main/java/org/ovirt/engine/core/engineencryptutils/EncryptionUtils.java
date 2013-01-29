@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
@@ -19,9 +20,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.ovirt.engine.core.compat.Encoding;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -39,13 +40,13 @@ public class EncryptionUtils {
      *            The cert.
      * @return base64 encoded result.
      */
-    private static String encrypt(String source, Certificate cert) throws GeneralSecurityException {
+    private static String encrypt(String source, Certificate cert) throws GeneralSecurityException, UnsupportedEncodingException {
         String result = null;
-        byte[] cipherbytes = Encoding.UTF8.getBytes(source.trim());
+        byte[] cipherbytes = source.trim().getBytes("UTF-8");
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.ENCRYPT_MODE, cert.getPublicKey());
         byte[] cipher = rsa.doFinal(cipherbytes);
-        result = Encoding.Base64.getString(cipher);
+        result = Base64.encodeBase64String(cipher);
         return result;
     }
 
@@ -65,13 +66,13 @@ public class EncryptionUtils {
         String result = "";
         try {
             {
-                byte[] cipherbytes = Encoding.Base64.getBytes(source);
+                byte[] cipherbytes = Base64.decodeBase64(source);
                 {
                     Cipher rsa = Cipher.getInstance(algo);
                     rsa.init(Cipher.DECRYPT_MODE, key);
                     {
                         byte[] plainbytes = rsa.doFinal(cipherbytes);
-                        result = Encoding.ASCII.getString(plainbytes);
+                        result = new String(plainbytes, "US-ASCII");
                     }
                 }
             }
@@ -149,13 +150,13 @@ public class EncryptionUtils {
     }
 
     private static String decrypt(String source, Key key) throws NoSuchAlgorithmException, NoSuchPaddingException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException {
         String result = "";
-        byte[] cipherbytes = Encoding.Base64.getBytes(source);
+        byte[] cipherbytes = Base64.decodeBase64(source);
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.DECRYPT_MODE, key);
         byte[] plainbytes = rsa.doFinal(cipherbytes);
-        result = Encoding.UTF8.getString(plainbytes);
+        result = new String(plainbytes, "UTF-8");
         return result;
     }
 
