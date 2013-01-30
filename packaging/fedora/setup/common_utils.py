@@ -417,7 +417,10 @@ def isTcpPortOpen(port):
 def getPgPassEnv():
     # .pgpass definition
     if os.path.exists(basedefs.DB_PASS_FILE):
-        return { "PGPASSFILE" : basedefs.DB_PASS_FILE }
+        return {
+            "PGPASSFILE" : basedefs.DB_PASS_FILE,
+            "ENGINE_PGPASS" : basedefs.DB_PASS_FILE,
+        }
     else:
         raise Exception(output_messages.ERR_PGPASS)
 
