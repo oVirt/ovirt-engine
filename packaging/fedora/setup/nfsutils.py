@@ -6,6 +6,7 @@ import logging
 import basedefs
 import common_utils as utils
 import output_messages
+import shutil
 
 SELINUX_RW_LABEL = "public_content_rw_t"
 
@@ -31,6 +32,49 @@ def addNfsExport(path, authInfo, comment=None, exportFilePath=basedefs.FILE_ETC_
         exportFile.write(line + "\n")
     finally:
         exportFile.close()
+
+
+def _backupOldNfsExports(exportFilePath=basedefs.FILE_ETC_EXPORTS):
+    logging.debug("Backup old NFS exports configuration file")
+    dateTimeSuffix = utils.getCurrentDateTime()
+    backupFile = "%s.%s.%s" % (exportFilePath, "BACKUP", dateTimeSuffix)
+    logging.debug("Backing up %s into %s", exportFilePath, backupFile)
+    shutil.move(exportFilePath, backupFile)
+
+
+def cleanNfsExports(comment, exportFilePath=basedefs.FILE_ETC_EXPORTS):
+    """
+    Remove all the lines added by engine-setup marked by comment from
+    exportFilePath.
+    """
+    # TODO: add support for /etc/exports.d
+    if not "#" in comment:
+        comment = "#%s" % comment
+    removed_exports = []
+    new_lines = []
+    with open(exportFilePath, "r") as exportFile:
+        lines = exportFile.readlines()
+        for line in lines:
+            if comment in line or "#rhev installer" in line:
+                logging.debug("removing %s from %s" % (line, exportFilePath))
+                path = line.split("\t")[0]
+                removed_exports.append(path)
+                continue
+            else:
+                new_lines.append(line)
+    if len(removed_exports) == 0:
+        # Unchanged
+        return removed_exports
+    # backup existing configuration and rewrite it
+    _backupOldNfsExports(exportFilePath)
+    with open(exportFilePath, "w") as exportFile:
+        exportFile.writelines(new_lines)
+    os.chmod(exportFilePath, 0644)
+    cmd = [ basedefs.EXEC_RESTORECON, exportFilePath ]
+    utils.execCmd(cmdList=cmd, failOnError=True,
+                  msg=output_messages.ERR_REFRESH_SELINUX_CONTEXT)
+    return removed_exports
+
 
 def setSELinuxContextForDir(path, contextName):
     logging.debug("setting selinux context for %s" % path)

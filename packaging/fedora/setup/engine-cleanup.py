@@ -8,11 +8,12 @@ import traceback
 import tempfile
 import shutil
 import pwd
-from optparse import OptionParser
+from optparse import OptionParser, OptionValueError
 from StringIO import StringIO
 import common_utils as utils
 import types
 import basedefs
+import nfsutils
 
 # Consts
 BASE_NAME = "ovirt-engine"
@@ -65,11 +66,17 @@ This utility will wipe all existing data including configuration settings, certi
 In addition, all existing DB connections will be closed." % (PROD_NAME)
 MSG_PROCEED_QUESTION = "Would you like to proceed"
 
+MSG_INFO_CLEANING_NFS="Cleaning NFS Exports\n"
+MSG_CLEAN_NFS_EXPORTS_QUESTION="Would you like to remove %s configuration from \
+%s" % (basedefs.APP_NAME, basedefs.FILE_ETC_EXPORTS)
+MSG_CLEAN_NFS_EXPORTED_DIRS_QUESTION="Would you like to remove the following \
+directories:\n%s\n"
 #global err msg list
 err_messages = []
 
 
 # Code
+
 def getOptions():
     parser = OptionParser()
 
@@ -85,11 +92,21 @@ def getOptions():
                       action="store_false", dest="remove_ca", default=True,
                       help="Don't remove CA")
 
+    parser.add_option("-e", "--remove-nfs-exports",
+                      action="store_true", dest="remove_nfs_exports",
+                      default=False, help="Remove NFS exports")
+
+    parser.add_option("-n", "--remove-exported-content",
+                      action="store_true", dest="remove_nfs_content",
+                      default=False, help="Remove NFS exported content")
+
     #parser.add_option("-s", "--dont-remove-profile",
     #                  action="store_false", dest="remove_slimmed", default=True,
     #                  help="Don't remove slimmed JBoss profile")
 
     (options, args) = parser.parse_args()
+    if options.remove_nfs_content and not options.remove_nfs_exports:
+        raise OptionValueError("-n can't be used without -e option")
     return (options, args)
 
 
@@ -141,6 +158,40 @@ def askForUserApproval():
     else:
         logging.debug("User chose to exit")
         return False
+
+
+def cleanNFSExports():
+    """
+    If the user choose to clean NFS exports by command line or interactive
+    prompt, removes any exported directory configured by the setup script
+    from /etc/exports.
+    For any line removed, if the user choose to clean the exported directories
+    by command line or interactive prompt, removes the directories.
+    """
+    # TODO: add support for /etc/exports.d
+    if not options.unattended_clean:
+        options.remove_nfs_exports = askYesNo(MSG_CLEAN_NFS_EXPORTS_QUESTION)
+    if not options.remove_nfs_exports:
+        logging.debug("User chose to not clean NFS exports")
+        return
+    logging.debug("User chose to clean NFS exports")
+    removed = nfsutils.cleanNfsExports(" %s installer" % basedefs.APP_NAME)
+    if len(removed) == 0:
+        return
+    nfsutils.refreshNfsExports()
+    path_list = ""
+    for p in removed:
+        path_list += "- %s\n" % p
+    if not options.unattended_clean:
+        options.remove_nfs_content = askYesNo(
+            MSG_CLEAN_NFS_EXPORTED_DIRS_QUESTION % path_list)
+    if not options.remove_nfs_content:
+        logging.debug("User chose to not clean NFS exported directories")
+        return
+    logging.debug("User chose to clean NFS exported directories")
+    for p in removed:
+        logging.debug("Removing directory %s" % p)
+        shutil.rmtree(p)
 
 
 def initLogging():
@@ -413,6 +464,9 @@ def main(options):
 
     # Stop notifierd service
     runFunc(stopNotifier, MSG_INFO_STOP_NOTIFIERD)
+
+    # Clean NFS exports
+    runFunc(cleanNFSExports, MSG_INFO_CLEANING_NFS)
 
     if len(err_messages) == 0:
         print MSG_INFO_CLEANUP_OK
