@@ -58,7 +58,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("{0} (VLAN {1})")
     String vlanNetwork(String name, String vlanId);
 
-    @DefaultMessage("VM {0} already exist")
+    @DefaultMessage("Virtual Machine {0} already exists")
     String sameVmNameExists(String vmName);
 
     @DefaultMessage("{0} out of unlimited MB")
