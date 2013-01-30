@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine</groupId>
     <artifactId>root</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0-SNAPSHOT</version>
   </parent>
   <artifactId>frontend-all</artifactId>
   <groupId>org.ovirt.engine.ui</groupId>
@@ -18,7 +18,7 @@
   <properties>
     <engine.groupId>org.ovirt.engine.ui</engine.groupId>
     <engine.core.groupId>org.ovirt.engine.core</engine.core.groupId>
-    <engine.version>3.2.0</engine.version>
+    <engine.version>3.3.0-SNAPSHOT</engine.version>
     <aspectj.version>1.6.11</aspectj.version>
   </properties>
   <build>

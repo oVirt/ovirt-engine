@@ -51,7 +51,8 @@ PYTHON=python
 PYTHON_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 
 # RPM version
-APP_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
+POM_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | awk -F\> '{print $$2}' | awk -F\< '{print $$1}')
+APP_VERSION:=$(subst -SNAPSHOT,,$(POM_VERSION))
 RPM_VERSION:=$(shell echo $(APP_VERSION) | sed "s/-/_/")
 
 # Display version
@@ -261,10 +262,10 @@ install_artifacts:
 	install -dm 755 $(DESTDIR)$(PKG_JAVA_DIR)
 	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
 
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name engine-server-ear-$(APP_VERSION).ear` && unzip "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(APP_VERSION)*'.ear` && unzip "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
 	for artifact_id in  $(ARTIFACTS); do \
-		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION).pom"`; \
+		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(APP_VERSION)*.pom"`; \
 		if ! [ -f "$${POM}" ]; then \
 			echo "ERROR: Cannot find artifact $${artifact_id}"; \
 			exit 1; \
