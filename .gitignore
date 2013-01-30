@@ -11,6 +11,7 @@ target
 *.class
 *.swp
 *.iws
+tmp.*
 
 # IDE files
 ###########################
@@ -22,6 +23,12 @@ target
 *.ipr
 *.iml
 .idea
+
+# python files
+###########################
+*.pyo
+*.pyc
+__pycache__
 
 # UI folders
 ###########################
