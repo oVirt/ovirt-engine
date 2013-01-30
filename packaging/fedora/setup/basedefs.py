@@ -213,11 +213,9 @@ SPACE_LEN=70
 RPM_LOCK_LIST = """
 {name}
 {name}-backend
-{name}-config
 {name}-dbscripts
-{name}-notification-service
 {name}-restapi
-{name}-tools-common
+{name}-tools
 {name}-userportal
 {name}-webadmin-portal
 """.format(name=ENGINE_RPM_NAME)

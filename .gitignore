@@ -43,5 +43,5 @@ __pycache__
 # Files generated from templates
 ###########################
 backend/manager/conf/engine.conf.defaults
-backend/manager/tools/engine-tools-common/src/main/shell/engine-prolog.sh
+backend/manager/tools/src/main/shell/engine-prolog.sh
 packaging/fedora/engine-service.py
