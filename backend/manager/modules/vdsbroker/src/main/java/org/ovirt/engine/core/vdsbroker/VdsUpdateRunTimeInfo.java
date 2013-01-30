@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -1077,14 +1079,9 @@ public class VdsUpdateRunTimeInfo {
 
         if (shouldLogDeviceDetails(deviceType)) {
             Map<String,Object> deviceInfo = device.getInnerMap();
-            log.infoFormat(message + ": {2}",
-                           StringUtils.defaultIfEmpty(deviceType, StringUtils.EMPTY),
-                           vmId,
-                           deviceInfo.toString());
+            log.infoFormat(message + ": {2}", StringUtils.defaultString(deviceType), vmId, deviceInfo);
         } else {
-            log.infoFormat(message,
-                           StringUtils.defaultIfEmpty(deviceType, StringUtils.EMPTY),
-                           vmId);
+            log.infoFormat(message, StringUtils.defaultString(deviceType), vmId);
         }
     }
 
@@ -1097,32 +1094,32 @@ public class VdsUpdateRunTimeInfo {
             log.error("Received NULL VM or VM id when processing VM devices, abort.");
             return;
         }
+
         Guid vmId = new Guid((String) vm.getItem(VdsProperties.vm_guid));
-        HashSet<Guid> processedDevices = new HashSet<Guid>();
-        Object[] objects = (Object[]) vm.getItem(VdsProperties.Devices);
+        Set<Guid> processedDevices = new HashSet<Guid>();
         List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmId(vmId);
-        Map<VmDeviceId, VmDevice> deviceMap = new HashMap<VmDeviceId, VmDevice>();
-        for (VmDevice device : devices) {
-            deviceMap.put(device.getId(), device);
-        }
-        for (Object o : objects) {
+        Map<VmDeviceId, VmDevice> deviceMap = Entities.businessEntitiesById(devices);
+
+        for (Object o : (Object[]) vm.getItem(VdsProperties.Devices)) {
             XmlRpcStruct device = new XmlRpcStruct((Map<String, Object>) o);
-            Guid deviceId = getDeviceId(device);
-            if ((device.getItem(VdsProperties.Address)) == null) {
+            if (device.getItem(VdsProperties.Address) == null) {
                 logDeviceInformation(vmId, device);
                 continue;
             }
+
+            Guid deviceId = getDeviceId(device);
             VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
             if (deviceId == null || vmDevice == null) {
                 deviceId = addNewVmDevice(vmId, device);
             } else {
-                String alias = StringUtils.defaultIfEmpty((String) device.getItem(VdsProperties.Alias), "");
                 vmDevice.setAddress(((Map<String, String>) device.getItem(VdsProperties.Address)).toString());
-                vmDevice.setAlias(alias);
+                vmDevice.setAlias(StringUtils.defaultString((String) device.getItem(VdsProperties.Alias)));
                 addVmDeviceToList(vmDevice);
             }
+
             processedDevices.add(deviceId);
         }
+
         handleRemovedDevices(vmId, processedDevices, devices);
     }
 
@@ -1131,24 +1128,24 @@ public class VdsUpdateRunTimeInfo {
      * @param vmId
      * @param processedDevices
      */
-    private void handleRemovedDevices(Guid vmId, HashSet<Guid> processedDevices, List<VmDevice> devices) {
+    private void handleRemovedDevices(Guid vmId, Set<Guid> processedDevices, List<VmDevice> devices) {
         for (VmDevice device : devices) {
-            if (!processedDevices.contains(device.getDeviceId())) {
-                if (device.getIsManaged()) {
-                    if (!device.getIsPlugged()) {
-                        log.errorFormat("VM {0} managed non pluggable device was removed unexpectedly from libvirt: {1}",
-                                vmId, device.toString());
-                    } else {
-                        device.setAddress("");
-                        addVmDeviceToList(device);
-                        log.debugFormat("VM {0} managed pluggable device was unplugged : {1}",
-                                vmId,
-                                device.toString());
-                    }
+            if (processedDevices.contains(device.getDeviceId())) {
+                continue;
+            }
+
+            if (device.getIsManaged()) {
+                if (device.getIsPlugged()) {
+                    device.setAddress("");
+                    addVmDeviceToList(device);
+                    log.debugFormat("VM {0} managed pluggable device was unplugged : {1}", vmId, device);
                 } else {
-                    removedDeviceIds.add(device.getId());
-                    log.debugFormat("VM {0} unmanaged device was marked for remove : {1}", vmId, device.toString());
+                    log.errorFormat("VM {0} managed non pluggable device was removed unexpectedly from libvirt: {1}",
+                            vmId, device);
                 }
+            } else {
+                removedDeviceIds.add(device.getId());
+                log.debugFormat("VM {0} unmanaged device was marked for remove : {1}", vmId, device);
             }
         }
     }
@@ -1162,25 +1159,27 @@ public class VdsUpdateRunTimeInfo {
         Guid newDeviceId = Guid.Empty;
         String typeName = (String) device.getItem(VdsProperties.Type);
         String deviceName = (String) device.getItem(VdsProperties.Device);
+
         // do not allow null or empty device or type values
-        if (!StringUtils.isEmpty(typeName) && !StringUtils.isEmpty(deviceName)) {
+        if (StringUtils.isEmpty(typeName) || StringUtils.isEmpty(deviceName)) {
+            log.errorFormat("Empty or NULL values were passed for a VM {0} device, Device is skipped", vmId);
+        } else {
             String address = ((Map<String, String>) device.getItem(VdsProperties.Address)).toString();
-            String alias = StringUtils.defaultIfEmpty((String) device.getItem(VdsProperties.Alias), "");
+            String alias = StringUtils.defaultString((String) device.getItem(VdsProperties.Alias));
             Object o = device.getItem(VdsProperties.SpecParams);
             newDeviceId = Guid.NewGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, typeName, deviceName, address,
                     0,
-                    o != null ? (Map<String, Object>) o : new HashMap<String, Object>(),
+                    o == null ? new HashMap<String, Object>() : (Map<String, Object>) o,
                     false,
                     true,
                     false,
                     alias);
             newVmDevices.add(newDevice);
-            log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice.toString());
-        } else {
-            log.errorFormat("Empty or NULL values were passed for a VM {0} device, Device is skipped", vmId);
+            log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice);
         }
+
         return newDeviceId;
     }
 
