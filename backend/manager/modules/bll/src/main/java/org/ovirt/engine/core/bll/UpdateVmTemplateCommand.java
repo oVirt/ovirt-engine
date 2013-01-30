@@ -63,7 +63,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                             .getCanDoActionMessages())
                             && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
                                     .getCanDoActionMessages())) {
-                        returnValue = VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(mOldTemplate, getVmTemplate());
+                        returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
                         if (!returnValue) {
                             addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
                         }

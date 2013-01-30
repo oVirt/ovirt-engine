@@ -53,6 +53,8 @@ public class VmHandler {
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
+    private static ObjectIdentityChecker mUpdateVmsStatic;
+
     static {
         failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.DUPLICATE_KEY,
                 VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS.name());
@@ -65,8 +67,6 @@ public class VmHandler {
         failureReasonsToFormatMessages.put(ValidationFailureReason.INCORRECT_VALUE, "$WrongValueKeys %1$s");
 
     }
-
-    public static ObjectIdentityChecker mUpdateVmsStatic;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -96,6 +96,14 @@ public class VmHandler {
                 Arrays.asList(new String[] { "vdsGroupId", "timeZone", "stateless", "niceLevel", "memSizeMb",
                         "numOfSockets", "cpuPerSocket", "isoPath", "userDefinedProperties",
                         "predefinedProperties", "customProperties" }));
+    }
+
+    public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
+        return mUpdateVmsStatic.IsUpdateValid(source, destination, status);
+    }
+
+    public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
+        return mUpdateVmsStatic.IsUpdateValid(source, destination);
     }
 
     /**

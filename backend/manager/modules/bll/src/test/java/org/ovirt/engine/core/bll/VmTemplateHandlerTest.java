@@ -25,7 +25,7 @@ public class VmTemplateHandlerTest {
         dest.setname(RandomUtils.instance().nextString(10));
 
         assertTrue("Update should be valid for different names",
-                VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(src, dest));
+                VmTemplateHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -37,7 +37,7 @@ public class VmTemplateHandlerTest {
         dest.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
 
         assertTrue("Update should be valid for different quota enforcement types",
-                VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(src, dest));
+                VmTemplateHandler.isUpdateValid(src, dest));
     }
 
     @Test
@@ -49,6 +49,6 @@ public class VmTemplateHandlerTest {
         dest.setQuotaDefault(false);
 
         assertTrue("Update should be valid for different quota default statuses",
-                VmTemplateHandler.mUpdateVmTemplate.IsUpdateValid(src, dest));
+                VmTemplateHandler.isUpdateValid(src, dest));
     }
 }

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class VdsHandler extends BaseHandler {
     private static Log log = LogFactory.getLog(VdsHandler.class);
-    public static ObjectIdentityChecker mUpdateVdsStatic;
+    private static ObjectIdentityChecker mUpdateVdsStatic;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed

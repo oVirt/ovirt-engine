@@ -298,7 +298,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     protected boolean areUpdatedFieldsLegal() {
-        return VmHandler.mUpdateVmsStatic.IsUpdateValid(getVm().getStaticData(),
+        return VmHandler.isUpdateValid(getVm().getStaticData(),
                 getParameters().getVmStaticData(),
                 getVm().getStatus());
     }

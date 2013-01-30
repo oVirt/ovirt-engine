@@ -18,7 +18,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class VmTemplateHandler {
     public static Guid BlankVmTemplateId = new Guid();
     public static String BlankVmTemplateName = "Blank";
-    public static ObjectIdentityChecker mUpdateVmTemplate;
+    private static ObjectIdentityChecker mUpdateVmTemplate;
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -38,6 +38,10 @@ public class VmTemplateHandler {
                 "quotaEnforcementType", "migrationSupport", "dedicatedVmForVds", "smartcardEnabled","dbGeneration", "deleteProtected",
                 "quotaDefault", "tunnelMigration"
         });
+    }
+
+    public static boolean isUpdateValid(VmTemplate source, VmTemplate destination) {
+        return mUpdateVmTemplate.IsUpdateValid(source, destination);
     }
 
     public static void UpdateDisksFromDb(VmTemplate vmt) {

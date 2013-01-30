@@ -81,10 +81,10 @@ public class VmHandlerTest {
         VmStatic dest = new VmStatic();
         dest.setVmName(RandomUtils.instance().nextString(10));
 
-        System.out.println(VmHandler.mUpdateVmsStatic.IsUpdateValid(src, dest, VMStatus.Up));
+        System.out.println(VmHandler.isUpdateValid(src, dest, VMStatus.Up));
 
         assertTrue("Update should be valid for different names",
-                VmHandler.mUpdateVmsStatic.IsUpdateValid(src, dest));
+                VmHandler.isUpdateValid(src, dest));
     }
 
 }
