@@ -22,6 +22,10 @@ public class ActionVersionMap implements Serializable {
     public ActionVersionMap() {
     }
 
+    public ActionVersionMap(boolean nullValue) {
+        this.nullValue = nullValue;
+    }
+
     public ActionVersionMap(VdcActionType actionType, String clusterMinimalVersion, String storagePoolMinimalVersion) {
         setaction_type(actionType);
         setcluster_minimal_version(clusterMinimalVersion);
@@ -64,6 +68,16 @@ public class ActionVersionMap implements Serializable {
 
     public void setstorage_pool_minimal_version(String value) {
         storagePoolMinimalVersion = value;
+    }
+
+    private transient boolean nullValue;
+
+    public boolean isNullValue() {
+        return nullValue;
+    }
+
+    public void setNullValue(boolean nullValue) {
+        this.nullValue = nullValue;
     }
 
     @Override

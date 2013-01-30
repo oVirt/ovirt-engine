@@ -3,6 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -17,6 +19,11 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * The initial implementation came from  {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements ActionGroupDAO {
+
+    private static final ConcurrentMap<VdcActionType, ActionVersionMap> cache =
+            new ConcurrentHashMap<VdcActionType, ActionVersionMap>();
+    private static final ActionVersionMap nullActionVersionMap = new ActionVersionMap(true);
+
     @Override
     public List<ActionGroup> getAllForRole(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -29,11 +36,28 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
 
     @Override
     public ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type) {
+        ActionVersionMap result = cache.get(action_type);
+        if (result != null) {
+            if (result.isNullValue()) {
+                return null;
+            }
+            return result;
+        }
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
 
-        return getCallsHandler().executeRead("Getaction_version_mapByaction_type",
+        result = getCallsHandler().executeRead("Getaction_version_mapByaction_type",
                 ActionVersionMapMapper.instance,
                 parameterSource);
+        if (result == null) {
+            cache.putIfAbsent(action_type, nullActionVersionMap);
+        } else {
+            cache.putIfAbsent(action_type, result);
+        }
+        result = cache.get(action_type);
+        if (result.isNullValue()) {
+            return null;
+        }
+        return result;
     }
 
     @Override
@@ -48,6 +72,7 @@ public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements Actio
 
     @Override
     public void removeActionVersionMap(VdcActionType action_type) {
+        cache.remove(action_type);
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("action_type", action_type);
         getCallsHandler().executeModification("Deleteaction_version_map", parameterSource);
     }
