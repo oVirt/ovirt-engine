@@ -590,7 +590,7 @@ BEGIN
         LEFT JOIN disk_image_dynamic ON images.image_guid = disk_image_dynamic.image_id
         LEFT JOIN storage_domain_static ON image_storage_domain_map.storage_domain_id = storage_domain_static.id
     WHERE quota_limitation.storage_size_gb IS NOT NULL
-    GROUP BY images.quota_id, storage_id,quota_limitation.id,storage_domain_static.storage_name;
+    GROUP BY quota_limitation.quota_id, storage_id,quota_limitation.id,storage_domain_static.storage_name,quota_limitation.storage_size_gb;
 END; $function$
 LANGUAGE plpgsql;
 
