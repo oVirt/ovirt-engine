@@ -134,6 +134,7 @@ DomainName=
 AdUserId=
 LdapServers=
 LDAPProviderTypes=
+LDAPServerPort=
 EOF
 
 "${JAVA_HOME}/bin/java" -cp .:$CP org.ovirt.engine.core.utils.kerberos.ManageDomains "$@" -propertiesFile=$PROPERTIES_FILE
