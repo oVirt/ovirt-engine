@@ -79,9 +79,9 @@ public class VmHandler {
                 Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
 
         mUpdateVmsStatic.AddPermittedFields(new String[] { "vmName", "description", "domain", "os", "osType",
-                "creationDate", "numOfMonitors", "allowConsoleReconnect", "usbPolicy", "autoSuspend",
+                "creationDate", "allowConsoleReconnect", "usbPolicy", "autoSuspend",
                 "autoStartup",
-                "dedicatedVmForVds", "defaultDisplayType", "priority", "defaultBootSequence", "initrdUrl",
+                "dedicatedVmForVds", "priority", "defaultBootSequence", "initrdUrl",
                 "kernelUrl", "kernelParams", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
                 "quotaEnforcementType", "cpuPinning",
                 "vmPayload", "balloonEnabled", "smartcardEnabled","deleteProtected","dbGeneration",
@@ -95,7 +95,7 @@ public class VmHandler {
                 Arrays.asList(new Enum<?>[] { VMStatus.Down }),
                 Arrays.asList(new String[] { "vdsGroupId", "timeZone", "stateless", "niceLevel", "memSizeMb",
                         "numOfSockets", "cpuPerSocket", "isoPath", "userDefinedProperties",
-                        "predefinedProperties", "customProperties" }));
+                        "predefinedProperties", "customProperties", "defaultDisplayType", "numOfMonitors" }));
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
