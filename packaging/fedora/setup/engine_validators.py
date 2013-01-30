@@ -12,6 +12,7 @@ import os
 import os.path
 import tempfile
 import cracklib
+import uuid
 from setup_controller import Controller
 
 def validateNFSMountPoint(param, options=[]):
@@ -27,10 +28,22 @@ def validateMountPoint(path):
     if not utils.verifyStringFormat(path, "^\/[\w\_\-\s]+(\/[\w\_\-\s]+)*\/?$"):
         print output_messages.INFO_VAL_PATH_NAME_INVALID
         return False
-    if _isPathInExportFs(path):
-        print output_messages.INFO_VAL_PATH_NAME_IN_EXPORTS
-        return False
+    valid = True
     if os.path.exists(path) and len(os.listdir(path)):
+        for entry in os.listdir(path):
+            entry_path = os.path.join(path, entry)
+            if not os.path.isdir(entry_path):
+                valid = False
+                break
+            try:
+                #check if the entry is a valid UUID
+                if uuid.UUID(entry).version != 4:
+                    valid = False
+                    break
+            except ValueError:
+                valid = False
+                break
+    if not valid:
         print output_messages.INFO_VAR_PATH_NOT_EMPTY % path
         return False
     if not _isPathWriteable(_getBasePath(path)):
@@ -545,17 +558,6 @@ def _getPatternFromNslookup(address, pattern):
             addresses.add(foundAddress)
     return addresses
 
-def _isPathInExportFs(path):
-    if not os.path.exists(basedefs.FILE_ETC_EXPORTS):
-        return False
-    file = open(basedefs.FILE_ETC_EXPORTS)
-    fileContent = file.readlines()
-    file.close()
-
-    for line in fileContent:
-        if utils.verifyStringFormat(line, "^%s\s+.+" % (path)):
-            return True
-    return False
 
 def _getBasePath(path):
     if os.path.exists(path):

@@ -23,6 +23,7 @@ import common_utils as utils
 import engine_validators as validate
 import random
 import tempfile
+import uuid
 from optparse import OptionParser, OptionGroup
 from setup_controller import Controller
 from Cheetah.Template import Template
@@ -462,7 +463,7 @@ def initConfig():
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_NFS_MP_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_NFS_MP_PROMPT,
                 "OPTION_LIST"     :[],
-                "VALIDATION_FUNC" :validate.validateNFSMountPoint,
+                "VALIDATION_FUNC" : validate.validateNFSMountPoint,
                 "DEFAULT_VALUE"   : generateIsoDomainPath(),
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
@@ -1747,10 +1748,23 @@ def _configNfsShare():
         if not os.path.exists(controller.CONF["NFS_MP"]):
             logging.debug("creating directory %s " % (controller.CONF["NFS_MP"]))
             os.makedirs(controller.CONF["NFS_MP"])
-        # Add export to exportfs
-        nfsutils.addNfsExport(controller.CONF["NFS_MP"],
-                              (("0.0.0.0", "0.0.0.0", ("rw",)),),
-                              " %s installer" % basedefs.APP_NAME)
+        # Migrate from FILE_ETC_EXPORTS to DIR_ETC_EXPORTSD if available
+        exportFilePath = basedefs.FILE_ETC_EXPORTS
+        if os.path.exists(basedefs.DIR_ETC_EXPORTSD):
+            exportFilePath = os.path.join(basedefs.DIR_ETC_EXPORTSD,
+                "%s-iso-domain.exports" % basedefs.ENGINE_SERVICE_NAME)
+
+            if utils.isPathInExportFs(controller.CONF["NFS_MP"],
+                basedefs.FILE_ETC_EXPORTS):
+                nfsutils.migrateConfig(controller.CONF["NFS_MP"])
+
+        # Add export to exportFilePath if not already there
+        if not utils.isPathInExportFs(controller.CONF["NFS_MP"],
+            exportFilePath):
+            nfsutils.addNfsExport(controller.CONF["NFS_MP"],
+                                  (("0.0.0.0", "0.0.0.0", ("rw",)),),
+                                  " %s installer" % basedefs.APP_NAME,
+                                  exportFilePath)
 
         # Add warning to user about nfs export permissions
         controller.MESSAGES.append(output_messages.WARN_ISO_DOMAIN_SECURITY % (controller.CONF["NFS_MP"]))
@@ -1765,12 +1779,26 @@ def _configNfsShare():
 
         # Start services
         _startNfsServices()
+        controller.CONF["sd_uuid"] = None
+        for entry in os.listdir(controller.CONF["NFS_MP"]):
+            path = os.path.join(controller.CONF["NFS_MP"], entry)
+            if os.path.isdir(path):
+                try:
+                    #check if the entry is a valid UUID
+                    if uuid.UUID(entry).version == 4:
+                        controller.CONF["sd_uuid"] = str(entry)
+                        break
+                except ValueError:
+                    #Should we abort if something else exists here?
+                    continue
+        if not controller.CONF["sd_uuid"]:
+            # Generate the UUID for the isodomain
+            controller.CONF["sd_uuid"] = nfsutils.generateUUID()
 
-        # Generate the UUID for the isodomain
-        controller.CONF["sd_uuid"] = nfsutils.generateUUID()
-
-        # Create ISO domain
-        nfsutils.createISODomain(controller.CONF["NFS_MP"], controller.CONF["ISO_DOMAIN_NAME"], controller.CONF["sd_uuid"])
+            # Create ISO domain
+            nfsutils.createISODomain(controller.CONF["NFS_MP"],
+                                     controller.CONF["ISO_DOMAIN_NAME"],
+                                     controller.CONF["sd_uuid"])
 
         # Add iso domain to DB
         _addIsoDomaintoDB(controller.CONF["sd_uuid"], controller.CONF["ISO_DOMAIN_NAME"])

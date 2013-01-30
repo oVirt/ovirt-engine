@@ -68,7 +68,7 @@ MSG_PROCEED_QUESTION = "Would you like to proceed"
 
 MSG_INFO_CLEANING_NFS="Cleaning NFS Exports\n"
 MSG_CLEAN_NFS_EXPORTS_QUESTION="Would you like to remove %s configuration from \
-%s" % (basedefs.APP_NAME, basedefs.FILE_ETC_EXPORTS)
+{files}" % basedefs.APP_NAME
 MSG_CLEAN_NFS_EXPORTED_DIRS_QUESTION="Would you like to remove the following \
 directories:\n%s\n"
 #global err msg list
@@ -168,14 +168,26 @@ def cleanNFSExports():
     For any line removed, if the user choose to clean the exported directories
     by command line or interactive prompt, removes the directories.
     """
-    # TODO: add support for /etc/exports.d
+    search_path = [basedefs.FILE_ETC_EXPORTS]
+    msg_files = basedefs.FILE_ETC_EXPORTS
+    exportFilePath = os.path.join(basedefs.DIR_ETC_EXPORTSD,
+        "%s-iso-domain.exports" % basedefs.ENGINE_SERVICE_NAME)
+    if os.path.exists(exportFilePath):
+        search_path.append(exportFilePath)
+        msg_files = "%s and %s" % (basedefs.FILE_ETC_EXPORTS, exportFilePath)
+
     if not options.unattended_clean:
-        options.remove_nfs_exports = askYesNo(MSG_CLEAN_NFS_EXPORTS_QUESTION)
+        msg = MSG_CLEAN_NFS_EXPORTS_QUESTION.format(files=msg_files)
+        options.remove_nfs_exports = askYesNo(msg)
     if not options.remove_nfs_exports:
         logging.debug("User chose to not clean NFS exports")
         return
     logging.debug("User chose to clean NFS exports")
-    removed = nfsutils.cleanNfsExports(" %s installer" % basedefs.APP_NAME)
+
+    removed = []
+    for path in search_path:
+        removed += nfsutils.cleanNfsExports(" %s installer" % basedefs.APP_NAME,
+                                            path)
     if len(removed) == 0:
         return
     nfsutils.refreshNfsExports()

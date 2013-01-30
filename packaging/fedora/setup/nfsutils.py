@@ -42,12 +42,58 @@ def _backupOldNfsExports(exportFilePath=basedefs.FILE_ETC_EXPORTS):
     shutil.move(exportFilePath, backupFile)
 
 
+def _updateNfsExports(content, exportFilePath, mode=0644):
+    """
+    Make a backup of exportFilePath and rewrite it with the provided content.
+    Restore the access mode and the selinux context on the newly written file.
+    If the file is in /etc/exports.d and content is empty, avoid to create it.
+    """
+    if os.path.exists(exportFilePath):
+        _backupOldNfsExports(exportFilePath)
+    if len(content) == 0 and \
+       os.path.dirname(exportFilePath) == basedefs.DIR_ETC_EXPORTSD:
+        #avoid to create an empty file in /etc/exports.d
+        return
+
+    with open(exportFilePath, "w") as exportFile:
+        exportFile.writelines(content)
+    os.chmod(exportFilePath, mode)
+    cmd = [ basedefs.EXEC_RESTORECON, exportFilePath ]
+    utils.execCmd(cmdList=cmd, failOnError=True,
+        msg=output_messages.ERR_REFRESH_SELINUX_CONTEXT)
+
+
+def migrateConfig(path):
+    """
+    Migrate the configuration of the specified exported path from
+    /etc/exports to /etc/exports.d
+    """
+    exportFilePath = os.path.join(basedefs.DIR_ETC_EXPORTSD,
+        "%s-iso-domain.exports" % basedefs.ENGINE_SERVICE_NAME)
+    dstFileContent = []
+
+    with open(basedefs.FILE_ETC_EXPORTS, "r") as srcExportFile :
+        srcFileContent = srcExportFile.readlines()
+    if os.path.exists(exportFilePath):
+        with open(exportFilePath, "r") as dstExportFile :
+            dstFileContent = dstExportFile.readlines()
+
+    for line in list(srcFileContent):
+        if utils.verifyStringFormat(line, "^%s\s+.+" % (path)):
+            logging.debug("Moving path %s to %s" % (path, exportFilePath))
+            srcFileContent.remove(line)
+            line = line.replace("#rhev installer", "# %s installer" % basedefs.APP_NAME)
+            dstFileContent.append(line)
+
+    _updateNfsExports(dstFileContent, exportFilePath)
+    _updateNfsExports(srcFileContent, basedefs.FILE_ETC_EXPORTS)
+
+
 def cleanNfsExports(comment, exportFilePath=basedefs.FILE_ETC_EXPORTS):
     """
     Remove all the lines added by engine-setup marked by comment from
     exportFilePath.
     """
-    # TODO: add support for /etc/exports.d
     if not "#" in comment:
         comment = "#%s" % comment
     removed_exports = []
@@ -65,14 +111,7 @@ def cleanNfsExports(comment, exportFilePath=basedefs.FILE_ETC_EXPORTS):
     if len(removed_exports) == 0:
         # Unchanged
         return removed_exports
-    # backup existing configuration and rewrite it
-    _backupOldNfsExports(exportFilePath)
-    with open(exportFilePath, "w") as exportFile:
-        exportFile.writelines(new_lines)
-    os.chmod(exportFilePath, 0644)
-    cmd = [ basedefs.EXEC_RESTORECON, exportFilePath ]
-    utils.execCmd(cmdList=cmd, failOnError=True,
-                  msg=output_messages.ERR_REFRESH_SELINUX_CONTEXT)
+    _updateNfsExports(new_lines, exportFilePath)
     return removed_exports
 
 

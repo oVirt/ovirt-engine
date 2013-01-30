@@ -64,6 +64,7 @@ DIR_OVIRT_PKI="/etc/pki/ovirt-engine"
 
 DIR_YUM_CACHE = "/var/cache/yum"
 DIR_PKGS_INSTALL = "/usr/share"
+DIR_ETC_EXPORTSD = "/etc/exports.d"
 
 FILE_INSTALLER_LOG="engine-setup.log"
 FILE_KRB_CONF="%s/deployments/configuration/krb5.conf" % DIR_ENGINE

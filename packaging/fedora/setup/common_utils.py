@@ -1627,3 +1627,19 @@ def isApplicationModeGluster(conf):
         return True
 
     return False
+
+
+def isPathInExportFs(path, exportsFilePath):
+    """
+    Check if the given path is already exported
+    """
+    ret = False
+    if os.path.exists(exportsFilePath):
+        with open(exportsFilePath) as exportsFile:
+            fileContent = exportsFile.readlines()
+
+        for line in fileContent:
+            if verifyStringFormat(line, "^%s\s+.+" % (path)):
+                ret = True
+                break
+    return ret
