@@ -28,6 +28,25 @@ check_email_format() {
     fi
 }
 
+check_port_number(){
+    #exit with a message if the property is not a valid port number
+    if ! [[ "${!1}" =~ ^-?[0-9]+$ ]] ; then
+       die "Error: $1 must be a valid port number"
+    elif [ ${!1} -lt 1 ]  ||  [ ${!1} -gt 65536 ] ;  then
+       die "Error: $1 must be a number between 0 and 65536"
+    fi
+
+
+}
+
+check_boolean(){
+    #exit with a message if the property is not true or false
+    if ! [[ ${!1} == "true" ]] ||  [[ ${!1} == "false" ]] ;  then
+       die "Error: $1 must be true or false"
+    fi
+
+}
+
 if [ "$1" == "--help" -o "$1" == "-h" ]; then
     usage
     exit 0
@@ -91,6 +110,7 @@ if [ "${MAIL_PORT+x}" ]; then
     if [ -z "$MAIL_PORT" ]; then
         die_no_propset \$MAIL_PORT
     fi
+    check_port_number "MAIL_PORT"
 fi
 
 # MAIL_USER if defined can not be empty
@@ -129,6 +149,7 @@ if [ "${HTML_MESSAGE_FORMAT+x}" ]; then
     if [ -z "$HTML_MESSAGE_FORMAT" ]; then
         die_no_propset \$HTML_MESSAGE_FORMAT
     fi
+    check_boolean "HTML_MESSAGE_FORMAT"
 fi
 
 # MAIL_FROM if defined can not be empty
