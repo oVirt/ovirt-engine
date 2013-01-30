@@ -907,6 +907,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetMacsByDataCenterId(v_data_center_id UUID) RETURNS SETOF varchar
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT mac_addr
+   FROM vm_interface_view
+   WHERE EXISTS (
+      SELECT 1 FROM vm_static
+      JOIN vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id
+      WHERE vds_groups.storage_pool_id = v_data_center_id
+      AND vm_static.vm_guid = vm_interface_view.vm_guid);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 Create or replace FUNCTION set_network_exclusively_as_display(v_cluster_id UUID, v_network_id UUID)
 RETURNS VOID

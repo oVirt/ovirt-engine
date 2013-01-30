@@ -271,6 +271,12 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         assertEquals(existingVmInterface, result.get(0));
     }
 
+    @Test
+    public void testGetAllMacsByStoragePool() throws Exception {
+        List<String> result = dao.getAllMacsByDataCenter(FixturesTool.STORAGE_POOL_NFS_2);
+        assertEquals(FixturesTool.MAC_ADDRESS, result.get(0));
+    }
+
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());

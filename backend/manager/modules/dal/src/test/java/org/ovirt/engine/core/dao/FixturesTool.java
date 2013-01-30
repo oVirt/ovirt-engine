@@ -14,7 +14,7 @@ public class FixturesTool {
     /**
      * Predefined NFS storage pool.
      */
-    protected static final Guid STORAGE_POOL_NFS_2 = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
+    public static final Guid STORAGE_POOL_NFS_2 = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
 
     /**
      * Predefined ISCSI storage pool.
@@ -341,5 +341,6 @@ public class FixturesTool {
      */
     public static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
-    public static final int NUMBER_OF_VM_INTERFACES = 2;
+    public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
+    public static final int NUMBER_OF_VM_INTERFACES = 3;
 }

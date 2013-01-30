@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDao {
 
+    private static final int MAC_COLUMN_POSITION = 1;
+
     protected final ParameterizedRowMapper<VmNetworkInterface> mapper =
             new ParameterizedRowMapper<VmNetworkInterface>() {
                 @Override
@@ -42,6 +44,14 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                     return entity;
                 }
             };
+
+    protected final ParameterizedRowMapper<String> macMapper = new ParameterizedRowMapper<String>() {
+
+        @Override
+        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return rs.getString(MAC_COLUMN_POSITION);
+        }
+    };
 
     @Override
     public VmNetworkInterface get(Guid id) {
@@ -135,5 +145,11 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
     public List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId) {
         return getCallsHandler().executeReadList("GetVmTemplateInterfacesByNetworkId",
                 mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
+    }
+
+    @Override
+    public List<String> getAllMacsByDataCenter(Guid dataCenterId) {
+        return getCallsHandler().executeReadList("GetMacsByDataCenterId",
+                macMapper, getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
     }
 }

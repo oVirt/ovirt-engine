@@ -10,6 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
@@ -55,6 +56,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected void executeCommand() {
+        List<String> macsToRemove = getVmNetworkInterfaceDao().getAllMacsByDataCenter(getStoragePool().getId());
         removeNetworks();
         /**
          * Detach master storage domain last.
@@ -79,7 +81,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 return;
             }
         }
+
         getStoragePoolDAO().remove(getStoragePool().getId());
+        MacPoolManager.getInstance().freeMacs(macsToRemove);
         setSucceeded(true);
     }
 

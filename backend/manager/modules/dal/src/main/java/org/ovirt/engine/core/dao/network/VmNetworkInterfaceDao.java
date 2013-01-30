@@ -69,4 +69,13 @@ public interface VmNetworkInterfaceDao extends GenericDao<VmNetworkInterface, Gu
      * @return the list of VmNetworkInterfaces
      */
     List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId);
+
+    /**
+     * Retrieves the MAC addresses of the Vms in the given Data Center.
+     *
+     * @param dataCenterId
+     *            the Data Center
+     * @return the list of MAC addresses
+     */
+    List<String> getAllMacsByDataCenter(Guid dataCenterId);
 }
