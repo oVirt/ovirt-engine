@@ -40,7 +40,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     @Override
     protected StepDao prepareDao() {
-        return prepareDAO(dbFacade.getStepDao());
+        return dbFacade.getStepDao();
     }
 
     @Override

@@ -6,20 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -31,16 +23,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@Entity
-@Table(name = "vm_templates")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmTemplate extends VmBase implements Nameable {
     private static final long serialVersionUID = -522552511046744989L;
 
-    @Transient
     private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
 
-    @Column(name = "child_count", nullable = false)
     private int childCount;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
@@ -48,35 +35,24 @@ public class VmTemplate extends VmBase implements Nameable {
             groups = { Default.class, ImportClonedEntity.class })
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
             UpdateEntity.class, ImportClonedEntity.class })
-    @Column(name = "name", length = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE, nullable = false)
     private String name;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated
     private VmTemplateStatus status = VmTemplateStatus.OK;
 
     private String vdsGroupName;
 
-    @Column(name = "storage_pool_id")
-    @Type(type = "guid")
     private NGuid storagePoolId;
 
-    @Transient
     private String storagePoolName;
 
-    @Transient
     private Map<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
 
-    @Transient
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
-    @Transient
     private HashMap<Guid, DiskImage> diskTemplateMap = new HashMap<Guid, DiskImage>();
 
-    @Transient
     private double bootDiskSizeGB;
 
-    @Transient
     private double actualDiskSize = 0;
 
     public VmTemplate() {

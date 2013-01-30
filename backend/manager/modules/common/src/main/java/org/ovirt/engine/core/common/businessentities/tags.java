@@ -3,94 +3,34 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-@Entity
-@Table(name = "tags")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class tags implements Serializable {
     private static final long serialVersionUID = -6566155246916011274L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "tag_id")
-    @Type(type = "guid")
     private Guid id;
 
     @Size(max = BusinessEntitiesDefinitions.TAG_NAME_SIZE)
-    @Column(name = "tag_name")
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N, message = "VALIDATION.TAGS.INVALID_TAG_NAME")
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
 
-    @Column(name = "parent_id")
-    @Type(type = "guid")
     private NGuid parent;
 
-    @Column(name = "readonly")
     private Boolean readonly;
 
-    @Column(name = "type")
     private TagsType type = TagsType.GeneralTag;
 
-    // TODO this is a hack to get around how the old mappings were done
-    // This will be redone in version 3.0 with proper relationship mapping
-    @ManyToOne
-    @JoinTable(name = "tags_user_group_map", joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id"))
-    @Cascade(CascadeType.MERGE)
     private LdapGroup userGroup;
 
-    @ManyToOne
-    @JoinTable(name = "tags_user_map", joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Cascade(CascadeType.MERGE)
-    private DbUser user;
-
-    @ManyToOne
-    @JoinTable(name = "tags_vds_map", joinColumns = @JoinColumn(name = "tag_id"), inverseJoinColumns = @JoinColumn(
-            name = "vds_id"))
-    @Cascade(CascadeType.MERGE)
-    private VdsStatic vds;
-
-    @ManyToOne
-    @JoinTable(name = "tags_vm_map", joinColumns = @JoinColumn(name = "tag_id"), inverseJoinColumns = @JoinColumn(
-            name = "vm_id"))
-    @Cascade(CascadeType.MERGE)
-    private VmStatic vm;
-
-    @ManyToOne
-    @JoinTable(name = "tags_vm_pool_map", joinColumns = @JoinColumn(name = "tag_id"), inverseJoinColumns = @JoinColumn(
-            name = "vm_pool_id"))
-    @Cascade(CascadeType.MERGE)
-    private vm_pools vmPool;
-
-    @Transient
     private List<tags> _children;
 
     public tags() {

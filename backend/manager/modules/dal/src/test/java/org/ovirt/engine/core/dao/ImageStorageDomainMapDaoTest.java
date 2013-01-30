@@ -22,7 +22,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getImageStorageDomainMapDao());
+        dao = dbFacade.getImageStorageDomainMapDao();
     }
 
     @Test

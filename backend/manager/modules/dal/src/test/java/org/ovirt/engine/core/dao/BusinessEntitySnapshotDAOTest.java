@@ -25,7 +25,6 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getBusinessEntitySnapshotDao();
-        prepareDAO(dao);
     }
 
 

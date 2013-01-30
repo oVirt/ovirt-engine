@@ -2,16 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Embeddable
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class ImageStorageDomainMapId implements Serializable {
     @Override
     public int hashCode() {
@@ -46,10 +38,8 @@ public class ImageStorageDomainMapId implements Serializable {
 
     private static final long serialVersionUID = -5870880575903017188L;
 
-    @Type(type = "guid")
     private Guid storageDomainId;
 
-    @Type(type = "guid")
     private Guid imageId;
 
     public Guid getStorageDomainId() {

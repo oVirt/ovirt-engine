@@ -3,39 +3,15 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "tags_user_group_map", uniqueConstraints = { @UniqueConstraint(columnNames = { "tag_id", "group_id" }) })
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries({ @NamedQuery(
-        name = "get_all_tags_user_group_maps_for_tag_name",
-        query = "select m from tags_user_group_map m, tags t where (m.tagId = t.id) and (t.name = :tag_name)") })
 public class TagsUserGroupMap implements Serializable {
     private static final long serialVersionUID = -731433436876337432L;
 
-    @Id
-    @Column(name = "tag_id")
-    @Type(type = "guid")
     private Guid tagId;
 
-    @Column(name = "group_id")
-    @Type(type = "guid")
     private Guid groupId = new Guid();
 
-    @Column(name = "_create_date")
     private Date created = new Date();
 
     public TagsUserGroupMap() {

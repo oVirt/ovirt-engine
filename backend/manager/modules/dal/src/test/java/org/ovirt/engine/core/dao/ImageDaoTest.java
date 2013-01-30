@@ -45,7 +45,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
 
     @Override
     protected ImageDao prepareDao() {
-        return prepareDAO(dbFacade.getImageDao());
+        return dbFacade.getImageDao();
     }
 
     @Override

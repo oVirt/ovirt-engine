@@ -31,7 +31,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStoragePoolDao());
+        dao = dbFacade.getStoragePoolDao();
         existingPool = dao
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
         existingPool.setstatus(StoragePoolStatus.Up);
@@ -285,8 +285,8 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testRemove() {
         Guid poolId = existingPool.getId();
-        VmAndTemplatesGenerationsDAO vmAndTemplatesGenerationsDAO = prepareDAO(dbFacade.getVmAndTemplatesGenerationsDao());
-        VmStaticDAO vmStaticDao = prepareDAO(dbFacade.getVmStaticDao());
+        VmAndTemplatesGenerationsDAO vmAndTemplatesGenerationsDAO = dbFacade.getVmAndTemplatesGenerationsDao();
+        VmStaticDAO vmStaticDao = dbFacade.getVmStaticDao();
 
         assertFalse(vmStaticDao.getAllByStoragePoolId(poolId).isEmpty());
         vmStaticDao.incrementDbGenerationForAllInStoragePool(poolId);

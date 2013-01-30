@@ -40,7 +40,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getPermissionDao());
+        dao = dbFacade.getPermissionDao();
 
         new_permissions = new permissions(AD_ELEMENT_ID, ROLE_ID, STORAGE_POOL_ID,
                 VdcObjectType.StoragePool);

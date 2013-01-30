@@ -1,16 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
@@ -19,53 +12,39 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "vm_static")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmStatic extends VmBase {
     private static final long serialVersionUID = -2753306386502558044L;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_NAME_SIZE, groups = { Default.class, ImportClonedEntity.class })
-    @Column(name = "vm_name")
     @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class, ImportClonedEntity.class })
     private String name = "";
 
-    @Column(name = "vmt_guid")
-    @Type(type = "guid")
     private Guid vmtGuid = new Guid();
 
-    @Column(name = "is_initialized")
     private boolean initialized;
 
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "userdefined_properties")
     private String userDefinedProperties;
 
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "predefined_properties")
     private String predefinedProperties;
 
     /**
      * Disk size in sectors of 512 bytes
      */
-    @Transient
     private int diskSize;
 
-    @Transient
     private int minAllocatedMemField;
 
-    @Transient
     private String customProperties;
 
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "cpu_pinning")
     private String cpuPinning;
 
-    @Column(name = "host_cpu_flags", nullable = false)
     private boolean useHostCpuFlags = false;
 
     public VmStatic() {

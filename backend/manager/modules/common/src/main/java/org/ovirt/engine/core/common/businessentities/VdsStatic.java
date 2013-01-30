@@ -4,25 +4,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Range;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
@@ -31,150 +19,102 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "vds_static")
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries(
-        value = {
-                @NamedQuery(name = "all_vds_static_for_vds_group_without_migration",
-                        query = "select s from VdsStatic s, VdsDynamic d, VmDynamic v where " +
-                                "(s.vdsGroupId = :vds_group_id) and " +
-                                "(d.id = s.id) and " +
-                                "(d.status = 3) and " +
-                                "(v.status in (5, 6, 11, 12)) and " +
-                                "(s.id != v.run_on_vds)")
-        })
 public class VdsStatic implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private final int HOST_DEFAULT_SPM_PRIORITY = 5;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "Id")
-    @Type(type = "guid")
     private Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_NAME_INVALID", groups = {
             CreateEntity.class, UpdateEntity.class })
-    @Column(name = "vds_name")
     private String name = ""; // GREGM prevents NPE
 
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     @NotNull(groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
-    @Column(name = "ip")
     private String ip;
 
     @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
-    @Column(name = "console_address", length = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
     private String consoleAddress;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
-    @Column(name = "vds_unique_id")
     private String uniqueId;
 
     @HostnameOrIp(message = "VALIDATION.VDS.HOSTNAME.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
-    @Column(name = "host_name", length = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
 
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.PORT.RANGE")
-    @Column(name = "port")
     private int port;
 
-    @Column(name = "vds_group_id")
-    @Type(type = "guid")
     private Guid vdsGroupId;
 
-    @Column(name = "server_ssl_enabled")
     private Boolean serverSslEnabled;
 
-    @Column(name = "vds_type")
     private VDSType vdsType = VDSType.VDS;
 
-    @Column(name = "vds_strength")
     private Integer vdsStrength;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
-    @Column(name = "pm_type")
     private String pmType;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
-    @Column(name = "pm_user")
     private String pmUser;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
-    @Column(name = "pm_password")
     private String pmPassword;
 
-    @Column(name = "pm_port")
     private Integer pmPort;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "pm_options", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String pmOptions;
 
-    @Column(name = "pm_enabled")
     private boolean pmEnabled;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "pm_proxy_preferences")
     private String pmProxyPreferences;
 
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
-    @Column(name = "pm_secondary_ip")
     private String pmSecondaryIp;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
-    @Column(name = "pm_secondary_type")
     private String pmSecondaryType;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
-    @Column(name = "pm_secondary_user")
     private String pmSecondaryUser;
 
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
-    @Column(name = "pm_secondary_password")
     private String pmSecondaryPassword;
 
-    @Column(name = "pm_secondary_port")
     private Integer pmSecondaryPort;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "pm_secondary_options", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String pmSecondaryOptions;
 
-    @Column(name = "pm_secondary_concurrent")
     private boolean pmSecondaryConcurrent;
 
-    @Transient
     private ValueObjectMap pmOptionsMap;
 
-    @Transient
     private ValueObjectMap pmSecondaryOptionsMap;
 
-    @Column(name = "otp_validity")
     private long otpValidity;
 
     @Min(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY)
     @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
-    @Column(name = "vds_spm_priority")
     private int vdsSpmPriority;
 
     private boolean autoRecoverable = true;
 
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
-    @Column(name = "sshKeyFingerprint")
     private String sshKeyFingerprint;
 
     public boolean isAutoRecoverable() {

@@ -39,7 +39,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
 
     @Override
     protected DiskLunMapDao prepareDao() {
-        return prepareDAO(dbFacade.getDiskLunMapDao());
+        return dbFacade.getDiskLunMapDao();
     }
 
     @Override

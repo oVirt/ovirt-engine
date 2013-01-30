@@ -16,7 +16,7 @@ public class NetworkViewDaoTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getNetworkViewDao());
+        dao = dbFacade.getNetworkViewDao();
     }
 
     /**

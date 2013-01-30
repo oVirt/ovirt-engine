@@ -2,31 +2,13 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-@Entity
-@Table(name = "event_subscriber")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class event_subscriber extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 5899827011779820180L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "subscriberId", column = @Column(name = "subscriber_id")),
-            @AttributeOverride(name = "eventUpName", column = @Column(name = "event_up_name")),
-            @AttributeOverride(name = "methodId", column = @Column(name = "method_id")),
-            @AttributeOverride(name = "tagName", column = @Column(name = "tag_name")) })
     private event_subscriber_id id = new event_subscriber_id();
 
     public event_subscriber() {
@@ -121,7 +103,6 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
         this.id.methodId = value;
     }
 
-    @Column(name = "method_address", length = 255)
     @Email(message = "VALIDATION.EVENTS.EMAIL_FORMAT")
     private String methodAddress;
 

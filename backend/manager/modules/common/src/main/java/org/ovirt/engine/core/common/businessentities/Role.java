@@ -1,51 +1,30 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "roles")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 1487620954798772886L;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "Id")
-    @Type(type = "guid")
     private Guid id = new Guid();
-    @Column(name = "is_readonly", nullable = false)
     private boolean readOnly;
 
     @NotNull(message = "VALIDATION.ROLES.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.ROLE_NAME_SIZE, message = "VALIDATION.ROLES.NAME.MAX", groups = {
             CreateEntity.class, UpdateEntity.class })
     @ValidName(message = "VALIDATION.ROLES.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    @Column(name = "name", length = BusinessEntitiesDefinitions.ROLE_NAME_SIZE, nullable = false)
     private String name;
 
     /**
      * MLA addition - distinct admin roles from user roles. Mainly used to prevent user from gaining admin permissions
      */
-    @Column(name = "role_type", nullable = false)
     private RoleType type;
 
     private boolean allowsViewingChildren = false;

@@ -28,7 +28,7 @@ public class EventDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getEventDao());
+        dao = dbFacade.getEventDao();
         existingSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
         newSubscriber = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
         newSubscription = new event_subscriber();

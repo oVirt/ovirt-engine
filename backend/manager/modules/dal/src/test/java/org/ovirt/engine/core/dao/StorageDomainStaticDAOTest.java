@@ -31,10 +31,10 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageDomainStaticDao());
-        dynamicDao = prepareDAO(dbFacade.getStorageDomainDynamicDao());
-        diskImageDao = prepareDAO(dbFacade.getDiskImageDao());
-        imageDao = prepareDAO(dbFacade.getImageDao());
+        dao = dbFacade.getStorageDomainStaticDao();
+        dynamicDao = dbFacade.getStorageDomainDynamicDao();
+        diskImageDao = dbFacade.getDiskImageDao();
+        imageDao = dbFacade.getImageDao();
         existingDomain = dao.get(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
 
         newStaticDomain = new StorageDomainStatic();

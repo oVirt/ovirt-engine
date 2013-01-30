@@ -2,30 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "vdc_options")
 public class VdcOption implements Serializable {
     private static final long serialVersionUID = 5489148306184781421L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "option_id")
     private int id;
-
-    @Column(name = "option_name", length = 100, nullable = false)
     private String name;
-
-    @Column(name = "option_value", length = 4000, nullable = false)
     private String value;
-
-    @Column(name = "version", length = 40, nullable = false)
     private String version = "general";
 
     public VdcOption() {

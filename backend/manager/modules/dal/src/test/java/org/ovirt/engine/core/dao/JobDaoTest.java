@@ -39,7 +39,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
 
     @Override
     protected JobDao prepareDao() {
-        return prepareDAO(dbFacade.getJobDao());
+        return dbFacade.getJobDao();
     }
 
     @Override

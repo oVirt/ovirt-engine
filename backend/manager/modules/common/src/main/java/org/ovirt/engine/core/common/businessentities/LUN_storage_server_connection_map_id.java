@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public class LUN_storage_server_connection_map_id implements Serializable {
     private static final long serialVersionUID = -1212805426968232766L;
 

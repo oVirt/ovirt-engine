@@ -1,10 +1,14 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.TagsType;
@@ -12,8 +16,6 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 
 /**
@@ -35,7 +37,7 @@ public class MultiThreadedDAOTest extends BaseDAOTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getTagDao());
+        dao = dbFacade.getTagDao();
     }
 
     @Test

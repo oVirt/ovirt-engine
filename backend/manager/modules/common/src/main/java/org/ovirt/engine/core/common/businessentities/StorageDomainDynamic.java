@@ -1,19 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "storage_domain_dynamic")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;
 
@@ -26,7 +14,6 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.usedDiskSize = used_disk_size;
     }
 
-    @Column(name = "available_disk_size")
     private Integer availableDiskSize = 0;
 
     public Integer getavailable_disk_size() {
@@ -37,9 +24,6 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.availableDiskSize = value;
     }
 
-    @Id
-    @Type(type = "guid")
-    @Column(name = "id")
     private Guid id = new Guid();
 
     @Override
@@ -52,8 +36,6 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-
-    @Column(name = "used_disk_size")
     private Integer usedDiskSize = 0;
 
     public Integer getused_disk_size() {

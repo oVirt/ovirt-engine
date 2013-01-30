@@ -26,7 +26,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getNetworkDao());
+        dao = dbFacade.getNetworkDao();
 
         cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         datacenter = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");

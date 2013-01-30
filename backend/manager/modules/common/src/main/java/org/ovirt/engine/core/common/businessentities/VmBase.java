@@ -6,15 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -35,119 +29,82 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "vm_guid")
-    @Type(type = "guid")
     private Guid id = new Guid();
 
-    @Column(name = "vds_group_id")
-    @Type(type = "guid")
     private Guid vdsGroupId;
 
     private VmOsType mOs = VmOsType.Unassigned;
 
-    @Column(name = "creation_date", nullable = false)
     private Date creationDate = new Date(0);
 
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
-    @Column(name = "description", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
-    @Column(name = "mem_size_mb", nullable = false)
     private int memSizeMB;
 
-    @Column(name = "num_of_sockets", nullable = false)
     private int numOfSockets = 1;
 
-    @Column(name = "cpu_per_socket", nullable = false)
     private int cpusPerSocket = 1;
 
-    @Column(name = "num_of_monitors")
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors, groups = DesktopVM.class,
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
-    @Column(name = "domain", length = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
     private String domain;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
-    @Column(name = "time_zone", length = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
     private String timezone;
 
-    @Column(name = "vm_type", nullable = false)
-    @Enumerated
     private VmType vmType = VmType.Desktop;
 
-    @Column(name = "usb_policy")
-    @Enumerated
     private UsbPolicy usbPolicy = UsbPolicy.DISABLED;
 
-    @Column(name = "fail_back", nullable = false)
     private boolean failBack;
 
-    @Column(name = "default_boot_sequence", nullable = false)
-    @Enumerated
     private BootSequence defaultBootSequence = BootSequence.C;
 
-    @Column(name = "nice_level", nullable = false)
     private int niceLevel;
 
-    @Column(name = "is_auto_suspend", nullable = false)
     private boolean autosuspend;
 
-    @Column(name = "priority", nullable = false)
     private int priority;
 
-    @Column(name = "auto_startup")
     private boolean autoStartup;
 
-    @Column(name = "is_stateless")
     private boolean stateless;
 
-    @Column(name = "is_delete_protected")
     private boolean deleteProtected;
 
-    @Column(name = "db_generation")
     private long dbGeneration;
 
-    @Column(name = "is_smartcard_enabled")
     private boolean smartcardEnabled;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "iso_path", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath = "";
 
-    @Column(name = "origin")
-    @Enumerated
     private OriginType origin;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "kernel_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String kernelUrl;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "kernel_params", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String kernelParams;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "initrd_url", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String initrdUrl;
 
-    @Column(name = "allow_console_reconnect")
     private boolean allowConsoleReconnect;
 
     /**
@@ -163,7 +120,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     public VmBase() {
     }
 
-    @Column(name = "quota_id")
     private Guid quotaId;
 
     /** Transient field for GUI presentation purposes. */
@@ -176,15 +132,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
-    @Column(name = "migration_support")
     private MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
 
-    @Column(name = "dedicated_vm_for_vds")
-    @Type(type = "guid")
     private NGuid dedicatedVmForVds;
 
-    @Column(name = "default_display_type")
-    @Enumerated
     protected DisplayType defaultDisplayType = DisplayType.qxl;
 
     public VmBase(Guid id,

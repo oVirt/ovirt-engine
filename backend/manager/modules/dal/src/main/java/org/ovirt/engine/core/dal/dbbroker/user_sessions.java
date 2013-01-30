@@ -1,20 +1,7 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "user_sessions")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class user_sessions {
 
     @Override
@@ -77,10 +64,6 @@ public class user_sessions {
         return true;
     }
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "userId", column = @Column(name = "user_id")),
-            @AttributeOverride(name = "sessionId", column = @Column(name = "session_id")) })
     private user_sessions_id id = new user_sessions_id();
 
     public user_sessions() {
@@ -96,7 +79,6 @@ public class user_sessions {
         this.id.userId = user_id;
     }
 
-    @Column(name = "browser", length = 10)
     private String browser;
 
     public String getbrowser() {
@@ -107,7 +89,6 @@ public class user_sessions {
         this.browser = value;
     }
 
-    @Column(name = "client_type", length = 10)
     private String clientType;
 
     public String getclient_type() {
@@ -118,7 +99,6 @@ public class user_sessions {
         this.clientType = value;
     }
 
-    @Column(name = "login_time")
     private java.util.Date loginTime;
 
     public java.util.Date getlogin_time() {
@@ -129,7 +109,6 @@ public class user_sessions {
         this.loginTime = value;
     }
 
-    @Column(name = "os", length = 10)
     private String os;
 
     public String getos() {

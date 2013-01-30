@@ -2,70 +2,25 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "vds_statistics")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VdsStatistics implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 69893283302260434L;
 
-    @Id
-    // @GeneratedValue(generator = "system-uuid")
-    // @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "Id")
-    @Type(type = "guid")
     private Guid id;
-
-    @Column(name = "cpu_idle")
     private BigDecimal cpu_idle;
-
-    @Column(name = "cpu_load")
     private BigDecimal cpu_load;
-
-    @Column(name = "cpu_sys")
     private BigDecimal cpu_sys;
-
-    @Column(name = "cpu_user")
     private BigDecimal cpu_user;
-
-    @Column(name = "usage_mem_percent")
     private Integer usage_mem_percent;
-
-    @Column(name = "usage_cpu_percent")
     private Integer usage_cpu_percent;
-
-    @Column(name = "usage_network_percent")
     private Integer usage_network_percent;
-
-    @Column(name = "mem_available")
     private Long mem_available = 0L;
-
-    @Column(name = "mem_shared")
     private Long mem_shared = 0L;
-
-    @Column(name = "swap_free")
     private Long swap_free = 0L;
-
-    @Column(name = "swap_total")
     private Long swap_total = 0L;
-
-    @Column(name = "ksm_cpu_percent")
     private Integer ksm_cpu_percent;
-
-    @Column(name = "ksm_pages")
     private Long ksm_pages = 0L;
-
-    @Column(name = "ksm_state")
     private Boolean ksm_state;
 
     public VdsStatistics() {

@@ -2,9 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public class EventMapId implements Serializable {
     private static final long serialVersionUID = -643444133261195061L;
 

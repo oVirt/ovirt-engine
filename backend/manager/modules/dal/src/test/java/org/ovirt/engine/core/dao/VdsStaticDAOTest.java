@@ -26,9 +26,9 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getVdsStaticDao());
-        dynamicDao = prepareDAO(dbFacade.getVdsDynamicDao());
-        statisticsDao = prepareDAO(dbFacade.getVdsStatisticsDao());
+        dao = dbFacade.getVdsStaticDao();
+        dynamicDao = dbFacade.getVdsDynamicDao();
+        statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         newStaticVds = new VdsStatic();
         newStaticVds.sethost_name("farkle.redhat.com");

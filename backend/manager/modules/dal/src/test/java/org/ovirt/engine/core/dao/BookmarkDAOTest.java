@@ -29,7 +29,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getBookmarkDao());
+        dao = dbFacade.getBookmarkDao();
 
         // create some test data
         new_bookmark = new Bookmark();

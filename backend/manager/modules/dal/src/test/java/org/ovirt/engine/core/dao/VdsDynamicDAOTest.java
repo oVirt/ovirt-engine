@@ -22,9 +22,9 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVdsDynamicDao());
-        staticDao =  prepareDAO(dbFacade.getVdsStaticDao());
-        statisticsDao =  prepareDAO(dbFacade.getVdsStatisticsDao());
+        dao = dbFacade.getVdsDynamicDao();
+        staticDao =  dbFacade.getVdsStaticDao();
+        statisticsDao =  dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();

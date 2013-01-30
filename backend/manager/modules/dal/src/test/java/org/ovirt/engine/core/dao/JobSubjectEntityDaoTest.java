@@ -24,7 +24,7 @@ public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getJobSubjectEntityDao());
+        dao = dbFacade.getJobSubjectEntityDao();
     }
 
     @Test

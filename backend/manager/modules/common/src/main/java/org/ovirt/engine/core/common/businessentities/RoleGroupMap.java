@@ -2,27 +2,11 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "roles_groups")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class RoleGroupMap implements Serializable {
     private static final long serialVersionUID = -230507879656573010L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "actionGroup", column = @Column(name = "action_group_id")),
-            @AttributeOverride(name = "roleId", column = @Column(name = "role_id")) })
     private RoleGroupMapId id = new RoleGroupMapId();
 
     public RoleGroupMap() {

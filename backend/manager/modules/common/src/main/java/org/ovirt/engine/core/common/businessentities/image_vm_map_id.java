@@ -2,22 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Embeddable
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class image_vm_map_id implements Serializable {
     private static final long serialVersionUID = 2283977222487071390L;
 
-    @Type(type = "guid")
     private Guid imageId;
-
-    @Type(type = "guid")
     private Guid vmId;
 
     public image_vm_map_id() {

@@ -1,41 +1,22 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "disk_image_dynamic")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskImageDynamic> {
     private static final long serialVersionUID = 6357763045419255853L;
     private Guid id;
 
-    @Column(name = "read_rate")
     private Integer readRate;
 
-    @Column(name = "write_rate")
     private Integer writeRate;
 
-    @Column(name = "actual_size", nullable = false)
     private long actualSize;
 
     // Latency fields are measured in second.
-    @Column(name = "readLatency")
     private Double readLatency;
 
-    @Column(name = "writeLatency")
     private Double writeLatency;
 
-    @Column(name = "flushLatency")
     private Double flushLatency;
 
     public DiskImageDynamic() {
@@ -148,11 +129,6 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
     }
 
     @Override
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "image_id")
-    @Type(type = "guid")
     public Guid getId() {
         return id;
     }

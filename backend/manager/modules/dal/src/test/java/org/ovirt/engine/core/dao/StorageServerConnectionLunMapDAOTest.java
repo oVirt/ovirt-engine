@@ -25,8 +25,8 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageServerConnectionLunMapDao());
-        storageServerConnectionDao = prepareDAO(dbFacade.getStorageServerConnectionDao());
+        dao = dbFacade.getStorageServerConnectionLunMapDao();
+        storageServerConnectionDao = dbFacade.getStorageServerConnectionDao();
 
         existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
 

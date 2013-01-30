@@ -2,16 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.ovirt.engine.core.compat.StringHelper;
 
-@Entity
-@Table(name = "storage_server_connections")
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 
@@ -57,7 +49,6 @@ public class StorageServerConnections implements Serializable {
         this(connection, id, iqn, password, storageType, userName, port, portal, null, null, null, null, null);
     }
 
-    @Column(name = "connection", length = 250, nullable = false)
     private String connection;
 
     public String getconnection() {
@@ -68,8 +59,6 @@ public class StorageServerConnections implements Serializable {
         this.connection = value;
     }
 
-    @Id
-    @Column(name = "id", length = 50)
     private String id;
 
     public String getid() {
@@ -81,7 +70,6 @@ public class StorageServerConnections implements Serializable {
     }
 
     // TODO this field needs to be made unique in the database
-    @Column(name = "iqn", length = 128)
     private String iqn;
 
     public String getiqn() {
@@ -92,7 +80,6 @@ public class StorageServerConnections implements Serializable {
         this.iqn = value;
     }
 
-    @Column(name = "port", length = 50)
     private String port;
 
     public String getport() {
@@ -103,7 +90,6 @@ public class StorageServerConnections implements Serializable {
         this.port = value;
     }
 
-    @Column(name = "portal", length = 50)
     private String portal;
 
     public String getportal() {
@@ -114,7 +100,6 @@ public class StorageServerConnections implements Serializable {
         this.portal = value;
     }
 
-    @Column(name = "password", length = 50)
     private String password;
 
     public String getpassword() {
@@ -125,8 +110,6 @@ public class StorageServerConnections implements Serializable {
         this.password = value;
     }
 
-    @Column(name = "storage_type", nullable = false)
-    @Enumerated
     private StorageType storageType = StorageType.forValue(0);
 
     public StorageType getstorage_type() {
@@ -137,7 +120,6 @@ public class StorageServerConnections implements Serializable {
         this.storageType = value;
     }
 
-    @Column(name = "user_name", length = 50)
     private String username;
 
     public String getuser_name() {
@@ -168,7 +150,6 @@ public class StorageServerConnections implements Serializable {
         return vfsType;
     }
 
-    @Column(name = "nfs_version", length = 4)
     private NfsVersion nfsVersion;
 
     public NfsVersion getNfsVersion() {
@@ -179,7 +160,6 @@ public class StorageServerConnections implements Serializable {
         this.nfsVersion = nfsVersion;
     }
 
-    @Column(name = "nfs_timeo")
     private Short nfsTimeo;
 
     public Short getNfsTimeo() {
@@ -190,7 +170,6 @@ public class StorageServerConnections implements Serializable {
         this.nfsTimeo = nfsTimeo;
     }
 
-    @Column(name = "nfs_retrans")
     private Short nfsRetrans;
 
     private String spec;

@@ -2,20 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
-
-@Entity
-@Table(name = "LUN_storage_server_connection_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class LUN_storage_server_connection_map implements Serializable, BusinessEntity<LUN_storage_server_connection_map_id> {
     private static final long serialVersionUID = -4203034156149786569L;
 
@@ -27,11 +13,6 @@ public class LUN_storage_server_connection_map implements Serializable, Business
         this.id.storageServerConnection = storage_server_connection;
     }
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "lunId", column = @Column(name = "lun_id", length = 255)),
-            @AttributeOverride(name = "storageServerConnection", column = @Column(name = "storage_server_connection",
-                    length = 50)) })
     private LUN_storage_server_connection_map_id id = new LUN_storage_server_connection_map_id();
 
     @Override

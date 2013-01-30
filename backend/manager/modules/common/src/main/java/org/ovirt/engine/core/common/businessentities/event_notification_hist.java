@@ -2,20 +2,8 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "event_notification_hist")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class event_notification_hist implements Serializable {
     private static final long serialVersionUID = 5812544412663001644L;
 
@@ -33,7 +21,6 @@ public class event_notification_hist implements Serializable {
         this.subscriberId = subscriber_id;
     }
 
-    @Column(name = "audit_log_id", nullable = false)
     private long auditLogId;
 
     public long getaudit_log_id() {
@@ -44,7 +31,6 @@ public class event_notification_hist implements Serializable {
         this.auditLogId = value;
     }
 
-    @Column(name = "event_name", length = 100, nullable = false)
     private String eventName;
 
     public String getevent_name() {
@@ -55,7 +41,6 @@ public class event_notification_hist implements Serializable {
         this.eventName = value;
     }
 
-    @Column(name = "method_type", nullable = false)
     private String methodType;
 
     public String getmethod_type() {
@@ -66,7 +51,6 @@ public class event_notification_hist implements Serializable {
         this.methodType = value;
     }
 
-    @Column(name = "reason", length = 255, nullable = false)
     private String reason;
 
     public String getreason() {
@@ -77,7 +61,6 @@ public class event_notification_hist implements Serializable {
         this.reason = value;
     }
 
-    @Column(name = "sent_at", nullable = false)
     private java.util.Date sentAt = new java.util.Date(0);
 
     public java.util.Date getsent_at() {
@@ -88,7 +71,6 @@ public class event_notification_hist implements Serializable {
         this.sentAt = value;
     }
 
-    @Column(name = "status", nullable = false)
     private boolean status;
 
     public boolean getstatus() {
@@ -99,9 +81,6 @@ public class event_notification_hist implements Serializable {
         this.status = value;
     }
 
-    @Id
-    @Column(name = "subscriber_id", nullable = false)
-    @Type(type = "guid")
     private Guid subscriberId = new Guid();
 
     public Guid getsubscriber_id() {

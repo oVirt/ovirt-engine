@@ -92,35 +92,6 @@ public class ReflectionUtils {
         }
     }
 
-    /**
-     *
-     * @param c the class
-     * @return the Table annotation of the class if exists, otherwise null.
-     */
-    public static Annotation getTableAnnotation(Class c) {
-        Annotation[] annotations = (Annotation[]) c.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(annotation instanceof javax.persistence.Table){
-                return annotation;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get a Field Column annotation
-     * @param f the field in the class
-     * @return the Column annotation of the given Field
-     */
-    public static Annotation getColumnAnnotation(Field f) {
-        Annotation[] annotations = (Annotation[]) f.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(annotation instanceof javax.persistence.Column){
-                return annotation;
-            }
-        }
-        return null;
-    }
 
     /**
      * Get a Field Size annotation

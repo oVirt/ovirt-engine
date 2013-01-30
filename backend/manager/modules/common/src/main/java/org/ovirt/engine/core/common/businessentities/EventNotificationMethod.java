@@ -2,16 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 
-@Entity
-@Table(name = "event_notification_methods")
 public class EventNotificationMethod implements Serializable {
     private static final long serialVersionUID = -8648391842192154307L;
 
@@ -23,8 +16,6 @@ public class EventNotificationMethod implements Serializable {
         this.methodType = method_type;
     }
 
-    @Id
-    @Column(name = "method_id")
     private int methodId;
 
     public int getmethod_id() {
@@ -35,7 +26,6 @@ public class EventNotificationMethod implements Serializable {
         this.methodId = value;
     }
 
-    @Column(name = "method_type", length = 10, nullable = false)
     private String methodType;
 
     public EventNotificationMethods getmethod_type() {

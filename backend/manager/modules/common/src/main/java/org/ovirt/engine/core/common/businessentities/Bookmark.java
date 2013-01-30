@@ -2,48 +2,26 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "bookmarks")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class Bookmark extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 8177640907822845847L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "bookmark_id")
-    @Type(type = "guid")
     private Guid id;
 
     @Size(max = BusinessEntitiesDefinitions.BOOKMARK_NAME_SIZE)
-    @Column(name = "bookmark_name")
     private String name;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.BOOKMARK_VALUE_SIZE)
-    @Column(name = "bookmark_value")
     private String value;
 
 
-    @Transient
     public String getbookmark_name() {
         return name;
     }
 
-    @Transient
     public String getbookmark_value() {
         return value;
     }

@@ -21,7 +21,7 @@ public class VmGuestAgentInterfaceDaoTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getVmGuestAgentInterfaceDao());
+        dao = dbFacade.getVmGuestAgentInterfaceDao();
     }
 
     @Test

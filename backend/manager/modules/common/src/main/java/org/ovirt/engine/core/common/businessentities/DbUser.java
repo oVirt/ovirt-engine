@@ -1,98 +1,64 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
-@Entity
-@Table(name = "users")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class DbUser extends IVdcQueryable {
     private static final long serialVersionUID = 7052102138405696755L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "user_id")
-    @Type(type = "guid")
     private Guid id = new Guid();
 
     @Size(max = BusinessEntitiesDefinitions.USER_NAME_SIZE)
-    @Column(name = "name")
     private String name = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_SURENAME_SIZE)
-    @Column(name = "surname")
     private String surname = "";
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
-    @Column(name = "domain")
     private String domain;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_USER_NAME_SIZE)
-    @Column(name = "username")
     private String username = "";
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "groups", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String groups;
 
     @Size(max = BusinessEntitiesDefinitions.USER_DEPARTMENT_SIZE)
-    @Column(name = "department")
     private String department = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_ROLE_SIZE)
-    @Column(name = "role")
     private String role = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_ICON_PATH_SIZE)
-    @Column(name = "user_icon_path")
     private String userIconPath = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_DESKTOP_DEVICE_SIZE)
-    @Column(name = "desktop_device")
     private String desktopDevice = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
-    @Column(name = "email")
     private String email;
 
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
-    @Column(name = "note")
     private String note = "";
 
-    @Column(name = "status")
     private int status;
 
-    @Column(name = "session_count")
     private int sessionCount;
 
-    @Transient
     private boolean isLoggedIn;
 
     /**
      * GUI flag only. Do not use for internal logic. The sole purpose of calculating this field is for the GUI user to
      * understand who is admin in a snap on the user-grid
      */
-    @Transient
     private boolean lastAdminCheckStatus;
 
     /**
      * comma delimited list of group guids
      */
     @Size(max = BusinessEntitiesDefinitions.USER_GROUP_IDS_SIZE)
-    @Column(name = "group_ids")
     private String groupIds;
 
     public DbUser() {

@@ -18,7 +18,7 @@ public class LunDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getLunDao());
+        dao = dbFacade.getLunDao();
 
         existingLUN = dao.get("1IET_00180001");
 

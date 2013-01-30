@@ -25,8 +25,8 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStoragePoolIsoMapDao());
-        storagePoolIsoMapDAO = prepareDAO(dbFacade.getStoragePoolDao());
+        dao = dbFacade.getStoragePoolIsoMapDao();
+        storagePoolIsoMapDAO = dbFacade.getStoragePoolDao();
 
         existingPool = storagePoolIsoMapDAO
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));

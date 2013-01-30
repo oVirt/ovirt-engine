@@ -2,63 +2,21 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "permissions")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 7249605272394212576L;
 
-    @Column(name = "ad_element_id")
-    @Type(type = "guid")
     private Guid adElementId = new Guid();
-
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "id")
-    @Type(type = "guid")
     private Guid id = new Guid();
-
-    @Transient
     private ArrayList<tags> tags;
-
-    @Column(name = "role_id")
-    @Type(type = "guid")
     private Guid roleId = new Guid();
-
-    @Column(name = "object_id")
-    @Type(type = "guid")
     private Guid objectId;
-
-    @Transient
     private String objectName;
-
-    @Column(name = "object_type_id")
-    @Enumerated
     private VdcObjectType objectType;
-
-    @Transient
     private String roleName;
-
-    @Transient
     private String ownerName;
-
-    @Transient
     private RoleType roleType;
 
     public permissions() {

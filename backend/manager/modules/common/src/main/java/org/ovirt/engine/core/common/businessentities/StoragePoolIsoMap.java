@@ -1,33 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "storage_pool_iso_map", uniqueConstraints = { @UniqueConstraint(columnNames = { "storage_id",
-        "storage_pool_id" }) })
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries({
-        @NamedQuery(name = "all_storage_pool_iso_map_by_storage_pool_id",
-                query = "select m from storage_pool_iso_map m where m.id.storagePoolId = :storagePoolId"),
-        @NamedQuery(name = "all_storage_pool_iso_map_by_storage_id",
-                query = "select m from storage_pool_iso_map m where m.id.storageId  = :storageId"),
-        @NamedQuery(
-                name = "all_storage_pool_iso_map_by_storage_id_and_storage_pool_id",
-                query = "select m from storage_pool_iso_map m where m.id = :id") })
 public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
     private static final long serialVersionUID = -2829958589095415567L;
@@ -41,10 +16,6 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         this.setstatus(status);
     }
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "storageId", column = @Column(name = "storage_id")),
-            @AttributeOverride(name = "storagePoolId", column = @Column(name = "storage_pool_id")) })
     private StoragePoolIsoMapId id = new StoragePoolIsoMapId();
 
     @Override
@@ -73,7 +44,6 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         this.id.setStoragePoolId(value);
     }
 
-    @Column(name = "status", nullable = true)
     private Integer persistentStorageDomainStatus = null;
 
     public StorageDomainStatus getstatus() {
@@ -91,7 +61,6 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         }
     }
 
-    @Column(name = "owner", nullable = true)
     private Integer persistentOwner = StorageDomainOwnerType.Unknown.getValue();
 
     public StorageDomainOwnerType getowner() {

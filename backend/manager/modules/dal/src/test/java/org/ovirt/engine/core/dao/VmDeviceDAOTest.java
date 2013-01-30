@@ -55,7 +55,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Override
     protected VmDeviceDAO prepareDao() {
-        return prepareDAO(dbFacade.getVmDeviceDao());
+        return dbFacade.getVmDeviceDao();
     }
 
     @Override

@@ -32,7 +32,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getDbUserDao());
+        dao = dbFacade.getDbUserDao();
         vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
 
         existingUser = dao

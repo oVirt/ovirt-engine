@@ -30,15 +30,15 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        VdsDAO vdsDAO = prepareDAO(dbFacade.getVdsDao());
+        VdsDAO vdsDAO = dbFacade.getVdsDao();
 
         existingVds = vdsDAO.get(FixturesTool.VDS_RHEL6_NFS_SPM);
 
-        StoragePoolDAO storagePoolDAO = prepareDAO(dbFacade.getStoragePoolDao());
+        StoragePoolDAO storagePoolDAO = dbFacade.getStoragePoolDao();
 
         storagePool = storagePoolDAO.get(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
 
-        dao = prepareDAO(dbFacade.getVdsGroupDao());
+        dao = dbFacade.getVdsGroupDao();
 
         existingVdsGroup = dao.get(existingVds.getvds_group_id());
         groupWithNoRunningVms = dbFacade.getVdsGroupDao().get(FixturesTool.VDS_GROUP_NO_RUNNING_VMS);

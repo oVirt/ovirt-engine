@@ -25,7 +25,7 @@ public class ActionGroupDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getActionGroupDao());
+        dao = dbFacade.getActionGroupDao();
         existingActionMap = dao.getActionVersionMapByActionType(VdcActionType.AddVm);
         newActionMap = new ActionVersionMap(VdcActionType.ActivateStorageDomain, "3.0", "3.0");
     }

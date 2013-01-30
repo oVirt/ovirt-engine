@@ -4,176 +4,115 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-@Entity
-@Table(name = "vds_dynamic")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VdsDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -6010035855157006935L;
 
-    @Id
-    // @GeneratedValue(generator = "system-uuid")
-    // @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "Id")
-    @Type(type = "guid")
     private Guid id;
 
-    @Column(name = "status")
     private VDSStatus status = VDSStatus.Unassigned;
 
-    @Column(name = "cpu_cores")
     private Integer cpu_cores;
 
-    @Column(name = "cpu_threads")
     private Integer cpuThreads;
 
-    @Column(name = "cpu_model")
     private String cpu_model;
 
-    @Column(name = "cpu_speed_mh", scale = 18, precision = 0)
     private BigDecimal cpu_speed_mh = BigDecimal.valueOf(0.0);
 
-    @Column(name = "if_total_speed")
     private String if_total_speed;
 
-    @Column(name = "kvm_enabled")
     private Boolean kvm_enabled;
 
-    @Column(name = "physical_mem_mb")
     private Integer physical_mem_mb;
 
-    @Column(name = "mem_commited")
     private Integer mem_commited;
 
-    @Column(name = "vm_active")
     private Integer vm_active;
 
-    @Column(name = "vm_count")
     private int vm_count;
 
-    @Column(name = "vm_migrating")
     private Integer vm_migrating;
 
-    @Column(name = "reserved_mem")
     private Integer reserved_mem ;
 
-    @Column(name = "guest_overhead")
     private Integer guest_overhead;
 
-    @Column(name = "software_version")
     private String softwareVersion;
 
-    @Column(name = "version_name")
     private String versionName;
 
-    @Column(name = "build_name")
     private String buildName;
 
-    @Column(name = "previous_status")
     private VDSStatus previous_status = VDSStatus.Unassigned;
 
-    @Column(name = "cpu_flags")
     private String cpu_flags;
 
-    @Column(name = "cpu_over_commit_time_stamp")
     private Date cpu_over_commit_time_stamp;
 
-    @Column(name = "vms_cores_count")
     private Integer vms_cores_count;
 
-    @Column(name = "pending_vcpus_count")
     private Integer pending_vcpus_count;
 
-    @Column(name = "cpu_sockets")
     private Integer cpu_sockets;
 
-    @Column(name = "net_config_dirty")
     private Boolean net_config_dirty;
 
-    @Column(name = "supported_cluster_levels")
     private String supported_cluster_levels;
 
-    @Column(name = "supported_engines")
     private String supported_engines;
 
-    @Column(name = "host_os")
     private String host_os;
 
-    @Column(name = "kvm_version")
     private String kvm_version;
 
-    @Transient
     private RpmVersion libvirt_version;
 
-    @Column(name = "spice_version")
     private String spice_version;
 
-    @Column(name = "kernel_version")
     private String kernel_version;
 
-    @Column(name = "iscsi_initiator_name")
     private String iScsiInitiatorName;
 
-    @Column(name = "transparent_hugepages_state")
     private VdsTransparentHugePagesState transparentHugePagesState = VdsTransparentHugePagesState.Never;
-    @Column(name = "anonymous_hugepages")
+
     private int anonymousHugePages;
 
-    @Column(name = "hooks")
     private String hooksStr;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwManufacturer")
     private String hwManufacturer;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwProductName")
     private String hwProductName;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwVersion")
     private String hwVersion;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwSerialNumber")
     private String hwSerialNumber;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwUUID")
     private String hwUUID;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
-    @Column(name = "hwFamily")
     private String hwFamily;
 
-    @Column(name = "non_operational_reason")
     private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
 
-    @Transient
     private Integer pending_vmem_size;
 
-    @Transient
     private RpmVersion rpmVersion;
 
-    @Transient
     private java.util.HashSet<Version> _supportedClusterVersionsSet;
 
-    @Transient
     private java.util.HashSet<Version> _supportedENGINESVersionsSet;
 
     public void setVersion(RpmVersion value) {

@@ -29,7 +29,7 @@ public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVmNetworkStatisticsDao());
+        dao = dbFacade.getVmNetworkStatisticsDao();
 
         newVmStatistics = new VmNetworkStatistics();
         newVmStatistics.setId(NEW_INTERFACE_ID);

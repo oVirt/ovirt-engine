@@ -26,7 +26,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getRoleDao());
+        dao = dbFacade.getRoleDao();
 
         existingRole = dao.get(new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78"));
 

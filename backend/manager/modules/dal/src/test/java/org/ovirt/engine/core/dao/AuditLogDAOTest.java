@@ -46,7 +46,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getAuditLogDao());
+        dao = dbFacade.getAuditLogDao();
 
         // create some test data
         newAuditLog = new AuditLog();

@@ -3,26 +3,12 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "async_tasks")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class AsyncTasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
 
@@ -45,8 +31,6 @@ public class AsyncTasks implements Serializable {
         this.taskType = taskType;
     }
 
-    @Column(name = "action_type", nullable = false)
-    @Enumerated
     private VdcActionType actionType = VdcActionType.forValue(0);
 
     public VdcActionType getaction_type() {
@@ -57,8 +41,6 @@ public class AsyncTasks implements Serializable {
         this.actionType = value;
     }
 
-    @Column(name = "result", nullable = false)
-    @Enumerated
     private AsyncTaskResultEnum result = AsyncTaskResultEnum.forValue(0);
 
 
@@ -81,8 +63,6 @@ public class AsyncTasks implements Serializable {
         this.result = value;
     }
 
-    @Column(name = "status", nullable = true)
-    @Enumerated
     private AsyncTaskStatusEnum status = AsyncTaskStatusEnum.forValue(0);
 
     public AsyncTaskStatusEnum getstatus() {
@@ -93,11 +73,6 @@ public class AsyncTasks implements Serializable {
         this.status = value;
     }
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "task_id")
-    @Type(type = "guid")
     private Guid taskId = new Guid();
 
     public Guid gettask_id() {
@@ -108,7 +83,6 @@ public class AsyncTasks implements Serializable {
         this.taskId = value;
     }
 
-    @Column(name = "action_parameters")
     private VdcActionParametersBase actionParameters;
 
     public VdcActionParametersBase getaction_parameters() {
@@ -119,7 +93,6 @@ public class AsyncTasks implements Serializable {
         this.actionParameters = value;
     }
 
-    @Column(name = "step_id")
     private NGuid stepId;
 
     public NGuid getStepId() {
@@ -130,7 +103,6 @@ public class AsyncTasks implements Serializable {
         this.stepId = stepId;
     }
 
-    @Column(name = "command_id")
     private Guid commandId = Guid.Empty;
 
     public Guid getCommandId() {

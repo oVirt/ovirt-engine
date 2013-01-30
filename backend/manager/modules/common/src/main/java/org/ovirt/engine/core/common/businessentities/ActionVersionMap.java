@@ -2,20 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Version;
 
-@Entity
-@Table(name = "action_version_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class ActionVersionMap implements Serializable {
     private static final long serialVersionUID = -212222175662336097L;
 
@@ -36,8 +25,6 @@ public class ActionVersionMap implements Serializable {
         this(actionType, clusterMinimalVersion.toString(), storagePoolMinimalVersion.toString());
     }
 
-    @Id
-    @Column(name = "action_type")
     private int actionType = VdcActionType.Unknown.getValue();
 
     public VdcActionType getaction_type() {
@@ -48,7 +35,6 @@ public class ActionVersionMap implements Serializable {
         actionType = value.getValue();
     }
 
-    @Column(name = "cluster_minimal_version", length = 40, nullable = false)
     private String clusterMinimalVersion;
 
     public String getcluster_minimal_version() {
@@ -59,7 +45,6 @@ public class ActionVersionMap implements Serializable {
         clusterMinimalVersion = value;
     }
 
-    @Column(name = "storage_pool_minimal_version", length = 40, nullable = false)
     private String storagePoolMinimalVersion;
 
     public String getstorage_pool_minimal_version() {

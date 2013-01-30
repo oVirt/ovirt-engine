@@ -3,32 +3,13 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "tags_vm_pool_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class TagsVmPoolMap implements Serializable {
     private static final long serialVersionUID = 1110697686039279639L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "tagId", column = @Column(name = "tag_id")),
-            @AttributeOverride(name = "vmPoolId", column = @Column(name = "vm_pool_id")) })
     private TagsVmPoolMapId id = new TagsVmPoolMapId();
-
-    @Column(name = "_create_date")
     private Date created = new Date();
 
     public TagsVmPoolMap() {

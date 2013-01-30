@@ -2,139 +2,47 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "vm_dynamic")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 521748509912037953L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "vm_guid")
-    @Type(type = "guid")
     private Guid id = new Guid();
-
-    @Column(name = "status")
     private VMStatus status = VMStatus.Down;
-
-    @Column(name = "vm_ip")
     private String vm_ip;
-
-    @Column(name = "vm_host")
     private String vm_host;
-
-    @Column(name = "vm_pid")
     private Integer vm_pid;
-
-    @Column(name = "vm_last_up_time")
     private java.util.Date vm_last_up_time;
-
-    @Column(name = "last_start_time")
     private Date lastStartTime;
-
-    @Column(name = "guest_cur_user_name")
     private String guest_cur_user_name;
-
-    @Column(name = "console_cur_user_name")
     private String console_cur_user_name;
-
-    @Column(name = "console_user_id")
-    @Type(type = "guid")
     private NGuid consoleUserId;
-
-    @Column(name = "guest_last_login_time")
     private java.util.Date guest_last_login_time;
-
-    @Column(name = "guest_last_logout_time")
     private java.util.Date guest_last_logout_time;
-
-    @Column(name = "guest_os")
     private String guest_os;
-
-    @Column(name = "migrating_to_vds")
-    @Type(type = "guid")
     private NGuid migrating_to_vds;
-
-    @Column(name = "run_on_vds")
-    @Type(type = "guid")
     private NGuid run_on_vds;
-
-    @Column(name = "app_list")
     private String appList;
-
-    @Column(name = "display")
     private Integer display;
-
-    @Column(name = "acpi_enable")
     private Boolean acpi_enable;
-
-    @Column(name = "session")
     private SessionState session = SessionState.Unknown;
-
-    @Column(name = "display_ip")
     private String display_ip;
-
-    @Column(name = "display_type")
     private DisplayType display_type = DisplayType.vnc;
-
-    @Column(name = "kvm_enable")
     private Boolean kvm_enable;
-
-    @Column(name = "display_secure_port")
     private Integer display_secure_port;
-
-    @Column(name = "utc_diff")
     private Integer utc_diff;
-
-    @Column(name = "last_vds_run_on")
-    @Type(type = "guid")
     private NGuid last_vds_run_on;
-
-    @Column(name = "client_ip")
     private String client_ip;
-
-    @Column(name = "guest_requested_memory")
     private Integer guest_requested_memory;
-
-    @Column(name = "hibernation_vol_handle")
     private String hibernation_vol_handle;
-
-    @Column(name = "boot_sequence")
     private BootSequence boot_sequence = BootSequence.C;
-
-    @Column(name = "exit_status")
     private VmExitStatus mExitStatus = VmExitStatus.Normal;
-
-    @Column(name = "pause_status")
     private VmPauseStatus pauseStatus = VmPauseStatus.NONE;
-
-    @Column(name = "hash")
     private String hash;
-
     private int guestAgentNicsHash;
-
-    @Column(name = "exit_message")
     private String mExitMessage;
-
-    @Transient
     private java.util.ArrayList<DiskImageDynamic> mDisks;
-
-    @Transient
     private boolean mWin2kHackEnable = false;
 
     @Override

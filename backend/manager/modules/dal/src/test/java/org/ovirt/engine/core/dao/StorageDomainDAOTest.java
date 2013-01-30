@@ -34,7 +34,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getStorageDomainDao());
+        dao = dbFacade.getStorageDomainDao();
         existingDomain = dao.get(EXISTING_DOMAIN_ID);
 
         newStaticDomain = new StorageDomainStatic();

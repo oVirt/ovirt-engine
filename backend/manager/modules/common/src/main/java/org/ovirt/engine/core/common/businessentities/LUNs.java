@@ -2,22 +2,10 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "luns")
-@NamedQueries({ @NamedQuery(
-        name = "all_luns_for_storage_server_connection",
-        query = "select lun from LUNs lun, LUN_storage_server_connection_map lmap where lmap.id.storageServerConnection = :storage_server_connection and lmap.id.lunId = lun.id")})
 public class LUNs implements Serializable {
     private static final long serialVersionUID = 3026455643639610091L;
 
@@ -145,9 +133,7 @@ public class LUNs implements Serializable {
         return true;
     }
 
-    @Id
     @Size(min = 1, max = BusinessEntitiesDefinitions.LUN_ID)
-    @Column(name = "lun_id", length = BusinessEntitiesDefinitions.LUN_ID)
     private String id;
 
     public String getLUN_id() {
@@ -160,7 +146,6 @@ public class LUNs implements Serializable {
 
     // TODO rename the column
     @Size(max = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
-    @Column(name = "physical_volume_id", length = BusinessEntitiesDefinitions.LUN_PHYSICAL_VOLUME_ID)
     private String physicalVolumeId;
 
     public String getphysical_volume_id() {
@@ -172,7 +157,6 @@ public class LUNs implements Serializable {
     }
 
     @Size(max = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
-    @Column(name = "volume_group_id", length = BusinessEntitiesDefinitions.LUN_VOLUME_GROUP_ID)
     private String volumeGroupId;
 
     public String getvolume_group_id() {
@@ -184,7 +168,6 @@ public class LUNs implements Serializable {
     }
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "serial", length = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String serial;
 
     public String getSerial() {
@@ -195,7 +178,6 @@ public class LUNs implements Serializable {
         this.serial = value;
     }
 
-    @Column(name = "lun_mapping")
     private Integer lunMapping;
 
     public Integer getLunMapping() {
@@ -207,7 +189,6 @@ public class LUNs implements Serializable {
     }
 
     @Size(max = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
-    @Column(name = "vendor_id", length = BusinessEntitiesDefinitions.LUN_VENDOR_ID)
     private String vendorId;
 
     public String getVendorId() {
@@ -219,7 +200,6 @@ public class LUNs implements Serializable {
     }
 
     @Size(max = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
-    @Column(name = "product_id", length = BusinessEntitiesDefinitions.LUN_PRODUCT_ID)
     private String productId;
 
     public String getProductId() {
@@ -230,7 +210,6 @@ public class LUNs implements Serializable {
         this.productId = value;
     }
 
-    @Transient
     private java.util.ArrayList<StorageServerConnections> _lunConnections;
 
     public java.util.ArrayList<StorageServerConnections> getLunConnections() {
@@ -241,7 +220,6 @@ public class LUNs implements Serializable {
         _lunConnections = value;
     }
 
-    @Column(name = "device_size")
     private int deviceSize;
 
     public int getDeviceSize() {
@@ -252,7 +230,6 @@ public class LUNs implements Serializable {
         deviceSize = value;
     }
 
-    @Transient
     private String vendorName;
 
     public String getVendorName() {
@@ -277,7 +254,6 @@ public class LUNs implements Serializable {
         return (getPathsDictionary() == null ? 0 : getPathsDictionary().size());
     }
 
-    @Transient
     private java.util.HashMap<String, Boolean> pathsDictionary;
 
     public java.util.HashMap<String, Boolean> getPathsDictionary() {
@@ -288,7 +264,6 @@ public class LUNs implements Serializable {
         pathsDictionary = value;
     }
 
-    @Transient
     private StorageType lunType = StorageType.forValue(0);
 
     public StorageType getLunType() {

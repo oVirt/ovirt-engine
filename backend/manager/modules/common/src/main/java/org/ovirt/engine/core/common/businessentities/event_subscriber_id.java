@@ -2,26 +2,14 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Embeddable
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class event_subscriber_id implements Serializable {
     private static final long serialVersionUID = 9035847334394545216L;
 
-    @Type(type = "guid")
     Guid subscriberId;
-
     String eventUpName;
-
     int methodId;
-
     String tagName;
 
     public event_subscriber_id() {

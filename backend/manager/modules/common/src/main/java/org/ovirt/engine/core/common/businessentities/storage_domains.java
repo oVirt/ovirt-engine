@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Set;
 
-import javax.persistence.Transient;
-
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -37,7 +35,6 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
     }
 
     //this member is in use only by the Frontend project
-    @Transient
     private String vdcQueryableId;
 
     private Set<VdcBllErrors> alerts;

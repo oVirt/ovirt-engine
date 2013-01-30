@@ -7,29 +7,6 @@ for accessing Database Access Objects (DAO) e.g.
 
   VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
 
-There are two implementations for each of the DAO interfaces:
-
-  1) The DbFacadeImpl classes access the database using stored procedures
-     via JDBC calls.
-
-  2) The HibernateImpl classes map the database contents to business
-     entities using Hibernate
-
-== Current Status ==
-
-Accessing a Microsoft SQL Server database using the JDBC implementation
-is the default mode.
-
-A conversion of this DB schema to Postgres is underway in the
-dbscripts_posgres directory. The initial conversion was done using the
-proprietary SQLWays tool but the schema is now kept in sync manually.
-
-When this conversion is complete, the JDBC implementation should work
-equally well with Postgres and MS-SQL.
-
-In parallel, the HibernateImpl is being developed. This too will work
-equally well with Postgres and MS-SQL when finished.
-
 == Unit Tests ==
 
 WARNING: the unit tests empty the database tables before running.
@@ -63,14 +40,10 @@ the username 'sa' and password 'ENGINEadmin2009'.
 
 To run the tests against and postgres DB, you can run:
 
-  $> mvn -P postgres clean test
+  $> mvn clean test
 
 This will default to using a database called 'engine' on localhost using
 the username 'engine' and password 'redhat'.
-
-You can also run the tests using the hibernate implementation using:
-
-  $> mvn -P hibernate clean test
 
 You can change the database configuration in ~/.m2/settings.xml e.g.
 

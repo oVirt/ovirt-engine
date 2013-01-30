@@ -1,31 +1,14 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "network_cluster")
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries(value = { @NamedQuery(name = "delete_network_cluster",
-                                    query = "delete from network_cluster n where n.clusterId = :cluster_id and n.networkId = :network_id") })
 public class NetworkCluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id = new NetworkClusterId();
-
-    @Column(name = "status")
     private NetworkStatus status = NetworkStatus.NON_OPERATIONAL;
-
-    @Column(name = "is_display")
     private boolean display;
 
     /**

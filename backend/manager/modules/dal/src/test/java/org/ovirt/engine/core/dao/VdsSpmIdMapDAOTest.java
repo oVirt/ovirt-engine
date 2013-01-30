@@ -24,8 +24,8 @@ public class VdsSpmIdMapDAOTest extends BaseDAOTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        dao = prepareDAO(dbFacade.getVdsSpmIdMapDao());
-        vdsDao = prepareDAO(dbFacade.getVdsDao());
+        dao = dbFacade.getVdsSpmIdMapDao();
+        vdsDao = dbFacade.getVdsDao();
         existingVds = vdsDao.get(EXISTING_VDS_ID);
         existingVdsSpmIdMap = dao.get(existingVds.getId());
         newVdsSpmIdMap = new vds_spm_id_map(FREE_STORAGE_POOL_ID, FREE_VDS_ID, 1);

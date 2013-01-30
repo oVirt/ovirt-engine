@@ -22,8 +22,6 @@ public interface ActionGroupDAO extends DAO {
      */
     List<ActionGroup> getAllForRole(Guid id);
 
-    // TODO APIs to be removed when Hibernate migration is completed
-
     ActionVersionMap getActionVersionMapByActionType(VdcActionType action_type);
 
     void addActionVersionMap(ActionVersionMap actionVersionMap);

@@ -47,7 +47,7 @@ public class TagDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getTagDao());
+        dao = dbFacade.getTagDao();
 
         existingTag = dao.get(EXISTING_TAG_ID);
         existingTag = dao.get(new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"));

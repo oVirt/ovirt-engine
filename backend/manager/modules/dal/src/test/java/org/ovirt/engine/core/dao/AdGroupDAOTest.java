@@ -27,7 +27,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getAdGroupDao());
+        dao = dbFacade.getAdGroupDao();
 
         // create some test data
         newAdGroup = new LdapGroup();

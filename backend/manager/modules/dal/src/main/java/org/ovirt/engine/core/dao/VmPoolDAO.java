@@ -93,8 +93,6 @@ public interface VmPoolDAO extends DAO, SearchDAO<vm_pools> {
      */
     void remove(NGuid vmPool);
 
-    // TODO APIS to be moved to hibernate relationships
-
     VmPoolMap getVmPoolMapByVmGuid(Guid vmId);
 
     void addVmToPool(VmPoolMap map);

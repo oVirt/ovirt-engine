@@ -3,26 +3,9 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -31,81 +14,45 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-@Entity
-@Table(name = "storage_pool")
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries(
-        value = {
-                @NamedQuery(
-                        name = "all_storage_pools_for_storage_domain",
-                        query = "from storage_pool p where (from storage_domain_static d where d.id = :storage_domain_id) in elements(p.domains)"),
-                @NamedQuery(
-                        name = "all_storage_pools_for_vds",
-                        query = "select p from storage_pool p where p.id in (select g.storagePool from VDSGroup g where g.storagePool = p.id and g.id in (select v.vdsGroupId from VdsStatic v where v.vdsGroupId = g.id and v.id = :vds_id))"),
-
-                @NamedQuery(
-                        name = "all_storage_pools_for_vds_group",
-                        query = "select p from storage_pool p, VDSGroup g where (g.id = :vds_group_id) and (g.storagePool = p.id)")
-                        })
 public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 8455998477522459262L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "id")
-    @Type(type = "guid")
     private Guid id = new Guid();
 
     @ValidName(message = "VALIDATION.DATA_CENTER.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
-    @Column(name = "name")
     private String name = ""; // GREGM prevents NPE
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "description")
     @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
             message = "VALIDATION.DATA_CENTER.DESCRIPTION.INVALID",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
-    @Column(name = "storage_pool_type")
     private int storagePoolType = StorageType.UNKNOWN.getValue();
 
-    @Column(name = "storage_pool_format_type")
     private StorageFormatType storagePoolFormatType = null;
 
-    @Column(name = "status")
     private StoragePoolStatus status = StoragePoolStatus.Uninitialized;
-    @Column(name = "master_domain_version")
+
     private int masterDomainVersion;
 
-    @Column(name = "spm_vds_id")
-    @Type(type = "guid")
     private NGuid spmVdsId = new NGuid();
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
-    @Column(name = "compatibility_version")
     private String compatibilityVersion;
 
-    @Transient
     private String LVER;
 
-    @Transient
     private RecoveryMode recovery_mode = RecoveryMode.forValue(0);
 
     // TODO this is a hack to get around how the old mappings were done
     // This will be redone in version 3.0 with proper relationship mapping
-    @OneToMany(mappedBy = "storagePool", cascade = CascadeType.MERGE)
     private Set<VDSGroup> vdsGroups;
 
-    @ManyToMany
-    @JoinTable(name = "storage_pool_iso_map", joinColumns = @JoinColumn(name = "storage_pool_id"),
-            inverseJoinColumns = @JoinColumn(name = "storage_id"))
     private List<StorageDomainStatic> domains;
 
-    @Transient
     private Version version;
 
     private QuotaEnforcementTypeEnum quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;

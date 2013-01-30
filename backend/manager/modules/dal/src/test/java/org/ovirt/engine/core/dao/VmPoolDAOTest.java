@@ -34,7 +34,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getVmPoolDao());
+        dao = dbFacade.getVmPoolDao();
 
         existingVmPool = dao.get(EXISTING_VM_POOL_ID);
         deletableVmPool = dao.get(DELETABLE_VM_POOL_ID);

@@ -2,21 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-@Entity
-@Table(name = "vm_pool_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class VmPoolMap implements Serializable {
     private static final long serialVersionUID = 5876397644156138863L;
 
@@ -28,9 +16,6 @@ public class VmPoolMap implements Serializable {
         this.vmPoolId = vm_pool_id;
     }
 
-    @Id
-    @Column(name = "vm_guid")
-    @Type(type = "guid")
     private Guid vmId = new Guid();
 
     public Guid getvm_guid() {
@@ -41,8 +26,6 @@ public class VmPoolMap implements Serializable {
         this.vmId = value;
     }
 
-    @Column(name = "vm_pool_id")
-    @Type(type = "guid")
     private NGuid vmPoolId;
 
     public NGuid getvm_pool_id() {

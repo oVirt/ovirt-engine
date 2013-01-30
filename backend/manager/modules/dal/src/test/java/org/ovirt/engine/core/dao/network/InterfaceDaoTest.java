@@ -35,7 +35,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        dao = prepareDAO(dbFacade.getInterfaceDao());
+        dao = dbFacade.getInterfaceDao();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
         newVdsInterface = new VdsNetworkInterface();

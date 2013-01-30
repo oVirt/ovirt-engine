@@ -1,26 +1,10 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "image_storage_domain_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class image_storage_domain_map implements BusinessEntity<ImageStorageDomainMapId> {
     private static final long serialVersionUID = 8459502119344718863L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "imageId", column = @Column(name = "image_id")),
-            @AttributeOverride(name = "storageDomainId", column = @Column(name = "storage_domain_id")) })
     private ImageStorageDomainMapId id = new ImageStorageDomainMapId();
 
 

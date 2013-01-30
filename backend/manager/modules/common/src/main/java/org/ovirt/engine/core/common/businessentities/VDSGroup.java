@@ -2,21 +2,9 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -25,15 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
-@Entity
-@Table(name = "vds_groups")
-@TypeDef(name = "guid", typeClass = GuidType.class)
-@NamedQueries(
-              value = {
-                      @NamedQuery(
-                                  name = "vdsgroup_with_running_vms",
-                                  query = "from VDSGroup g where g.id = :vds_group_id and :vds_group_id in (select s.vds_group_id from VmStatic s, VmDynamic d where d.status not in (0, 13, 14) and d.id = s.id)")
-              })
 @ValidVdsGroup(groups = { CreateEntity.class })
 public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<NGuid> {
 
@@ -42,11 +21,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "vds_group_id")
-    @Type(type = "guid")
     private Guid id;
 
     @NotNull(message = "VALIDATION.VDS_GROUP.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
@@ -54,61 +28,43 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
             groups = {
             CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "VALIDATION.VDS_GROUP.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    @Column(name = "name")
     private String name = ""; // GREGM Prevents NPE
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "description")
     private String description;
 
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
-    @Column(name = "cpu_name")
     private String cpu_name;
 
-    @Column(name = "selection_algorithm")
     private VdsSelectionAlgorithm selection_algorithm = VdsSelectionAlgorithm.None;
 
-    @Column(name = "high_utilization")
     private int high_utilization = 0;
 
-    @Column(name = "low_utilization")
     private int low_utilization = 0;
 
-    @Column(name = "cpu_over_commit_duration_minutes")
     private int cpu_over_commit_duration_minutes = 0;
 
-    @Column(name = "storage_pool_id")
-    @Type(type = "guid")
     private NGuid storagePoolId;
 
-    @Column(name = "storage_pool_name")
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
 
-    @Column(name = "max_vds_memory_over_commit")
     private int max_vds_memory_over_commit = 0;
 
-    @Column(name = "count_threads_as_cores")
     private boolean countThreadsAsCores = false;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
-    @Column(name = "compatibility_version")
     private String compatibility_version;
 
-    @Transient
     private Version compatVersion;
 
-    @Column(name = "transparent_hugepages")
     private boolean transparentHugepages;
 
     @NotNull(message = "VALIDATION.VDS_GROUP.MigrateOnError.NOT_NULL")
-    @Column(name = "migrate_on_error")
     private MigrateOnErrorOptions migrateOnError;
 
-    @Column(name = "virt_service")
     private boolean virtService = true;
 
-    @Column(name = "gluster_service")
     private boolean glusterService = false;
 
     public VDSGroup() {

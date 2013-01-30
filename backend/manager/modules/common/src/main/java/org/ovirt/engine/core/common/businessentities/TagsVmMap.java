@@ -1,37 +1,15 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Date;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "tags_vm_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class TagsVmMap implements Serializable {
     private static final long serialVersionUID = 4061390921955269261L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-            @AttributeOverride(name = "tagId", column = @Column(name = "tag_id")),
-            @AttributeOverride(name = "vmId", column = @Column(name = "vm_id")) })
     private TagsVmMapId id = new TagsVmMapId();
 
-    @Column(name = "defaultdisplaytype")
     private Integer defaultDisplayType = 0;
-
-    @Column(name = "_create_date")
-    private Date created = new Date();
 
     public TagsVmMap() {
     }

@@ -1,29 +1,11 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "image_vm_map")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class image_vm_map implements BusinessEntity<image_vm_map_id> {
     private static final long serialVersionUID = -6528043171116600954L;
 
-    @EmbeddedId
-    @AttributeOverrides({
-        @AttributeOverride(name = "imageId", column = @Column(name = "image_id")),
-        @AttributeOverride(name = "vmId", column = @Column(name = "vm_id")) })
     private image_vm_map_id id = new image_vm_map_id();
-
-    @Column(name = "active")
     private Boolean active;
 
     public image_vm_map() {
@@ -100,6 +82,7 @@ public class image_vm_map implements BusinessEntity<image_vm_map_id> {
     /**
      * @return the id
      */
+    @Override
     public image_vm_map_id getId() {
         return id;
     }
@@ -107,6 +90,7 @@ public class image_vm_map implements BusinessEntity<image_vm_map_id> {
     /**
      * @param id the id to set
      */
+    @Override
     public void setId(image_vm_map_id id) {
         this.id = id;
     }

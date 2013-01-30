@@ -156,8 +156,6 @@ public interface TagDAO extends DAO {
      */
     void remove(Guid id);
 
-    // TODO these APIs will be eliminated when we move to hibernate
-
     void attachUserGroupToTag(TagsUserGroupMap map);
 
     TagsUserGroupMap getTagUserGroupByGroupIdAndByTagId(Guid tagId, Guid groupId);

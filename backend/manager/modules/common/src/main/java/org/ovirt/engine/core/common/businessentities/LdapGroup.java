@@ -2,45 +2,21 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "ad_groups")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "id")
-    @Type(type = "guid")
     private Guid id = new Guid();
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "status")
     private LdapRefStatus status = LdapRefStatus.Inactive;
 
-    @Column(name = "domain", length = 100, nullable = false)
     private String domain;
 
-    @Transient
     private List<String> memberOf;
 
-    @Transient
     private String distinguishedName;
 
     public LdapGroup() {

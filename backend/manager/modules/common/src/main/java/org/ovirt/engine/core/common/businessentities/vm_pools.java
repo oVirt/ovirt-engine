@@ -2,20 +2,10 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -24,62 +14,41 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-@Entity
-@Table(name = "vm_pools")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class vm_pools extends IVdcQueryable implements Serializable {
 
     private static final long serialVersionUID = -2176168998321713354L;
     private final int DEFAULT_PRESTARTED_VMS = 0;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "vm_pool_id")
-    @Type(type = "guid")
     private Guid id;
 
     @NotNull(message = "VALIDATION.VM_POOLS.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_POOL_NAME_SIZE)
-    @Column(name = "vm_pool_name")
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
             UpdateEntity.class })
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "vm_pool_description", length = 4000)
     private String description;
 
-    @Column(name = "vm_pool_type")
     private VmPoolType type = VmPoolType.Automatic;
 
     @Size(max = BusinessEntitiesDefinitions.VM_POOL_PARAMS)
-    @Column(name = "parameters", length = 200)
     private String parameters = "";
 
-    @Column(name = "vds_group_id")
-    @Type(type = "guid")
     private Guid vdsGroupId;
 
-    @Column(name = "prestarted_vms")
     private int prestartedVms;
 
-    @Transient
     private int defaultTimeInDays;
 
-    @Transient
     private TimeSpan defaultStartTime = new TimeSpan();
 
-    @Transient
     private TimeSpan defaultEndTime = new TimeSpan();
 
-    @Transient
     private String vdsGroupName;
 
-    @Transient
     private int vmPoolAssignedCount = 1;
 
-    @Transient
     private int vmPoolRunningCount = 1;
 
     /**

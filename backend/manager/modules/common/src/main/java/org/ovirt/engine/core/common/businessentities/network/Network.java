@@ -2,91 +2,58 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.businessentities.mapping.GuidType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-@Entity
-@Table(name = "network")
-@TypeDef(name = "guid", typeClass = GuidType.class)
 public class Network extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 7357288865938773402L;
 
-    @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "org.ovirt.engine.core.dao.GuidGenerator")
-    @Column(name = "Id")
-    @Type(type = "guid")
     private Guid id;
 
     @Pattern(regexp = "^[_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
             UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
-    @Column(name = "name")
     private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "type")
     private Integer type;
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NETWORK_ADDR_SIZE)
-    @Column(name = "addr")
     private String addr;
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_SUBNET_SIZE)
-    @Column(name = "subnet")
     private String subnet;
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_GATEWAY_SIZE)
-    @Column(name = "gateway")
     private String gateway;
 
-    @Column(name = "vlan_id")
     @Min(value = 0, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
     @Max(value = 4094, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
     private Integer vlanId;
 
-    @Column(name = "stp")
     private boolean stp = false;
 
-    @Column(name = "storage_pool_id")
-    @Type(type = "guid")
     @NotNull(message = "VALIDATION.STORAGE_POOL.ID.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private Guid dataCenterId;
 
-    @ManyToOne
-    @JoinTable(name = "network_cluster", joinColumns = @JoinColumn(name = "network_id"),
-    inverseJoinColumns = @JoinColumn(name = "cluster_id"))
     private NetworkCluster cluster;
 
     private boolean vmNetwork = true;

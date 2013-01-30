@@ -55,7 +55,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Override
     protected SnapshotDao prepareDao() {
-        return prepareDAO(dbFacade.getSnapshotDao());
+        return dbFacade.getSnapshotDao();
     }
 
     @Override
