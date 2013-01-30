@@ -93,13 +93,15 @@ public class AutoRecoveryManager {
         }
         log.debugFormat("Checking autorecoverable {0}" , logMsg);
         final List<T> fails = dao.listFailedAutorecoverables();
-        final BackendInternal backend = getBackend();
-        log.info("Autorecovering " + fails.size() + " " + logMsg);
-        for (final T fail : fails) {
-            log.info("Autorecovering " + logMsg + " id: " + fail.getId() + getHostName(fail));
-            final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
-            actionParams.setShouldBeLogged(true);
-            backend.runInternalAction(actionType, actionParams);
+        if (fails.size() > 0) {
+            final BackendInternal backend = getBackend();
+            log.info("Autorecovering " + fails.size() + " " + logMsg);
+            for (final T fail : fails) {
+                log.info("Autorecovering " + logMsg + " id: " + fail.getId() + getHostName(fail));
+                final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
+                actionParams.setShouldBeLogged(true);
+                backend.runInternalAction(actionType, actionParams);
+            }
         }
         log.debugFormat("Checking autorecoverable {0} done",logMsg);
     }
