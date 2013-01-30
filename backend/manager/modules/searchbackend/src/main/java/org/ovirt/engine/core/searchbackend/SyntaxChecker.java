@@ -1092,7 +1092,20 @@ public class SyntaxChecker implements ISyntaxChecker {
         final String tableName = mSearchObjectAC.getRelatedTableName(objName);
         // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)
         // we have to escape this character in the value to make it treated as a regular character.
-        customizedValue = customizedValue.replace("_", "\\_");
+        // Due to changes between PG8.x and PG9.x on ESCAPE representation in a string, we should
+        // figure out what PG Release is running in order to escape the special character(_) correctly
+        // This is done in a IF block and not with Method Factory pattern since this is the only change
+        // right now, if we encounter other changes, this will be refactored to use the Method Factory pattern.
+        String replaceWith = "_";
+        int pgMajorRelease = Config.<Integer> GetValue(ConfigValues.PgMajorRelease);
+        if (pgMajorRelease == PgMajorRelease.PG8.getValue()) {
+            replaceWith = "\\\\_";
+        }
+        else if (pgMajorRelease == PgMajorRelease.PG9.getValue()) {
+            replaceWith = "\\_";
+        }
+
+        customizedValue = customizedValue.replace("_", replaceWith);
         switch (conditionType) {
         case FreeText:
         case FreeTextSpecificObj:
@@ -1113,4 +1126,19 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private static Log log = LogFactory.getLog(SyntaxChecker.class);
+
+    private static enum PgMajorRelease {
+        PG8(8),
+        PG9(9);
+
+        private int value;
+
+        private PgMajorRelease(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 }

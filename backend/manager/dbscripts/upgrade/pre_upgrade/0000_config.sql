@@ -747,3 +747,20 @@ LANGUAGE plpgsql;
 SELECT  __temp_update_ldap_provier_types();
 DROP FUNCTION __temp_update_ldap_provier_types();
 
+
+create or replace function __temp_set_pg_major_release()
+RETURNS void
+AS $procedure$
+DECLARE
+    v_pg_major_release char(1);
+BEGIN
+    -- the folowing evaluates currently to 8 on PG 8.x and to 9 on PG 9.x
+    v_pg_major_release:=substring ((string_to_array(version(),' '))[2],1,1);
+    perform fn_db_add_config_value('PgMajorRelease',v_pg_major_release,'general');
+    -- ensure that if PG was upgraded we will get the right value
+    perform fn_db_update_config_value('PgMajorRelease',v_pg_major_release,'general');
+END; $procedure$
+LANGUAGE plpgsql;
+SELECT  __temp_set_pg_major_release();
+DROP FUNCTION __temp_set_pg_major_release();
+

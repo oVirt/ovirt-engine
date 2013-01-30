@@ -1365,6 +1365,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MigrationSupportForNativeUsb(417),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("9")
+    PgMajorRelease(418),
+
     Invalid(65535);
 
     private int intValue;
