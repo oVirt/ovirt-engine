@@ -2,17 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
@@ -97,7 +96,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         boolean retval = false;
         for (event_subscriber eventSubscriber : subscriptions) {
             if (subscriberId.equals(eventSubscriber.getsubscriber_id())
-                    && StringHelper.EqOp(eventSubscriber.getevent_up_name(), eventName)
+                    && StringUtils.equals(eventSubscriber.getevent_up_name(), eventName)
                     && eventSubscriber.getmethod_id() == methodId) {
                 retval = true;
                 break;

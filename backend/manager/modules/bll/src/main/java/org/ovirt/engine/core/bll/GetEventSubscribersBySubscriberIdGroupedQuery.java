@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.queries.GetEventSubscribersBySubscriberIdParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends GetEventSubscribersBySubscriberIdParameters>
@@ -37,7 +37,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends GetEventSub
 
             java.util.ArrayList<event_subscriber> groupedList = new ArrayList<event_subscriber>(dic.values());
             for (event_subscriber event : groupedList) {
-                event.settag_name(StringHelper.trim(event.gettag_name(), new char[] { ',', ' ' }));
+                event.settag_name(StringUtils.strip(event.gettag_name(), ", "));
             }
             getQueryReturnValue().setReturnValue(groupedList);
         } else {

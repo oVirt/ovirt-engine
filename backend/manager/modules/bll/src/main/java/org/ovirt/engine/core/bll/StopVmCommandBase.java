@@ -3,11 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
-import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
-import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -86,7 +86,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     protected void executeVmCommand() {
         getParameters().setEntityId(getVm().getId());
         if (getVm().getStatus() == VMStatus.Suspended
-                || !StringHelper.isNullOrEmpty(getVm().getHibernationVolHandle())) {
+                || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
             setSuspendedVm(true);
             setSucceeded(stopSuspendedVm());
         } else {
@@ -112,7 +112,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm().getStatus() != VMStatus.ImageLocked) {
             // Set the VM to image locked to decrease race condition.
             updateVmStatus(VMStatus.ImageLocked);
-             if (!StringHelper.isNullOrEmpty(getVm().getHibernationVolHandle())
+            if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())
                     && handleHibernatedVm(getActionType(), false)) {
                 returnVal = true;
             } else {
@@ -171,6 +171,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
 
     private static Log log = LogFactory.getLog(StopVmCommandBase.class);
 
+    @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
@@ -189,6 +190,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         return list;
     }
 
+    @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
         if (!getVm().isStateless()) {

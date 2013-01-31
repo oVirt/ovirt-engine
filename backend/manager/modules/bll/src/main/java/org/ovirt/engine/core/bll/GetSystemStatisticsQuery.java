@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParameters> extends QueriesCommandBase<P> {
@@ -69,7 +69,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
                 (String.valueOf(VMStatus.Paused.getValue())),
                 (String.valueOf(VMStatus.Unknown.getValue())) };
         int active_vms = DbFacade.getInstance()
-                .GetSystemStatisticsValue("VM", StringHelper.join(",", activeVmStatuses));
+                .GetSystemStatisticsValue("VM", StringUtils.join(activeVmStatuses, ','));
 
         int down_vms = (total_vms - active_vms) < 0 ? 0 : (total_vms - active_vms);
 
@@ -79,7 +79,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
         String[] activeVdsStatuses = { (String.valueOf(VDSStatus.Up.getValue())),
                 (String.valueOf(VDSStatus.PreparingForMaintenance.getValue()))};
         int active_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
-                StringHelper.join(",", activeVdsStatuses));
+                StringUtils.join(activeVdsStatuses, ','));
         int maintenance_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
                 (String.valueOf(VDSStatus.Maintenance.getValue())));
         int down_vds = (total_vds - active_vds - maintenance_vds) < 0 ? 0 : (total_vds - active_vds - maintenance_vds);

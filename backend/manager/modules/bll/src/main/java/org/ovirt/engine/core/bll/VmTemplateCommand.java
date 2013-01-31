@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -133,7 +133,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     public static boolean IsDomainLegal(String domainName, java.util.ArrayList<String> reasons) {
         boolean result = true;
         char[] illegalChars = new char[] { '&' };
-        if (!StringHelper.isNullOrEmpty(domainName)) {
+        if (StringUtils.isNotEmpty(domainName)) {
             for (char c : illegalChars) {
                 if (domainName.contains((Character.toString(c)))) {
                     result = false;

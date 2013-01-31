@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class UpdateRoleCommand<T extends RolesOperationsParameters> extends RolesOperationCommandBase<T> {
@@ -29,7 +29,7 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
             if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-            } else if (!StringHelper.EqOp(getRole().getname(), oldRole.getname())
+            } else if (!StringUtils.equals(getRole().getname(), oldRole.getname())
                     && getRoleDao().getByName(getRole().getname()) != null) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_UPDATE_ROLE_NAME);
                 returnValue = false;

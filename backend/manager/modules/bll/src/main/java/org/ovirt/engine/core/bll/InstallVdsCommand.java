@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.Path;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.FileUtil;
@@ -225,13 +224,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
     }
 
-    protected String getErrorMessage(String msg)
-    {
-        return (
-                StringHelper.isNullOrEmpty(msg) ?
-                        GENERIC_ERROR :
-                            msg
-        );
+    protected String getErrorMessage(String msg) {
+        return (StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg);
     }
 
 }

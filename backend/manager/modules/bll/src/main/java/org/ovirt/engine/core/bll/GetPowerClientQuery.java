@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetPowerClientByClientInfoParameters;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -24,7 +24,7 @@ public class GetPowerClientQuery<P extends GetPowerClientByClientInfoParameters>
 
     private VDS GetPowerClient(String client_ip) {
         VDS powerClient = null;
-        if (!StringHelper.isNullOrEmpty(client_ip)) {
+        if (StringUtils.isNotEmpty(client_ip)) {
             boolean powerClientLogDetection =
                     Config.<Boolean> GetValue(ConfigValues.PowerClientLogDetection);
             if (powerClientLogDetection) {

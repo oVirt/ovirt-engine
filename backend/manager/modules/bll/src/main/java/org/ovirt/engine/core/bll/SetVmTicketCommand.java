@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
@@ -12,13 +13,12 @@ import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.Ticketing;
 
 @InternalCommandAttribute
 public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOperationCommandBase<T> {
@@ -114,7 +114,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     protected void Perform() {
         // Generate the ticket if needed (in some situations the client will not send
         // a ticket):
-        if (StringHelper.isNullOrEmpty(mTicket)) {
+        if (StringUtils.isEmpty(mTicket)) {
             mTicket = Ticketing.GenerateOTP();
         }
 

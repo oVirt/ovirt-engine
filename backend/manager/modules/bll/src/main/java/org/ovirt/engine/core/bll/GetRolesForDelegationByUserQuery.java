@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
@@ -45,7 +45,7 @@ public class GetRolesForDelegationByUserQuery<P extends VdcQueryParametersBase> 
     private IVdcUser getCurrentUser() {
         String sessionId = getParameters().getSessionId();
         IVdcUser user = null;
-        if (!StringHelper.isNullOrEmpty(sessionId)) {
+        if (StringUtils.isNotEmpty(sessionId)) {
             user = SessionDataContainer.getInstance().getUser(sessionId, false);
         }
         return user;
