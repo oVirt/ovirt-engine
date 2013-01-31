@@ -33,7 +33,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -224,7 +223,7 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     private void mockVmDao() {
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDao);
+        doReturn(vmDao).when(command).getVmDAO();
     }
 
     private void mockDiskImageDao() {

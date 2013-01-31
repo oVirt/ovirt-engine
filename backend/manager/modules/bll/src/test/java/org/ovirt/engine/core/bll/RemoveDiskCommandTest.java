@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -76,7 +75,7 @@ public class RemoveDiskCommandTest {
         cmd = spy(new RemoveDiskCommand<RemoveDiskParameters>(params));
         doReturn(disk).when(cmd).getDisk();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDAO();
-        AuditLogableBaseMockUtils.mockVmDao(cmd, vmDao);
+        doReturn(vmDao).when(cmd).getVmDAO();
     }
 
     /* Tests for canDoAction() flow */

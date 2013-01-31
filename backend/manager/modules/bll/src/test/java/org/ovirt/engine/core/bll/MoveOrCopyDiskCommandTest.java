@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -163,7 +162,7 @@ public class MoveOrCopyDiskCommandTest {
     protected void initVm() {
         VM vm = new VM();
         vm.setStatus(VMStatus.PoweredDown);
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDao);
+        doReturn(vmDao).when(command).getVmDAO();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
         mockGetVmsListForDisk();
     }

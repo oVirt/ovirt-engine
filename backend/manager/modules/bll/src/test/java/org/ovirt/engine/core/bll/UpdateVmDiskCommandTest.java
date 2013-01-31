@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -150,7 +149,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void mockNullVm() {
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         mockGetForDisk(null);
         mockGetVmsListForDisk(null);
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
@@ -164,7 +163,7 @@ public class UpdateVmDiskCommandTest {
         vm.setStatus(VMStatus.Down);
         vm.setGuestOs("rhel6");
         vm.setId(vmId);
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         mockGetForDisk(vm);
         mockGetVmsListForDisk(vm);
         storage_pool storagePool = mockStoragePool(Version.v3_1);

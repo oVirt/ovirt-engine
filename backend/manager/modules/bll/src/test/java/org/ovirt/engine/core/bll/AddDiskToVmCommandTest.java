@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
@@ -368,7 +367,7 @@ public class AddDiskToVmCommandTest {
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDao();
         doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(true).when(command).performImagesChecks(any(Guid.class));

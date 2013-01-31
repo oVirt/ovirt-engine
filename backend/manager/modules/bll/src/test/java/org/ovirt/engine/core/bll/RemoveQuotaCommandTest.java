@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.QuotaDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -91,7 +90,7 @@ public class RemoveQuotaCommandTest {
         command = spy(new RemoveQuotaCommand(param));
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(quotaDAO).when(command).getQuotaDAO();
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         return command;
     }
 

@@ -55,7 +55,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -310,7 +309,7 @@ public class RunVmCommandTest {
     private VM mockVm(RunVmCommand<RunVmParams> spyVmCommand) {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        AuditLogableBaseMockUtils.mockVmDao(spyVmCommand, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
         return vm;
     }

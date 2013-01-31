@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -71,7 +70,7 @@ public class AddVmTemplateCommandTest {
 
         // Using the compensation constructor since the normal one contains DB access
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params));
-        AuditLogableBaseMockUtils.mockVmDao(cmd, vmDao);
+        doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
         cmd.setVmId(vmId);
         cmd.setVdsGroupId(vdsGroupId);

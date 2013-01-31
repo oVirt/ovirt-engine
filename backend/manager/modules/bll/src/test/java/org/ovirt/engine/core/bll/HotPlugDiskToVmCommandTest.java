@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -33,12 +34,10 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -183,7 +182,7 @@ public class HotPlugDiskToVmCommandTest {
     }
 
     private void mockNullVm() {
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
         cretaeVirtIODisk();
     }
@@ -197,7 +196,7 @@ public class HotPlugDiskToVmCommandTest {
         vm.setVmOs(VmOsType.RHEL6);
         vm.setId(vmId);
         vm.setRunOnVds(Guid.NewGuid());
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         mockVMDAO(vm);
         return vm;
     }

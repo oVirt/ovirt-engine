@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -232,7 +231,7 @@ public class UpdateVmCommandTest {
     }
 
     private void mockVmDaoGetVm() {
-        AuditLogableBaseMockUtils.mockVmDao(command, vmDAO);
+        doReturn(vmDAO).when(command).getVmDAO();
         when(vmDAO.get(any(Guid.class))).thenReturn(vm);
     }
 

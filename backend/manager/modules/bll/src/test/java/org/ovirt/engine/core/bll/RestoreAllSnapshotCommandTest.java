@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBaseMockUtils;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -220,7 +219,7 @@ public class RestoreAllSnapshotCommandTest {
         vm.setId(vmId);
         vm.setStoragePoolId(spId);
         vm.setStatus(VMStatus.Down);
-        AuditLogableBaseMockUtils.mockVmDao(spyCommand, vmDAO);
+        doReturn(vmDAO).when(spyCommand).getVmDAO();
         when(vmDAO.get(vmId)).thenReturn(vm);
         return vm;
     }
