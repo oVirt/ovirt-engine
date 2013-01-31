@@ -37,7 +37,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameters> extends
         DeactivateStorageDomainCommand<T> {
 
-    protected boolean reconstructOpSucceeded;
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -124,7 +123,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         // set to true here in case of failure in executing/getting answer from the reconstruct vds command,
         // unless we know that the command failed we assume that it succeeded (use by RecoveryStoragePool command in
         // order to avoid detaching domain that is already part of the pool in vdsm).
-        reconstructOpSucceeded = true;
+        setActionReturnValue(true);
         return runVdsCommand(VDSCommandType.ReconstructMaster,
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
                         getVds().getvds_spm_id(), getStoragePool().getId(),
@@ -136,7 +135,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     @Override
     protected void executeCommand() {
         try {
-            reconstructOpSucceeded = reconstructMaster();
+            boolean reconstructOpSucceeded = reconstructMaster();
+            setActionReturnValue(reconstructOpSucceeded);
             connectAndRefreshAllUpHosts(reconstructOpSucceeded);
             if (!_isLastMaster && reconstructOpSucceeded) {
                 // all vms/templates metadata should be copied to the new master domain, so we need
