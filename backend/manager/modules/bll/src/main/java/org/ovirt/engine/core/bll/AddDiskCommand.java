@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -136,7 +135,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         returnValue =
                 validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive()) &&
                 checkImageConfiguration() &&
-                checkFreeSpace() &&
+                hasFreeSpace(getStorageDomain()) &&
                 checkExceedingMaxBlockDiskSize() &&
                 canAddShareableDisk();
 
@@ -180,13 +179,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
             getStorageDomainId().getValue(), vm.getStoragePoolId())) == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
-        }
-        return true;
-    }
-
-    private boolean checkFreeSpace() {
-        if (!hasFreeSpace(getStorageDomain())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
         }
         return true;
     }
@@ -237,11 +229,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain) {
-        return StorageDomainSpaceChecker.hasSpaceForRequest(storageDomain, getDiskImageInfo().getSizeInGigabytes());
+        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(getDiskImageInfo().getSizeInGigabytes()));
     }
 
     protected boolean isStorageDomainWithinThresholds(storage_domains storageDomain) {
-        return StorageDomainSpaceChecker.isWithinThresholds(storageDomain);
+        return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
     }
 
     /** @return The disk from the parameters, cast to a {@link DiskImage} */

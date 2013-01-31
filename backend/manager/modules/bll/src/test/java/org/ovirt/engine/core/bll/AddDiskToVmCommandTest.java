@@ -163,7 +163,6 @@ public class AddDiskToVmCommandTest {
         mockVm();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
-        mockStorageDomainSpaceChecker(domains, true);
 
         assertTrue(command.canDoAction());
     }
@@ -178,12 +177,11 @@ public class AddDiskToVmCommandTest {
         mockVm();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
-        mockStorageDomainSpaceChecker(domains, false);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     @Test
@@ -196,13 +194,12 @@ public class AddDiskToVmCommandTest {
         mockVm();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
-        mockStorageDomainSpaceCheckerRequest(domains, true);
         assertTrue(command.canDoAction());
     }
 
     @Test
     public void canDoActionPreallocatedSpaceCheckFailsSize() {
-        final int availableSize = 8;
+        final int availableSize = 3;
         final int usedSize = 7;
         Guid sdid = Guid.NewGuid();
         initializeCommand(sdid, VolumeType.Preallocated);
@@ -210,12 +207,11 @@ public class AddDiskToVmCommandTest {
         mockVm();
         storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
-        mockStorageDomainSpaceCheckerRequest(domains, false);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
     }
 
     /**
@@ -333,7 +329,6 @@ public class AddDiskToVmCommandTest {
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(true).when(command).performImagesChecks(any(Guid.class));
-        doReturn(true).when(command).isStorageDomainWithinThresholds(any(storage_domains.class));
         doReturn(mockSnapshotValidator()).when(command).getSnapshotValidator();
     }
 
@@ -408,7 +403,7 @@ public class AddDiskToVmCommandTest {
     }
 
     private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
-        return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, new Version());
+        return mockStorageDomain(storageId, availableSize, usedSize, StorageType.UNKNOWN, new Version());
     }
 
     private storage_domains mockStorageDomain(Guid storageId, Version version) {
@@ -624,14 +619,6 @@ public class AddDiskToVmCommandTest {
         command.getReturnValue()
         .getCanDoActionMessages()
         .clear();
-    }
-
-    private void mockStorageDomainSpaceChecker(storage_domains domain, boolean succeeded) {
-        doReturn(succeeded).when(command).isStorageDomainWithinThresholds(domain);
-    }
-
-    private void mockStorageDomainSpaceCheckerRequest(storage_domains domain, boolean succeeded) {
-        doReturn(succeeded).when(command).doesStorageDomainhaveSpaceForRequest(domain);
     }
 
     private static final Log log = LogFactory.getLog(AddDiskToVmCommandTest.class);
