@@ -12,7 +12,6 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -290,9 +289,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             Guid storagePoolId = disksList.get(0).getstorage_pool_id().getValue();
             storage_domains destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
-            if (!StorageDomainSpaceChecker.isWithinThresholds(destDomain)) {
-                addCanDoActionMessage(String.format("$%1$s %2$s", "storageName", destDomain.getstorage_name()));
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
+            if (!isStorageDomainWithinThresholds(destDomain)) {
+                return false;
             }
 
             long totalImagesSize = 0;
@@ -305,12 +303,19 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                 totalImagesSize += Math.round(diskImage.getActualDiskWithSnapshotsSize());
             }
 
-            if (!StorageDomainSpaceChecker.hasSpaceForRequest(destDomain, totalImagesSize)) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            if (!doesStorageDomainhaveSpaceForRequest(destDomain, totalImagesSize)) {
+                return false;
             }
         }
 
         return true;
     }
 
+    protected boolean isStorageDomainWithinThresholds(storage_domains storageDomain) {
+        return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
+    }
+
+    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long totalImagesSize) {
+        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(totalImagesSize));
+    }
 }
