@@ -184,7 +184,6 @@ jar_names='
     commons-lang
     commons-logging
     dom4j
-    hibernate-jpa-2.0-api
     javamail
     log4j
     ovirt-engine/common
@@ -212,9 +211,6 @@ done
 # in order to make the script less dependent on the version of oVirt Engine
 # installed:
 jar_names='
-    hibernate-annotations
-    hibernate-commons-annotations
-    hibernate-core
     hibernate-validator
     validation-api
 '

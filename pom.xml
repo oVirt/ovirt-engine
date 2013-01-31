@@ -76,9 +76,7 @@
     <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
     <javax.mail.version>1.4.4</javax.mail.version>
-    <hibernate-core.version>3.3.0.SP1</hibernate-core.version>
     <hibernate-validator.version>4.0.2.GA</hibernate-validator.version>
-    <hibernate-annotations.version>3.4.0.GA</hibernate-annotations.version>
     <jackson-core-asl.version>1.9.4</jackson-core-asl.version>
     <jackson-mapper-asl.version>1.9.4</jackson-mapper-asl.version>
     <commons-configuration.version>1.6</commons-configuration.version>
@@ -226,24 +224,8 @@
       </dependency>
       <dependency>
         <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate-core.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate-validator.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-annotations</artifactId>
-        <version>${hibernate-annotations.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.codehaus.jackson</groupId>

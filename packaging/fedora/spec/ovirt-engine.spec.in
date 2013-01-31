@@ -113,8 +113,6 @@ BuildRequires: apache-sshd
 BuildRequires: bea-stax-api
 BuildRequires: dos2unix
 BuildRequires: jackson
-BuildRequires: hibernate-commons-annotations
-BuildRequires: hibernate-jpa-2.0-api
 BuildRequires: hibernate-validator
 BuildRequires: jakarta-commons-httpclient
 BuildRequires: java-devel
@@ -146,8 +144,6 @@ Requires: bea-stax-api
 Requires: bind-utils
 Requires: cracklib-python
 Requires: geronimo-validation
-Requires: hibernate-commons-annotations
-Requires: hibernate-jpa-2.0-api
 Requires: hibernate-validator
 Requires: httpd
 Requires: java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
@@ -441,7 +437,6 @@ commons-lang commons-lang
 commons-compress commons-compress
 dom4j dom4j
 geronimo-validation validation-api
-hibernate/hibernate-commons-annotations hibernate-commons-annotations
 hibernate-validator hibernate-validator
 jsch jsch
 objectweb-asm/asm-all asm-all
