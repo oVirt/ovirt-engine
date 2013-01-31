@@ -6,18 +6,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
@@ -54,15 +54,15 @@ public class OvfVmReader extends OvfReader {
         for (XmlNode node : list) {
             String resourceType = node.SelectSingleNode("rasd:ResourceType", _xmlNS).InnerText;
 
-            if (StringHelper.EqOp(resourceType, OvfHardware.CPU)) {
+            if (OvfHardware.CPU.equals(resourceType)) {
                 _vm.getStaticData().setNumOfSockets(
                         Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).InnerText));
                 _vm.getStaticData().setCpuPerSocket(
                         Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).InnerText));
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.Memory)) {
+            } else if (OvfHardware.Memory.equals(resourceType)) {
                 _vm.getStaticData().setMemSizeMb(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.DiskImage)) {
+            } else if (OvfHardware.DiskImage.equals(resourceType)) {
                 final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).InnerText);
 
                 DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
@@ -73,20 +73,20 @@ public class OvfVmReader extends OvfReader {
                 });
                 image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
                         "rasd:HostResource", _xmlNS).InnerText));
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));
                 }
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
                     image.setit_guid(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
                 }
                 image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
 
                 XmlNode storageNode = node.SelectSingleNode("rasd:StorageId", _xmlNS);
                 if (storageNode != null &&
-                        !StringHelper.isNullOrEmpty(storageNode.InnerText)) {
+                        StringUtils.isNotEmpty(storageNode.InnerText)) {
                     image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.InnerText))));
                 }
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
                 final Date creationDate = OvfParser.UtcDateStringToLocaDate(
@@ -105,23 +105,23 @@ public class OvfVmReader extends OvfReader {
                     image.setlast_modified_date(last_modified_date);
                 }
                 readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.Network)) {
+            } else if (OvfHardware.Network.equals(resourceType)) {
                 VmNetworkInterface iface = getNetwotkInterface(node);
                 updateSingleNic(node, iface);
                 _vm.getInterfaces().add(iface);
                 readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.USB)) {
+            } else if (OvfHardware.USB.equals(resourceType)) {
                 _vm.getStaticData().setUsbPolicy(
                         UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).InnerText));
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.Monitor)) {
+            } else if (OvfHardware.Monitor.equals(resourceType)) {
                 _vm.getStaticData().setNumOfMonitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
                 readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.CD)) {
+            } else if (OvfHardware.CD.equals(resourceType)) {
                 readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
-            } else if (StringHelper.EqOp(resourceType, OvfHardware.OTHER)) {
+            } else if (OvfHardware.OTHER.equals(resourceType)) {
                 if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
-                        && !StringHelper.isNullOrEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
+                        && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
                     String type = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText);
                     String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText);
                     // special devices are treated as managed devices but still have the OTHER OVF ResourceType
@@ -147,13 +147,13 @@ public class OvfVmReader extends OvfReader {
         }
         node = content.SelectSingleNode("TemplateId");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
                 _vm.getStaticData().setVmtGuid(new Guid(node.InnerText));
             }
         }
         node = content.SelectSingleNode("TemplateName");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
                 _vm.setVmtName(node.InnerText);
             }
         }
@@ -181,7 +181,7 @@ public class OvfVmReader extends OvfReader {
         List<String> aliases = handler.getAliases();
         for (String alias : aliases) {
             String value = readEventLogValue(content, alias);
-            if (!StringHelper.isNullOrEmpty(value)) {
+            if (StringUtils.isNotEmpty(value)) {
                 handler.addValueForAlias(alias, value);
 
             }
@@ -189,7 +189,7 @@ public class OvfVmReader extends OvfReader {
 
         node = content.SelectSingleNode("app_list");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
                 _vm.setAppList(node.InnerText);
             }
         }
@@ -210,7 +210,7 @@ public class OvfVmReader extends OvfReader {
 
         node = content.SelectSingleNode("MinAllocatedMem");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
                 _vm.setMinAllocatedMem(Integer.parseInt(node.InnerText));
             }
         }
@@ -251,6 +251,7 @@ public class OvfVmReader extends OvfReader {
         return null;
     }
 
+    @Override
     protected void readSnapshotsSection(XmlNode section) {
         XmlNodeList list = section.SelectNodes("Snapshot");
         ArrayList<Snapshot> snapshots = new ArrayList<Snapshot>();

@@ -3,9 +3,8 @@ package org.ovirt.engine.core.utils.vdshooks;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.utils.vdshooks.VdsHooksParser.ParsingResult;
 
 /**
  * Parsers a hooks string to a ValueObjectMap of script directories/events to a ValueObjectMap of script names to a
@@ -34,6 +33,7 @@ public class VdsHooksParser {
             this.endIndex = endIndex;
         }
 
+        @Override
         public String toString() {
             return map.toString();
         }
@@ -154,7 +154,7 @@ public class VdsHooksParser {
     public static ValueObjectMap parseHooks(String hooksStr) {
         ValueObjectMap result = new ValueObjectMap();
         // If the hooks string is null or empty an empty data structure will be returned
-        if (!StringHelper.isNullOrEmpty(hooksStr)) {
+        if (StringUtils.isNotEmpty(hooksStr)) {
             char[] chars = new char[hooksStr.length()];
             hooksStr.getChars(0, hooksStr.length(), chars, 0);
             ParsingResult parsingResult = parseMap(chars, 0);

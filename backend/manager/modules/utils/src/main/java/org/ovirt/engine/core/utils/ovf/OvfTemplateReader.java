@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
@@ -74,18 +73,18 @@ public class OvfTemplateReader extends OvfReader {
                 });
                 image.setId(OvfParser.GetImageGrupIdFromImageFile(node.SelectSingleNode(
                         "rasd:HostResource", _xmlNS).InnerText));
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText)) {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));
                 }
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
                     image.setit_guid(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
                 }
                 image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
                     image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId",
                             _xmlNS).InnerText))));
                 }
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
                     image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
                 final Date creationDate = OvfParser.UtcDateStringToLocaDate(
@@ -104,7 +103,7 @@ public class OvfTemplateReader extends OvfReader {
             // Network
             case 10:
                 VmNetworkInterface iface = getNetwotkInterface(node);
-                if (!StringHelper.isNullOrEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
+                if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText)) {
                     iface.setType(Integer.parseInt(node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).InnerText));
                 }
 
@@ -154,7 +153,7 @@ public class OvfTemplateReader extends OvfReader {
         }
         node = content.SelectSingleNode("TemplateId");
         if (node != null) {
-            if (!StringHelper.isNullOrEmpty(node.InnerText)) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
                 _vmTemplate.setId(new Guid(node.InnerText));
             }
         }

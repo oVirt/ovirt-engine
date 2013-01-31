@@ -5,14 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.LongCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -57,7 +58,7 @@ public class VdsFenceOptions implements Serializable {
      *            The fencing options.
      */
     public VdsFenceOptions(String agent, String fencingOptions) {
-        if (!StringHelper.isNullOrEmpty(agent)) {
+        if (StringUtils.isNotEmpty(agent)) {
             this.fenceAgent = agent;
             this.fencingOptions = fencingOptions;
         }
@@ -110,17 +111,17 @@ public class VdsFenceOptions implements Serializable {
      */
     private void CacheFencingAgentsOptionMapping() {
         String localfencingOptionMapping = Config.<String> GetValue(ConfigValues.VdsFenceOptionMapping);
-        String[] agentsOptionsStr = localfencingOptionMapping.split(StringHelper.quote(SEMICOLON), -1);
+        String[] agentsOptionsStr = localfencingOptionMapping.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : agentsOptionsStr) {
-            String[] parts = agentOptionsStr.split(StringHelper.quote(COLON), -1);
+            String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
                 String agent = parts[0];
                 HashMap<String, String> agentOptions = new HashMap<String, String>();
                 // check for empty options
-                if (!StringHelper.isNullOrEmpty(parts[1])) {
-                    String[] options = parts[1].split(StringHelper.quote(COMMA), -1);
+                if (StringUtils.isNotEmpty(parts[1])) {
+                    String[] options = parts[1].split(Pattern.quote(COMMA), -1);
                     for (String option : options) {
-                        String[] optionKeyVal = option.split(StringHelper.quote(EQUAL), -1);
+                        String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                         agentOptions.put(optionKeyVal[0], optionKeyVal[1]);
                         // add mapped keys to special params
                         fencingSpecialParams.add(optionKeyVal[1]);
@@ -140,9 +141,9 @@ public class VdsFenceOptions implements Serializable {
      */
     private void CacheFencingAgentsOptionTypes() {
         String localfencingOptionTypes = Config.<String> GetValue(ConfigValues.VdsFenceOptionTypes);
-        String[] types = localfencingOptionTypes.split(StringHelper.quote(COMMA), -1);
+        String[] types = localfencingOptionTypes.split(Pattern.quote(COMMA), -1);
         for (String entry : types) {
-            String[] optionKeyVal = entry.split(StringHelper.quote(EQUAL), -1);
+            String[] optionKeyVal = entry.split(Pattern.quote(EQUAL), -1);
             fencingOptionTypes.put(optionKeyVal[0], optionKeyVal[1]);
         }
     }
@@ -158,7 +159,7 @@ public class VdsFenceOptions implements Serializable {
      */
     private String GetRealKey(String agent, String displayedKey) {
         String result = "";
-        if (!StringHelper.isNullOrEmpty(agent) && !StringHelper.isNullOrEmpty(displayedKey)) {
+        if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(displayedKey)) {
             if (fencingOptionMapping.containsKey(agent)) {
                 HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
                 result = agentOptions.containsKey(displayedKey) ? agentOptions.get(displayedKey)
@@ -181,12 +182,12 @@ public class VdsFenceOptions implements Serializable {
      */
     private String GetDisplayedKey(String agent, String realKey) {
         String result = "";
-        if (!StringHelper.isNullOrEmpty(agent) && !StringHelper.isNullOrEmpty(realKey)) {
+        if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(realKey)) {
             if (fencingOptionMapping.containsKey(agent)) {
                 HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
                 if (agentOptions.containsValue(realKey)) {
                     for (Map.Entry<String, String> pair : agentOptions.entrySet()) {
-                        if (StringHelper.EqOp(pair.getValue(), realKey)) {
+                        if (StringUtils.equals(pair.getValue(), realKey)) {
                             result = pair.getKey();
                             break;
                         }
@@ -212,7 +213,7 @@ public class VdsFenceOptions implements Serializable {
      */
     private String GetOptionType(String key) {
         String result = "";
-        if (!StringHelper.isNullOrEmpty(key) && fencingOptionTypes.containsKey(key)) {
+        if (StringUtils.isNotEmpty(key) && fencingOptionTypes.containsKey(key)) {
             result = fencingOptionTypes.get(key);
         }
         return result;
@@ -281,12 +282,12 @@ public class VdsFenceOptions implements Serializable {
      * Caches the fencing agent instance options.
      */
     private void CacheFencingAgentInstanceOptions() {
-        if (!StringHelper.isNullOrEmpty(getAgent())
-                && !StringHelper.isNullOrEmpty(getFencingOptions())) {
-            String[] options = getFencingOptions().split(StringHelper.quote(COMMA), -1);
+        if (StringUtils.isNotEmpty(getAgent())
+                && StringUtils.isNotEmpty(getFencingOptions())) {
+            String[] options = getFencingOptions().split(Pattern.quote(COMMA), -1);
             fencingAgentInstanceOptions.clear();
             for (String option : options) {
-                String[] optionKeyVal = option.split(StringHelper.quote(EQUAL), -1);
+                String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                 if (optionKeyVal.length == 1) {
                     add(getAgent(), optionKeyVal[0], "");
                 } else {
@@ -307,11 +308,11 @@ public class VdsFenceOptions implements Serializable {
         String agentMapping = Config.<String> GetValue(ConfigValues.FenceAgentMapping);
         String realAgent = agent;
         // result has the format [<agent>=<real agent>[,]]*
-        String[] settings = agentMapping.split(StringHelper.quote(COMMA), -1);
+        String[] settings = agentMapping.split(Pattern.quote(COMMA), -1);
         if (settings.length > 0) {
             for (String setting : settings) {
                 // get the <agent>=<real agent> pair
-                String[] pair = setting.split(StringHelper.quote(EQUAL), -1);
+                String[] pair = setting.split(Pattern.quote(EQUAL), -1);
                 if (pair.length == 2) {
                     if (agent.equalsIgnoreCase(pair[0])) {
                         realAgent = pair[1];
@@ -334,16 +335,16 @@ public class VdsFenceOptions implements Serializable {
         String agentdefaultParams = Config.<String> GetValue(ConfigValues.FenceAgentDefaultParams);
         StringBuilder realOptions = new StringBuilder(fenceOptions);
         // result has the format [<agent>:param=value[,]...;]*
-        String[] params = agentdefaultParams.split(StringHelper.quote(SEMICOLON), -1);
+        String[] params = agentdefaultParams.split(Pattern.quote(SEMICOLON), -1);
         for (String agentOptionsStr : params) {
-            String[] parts = agentOptionsStr.split(StringHelper.quote(COLON), -1);
+            String[] parts = agentOptionsStr.split(Pattern.quote(COLON), -1);
             if (parts.length == 2) {
                 if (agent.equalsIgnoreCase(parts[0])) {
                     // check for empty options
-                    if (!StringHelper.isNullOrEmpty(parts[1])) {
-                        String[] options = parts[1].split(StringHelper.quote(COMMA), -1);
+                    if (StringUtils.isNotEmpty(parts[1])) {
+                        String[] options = parts[1].split(Pattern.quote(COMMA), -1);
                         for (String option : options) {
-                            String[] optionKeyVal = option.split(StringHelper.quote(EQUAL), -1);
+                            String[] optionKeyVal = option.split(Pattern.quote(EQUAL), -1);
                             // if a value is set explicitly for a default param
                             // we respect that value and not use the default value
                             if (!fenceOptions.contains(optionKeyVal[0])) {
@@ -436,7 +437,7 @@ public class VdsFenceOptions implements Serializable {
 
     public boolean IsSupported(String agent, String key) {
         boolean result = false;
-        if (!StringHelper.isNullOrEmpty(agent) && !StringHelper.isNullOrEmpty(key)
+        if (StringUtils.isNotEmpty(agent) && StringUtils.isNotEmpty(key)
                 && fencingOptionMapping.containsKey(agent)) {
             HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
             result = (agentOptions == null) ? false : agentOptions.containsKey(key);
@@ -494,12 +495,12 @@ public class VdsFenceOptions implements Serializable {
         final String LONG = "long";
         final String DOUBLE = "double";
         Object result = null;
-        if (!StringHelper.isNullOrEmpty(key)) {
+        if (StringUtils.isNotEmpty(key)) {
             String type = GetOptionType(key);
             key = GetRealKey(getAgent(), key);
             if (fencingAgentInstanceOptions != null
                     && fencingAgentInstanceOptions.containsKey(key)) {
-                if (!StringHelper.isNullOrEmpty(type)) {
+                if (StringUtils.isNotEmpty(type)) {
                     // Convert to the suitable type according to metadata.
                     if (type.equalsIgnoreCase(BOOL)) {
                         result = Boolean.parseBoolean(fencingAgentInstanceOptions.get(key));

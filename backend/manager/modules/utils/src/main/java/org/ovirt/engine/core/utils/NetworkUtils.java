@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public final class NetworkUtils {
     public static int MaxVmInterfaces = 8;
@@ -38,7 +37,7 @@ public final class NetworkUtils {
         for (int i = 0; i < tokens.length - 1; i++) {
             sb.append(tokens[i]).append(".");
         }
-        return StringHelper.trimEnd(sb.toString(), '.');
+        return StringUtils.stripEnd(sb.toString(), ".");
     }
 
     // method return interface name without vlan:
@@ -55,7 +54,7 @@ public final class NetworkUtils {
         for (int i = 0; i < tokens.length - 1; i++) {
             sb.append(tokens[i]).append(".");
         }
-        return StringHelper.trimEnd(sb.toString(), '.');
+        return StringUtils.stripEnd(sb.toString(), ".");
     }
 
     // method return the vlan part of the interface name (if exists),
