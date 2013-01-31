@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -79,7 +78,7 @@ public final class ImagesHandler {
         for (storage_domains storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
-                    && (notCheckSize || StorageDomainSpaceChecker.isWithinThresholds(storageDomain))) {
+                    && (notCheckSize || isStorageDomainWithinThresholds(storageDomain, null, false))) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
@@ -537,10 +536,8 @@ public final class ImagesHandler {
                         messages.add(res.getMessage().toString());
                     }
                 }
-                if (diskSpaceCheck && returnValue && !StorageDomainSpaceChecker.isWithinThresholds(domain)) {
-                    returnValue = false;
-                    ListUtils.nullSafeAdd(messages, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.toString());
-                    break;
+                if (diskSpaceCheck && returnValue && !isStorageDomainWithinThresholds(domain, messages, true)) {
+                    return false;
                 }
             }
         }
@@ -556,6 +553,39 @@ public final class ImagesHandler {
             returnValue = CheckImagesLegality(messages, images, irsImages);
         }
         return returnValue;
+    }
+
+    /**
+     * Returns whether the storage domain is within the threshold
+     *
+     * @param storageDomain
+     *            - The storage domain to be checked.
+     * @param messages
+     *            - Add a message to the messages list.
+     * @param addCanDoMessage
+     *            - Indicate whether to add a CDA message for failure
+     * @return <code>boolean</code> value which indicates if the storage domain has enough free space.
+     */
+    private static boolean isStorageDomainWithinThresholds(storage_domains storageDomain,
+            List<String> messages,
+            boolean addCanDoMessage) {
+        ValidationResult validationResult = new StorageDomainValidator(storageDomain).isDomainWithinThresholds();
+        if (addCanDoMessage) {
+            validate(validationResult, messages);
+        }
+        return validationResult.isValid();
+    }
+
+    private static boolean validate(ValidationResult validationResult, List<String> messages) {
+        if (!validationResult.isValid()) {
+            ListUtils.nullSafeAdd(messages, validationResult.getMessage().name());
+            if (validationResult.getVariableReplacements() != null) {
+                for (String variableReplacement : validationResult.getVariableReplacements()) {
+                    messages.add(variableReplacement);
+                }
+            }
+        }
+        return validationResult.isValid();
     }
 
     private static boolean CheckImagesLegality
