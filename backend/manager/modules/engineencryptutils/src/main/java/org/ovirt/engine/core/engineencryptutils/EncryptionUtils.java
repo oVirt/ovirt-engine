@@ -40,7 +40,7 @@ public class EncryptionUtils {
     private static String encrypt(String source, Certificate cert) throws GeneralSecurityException, UnsupportedEncodingException {
         Cipher rsa = Cipher.getInstance(algo);
         rsa.init(Cipher.ENCRYPT_MODE, cert.getPublicKey());
-        return Base64.encodeBase64String(
+        return new Base64(0).encodeToString(
             rsa.doFinal(source.trim().getBytes("UTF-8"))
         );
     }
