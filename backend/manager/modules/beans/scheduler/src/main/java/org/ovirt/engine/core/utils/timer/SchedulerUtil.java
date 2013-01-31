@@ -100,6 +100,14 @@ public interface SchedulerUtil {
     public void resumeJob(String jobId);
 
     /**
+     * Execute immediately the job with the given jobId
+     *
+     * @param jobId
+     *            - the id of the job to be triggered
+     */
+    public void triggerJob(String jobId);
+
+    /**
      * Halts the Scheduler, and cleans up all resources associated with the
      * Scheduler. The scheduler cannot be re-started.
      */

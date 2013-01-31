@@ -8,6 +8,7 @@ import static org.quartz.TriggerKey.triggerKey;
 import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -33,6 +34,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
 // Here we use a Singleton bean, names Scheduler.
@@ -376,6 +378,29 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             log.error("failed to pause a job with id=" + jobId, se);
         }
 
+    }
+
+    @Override
+    public void triggerJob(String jobId) {
+        try {
+            List<? extends Trigger> existingTriggers = sched.getTriggersOfJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
+
+            if (!existingTriggers.isEmpty()) {
+                // Note: we assume that every job has exactly one trigger
+                Trigger oldTrigger = existingTriggers.get(0);
+                TriggerKey oldTriggerKey = oldTrigger.getKey();
+                Trigger newTrigger = newTrigger()
+                    .withIdentity(oldTriggerKey)
+                    .startAt(getFutureDate(0, TimeUnit.MILLISECONDS))
+                    .build();
+
+                rescheduleAJob(oldTriggerKey.getName(), oldTriggerKey.getGroup(), newTrigger);
+            } else {
+                log.error("failed to trigger a job with id=" + jobId + ", job has no trigger");
+            }
+        } catch (SchedulerException se) {
+            log.error("failed to trigger a job with id=" + jobId, se);
+        }
     }
 
     /**

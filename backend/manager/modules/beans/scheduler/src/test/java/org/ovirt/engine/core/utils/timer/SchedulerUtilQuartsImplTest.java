@@ -224,6 +224,43 @@ public class SchedulerUtilQuartsImplTest {
         assertEquals("Number of scheduled jobs after resume should be higher than before", true, testResume);
     }
 
+    /*
+     * test periodic job remain periodic after triggering it to be executed immediately
+     */
+    // @Test
+    public void testTriggerJob() {
+        PrintJob pj = new PrintJob();
+        long startTestDate = System.currentTimeMillis();
+        System.out.println("Start Time=" + startTestDate);
+        String jobId =
+                scheduler.scheduleAFixedDelayJob(pj,
+                        "onTimer11",
+                        new Class[0],
+                        new Object[0],
+                        5,
+                        8,
+                        TimeUnit.MILLISECONDS);
+        try {
+            Thread.sleep(30);
+        } catch (InterruptedException ie) {
+            // log.error("sleep was interrupted", ie);
+        }
+        int numberOfRunBeforeTriggerting = messages.size();
+
+        scheduler.triggerJob(jobId);
+        try {
+            Thread.sleep(30);
+        } catch (InterruptedException ie) {
+            // log.error("sleep was interrupted", ie);
+        }
+        int numberOfRunLongAfterTriggering = messages.size();
+
+        // test if during resume the job was executed again
+        int diff = numberOfRunLongAfterTriggering - numberOfRunBeforeTriggerting;
+        boolean testTrigger = diff >= 2;
+        assertEquals("Number of messages should be at least 2  but was " + diff, true, testTrigger);
+    }
+
     // @Test
     @SuppressWarnings("unchecked")
     public void tryReflection() {
