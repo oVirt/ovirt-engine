@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
@@ -203,6 +204,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.bookmark.BookmarkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterManageNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookContentPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.NewClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
@@ -917,6 +919,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(DetachGlusterHostsPopupPresenterWidget.class,
                 DetachGlusterHostsPopupPresenterWidget.ViewDef.class,
                 DetachGlusterHostsPopupView.class);
+
+        bindPresenterWidget(GlusterHookContentPopupPresenterWidget.class,
+                GlusterHookContentPopupPresenterWidget.ViewDef.class,
+                GlusterHookContentPopupView.class);
 
         // Host
         bindPresenterWidget(HostPopupPresenterWidget.class,

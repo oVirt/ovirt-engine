@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookContentPopupView.WidgetStyle">
+		.labelStyle {
+			width: 0px;
+		}
+
+		.content textarea{
+			height: 100%;
+		}
+
+		.content {
+			width: 785px;
+			height: 445px;
+		}
+
+		.messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-top: 5px;
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="800px" height="520px">
+		<d:content>
+			<g:VerticalPanel>
+				<e:EntityModelTextAreaLabelEditor  addStyleNames="{style.content}" ui:field="contentEditor"/>
+				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

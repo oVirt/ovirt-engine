@@ -1543,6 +1543,15 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to disable the following Hook(s)?")
     String disableGlusterHooksMessage();
 
+    @DefaultStringValue("Hook Content")
+    String viewContentGlusterHookTitle();
+
+    @DefaultStringValue("Unable to fetch the hook content, please try again later.")
+    String viewContentErrorGlusterHook();
+
+    @DefaultStringValue("Hook content is empty or binary")
+    String viewContentEmptyGlusterHook();
+
     @DefaultStringValue("VMs already exist")
     String vmAlreadyExistsMsg();
 

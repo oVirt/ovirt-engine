@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
@@ -179,16 +180,29 @@ public class ClusterModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(ClientGinjector ginjector,
-            final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider) {
+            final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider,
+            final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(ginjector,
                 ClusterListModel.class,
                 ClusterGlusterHookListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup( ClusterGlusterHookListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getViewHookCommand()) {
+                    return contentPopupProvider.get();
+                }
+                else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterGlusterHookListModel source,
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getDisableHookCommand()) {
                     return confirmPopupProvider.get();
-                } else {
+                }
+                else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }

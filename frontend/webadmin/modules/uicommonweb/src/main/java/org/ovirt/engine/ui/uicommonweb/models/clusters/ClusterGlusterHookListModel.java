@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -27,6 +28,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
     private UICommand disableHookCommand;
 
+    private UICommand viewHookCommand;
+
     public UICommand getEnableHookCommand() {
         return enableHookCommand;
     }
@@ -43,6 +46,14 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         this.disableHookCommand = disableHookCommand;
     }
 
+    public UICommand getViewHookCommand() {
+        return viewHookCommand;
+    }
+
+    public void setViewHookCommand(UICommand viewHookCommand) {
+        this.viewHookCommand = viewHookCommand;
+    }
+
     @Override
     public VDSGroup getEntity() {
         return (VDSGroup) super.getEntity();
@@ -55,8 +66,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         setEnableHookCommand(new UICommand("EnableHook", this)); //$NON-NLS-1$
         getEnableHookCommand().setIsExecutionAllowed(false);
+
         setDisableHookCommand(new UICommand("DisableHook", this)); //$NON-NLS-1$
         getDisableHookCommand().setIsExecutionAllowed(false);
+
+        setViewHookCommand(new UICommand("ViewContent", this)); //$NON-NLS-1$
+        getViewHookCommand().setIsExecutionAllowed(false);
     }
 
     private void enableHook() {
@@ -140,6 +155,56 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         setConfirmWindow(null);
     }
 
+    private void viewHook() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        GlusterHookEntity hookEntity = (GlusterHookEntity) getSelectedItem();
+
+        if (hookEntity == null) {
+            return;
+        }
+
+        GlusterHookContentModel contentModel = new GlusterHookContentModel();
+        contentModel.setTitle(ConstantsManager.getInstance().getConstants().viewContentGlusterHookTitle());
+        contentModel.setHashName("view_gluster_hook"); //$NON-NLS-1$
+        setWindow(contentModel);
+
+        contentModel.startProgress(null);
+
+        AsyncDataProvider.getGlusterHookContent(new AsyncQuery(contentModel, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                String content = (String) returnValue;
+                GlusterHookContentModel localModel = (GlusterHookContentModel) model;
+                localModel.getContent().setEntity(content);
+                if (content == null) {
+                    localModel.getContent().setIsAvailable(false);
+                    localModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .viewContentErrorGlusterHook());
+                }
+                else if (content.length() == 0) {
+                    localModel.getContent().setIsAvailable(false);
+                    localModel.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .viewContentEmptyGlusterHook());
+                }
+                localModel.stopProgress();
+            }
+        }), hookEntity.getId(), null);
+
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().close());
+        command.setIsCancel(true);
+        contentModel.getCommands().add(command);
+    }
+
+    private void cancel() {
+        setWindow(null);
+    }
+
     @Override
     protected void onSelectedItemChanged()
     {
@@ -156,10 +221,11 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     private void updateActionAvailability() {
         boolean allowEnable = true;
         boolean allowDisable = true;
-
+        boolean allowViewContent = true;
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowEnable = false;
             allowDisable = false;
+            allowViewContent = false;
         }
         else {
             for (Object item : getSelectedItems()) {
@@ -174,9 +240,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
                     break;
                 }
             }
+            allowViewContent = (getSelectedItems().size() == 1
+                    && ((GlusterHookEntity) getSelectedItems().get(0)).getContentType() == GlusterHookContentType.TEXT);
         }
         getEnableHookCommand().setIsExecutionAllowed(allowEnable);
         getDisableHookCommand().setIsExecutionAllowed(allowDisable);
+        getViewHookCommand().setIsExecutionAllowed(allowViewContent);
     }
 
     @Override
@@ -233,6 +302,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
         else if (command.getName().equals("OnCancelConfirmation")) { //$NON-NLS-1$
             cancelConfirmation();
+        }
+        else if (command.equals(getViewHookCommand())) {
+            viewHook();
+        }
+        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+            cancel();
         }
     }
 }

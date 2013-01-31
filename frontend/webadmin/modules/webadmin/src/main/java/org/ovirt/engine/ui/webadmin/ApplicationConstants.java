@@ -1719,6 +1719,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disable")
     String disableHook();
 
+    @DefaultStringValue("View Content")
+    String viewHookContent();
+
     // Interface
     @DefaultStringValue("Empty")
     String emptyInterface();
