@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.utils.collections;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,10 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.TransformerUtils;
-
 
 /**
  * A map decorator for providing copies of keys and values upon invocation of accessor methods. With this decorator the
@@ -24,11 +26,9 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
 
     private static final int REALLOCATION_FACTOR = 2;
     private Map<K, V> innerMap;
-    Transformer cloner;
 
     public CopyOnAccessMap(Map<K, V> innerMap) {
         this.innerMap = innerMap;
-        cloner = TransformerUtils.cloneTransformer();
     }
 
     @Override
@@ -58,10 +58,71 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
 
     @SuppressWarnings("unchecked")
     private <O> O clone(O originalKey) {
-        return (O) cloner.transform(originalKey);
+        // We use an intermediate buffer to hold the serialized form of the
+        // object:
+        byte[] buffer = null;
+
+        // Serialize the object to an array of bytes:
+        ByteArrayOutputStream bufferOut = null;
+        ObjectOutputStream objectOut = null;
+        try {
+            bufferOut = new ByteArrayOutputStream(512);
+            objectOut = new ObjectOutputStream(bufferOut);
+            objectOut.writeObject(originalKey);
+            buffer = bufferOut.toByteArray();
+        }
+        catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        finally {
+            if (objectOut != null) {
+                try {
+                    objectOut.close();
+                }
+                catch (IOException exception) {
+                    // Ignored.
+                }
+            }
+        }
+
+        // Create a new instance of the object deserializing it from the
+        // buffer:
+        ByteArrayInputStream bufferIn = null;
+        ObjectInputStream objectIn = null;
+        try {
+            bufferIn = new ByteArrayInputStream(buffer);
+            objectIn = new ObjectInputStream(bufferIn) {
+                @Override
+                protected Class<?> resolveClass(ObjectStreamClass description) throws IOException, ClassNotFoundException {
+                    // First try with the context class loader, if that fails
+                    // then just call the overridden method:
+                    try {
+                        return Class.forName(description.getName(), false, Thread.currentThread().getContextClassLoader());
+                    }
+                    catch (ClassNotFoundException exception) {
+                        return super.resolveClass(description);
+                    }
+                }
+            };
+            return (O) objectIn.readObject();
+        }
+        catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        catch (ClassNotFoundException exception) {
+            throw new RuntimeException(exception);
+        }
+        finally {
+            if (objectIn != null) {
+                try {
+                    objectIn.close();
+                }
+                catch (IOException exception) {
+                    // Ignored.
+                }
+            }
+        }
     }
-
-
 
     @Override
     public V put(K key, V value) {
