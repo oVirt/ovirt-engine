@@ -1556,10 +1556,10 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot remove more than one brick from a Replicate volume at a time")
     String cannotRemoveBricksReplicateVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for the removel in Distributed Replicate volume. Either all the bricks should be from the same sub volume or one brick each for every sub volume!")
+    @DefaultStringValue("Incorrect bricks selected for the removal in Distributed Replicate volume. Either all the selected bricks should be from the same sub volume or one brick each for every sub volume!")
     String cannotRemoveBricksDistributedReplicateVolume();
 
-    @DefaultStringValue("Incorrect bricks selected for the removel in Distributed Stripe volume. Selected bricks should be from the same sub volume!")
+    @DefaultStringValue("Incorrect bricks selected for the removal in Distributed Stripe volume. Selected bricks should be from the same sub volume!")
     String cannotRemoveBricksDistributedStripeVolume();
 
     @DefaultStringValue("Replica count can be increased by only one")
