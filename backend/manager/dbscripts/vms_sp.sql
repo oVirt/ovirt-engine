@@ -1095,4 +1095,12 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmsByVmPoolId(v_vm_pool_id UUID) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vms.*
+      FROM vms
+      WHERE vm_pool_id = v_vm_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
 

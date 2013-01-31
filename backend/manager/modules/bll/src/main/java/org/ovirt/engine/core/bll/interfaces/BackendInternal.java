@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.DateTime;
 
 public interface BackendInternal extends BackendLocal {
 
-    public VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters);
+    VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters);
 
     /**
      * Executes an action internally.
@@ -48,12 +48,17 @@ public interface BackendInternal extends BackendLocal {
             VdcActionParametersBase parameters,
             CommandContext context);
 
-    public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
+    VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
 
     ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters);
 
-    public DateTime getStartedAt();
+    DateTime getStartedAt();
+
+    /**
+     * Execute the pool monitoring job immediately
+     */
+    void triggerPoolMonitoringJob();
 
     /**
      * Invokes multiple actions of the same action type with different parameters under a given execution context which

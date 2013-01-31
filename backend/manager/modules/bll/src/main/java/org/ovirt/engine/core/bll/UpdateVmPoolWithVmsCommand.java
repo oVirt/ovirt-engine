@@ -54,4 +54,10 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
         return getAddVmsSucceded() ? AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS
                 : AuditLogType.USER_UPDATE_VM_POOL_WITH_VMS_FAILED;
     }
+
+    @Override
+    protected void executeCommand() {
+        super.executeCommand();
+        Backend.getInstance().triggerPoolMonitoringJob();
+    }
 }

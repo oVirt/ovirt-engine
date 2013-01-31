@@ -26,6 +26,7 @@ public class VmDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    private static final Guid POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
 
     private static final int VM_COUNT = 5;
     private VmDAO dao;
@@ -385,5 +386,13 @@ public class VmDAOTest extends BaseDAOTestCase {
         for (VM vm : result) {
             assertEquals("Vm db generation wasn't loaded as expected", 1, vm.getDbGeneration());
         }
+    }
+
+    @Test
+    public void testGetAllForVmPool() {
+        List<VM> result = dao.getAllForVmPool(POOL_ID);
+
+        assertNotNull(result);
+        assertEquals("wrong number of VMs attached to pool", 2, result.size());
     }
 }

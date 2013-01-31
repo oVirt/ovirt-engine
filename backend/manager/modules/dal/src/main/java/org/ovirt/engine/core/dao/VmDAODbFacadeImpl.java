@@ -258,6 +258,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                         .addValue("vds_group_id", vds_group_id));
     }
 
+    @Override
+    public List<VM> getAllForVmPool(NGuid vmPoolId) {
+        return getCallsHandler().executeReadList("GetVmsByVmPoolId",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                .addValue("vm_pool_id", vmPoolId));
+    }
+
     static final class VMRowMapper implements ParameterizedRowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 

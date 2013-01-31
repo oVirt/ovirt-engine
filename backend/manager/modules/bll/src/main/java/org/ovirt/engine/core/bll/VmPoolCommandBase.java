@@ -110,17 +110,15 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
-        List<VmPoolMap> vmPoolMaps = DbFacade.getInstance().getVmPoolDao()
-                .getVmMapsInVmPoolByVmPoolIdAndStatus(poolId, VMStatus.Up);
-        int prestartedVmsInPool = 0;
-        if (vmPoolMaps != null) {
-            for (VmPoolMap map : vmPoolMaps) {
-                if (canAttachPrestartedVmToUser(map.getvm_guid())) {
-                    prestartedVmsInPool++;
-                }
+        List<VM> vmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(poolId);
+        int numOfPrestartedVmsInPool = 0;
+        if (vmsInPool != null) {
+            for (VM vm : vmsInPool) {
+                if (vm.isStartingOrUp() && canAttachPrestartedVmToUser(vm.getId()))
+                    ++numOfPrestartedVmsInPool;
             }
         }
-        return prestartedVmsInPool;
+        return numOfPrestartedVmsInPool;
     }
 
     protected static List<VmPoolMap> getListOfVmsInPool(NGuid poolId) {

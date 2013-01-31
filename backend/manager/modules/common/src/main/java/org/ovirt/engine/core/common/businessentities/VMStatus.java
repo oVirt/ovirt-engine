@@ -96,4 +96,22 @@ public enum VMStatus implements Identifiable {
     public boolean isUpOrPaused() {
         return this == Up || this == Paused;
     }
+
+    /**
+     * This method reflects whether the VM is starting-up
+     *
+     * @return true if this status indicates that the VM is starting, otherwise false
+     */
+    public boolean isStarting() {
+        return this == WaitForLaunch || this == PoweringUp;
+    }
+
+    /**
+     * This method reflects whether the VM is starting-up or in Up state
+     *
+     * @return true if this status indicates that the VM is starting or up, otherwise false
+     */
+    public boolean isStartingOrUp() {
+        return this == Up || isStarting();
+    }
 }

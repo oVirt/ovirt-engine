@@ -85,6 +85,7 @@ public class Backend implements BackendInternal {
     private ErrorTranslator _vdsErrorsTranslator;
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
+    private String poolMonitoringJobId;
 
     public static BackendInternal getInstance() {
         return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
@@ -212,10 +213,11 @@ public class Backend implements BackendInternal {
         _startedAt = DateTime.getNow();
 
         int vmPoolMonitorIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
-        SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
-                "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
-                vmPoolMonitorIntervalInMinutes,
-                vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
+        poolMonitoringJobId =
+                SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(new VmPoolMonitor(),
+                        "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
+                        vmPoolMonitorIntervalInMinutes,
+                        vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
 
         int quotaCacheIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.QuotaCacheIntervalInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),
@@ -579,6 +581,12 @@ public class Backend implements BackendInternal {
 
     protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
         return CommandsFactory.CreateQueryCommand(actionType, parameters);
+    }
+
+    @Override
+    @ExcludeClassInterceptors
+    public void triggerPoolMonitoringJob() {
+        SchedulerUtilQuartzImpl.getInstance().triggerJob(poolMonitoringJobId);
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);
