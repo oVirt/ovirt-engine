@@ -589,6 +589,7 @@ public class CommonModel extends ListModel
             if (!cluster.supportsVirtService()) {
                 vmList.setIsAvailable(false);
                 templateList.setIsAvailable(false);
+                storageList.setIsAvailable(false);
             }
         }
 
