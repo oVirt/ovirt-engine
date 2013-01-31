@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends IrsBrokerCommand<P> {
@@ -43,7 +43,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
                 imageList[i] = imagesGuidList.get(i).toString();
             }
 
-            vmToSend.put("imglist", StringHelper.join(",", imageList));
+            vmToSend.put("imglist", StringUtils.join(imageList, ','));
             result[counter] = vmToSend;
             counter++;
         }

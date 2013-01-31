@@ -48,7 +48,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -724,8 +723,8 @@ public class VdsUpdateRunTimeInfo {
                     log.info(message);
 
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-                    logable.AddCustomValue("Networks", StringHelper.trimEnd(sNetworks.toString(), ',', ' '));
-                    logable.AddCustomValue("Interfaces", StringHelper.trimEnd(sNics.toString(), ',', ' '));
+                    logable.AddCustomValue("Networks", StringUtils.stripEnd(sNetworks.toString(), ", "));
+                    logable.AddCustomValue("Interfaces", StringUtils.stripEnd(sNics.toString(), ", "));
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",
@@ -873,7 +872,7 @@ public class VdsUpdateRunTimeInfo {
             sb.append(tokens[i])
                     .append(".");
         }
-        String ifaceName = StringHelper.trimEnd(sb.toString(), '.');
+        String ifaceName = StringUtils.stripEnd(sb.toString(), ".");
         for (VdsNetworkInterface iface : _vds.getInterfaces()) {
             if (iface.getName().equals(ifaceName)) {
                 return iface.getStatistics().getStatus() == InterfaceStatus.UP;
@@ -1393,7 +1392,7 @@ public class VdsUpdateRunTimeInfo {
             if (!inMigrationTo(runningVm, vmToUpdate) && runningVm.getstatus() != VMStatus.Down) {
                 if (vmToUpdate != null) {
                     if (_vmDict.containsKey(vmToUpdate.getId())
-                            && !StringHelper.EqOp(runningVm.getclient_ip(), vmToUpdate.getClientIp())) {
+                            && !StringUtils.equals(runningVm.getclient_ip(), vmToUpdate.getClientIp())) {
                         _vmsClientIpChanged.put(vmToUpdate, runningVm);
                     }
                 }
