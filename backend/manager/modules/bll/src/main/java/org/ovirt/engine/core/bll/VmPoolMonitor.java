@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -28,7 +28,7 @@ public class VmPoolMonitor {
     @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
     public void managePrestartedVmsInAllVmPools() {
         List<vm_pools> vmPools = DbFacade.getInstance().getVmPoolDao().getAll();
-         for (vm_pools vmPool : vmPools) {
+        for (vm_pools vmPool : vmPools) {
             managePrestartedVmsInPool(vmPool);
         }
     }
@@ -39,20 +39,14 @@ public class VmPoolMonitor {
      * @param vmPool
      */
     private void managePrestartedVmsInPool(vm_pools vmPool) {
-        int prestartedVms;
-        int missingPrestartedVms;
-        int numOfVmsToPrestart;
         Guid vmPoolId = vmPool.getvm_pool_id();
-        prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId);
-        missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
+        int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId);
+        int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {
             // We do not want to start too many vms at once
-            int batchSize = Config.<Integer> GetValue(ConfigValues.VmPoolMonitorBatchSize);
-            if (missingPrestartedVms > batchSize) {
-                numOfVmsToPrestart = batchSize;
-            } else {
-                numOfVmsToPrestart = missingPrestartedVms;
-            }
+            int numOfVmsToPrestart =
+                    Math.min(missingPrestartedVms, Config.<Integer> GetValue(ConfigValues.VmPoolMonitorBatchSize));
+
             log.infoFormat("VmPool {0} is missing {1} prestarted Vms, attempting to prestart {2} Vms",
                     vmPoolId,
                     missingPrestartedVms,

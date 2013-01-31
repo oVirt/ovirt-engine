@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
@@ -135,7 +134,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      * @return True if can be attached, false otherwise.
      */
     protected static boolean canAttachNonPrestartedVmToUser(Guid vm_guid) {
-        return isVmFree(vm_guid, new java.util.ArrayList<String>());
+        return isVmFree(vm_guid, new ArrayList<String>());
     }
 
     /**
@@ -145,22 +144,9 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      * @return True if can be attached, false otherwise.
      */
     protected static boolean canAttachPrestartedVmToUser(Guid vmId) {
-        boolean returnValue = true;
-        java.util.ArrayList<String> messages = new java.util.ArrayList<String>();
-
-        // check that there isn't another user already attached to this VM:
-        if (vmAssignedToUser(vmId, messages)) {
-            returnValue = false;
-        }
-
-        // Make sure the Vm is running stateless
-        if (returnValue) {
-            if (!vmIsRunningStateless(vmId)) {
-                returnValue = false;
-            }
-        }
-
-        return returnValue;
+        // check that there isn't another user already attached to this VM
+        // and make sure the Vm is running stateless
+        return !vmAssignedToUser(vmId, new ArrayList<String>()) && vmIsRunningStateless(vmId);
     }
 
     private static boolean vmIsRunningStateless(Guid vmId) {
@@ -175,7 +161,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
      *            The messages.
      * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise, <c>false</c>.
      */
-    protected static boolean isVmFree(Guid vmId, java.util.ArrayList<String> messages) {
+    protected static boolean isVmFree(Guid vmId, ArrayList<String> messages) {
         boolean returnValue = true;
 
         // check that there isn't another user already attached to this VM:
@@ -258,7 +244,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return vmAssignedToUser;
     }
 
-    protected static boolean canRunPoolVm(Guid vmId, java.util.ArrayList<String> messages) {
+    protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
 
         // TODO: This is done to keep consistency with VmDAO.getById.
@@ -296,15 +282,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 VdcObjectType.VmPool,
                 getActionType().getActionGroup()));
         return permissionList;
-    }
-
-    public static boolean isPrestartedVmForAssignment(Guid vm_guid) {
-        VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vm_guid);
-        if (vmDynamic != null && vmDynamic.getstatus() == VMStatus.Up && canAttachPrestartedVmToUser(vm_guid)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     protected VmPoolDAO getVmPoolDAO() {
