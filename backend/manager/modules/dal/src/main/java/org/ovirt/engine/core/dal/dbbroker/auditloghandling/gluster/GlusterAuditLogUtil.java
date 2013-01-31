@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
@@ -26,11 +27,11 @@ public class GlusterAuditLogUtil {
     }
 
     public void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
-        logAuditMessage(volume.getClusterId(), volume, null, logType, null);
+        logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.<String, String> emptyMap());
     }
 
     public void logServerMessage(final VDS server, final AuditLogType logType) {
-        logAuditMessage(null, null, server, logType, null);
+        logAuditMessage(null, null, server, logType, Collections.<String, String> emptyMap());
     }
 
     @SuppressWarnings("serial")
