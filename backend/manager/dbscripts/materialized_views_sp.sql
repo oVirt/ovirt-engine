@@ -16,6 +16,9 @@ Flow:
                               in this case the original view will be renamed
                               and the new Materialized View will have the original
                               view name.
+   The following should be called for Custom Materialized Views
+   CreateCustomMaterializedView
+   CreateCustomMaterializedViewAs
 2) If your Snapshot Materialized View is my_mt you should create Stored Procedures:
     MtDropmy_mtIndexes - Drops indexes on my_mt
     MtCreatemy_mtIndexes - Creates needed indexes on my_mt
@@ -34,11 +37,15 @@ Flow:
    when calling it from a cron job in order to update the materialized views only when needed.
    (This SP is called with v_force = true after create/upgrade DB)
 
-There are 4 additional functions :
+There are also additional functions :
    CreateAllMaterializedViewsiIndexes - Creates indexes for all Snapshot Materialized views
    DropMaterializedView - Drops the Materialized View
    DropAllMaterializedViews - Drop all Materialized Views
+   DropAllCustomMaterializedViews - Drop all custom Materialized Views
    UpdateMaterializedViewRefreshRate - Updates the Materialized View refresh rate
+   UpdateMaterializedViewMinRefreshRate - Updates the Materialized View minimal refresh rate
+   ActivateMaterializedView - activates/decativates a  Materialized View
+   ActivateAllMaterializedViews - activates/decativates all Materialized Views
 
 In addition, you can create a file named create_materialized_views.sql under dbscripts/upgrade/post_upgrade/custom/
 This file may include other custom materialized views settings and is executed by the create/upgrade database scripts.
@@ -57,7 +64,8 @@ END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE STRICT;
 
 -- CreateMaterializedViewAsCreates a new Materialized View
-CREATE OR REPLACE FUNCTION CreateMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+CREATE OR REPLACE FUNCTION CreateMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                  v_custom BOOLEAN, v_min_refresh_rate_in_sec INTEGER)
  RETURNS VOID
 AS $procedure$
 DECLARE
@@ -80,18 +88,38 @@ DECLARE
 
      EXECUTE 'GRANT SELECT ON ' || v_matview || ' TO PUBLIC';
 
-     INSERT INTO materialized_views (mv_name, v_name, refresh_rate_in_sec, last_refresh)
-       VALUES (v_matview, v_view_name, v_refresh_rate_in_sec, CURRENT_TIMESTAMP);
+     INSERT INTO materialized_views (mv_name, v_name, refresh_rate_in_sec, last_refresh, custom, min_refresh_rate_in_sec)
+       VALUES (v_matview, v_view_name, v_refresh_rate_in_sec, CURRENT_TIMESTAMP, v_custom, v_min_refresh_rate_in_sec);
 
      RETURN;
  END; $procedure$
  LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION CreateCustomMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                        v_min_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+ BEGIN
+     PERFORM CreateMaterializedView(v_matview, v_view_name, true, v_min_refresh_rate_in_sec);
+     RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CreateMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+BEGIN
+     PERFORM  CreateMaterializedView(v_matview, v_view_name, v_refresh_rate_in_sec, false, 0);
+END; $procedure$
+ LANGUAGE plpgsql;
+
+
 -- Enables to create a New materialized view with a name of existing view
 -- This is done in order to solve cases where we are forced to use the old view name for the new createed
 -- Materialized View because it is used from dynamic SQL and we have to send only a DB patch without forcing
 -- recompilation of engine code
-CREATE OR REPLACE FUNCTION CreateMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+CREATE OR REPLACE FUNCTION CreateMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                    v_custom BOOLEAN, v_min_refesh_rate_in_sec INTEGER)
  RETURNS VOID
 AS $procedure$
 DECLARE
@@ -105,10 +133,30 @@ DECLARE
 
      v_renamed_view := v_view_name || '_mt_base';
      EXECUTE  'ALTER VIEW ' ||  v_view_name || ' RENAME TO ' || v_renamed_view;
-     perform CreateMaterializedView(v_view_name, v_renamed_view, v_refresh_rate_in_sec);
+     perform CreateMaterializedView(v_view_name, v_renamed_view, v_refresh_rate_in_sec, v_custom, v_min_refesh_rate_in_sec);
 
      RETURN;
  END; $procedure$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CreateCustomMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                          v_custom BOOLEAN, v_min_refesh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+ BEGIN
+     PERFORM CreateMaterializedViewAs(v_view_name, v_renamed_view, v_refresh_rate_in_sec, true, v_min_refesh_rate_in_sec);
+     RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION CreateMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+BEGIN
+    PERFORM  CreateMaterializedViewAs(v_view_name, v_refresh_rate_in_sec, false, 0);
+END; $procedure$
  LANGUAGE plpgsql;
 
 -- Drops a Materialized View
@@ -132,7 +180,7 @@ DECLARE
  END; $procedure$
  LANGUAGE plpgsql;
 
---  Drops a Materialized Views
+--  Drops all Materialized Views
 CREATE OR REPLACE FUNCTION DropAllMaterializedViews()
 RETURNS void
 AS $procedure$
@@ -151,6 +199,26 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Drops all custom Materialized Views
+CREATE OR REPLACE FUNCTION DropAllCustomMaterializedViews()
+RETURNS void
+AS $procedure$
+DECLARE
+    v_cur CURSOR FOR SELECT * FROM materialized_views where custom;
+    v_record materialized_views%ROWTYPE;
+BEGIN
+       OPEN v_cur;
+       -- loop on all entries in materialized_views
+       LOOP
+           FETCH v_cur INTO v_record;
+           EXIT WHEN NOT FOUND;
+           perform DropMaterializedView(v_record.mv_name);
+       END LOOP;
+       CLOSE v_cur;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 -- Checks if  Materialized View should be refreshed
 CREATE OR REPLACE FUNCTION IsMaterializedViewRefreshed(v_matview NAME)
  RETURNS boolean
@@ -165,7 +233,9 @@ DECLARE
     END IF;
 
     -- check if materialized View should refresh
-    v_is_refreshed := (CURRENT_TIMESTAMP - to_interval(refresh_rate_in_sec)) <= last_refresh from materialized_views
+    v_is_refreshed := (((CURRENT_TIMESTAMP - to_interval(refresh_rate_in_sec)) <= last_refresh) and
+                      ((CURRENT_TIMESTAMP - to_interval(min_refresh_rate_in_sec)) <= last_refresh)) or
+                      not active from materialized_views
                        where mv_name = v_matview;
     RETURN v_is_refreshed;
  END; $procedure$
@@ -243,7 +313,7 @@ BEGIN
        LOOP
            FETCH v_cur INTO v_record;
            EXIT WHEN NOT FOUND;
-           IF (v_force or not IsMaterializedViewRefreshed(v_record.mv_name)) THEN
+           IF ((v_force and v_record.min_refresh_rate_in_sec = 0) or not IsMaterializedViewRefreshed(v_record.mv_name)) THEN
               perform RefreshMaterializedView(v_record.mv_name);
            END IF;
        END LOOP;
@@ -292,6 +362,52 @@ DECLARE
 
     update materialized_views set refresh_rate_in_sec = v_refresh_rate
     where  mv_name = v_matview;
+    RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
+-- Updates a  Materialized View min refresh rate
+CREATE OR REPLACE FUNCTION UpdateMaterializedViewMinRefreshRate(v_matview NAME, v_min_refresh_rate INTEGER)
+ RETURNS VOID
+AS $procedure$
+DECLARE
+     v_entry materialized_views%ROWTYPE;
+ BEGIN
+     SELECT * INTO v_entry FROM materialized_views WHERE mv_name = v_matview;
+     IF NOT FOUND THEN
+         RAISE EXCEPTION 'Materialized view % does not exist.', v_matview;
+    END IF;
+
+    update materialized_views set min_refresh_rate_in_sec = v_min_refresh_rate
+    where  mv_name = v_matview;
+    RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ActivateMaterializedView(v_matview NAME, v_active BOOLEAN)
+ RETURNS VOID
+AS $procedure$
+DECLARE
+     v_entry materialized_views%ROWTYPE;
+ BEGIN
+     SELECT * INTO v_entry FROM materialized_views WHERE mv_name = v_matview;
+     IF NOT FOUND THEN
+         RAISE EXCEPTION 'Materialized view % does not exist.', v_matview;
+    END IF;
+
+    update materialized_views set active = v_active
+    where  mv_name = v_matview;
+    RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION ActivateAllMaterializedViews(v_active BOOLEAN)
+ RETURNS VOID
+AS $procedure$
+DECLARE
+     v_entry materialized_views%ROWTYPE;
+ BEGIN
+    update materialized_views set active = v_active;
     RETURN;
  END; $procedure$
  LANGUAGE plpgsql;

@@ -157,7 +157,12 @@ run_post_upgrade() {
     custom_materialized_views_file="upgrade/post_upgrade/custom/create_materialized_views.sql"
     if [ -f ${custom_materialized_views_file} ]; then
         echo "running custom materialized views from ${custom_materialized_views_file} ..."
-        execute_file ${custom_materialized_views_file} ${DATABASE} ${SERVERNAME} ${PORT}  > /dev/null
+        psql -U ${USERNAME} --pset=tuples_only=on  --set ON_ERROR_STOP=1 -h ${SERVERNAME} -p ${PORT} -f "${custom_materialized_views_file}" ${DATABASE} > /dev/null
+        if [ $? -ne 0 ] ; then
+            #drop all custom views
+            psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "select DropAllCustomMaterializedViews();" ${DATABASE} > /dev/null
+            echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
+        fi
     fi
     refresh_materialized_views
 
