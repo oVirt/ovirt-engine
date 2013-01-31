@@ -24,10 +24,10 @@ public class GlusterMultipleActionsRunner extends MultipleActionsRunner {
     }
 
     @Override
-    protected void executeValidatedCommands(CommandBase<?> command) {
+    protected void executeValidatedCommand(CommandBase<?> command) {
         // Since we had released the lock at the end of CanDoAction,
         // it must be acquired back just before execution of the command
         command.acquireLock();
-        super.executeValidatedCommands(command);
+        super.executeValidatedCommand(command);
     }
 }

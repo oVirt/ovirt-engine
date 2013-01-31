@@ -160,7 +160,9 @@ public class MultipleActionsRunner {
 
     protected void RunCommands() {
         for (CommandBase<?> command : getCommands()) {
-            executeValidatedCommands(command);
+            if (command.getReturnValue().getCanDoAction()) {
+                executeValidatedCommand(command);
+            }
         }
     }
 
@@ -170,18 +172,15 @@ public class MultipleActionsRunner {
      * @param command
      *            The command to execute
      */
-    protected void executeValidatedCommands(CommandBase<?> command) {
-        if (command.getReturnValue().getCanDoAction()) {
-
-            if (executionContext == null || executionContext.isMonitored()) {
-                ExecutionHandler.prepareCommandForMonitoring(command,
-                        command.getActionType(),
-                        command.isInternalExecution(),
-                        new Boolean(hasCorrelationIdMap.get(command.getCommandId())));
-            }
-            ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
-            command.executeAction();
+    protected void executeValidatedCommand(CommandBase<?> command) {
+        if (executionContext == null || executionContext.isMonitored()) {
+            ExecutionHandler.prepareCommandForMonitoring(command,
+                    command.getActionType(),
+                    command.isInternalExecution(),
+                    new Boolean(hasCorrelationIdMap.get(command.getCommandId())));
         }
+        ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
+        command.executeAction();
     }
 
     public void setExecutionContext(ExecutionContext executionContext) {
