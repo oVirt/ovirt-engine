@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -11,6 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -34,7 +39,8 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     EntityModelTextBoxEditor descriptionEditor;
 
     @UiField
-    Label message;
+    @Ignore
+    FlowPanel messagePanel;
 
     public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants) {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -48,8 +54,18 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     }
 
     @Override
-    public void edit(SnapshotModel object) {
-        Driver.driver.edit(object);
+    public void edit(final SnapshotModel model) {
+        Driver.driver.edit(model);
+
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("Message".equals(propName)) { //$NON-NLS-1$
+                    appendMessage(model.getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -60,6 +76,14 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     @Override
     public void focusInput() {
         descriptionEditor.setFocus(true);
+    }
+
+    public void appendMessage(String message) {
+        if (message == null) {
+            return;
+        }
+
+        messagePanel.add(new Label(message));
     }
 
 }

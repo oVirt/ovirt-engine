@@ -11,7 +11,7 @@
 			width: 100%;
 		}
 
-		.errorMessageLabel {
+		.messagePanel {
 			color: #CD2127;
 			margin-top: 10px;
 			margin-left: 5px;
@@ -20,7 +20,8 @@
 
 	<g:VerticalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.content}">
 		<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}" />
-		<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
+		<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}">
+		</g:FlowPanel>
 	</g:VerticalPanel>
 
 </ui:UiBinder>

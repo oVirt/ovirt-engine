@@ -483,6 +483,8 @@ public class VmSnapshotListModel extends SearchableListModel
                         ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
                         vmSnapshotListModel.PostNew(disks);
+                        // show message
+                        snapshotModel.sendWarningForNonExportableDisks(disks);
                         snapshotModel.StopProgress();
                     }
                 }),

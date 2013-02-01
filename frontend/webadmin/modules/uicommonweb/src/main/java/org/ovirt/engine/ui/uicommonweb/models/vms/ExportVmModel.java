@@ -6,10 +6,8 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
-@SuppressWarnings("unused")
 public class ExportVmModel extends Model
 {
-
     private ListModel privateStorage;
 
     public ListModel getStorage()

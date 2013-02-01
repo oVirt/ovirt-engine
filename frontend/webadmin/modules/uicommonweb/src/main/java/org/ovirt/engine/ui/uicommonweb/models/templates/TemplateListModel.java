@@ -762,4 +762,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     protected String extractNameFromEntity(VmTemplate entity) {
         return entity.getname();
     }
+
+    @Override
+    protected void sendWarningForNonExportableDisks(VmTemplate entity) {
+        // no op
+    }
 }

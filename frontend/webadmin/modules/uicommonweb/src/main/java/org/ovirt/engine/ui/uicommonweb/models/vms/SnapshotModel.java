@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -18,8 +19,9 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-@SuppressWarnings("unused")
 public class SnapshotModel extends EntityModel
 {
     private VM vm;
@@ -153,4 +155,22 @@ public class SnapshotModel extends EntityModel
 
         return getDescription().getIsValid();
     }
+
+    // send warning message, if a disk which doesn't allow snapshot is detected (e.g. LUN)
+    void sendWarningForNonExportableDisks(ArrayList<Disk> disks) {
+        // filter non-exportable disks
+        final List<String> list = new ArrayList<String>();
+        for (Disk disk : disks) {
+            if (!disk.isAllowSnapshot()) {
+                list.add(disk.getDiskAlias());
+            }
+        }
+
+        if(!list.isEmpty()) {
+            final String s = StringUtils.join(list, ", "); //$NON-NLS-1$
+            // append warning message
+            setMessage(ConstantsManager.getInstance().getMessages().disksWillNotBePartOfTheExportedVMSnapshot(s));
+        }
+    }
+
 }

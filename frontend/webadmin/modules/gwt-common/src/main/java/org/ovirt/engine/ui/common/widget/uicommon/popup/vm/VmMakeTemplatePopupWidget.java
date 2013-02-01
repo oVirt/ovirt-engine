@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -70,7 +71,8 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     EntityModelCheckBoxEditor isTemplatePublicEditor;
 
     @UiField
-    Label message;
+    @Ignore
+    FlowPanel messagePanel;
 
     @UiField
     @Ignore
@@ -146,6 +148,16 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                 disksAllocationLabel.getElement().getStyle().setColor(isDisksAllocationEnabled ? "black" : "grey"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         });
+
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+                if ("Message".equals(propName)) { //$NON-NLS-1$
+                    appendMessage(model.getMessage());
+                }
+            }
+        });
     }
 
     private void addDiskAllocation(UnitVmModel model) {
@@ -174,4 +186,13 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         isTemplatePublicEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
+
+    public void appendMessage(String message) {
+        if (message == null) {
+            return;
+        }
+
+        messagePanel.add(new Label(message));
+    }
+
 }

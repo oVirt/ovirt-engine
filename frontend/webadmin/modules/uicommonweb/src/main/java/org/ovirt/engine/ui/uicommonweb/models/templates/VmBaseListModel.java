@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
@@ -64,6 +65,9 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                         vmListModel.PostExportGetStorageDomainList(filteredStorageDomains);
                     }
                 }), extractStoragePoolIdNullSafe(selectedEntity));
+
+        // check, if the VM has a disk which doesn't allow snapshot
+        sendWarningForNonExportableDisks(selectedEntity);
     }
 
     private void PostExportGetStorageDomainList(List<storage_domains> storageDomains)
@@ -198,12 +202,12 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
     }
 
     private String composeExistingVmsWarningMessage(List<T> existingVms) {
-        String res = ""; //$NON-NLS-1$
+        final List<String> list = new ArrayList<String>();
         for (T t : existingVms) {
-            String name = extractNameFromEntity(t);
-            res += "\u2022  " + name + " "; //$NON-NLS-1$ //$NON-NLS-2$
+            list.add(extractNameFromEntity(t));
         }
-        return res;
+
+        return StringUtils.join(list, ", "); //$NON-NLS-1$
     }
 
     protected void setupExportModel(ExportVmModel model) {
@@ -227,5 +231,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
     protected abstract String thereIsNoExportDomainBackupEntityAttachExportDomainToVmsDcMsg();
 
     protected abstract VdcQueryType getEntityExportDomain();
+
+    protected abstract void sendWarningForNonExportableDisks(T entity);
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -30,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
@@ -107,6 +109,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
                         ArrayList<Disk> disks = new ArrayList<Disk>();
+                        List<Disk> nonExportableDisks = new ArrayList<Disk>();
                         Iterable disksEnumerable = (Iterable) returnValue;
                         Iterator disksIterator = disksEnumerable.iterator();
 
@@ -116,11 +119,14 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                             if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable()) {
                                 disks.add(disk);
+                            } else if (!disk.isAllowSnapshot()) {
+                                nonExportableDisks.add(disk);
                             }
                         }
 
                         behavior.InitStorageDomains();
                         InitDisks(disks);
+                        sendWarningForNonExportableDisks(nonExportableDisks);
                     }
                 }, getModel().getHash()),
                 vm.getId(),
@@ -130,6 +136,20 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             getModel().getQuota().setIsAvailable(true);
         } else {
             getModel().getQuota().setIsAvailable(false);
+        }
+    }
+
+    private void sendWarningForNonExportableDisks(List<Disk> nonExportableDisks) {
+        if (!nonExportableDisks.isEmpty()) {
+            final List<String> list = new ArrayList<String>();
+            for (Disk disk : nonExportableDisks) {
+                list.add(disk.getDiskAlias());
+            }
+
+            final String s = StringUtils.join(list, ", "); //$NON-NLS-1$
+
+            // append warning message
+            getModel().setMessage(ConstantsManager.getInstance().getMessages().disksWillNotBePartOfTheExportedVMTemplate(s));
         }
     }
 

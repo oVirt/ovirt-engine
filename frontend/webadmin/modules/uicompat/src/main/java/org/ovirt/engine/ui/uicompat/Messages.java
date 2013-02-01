@@ -90,11 +90,20 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Import process has begun for Template(s): {0}.\nYou can check import status in the ''Events'' tab of the specific destination storage domain, or in the main ''Events'' tab")
     String importProcessHasBegunForTemplates(String importedTemplates);
 
-    @DefaultMessage("Template(s):\n{0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
+    @DefaultMessage("Template(s): {0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
     String templatesAlreadyExistonTargetExportDomain(String existingTemplates);
 
-    @DefaultMessage("VM(s):\n{0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
+    @DefaultMessage("VM(s): {0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
     String vmsAlreadyExistOnTargetExportDomain(String existingVMs);
+
+    @DefaultMessage("Shared disk(s): {0} will not be part of the exported virtual machine.")
+    String disksWillNotBePartOfTheExportedVM(String diskList);
+
+    @DefaultMessage("Shared disk(s): {0} will not be part of the exported template.")
+    String disksWillNotBePartOfTheExportedVMTemplate(String diskList);
+
+    @DefaultMessage("Shared disk(s): {0} will not be part of the exported snapshot.")
+    String disksWillNotBePartOfTheExportedVMSnapshot(String diskList);
 
     @DefaultMessage("Error connecting to Virtual Machine using Spice:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);
