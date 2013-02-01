@@ -370,6 +370,8 @@ ERR_IPS_NOT_CONFIGED="Some or all of the IP addresses: (%s) which were resolved 
 ERR_IPS_NOT_CONFIGED_ON_INT="The IP (%s) which was resolved from the FQDN %s is not configured on any interface on this host"
 ERR_IPS_HAS_NO_PTR="None of the IP addresses on this host(%s) holds a PTR record for the FQDN: %s"
 ERR_IP_HAS_NO_PTR="The IP %s does not hold a PTR record for the FQDN: %s"
+ERR_CANT_USE_IP_AS_FQDN="%s is an IP address and not a FQDN. A FQDN is needed \
+to be able to generate certificates correctly."
 
 #init logging
 ERR_EXP_FAILED_INIT_LOGGER="Unexpected error: Failed to initiate logger, please check file system permission"
