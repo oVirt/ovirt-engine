@@ -91,7 +91,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         return performAction(VdcActionType.RemoveVdsGroup, new VdsGroupParametersBase(asGuid(id)));
     }
 
-    private Clusters mapCollection(List<VDSGroup> entities) {
+    protected Clusters mapCollection(List<VDSGroup> entities) {
         Clusters collection = new Clusters();
         for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
             collection.getClusters().add(addLinks(map(entity)));

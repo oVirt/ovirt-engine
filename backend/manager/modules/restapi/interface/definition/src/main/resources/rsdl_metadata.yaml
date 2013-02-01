@@ -1276,6 +1276,145 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
+  request:
+    body:
+      parameterType: Cluster
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
+        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
+        cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
+        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters|rel=add
+  request:
+    body:
+      parameterType: Cluster
+      signatures:
+      - mandatoryArguments: {cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
+        optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
+        cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
+        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
+        cluster.tunnel_migration: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
+  request:
+    body:
+      parameterType: Network
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
+  request:
+    body:
+      parameterType: Network
+      signatures:
+      - mandatoryArguments: {network.id|name: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+      - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/domains|rel=get
   request:
     body:
