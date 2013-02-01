@@ -305,6 +305,12 @@ def validateRemoteDB(param={}, options=[]):
 
 def validateFQDN(param, options=[]):
     logging.info("Validating %s as a FQDN"%(param))
+    # Ensure that it isn't an IP address.
+    if re.match("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", param):
+        logging.error(output_messages.ERR_CANT_USE_IP_AS_FQDN % (param))
+        print output_messages.ERR_CANT_USE_IP_AS_FQDN % (param)
+        return False
+
     if not validateDomain(param,options):
         return False
     try:
