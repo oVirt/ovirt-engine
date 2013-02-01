@@ -356,6 +356,13 @@ install -dm 755 %{buildroot}%{_sysconfdir}/rc.d/init.d
 ln -s %{engine_data}/service/engine-service.py %{buildroot}%{_sysconfdir}/rc.d/init.d/ovirt-engine
 %endif
 
+# backward compatibly (pre-3.3.0)
+# force rpm not to remove pki template files
+# as these used to be %config
+# these files are created empty in order to mark
+# them as %ghost
+touch %{buildroot}%{engine_pki}/cacert.template
+touch %{buildroot}%{engine_pki}/cert.template
 
 %preun
 if [ "$1" -eq 0 ]
@@ -532,6 +539,12 @@ fi
 %config(noreplace) %{engine_pki}/openssl.conf
 %config(noreplace) %{engine_pki}/cacert.template.in
 %config(noreplace) %{engine_pki}/cert.template.in
+
+# backward compatibly (pre-3.3.0)
+# force rpm not to remove pki template files
+# as these used to be %config
+%ghost %config(noreplace) %{engine_pki}/cacert.template
+%ghost %config(noreplace) %{engine_pki}/cert.template
 
 # The certificate database files:
 %config(noreplace) %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/database.txt
