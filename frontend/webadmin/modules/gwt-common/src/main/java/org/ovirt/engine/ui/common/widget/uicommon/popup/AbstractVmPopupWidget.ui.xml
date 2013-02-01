@@ -182,23 +182,12 @@
             padding-left: 2px;
         }
         
-        .prestartedLabelWithHelp {
+        .prestartedLabelWithHelp,.increasePrestartedLabel {
         	float: left;
-        	width: 251px;
         }
 
-        .increasePrestartedLabel {
-        	float: left;
-        	width: 251px;
-        }
-        
-        .eidtPrestartedVms {
-        	float: left;
-        	width: 230px;
-        }
-        
-        .eidtIncreaseVms {
-        	float: left;
+        .editPrestartedVms,.editIncreaseVms {
+            float: right;
         	width: 230px;
         }
         
@@ -243,7 +232,7 @@
 									<g:Label ui:field="editPrestartedVmsLabel" addStyleNames="{style.prestartedLabel}" />
 									<d:InfoIcon ui:field="editPoolPrestartedVmsIcon" addStyleNames="{style.prestartedVmsIcon}" />
 								</g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.eidtPrestartedVms}">
+								<g:FlowPanel addStyleNames="{style.editPrestartedVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="editPrestartedVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:ValueLabel ui:field="outOfxInPool" />
 								</g:FlowPanel>
@@ -251,7 +240,7 @@
                             
                             <g:FlowPanel ui:field="editPoolIncraseNumOfVmsPanel" addStyleNames="{style.poolEditVms}">
 								<g:Label text="{constants.increaseNumberOfVMsInPoolBy}" addStyleNames="{style.increasePrestartedLabel}" />
-								<g:FlowPanel addStyleNames="{style.eidtIncreaseVms}">
+								<g:FlowPanel addStyleNames="{style.editIncreaseVms}">
 									<e:EntityModelTextBoxOnlyEditor ui:field="incraseNumOfVmsEditor" addStyleNames="{style.editPrestartedVmsEditor}" contentWidgetStyleName="{style.textBox}" />
 									<g:Label text="{constants.vms}" addStyleNames="{style.increaseVmsInPoolVms}" />
 								</g:FlowPanel>
