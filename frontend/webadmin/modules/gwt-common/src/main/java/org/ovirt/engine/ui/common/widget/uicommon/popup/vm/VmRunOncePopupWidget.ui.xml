@@ -110,7 +110,7 @@
 			width: 100%;
 		}
 
-<!-- 		DisclosurePanel header section -->
+		/* DisclosurePanel header section */
 		.panelStyle a[class=header] {
 			font-weight: bold;
 		}
