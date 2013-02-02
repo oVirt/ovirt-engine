@@ -6,14 +6,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
-    private static final long serialVersionUID = 521748509912037953L;
+    private static final long serialVersionUID = 7789482445091432555L;
 
     private Guid id = new Guid();
     private VMStatus status = VMStatus.Down;
     private String vm_ip;
     private String vm_host;
     private Integer vm_pid;
-    private java.util.Date vm_last_up_time;
     private Date lastStartTime;
     private String guest_cur_user_name;
     private String console_cur_user_name;
@@ -136,10 +135,6 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
                 * result
                 + ((lastStartTime == null) ? 0
                         : lastStartTime.hashCode());
-        result = prime
-                * result
-                + ((vm_last_up_time == null) ? 0 : vm_last_up_time
-                        .hashCode());
         result = prime * result
                 + ((vm_pid == null) ? 0 : vm_pid.hashCode());
         return result;
@@ -298,11 +293,6 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
             if (other.lastStartTime != null)
                 return false;
         } else if (!lastStartTime.equals(other.lastStartTime))
-            return false;
-        if (vm_last_up_time == null) {
-            if (other.vm_last_up_time != null)
-                return false;
-        } else if (!vm_last_up_time.equals(other.vm_last_up_time))
             return false;
         if (vm_pid == null) {
             if (other.vm_pid != null)
