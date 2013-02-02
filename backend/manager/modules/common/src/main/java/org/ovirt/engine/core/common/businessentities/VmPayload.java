@@ -37,9 +37,9 @@ public class VmPayload implements Serializable {
         Map<String, Object> payload = (Map<String, Object>)specParams.get(SpecParamsPayload);
         Map<String, Object> files = (Map<String, Object>)payload.get(SpecParamsFileType);
         // for now we use only one file and one content...
-        for (String key: files.keySet()) {
-            this.fileName = key;
-            this.content = files.get(key).toString();
+        for (Map.Entry<String, Object> entry : files.entrySet()) {
+            this.fileName = entry.getKey();
+            this.content = entry.getValue().toString();
         }
     }
 
