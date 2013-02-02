@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdsStatic implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
-    private final int HOST_DEFAULT_SPM_PRIORITY = 5;
+    private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
 
     private Guid id;
 
