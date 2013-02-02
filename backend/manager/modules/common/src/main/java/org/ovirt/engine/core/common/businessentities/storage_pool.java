@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Pattern;
@@ -15,8 +14,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
 public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> {
-
-    private static final long serialVersionUID = 8455998477522459262L;
+    private static final long serialVersionUID = -4707023591965221264L;
 
     private Guid id = new Guid();
 
@@ -50,8 +48,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
     // TODO this is a hack to get around how the old mappings were done
     // This will be redone in version 3.0 with proper relationship mapping
     private Set<VDSGroup> vdsGroups;
-
-    private List<StorageDomainStatic> domains;
 
     private Version version;
 
@@ -181,7 +177,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
         result = prime * result + ((LVER == null) ? 0 : LVER.hashCode());
         result = prime * result + ((compatibilityVersion == null) ? 0 : compatibilityVersion.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((domains == null) ? 0 : domains.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + masterDomainVersion;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -218,11 +213,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
             if (other.getcompatibility_version() != null)
                 return false;
         } else if (!getcompatibility_version().equals(other.getcompatibility_version()))
-            return false;
-        if (domains == null) {
-            if (other.domains != null)
-                return false;
-        } else if (!domains.equals(other.domains))
             return false;
         if (id == null) {
             if (other.id != null)
