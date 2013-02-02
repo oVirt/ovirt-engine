@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1578,7 +1579,11 @@ public class UnitVmModel extends Model {
         getKernel_parameters().setIsAvailable(getIsLinux_Unassign_UnknownOS());
 
         getDomain().setIsChangable(getIsWindowsOS());
-        getBehavior().updateTimeZone();
+        if (getTimeZone().getSelectedItem() == null) {
+            getBehavior().updateTimeZone();
+        } else {
+            getBehavior().updateTimeZone(((Entry<String, String>)getTimeZone().getSelectedItem()).getKey());
+        }
 
     }
 

@@ -145,6 +145,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     final int windowsTimezones = 0;
     final int generalTimezones = 1;
+    private boolean lastIsWinOS = false;
+    private String winTimezoneString;
+    private String generalTimezonesString;
 
     protected void updateTimeZone() {
         updateTimeZone(null);
@@ -176,6 +179,25 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void PostUpdateTimeZone(String selectedTimeZone)
     {
+        if (getModel().getIsWindowsOS() != lastIsWinOS) {
+            lastIsWinOS = getModel().getIsWindowsOS();
+            if (selectedTimeZone != null) {
+                if (getModel().getIsWindowsOS()) {
+                    generalTimezonesString = selectedTimeZone;
+                } else {
+                    winTimezoneString = selectedTimeZone;
+                }
+            }
+            selectedTimeZone = getModel().getIsWindowsOS() ? winTimezoneString : generalTimezonesString;
+        } else {
+            if (selectedTimeZone != null) {
+                if (getModel().getIsWindowsOS()) {
+                    winTimezoneString = selectedTimeZone;
+                } else {
+                    generalTimezonesString = selectedTimeZone;
+                }
+            }
+        }
         final int index = getModel().getIsWindowsOS() ? windowsTimezones : generalTimezones;
         getModel().getTimeZone().setItems(cachedTimeZones.get(index));
 
