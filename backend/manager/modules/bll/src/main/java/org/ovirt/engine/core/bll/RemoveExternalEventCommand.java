@@ -20,26 +20,25 @@ public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters
 
     @Override
     protected boolean canDoAction() {
-        boolean result = true;
         // check if such event exists
         AuditLog event = DbFacade.getInstance().getAuditLogDao().get(getParameters().getId());
         if (event == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND);
-            result = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_NOT_FOUND);
         }
         if (OVIRT.equalsIgnoreCase(event.getOrigin())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
-            result = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
         }
-        if (!event.getseverity().equals(AuditLogSeverity.ALERT)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION);
-            result = false;
+        if (event.getseverity() == AuditLogSeverity.ALERT) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION);
         }
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_EVENT);
-        }
-        return result;
+
+        return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__EXTERNAL_EVENT);
     }
 
     @Override
