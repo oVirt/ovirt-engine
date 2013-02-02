@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.Set;
-
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -14,7 +12,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
 public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> {
-    private static final long serialVersionUID = -4707023591965221264L;
+    private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id = new Guid();
 
@@ -44,10 +42,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
     private String LVER;
 
     private RecoveryMode recovery_mode = RecoveryMode.forValue(0);
-
-    // TODO this is a hack to get around how the old mappings were done
-    // This will be redone in version 3.0 with proper relationship mapping
-    private Set<VDSGroup> vdsGroups;
 
     private Version version;
 
@@ -184,7 +178,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
         result = prime * result + ((spmVdsId == null) ? 0 : spmVdsId.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + storagePoolType;
-        result = prime * result + ((vdsGroups == null) ? 0 : vdsGroups.hashCode());
         result = prime * result + ((storagePoolFormatType == null) ? 0 : storagePoolFormatType.hashCode());
         result = prime * result + ((quotaEnforcementType == null) ? 0 : quotaEnforcementType.hashCode());
         return result;
@@ -236,11 +229,6 @@ public class storage_pool extends IVdcQueryable implements BusinessEntity<Guid> 
         if (status != other.status)
             return false;
         if (storagePoolType != other.storagePoolType)
-            return false;
-        if (vdsGroups == null) {
-            if (other.vdsGroups != null)
-                return false;
-        } else if (!vdsGroups.equals(other.vdsGroups))
             return false;
         if (storagePoolFormatType == null) {
             if (other.storagePoolFormatType != null)
