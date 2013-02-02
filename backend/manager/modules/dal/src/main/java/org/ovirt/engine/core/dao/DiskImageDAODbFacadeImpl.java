@@ -103,16 +103,6 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 parameterSource);
     }
 
-    @Override
-    public List<DiskImage> getImagesByStorageId(Guid storageId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_id", storageId);
-
-        return getCallsHandler().executeReadList("GetImagesByStorageId",
-                DiskImageRowMapper.instance,
-                parameterSource);
-    }
-
     public List<DiskImage> getImagesWithNoDisk(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);

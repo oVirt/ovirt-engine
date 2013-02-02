@@ -155,13 +155,3 @@ LANGUAGE plpgsql;
 
 
 
-
-Create or replace FUNCTION GetImagesByStorageId(v_storage_id UUID)
-RETURNS SETOF images_storage_domain_view
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT images_storage_domain_view.*
-      FROM   images_storage_domain_view
-      WHERE  images_storage_domain_view.storage_id = v_storage_id;
-END; $procedure$
-LANGUAGE plpgsql;
