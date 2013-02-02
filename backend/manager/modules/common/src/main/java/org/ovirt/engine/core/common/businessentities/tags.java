@@ -29,8 +29,6 @@ public class tags implements Serializable {
 
     private TagsType type = TagsType.GeneralTag;
 
-    private LdapGroup userGroup;
-
     private List<tags> _children;
 
     public tags() {
@@ -205,9 +203,5 @@ public class tags implements Serializable {
     public void UpdateTag(tags from) {
         setdescription(from.getdescription());
         settag_name(from.gettag_name());
-    }
-
-    public LdapGroup getUserGroup() {
-        return userGroup;
     }
 }
