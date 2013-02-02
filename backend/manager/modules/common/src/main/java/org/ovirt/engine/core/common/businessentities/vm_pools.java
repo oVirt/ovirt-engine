@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.TimeSpan;
 public class vm_pools extends IVdcQueryable implements Serializable {
 
     private static final long serialVersionUID = -2176168998321713354L;
-    private final int DEFAULT_PRESTARTED_VMS = 0;
+    private static final int DEFAULT_PRESTARTED_VMS = 0;
 
     private Guid id;
 
