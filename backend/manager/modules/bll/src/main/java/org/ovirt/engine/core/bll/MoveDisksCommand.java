@@ -163,9 +163,12 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
 
         for (MoveOrCopyImageGroupParameters parameters : getParameters().getParametersList()) {
-            permissionList.add(new PermissionSubject(parameters.getImageId(),
-                    VdcObjectType.Disk,
-                    ActionGroup.CONFIGURE_DISK_STORAGE));
+            DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
+            if (diskImage != null) {
+                permissionList.add(new PermissionSubject(diskImage.getId(),
+                        VdcObjectType.Disk,
+                        ActionGroup.CONFIGURE_DISK_STORAGE));
+            }
         }
 
         return permissionList;
