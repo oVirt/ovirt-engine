@@ -67,6 +67,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -503,15 +504,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public IIrsServer getIrsProxy() {
             if (getmIrsProxy() == null) {
-                storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
+                final storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
                 // don't try to start spm on uninitialized pool
                 if (storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
-                    String host = TransactionSupport.executeInScope(TransactionScopeOption.Suppress, new TransactionMethod<String>() {
-                        @Override
-                        public String runInTransaction() {
-                            return gethostFromVds();
-                        }
-                    });
+                    String host =
+                            TransactionSupport.executeInScope(TransactionScopeOption.Suppress,
+                                    new TransactionMethod<String>() {
+                                        @Override
+                                        public String runInTransaction() {
+                                            return gethostFromVds();
+                                        }
+                                    });
 
                     if (host != null) {
                         int clientTimeOut = Config.<Integer> GetValue(ConfigValues.vdsTimeout) * 1000;
@@ -522,26 +525,29 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                         IrsServerConnector.class,
                                         Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
                         privatemIrsProxy = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
-                        Class[] inputTypes = new Class[] { storage_pool.class, boolean.class };
-                        Object[] inputParams = new Object[] { storagePool, _isSpmStartCalled };
-                        // TODO use thread pool
-                        SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "StorageEventOnTimer",
-                                inputTypes, inputParams, 0, TimeUnit.MILLISECONDS);
+                        runStoragePoolUpEvent(storagePool);
                     }
                 }
             }
             return getmIrsProxy();
         }
 
-        @OnTimerMethodAnnotation("StorageEventOnTimer")
-        public void StorageEventOnTimer(storage_pool storagePool, boolean _isSpmStartCalled) {
-            try {
-                if (DbFacade.getInstance().IsStoragePoolMasterUp(_storagePoolId)) {
-                    ResourceManager.getInstance().getEventListener().storagePoolUpEvent(storagePool, _isSpmStartCalled);
+        private void runStoragePoolUpEvent(final storage_pool storagePool) {
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (DbFacade.getInstance().IsStoragePoolMasterUp(_storagePoolId)) {
+                            ResourceManager.getInstance()
+                                    .getEventListener()
+                                    .storagePoolUpEvent(storagePool, _isSpmStartCalled);
+                        }
+                    } catch (RuntimeException exp) {
+                        log.error("Error in StoragePoolUpEvent - ", exp);
+                    }
+
                 }
-            } catch (RuntimeException exp) {
-                log.error("Error in StoragePoolUpEvent - ", exp);
-            }
+            });
         }
 
         /**
