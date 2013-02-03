@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.storage.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -14,36 +15,51 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.ExtendStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
-@SuppressWarnings("serial")
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
+
+    private static final long serialVersionUID = 5070823228078328883L;
+
+    protected ExtendSANStorageDomainCommand(Guid commandId) {
+        super(commandId);
+    }
+
     public ExtendSANStorageDomainCommand(T parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeCommand() {
-        setStorageDomainStatus(StorageDomainStatus.Locked, null);
-        for (LUNs lun : getParameters().getLunsList()) {
-            proceedLUNInDb(lun, getStorageDomain().getstorage_type(), getStorageDomain().getstorage());
-        }
-
+        executeInNewTransaction(new TransactionMethod<Void>() {
+            public Void runInTransaction() {
+                setStorageDomainStatus(StorageDomainStatus.Locked, getCompensationContext());
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
         boolean supportForceExtendVG = Config.<Boolean> GetValue(
-                ConfigValues.SupportForceExtendVG,  getStoragePool().getcompatibility_version().toString());
+                ConfigValues.SupportForceExtendVG, getStoragePool().getcompatibility_version().toString());
 
-        if (Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.ExtendStorageDomain,
-                        new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
-                                .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG))
-                .getSucceeded()) {
-            setStorageDomainStatus(StorageDomainStatus.Active, null);
-            setSucceeded(true);
-        }
+        runVdsCommand(VDSCommandType.ExtendStorageDomain,
+                new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
+                        .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG));
+        executeInNewTransaction(new TransactionMethod<Void>() {
+            public Void runInTransaction() {
+                for (LUNs lun : getParameters().getLunsList()) {
+                    proceedLUNInDb(lun, getStorageDomain().getstorage_type(), getStorageDomain().getstorage());
+                }
+
+                setStorageDomainStatus(StorageDomainStatus.Active, null);
+                getCompensationContext().resetCompensation();
+                return null;
+            }
+        });
+        setSucceeded(true);
     }
 
     @SuppressWarnings("unchecked")
