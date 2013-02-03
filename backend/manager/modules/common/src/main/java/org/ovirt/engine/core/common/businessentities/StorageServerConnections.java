@@ -186,8 +186,7 @@ public class StorageServerConnections implements Serializable {
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
         if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
-            returnValue = (!StringHelper.EqOp(getid(), "") && StringHelper.EqOp(getid(),
-                    ((StorageServerConnections) obj).getid()));
+            returnValue = (!"".equals(getid()) && StringHelper.EqOp(getid(), ((StorageServerConnections) obj).getid()));
         }
         return returnValue;
     }

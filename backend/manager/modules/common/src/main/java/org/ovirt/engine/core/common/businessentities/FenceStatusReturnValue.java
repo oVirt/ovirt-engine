@@ -22,7 +22,7 @@ public class FenceStatusReturnValue implements Serializable {
     private String _message;
 
     public String getMessage() {
-        return (StringHelper.EqOp(_message.toLowerCase(), "done")) ? "" : _message;
+        return ("done".equalsIgnoreCase(_message)) ? "" : _message;
     }
 
     public boolean getIsSucceeded() {

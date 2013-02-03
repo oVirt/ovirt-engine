@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class VdsOperationActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 4156122527623908516L;
@@ -23,7 +22,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VdsOperationActionParameters(VdsStatic vdsStatic, String rootPassword) {
         super(vdsStatic.getId());
-        if (StringHelper.EqOp(vdsStatic.getManagmentIp(), "")) {
+        if ("".equals(vdsStatic.getManagmentIp())) {
             vdsStatic.setManagmentIp(null);
         }
         _vdsStatic = vdsStatic;
