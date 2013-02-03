@@ -47,7 +47,38 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
             return false;
         }
 
+        if (!isEmpty(iface.getBondName()) && !validateSlave(iface)) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("SLAVE_INTERFACE_IS_MISCONFIGURED").addConstraintViolation();
+            return false;
+        }
+
         return true;
     }
 
+    /**
+     * Validate the slave is configured properly by the following traits:
+     * <ul>
+     * <li>No network name</li>
+     * <li>No boot protocol: no address, subnet, gateway or boot protocol</li>
+     * <li>No vlan configured, either as part of the name or explicitly by {@link VdsNetworkInterface#getVlanId()}</li>
+     * </ul>
+     *
+     * @param slave
+     *            The network interface represents a slave
+     * @return {@code true} if the slave is configured properly.
+     */
+    private boolean validateSlave(VdsNetworkInterface slave) {
+        return (slave.getBootProtocol() == null || slave.getBootProtocol() == NetworkBootProtocol.NONE)
+                && isEmpty(slave.getNetworkName())
+                && isEmpty(slave.getAddress())
+                && isEmpty(slave.getSubnet())
+                && isEmpty(slave.getGateway())
+                && (slave.getName() == null || !slave.getName().contains("."))
+                && slave.getVlanId() == null;
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
 }

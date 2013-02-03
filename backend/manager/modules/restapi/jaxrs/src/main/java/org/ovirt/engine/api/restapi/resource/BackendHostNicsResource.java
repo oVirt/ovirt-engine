@@ -197,8 +197,12 @@ public class BackendHostNicsResource
     protected VdsNetworkInterface map(HostNIC entity, VdsNetworkInterface template) {
         VdsNetworkInterface iface = super.map(entity, template);
         if (entity.isSetNetwork()) {
-            org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(entity.getNetwork());
-            iface.setNetworkName(net.getName());
+            if (entity.getNetwork().isSetId() || entity.getNetwork().isSetName()) {
+                org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(entity.getNetwork());
+                iface.setNetworkName(net.getName());
+            } else {
+                iface.setNetworkName(null);
+            }
         }
         return iface;
     }
