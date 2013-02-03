@@ -23,7 +23,6 @@
 
 		<!-- Referenced directly by UICommon -->
 		<include name="compat/CompatException.java" />
-		<include name="compat/CultureInfo.java" />
 		<include name="compat/IntegerCompat.java" />
 		<include name="compat/RefObject.java" />
 		<include name="compat/KeyValuePairCompat.java" />
@@ -38,7 +37,6 @@
 
 		<include name="compat/DateTime.java" />
 		<include name="compat/DayOfWeek.java" />
-		<include name="compat/DateTimeStyles.java" />
 		<include name="compat/RegEx.java" />
 
 		<!-- Required by common->action->VdcActionParametersBase.java -->

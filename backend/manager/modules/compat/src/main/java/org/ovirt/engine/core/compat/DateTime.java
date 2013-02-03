@@ -150,10 +150,4 @@ public class DateTime extends Date {
     public static String getDayOfTheWeekAsString(int dayOfTheWeek) {
         return dayNames[dayOfTheWeek];
     }
-
-    public static boolean TryParseExact(String value, String string, Object dateTimeFormat, DateTimeStyles none,
-            RefObject<Date> tempRefObject) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
-    }
 }

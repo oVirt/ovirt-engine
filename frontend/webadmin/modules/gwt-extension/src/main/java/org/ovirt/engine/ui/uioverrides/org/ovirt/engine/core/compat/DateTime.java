@@ -82,19 +82,6 @@ public class DateTime extends Date {
     	return new Date(-7200000);
     }
     
-	public static boolean TryParseExact(String value, String string,
-			Object dateTimeFormat, DateTimeStyles none,
-			RefObject<Date> tempRefObject) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException(); //juicommon
-	}
-
-	public static Date ParseExact(String entity, String string,
-			CultureInfo currentCulture) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException(); //juicommon
-	}
-	
     public DateTime AddDays(int i) {
         Date date = new Date();
         CalendarUtil.addDaysToDate(date, i);
