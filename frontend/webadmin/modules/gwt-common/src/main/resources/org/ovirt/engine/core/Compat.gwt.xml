@@ -27,7 +27,6 @@
 		<include name="compat/CompatException.java" />
 		<include name="compat/CultureInfo.java" />
 		<include name="compat/IntegerCompat.java" />
-		<include name="compat/NumberStyles.java" />
 		<include name="compat/RefObject.java" />
 		<include name="compat/KeyValuePairCompat.java" />
 		<include name="compat/NotImplementedException.java" />

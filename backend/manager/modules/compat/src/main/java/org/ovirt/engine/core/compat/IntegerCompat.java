@@ -20,12 +20,6 @@ public class IntegerCompat {
         }
     }
 
-    public static boolean TryParse(String value, NumberStyles integer, CultureInfo currentCulture,
-            RefObject<Integer> tempRefObject) {
-        // TODO Auto-generated method stub
-        throw new NotImplementedException(); // juicommon
-    }
-
     // public static boolean TryParse(String value, int test) {
     // throw new
     // NotImplementedException("See the try parse which takes in a refobject");

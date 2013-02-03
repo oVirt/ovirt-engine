@@ -14,10 +14,4 @@ public class LongCompat {
             return null;
         }
     }
-
-    public static long parseLong(String parseRangePart, NumberStyles style) {
-        int radix = (style == NumberStyles.HexNumber) ? 16 : 10;
-        return Long.parseLong(parseRangePart, radix);
-    }
-
 }
