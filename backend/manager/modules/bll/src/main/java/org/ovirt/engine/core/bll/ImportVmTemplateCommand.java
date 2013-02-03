@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -175,10 +174,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 domainMap.put(getStorageDomain(), sz);
             }
             for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
-                retVal = StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue());
-                if (!retVal) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
-                    break;
+                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
+                    return false;
                 }
             }
         }

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
@@ -33,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -147,8 +147,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
         // check destination storage have free space
         int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize();
-        if (!StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), sizeInGB)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+        if (!doesStorageDomainhaveSpaceForRequest(getStorageDomain(), sizeInGB)) {
             return false;
         }
 
@@ -173,6 +172,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         return true;
+    }
+
+    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long sizeRequested) {
+        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
     }
 
     @Override

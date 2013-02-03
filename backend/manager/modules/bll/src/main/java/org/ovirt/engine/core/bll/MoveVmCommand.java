@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -111,12 +111,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
     }
 
     private boolean destinationHasSpace() {
-        if (!StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(),
-                (int) getVm().getActualDiskWithSnapshotsSize())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
-            return false;
-        }
-        return true;
+        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest((long) getVm().getActualDiskWithSnapshotsSize()));
     }
 
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {

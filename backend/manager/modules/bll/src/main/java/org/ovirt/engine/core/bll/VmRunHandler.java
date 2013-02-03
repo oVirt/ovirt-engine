@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -167,9 +167,8 @@ public class VmRunHandler {
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
                             }
 
-                            if (retValue && isStatelessVm && !hasSpaceForSnapthosts(vm)) {
-                                retValue = false;
-                                message.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW.name());
+                            if (retValue && isStatelessVm && !hasSpaceForSnapthosts(vm, message)) {
+                                return false;
                             }
 
                             retValue = retValue == false ? retValue : vdsSelector.canFindVdsToRunOn(message, false);
@@ -198,16 +197,30 @@ public class VmRunHandler {
      * @param vm
      * @return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
-    public boolean hasSpaceForSnapthosts(VM vm) {
+    public boolean hasSpaceForSnapthosts(VM vm, ArrayList<String> message) {
         Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
         for (Entry<storage_domains, Integer> e : mapStorageDomainsToNumOfDisks(vm).entrySet()) {
-            if (!StorageDomainSpaceChecker.hasSpaceForRequest(e.getKey(),
-                    minSnapshotSize * e.getValue())) {
-                log.error("not enough space to create snapshot on domain " + e.getKey().getId());
+            if (!destinationHasSpace(e.getKey(), minSnapshotSize * e.getValue(), message)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean destinationHasSpace(storage_domains storageDomain, long sizeRequested, ArrayList<String> message) {
+        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested), message);
+    }
+
+    protected boolean validate(ValidationResult validationResult, ArrayList<String> message) {
+        if (!validationResult.isValid()) {
+            message.add(validationResult.getMessage().name());
+            if (validationResult.getVariableReplacements() != null) {
+                for (String variableReplacement : validationResult.getVariableReplacements()) {
+                    message.add(variableReplacement);
+                }
+            }
+        }
+        return validationResult.isValid();
     }
 
     /**

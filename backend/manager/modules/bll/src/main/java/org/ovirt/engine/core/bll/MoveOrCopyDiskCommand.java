@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -171,7 +170,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean doesStorageDomainHaveSpaceForRequest(long size) {
-        return StorageDomainSpaceChecker.hasSpaceForRequest(getStorageDomain(), size);
+        return validate(new StorageDomainValidator(getStorageDomain()).isDomainHasSpaceForRequest(size));
     }
 
     protected boolean checkIfNeedToBeOverride() {

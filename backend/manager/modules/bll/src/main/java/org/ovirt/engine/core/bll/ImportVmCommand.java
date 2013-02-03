@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.command.utils.StorageDomainSpaceChecker;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -338,8 +337,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
 
         for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
-            if (!StorageDomainSpaceChecker.hasSpaceForRequest(entry.getKey(), entry.getValue())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW);
+            if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
+                return false;
             }
         }
 
