@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class VmTemplate extends VmBase implements Nameable {
     private static final long serialVersionUID = -522552511046744989L;
@@ -120,9 +119,7 @@ public class VmTemplate extends VmBase implements Nameable {
     }
 
     public void setname(String value) {
-        if (!StringHelper.EqOp(this.name, value)) {
-            this.name = value;
-        }
+        this.name = value;
     }
 
     public VmTemplateStatus getstatus() {

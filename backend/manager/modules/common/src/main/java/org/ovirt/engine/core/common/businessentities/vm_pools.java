@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
 
 public class vm_pools extends IVdcQueryable implements Serializable {
@@ -248,9 +247,7 @@ public class vm_pools extends IVdcQueryable implements Serializable {
     }
 
     public void setvm_pool_name(String value) {
-        if (!StringHelper.EqOp(this.name, value)) {
-            this.name = value;
-        }
+        this.name = value;
     }
 
     public int getvm_assigned_count() {

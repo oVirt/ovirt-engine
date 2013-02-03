@@ -248,9 +248,7 @@ public class DbUser extends IVdcQueryable {
     }
 
     public void setname(String value) {
-        if (!StringHelper.EqOp(this.name, value)) {
-            this.name = value;
-        }
+        this.name = value;
     }
 
     public String getnote() {
