@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
+@CustomLogFields({ @CustomLogField("InterfaceName"), @CustomLogField("InterfaceType") })
 public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicParameters> extends VmCommand<T> {
 
     private VmDevice vmDevice;
@@ -69,11 +72,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         return vmNetworkInterface == null ? null : vmNetworkInterface.getNetworkName();
     }
 
+    public String getInterfaceName() {
+        return vmNetworkInterface.getName();
+    }
+
+    public String getInterfaceType() {
+        return VmInterfaceType.forValue(vmNetworkInterface.getType()).getDescription();
+    }
+
     @Override
     protected void executeVmCommand() {
-        AddCustomValue("InterfaceName", vmNetworkInterface.getName());
-        AddCustomValue("InterfaceType", VmInterfaceType.forValue(vmNetworkInterface.getType())
-                .getDescription());
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
             runVdsCommand(getParameters().getAction().getCommandType(),
