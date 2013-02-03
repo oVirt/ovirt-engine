@@ -35,6 +35,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 @SuppressWarnings("unused")
 public abstract class VmInterfaceModel extends Model
 {
+    public static String ENGINE_NETWORK_NAME;
+
     private boolean privateIsNew;
     private EntityModel privateName;
     private ListModel privateNetwork;
@@ -64,6 +66,10 @@ public abstract class VmInterfaceModel extends Model
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel)
     {
+        // get management network name
+        ENGINE_NETWORK_NAME =
+                (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+
         this.vm = vm;
         this.vmNicList = vmNicList;
         this.sourceModel = sourceModel;
@@ -437,15 +443,15 @@ public abstract class VmInterfaceModel extends Model
             public void OnSuccess(Object model1, Object result1)
             {
                 ArrayList<Network> networks = new ArrayList<Network>();
-                if (hotUpdateSupported) {
-                    networks.add(null);
-                }
                 for (Network a : (ArrayList<Network>) result1)
                 {
                     if (a.getCluster().getStatus() == NetworkStatus.OPERATIONAL && a.isVmNetwork())
                     {
                         networks.add(a);
                     }
+                }
+                if (hotUpdateSupported) {
+                    networks.add(null);
                 }
 
                 getNetwork().setItems(networks);

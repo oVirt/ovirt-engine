@@ -78,6 +78,12 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedNetwork(ArrayList<Network> networks) {
+        for (Network network : networks) {
+            if (ENGINE_NETWORK_NAME.equals(network.getName())) {
+                getNetwork().setSelectedItem(network);
+                return;
+            }
+        }
         getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
     }
 
