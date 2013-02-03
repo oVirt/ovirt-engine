@@ -92,7 +92,6 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
-        VmDeviceUtils.updateBootOrderInVmDevice(getVm().getStaticData());
         setSucceeded(true);
     }
 
@@ -103,6 +102,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             public Void runInTransaction() {
                 vmDevice.setIsPlugged(getParameters().getAction() == PlugAction.PLUG ? true : false);
                 getVmDeviceDao().update(vmDevice);
+                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
                 return null;
             }
         };
