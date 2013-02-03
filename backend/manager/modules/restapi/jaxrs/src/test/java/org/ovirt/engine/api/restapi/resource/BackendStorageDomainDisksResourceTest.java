@@ -1,16 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -20,16 +23,21 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDisksResource> {
+public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendStorageDomainDisksResource> {
+
+    protected static final Guid storagePoolId = new Guid("44444444-4444-4444-4444-444444444444");
 
     public BackendStorageDomainDisksResourceTest() {
-        super(new BackendDisksResource(), SearchType.Disk, "Disks : ");
+        super(new BackendStorageDomainDisksResource(GUIDS[3]), SearchType.Disk, "Disks : ");
     }
 
     @Override
@@ -41,18 +49,18 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
     protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
-        entity.setvolume_format(VolumeFormat.RAW);
+        entity.setvolumeFormat(VolumeFormat.RAW);
         entity.setDiskInterface(DiskInterface.VirtIO);
-        entity.setimageStatus(ImageStatus.OK);
-        entity.setvolume_type(VolumeType.Sparse);
+        entity.setImageStatus(ImageStatus.OK);
+        entity.setVolumeType(VolumeType.Sparse);
         entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);    }
 
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        entity.setread_rate(1);
-        entity.setwrite_rate(2);
+        entity.setReadRate(1);
+        entity.setWriteRate(2);
         entity.setReadLatency(3.0);
         entity.setWriteLatency(4.0);
         entity.setFlushLatency(5.0);
@@ -72,17 +80,54 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {"StorageDomainId"},
-                new Object[] {GUIDS[2]},
+                new Object[] {GUIDS[3]},
                 true,
                 true,
                 GUIDS[0],
-                asList(GUIDS[3]),
+                asList(storagePoolId),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                 VdcQueryType.GetDiskByDiskId,
                 GetDiskByDiskIdParameters.class,
                 new String[] {"DiskId"},
                 new Object[] {GUIDS[0]},
                 getEntity(0));
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Disk);
+        verifyModel((Disk)response.getEntity(), 0);
+        assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    @Test
+    public void testAddUnregistered() throws Exception {
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
+        setUpHttpHeaderExpectations("Expect", "201-created");
+        storage_pool storagePool = new storage_pool();
+        storagePool.setId(storagePoolId);
+        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+                StorageDomainQueryParametersBase.class,
+                new String[] {"StorageDomainId"},
+                new Object[] {GUIDS[3]},
+                Arrays.asList(storagePool));
+        setUpEntityQueryExpectations(VdcQueryType.GetUnregisteredDisk,
+                GetUnregisteredDiskQueryParameters.class,
+                new String[] {"DiskId", "StorageDomainId", "StoragePoolId"},
+                new Object[] {GUIDS[0], GUIDS[3], storagePoolId},
+                getEntity(0));
+        Disk model = getModel(0);
+        setUpCreationExpectations(VdcActionType.RegisterDisk,
+                RegisterDiskParameters.class,
+                new String[] {"DiskImage"},
+                new Object[] {getEntity(0)},
+                true,
+                true,
+                GUIDS[0],
+                VdcQueryType.GetDiskByDiskId,
+                GetDiskByDiskIdParameters.class,
+                new String[] {"DiskId"},
+                new Object[] {GUIDS[0]},
+                getEntity(0));
+        model.setId(GUIDS[0].toString());
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Disk);
@@ -102,11 +147,6 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Disk model = getModel(0);
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
-        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
-                VdcQueryParametersBase.class,
-                new String[] {},
-                new Object[] {},
-                getStorageDomains());
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {},
@@ -114,7 +154,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 true,
                 true,
                 GUIDS[0],
-                asList(GUIDS[3]),
+                asList(storagePoolId),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                 VdcQueryType.GetDiskByDiskId,
                 GetDiskByDiskIdParameters.class,
@@ -128,13 +168,73 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private Object getStorageDomains() {
-        List<storage_domains> sds = new LinkedList<storage_domains>();
-        storage_domains sd = new storage_domains();
-        sd.setstorage_name("Storage_Domain_1");
-        sd.setId(GUIDS[2]);
-        sds.add(sd);
-        return sds;
+    @Test
+    @Ignore
+    public void testQuery() throws Exception {
+    }
+
+    @Test
+    @Override
+    public void testList() throws Exception {
+        collection.setUriInfo(setUpBasicUriExpectations());
+
+        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
+        for (int i = 0; i < NAMES.length; i++) {
+            entities.add(getEntity(i));
+        }
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByStorageDomainId,
+                StorageDomainQueryParametersBase.class,
+                new String[] {"StorageDomainId"},
+                new Object[] {GUIDS[3]},
+                entities);
+        control.replay();
+        verifyCollection(getCollection());
+    }
+
+    @Test
+    public void testListUnregistered() throws Exception {
+        setUriInfo(addMatrixParameterExpectations(setUpBasicUriExpectations(), BackendStorageDomainDisksResource.UNREGISTERED_CONSTRAINT_PARAMETER));
+
+        storage_pool storagePool = new storage_pool();
+        storagePool.setId(storagePoolId);
+        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+                StorageDomainQueryParametersBase.class,
+                new String[] {"StorageDomainId"},
+                new Object[] {GUIDS[3]},
+                Arrays.asList(storagePool));
+
+        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
+        for (int i = 0; i < NAMES.length; i++) {
+            entities.add(getEntity(i));
+        }
+        setUpEntityQueryExpectations(VdcQueryType.GetUnregisteredDisks,
+                GetUnregisteredDisksQueryParameters.class,
+                new String[] {"StorageDomainId", "StoragePoolId"},
+                new Object[] {GUIDS[3], storagePoolId},
+                entities);
+        control.replay();
+        verifyCollection(getCollection());
+    }
+
+    @Test
+    @Override
+    @Ignore
+    public void testListFailure() throws Exception {
+
+    }
+
+    @Test
+    @Override
+    @Ignore
+    public void testListCrash() throws Exception {
+
+    }
+
+    @Test
+    @Override
+    @Ignore
+    public void testListCrashClientLocale() throws Exception {
+
     }
 
     static Disk getModel(int index) {

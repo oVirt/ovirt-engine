@@ -265,4 +265,18 @@ public class IrsServerWrapper implements IIrsServer {
         Map<String, Object> xmlRpcReturnValue = irsServer.upgradeStoragePool(storagePoolId, targetVersion);
         return new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
     }
+
+    @Override
+    public ImagesListReturnForXmlRpc getImagesList(String sdUUID) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.getImagesList(sdUUID);
+        ImagesListReturnForXmlRpc wrapper = new ImagesListReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
+    public UUIDListReturnForXmlRpc getVolumesList(String sdUUID, String spUUID, String imgUUID) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.getVolumesList(sdUUID, spUUID, imgUUID);
+        UUIDListReturnForXmlRpc wrapper = new UUIDListReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
 }

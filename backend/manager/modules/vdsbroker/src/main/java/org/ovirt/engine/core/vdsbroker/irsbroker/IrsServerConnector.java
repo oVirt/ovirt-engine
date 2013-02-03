@@ -104,4 +104,7 @@ public interface IrsServerConnector {
 
     public Map<String, Object> upgradeStoragePool(String storagePoolId, String targetVersion);
 
+    public Map<String, Object> getImagesList(String sdUUID);
+
+    public Map<String, Object> getVolumesList(String sdUUID, String spUUID, String imgUUID);
 }

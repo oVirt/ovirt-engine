@@ -91,4 +91,8 @@ public interface IIrsServer {
     GetVmsListReturnForXmlRpc getVmsList(String storagePoolId, String storageDomainId);
 
     StatusOnlyReturnForXmlRpc upgradeStoragePool(String storagePoolId, String targetVersion);
+
+    ImagesListReturnForXmlRpc getImagesList(String sdUUID);
+
+    UUIDListReturnForXmlRpc getVolumesList(String sdUUID, String spUUID, String imgUUID);
 }

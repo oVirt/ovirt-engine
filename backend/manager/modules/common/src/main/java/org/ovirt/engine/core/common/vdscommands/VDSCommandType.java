@@ -96,6 +96,8 @@ public enum VDSCommandType {
     VmReplicateDiskStart("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VmReplicateDiskFinish("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetImageDomainsList("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    GetImagesList("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    GetVolumesList("org.ovirt.engine.core.vdsbroker.irsbroker"),
     CreateVG("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVGList("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVGInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),

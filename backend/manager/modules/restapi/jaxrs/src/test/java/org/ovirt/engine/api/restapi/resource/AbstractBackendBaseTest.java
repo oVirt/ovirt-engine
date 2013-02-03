@@ -14,12 +14,15 @@ import java.util.Locale;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.easymock.IAnswer;
 import org.easymock.IMocksControl;
 import org.easymock.classextension.EasyMock;
+import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -156,6 +159,15 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(uriInfo.getPath()).andReturn(path).anyTimes();
 
         return uriInfo;
+    }
+
+    protected UriInfo addMatrixParameterExpectations(UriInfo mockUriInfo, String matrixParameter) {
+        MultivaluedMap<String, String> matrixParams = new MultivaluedMapImpl<String, String>();
+        matrixParams.put(matrixParameter, null);
+        PathSegment segment = control.createMock(PathSegment.class);
+        expect(segment.getMatrixParameters()).andReturn(matrixParams).anyTimes();
+        expect(mockUriInfo.getPathSegments()).andReturn(Arrays.asList(segment)).anyTimes();
+        return mockUriInfo;
     }
 
     protected <E> void setUpGetEntityExpectations(VdcQueryType query,

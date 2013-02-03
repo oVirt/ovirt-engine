@@ -22,7 +22,7 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[0];
 
     public BackendStorageDomainDiskResourceTest() {
-        super(new BackendStorageDomainDiskResource(DISK_ID.toString(), STORAGE_DOMAIN_ID.toString()));
+        super(new BackendStorageDomainDiskResource(DISK_ID.toString(), new BackendStorageDomainDisksResource(STORAGE_DOMAIN_ID)));
     }
 
     @Test
@@ -68,10 +68,10 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
     protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index, boolean noSD) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
-        entity.setvolume_format(VolumeFormat.RAW);
+        entity.setvolumeFormat(VolumeFormat.RAW);
         entity.setDiskInterface(DiskInterface.VirtIO);
-        entity.setimageStatus(ImageStatus.OK);
-        entity.setvolume_type(VolumeType.Sparse);
+        entity.setImageStatus(ImageStatus.OK);
+        entity.setVolumeType(VolumeType.Sparse);
         entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
@@ -81,12 +81,12 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
                 storages.add(GUIDS[i]);
             }
         }
-        entity.setstorage_ids(storages);
+        entity.setStorageIds(storages);
         return setUpStatisticalEntityExpectations(entity);
     }
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        entity.setread_rate(1);
-        entity.setwrite_rate(2);
+        entity.setReadRate(1);
+        entity.setWriteRate(2);
         entity.setReadLatency(3.0);
         entity.setWriteLatency(4.0);
         entity.setFlushLatency(5.0);

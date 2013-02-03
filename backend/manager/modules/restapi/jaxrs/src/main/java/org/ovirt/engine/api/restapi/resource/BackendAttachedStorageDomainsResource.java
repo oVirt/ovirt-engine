@@ -129,8 +129,7 @@ public class BackendAttachedStorageDomainsResource
         return model;
     }
 
-    @Override
-    public String[] getLinksToExclude(storage_domains storageDomain) {
+    public String[] getLinksToExclude(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
         return isIsoDomain(storageDomain) ? new String[] { "disks" }
                                             :
                                             new String[] {};

@@ -2969,13 +2969,15 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   request:
@@ -3011,7 +3013,8 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-    urlparams: {}
+    urlparams:
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
@@ -3025,13 +3028,15 @@ actions:
       search: {context: query, type: 'xs:string', value: query, required: false}
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required:false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   request:
@@ -3067,7 +3072,8 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
-    urlparams: {}
+    urlparams:
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}

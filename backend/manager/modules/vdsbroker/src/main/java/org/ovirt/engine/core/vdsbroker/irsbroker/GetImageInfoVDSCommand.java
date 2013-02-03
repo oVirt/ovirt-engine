@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -108,6 +110,14 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             }
             if (xmlRpcStruct.contains("image")) {
                 newImage.setimage_group_id(new Guid(xmlRpcStruct.getItem("image").toString()));
+            }
+            if (xmlRpcStruct.contains("type")) {
+                newImage.setVolumeType(EnumUtils.valueOf(VolumeType.class, xmlRpcStruct.getItem("type").toString(),
+                        true));
+            }
+            if (xmlRpcStruct.contains("format")) {
+                newImage.setvolumeFormat(EnumUtils.valueOf(VolumeFormat.class, xmlRpcStruct.getItem("format")
+                        .toString(), true));
             }
         } catch (RuntimeException ex) {
             log.errorFormat("irsBroker::buildImageEntity::Failed building DIskImage");

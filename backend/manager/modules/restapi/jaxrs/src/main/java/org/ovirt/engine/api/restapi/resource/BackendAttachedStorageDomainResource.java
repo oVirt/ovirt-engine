@@ -21,8 +21,8 @@ public class BackendAttachedStorageDomainResource
 
     protected Guid dataCenterId;
 
-    public BackendAttachedStorageDomainResource(String id, Guid dataCenterId) {
-        super(id, StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+    public BackendAttachedStorageDomainResource(String id, Guid dataCenterId, String... subCollections) {
+        super(id, StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, subCollections);
         this.dataCenterId = dataCenterId;
     }
 
@@ -68,7 +68,7 @@ public class BackendAttachedStorageDomainResource
     @Override
     protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
-    } 
+    }
 
     @Override
     public DisksResource getDisksResource() {
