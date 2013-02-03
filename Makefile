@@ -248,6 +248,7 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	@install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains
@@ -311,7 +312,6 @@ install_setup:
 	install -m 644 packaging/fedora/setup/add_fn_db_get_async_tasks_function.sql $(DESTDIR)$(DATA_DIR)/scripts
 
 	# Install man pages
-	install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
 	install -m 644 packaging/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
 	install -m 644 packaging/engine-upgrade.8 $(DESTDIR)$(MAN_DIR)/man8/
 

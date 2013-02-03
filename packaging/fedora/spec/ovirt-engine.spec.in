@@ -784,6 +784,7 @@ fi
 %{_bindir}/engine-manage-domains
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-manage-domains.sh
+%{_mandir}/man8/engine-manage-domains.*
 
 # Configuration files for the configuration tool:
 %dir %{engine_etc}/engine-config
