@@ -16,7 +16,6 @@
 		<include name="compat/Guid.java" />
 		<include name="compat/NGuid.java" />
 		<include name="compat/Serializable.java" />
-		<include name="compat/LongCompat.java" />
 		<include name="compat/DoubleCompat.java" />
 		<include name="compat/ApplicationException.java" />
 		<!-- Required by common's utils -->

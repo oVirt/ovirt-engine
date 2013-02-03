@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -720,11 +719,10 @@ public class VdsBrokerObjectsBuilder {
                                                      // need int.
                 stringValue = stringValue.split("[.]", -1)[0];
             }
-            final Long dec = LongCompat.tryParse(stringValue);
-            if (dec == null) {
+            try {
+                return Long.parseLong(stringValue);
+            } catch (NumberFormatException e) {
                 log.errorFormat("Failed to parse {0} value {1} to long", name, stringValue);
-            } else {
-                return dec;
             }
         }
         return null;

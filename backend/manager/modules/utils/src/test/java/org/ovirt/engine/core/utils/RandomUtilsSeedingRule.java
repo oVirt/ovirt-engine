@@ -2,7 +2,6 @@ package org.ovirt.engine.core.utils;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -22,11 +21,12 @@ public class RandomUtilsSeedingRule extends TestWatcher {
     @Override
     public void starting(Description description) {
         String seedProperty = System.getProperty(RANDOM_SEED_PROPERTY);
-        Long seed = LongCompat.tryParse(seedProperty);
-        if (seed == null) {
-            log.infoFormat
-                    ("Property \"{0}\" was not set, using System.currentTimeMillis() as a seed.",
-                            RANDOM_SEED_PROPERTY);
+        Long seed;
+        try {
+            seed = Long.parseLong(seedProperty);
+        } catch (NumberFormatException e) {
+            log.infoFormat("Property \"{0}\" was not set, using System.currentTimeMillis() as a seed.",
+                    RANDOM_SEED_PROPERTY);
             seed = System.currentTimeMillis();
         }
         RandomUtils.instance().setSeed(seed);

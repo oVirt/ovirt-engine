@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -513,10 +512,9 @@ public class VdsFenceOptions implements Serializable {
                         }
                     }
                     else if (type.equalsIgnoreCase(LONG)) {
-                        final Long longVal = LongCompat.tryParse(fencingAgentInstanceOptions
-                                .get(key));
-                        if (longVal != null) {
-                            result = longVal;
+                        try {
+                            result = Long.parseLong(fencingAgentInstanceOptions.get(key));
+                        } catch (NumberFormatException e) {
                         }
                     }
                     else if (type.equalsIgnoreCase(DOUBLE)) {
