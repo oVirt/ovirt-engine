@@ -689,7 +689,7 @@ public class ManageDomains {
             users.setValueForDomain(domain, constructUPN(currUserName, domain));
             try {
                 log.info("Testing kerberos configuration for domain: " + domain);
-                List<String> ldapServersPerDomain = ldapServersPerDomainMap.get(ldapServers);
+                List<String> ldapServersPerDomain = ldapServersPerDomainMap.get(domain);
                 KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapServersPerDomain, ldapServerPort);
                 StringBuffer userGuid = new StringBuffer();
                 kerberosConfigCheck.checkInstallation(domain,
