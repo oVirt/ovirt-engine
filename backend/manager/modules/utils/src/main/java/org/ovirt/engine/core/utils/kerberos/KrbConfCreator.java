@@ -121,7 +121,8 @@ public class KrbConfCreator {
             }
 
             // populate domain realms by domains
-            if (!useDnsLookup && line.matches(DOMAIN_REALM_SECTION)) {
+            //In case useDnsLookup is true
+            if (!(useDnsLookup  && realms.size() == 1) && line.matches(DOMAIN_REALM_SECTION)) {
                 line = appendDomainRealms(realms);
                 log.debug("setting domain realm");
             }
