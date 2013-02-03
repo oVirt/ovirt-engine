@@ -282,21 +282,20 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && checkStoragePool()
-                && CheckStoragePoolStatusNotEqual(StoragePoolStatus.Up,
-                                                  VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        if (!returnValue) {
+        if (!super.canDoAction() ||
+                !checkStoragePool() ||
+                !CheckStoragePoolStatusNotEqual(StoragePoolStatus.Up,
+                        VdcBllMessages.ERROR_CANNOT_REMOVE_ACTIVE_STORAGE_POOL)) {
             return false;
         }
+
         if (getStoragePool().getstatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()
                 && !InitializeVds()) {
             return false;
         }
+
         final List<storage_domains> poolDomains =
-                DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
-                        getStoragePool().getId());
+                getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
         final List<storage_domains> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
@@ -316,13 +315,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
                 }
             }
-            final List<VmStatic> vms =
-                    DbFacade.getInstance().getVmStaticDao().getAllByStoragePoolId(getStoragePool().getId());
-            if (vms.size() > 0) {
+            final List<VmStatic> vms = getVmStaticDAO().getAllByStoragePoolId(getStoragePool().getId());
+            if (!vms.isEmpty()) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_VMS);
             }
-        }
-        else {
+        } else {
             List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
 
             sharedLocks = new HashMap<String, String>();
@@ -330,7 +327,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 sharedLocks.put(host.getId().toString(), LockingGroup.VDS.name());
             }
 
-            if (poolHosts != null && !poolHosts.isEmpty() && acquireLockInternal()) {
+            if (!poolHosts.isEmpty() && acquireLockInternal()) {
                 for (VDS host : poolHosts) {
                     if (host.getstatus() != VDSStatus.Maintenance) {
                         return failCanDoAction(VdcBllMessages.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
@@ -340,6 +337,12 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         return true;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
     }
 
     protected List<storage_domains> getActiveOrLockedDomainList(List<storage_domains> domainsList) {
