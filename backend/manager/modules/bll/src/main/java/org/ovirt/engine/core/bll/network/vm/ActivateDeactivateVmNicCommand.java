@@ -39,33 +39,29 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
-
-        if (activateDeactivateVmNicAllowed(getVm().getStatus())) {
-            // HotPlug in the host needs to be called only if the Vm is UP
-            if (hotPlugVmNicRequired(getVm().getStatus())) {
-                setVdsId(getVm().getRunOnVds().getValue());
-                returnValue = canPerformHotPlug();
-                if (returnValue && (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId()))) {
-                    addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
-                    returnValue = false;
-                }
-            }
-        } else {
+        if (!activateDeactivateVmNicAllowed(getVm().getStatus())) {
             addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
-            returnValue = false;
+            return false;
         }
 
-        if (returnValue) {
-            vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
-            vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
-            if (vmDevice == null || vmNetworkInterface == null) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+        // HotPlug in the host needs to be called only if the Vm is UP
+        if (hotPlugVmNicRequired(getVm().getStatus())) {
+            setVdsId(getVm().getRunOnVds().getValue());
+            if (canPerformHotPlug()
+                    && (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId()))) {
+                addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
+                return false;
             }
         }
 
-        return returnValue;
+        vmDevice = getVmDeviceDao().get(new VmDeviceId(getParameters().getNicId(), getParameters().getVmId()));
+        vmNetworkInterface = getVmNetworkInterfaceDao().get(getParameters().getNicId());
+        if (vmDevice == null || vmNetworkInterface == null) {
+            addCanDoActionMessage(VdcBllMessages.VM_INTERFACE_NOT_EXIST);
+            return false;
+        }
+
+        return true;
     }
 
     private String getNetworkName() {
