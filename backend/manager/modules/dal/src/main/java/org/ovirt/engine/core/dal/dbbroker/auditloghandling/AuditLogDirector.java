@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.DictionaryEntry;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.ResXResourceReader;
@@ -714,7 +714,7 @@ public final class AuditLogDirector {
 
     private static void initMessages() {
         ResXResourceReader reader = new ResXResourceReader("bundles/AuditLogMessages");
-        for (DictionaryEntry entry : reader) {
+        for (Entry<String, Object> entry : reader) {
             try {
                 AuditLogType type = AuditLogType.valueOf(entry.getKey());
                 if (!mMessages.containsKey(type)) {

@@ -1,16 +1,19 @@
 package org.ovirt.engine.core.compat.backendcompat;
 
+import java.util.AbstractMap;
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.LinkedList;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.ovirt.engine.core.compat.ApplicationException;
 
-import org.ovirt.engine.core.compat.CompatException;
-import org.ovirt.engine.core.compat.DictionaryEntry;
+public class ResXResourceReader extends LinkedList<Entry<String, Object>> {
 
-public class ResXResourceReader extends LinkedList<DictionaryEntry> {
+    private static final long serialVersionUID = -1668354571890766752L;
     private Log log = LogFactory.getLog(ResXResourceReader.class);
 
     // Although this is ResXReader the assumption is that the
@@ -18,16 +21,16 @@ public class ResXResourceReader extends LinkedList<DictionaryEntry> {
     public ResXResourceReader(String appErrorsFileName) {
         try {
             ResourceBundle bundle = ResourceBundle.getBundle(appErrorsFileName);
-            Enumeration keys = bundle.getKeys();
+            Enumeration<String> keys = bundle.getKeys();
             while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
+                String key = keys.nextElement();
                 String value = bundle.getString(key);
-                DictionaryEntry entry = new DictionaryEntry(key, value);
+                Entry<String, Object> entry = new AbstractMap.SimpleEntry<String, Object>(key, value);
                 this.addLast(entry);
             }
         } catch (MissingResourceException e) {
             log.error("Could not load the resources for " + appErrorsFileName);
-            throw new CompatException(e);
+            throw new ApplicationException(e);
         }
     }
 
