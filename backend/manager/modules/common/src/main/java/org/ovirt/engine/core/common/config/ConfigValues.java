@@ -1363,7 +1363,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    MigrationSupportForNativeUsb(416),
+    MigrationSupportForNativeUsb(417),
 
     Invalid(65535);
 
