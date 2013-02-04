@@ -202,7 +202,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                 }
                 setStoragePool(dataCenter);
                 // show quota
-                if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
+                if (dataCenter != null && dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
                     hasQuota = true;
                 }
                 if (hasQuota) {
