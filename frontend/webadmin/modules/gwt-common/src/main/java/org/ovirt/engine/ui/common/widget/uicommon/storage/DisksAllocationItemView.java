@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -16,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
@@ -100,19 +100,9 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     void initEditors() {
         volumeTypeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
 
-        storageListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
+        storageListEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
 
-        sourceStorageListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
+        sourceStorageListEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
 
         quotaListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override

@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
@@ -441,7 +442,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 storage_domains selectedStorageDomain = null;
                 if (importData != null && importData.getStorageDomains() != null) {
                     for (storage_domains storageDomain : importData.getStorageDomains()) {
-                        storageDomainsNameList.add(storageDomain.getstorage_name());
+                        storageDomainsNameList.add(
+                                new StorageDomainFreeSpaceRenderer<storage_domains>().render(storageDomain));
                         if (importData.getSelectedStorageDomain() != null) {
                             if (storageDomain.getId().equals(importData.getSelectedStorageDomain().getId())) {
                                 selectedStorageDomain = storageDomain;
@@ -452,7 +454,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 ((CustomSelectionCell) getCell()).setOptions(storageDomainsNameList);
                 if (!storageDomainsNameList.isEmpty()) {
                     if (selectedStorageDomain != null) {
-                        return selectedStorageDomain.getstorage_name();
+                        return new StorageDomainFreeSpaceRenderer<storage_domains>().render(selectedStorageDomain);
                     } else {
                         return storageDomainsNameList.get(0);
                     }
@@ -536,12 +538,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 return ((Quota) object).getQuotaName();
             }
         });
-        destStorageEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
+        destStorageEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
     }
 
     private void initCheckboxes() {

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
@@ -30,6 +29,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
@@ -246,12 +246,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void initManualWidgets() {
-        storageDomainEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
+        storageDomainEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
 
         hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
