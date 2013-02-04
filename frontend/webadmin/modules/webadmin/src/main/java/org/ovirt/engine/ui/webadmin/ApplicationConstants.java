@@ -658,13 +658,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume Details")
     String clusterVolumesLabel();
 
-    @DefaultStringValue("No. Of Volumes")
+    @DefaultStringValue("Total No. Of Volumes")
     String clusterVolumesTotalLabel();
 
-    @DefaultStringValue("Up")
+    @DefaultStringValue("No. Of Volumes Up")
     String clusterVolumesUpLabel();
 
-    @DefaultStringValue("Down")
+    @DefaultStringValue("No. Of Volumes Down")
     String clusterVolumesDownLabel();
 
     @DefaultStringValue("Policy:")
@@ -2529,4 +2529,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
     String consolePartiallyOverridden();
+
+    @DefaultStringValue("Use Threads as CPU")
+    String cpuThreadsCluster();
+
+    @DefaultStringValue("Max Memory Over Commitment")
+    String memoryOptimizationCluster();
+
+    @DefaultStringValue("Resilience Policy")
+    String resiliencePolicyCluster();
+
+    @DefaultStringValue("High Priority Only")
+    String highPriorityOnly();
+
+    @DefaultStringValue("Compatibility Version")
+    String compatibilityVersionCluster();
+
+    @DefaultStringValue("Cluster Node Type")
+    String clusterType();
 }

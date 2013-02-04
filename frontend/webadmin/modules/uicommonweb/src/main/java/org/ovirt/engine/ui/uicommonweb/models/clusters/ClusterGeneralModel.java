@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
+import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -135,6 +136,16 @@ public class ClusterGeneralModel extends EntityModel {
         detachNewGlusterHostsCommand = value;
     }
 
+    private String name;
+    private String description;
+    private String cpuName;
+    private String dataCenterName;
+    private String compatibilityVersion;
+    private int memoryOverCommit;
+    private MigrateOnErrorOptions resiliencePolicy;
+    private boolean cpuThreads;
+    private ClusterType clusterType;
+
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
         if (this.consoleAddressPartiallyOverridden != consoleAddressPartiallyOverridden) {
             this.consoleAddressPartiallyOverridden = consoleAddressPartiallyOverridden;
@@ -223,9 +234,24 @@ public class ClusterGeneralModel extends EntityModel {
             UpdateVolumeDetails();
             updateAlerts();
             updateConsoleAddressPartiallyOverridden(getEntity());
+            updateProperties();
         }
 
         UpdateActionAvailability();
+    }
+
+    private void updateProperties() {
+        VDSGroup vdsGroup = getEntity();
+
+        setName(vdsGroup.getname());
+        setDescription(vdsGroup.getdescription());
+        setCpuName(vdsGroup.getcpu_name());
+        setDataCenterName(vdsGroup.getStoragePoolName());
+        setMemoryOverCommit(vdsGroup.getmax_vds_memory_over_commit());
+        setCpuThreads(vdsGroup.getCountThreadsAsCores());
+        setResiliencePolicy(vdsGroup.getMigrateOnError());
+        setCompatibilityVersion(vdsGroup.getcompatibility_version().getValue());
+        generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
     }
 
     private void updateConsoleAddressPartiallyOverridden(VDSGroup cluster) {
@@ -534,5 +560,90 @@ public class ClusterGeneralModel extends EntityModel {
         {
             Cancel();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCpuName() {
+        return cpuName;
+    }
+
+    public void setCpuName(String cpuName) {
+        this.cpuName = cpuName;
+    }
+
+    public String getDataCenterName() {
+        return dataCenterName;
+    }
+
+    public void setDataCenterName(String dataCenterName) {
+        this.dataCenterName = dataCenterName;
+    }
+
+    public Integer getMemoryOverCommit() {
+        return memoryOverCommit;
+    }
+
+    public void setMemoryOverCommit(int memoryOverCommit) {
+        this.memoryOverCommit = memoryOverCommit;
+    }
+
+    public MigrateOnErrorOptions getResiliencePolicy() {
+        return resiliencePolicy;
+    }
+
+    public void setResiliencePolicy(MigrateOnErrorOptions resiliencePolicy) {
+        this.resiliencePolicy = resiliencePolicy;
+    }
+
+    public boolean getCpuThreads() {
+        return cpuThreads;
+    }
+
+    public void setCpuThreads(boolean cpuThreads) {
+        this.cpuThreads = cpuThreads;
+    }
+
+    public String getCompatibilityVersion() {
+        return compatibilityVersion;
+    }
+
+    public void setCompatibilityVersion(String compatibilityVersion) {
+        this.compatibilityVersion = compatibilityVersion;
+    }
+
+    public ClusterType getClusterType() {
+        return clusterType;
+    }
+
+    private void generateClusterType(boolean supportGluster, boolean supportVirt) {
+        if (supportGluster) {
+            if (supportVirt) {
+                clusterType = ClusterType.BOTH;
+            } else {
+                clusterType = ClusterType.GLUSTER;
+            }
+        } else if (supportVirt) {
+            clusterType = ClusterType.VIRT;
+        }
+    }
+
+
+    public static enum ClusterType {
+        GLUSTER, VIRT, BOTH
     }
 }

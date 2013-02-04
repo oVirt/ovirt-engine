@@ -1140,4 +1140,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Collapse Snapshots")
     String collapseSnapshots();
 
+    @DefaultStringValue("High Priority Only")
+    String highPriorityOnly();
+
+    @DefaultStringValue("Virt")
+    String virt();
+
+    @DefaultStringValue("Gluster")
+    String gluster();
 }

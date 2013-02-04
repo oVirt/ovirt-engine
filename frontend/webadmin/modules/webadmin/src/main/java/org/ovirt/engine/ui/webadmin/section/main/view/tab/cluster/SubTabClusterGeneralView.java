@@ -8,10 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
-import org.ovirt.engine.ui.common.widget.form.FormItem;
-import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.form.Slider;
-import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -35,7 +32,6 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
@@ -54,6 +50,10 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     // to find the icon for alert messages:
     private final ApplicationResources resources;
+
+    @UiField(provided = true)
+    @Ignore
+    ClusterGeneralModelForm form;
 
     @UiField
     HorizontalPanel policyPanel;
@@ -95,21 +95,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     @Ignore
     AbsolutePanel sliderPanel;
 
-    @UiField
-    VerticalPanel volumeSummaryPanel;
-
-    @UiField
-    GeneralFormPanel volumeFormPanel;
-
     FormBuilder formBuilder;
-
-    @UiField
-    @Ignore
-    Label volumeHeaderLabel;
-
-    TextBoxLabel noOfVolumesTotal = new TextBoxLabel();
-    TextBoxLabel noOfVolumesUp = new TextBoxLabel();
-    TextBoxLabel noOfVolumesDown = new TextBoxLabel();
 
     @UiField
     HTMLPanel alertsPanel;
@@ -129,6 +115,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
         // Inject a reference to the resources:
         this.resources = resources;
+        this.form = new ClusterGeneralModelForm(modelProvider, constants);
 
         initSliders();
         initLabels();
@@ -149,7 +136,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
         localize(constants);
         Driver.driver.initialize(this);
-        buildVolumeDetailsPanel();
     }
 
     private void localize(ApplicationConstants constants) {
@@ -157,7 +143,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         maxServiceLevelLabel.setText(constants.clusterPolicyMaxServiceLevelLabel());
         editPolicyButton.setLabel(constants.clusterPolicyEditPolicyButtonLabel());
         policyLabel.setText(constants.clusterPolicyPolicyLabel());
-        volumeHeaderLabel.setText(constants.clusterVolumesLabel());
     }
 
     private void initDummyPanel() {
@@ -198,17 +183,10 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         }
     }
 
-    private void buildVolumeDetailsPanel() {
-        formBuilder = new FormBuilder(volumeFormPanel, 1, 3);
-        formBuilder.addFormItem(new FormItem(constants.clusterVolumesTotalLabel(), noOfVolumesTotal, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.clusterVolumesUpLabel(), noOfVolumesUp, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 0));
-    }
 
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
         Driver.driver.edit(getDetailModel());
-        formBuilder.showForm(getDetailModel());
         if(selectedItem.supportsVirtService())
         {
             if (selectedItem.getselection_algorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
@@ -233,8 +211,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         }
 
         policyPanel.setVisible(selectedItem.supportsVirtService());
-        volumeSummaryPanel.setVisible(selectedItem.supportsGlusterService());
-
+        form.update();
     }
 
     @Override
