@@ -47,6 +47,16 @@
     <url-pattern>/rhevm.ssh.key.txt</url-pattern>
   </servlet-mapping>
 
+  <!-- Servlet to serve config files for console client -->
+  <servlet>
+    <servlet-name>GetAttachmentServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.GetAttachmentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetAttachmentServlet</servlet-name>
+    <url-pattern>/getAttachment</url-pattern>
+  </servlet-mapping>
+
   <!-- Documentation: -->
   <servlet>
     <servlet-name>docs</servlet-name>

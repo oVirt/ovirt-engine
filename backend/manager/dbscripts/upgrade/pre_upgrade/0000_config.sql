@@ -498,6 +498,8 @@ select fn_db_add_config_value('WaitForVdsInitInSec','60','general');
 select fn_db_add_config_value('NetworkConnectivityCheckTimeoutInSeconds','120','general');
 -- AutoRecoveryConfiguration
 select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\"true\",\"hosts\":\"true\"}','general');
+-- Client console mode settings (Auto, Native, Plugin)
+select fn_db_add_config_value('ClientConsoleModeDefault','Auto','general');
 -- Gluster refresh rates (in seconds)
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');

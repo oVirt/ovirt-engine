@@ -1404,6 +1404,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     SpiceProxyDefault(420),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("Auto")
+    ClientConsoleModeDefault(501),
+
     Invalid(65535);
 
     private int intValue;

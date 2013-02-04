@@ -25,6 +25,7 @@ public enum ConfigurationValues {
     SpiceReleaseCursorKeys(ConfigAuthType.User),
     SpiceToggleFullScreenKeys(ConfigAuthType.User),
     SpiceProxyDefault(ConfigAuthType.User),
+    ClientConsoleModeDefault(ConfigAuthType.User),
     HighUtilizationForEvenlyDistribute(ConfigAuthType.User),
     SpiceUsbAutoShare(ConfigAuthType.User),
     ImportDefaultPath,
