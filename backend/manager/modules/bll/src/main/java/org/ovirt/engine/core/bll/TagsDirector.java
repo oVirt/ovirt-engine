@@ -92,7 +92,7 @@ public class TagsDirector {
     }
 
     /**
-     * Recurcive tree initialization call
+     * Recursive tree initialization call
      *
      * @param tag
      */
@@ -225,7 +225,7 @@ public class TagsDirector {
      *
      * @param tagId
      *            the tag ID.
-     * @return a comma seperated list of IDs.
+     * @return a comma separated list of IDs.
      */
     public String GetTagIdAndParentsIds(Guid tagId) {
         tags tag = GetTagById(tagId);
@@ -237,7 +237,7 @@ public class TagsDirector {
      *
      * @param tagName
      *            the tag name.
-     * @return a comma seperated list of IDs.
+     * @return a comma separated list of IDs.
      */
     public String GetTagIdAndParentsIds(String tagName) {
         tags tag = GetTagByName(tagName);

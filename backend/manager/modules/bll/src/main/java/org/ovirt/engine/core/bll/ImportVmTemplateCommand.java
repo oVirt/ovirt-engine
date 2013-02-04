@@ -226,7 +226,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
      * @param storageType
      *            The domain type.
      * @param image
-     *            The image to check and cheange if needed.
+     *            The image to check and change if needed.
      */
     private void changeRawToCowIfSparseOnBlockDevice(StorageType storageType, DiskImage image) {
         if ((storageType == StorageType.FCP

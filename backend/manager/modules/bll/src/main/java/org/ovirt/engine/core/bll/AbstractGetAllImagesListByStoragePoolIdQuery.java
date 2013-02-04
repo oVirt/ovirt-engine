@@ -19,7 +19,7 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
 
     @Override
     protected Guid getStorageDomainId() {
-        if (doesUserHavePemissionsOnStoragePool()) {
+        if (doesUserHavePermissionsOnStoragePool()) {
             return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
         }
         return null;
@@ -37,7 +37,7 @@ public abstract class AbstractGetAllImagesListByStoragePoolIdQuery<P extends Get
      * Checks if the user have query permissions on the storage <b>pool</b>.
      * @return <code>true</code> if the user has permissions on the storage pool, <code>false</code> if not.
      */
-    private boolean doesUserHavePemissionsOnStoragePool() {
+    private boolean doesUserHavePermissionsOnStoragePool() {
         storage_pool pool =
                 getDbFacade().getStoragePoolDao().get(getStoragePoolId(),
                         getUserID(),

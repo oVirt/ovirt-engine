@@ -56,7 +56,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVmStatus,
                             new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down));
-            // Write that this VM was shut down by host rebbot or manual fence
+            // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
                 LogSettingVmToDown(getVds().getId(), vm.getId());
             }

@@ -74,8 +74,8 @@ public class VdsHandler extends BaseHandler {
         return mUpdateVdsStatic.IsUpdateValid(source, distination, status);
     }
 
-    public static boolean IsFieldsUpdated(VdsStatic source, VdsStatic distination, Iterable<String> list) {
-        return mUpdateVdsStatic.IsFieldsUpdated(source, distination, list);
+    public static boolean IsFieldsUpdated(VdsStatic source, VdsStatic destination, Iterable<String> list) {
+        return mUpdateVdsStatic.IsFieldsUpdated(source, destination, list);
     }
 
     public static void HandleVdsCpuFlagsOrClusterChanged(Guid vdsId) {

@@ -195,7 +195,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return new SnapshotsValidator();
     }
 
-    /** Checks if the iamge's configuration is legal */
+    /** Checks if the image's configuration is legal */
     protected boolean checkImageConfiguration() {
         return ImagesHandler.CheckImageConfiguration(
                 getStorageDomain().getStorageStaticData(),

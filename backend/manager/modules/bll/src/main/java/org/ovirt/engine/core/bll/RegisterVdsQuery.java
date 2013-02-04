@@ -237,7 +237,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         if (ret == null || !ret.getSucceeded()) {
                             log.errorFormat("Approval of oVirt {0} failed. ", params.getVdsId());
                         } else if (ret.getSucceeded()) {
-                            log.infoFormat("Approval of oVirt {0} ended successefully. ", params.getVdsId());
+                            log.infoFormat("Approval of oVirt {0} ended successfully. ", params.getVdsId());
                         }
                     } catch (RuntimeException ex) {
                         log.error("Failed to Approve host", ex);

@@ -834,7 +834,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return -1;
     }
 
-    // function return the index of image that is it's chiled
+    // function return the index of image that is its child
     private static int getNextImage(List<DiskImage> images, DiskImage curr) {
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getParentId().equals(curr.getImageId())) {

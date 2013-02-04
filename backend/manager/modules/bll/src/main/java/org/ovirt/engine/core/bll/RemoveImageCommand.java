@@ -163,7 +163,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     /**
      * this method returns the vm that a non shareable disk is attached to
-     * or null is the disk is unttached to any vm,
+     * or null is the disk is unattached to any vm,
      * @param disk
      * @return
      */

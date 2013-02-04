@@ -55,7 +55,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
             log.infoFormat("Deleting snapshots for stateless vm {0}", vm.getId());
             VmOperationParameterBase restoreParams = new VmOperationParameterBase(vm.getId());
 
-            // setting RestoreStatelessVm to run in new transaction so it could rollback internaly if needed,
+            // setting RestoreStatelessVm to run in new transaction so it could rollback internally if needed,
             // but still not affect this command, in order to keep permissions changes even on restore failure
             restoreParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm, restoreParams,

@@ -91,7 +91,7 @@ public class DbUserCacheManager {
      *            list of changed users.
      */
     private void updateDBUserFromADUser(DbUser dbUser, LdapUser ldapUser, HashSet<Guid> updatedUsers) {
-        boolean succeded = false;
+        boolean succeeded = false;
 
         if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
                 || (!ldapUser.getUserId().equals(dbUser.getuser_id()))) {
@@ -99,57 +99,57 @@ public class DbUserCacheManager {
                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                         dbUser.getname());
                 dbUser.setstatus(0);
-                succeded = true;
+                succeeded = true;
             }
         } else {
             if (dbUser.getstatus() == 0) {
                 log.warnFormat("Inactive User {0} found in directory server, its status switched to Active",
                         dbUser.getname());
                 dbUser.setstatus(1);
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getname(), ldapUser.getName())) {
                 dbUser.setname(ldapUser.getName());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getsurname(), ldapUser.getSurName())) {
                 dbUser.setsurname(ldapUser.getSurName());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getdomain(), ldapUser.getDomainControler())) {
                 dbUser.setdomain(ldapUser.getDomainControler());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getusername(), ldapUser.getUserName())) {
                 dbUser.setusername(ldapUser.getUserName());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getgroups(), ldapUser.getGroup())) {
                 dbUser.setgroups(ldapUser.getGroup());
-                succeded = true;
+                succeeded = true;
                 updatedUsers.add(dbUser.getuser_id());
             }
             if (!StringUtils.equals(dbUser.getdepartment(), ldapUser.getDepartment())) {
                 dbUser.setdepartment(ldapUser.getDepartment());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getrole(), ldapUser.getTitle())) {
                 dbUser.setrole(ldapUser.getTitle());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getemail(), ldapUser.getEmail())) {
                 dbUser.setemail(ldapUser.getEmail());
-                succeded = true;
+                succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getGroupIds(), ldapUser.getGroupIds())) {
                 dbUser.setGroupIds(ldapUser.getGroupIds());
-                succeded = true;
+                succeeded = true;
             }
-            if (succeded) {
+            if (succeeded) {
                 dbUser.setstatus(dbUser.getstatus() + 1);
             }
         }
-        if (succeded) {
+        if (succeeded) {
             DbFacade.getInstance().getDbUserDao().update(dbUser);
         } else {
         }
@@ -206,7 +206,7 @@ public class DbUserCacheManager {
                     } else {
                         for (DbUser dbUser : usersForDomain) {
                             if (dbUser.getstatus() != 0) {
-                                log.warnFormat("User {0} not found in directory sevrer, its status switched to InActive",
+                                log.warnFormat("User {0} not found in directory server, its status switched to InActive",
                                         dbUser.getname());
                                 dbUser.setstatus(AsyncTaskStatusEnum.unknown.getValue());
                                 DbFacade.getInstance().getDbUserDao().update(dbUser);
@@ -247,7 +247,7 @@ public class DbUserCacheManager {
                 StringBuilder logMsg = new StringBuilder();
                 logMsg.append("domain name for ad group ")
                         .append(group.getname())
-                        .append(" is null. This should not occur, please check that domain name is passed corectly from client");
+                        .append(" is null. This should not occur, please check that domain name is passed correctly from client");
                 log.warn(logMsg.toString());
                 String partAfterAtSign = group.getname().split("[@]", -1)[1];
                 String newDomainName = partAfterAtSign;

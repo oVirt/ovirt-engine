@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 
 /**
- * This command is reponsible for removing a template image.
+ * This command is responsible for removing a template image.
  */
 @InternalCommandAttribute
 public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
