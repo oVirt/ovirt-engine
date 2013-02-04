@@ -410,8 +410,8 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         setPropertyChangedEvent(new Event(ProvidePropertyChangedEvent.Definition));
 
         // Resolve commonly used types.
-        setConfigurator((Configurator) TypeResolver.getInstance().Resolve(Configurator.class));
-        setLogger((ILogger) TypeResolver.getInstance().Resolve(ILogger.class));
+        setConfigurator(lookupConfigurator());
+        setLogger(lookupLogger());
 
         setInvalidityReasons(new ObservableCollection<String>());
         setIsValid(true);
@@ -423,6 +423,14 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         setIsSelectable(true);
 
         setCommands(new ObservableCollection<UICommand>());
+    }
+
+    protected ILogger lookupLogger() {
+        return (ILogger) TypeResolver.getInstance().Resolve(ILogger.class);
+    }
+
+    protected Configurator lookupConfigurator() {
+        return (Configurator) TypeResolver.getInstance().Resolve(Configurator.class);
     }
 
     /**
