@@ -54,7 +54,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
             }
             if ((list = DbFacade.getInstance().getVmPoolDao().getAll()).size() > 0) {
                 for (VmPool pool : list) {
-                    if (pool.getvds_group_id().equals(getVdsGroup().getId())) {
+                    if (pool.getVdsGroupId().equals(getVdsGroup().getId())) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);
                         returnValue = false;
                         break;

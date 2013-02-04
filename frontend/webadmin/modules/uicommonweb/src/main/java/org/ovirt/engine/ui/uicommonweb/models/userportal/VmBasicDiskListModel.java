@@ -103,7 +103,7 @@ public class VmBasicDiskListModel extends SearchableListModel
 
             VmPool pool = (VmPool) getEntity();
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                    new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                    new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }
     }

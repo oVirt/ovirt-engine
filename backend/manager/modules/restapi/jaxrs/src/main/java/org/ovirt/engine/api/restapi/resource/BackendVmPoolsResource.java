@@ -58,7 +58,7 @@ public class BackendVmPoolsResource
         }
 
         org.ovirt.engine.core.common.businessentities.VmPool entity = map(pool);
-        entity.setvm_pool_type(VmPoolType.Automatic);
+        entity.setVmPoolType(VmPoolType.Automatic);
 
         VM vm = mapToVM(pool, template);
 

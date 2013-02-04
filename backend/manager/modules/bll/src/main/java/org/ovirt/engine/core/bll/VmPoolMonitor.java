@@ -39,7 +39,7 @@ public class VmPoolMonitor {
      * @param vmPool
      */
     private void managePrestartedVmsInPool(VmPool vmPool) {
-        Guid vmPoolId = vmPool.getvm_pool_id();
+        Guid vmPoolId = vmPool.getVmPoolId();
         int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId);
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
         if (missingPrestartedVms > 0) {

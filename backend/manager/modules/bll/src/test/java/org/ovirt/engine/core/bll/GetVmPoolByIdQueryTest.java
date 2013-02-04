@@ -20,7 +20,7 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<GetVmPoolByIdP
     public void testExecuteQuery() {
         Guid vmPoolID = Guid.NewGuid();
         VmPool expectedResult = new VmPool();
-        expectedResult.setvm_pool_id(vmPoolID);
+        expectedResult.setVmPoolId(vmPoolID);
 
         GetVmPoolByIdParameters paramsMock = getQueryParameters();
         when(paramsMock.getPoolId()).thenReturn(vmPoolID);

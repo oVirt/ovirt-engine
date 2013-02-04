@@ -252,7 +252,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
             VmPool pool = (VmPool) entity;
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                    new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                    new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
                     _asyncQuery);
         }
     }
@@ -291,12 +291,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             for (VmPool pool : getpools())
             {
                 // Add pool to map.
-                poolMap.put(pool.getvm_pool_id(), pool);
+                poolMap.put(pool.getVmPoolId(), pool);
 
                 boolean found = false;
                 for (VM vm : getvms())
                 {
-                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getvm_pool_id()))
+                    if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId()))
                     {
                         found = true;
                         break;

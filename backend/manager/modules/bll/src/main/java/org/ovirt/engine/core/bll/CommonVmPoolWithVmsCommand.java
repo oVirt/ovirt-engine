@@ -166,7 +166,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         } catch (RuntimeException e) {
             log.errorFormat("Failed to create command context of adding VM {0} to Pool {1}",
                     currentVmName,
-                    getParameters().getVmPool().getvm_pool_name(),
+                    getParameters().getVmPool().getVmPoolName(),
                     e);
         }
         return commandCtx;
@@ -179,7 +179,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     protected boolean canDoAction() {
-        VDSGroup grp = getVdsGroupDAO().get(getParameters().getVmPool().getvds_group_id());
+        VDSGroup grp = getVdsGroupDAO().get(getParameters().getVmPool().getVdsGroupId());
         if (grp == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
@@ -189,9 +189,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getvm_pool_name());
+        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getVmPoolName());
         if (pool != null
-                && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getvm_pool_id().equals(
+                && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_CREATE_DUPLICATE_NAME);
             return false;
@@ -230,7 +230,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getvm_assigned_count()) {
+        if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
             return false;
         }

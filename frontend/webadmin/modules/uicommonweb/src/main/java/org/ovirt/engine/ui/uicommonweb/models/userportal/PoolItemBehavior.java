@@ -68,7 +68,7 @@ public class PoolItemBehavior extends ItemBehavior
     {
         VmPool entity = (VmPool) getItem().getEntity();
 
-        Frontend.RunAction(VdcActionType.AttachUserToVmFromPoolAndRun, new VmPoolUserParameters(entity.getvm_pool_id(),
+        Frontend.RunAction(VdcActionType.AttachUserToVmFromPoolAndRun, new VmPoolUserParameters(entity.getVmPoolId(),
                 Frontend.getLoggedInUser(),
                 false),
                 new IFrontendActionAsyncCallback() {
@@ -106,19 +106,19 @@ public class PoolItemBehavior extends ItemBehavior
     {
         VmPool entity = (VmPool) getItem().getEntity();
 
-        getItem().setName(entity.getvm_pool_name());
-        getItem().setDescription(entity.getvm_pool_description());
+        getItem().setName(entity.getVmPoolName());
+        getItem().setDescription(entity.getVmPoolDescription());
         getItem().setIsPool(true);
         getItem().setIsServer(false);
         getItem().setStatus(VMStatus.Down);
         getItem().setIsFromPool(false);
-        getItem().setPoolType(entity.getvm_pool_type());
-        if (poolToOsType.containsKey(entity.getvm_pool_id())) {
-            getItem().setOsType(poolToOsType.get(entity.getvm_pool_id()));
+        getItem().setPoolType(entity.getVmPoolType());
+        if (poolToOsType.containsKey(entity.getVmPoolId())) {
+            getItem().setOsType(poolToOsType.get(entity.getVmPoolId()));
         }
 
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(entity.getvm_pool_id()),
+                new GetVmdataByPoolIdParameters(entity.getVmPoolId()),
                 new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
@@ -134,7 +134,7 @@ public class PoolItemBehavior extends ItemBehavior
                                     UserPortalItemModel model = behavior.getItem();
                                     model.setOsType(vm.getVmOs());
                                     model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
-                                    poolToOsType.put(((VmPool) model.getEntity()).getvm_pool_id(), vm.getVmOs());
+                                    poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), vm.getVmOs());
                                 }
 
                             }

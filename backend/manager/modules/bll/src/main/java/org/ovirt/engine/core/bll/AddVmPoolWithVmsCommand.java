@@ -57,7 +57,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
         DbFacade.getInstance().getVmPoolDao().save(vmPool);
 
-        return vmPool.getvm_pool_id();
+        return vmPool.getVmPoolId();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         VmPool vmPool = getParameters().getVmPool();
         String vmPoolName;
         if (vmPool != null) {
-            vmPoolName = vmPool.getvm_pool_name();
+            vmPoolName = vmPool.getVmPoolName();
         } else {
             vmPoolName = "";
         }

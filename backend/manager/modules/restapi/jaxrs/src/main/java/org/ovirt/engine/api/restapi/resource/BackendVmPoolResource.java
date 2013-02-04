@@ -100,7 +100,7 @@ public class BackendVmPoolResource
         @Override
         public VdcActionParametersBase getParameters(VmPool incoming,
                 org.ovirt.engine.core.common.businessentities.VmPool current) {
-            int currentVmCount = current.getvm_assigned_count();
+            int currentVmCount = current.getAssignedVmsCount();
             org.ovirt.engine.core.common.businessentities.VmPool entity = map(incoming, current);
 
             VM vm = mapToVM(map(entity));

@@ -26,13 +26,13 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected Guid getPoolId() {
         getVmPoolDAO().update(getVmPool());
-        return getVmPool().getvm_pool_id();
+        return getVmPool().getVmPoolId();
     }
 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
-        VmPool oldPool = getVmPoolDAO().get(getVmPool().getvm_pool_id());
+        VmPool oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
         if (returnValue && oldPool == null) {
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
             returnValue = false;

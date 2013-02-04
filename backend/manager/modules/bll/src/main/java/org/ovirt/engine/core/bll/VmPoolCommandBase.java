@@ -53,7 +53,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     public String getVmPoolName() {
-        return getVmPool() != null ? getVmPool().getvm_pool_name() : null;
+        return getVmPool() != null ? getVmPool().getVmPoolName() : null;
     }
 
     @Override

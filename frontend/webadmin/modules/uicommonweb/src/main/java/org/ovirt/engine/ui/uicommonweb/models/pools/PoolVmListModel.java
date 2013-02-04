@@ -68,7 +68,7 @@ public class PoolVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Vms: pool=" + getEntity().getvm_pool_name()); //$NON-NLS-1$
+            setSearchString("Vms: pool=" + getEntity().getVmPoolName()); //$NON-NLS-1$
             super.Search();
         }
     }
@@ -105,7 +105,7 @@ public class PoolVmListModel extends VmListModel
         Collections.sort(list);
         model.setItems(list);
 
-        if (list.size() == getEntity().getvm_assigned_count()) {
+        if (list.size() == getEntity().getAssignedVmsCount()) {
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangable(true);
             model.setNote(ConstantsManager.getInstance().getConstants().detachAllVmsWarning());

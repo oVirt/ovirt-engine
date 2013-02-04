@@ -119,7 +119,7 @@ public class PoolListModel extends ListWithDetailsModel
             Object[] keys = new Object[getSelectedItems().size()];
             for (int i = 0; i < getSelectedItems().size(); i++)
             {
-                keys[i] = ((VmPool) getSelectedItems().get(i)).getvm_pool_id();
+                keys[i] = ((VmPool) getSelectedItems().get(i)).getVmPoolId();
             }
             return keys;
         }
@@ -248,7 +248,7 @@ public class PoolListModel extends ListWithDetailsModel
         final PoolListModel poolListModel = this;
 
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
 
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
@@ -264,7 +264,7 @@ public class PoolListModel extends ListWithDetailsModel
                                 for (Object item : model.getPoolType().getItems())
                                 {
                                     EntityModel a = (EntityModel) item;
-                                    if (a.getEntity() == pool.getvm_pool_type())
+                                    if (a.getEntity() == pool.getVmPoolType())
                                     {
                                         model.getPoolType().setSelectedItem(a);
                                         break;
@@ -322,11 +322,11 @@ public class PoolListModel extends ListWithDetailsModel
                         model.setHashName("edit_pool"); //$NON-NLS-1$
                         model.setVmType(VmType.Desktop);
                         model.Initialize(null);
-                        model.getName().setEntity(pool.getvm_pool_name());
-                        model.getDescription().setEntity(pool.getvm_pool_description());
-                        model.getAssignedVms().setEntity(pool.getvm_assigned_count());
+                        model.getName().setEntity(pool.getVmPoolName());
+                        model.getDescription().setEntity(pool.getVmPoolDescription());
+                        model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
                         model.getPrestartedVms().setEntity(pool.getPrestartedVms());
-                        model.setPrestartedVmsHint("0-" + pool.getvm_assigned_count()); //$NON-NLS-1$
+                        model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
                     }
                 }));
     }
@@ -361,7 +361,7 @@ public class PoolListModel extends ListWithDetailsModel
         ArrayList<String> list = new ArrayList<String>();
         for (VmPool item : Linq.<VmPool> Cast(getSelectedItems()))
         {
-            list.add(item.getvm_pool_name());
+            list.add(item.getVmPoolName());
         }
         model.setItems(list);
 
@@ -388,7 +388,7 @@ public class PoolListModel extends ListWithDetailsModel
         for (Object item : getSelectedItems())
         {
             VmPool pool = (VmPool) item;
-            list.add(new VmPoolParametersBase(pool.getvm_pool_id()));
+            list.add(new VmPoolParametersBase(pool.getVmPoolId()));
         }
 
         model.StartProgress(null);
@@ -438,7 +438,7 @@ public class PoolListModel extends ListWithDetailsModel
                         Boolean isUnique = (Boolean) returnValue;
 
                         if ((model.getIsNew() && !isUnique)
-                                || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getvm_pool_name()) != 0)) {
+                                || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getVmPoolName()) != 0)) {
                             model.getName()
                                     .getInvalidityReasons()
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
@@ -448,13 +448,13 @@ public class PoolListModel extends ListWithDetailsModel
                         }
 
                         // Save changes.
-                        pool.setvm_pool_name((String) model.getName().getEntity());
-                        pool.setvm_pool_description((String) model.getDescription().getEntity());
-                        pool.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+                        pool.setVmPoolName((String) model.getName().getEntity());
+                        pool.setVmPoolDescription((String) model.getDescription().getEntity());
+                        pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         pool.setPrestartedVms(model.getPrestartedVms().AsConvertible().Integer());
 
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
-                        pool.setvm_pool_type((VmPoolType) poolTypeSelectedItem.getEntity());
+                        pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());
 
                         NGuid default_host;
                         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
@@ -600,7 +600,7 @@ public class PoolListModel extends ListWithDetailsModel
 
     private boolean hasVms(Object selectedItem) {
         if (selectedItem instanceof VmPool) {
-            return ((VmPool) selectedItem).getvm_assigned_count() != 0;
+            return ((VmPool) selectedItem).getAssignedVmsCount() != 0;
         }
         return false;
     }

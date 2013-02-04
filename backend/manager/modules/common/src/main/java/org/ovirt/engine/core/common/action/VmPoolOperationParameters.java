@@ -10,9 +10,9 @@ public class VmPoolOperationParameters extends VmPoolParametersBase {
     private VmPool _vmPool;
 
     public VmPoolOperationParameters(VmPool vm_pools) {
-        super(vm_pools.getvm_pool_id());
-        String tempVar = vm_pools.getvm_pool_description();
-        vm_pools.setvm_pool_description((tempVar != null) ? tempVar : "");
+        super(vm_pools.getVmPoolId());
+        String tempVar = vm_pools.getVmPoolDescription();
+        vm_pools.setVmPoolDescription((tempVar != null) ? tempVar : "");
         _vmPool = vm_pools;
     }
 

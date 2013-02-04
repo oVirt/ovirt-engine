@@ -13,22 +13,22 @@ public class VmPoolMapper {
         org.ovirt.engine.core.common.businessentities.VmPool entity =
                 template != null ? template : new org.ovirt.engine.core.common.businessentities.VmPool();
         if (model.isSetId()) {
-            entity.setvm_pool_id(new Guid(model.getId()));
+            entity.setVmPoolId(new Guid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setvm_pool_name(model.getName());
+            entity.setVmPoolName(model.getName());
         }
         if (model.isSetDescription()) {
-            entity.setvm_pool_description(model.getDescription());
+            entity.setVmPoolDescription(model.getDescription());
         }
         if (model.isSetSize()) {
-            entity.setvm_assigned_count(model.getSize());
+            entity.setAssignedVmsCount(model.getSize());
         }
         if (model.isSetCluster()) {
             if (model.getCluster().isSetId()) {
-                entity.setvds_group_id(new Guid(model.getCluster().getId()));
+                entity.setVdsGroupId(new Guid(model.getCluster().getId()));
             } else if (model.getCluster().isSetName()) {
-                entity.setvds_group_name(model.getCluster().getName());
+                entity.setVdsGroupName(model.getCluster().getName());
             }
         }
         if (model.isSetPrestartedVms()) {
@@ -56,15 +56,15 @@ public class VmPoolMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.VmPool.class, to = VmPool.class)
     public static VmPool map(org.ovirt.engine.core.common.businessentities.VmPool entity, VmPool template) {
         VmPool model = template != null ? template : new VmPool();
-        model.setId(entity.getvm_pool_id().toString());
-        model.setName(entity.getvm_pool_name());
-        model.setDescription(entity.getvm_pool_description());
-        model.setSize(entity.getvm_assigned_count());
+        model.setId(entity.getVmPoolId().toString());
+        model.setName(entity.getVmPoolName());
+        model.setDescription(entity.getVmPoolDescription());
+        model.setSize(entity.getAssignedVmsCount());
         model.setPrestartedVms(entity.getPrestartedVms());
-        if (entity.getvds_group_id() != null ||
-            entity.getvds_group_name() != null) {
+        if (entity.getVdsGroupId() != null ||
+            entity.getVdsGroupName() != null) {
             model.setCluster(new Cluster());
-            model.getCluster().setId(entity.getvds_group_id().toString());
+            model.getCluster().setId(entity.getVdsGroupId().toString());
         }
         return model;
     }

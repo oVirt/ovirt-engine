@@ -125,7 +125,7 @@ public class VmPool extends IVdcQueryable implements Serializable {
         return true;
     }
 
-    private void InitializedTimeLeasedDefaultData(String parameter) {
+    private void initializeTimeLeasedDefaultData(String parameter) {
         String[] values = parameter.split("[,]", -1);
         if (values.length == 3) {
             try {
@@ -144,8 +144,8 @@ public class VmPool extends IVdcQueryable implements Serializable {
         }
     }
 
-    public String getparameters() {
-        switch (getvm_pool_type()) {
+    public String getParameters() {
+        switch (getVmPoolType()) {
         case TimeLease: {
             return StringFormat.format("%1$s,%2$s:%3$s,%4$s:%5$s", defaultTimeInDays, defaultStartTime.Hours,
                     defaultStartTime.Minutes, defaultEndTime.Hours, defaultEndTime.Minutes);
@@ -157,10 +157,10 @@ public class VmPool extends IVdcQueryable implements Serializable {
 
     }
 
-    public void setparameters(String value) {
-        switch (getvm_pool_type()) {
+    public void setParameters(String value) {
+        switch (getVmPoolType()) {
         case TimeLease: {
-            InitializedTimeLeasedDefaultData(value);
+            initializeTimeLeasedDefaultData(value);
             break;
         }
         default: {
@@ -203,72 +203,72 @@ public class VmPool extends IVdcQueryable implements Serializable {
         this.prestartedVms = prestartedVms;
     }
 
-    public String getvm_pool_description() {
+    public String getVmPoolDescription() {
         return this.description;
     }
 
-    public void setvm_pool_description(String value) {
+    public void setVmPoolDescription(String value) {
         this.description = value;
     }
 
-    public Guid getvm_pool_id() {
+    public Guid getVmPoolId() {
         return this.id;
     }
 
-    public void setvm_pool_id(Guid value) {
+    public void setVmPoolId(Guid value) {
         this.id = value;
     }
 
-    public String getvm_pool_name() {
+    public String getVmPoolName() {
         return this.name;
     }
 
-    public void setvm_pool_name(String value) {
+    public void setVmPoolName(String value) {
         this.name = value;
     }
 
-    public int getvm_assigned_count() {
+    public int getAssignedVmsCount() {
         return vmPoolAssignedCount;
     }
 
-    public void setvm_assigned_count(int value) {
+    public void setAssignedVmsCount(int value) {
         vmPoolAssignedCount = value;
     }
 
-    public int getvm_running_count() {
+    public int getRunningVmsCount() {
         return vmPoolRunningCount;
     }
 
-    public void setvm_running_count(int value) {
+    public void setRunningVmsCount(int value) {
         vmPoolRunningCount = value;
     }
 
-    public VmPoolType getvm_pool_type() {
+    public VmPoolType getVmPoolType() {
         return type;
     }
 
-    public void setvm_pool_type(VmPoolType value) {
+    public void setVmPoolType(VmPoolType value) {
         this.type = value;
     }
 
-    public Guid getvds_group_id() {
+    public Guid getVdsGroupId() {
         return this.vdsGroupId;
     }
 
-    public void setvds_group_id(Guid value) {
+    public void setVdsGroupId(Guid value) {
         this.vdsGroupId = value;
     }
 
-    public String getvds_group_name() {
+    public String getVdsGroupName() {
         return this.vdsGroupName;
     }
 
-    public void setvds_group_name(String value) {
+    public void setVdsGroupName(String value) {
         this.vdsGroupName = value;
     }
 
     @Override
     public Object getQueryableId() {
-        return getvm_pool_id();
+        return getVmPoolId();
     }
 }

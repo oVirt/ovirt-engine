@@ -78,7 +78,7 @@ public final class Linq
             }
             if (obj instanceof VmPool)
             {
-                return ((VmPool) obj).getvm_pool_name();
+                return ((VmPool) obj).getVmPoolName();
             }
 
             throw new NotImplementedException();

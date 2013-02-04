@@ -14,7 +14,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         super(parameters);
         // set group id for logging and job
         if (getVmPool() != null) {
-            setVdsGroupId(getVmPool().getvds_group_id());
+            setVdsGroupId(getVmPool().getVdsGroupId());
         }
     }
 

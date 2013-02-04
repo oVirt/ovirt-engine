@@ -2742,7 +2742,7 @@ public final class AsyncDataProvider {
         }
         else if (entity instanceof VmPool)
         {
-            return ((VmPool) entity).getvm_pool_id();
+            return ((VmPool) entity).getVmPoolId();
         }
         else if (entity instanceof DbUser)
         {

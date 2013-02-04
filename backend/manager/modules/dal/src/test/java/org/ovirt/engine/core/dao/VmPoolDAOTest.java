@@ -40,13 +40,13 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
         deletableVmPool = dao.get(DELETABLE_VM_POOL_ID);
 
         newVmPool = new VmPool();
-        newVmPool.setvm_pool_name("New VM Pool");
-        newVmPool.setvm_pool_description("This is a new VM pool.");
-        newVmPool.setvds_group_id(VDS_GROUP_ID);
+        newVmPool.setVmPoolName("New VM Pool");
+        newVmPool.setVmPoolDescription("This is a new VM pool.");
+        newVmPool.setVdsGroupId(VDS_GROUP_ID);
 
         existingVmPoolMap = dao.getVmPoolMapByVmGuid(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         newVmPoolMap =
-                new VmPoolMap(FREE_VM_ID, existingVmPool.getvm_pool_id());
+                new VmPoolMap(FREE_VM_ID, existingVmPool.getVmPoolId());
     }
 
     @Test
@@ -79,28 +79,28 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetVmPool() {
-        VmPool result = dao.get(existingVmPool.getvm_pool_id());
+        VmPool result = dao.get(existingVmPool.getVmPoolId());
 
         assertGetResult(result);
     }
 
     @Test
     public void testGetFilteredWithPermissions() {
-        VmPool result = dao.get(existingVmPool.getvm_pool_id(), PRIVILEGED_USER_ID, true);
+        VmPool result = dao.get(existingVmPool.getVmPoolId(), PRIVILEGED_USER_ID, true);
 
         assertGetResult(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissions() {
-        VmPool result = dao.get(existingVmPool.getvm_pool_id(), UNPRIVILEGED_USER_ID, true);
+        VmPool result = dao.get(existingVmPool.getVmPoolId(), UNPRIVILEGED_USER_ID, true);
 
         assertNull(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
-        VmPool result = dao.get(existingVmPool.getvm_pool_id(), UNPRIVILEGED_USER_ID, false);
+        VmPool result = dao.get(existingVmPool.getVmPoolId(), UNPRIVILEGED_USER_ID, false);
 
         assertGetResult(result);
     }
@@ -125,7 +125,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        VmPool result = dao.getByName(existingVmPool.getvm_pool_name());
+        VmPool result = dao.getByName(existingVmPool.getVmPoolName());
 
         assertNotNull(result);
         assertEquals(existingVmPool, result);
@@ -172,7 +172,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     public void testSaveVmPool() {
         dao.save(newVmPool);
 
-        VmPool result = dao.getByName(newVmPool.getvm_pool_name());
+        VmPool result = dao.getByName(newVmPool.getVmPoolName());
 
         assertNotNull(result);
         assertEquals(newVmPool, result);
@@ -183,11 +183,11 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateVmPool() {
-        existingVmPool.setvm_pool_description("This is an updated VM pool.");
+        existingVmPool.setVmPoolDescription("This is an updated VM pool.");
 
         dao.update(existingVmPool);
 
-        VmPool result = dao.get(existingVmPool.getvm_pool_id());
+        VmPool result = dao.get(existingVmPool.getVmPoolId());
 
         assertEquals(existingVmPool, result);
     }
@@ -197,9 +197,9 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemoveVmPool() {
-        dao.remove(deletableVmPool.getvm_pool_id());
+        dao.remove(deletableVmPool.getVmPoolId());
 
-        VmPool result = dao.get(deletableVmPool.getvm_pool_id());
+        VmPool result = dao.get(deletableVmPool.getVmPoolId());
 
         assertNull(result);
     }
@@ -231,7 +231,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetVmMapsInVmPoolByVmPoolIdAndStatus() {
         List<VmPoolMap> result = dao.getVmMapsInVmPoolByVmPoolIdAndStatus(
-                existingVmPool.getvm_pool_id(), VMStatus.MigratingFrom);
+                existingVmPool.getVmPoolId(), VMStatus.MigratingFrom);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

@@ -433,8 +433,8 @@ public class PoolGeneralModel extends EntityModel
     {
         VmPool pool = (VmPool) getEntity();
 
-        setName(pool.getvm_pool_name());
-        setDescription(pool.getvm_pool_description());
+        setName(pool.getVmPoolName());
+        setDescription(pool.getVmPoolDescription());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -538,7 +538,7 @@ public class PoolGeneralModel extends EntityModel
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
-                new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
+                new GetVmdataByPoolIdParameters(pool.getVmPoolId()),
                 _asyncQuery);
     }
 

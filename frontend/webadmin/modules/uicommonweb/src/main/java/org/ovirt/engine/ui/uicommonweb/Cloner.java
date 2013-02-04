@@ -4,10 +4,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
@@ -311,21 +311,21 @@ public final class Cloner
     {
         VmPool obj = new VmPool();
 
-        obj.setvm_pool_description(instance.getvm_pool_description());
-        obj.setvm_pool_id(instance.getvm_pool_id());
-        obj.setvm_pool_name(instance.getvm_pool_name());
-        obj.setvm_pool_type(instance.getvm_pool_type());
-        obj.setvds_group_id(instance.getvds_group_id());
+        obj.setVmPoolDescription(instance.getVmPoolDescription());
+        obj.setVmPoolId(instance.getVmPoolId());
+        obj.setVmPoolName(instance.getVmPoolName());
+        obj.setVmPoolType(instance.getVmPoolType());
+        obj.setVdsGroupId(instance.getVdsGroupId());
 
-        obj.setvm_pool_type(instance.getvm_pool_type());
-        obj.setparameters(instance.getparameters());
+        obj.setVmPoolType(instance.getVmPoolType());
+        obj.setParameters(instance.getParameters());
         obj.setDefaultEndTime(instance.getDefaultEndTime());
         obj.setDefaultStartTime(instance.getDefaultStartTime());
         obj.setDefaultTimeInDays(instance.getDefaultTimeInDays());
-        obj.setvds_group_name(instance.getvds_group_name());
-        obj.setvm_assigned_count(instance.getvm_assigned_count());
-        obj.setvm_pool_description(instance.getvm_pool_description());
-        obj.setvm_running_count(instance.getvm_running_count());
+        obj.setVdsGroupName(instance.getVdsGroupName());
+        obj.setAssignedVmsCount(instance.getAssignedVmsCount());
+        obj.setVmPoolDescription(instance.getVmPoolDescription());
+        obj.setRunningVmsCount(instance.getRunningVmsCount());
         obj.setPrestartedVms(instance.getPrestartedVms());
 
         return obj;
