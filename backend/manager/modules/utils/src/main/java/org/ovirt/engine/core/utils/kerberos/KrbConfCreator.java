@@ -46,7 +46,7 @@ public class KrbConfCreator {
     }
 
     public KrbConfCreator(String domains, boolean useDnsLookup, Map<String, List<String>> ldapServersPerGSSAPIDomains) throws Exception {
-        this.useDnsLookup = useDnsLookup;
+        this.useDnsLookup = useDnsLookup && ( ldapServersPerGSSAPIDomains == null || ldapServersPerGSSAPIDomains.size() == 0 );
         this.ldapServersPerGSSAPIDomains = ldapServersPerGSSAPIDomains;
         loadSourceFile();
         extractRealmsFromDomains(domains);
