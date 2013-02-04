@@ -2769,7 +2769,7 @@ public final class AsyncDataProvider {
 
     private static ArrayList<VmOsType> windowsOsTypes;
 
-    public static ArrayList<VmOsType> GetWindowsOsTypes()
+    public synchronized static ArrayList<VmOsType> GetWindowsOsTypes()
     {
         if (windowsOsTypes != null)
         {
