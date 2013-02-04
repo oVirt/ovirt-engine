@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBase<T> {
@@ -28,12 +27,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        Guid userId = (getParameters()).getUserId();
-        String httpSessionId = getParameters().getHttpSessionId();
-        if (httpSessionId != null) {
-            DbFacade.getInstance().getDbUserDao().removeUserSession(httpSessionId, userId);
-            SessionDataContainer.getInstance().removeSession(httpSessionId);
-        } else if (!"".equals(getParameters().getSessionId())) {
+        if (!"".equals(getParameters().getSessionId())) {
             SessionDataContainer.getInstance().removeSession(getParameters().getSessionId());
         } else {
             SessionDataContainer.getInstance().removeSession();

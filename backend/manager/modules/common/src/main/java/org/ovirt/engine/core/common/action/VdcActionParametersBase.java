@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 public class VdcActionParametersBase implements java.io.Serializable {
@@ -21,7 +20,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private Guid commandId;
     private transient String sessionid;
     private boolean shouldbelogged;
-    private String httpSessionId;
     private IVdcUser parametersCurrentUser;
     private TransactionScopeOption transctionOption;
 
@@ -77,22 +75,14 @@ public class VdcActionParametersBase implements java.io.Serializable {
     }
 
     public String getSessionId() {
-        if (StringHelper.isNullOrEmpty(sessionid)) {
-            if (getHttpSessionId() != null) {
-                sessionid = getHttpSessionId();
-            } else {
-                sessionid = "";
-            }
+        if (sessionid == null) {
+            sessionid = "";
         }
         return sessionid;
     }
 
     public void setSessionId(String value) {
         sessionid = value;
-    }
-
-    public String getHttpSessionId() {
-        return httpSessionId;
     }
 
     public IVdcUser getParametersCurrentUser() {
@@ -258,7 +248,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
         result = prime * result + (shouldbelogged ? 1231 : 1237);
         result = prime * result + ((transctionOption == null) ? 0 : transctionOption.hashCode());
         result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
-        result = prime * result + ((httpSessionId == null) ? 0 : httpSessionId.hashCode());
         result = prime * result + (multipleAction ? 1231 : 1237);
         result = prime * result + ((parametersCurrentUser == null) ? 0 : parametersCurrentUser.hashCode());
         result = prime * result + ((parentCommand == null) ? 0 : parentCommand.hashCode());
@@ -290,11 +279,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
             if (other.entityId != null)
                 return false;
         } else if (!entityId.equals(other.entityId))
-            return false;
-        if (httpSessionId == null) {
-            if (other.httpSessionId != null)
-                return false;
-        } else if (!httpSessionId.equals(other.httpSessionId))
             return false;
         if (multipleAction != other.multipleAction)
             return false;

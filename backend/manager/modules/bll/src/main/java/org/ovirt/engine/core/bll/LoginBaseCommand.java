@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,8 +13,8 @@ import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByUserNameParameters;
 import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LoginResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
@@ -95,20 +93,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         log.errorFormat(getReturnValue().getCanDoActionMessages().get(0) + " : {0}", getParameters().getUserName());
     }
 
-    /**
-     * Handles the user session.
-     *
-     * @param ldapUser
-     *            The LDAP user.
-     */
-    protected void HandleUserSession(LdapUser ldapUser) {
-        if (!StringUtils.isEmpty(getParameters().getHttpSessionId())) {
-            user_sessions user_sessions = new user_sessions("", "", new Date(), "", getParameters()
-                    .getHttpSessionId(), ldapUser.getUserId());
-            DbFacade.getInstance().getDbUserDao().saveSession(user_sessions);
-        }
-    }
-
     public String getUserPassword() {
         return getParameters().getUserPassword();
     }
@@ -129,8 +113,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     @Override
     protected void executeCommand() {
         // add user session
-        // todo : insert correct values of all arguments, separate
-        HandleUserSession(ldapUser);
         setActionReturnValue(getCurrentUser());
         // Persist the most updated version of the user
         UserCommandBase.persistAuthenticatedUser(ldapUser);
