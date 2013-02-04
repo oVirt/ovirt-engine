@@ -208,7 +208,7 @@ public class FeaturesHelper {
 
     private void addFeaturePosixDevice(Features features) {
         Feature feature = new Feature();
-        feature.setName("POSIX-FS Stroage Type");
+        feature.setName("POSIX-FS Storage Type");
         feature.setStorageTypes(new StorageTypes());
         feature.getStorageTypes().getStorageTypes().add(StorageType.POSIXFS.value());
         features.getFeature().add(feature);
