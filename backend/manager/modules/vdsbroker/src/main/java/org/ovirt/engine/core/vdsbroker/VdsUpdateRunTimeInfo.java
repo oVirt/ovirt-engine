@@ -1139,7 +1139,7 @@ public class VdsUpdateRunTimeInfo {
                     device.setAddress("");
                     addVmDeviceToList(device);
                     log.debugFormat("VM {0} managed pluggable device was unplugged : {1}", vmId, device);
-                } else {
+                } else if (!devicePluggable(device)) {
                     log.errorFormat("VM {0} managed non pluggable device was removed unexpectedly from libvirt: {1}",
                             vmId, device);
                 }
@@ -1148,6 +1148,12 @@ public class VdsUpdateRunTimeInfo {
                 log.debugFormat("VM {0} unmanaged device was marked for remove : {1}", vmId, device);
             }
         }
+    }
+
+    private boolean devicePluggable(VmDevice device) {
+        return (VmDeviceType.DISK.getName().equals(device.getDevice()) && VmDeviceType.DISK.getName().equals(device))
+                || (VmDeviceType.BRIDGE.getName().equals(device.getDevice())
+                && VmDeviceType.INTERFACE.getName().equals(device.getType()));
     }
 
     /**
