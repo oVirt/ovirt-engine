@@ -400,8 +400,10 @@ public class HostSetupNetworksModel extends EntityModel {
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         cancelCommand.setIsCancel(true);
 
-        editPopup.getCommands().add(okCommand);
-        editPopup.getCommands().add(cancelCommand);
+        if (editPopup != null) {
+            editPopup.getCommands().add(okCommand);
+            editPopup.getCommands().add(cancelCommand);
+        }
         sourceListModel.setConfirmWindow(editPopup);
     }
 
