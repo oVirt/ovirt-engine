@@ -168,7 +168,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         ISpice spice = extractSpice(model);
         if (spice != null) {
-            if (!spice.getIsWanOptionsEnabled()) {
+            if (!spice.isWanOptionsEnabled()) {
                 getView().selectWanOptionsEnabled(false);
             }
         }

@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -22,15 +21,12 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 @SuppressWarnings("unused")
 public class VncConsoleModel extends ConsoleModel
 {
-    private final IVnc vnc;
     String otp64 = null;
     private static final int seconds = 120;
 
     public VncConsoleModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-
-        vnc = (IVnc) TypeResolver.getInstance().Resolve(IVnc.class);
     }
 
     @Override
@@ -90,19 +86,14 @@ public class VncConsoleModel extends ConsoleModel
     }
 
     protected void postGetHost(String hostName) {
-        VncInfoModel infoModel = new VncInfoModel();
+        StringBuilder configBuilder = new StringBuilder("[virt-viewer]"); //$NON-NLS-1$
+        configBuilder.append("\ntype=vnc") //$NON-NLS-1$
+            .append("\nhost=").append(hostName) //$NON-NLS-1$
+            .append("\nport=").append(getEntity().getDisplay().toString()) //$NON-NLS-1$
+            .append("\npassword=").append(otp64) //$NON-NLS-1$
+            .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
 
-        infoModel.setTitle("VNC - " + getEntity().getName()); //$NON-NLS-1$
-        infoModel.getVncMessage().setEntity(ConstantsManager.getInstance()
-                .getMessages()
-                .vncInfoMessage(hostName,
-                        (getEntity().getDisplay() == null ? 0 : getEntity().getDisplay()),
-                        otp64,
-                        seconds));
-        infoModel.setCloseCommand(new UICommand("closeVncInfo", parentModel)); //$NON-NLS-1$
-        infoModel.getCloseCommand().setTitle(ConstantsManager.getInstance().getConstants().close());
-        infoModel.getCommands().add(infoModel.getCloseCommand());
-        parentModel.setWindow(infoModel);
+        ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     @Override

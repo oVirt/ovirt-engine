@@ -359,7 +359,7 @@ public abstract class Configurator {
             return true;
 
         case qxl:
-            return isClientWindownsExplorer() || isClientLinuxFirefox();
+            return true;
         }
 
         return false;

@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -80,16 +80,39 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     public SpiceConsoleModel() {
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-
-        setspice((ISpice) TypeResolver.getInstance().Resolve(ISpice.class));
-
-        configureSpice();
+        setSpiceImplementation();
+        getConfigurator().Configure(getspice());
 
         getspice().getConnectedEvent().addListener(this);
     }
 
-    private void configureSpice() {
-        getConfigurator().Configure(getspice());
+    /**
+     * Sets implementation of ISpice which will be used (either implementation
+     * that uses spice browser plugin or the one using configuration servlet).
+     *
+     * The result implementation is based on db config.
+     *
+     * Default mode is "Auto" (spice browser plugin is used only if it is
+     * installed).
+     *
+     */
+    private void setSpiceImplementation() {
+        ClientConsoleMode consoleMode =
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.ClientConsoleModeDefault));
+
+        if (ClientConsoleMode.Native.equals(consoleMode)) { //$NON-NLS-1$
+            setspice((ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
+        } else if (ClientConsoleMode.Plugin.equals(consoleMode)) { //$NON-NLS-1$
+            setspice((ISpice) TypeResolver.getInstance().Resolve(ISpicePlugin.class));
+        } else {
+            ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().Resolve(ISpicePlugin.class);
+
+            if (pluginSpice.detectXpiPlugin()) {
+                setspice(pluginSpice);
+            } else {
+                setspice((ISpice) TypeResolver.getInstance().Resolve(ISpiceNative.class));
+            }
+        }
     }
 
     @Override
@@ -119,7 +142,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
             if (!getEntity().getVmOs().isWindows() || !getEntity().getHasSpiceDriver()) {
-                getspice().setIsWanOptionsEnabled(false);
+                getspice().setWanOptionsEnabled(false);
             }
 
             UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
@@ -384,20 +407,8 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 && getEntity().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
                 : getConfigurator().getSpiceDisableUsbListenPort());
 
-        // At lease one of the hot-keys is not empty -> send it to SPICE:
-        if (!StringHelper.isNullOrEmpty(releaseCursorKeys) || !StringHelper.isNullOrEmpty(toggleFullScreenKeys)) {
-            String comma =
-                    (!StringHelper.isNullOrEmpty(releaseCursorKeys) && !StringHelper.isNullOrEmpty(toggleFullScreenKeys)) ? "," //$NON-NLS-1$
-                            : ""; //$NON-NLS-1$
-
-            String releaseCursorKeysParameter =
-                    StringHelper.isNullOrEmpty(releaseCursorKeys) ? "" : "release-cursor=" + releaseCursorKeys; //$NON-NLS-1$ //$NON-NLS-2$
-
-            String toggleFullScreenKeysParameter =
-                    StringHelper.isNullOrEmpty(toggleFullScreenKeys) ? "" : "toggle-fullscreen=" + toggleFullScreenKeys; //$NON-NLS-1$ //$NON-NLS-2$
-
-            getspice().setHotKey(releaseCursorKeysParameter + comma + toggleFullScreenKeysParameter);
-        }
+        getspice().setToggleFullscreenHotKey(toggleFullScreenKeys);
+        getspice().setReleaseCursorHotKey(releaseCursorKeys);
 
         getspice().setLocalizedStrings(new String[] {
                 ConstantsManager.getInstance().getConstants().usb(),

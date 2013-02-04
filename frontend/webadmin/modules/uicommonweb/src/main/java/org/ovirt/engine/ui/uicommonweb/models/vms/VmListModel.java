@@ -739,8 +739,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 SpiceConsoleModel spiceConsoleModel = new SpiceConsoleModel();
                 spiceConsoleModel.setParentModel(this);
                 spiceConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
+
                 VncConsoleModel vncConsoleModel = new VncConsoleModel();
-                vncConsoleModel.setParentModel(this);
+
                 RdpConsoleModel rdpConsoleModel = new RdpConsoleModel();
                 rdpConsoleModel.getErrorEvent().addListener(new ConsoleModelErrorEventListener(this));
 

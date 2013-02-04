@@ -43,7 +43,7 @@ public interface ISpice
 
     void setHost(String value);
 
-    boolean getFullScreen();
+    boolean isFullScreen();
 
     void setFullScreen(boolean value);
 
@@ -59,7 +59,7 @@ public interface ISpice
 
     void setUsbListenPort(int value);
 
-    boolean getAdminConsole();
+    boolean isAdminConsole();
 
     void setAdminConsole(boolean value);
 
@@ -91,9 +91,13 @@ public interface ISpice
 
     void setTitle(String value);
 
-    String getHotKey();
+    String getToggleFullscreenHotKey();
 
-    void setHotKey(String value);
+    void setToggleFullscreenHotKey(String toggleFullscreenHotKey);
+
+    String getReleaseCursorHotKey();
+
+    void setReleaseCursorHotKey(String releaseCursorHotKey);
 
     String[] getLocalizedStrings();
 
@@ -139,9 +143,9 @@ public interface ISpice
 
     void setSpiceBaseURL(String spiceBaseURL);
 
-    boolean getIsWanOptionsEnabled();
+    boolean isWanOptionsEnabled();
 
-    void setIsWanOptionsEnabled(boolean enabled);
+    void setWanOptionsEnabled(boolean enabled);
 
     public void setSmartcardEnabled(boolean enabled);
 

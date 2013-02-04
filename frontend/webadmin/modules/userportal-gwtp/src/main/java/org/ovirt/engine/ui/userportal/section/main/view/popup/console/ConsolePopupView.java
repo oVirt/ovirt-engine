@@ -134,12 +134,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setIsWanOptionsEnabled(value);
+                spice.setWanOptionsEnabled(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.getIsWanOptionsEnabled();
+                return spice.isWanOptionsEnabled();
             }
 
         });
@@ -184,7 +184,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.getFullScreen();
+                return spice.isFullScreen();
             }
         });
         openInFullScreen.setLabel(constants.openInFullScreen());
