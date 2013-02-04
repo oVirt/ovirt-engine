@@ -114,7 +114,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXPORT);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
 
     @Override
