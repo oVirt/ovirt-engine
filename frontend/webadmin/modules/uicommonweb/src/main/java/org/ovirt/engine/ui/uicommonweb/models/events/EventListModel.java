@@ -130,10 +130,10 @@ public class EventListModel extends SearchableListModel
         // Force refresh of the event list when the event tab is shown
         // without waiting to the timer. This is invoked only the first
         // time the Events tab is shown - than the timer takes care of this.
-        forceRefresh();
+        forceRefreshWithoutTimers();
     }
 
-    protected void forceRefresh() {
+    protected void forceRefreshWithoutTimers() {
         getRefreshCommand().Execute();
     }
 
