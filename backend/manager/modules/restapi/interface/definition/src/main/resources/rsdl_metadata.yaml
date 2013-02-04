@@ -1049,6 +1049,58 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/networks|rel=get
+  description: get networks for the datacenter in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/networks/{network:id}|rel=get
+  description: get the specified network in the datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/networks/{network:id}|rel=delete
+  description: delete the specified network in the datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/networks/{network:id}|rel=update
+  description: update the specified network in the datacenter
+  request:
+    body:
+      parameterType: Network
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /ovirt-engine/api/datacenters/{datacenter:id}/networks|rel=add
+  description: add a new network to the datacenter
+  request:
+    body:
+      parameterType: Network
+      signatures:
+      - mandatoryArguments: {network.id|name: 'xs:string'}
+        description: add a new network to the datacenter
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /ovirt-engine/api/storagedomains|rel=get
   description: get storage domains in the system
   request:

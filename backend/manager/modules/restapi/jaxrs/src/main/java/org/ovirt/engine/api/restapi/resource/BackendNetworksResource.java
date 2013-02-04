@@ -21,7 +21,11 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
     static final String[] SUB_COLLECTIONS = { "permissions", "vnicprofiles" };
 
     public BackendNetworksResource() {
-        super(VdcQueryType.GetAllNetworks, VdcActionType.AddNetwork, VdcActionType.RemoveNetwork, SUB_COLLECTIONS);
+        this(VdcQueryType.GetAllNetworks);
+    }
+
+    public BackendNetworksResource(VdcQueryType queryType) {
+        super(queryType, VdcActionType.AddNetwork, VdcActionType.RemoveNetwork, SUB_COLLECTIONS);
     }
 
     @Override

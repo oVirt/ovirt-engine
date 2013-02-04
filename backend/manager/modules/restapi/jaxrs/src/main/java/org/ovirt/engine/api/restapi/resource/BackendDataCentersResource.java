@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendDataCentersResource extends
         AbstractBackendCollectionResource<DataCenter, StoragePool> implements DataCentersResource {
 
-    static final String[] SUB_COLLECTIONS = {"storagedomains", "clusters", "permissions", "quotas"};
+    static final String[] SUB_COLLECTIONS = {"storagedomains", "clusters", "networks", "permissions", "quotas"};
 
     public BackendDataCentersResource() {
         super(DataCenter.class, StoragePool.class, SUB_COLLECTIONS);

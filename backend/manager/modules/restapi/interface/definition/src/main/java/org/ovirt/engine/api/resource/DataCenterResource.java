@@ -30,6 +30,9 @@ public interface DataCenterResource extends UpdatableResource<DataCenter> {
     @Path("clusters")
     public ClustersResource getClustersResource();
 
+    @Path("networks")
+    public NetworksResource getNetworksResource();
+
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
 

@@ -11,6 +11,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
+import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
@@ -59,6 +60,10 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @Override
     public AttachedStorageDomainsResource getAttachedStorageDomainsResource() {
         return inject(new BackendAttachedStorageDomainsResource(id));
+    }
+
+    public NetworksResource getNetworksResource() {
+        return inject(new BackendDataCenterNetworksResource(id));
     }
 
     @Override
