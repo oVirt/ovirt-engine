@@ -207,7 +207,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
     String cpuInfoLabel(int numberOfCpus, int numberOfSockets, int numberOfCpusPerSocket);
 
-    @DefaultMessage("{0} (from Stroage Domain {1})")
+    @DefaultMessage("{0} (from Storage Domain {1})")
     String templateDiskDescription(String diskAlias, String storageDomainName);
 
     // Vnic
