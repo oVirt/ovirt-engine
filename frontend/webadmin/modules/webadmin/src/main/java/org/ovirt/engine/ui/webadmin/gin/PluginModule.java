@@ -6,15 +6,17 @@ import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.DynamicUrlContentTabView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.DynamicUrlContentPopupView;
 
-import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
+import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 
 /**
- * GIN module containing WebAdmin UI plugin infrastructure bindings.
+ * GIN module containing WebAdmin UI plugin infrastructure and related GWTP presenter bindings.
  */
-public class PluginModule extends AbstractGinModule {
+public class PluginModule extends AbstractPresenterModule {
 
     @Override
     protected void configure() {
@@ -23,9 +25,14 @@ public class PluginModule extends AbstractGinModule {
         bind(PluginUiFunctions.class).in(Singleton.class);
         bind(RestApiSessionManager.class).in(Singleton.class);
 
-        // Dynamic tab component bindings
+        // Dynamic tab component
         bind(DynamicUrlContentTabPresenter.ViewDef.class).to(DynamicUrlContentTabView.class);
         bind(DynamicUrlContentTabProxyFactory.class).in(Singleton.class);
+
+        // Dynamic dialog component
+        bindPresenterWidget(DynamicUrlContentPopupPresenterWidget.class,
+                DynamicUrlContentPopupPresenterWidget.ViewDef.class,
+                DynamicUrlContentPopupView.class);
     }
 
 }

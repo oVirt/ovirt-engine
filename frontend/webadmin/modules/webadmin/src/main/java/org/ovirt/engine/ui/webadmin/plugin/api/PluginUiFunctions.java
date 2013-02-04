@@ -16,6 +16,9 @@ import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentUrlEvent;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SetDynamicPopupContentUrlEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
@@ -32,18 +35,21 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.Template
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
+import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 /**
  * Contains UI related functionality exposed to UI plugins through the plugin API.
@@ -61,6 +67,8 @@ public class PluginUiFunctions implements HasHandlers {
     private final Provider<MainTabVirtualMachinePresenter> mainTabVirtualMachinePresenterProvider;
     private final Provider<MainTabTemplatePresenter> mainTabTemplatePresenterProvider;
 
+    private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
+
     @Inject
     public PluginUiFunctions(EventBus eventBus,
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
@@ -70,7 +78,8 @@ public class PluginUiFunctions implements HasHandlers {
             Provider<MainTabStoragePresenter> mainTabStoragePresenterProvider,
             Provider<MainTabDiskPresenter> mainTabDiskPresenterProvider,
             Provider<MainTabVirtualMachinePresenter> mainTabVirtualMachinePresenterProvider,
-            Provider<MainTabTemplatePresenter> mainTabTemplatePresenterProvider) {
+            Provider<MainTabTemplatePresenter> mainTabTemplatePresenterProvider,
+            Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
         this.mainTabDataCenterPresenterProvider = mainTabDataCenterPresenterProvider;
@@ -80,6 +89,7 @@ public class PluginUiFunctions implements HasHandlers {
         this.mainTabDiskPresenterProvider = mainTabDiskPresenterProvider;
         this.mainTabVirtualMachinePresenterProvider = mainTabVirtualMachinePresenterProvider;
         this.mainTabTemplatePresenterProvider = mainTabTemplatePresenterProvider;
+        this.dynamicUrlContentPopupPresenterWidgetProvider = dynamicUrlContentPopupPresenterWidgetProvider;
     }
 
     @Override
@@ -253,17 +263,54 @@ public class PluginUiFunctions implements HasHandlers {
     }
 
     /**
-     * Shows a dialog with content loaded from the given URL.
+     * Shows a modal dialog with content loaded from the given URL.
      */
-    // TODO(vszocs) integrate with GWTP dialog infrastructure, using window.open (non-modal) implementation for now
-    public void showDialog(String title, String contentUrl, int width, int height) {
-        String windowFeatures = new StringBuilder("scrollbars=yes") //$NON-NLS-1$
-                .append(",width=").append(width) //$NON-NLS-1$
-                .append(",height=").append(height) //$NON-NLS-1$
-                .append(",left=").append((Window.getClientWidth() / 2) - (width / 2)) //$NON-NLS-1$
-                .append(",top=").append((Window.getClientHeight() / 2) - (height / 2)) //$NON-NLS-1$
-                .toString();
-        Window.open(contentUrl, "_blank", windowFeatures); //$NON-NLS-1$
+    public void showDialog(String title, String dialogToken, String contentUrl, String width, String height,
+            DialogOptions options) {
+        DynamicUrlContentPopupPresenterWidget popup = dynamicUrlContentPopupPresenterWidgetProvider.get();
+        popup.init(dialogToken, title, width, height,
+                options.getResizeEnabled(), options.getCloseIconVisible(), options.getCloseOnEscKey());
+        popup.setContentUrl(contentUrl);
+
+        // Add dialog buttons
+        JsArray<DialogButtonInterface> buttons = options.getButtons();
+        for (int i = 0; i < buttons.length(); i++) {
+            final DialogButtonInterface dialogButtonInterface = buttons.get(i);
+
+            popup.addFooterButton(dialogButtonInterface.getLabel(), new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    dialogButtonInterface.onClick().invoke(null, null);
+                }
+            });
+        }
+
+        // Reveal the popup
+        RevealRootPopupContentEvent.fire(this, popup);
+    }
+
+    /**
+     * Sets the content URL for existing modal dialog.
+     */
+    public void setDialogContentUrl(final String dialogToken, final String contentUrl) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                SetDynamicPopupContentUrlEvent.fire(PluginUiFunctions.this, dialogToken, contentUrl);
+            }
+        });
+    }
+
+    /**
+     * Closes an existing modal dialog.
+     */
+    public void closeDialog(final String dialogToken) {
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                CloseDynamicPopupEvent.fire(PluginUiFunctions.this, dialogToken);
+            }
+        });
     }
 
 }

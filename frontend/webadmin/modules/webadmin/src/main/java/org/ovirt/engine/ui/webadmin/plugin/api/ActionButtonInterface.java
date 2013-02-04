@@ -12,7 +12,7 @@ public final class ActionButtonInterface extends JsInterfaceObject {
     }
 
     /**
-     * Called when a user clicks the action button.
+     * Called when the user clicks the action button.
      * <p>
      * Default return value: N/A
      */
@@ -21,7 +21,7 @@ public final class ActionButtonInterface extends JsInterfaceObject {
     }
 
     /**
-     * Determines whether the action button is enabled (clickable).
+     * Controls whether the action button is enabled (clickable).
      * <p>
      * Default return value: {@code true}
      */
@@ -30,7 +30,7 @@ public final class ActionButtonInterface extends JsInterfaceObject {
     }
 
     /**
-     * Determines whether the action button is accessible (visible).
+     * Controls whether the action button is accessible (visible).
      * <p>
      * Default return value: {@code true}
      */

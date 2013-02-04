@@ -60,9 +60,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     }
 
-    // Indicates whether the popup has been disposed
-    private boolean destroyed = false;
-
     private final ModelBoundPopupHandler<T> popupHandler;
 
     private T model;
@@ -274,17 +271,6 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
                     button.getCommand().Execute();
                 }
             }));
-        }
-    }
-
-    /**
-     * Hides the popup and unbinds the presenter widget, removing all handlers registered via {@link #registerHandler}.
-     */
-    public void hideAndUnbind() {
-        if (!destroyed) {
-            getView().hide();
-            unbind();
-            destroyed = true;
         }
     }
 

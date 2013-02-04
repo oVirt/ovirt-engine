@@ -27,4 +27,6 @@ public abstract class AbstractDialogPanel extends DialogBoxWithKeyHandlers {
 
     public abstract HasClickHandlers getCloseIconButton();
 
+    public abstract void setCloseIconButtonVisible(boolean visible);
+
 }

@@ -151,6 +151,11 @@ public class SimpleDialogPanel extends AbstractDialogPanel implements FocusableC
     }
 
     @Override
+    public void setCloseIconButtonVisible(boolean visible) {
+        closeIconButton.setVisible(visible);
+    }
+
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         int nbWidgets = footerButtonPanel.getWidgetCount();
         for (int i = nbWidgets - 1; i >= 0; --i) {

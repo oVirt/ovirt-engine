@@ -50,8 +50,10 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
         button.setCustomContentStyle(customStyle);
     }
 
+    @Override
     public int setTabIndexes(int nextTabIndex) {
         button.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
+
 }

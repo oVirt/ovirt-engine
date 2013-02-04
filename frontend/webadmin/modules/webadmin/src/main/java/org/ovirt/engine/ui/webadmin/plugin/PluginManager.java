@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -162,10 +164,15 @@ public class PluginManager {
     public void enablePluginInvocation() {
         canInvokePlugins = true;
 
-        // Try to initialize all plugins
-        for (Plugin plugin : getPlugins()) {
-            initPlugin(plugin);
-        }
+        // Try to initialize all plugins after the browser event loop returns
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                for (Plugin plugin : getPlugins()) {
+                    initPlugin(plugin);
+                }
+            }
+        });
     }
 
     /**
@@ -366,6 +373,10 @@ public class PluginManager {
             return @org.ovirt.engine.ui.webadmin.plugin.entity.EntityType::from(Ljava/lang/String;)(entityTypeName);
         };
 
+        var sanitizeObject = function(object) {
+            return (object != null) ? object : {};
+        };
+
         // Define pluginApi function used to construct specific Plugin API instances
         var pluginApi = function(pluginName) {
             return new pluginApi.fn.init(pluginName);
@@ -423,9 +434,19 @@ public class PluginManager {
                     uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,actionButtonInterface);
                 }
             },
-            showDialog: function(title, contentUrl, width, height) {
+            showDialog: function(title, dialogToken, contentUrl, width, height, options) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showDialog(Ljava/lang/String;Ljava/lang/String;II)(title,contentUrl,width,height);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::showDialog(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/DialogOptions;)(title,dialogToken,contentUrl,width,height,sanitizeObject(options));
+                }
+            },
+            setDialogContentUrl: function(dialogToken, contentUrl) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::setDialogContentUrl(Ljava/lang/String;Ljava/lang/String;)(dialogToken,contentUrl);
+                }
+            },
+            closeDialog: function(dialogToken) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::closeDialog(Ljava/lang/String;)(dialogToken);
                 }
             },
             loginUserName: function() {
