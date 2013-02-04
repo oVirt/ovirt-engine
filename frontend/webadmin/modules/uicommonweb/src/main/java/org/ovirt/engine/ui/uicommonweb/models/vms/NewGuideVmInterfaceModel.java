@@ -14,8 +14,7 @@ public class NewGuideVmInterfaceModel extends NewVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        NewGuideVmInterfaceModel instance =
-                NewGuideVmInterfaceModel.createInstance(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
+        NewGuideVmInterfaceModel instance = new NewGuideVmInterfaceModel(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
         instance.init();
         return instance;
     }
