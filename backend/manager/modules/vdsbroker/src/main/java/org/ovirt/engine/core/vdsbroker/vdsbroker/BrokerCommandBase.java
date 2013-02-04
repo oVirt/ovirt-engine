@@ -167,6 +167,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         case STORAGE_DOMAIN_REFRESH_ERROR:
         case VOLUME_GROUP_BLOCK_SIZE_ERROR:
         case MIGRATION_DEST_INVALID_HOSTNAME:
+        case ResourceTimeout:
         case DEVICE_BLOCK_SIZE_NOT_SUPPORTED:
             if (this instanceof IrsBrokerCommand) {
                 outEx = new IrsOperationFailedNoFailoverException(getReturnStatus().mMessage);
