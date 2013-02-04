@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -36,7 +36,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
     {
         super.OnEntityChanged();
 
-        vm_pools pool = (vm_pools) getEntity();
+        VmPool pool = (VmPool) getEntity();
         if (pool != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();

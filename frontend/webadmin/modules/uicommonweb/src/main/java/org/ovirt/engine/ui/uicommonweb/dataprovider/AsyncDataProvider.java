@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -2740,9 +2740,9 @@ public final class AsyncDataProvider {
         {
             return ((VmTemplate) entity).getId();
         }
-        else if (entity instanceof vm_pools)
+        else if (entity instanceof VmPool)
         {
-            return ((vm_pools) entity).getvm_pool_id();
+            return ((VmPool) entity).getvm_pool_id();
         }
         else if (entity instanceof DbUser)
         {

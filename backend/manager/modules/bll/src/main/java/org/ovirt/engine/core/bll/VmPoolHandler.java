@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -34,7 +34,7 @@ public class VmPoolHandler {
         List<DbUser> users = DbFacade.getInstance().getDbUserDao().getAllForVm(vmId);
         // Check if this is a Vm from a Vm pool, and is attached to a user
         if (map != null && users != null && !users.isEmpty()) {
-            vm_pools pool = DbFacade.getInstance().getVmPoolDao().get(map.getvm_pool_id());
+            VmPool pool = DbFacade.getInstance().getVmPoolDao().get(map.getvm_pool_id());
             if (pool != null && pool.getvm_pool_type() == VmPoolType.Automatic) {
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {

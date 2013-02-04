@@ -2,6 +2,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
+
 import java.util.ArrayList;
 
 import javax.ws.rs.WebApplicationException;
@@ -9,7 +10,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,7 +25,7 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResourceTest
-        extends AbstractBackendSubResourceTest<VmPool, vm_pools, BackendVmPoolResource> {
+        extends AbstractBackendSubResourceTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, BackendVmPoolResource> {
 
     public BackendVmPoolResourceTest() {
         super(new BackendVmPoolResource(GUIDS[0].toString(), new BackendVmPoolsResource()));
@@ -127,7 +126,7 @@ public class BackendVmPoolResourceTest
         setUpGetEntityExpectations(times, notFound, getEntity(0));
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.vm_pools entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VmPool entity) throws Exception {
 
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVmPoolById,
@@ -165,6 +164,7 @@ public class BackendVmPoolResourceTest
         verifyActionResponse(r, "vmpools/" + GUIDS[0], false);
     }
 
+    @Override
     protected void verifyModel(VmPool model, int index) {
         super.verifyModel(model, index);
         verifyModelSpecific(model, index);
@@ -176,13 +176,14 @@ public class BackendVmPoolResourceTest
     }
 
     @Override
-    protected vm_pools getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.VmPool getEntity(int index) {
         return setUpEntityExpectations(
-                control.createMock(vm_pools.class),
+                control.createMock(org.ovirt.engine.core.common.businessentities.VmPool.class),
                 index);
     }
 
-    private vm_pools setUpEntityExpectations(vm_pools entity, int index) {
+    private org.ovirt.engine.core.common.businessentities.VmPool setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.VmPool entity,
+            int index) {
         expect(entity.getvm_pool_id()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getvds_group_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvm_pool_name()).andReturn(NAMES[index]).anyTimes();

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmPoolDAO;
@@ -26,14 +26,14 @@ public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractQueryTest<GetA
         mockQueryParameters(requestedUser);
 
         // Mock the result of the DAO
-        final vm_pools expectedPool = mockVMPoolsFromDAO(requestedUser);
+        final VmPool expectedPool = mockVMPoolsFromDAO(requestedUser);
 
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<vm_pools> actualPools = (List<vm_pools>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VmPool> actualPools = (List<VmPool>) getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("wrong number of VMs returned", 1, actualPools.size());
-        vm_pools actualPool = actualPools.get(0);
+        VmPool actualPool = actualPools.get(0);
         assertEquals("wrong VMs returned", expectedPool, actualPool);
     }
 
@@ -50,8 +50,8 @@ public class GetAllVmPoolsAttachedToUserQueryTest extends AbstractQueryTest<GetA
      * @param requestedUser The user on the parameter object to return the VM for
      * @return The VM the mocked DAO will return
      */
-    private vm_pools mockVMPoolsFromDAO(Guid requestedUser) {
-        vm_pools expectedPool = new vm_pools();
+    private VmPool mockVMPoolsFromDAO(Guid requestedUser) {
+        VmPool expectedPool = new VmPool();
         VmPoolDAO vmDaoPoolMock = mock(VmPoolDAO.class);
         when(vmDaoPoolMock.getAllForUser(requestedUser)).thenReturn(Collections.singletonList(expectedPool));
         when(getDbFacadeMockInstance().getVmPoolDao()).thenReturn(vmDaoPoolMock);

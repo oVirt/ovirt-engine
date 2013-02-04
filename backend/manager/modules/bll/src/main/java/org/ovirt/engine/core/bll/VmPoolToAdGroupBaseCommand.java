@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.VmPoolToAdElementParameters;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
@@ -10,7 +10,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 @CustomLogFields({ @CustomLogField("VmPoolName") })
 public abstract class VmPoolToAdGroupBaseCommand<T extends VmPoolToAdElementParameters> extends
         AdGroupsHandlingCommandBase<T> {
-    private vm_pools mVmPool;
+    private VmPool mVmPool;
     private String mVmPoolName;
 
     public VmPoolToAdGroupBaseCommand(T parameters) {

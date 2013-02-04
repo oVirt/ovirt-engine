@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -206,7 +206,7 @@ public class VmItemBehavior extends ItemBehavior
                         public void OnSuccess(Object target, Object returnValue) {
 
                             VmItemBehavior behavior = (VmItemBehavior) target;
-                            vm_pools pool = (vm_pools) returnValue;
+                            VmPool pool = (VmPool) returnValue;
                             boolean isManualPool = pool.getvm_pool_type() == VmPoolType.Manual;
                             behavior.UpdateCommandsAccordingToPoolType(isManualPool);
 

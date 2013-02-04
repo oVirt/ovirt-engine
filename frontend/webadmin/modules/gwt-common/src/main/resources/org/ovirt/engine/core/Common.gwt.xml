@@ -113,7 +113,7 @@
 		<include name="common/businessentities/VDSType.java" />
 		<include name="common/businessentities/VdsVersion.java" />
 		<include name="common/businessentities/VmPoolMap.java" />
-		<include name="common/businessentities/vm_pools.java" />
+		<include name="common/businessentities/VmPool.java" />
 		<include name="common/businessentities/VM.java" />
 		<include name="common/businessentities/VmPayload.java" />
 		<include name="common/businessentities/VmBase.java" />

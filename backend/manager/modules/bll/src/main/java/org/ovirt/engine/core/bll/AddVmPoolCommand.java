@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VmPoolOperationParameters;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -24,7 +24,7 @@ public class AddVmPoolCommand<T extends VmPoolOperationParameters> extends VmPoo
 
     @Override
     protected void executeCommand() {
-        vm_pools vmPool = getVmPool();
+        VmPool vmPool = getVmPool();
 
         DbFacade.getInstance().getVmPoolDao().save(vmPool);
         setActionReturnValue(vmPool.getvm_pool_id());

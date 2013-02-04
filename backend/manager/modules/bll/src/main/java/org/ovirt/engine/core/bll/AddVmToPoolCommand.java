@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -47,7 +47,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
         if (poolId != null) {
             VM vm = DbFacade.getInstance().getVmDao().get(vmId);
             if (vm != null) {
-                vm_pools pool = DbFacade.getInstance().getVmPoolDao().get(poolId);
+                VmPool pool = DbFacade.getInstance().getVmPoolDao().get(poolId);
                 if (pool != null) {
                     if (messages != null && !pool.getvds_group_id().equals(vm.getVdsGroupId())) {
                         messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_DIFFERENT_CLUSTER.toString());

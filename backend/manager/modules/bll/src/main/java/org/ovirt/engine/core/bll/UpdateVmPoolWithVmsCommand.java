@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
@@ -32,7 +32,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
-        vm_pools oldPool = getVmPoolDAO().get(getVmPool().getvm_pool_id());
+        VmPool oldPool = getVmPoolDAO().get(getVmPool().getvm_pool_id());
         if (returnValue && oldPool == null) {
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
             returnValue = false;

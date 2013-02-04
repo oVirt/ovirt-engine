@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
@@ -26,13 +25,13 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolsResource
-    extends AbstractBackendCollectionResource<VmPool, vm_pools>
+        extends AbstractBackendCollectionResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
     implements VmPoolsResource {
 
     static final String SUB_COLLECTION = "permissions";
 
     public BackendVmPoolsResource() {
-        super(VmPool.class, vm_pools.class);
+        super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class BackendVmPoolsResource
             pool.getCluster().setId(getClusterId(pool));
         }
 
-        vm_pools entity = map(pool);
+        org.ovirt.engine.core.common.businessentities.VmPool entity = map(pool);
         entity.setvm_pool_type(VmPoolType.Automatic);
 
         VM vm = mapToVM(pool, template);
@@ -83,12 +82,12 @@ public class BackendVmPoolsResource
     }
 
     @Override
-    public VmPool doPopulate(VmPool pool, vm_pools entity) {
+    public VmPool doPopulate(VmPool pool, org.ovirt.engine.core.common.businessentities.VmPool entity) {
         return pool;
     }
 
     @Override
-    protected VmPool deprecatedPopulate(VmPool model, vm_pools entity) {
+    protected VmPool deprecatedPopulate(VmPool model, org.ovirt.engine.core.common.businessentities.VmPool entity) {
         if (model.isSetSize() && model.getSize() > 0) {
             VM vm = getEntity(VM.class, SearchType.VM, "Vms: pool=" + model.getName());
             model.setTemplate(new Template());
@@ -107,9 +106,9 @@ public class BackendVmPoolsResource
         return vm;
     }
 
-    protected VmPools mapCollection(List<vm_pools> entities) {
+    protected VmPools mapCollection(List<org.ovirt.engine.core.common.businessentities.VmPool> entities) {
         VmPools collection = new VmPools();
-        for (vm_pools entity : entities) {
+        for (org.ovirt.engine.core.common.businessentities.VmPool entity : entities) {
             collection.getVmPools().add(addLinks(populate(map(entity), entity)));
         }
         return collection;

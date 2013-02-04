@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -53,7 +53,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     protected Guid getPoolId() {
-        vm_pools vmPool = getVmPool();
+        VmPool vmPool = getVmPool();
 
         DbFacade.getInstance().getVmPoolDao().save(vmPool);
 
@@ -83,7 +83,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
-        vm_pools vmPool = getParameters().getVmPool();
+        VmPool vmPool = getParameters().getVmPool();
         String vmPoolName;
         if (vmPool != null) {
             vmPoolName = vmPool.getvm_pool_name();

@@ -3,14 +3,15 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolMapper {
 
-    @Mapping(from = VmPool.class, to = vm_pools.class)
-    public static vm_pools map(VmPool model, vm_pools template) {
-        vm_pools entity = template != null ? template : new vm_pools();
+    @Mapping(from = VmPool.class, to = org.ovirt.engine.core.common.businessentities.VmPool.class)
+    public static org.ovirt.engine.core.common.businessentities.VmPool map(VmPool model,
+            org.ovirt.engine.core.common.businessentities.VmPool template) {
+        org.ovirt.engine.core.common.businessentities.VmPool entity =
+                template != null ? template : new org.ovirt.engine.core.common.businessentities.VmPool();
         if (model.isSetId()) {
             entity.setvm_pool_id(new Guid(model.getId()));
         }
@@ -52,8 +53,8 @@ public class VmPoolMapper {
         return entity;
     }
 
-    @Mapping(from = vm_pools.class, to = VmPool.class)
-    public static VmPool map(vm_pools entity, VmPool template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmPool.class, to = VmPool.class)
+    public static VmPool map(org.ovirt.engine.core.common.businessentities.VmPool entity, VmPool template) {
         VmPool model = template != null ? template : new VmPool();
         model.setId(entity.getvm_pool_id().toString());
         model.setName(entity.getvm_pool_name());

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -34,11 +34,11 @@ public class PoolModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<vm_pools, PoolListModel> getPoolListProvider(ClientGinjector ginjector,
+    public MainModelProvider<VmPool, PoolListModel> getPoolListProvider(ClientGinjector ginjector,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
             final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider) {
-        return new MainTabModelProvider<vm_pools, PoolListModel>(ginjector, PoolListModel.class) {
+        return new MainTabModelProvider<VmPool, PoolListModel>(ginjector, PoolListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PoolListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {

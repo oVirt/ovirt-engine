@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAODbFacadeImpl.VMRowMapper;
@@ -31,19 +31,19 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public vm_pools get(NGuid id) {
+    public VmPool get(NGuid id) {
         return get(id, null, false);
     }
 
     @Override
-    public vm_pools get(NGuid id, Guid userID, boolean isFiltered) {
+    public VmPool get(NGuid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", VmPoolFullRowMapper.instance, parameterSource);
     }
 
     @Override
-    public vm_pools getByName(String name) {
+    public VmPool getByName(String name) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_name", name);
         return getCallsHandler().executeRead("GetVm_poolsByvm_pool_name",
@@ -52,13 +52,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<vm_pools> getAll() {
+    public List<VmPool> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
         return getCallsHandler().executeReadList("GetAllFromVm_pools", VmPoolFullRowMapper.instance, parameterSource);
     }
 
     @Override
-    public List<vm_pools> getAllForUser(Guid id) {
+    public List<VmPool> getAllForUser(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id);
         return getCallsHandler().executeReadList("GetAllVm_poolsByUser_id_with_groups_and_UserRoles",
@@ -66,12 +66,12 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<vm_pools> getAllWithQuery(String query) {
+    public List<VmPool> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, VmPoolFullRowMapper.instance);
     }
 
     @Override
-    public void save(vm_pools pool) {
+    public void save(VmPool pool) {
         Guid id = pool.getvm_pool_id();
         if (Guid.isNullOrEmpty(id)) {
             id = Guid.NewGuid();
@@ -90,7 +90,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public void update(vm_pools pool) {
+    public void update(VmPool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getvm_pool_description())
                 .addValue("vm_pool_id", pool.getvm_pool_id())
@@ -173,12 +173,12 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 parameterSource);
     }
 
-    private static final class VmPoolFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+    private static final class VmPoolFullRowMapper implements ParameterizedRowMapper<VmPool> {
         public final static VmPoolFullRowMapper instance = new VmPoolFullRowMapper();
 
         @Override
-        public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final vm_pools entity = new vm_pools();
+        public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final VmPool entity = new VmPool();
             entity.setvm_pool_description(rs
                     .getString("vm_pool_description"));
             entity.setvm_pool_id(Guid.createGuidFromString(rs
@@ -197,12 +197,12 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         }
     }
 
-    private static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<vm_pools> {
+    private static final class VmPoolNonFullRowMapper implements ParameterizedRowMapper<VmPool> {
         public final static VmPoolNonFullRowMapper instance = new VmPoolNonFullRowMapper();
 
         @Override
-        public vm_pools mapRow(final ResultSet rs, final int rowNum) throws SQLException {
-            final vm_pools entity = new vm_pools();
+        public VmPool mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+            final VmPool entity = new VmPool();
             entity.setvm_pool_description(rs
                     .getString("vm_pool_description"));
             entity.setvm_pool_id(Guid.createGuidFromString(rs

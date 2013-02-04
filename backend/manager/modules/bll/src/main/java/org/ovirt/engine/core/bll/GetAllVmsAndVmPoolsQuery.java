@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -30,7 +30,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
                     Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
                             new GetAllVmPoolsAttachedToUserParameters(getUserID()));
             if (queryResult != null && queryResult.getSucceeded()) {
-                retValList.addAll((List<vm_pools>) queryResult.getReturnValue());
+                retValList.addAll((List<VmPool>) queryResult.getReturnValue());
             } else {
                 isSucceeded = false;
             }

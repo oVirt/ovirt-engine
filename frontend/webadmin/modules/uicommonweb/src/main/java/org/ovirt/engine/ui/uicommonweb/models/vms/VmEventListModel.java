@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 
@@ -13,7 +13,7 @@ public class VmEventListModel extends SubTabEventListModel
         super.onEntityContentChanged();
 
         // Deal with pool as Entity without failing.
-        if (getEntity() != null && !(getEntity() instanceof vm_pools))
+        if (getEntity() != null && !(getEntity() instanceof VmPool))
         {
             getSearchCommand().Execute();
         }

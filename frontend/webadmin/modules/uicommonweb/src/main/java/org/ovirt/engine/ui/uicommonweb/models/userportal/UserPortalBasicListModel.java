@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -67,14 +67,14 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privatevms = value;
     }
 
-    private ArrayList<vm_pools> privatepools;
+    private ArrayList<VmPool> privatepools;
 
-    public ArrayList<vm_pools> getpools()
+    public ArrayList<VmPool> getpools()
     {
         return privatepools;
     }
 
-    public void setpools(ArrayList<vm_pools> value)
+    public void setpools(ArrayList<VmPool> value)
     {
         privatepools = value;
     }
@@ -132,7 +132,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                     public void OnSuccess(Object model, Object returnValue) {
                         UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
                         ArrayList<VM> vms = new ArrayList<VM>();
-                        ArrayList<vm_pools> pools = new ArrayList<vm_pools>();
+                        ArrayList<VmPool> pools = new ArrayList<VmPool>();
 
                         VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
                         if (retValue != null && retValue.getSucceeded()) {
@@ -141,8 +141,8 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                                 for (Object object : list) {
                                     if (object instanceof VM) {
                                         vms.add((VM) object);
-                                    } else if (object instanceof vm_pools) {
-                                        pools.add((vm_pools) object);
+                                    } else if (object instanceof VmPool) {
+                                        pools.add((VmPool) object);
                                     }
                                 }
                             }
@@ -231,7 +231,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             VM vm = (VM) entity;
             UpdateDetails(vm);
         }
-        else if (entity instanceof vm_pools)
+        else if (entity instanceof VmPool)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
@@ -250,7 +250,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
                 }
             };
 
-            vm_pools pool = (vm_pools) entity;
+            VmPool pool = (VmPool) entity;
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
                     new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
                     _asyncQuery);
@@ -285,10 +285,10 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             // Complete search.
 
             // Remove pools that has provided VMs.
-            ArrayList<vm_pools> filteredPools = new ArrayList<vm_pools>();
-            poolMap = new HashMap<Guid, vm_pools>();
+            ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
+            poolMap = new HashMap<Guid, VmPool>();
 
-            for (vm_pools pool : getpools())
+            for (VmPool pool : getpools())
             {
                 // Add pool to map.
                 poolMap.put(pool.getvm_pool_id(), pool);

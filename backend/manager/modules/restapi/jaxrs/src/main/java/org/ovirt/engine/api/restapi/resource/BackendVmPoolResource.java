@@ -1,6 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import static org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource.SUB_COLLECTION;
+
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -19,29 +21,26 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
-import static org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource.SUB_COLLECTION;
-
 public class BackendVmPoolResource
-    extends AbstractBackendActionableResource<VmPool, vm_pools>
+        extends AbstractBackendActionableResource<VmPool, org.ovirt.engine.core.common.businessentities.VmPool>
     implements VmPoolResource {
 
     private BackendVmPoolsResource parent;
 
     public BackendVmPoolResource(String id, BackendVmPoolsResource parent) {
-        super(id, VmPool.class, vm_pools.class, SUB_COLLECTION);
+        super(id, VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class, SUB_COLLECTION);
         this.parent = parent;
     }
 
@@ -69,12 +68,12 @@ public class BackendVmPoolResource
     }
 
     @Override
-    protected VmPool deprecatedPopulate(VmPool pool, vm_pools entity) {
+    protected VmPool deprecatedPopulate(VmPool pool, org.ovirt.engine.core.common.businessentities.VmPool entity) {
         return parent.deprecatedPopulate(pool, entity);
     }
 
     @Override
-    protected VmPool doPopulate(VmPool pool, vm_pools entity) {
+    protected VmPool doPopulate(VmPool pool, org.ovirt.engine.core.common.businessentities.VmPool entity) {
         return parent.doPopulate(pool, entity);
     }
 
@@ -97,11 +96,12 @@ public class BackendVmPoolResource
         return storageDomainId;
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<VmPool, vm_pools> {
+    protected class UpdateParametersProvider implements ParametersProvider<VmPool, org.ovirt.engine.core.common.businessentities.VmPool> {
         @Override
-        public VdcActionParametersBase getParameters(VmPool incoming, vm_pools current) {
+        public VdcActionParametersBase getParameters(VmPool incoming,
+                org.ovirt.engine.core.common.businessentities.VmPool current) {
             int currentVmCount = current.getvm_assigned_count();
-            vm_pools entity = map(incoming, current);
+            org.ovirt.engine.core.common.businessentities.VmPool entity = map(incoming, current);
 
             VM vm = mapToVM(map(entity));
 

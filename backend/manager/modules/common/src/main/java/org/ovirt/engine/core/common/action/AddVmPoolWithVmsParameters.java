@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
@@ -22,7 +22,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     public AddVmPoolWithVmsParameters() {
     }
 
-    public AddVmPoolWithVmsParameters(vm_pools vmPool, VM vm, int count, int diskSize) {
+    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int count, int diskSize) {
         super(vmPool);
         _vm = vm;
         _vmsCount = count;

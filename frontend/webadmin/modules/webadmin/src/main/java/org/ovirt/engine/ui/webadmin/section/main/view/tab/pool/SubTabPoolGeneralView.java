@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -21,7 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, PoolListModel, PoolGeneralModel> implements SubTabPoolGeneralPresenter.ViewDef, Editor<PoolGeneralModel> {
+public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolListModel, PoolGeneralModel> implements SubTabPoolGeneralPresenter.ViewDef, Editor<PoolGeneralModel> {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabPoolGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -108,7 +108,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<vm_pools, Pool
     }
 
     @Override
-    public void setMainTabSelectedItem(vm_pools selectedItem) {
+    public void setMainTabSelectedItem(VmPool selectedItem) {
         Driver.driver.edit(getDetailModel());
 
         // TODO required because of GWT#5864

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
@@ -109,8 +109,8 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 VdcQueryReturnValue returnValuePools = Backend.getInstance().runInternalQuery(
                         VdcQueryType.GetAllVmPoolsAttachedToUser,
                         new GetAllVmPoolsAttachedToUserParameters(getParameters().getRequestingUser().getUserId()));
-                List<vm_pools> vmPools = (returnValuePools != null) ? (List) returnValuePools.getReturnValue()
-                        : new java.util.ArrayList<vm_pools>();
+                List<VmPool> vmPools = (returnValuePools != null) ? (List) returnValuePools.getReturnValue()
+                        : new java.util.ArrayList<VmPool>();
                 // foreach (VM vm in vmList)
                 // if (vm.DynamicData.guest_cur_user_id.HasValue)
                 // {

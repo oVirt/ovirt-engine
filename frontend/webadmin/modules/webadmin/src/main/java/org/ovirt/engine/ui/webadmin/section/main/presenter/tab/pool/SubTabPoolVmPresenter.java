@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabPoolVmPresenter extends AbstractSubTabPresenter<vm_pools, PoolListModel, PoolVmListModel, SubTabPoolVmPresenter.ViewDef, SubTabPoolVmPresenter.ProxyDef> {
+public class SubTabPoolVmPresenter extends AbstractSubTabPresenter<VmPool, PoolListModel, PoolVmListModel, SubTabPoolVmPresenter.ViewDef, SubTabPoolVmPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.poolVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabPoolVmPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<vm_pools> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VmPool> {
     }
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)

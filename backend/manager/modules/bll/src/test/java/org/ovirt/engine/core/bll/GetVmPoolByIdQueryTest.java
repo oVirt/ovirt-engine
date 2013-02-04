@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -19,7 +19,7 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<GetVmPoolByIdP
     @Test
     public void testExecuteQuery() {
         Guid vmPoolID = Guid.NewGuid();
-        vm_pools expectedResult = new vm_pools();
+        VmPool expectedResult = new VmPool();
         expectedResult.setvm_pool_id(vmPoolID);
 
         GetVmPoolByIdParameters paramsMock = getQueryParameters();
@@ -33,7 +33,7 @@ public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<GetVmPoolByIdP
 
         getQuery().executeQueryCommand();
 
-        vm_pools result = (vm_pools) getQuery().getQueryReturnValue().getReturnValue();
+        VmPool result = (VmPool) getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong VM pool returned", expectedResult, result);
     }

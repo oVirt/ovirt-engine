@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
@@ -119,7 +119,7 @@ public class PoolListModel extends ListWithDetailsModel
             Object[] keys = new Object[getSelectedItems().size()];
             for (int i = 0; i < getSelectedItems().size(); i++)
             {
-                keys[i] = ((vm_pools) getSelectedItems().get(i)).getvm_pool_id();
+                keys[i] = ((VmPool) getSelectedItems().get(i)).getvm_pool_id();
             }
             return keys;
         }
@@ -238,7 +238,7 @@ public class PoolListModel extends ListWithDetailsModel
 
     public void Edit()
     {
-        final vm_pools pool = (vm_pools) getSelectedItem();
+        final VmPool pool = (VmPool) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -359,7 +359,7 @@ public class PoolListModel extends ListWithDetailsModel
         model.setMessage(ConstantsManager.getInstance().getConstants().poolsMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (vm_pools item : Linq.<vm_pools> Cast(getSelectedItems()))
+        for (VmPool item : Linq.<VmPool> Cast(getSelectedItems()))
         {
             list.add(item.getvm_pool_name());
         }
@@ -387,7 +387,7 @@ public class PoolListModel extends ListWithDetailsModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
-            vm_pools pool = (vm_pools) item;
+            VmPool pool = (VmPool) item;
             list.add(new VmPoolParametersBase(pool.getvm_pool_id()));
         }
 
@@ -426,7 +426,7 @@ public class PoolListModel extends ListWithDetailsModel
             return;
         }
 
-        final vm_pools pool = model.getIsNew() ? new vm_pools() : (vm_pools) Cloner.clone(getSelectedItem());
+        final VmPool pool = model.getIsNew() ? new VmPool() : (VmPool) Cloner.clone(getSelectedItem());
 
         final String name = (String) model.getName().getEntity();
 
@@ -595,12 +595,12 @@ public class PoolListModel extends ListWithDetailsModel
                 && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && VdcActionUtils.CanExecute(getSelectedItems(), vm_pools.class, VdcActionType.RemoveVmPool));
+                && VdcActionUtils.CanExecute(getSelectedItems(), VmPool.class, VdcActionType.RemoveVmPool));
     }
 
     private boolean hasVms(Object selectedItem) {
-        if (selectedItem instanceof vm_pools) {
-            return ((vm_pools) selectedItem).getvm_assigned_count() != 0;
+        if (selectedItem instanceof VmPool) {
+            return ((VmPool) selectedItem).getvm_assigned_count() != 0;
         }
         return false;
     }

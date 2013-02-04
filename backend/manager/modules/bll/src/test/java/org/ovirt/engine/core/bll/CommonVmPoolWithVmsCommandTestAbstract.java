@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -70,7 +70,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected Guid vmPoolId = Guid.NewGuid();
     private VDSGroup vdsGroup;
     protected VM testVm;
-    protected vm_pools vmPools;
+    protected VmPool vmPools;
     protected static int VM_COUNT = 5;
     protected static int DISK_SIZE = 100000;
     protected VmTemplate vmTemplate;
@@ -326,8 +326,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     /**
      * Mock VM pools.
      */
-    private vm_pools mockVmPools() {
-        vm_pools pool = new vm_pools();
+    private VmPool mockVmPools() {
+        VmPool pool = new VmPool();
         pool.setvm_pool_name("simplePoolName");
         pool.setvds_group_id(vdsGroupId);
         pool.setvm_pool_id(vmPoolId);

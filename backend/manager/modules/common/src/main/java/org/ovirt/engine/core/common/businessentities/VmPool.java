@@ -13,10 +13,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-public class vm_pools extends IVdcQueryable implements Serializable {
+public class VmPool extends IVdcQueryable implements Serializable {
 
-    private static final long serialVersionUID = -2176168998321713354L;
-    private static final int DEFAULT_PRESTARTED_VMS = 0;
+    private static final long serialVersionUID = 4517650877696849024L;
 
     private Guid id;
 
@@ -50,16 +49,7 @@ public class vm_pools extends IVdcQueryable implements Serializable {
 
     private int vmPoolRunningCount = 1;
 
-    /**
-     * TODO: Vitaly change it to better designed implementation
-     */
-    public vm_pools(String vm_pool_description, Guid vm_pool_id, String vm_pool_name, VmPoolType vmPoolType,
-            Guid vds_group_id, int defaultTimeInDays, TimeSpan defaultStartTime, TimeSpan defaultEndTime) {
-        this(vm_pool_description, vm_pool_id, vm_pool_name, vmPoolType, vds_group_id);
-        this.defaultTimeInDays = defaultTimeInDays;
-        this.defaultStartTime = defaultStartTime;
-        this.defaultEndTime = defaultEndTime;
-        this.prestartedVms = DEFAULT_PRESTARTED_VMS;
+    public VmPool() {
     }
 
     @Override
@@ -89,7 +79,7 @@ public class vm_pools extends IVdcQueryable implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        vm_pools other = (vm_pools) obj;
+        VmPool other = (VmPool) obj;
         if (defaultEndTime == null) {
             if (other.defaultEndTime != null)
                 return false;
@@ -203,19 +193,6 @@ public class vm_pools extends IVdcQueryable implements Serializable {
 
     public void setDefaultEndTime(TimeSpan value) {
         defaultEndTime = value;
-    }
-
-    public vm_pools() {
-    }
-
-    public vm_pools(String vm_pool_description, Guid vm_pool_id, String vm_pool_name, VmPoolType vmPoolType,
-            Guid vds_group_id) {
-        this.description = vm_pool_description;
-        this.id = vm_pool_id;
-        this.name = vm_pool_name;
-        this.type = vmPoolType;
-        this.vdsGroupId = vds_group_id;
-        this.prestartedVms = DEFAULT_PRESTARTED_VMS;
     }
 
     public int getPrestartedVms() {

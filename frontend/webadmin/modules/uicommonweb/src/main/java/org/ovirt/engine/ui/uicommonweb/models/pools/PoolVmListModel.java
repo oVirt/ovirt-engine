@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -36,12 +36,12 @@ public class PoolVmListModel extends VmListModel
     }
 
     @Override
-    public vm_pools getEntity()
+    public VmPool getEntity()
     {
-        return (vm_pools) super.getEntity();
+        return (VmPool) super.getEntity();
     }
 
-    public void setEntity(vm_pools value)
+    public void setEntity(VmPool value)
     {
         super.setEntity(value);
     }

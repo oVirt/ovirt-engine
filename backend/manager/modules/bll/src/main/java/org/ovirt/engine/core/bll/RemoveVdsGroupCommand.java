@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -24,7 +24,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
 
     @Override
     protected boolean canDoAction() {
-        List<vm_pools> list = null;
+        List<VmPool> list = null;
         boolean returnValue = super.canDoAction();
         getReturnValue().getCanDoActionMessages().add(
                 VdcBllMessages.VAR__ACTION__REMOVE.toString());
@@ -53,7 +53,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
                 returnValue = false;
             }
             if ((list = DbFacade.getInstance().getVmPoolDao().getAll()).size() > 0) {
-                for (vm_pools pool : list) {
+                for (VmPool pool : list) {
                     if (pool.getvds_group_id().equals(getVdsGroup().getId())) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_REMOVE_HAS_VM_POOLS);
                         returnValue = false;

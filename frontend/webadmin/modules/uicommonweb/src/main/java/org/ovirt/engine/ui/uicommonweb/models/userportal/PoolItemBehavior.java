@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,7 +66,7 @@ public class PoolItemBehavior extends ItemBehavior
 
     private void TakeVm()
     {
-        vm_pools entity = (vm_pools) getItem().getEntity();
+        VmPool entity = (VmPool) getItem().getEntity();
 
         Frontend.RunAction(VdcActionType.AttachUserToVmFromPoolAndRun, new VmPoolUserParameters(entity.getvm_pool_id(),
                 Frontend.getLoggedInUser(),
@@ -104,7 +104,7 @@ public class PoolItemBehavior extends ItemBehavior
 
     private void UpdateProperties()
     {
-        vm_pools entity = (vm_pools) getItem().getEntity();
+        VmPool entity = (VmPool) getItem().getEntity();
 
         getItem().setName(entity.getvm_pool_name());
         getItem().setDescription(entity.getvm_pool_description());
@@ -134,7 +134,7 @@ public class PoolItemBehavior extends ItemBehavior
                                     UserPortalItemModel model = behavior.getItem();
                                     model.setOsType(vm.getVmOs());
                                     model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
-                                    poolToOsType.put(((vm_pools) model.getEntity()).getvm_pool_id(), vm.getVmOs());
+                                    poolToOsType.put(((VmPool) model.getEntity()).getvm_pool_id(), vm.getVmOs());
                                 }
 
                             }

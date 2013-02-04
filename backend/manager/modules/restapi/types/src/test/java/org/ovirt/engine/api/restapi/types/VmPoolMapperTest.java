@@ -1,12 +1,13 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.VmPool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
 
-public class VmPoolMapperTest extends AbstractInvertibleMappingTest<VmPool, vm_pools, vm_pools> {
+public class VmPoolMapperTest extends AbstractInvertibleMappingTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, org.ovirt.engine.core.common.businessentities.VmPool> {
 
     public VmPoolMapperTest() {
-        super(VmPool.class, vm_pools.class, vm_pools.class);
+        super(VmPool.class,
+                org.ovirt.engine.core.common.businessentities.VmPool.class,
+                org.ovirt.engine.core.common.businessentities.VmPool.class);
     }
 
     @Override

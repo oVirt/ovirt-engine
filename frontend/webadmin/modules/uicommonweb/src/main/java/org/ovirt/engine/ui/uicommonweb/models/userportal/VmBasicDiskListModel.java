@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -62,7 +62,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                     new GetAllDisksByVmIdParameters(vm.getId()),
                     _asyncQuery);
         }
-        else if (getEntity() instanceof vm_pools)
+        else if (getEntity() instanceof VmPool)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setModel(this);
@@ -101,7 +101,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                 }
             };
 
-            vm_pools pool = (vm_pools) getEntity();
+            VmPool pool = (VmPool) getEntity();
             Frontend.RunQuery(VdcQueryType.GetVmDataByPoolId,
                     new GetVmdataByPoolIdParameters(pool.getvm_pool_id()),
                     _asyncQuery);

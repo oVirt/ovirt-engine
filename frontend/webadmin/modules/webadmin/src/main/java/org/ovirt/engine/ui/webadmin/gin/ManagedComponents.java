@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
@@ -298,7 +298,7 @@ public interface ManagedComponents {
 
     AsyncProvider<MainTabPoolPresenter> getMainTabPoolPresenter();
 
-    MainModelProvider<vm_pools, PoolListModel> getMainTabPoolModelProvider();
+    MainModelProvider<VmPool, PoolListModel> getMainTabPoolModelProvider();
 
     AsyncProvider<MainTabTemplatePresenter> getMainTabTemplatePresenter();
 

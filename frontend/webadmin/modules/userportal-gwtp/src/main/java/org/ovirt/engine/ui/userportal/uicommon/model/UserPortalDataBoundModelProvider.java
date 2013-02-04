@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal.uicommon.model;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
@@ -47,7 +47,7 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     public Object getKey(T item) {
         if (item instanceof UserPortalItemModel) {
             UserPortalItemModel itemModel = (UserPortalItemModel) item;
-            return itemModel.getIsPool() ? ((vm_pools) itemModel.getEntity()).getvm_pool_id()
+            return itemModel.getIsPool() ? ((VmPool) itemModel.getEntity()).getvm_pool_id()
                     : ((VM) itemModel.getEntity()).getId();
         }
 

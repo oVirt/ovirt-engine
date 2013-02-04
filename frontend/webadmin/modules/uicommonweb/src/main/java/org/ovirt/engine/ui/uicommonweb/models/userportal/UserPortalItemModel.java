@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
@@ -361,7 +361,7 @@ public class UserPortalItemModel extends EntityModel
         {
             behavior = new VmItemBehavior(this);
         }
-        else if (getEntity() instanceof vm_pools)
+        else if (getEntity() instanceof VmPool)
         {
             behavior = new PoolItemBehavior(this);
         }

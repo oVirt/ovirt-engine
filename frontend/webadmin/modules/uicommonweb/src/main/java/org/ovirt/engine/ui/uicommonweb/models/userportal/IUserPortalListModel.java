@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -71,9 +71,9 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
 
     public abstract void OnVmAndPoolLoad();
 
-    protected HashMap<Guid, vm_pools> poolMap;
+    protected HashMap<Guid, VmPool> poolMap;
 
-    public vm_pools ResolveVmPoolById(Guid id)
+    public VmPool ResolveVmPoolById(Guid id)
     {
         return poolMap.get(id);
     }

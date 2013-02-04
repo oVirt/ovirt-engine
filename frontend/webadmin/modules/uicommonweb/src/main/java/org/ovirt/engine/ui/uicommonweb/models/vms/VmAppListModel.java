@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,7 +66,7 @@ public class VmAppListModel extends SearchableListModel
         if (getEntity() instanceof VM) {
             updateAppListFromVm((VM) getEntity());
         } else {
-            vm_pools pool = (vm_pools) getEntity();
+            VmPool pool = (VmPool) getEntity();
             if (pool != null)
             {
                 AsyncQuery _asyncQuery = new AsyncQuery();

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<vm_pools, PoolListModel, MainTabPoolPresenter.ViewDef, MainTabPoolPresenter.ProxyDef> {
+public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<VmPool, PoolListModel, MainTabPoolPresenter.ViewDef, MainTabPoolPresenter.ProxyDef> {
 
     @GenEvent
     public static class PoolSelectionChange {
 
-        List<vm_pools> selectedItems;
+        List<VmPool> selectedItems;
 
     }
 
@@ -36,7 +36,7 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<vm
     public interface ProxyDef extends TabContentProxyPlace<MainTabPoolPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<vm_pools> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VmPool> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -47,7 +47,7 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<vm
 
     @Inject
     public MainTabPoolPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<vm_pools, PoolListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<VmPool, PoolListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -76,9 +76,9 @@ public final class Linq
             {
                 return ((VM) obj).getVmName();
             }
-            if (obj instanceof vm_pools)
+            if (obj instanceof VmPool)
             {
-                return ((vm_pools) obj).getvm_pool_name();
+                return ((VmPool) obj).getvm_pool_name();
             }
 
             throw new NotImplementedException();

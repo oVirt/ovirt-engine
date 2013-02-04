@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -31,16 +31,16 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils;
 
 @CustomLogFields({ @CustomLogField("VmPoolName") })
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
-    private vm_pools mVmPool;
+    private VmPool mVmPool;
 
-    protected vm_pools getVmPool() {
+    protected VmPool getVmPool() {
         if (mVmPool == null && getVmPoolId() != null) {
             mVmPool = getVmPoolDAO().get(getVmPoolId());
         }
         return mVmPool;
     }
 
-    protected void setVmPool(vm_pools value) {
+    protected void setVmPool(VmPool value) {
         mVmPool = value;
     }
 

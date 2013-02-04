@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -16,14 +16,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pools, PoolListModel> implements MainTabPoolPresenter.ViewDef {
+public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool, PoolListModel> implements MainTabPoolPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabPoolView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @Inject
-    public MainTabPoolView(MainModelProvider<vm_pools, PoolListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabPoolView(MainModelProvider<VmPool, PoolListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
@@ -33,59 +33,59 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<vm_pool
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<vm_pools> nameColumn = new TextColumnWithTooltip<vm_pools>() {
+        TextColumnWithTooltip<VmPool> nameColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
-            public String getValue(vm_pools object) {
+            public String getValue(VmPool object) {
                 return object.getvm_pool_name();
             }
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<vm_pools> assignedColumn = new TextColumnWithTooltip<vm_pools>() {
+        TextColumnWithTooltip<VmPool> assignedColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
-            public String getValue(vm_pools object) {
+            public String getValue(VmPool object) {
                 return Integer.toString(object.getvm_assigned_count());
             }
         };
         getTable().addColumn(assignedColumn, constants.assignVmsPool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<vm_pools> runningColumn = new TextColumnWithTooltip<vm_pools>() {
+        TextColumnWithTooltip<VmPool> runningColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
-            public String getValue(vm_pools object) {
+            public String getValue(VmPool object) {
                 return Integer.toString(object.getvm_running_count());
             }
         };
         getTable().addColumn(runningColumn, constants.runningVmsPool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<vm_pools> typeColumn = new EnumColumn<vm_pools, VmPoolType>() {
+        TextColumnWithTooltip<VmPool> typeColumn = new EnumColumn<VmPool, VmPoolType>() {
             @Override
-            public VmPoolType getRawValue(vm_pools object) {
+            public VmPoolType getRawValue(VmPool object) {
                 return object.getvm_pool_type();
             }
         };
         getTable().addColumn(typeColumn, constants.typePool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<vm_pools> descColumn = new TextColumnWithTooltip<vm_pools>() {
+        TextColumnWithTooltip<VmPool> descColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
-            public String getValue(vm_pools object) {
+            public String getValue(VmPool object) {
                 return object.getvm_pool_description();
             }
         };
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.newPool()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.editPool()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.editPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<vm_pools>(constants.removePool()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.removePool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();

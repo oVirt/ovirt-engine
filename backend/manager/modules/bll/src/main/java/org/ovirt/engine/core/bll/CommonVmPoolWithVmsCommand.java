@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Step;
@@ -189,7 +189,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        vm_pools pool = getVmPoolDAO().getByName(getParameters().getVmPool().getvm_pool_name());
+        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getvm_pool_name());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getvm_pool_id().equals(
                         getParameters().getVmPoolId()))) {

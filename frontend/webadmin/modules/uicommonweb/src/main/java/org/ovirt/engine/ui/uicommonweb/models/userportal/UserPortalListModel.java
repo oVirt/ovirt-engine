@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -222,14 +222,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         privatevms = value;
     }
 
-    private ArrayList<vm_pools> privatepools;
+    private ArrayList<VmPool> privatepools;
 
-    public ArrayList<vm_pools> getpools()
+    public ArrayList<VmPool> getpools()
     {
         return privatepools;
     }
 
-    public void setpools(ArrayList<vm_pools> value)
+    public void setpools(ArrayList<VmPool> value)
     {
         privatepools = value;
     }
@@ -353,7 +353,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     public void OnSuccess(Object model, Object returnValue) {
                         UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                         ArrayList<VM> vms = new ArrayList<VM>();
-                        ArrayList<vm_pools> pools = new ArrayList<vm_pools>();
+                        ArrayList<VmPool> pools = new ArrayList<VmPool>();
 
                         VdcQueryReturnValue retValue = (VdcQueryReturnValue) returnValue;
                         if (retValue != null && retValue.getSucceeded()) {
@@ -362,8 +362,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 for (Object object : list) {
                                     if (object instanceof VM) {
                                         vms.add((VM) object);
-                                    } else if (object instanceof vm_pools) {
-                                        pools.add((vm_pools) object);
+                                    } else if (object instanceof VmPool) {
+                                        pools.add((VmPool) object);
                                     }
                                 }
                             }
@@ -1759,10 +1759,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             // Complete search.
 
             // Remove pools that has provided VMs.
-            ArrayList<vm_pools> filteredPools = new ArrayList<vm_pools>();
-            poolMap = new HashMap<Guid, vm_pools>();
+            ArrayList<VmPool> filteredPools = new ArrayList<VmPool>();
+            poolMap = new HashMap<Guid, VmPool>();
 
-            for (vm_pools pool : getpools())
+            for (VmPool pool : getpools())
             {
                 // Add pool to map.
                 poolMap.put(pool.getvm_pool_id(), pool);

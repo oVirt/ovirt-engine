@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.vm_pools;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,8 +27,8 @@ public class VmPoolMonitor {
      */
     @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
     public void managePrestartedVmsInAllVmPools() {
-        List<vm_pools> vmPools = DbFacade.getInstance().getVmPoolDao().getAll();
-        for (vm_pools vmPool : vmPools) {
+        List<VmPool> vmPools = DbFacade.getInstance().getVmPoolDao().getAll();
+        for (VmPool vmPool : vmPools) {
             managePrestartedVmsInPool(vmPool);
         }
     }
@@ -38,7 +38,7 @@ public class VmPoolMonitor {
      * (the minimum between the two).
      * @param vmPool
      */
-    private void managePrestartedVmsInPool(vm_pools vmPool) {
+    private void managePrestartedVmsInPool(VmPool vmPool) {
         Guid vmPoolId = vmPool.getvm_pool_id();
         int prestartedVms = VmPoolCommandBase.getNumOfPrestartedVmsInPool(vmPoolId);
         int missingPrestartedVms = vmPool.getPrestartedVms() - prestartedVms;
