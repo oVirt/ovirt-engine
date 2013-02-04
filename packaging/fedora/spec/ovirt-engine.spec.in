@@ -124,7 +124,6 @@ BuildRequires: jboss-logging
 BuildRequires: jboss-interceptors-1.1-api
 BuildRequires: jboss-servlet-3.0-api
 BuildRequires: jpackage-utils
-BuildRequires: jsch
 BuildRequires: log4j
 BuildRequires: make
 BuildRequires: maven
@@ -221,7 +220,6 @@ Requires: jakarta-commons-httpclient
 Requires: java
 Requires: javassist
 Requires: jboss-interceptors-1.1-api
-Requires: jsch
 Requires: objectweb-asm
 Requires: openssh
 Requires: openssl
@@ -438,7 +436,6 @@ commons-compress commons-compress
 dom4j dom4j
 geronimo-validation validation-api
 hibernate-validator hibernate-validator
-jsch jsch
 objectweb-asm/asm-all asm-all
 quartz quartz
 slf4j/api slf4j-api
