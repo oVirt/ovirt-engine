@@ -787,6 +787,20 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 .get(vm.getVdsGroupCompatibilityVersion()));
 
         // Boot sequence.
+        setIsBootFromNetworkAllowedForVm(vm);
+        setIsBootFromHardDiskAllowedForVm(vm);
+
+        UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
+        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        tempVar3.setIsDefault(true);
+        model.getCommands().add(tempVar3);
+        UICommand tempVar4 = new UICommand("Cancel", this); //$NON-NLS-1$
+        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        tempVar4.setIsCancel(true);
+        model.getCommands().add(tempVar4);
+    }
+
+    private void setIsBootFromNetworkAllowedForVm(VM vm) {
         AsyncQuery _asyncQuery2 = new AsyncQuery();
         _asyncQuery2.setModel(this);
 
@@ -811,17 +825,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()), _asyncQuery2);
-
-        setIsBootFromHardDiskAllowedForVm(vm);
-
-        UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar3.setIsDefault(true);
-        model.getCommands().add(tempVar3);
-        UICommand tempVar4 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar4.setIsCancel(true);
-        model.getCommands().add(tempVar4);
     }
 
     private void setIsBootFromHardDiskAllowedForVm(VM vm) {

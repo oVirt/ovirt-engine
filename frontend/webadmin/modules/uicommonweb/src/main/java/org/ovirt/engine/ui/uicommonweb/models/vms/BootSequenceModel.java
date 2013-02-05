@@ -48,35 +48,23 @@ public class BootSequenceModel extends ListModel
 
     public EntityModel getHardDiskOption()
     {
-        for (EntityModel a : getItems())
-        {
-            if ((BootSequence) a.getEntity() == BootSequence.C)
-            {
-                return a;
-            }
-        }
-
-        throw new IndexOutOfBoundsException();
+        return getBootSequenceOption(BootSequence.C);
     }
 
     public EntityModel getNetworkOption()
     {
-        for (EntityModel a : getItems())
-        {
-            if ((BootSequence) a.getEntity() == BootSequence.N)
-            {
-                return a;
-            }
-        }
-
-        throw new IndexOutOfBoundsException();
+        return getBootSequenceOption(BootSequence.N);
     }
 
     public EntityModel getCdromOption()
     {
+        return getBootSequenceOption(BootSequence.D);
+    }
+
+    private EntityModel getBootSequenceOption(BootSequence bootSequenceOption) {
         for (EntityModel a : getItems())
         {
-            if ((BootSequence) a.getEntity() == BootSequence.D)
+            if ((BootSequence) a.getEntity() == bootSequenceOption)
             {
                 return a;
             }
