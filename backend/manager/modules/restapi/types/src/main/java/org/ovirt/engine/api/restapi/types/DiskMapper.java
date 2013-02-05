@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -40,7 +41,7 @@ public class DiskMapper {
             engineDisk.setDiskAlias(disk.getAlias());
         }
         if (disk.isSetId()) {
-            engineDisk.setId(new Guid(disk.getId()));
+            engineDisk.setId(GuidUtils.asGuid(disk.getId()));
         }
         if (disk.isSetBootable()) {
             engineDisk.setBoot(disk.isBootable());
@@ -75,7 +76,7 @@ public class DiskMapper {
     private static void mapDiskToDiskImageProperties(Disk disk,
             DiskImage diskImage) {
         if (disk.isSetImageId()) {
-            diskImage.setImageId(new Guid(disk.getImageId()));
+            diskImage.setImageId(GuidUtils.asGuid(disk.getImageId()));
         }
         //Notice below:
         //Both <size> and <provisioned_size> are mapped to the same field: 'size' in the
@@ -113,7 +114,7 @@ public class DiskMapper {
             diskImage.getstorage_ids().add(Guid.createGuidFromString(storageDomain.getId()));
         }
         if (disk.isSetQuota() && disk.getQuota().isSetId()) {
-            diskImage.setQuotaId(new Guid(disk.getQuota().getId()));
+            diskImage.setQuotaId(GuidUtils.asGuid(disk.getQuota().getId()));
         }
     }
 

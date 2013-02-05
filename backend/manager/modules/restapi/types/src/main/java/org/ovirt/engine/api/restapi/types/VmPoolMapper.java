@@ -2,9 +2,9 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
-import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolMapper {
 
@@ -12,7 +12,7 @@ public class VmPoolMapper {
     public static vm_pools map(VmPool model, vm_pools template) {
         vm_pools entity = template != null ? template : new vm_pools();
         if (model.isSetId()) {
-            entity.setvm_pool_id(new Guid(model.getId()));
+            entity.setvm_pool_id(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setvm_pool_name(model.getName());
@@ -25,7 +25,7 @@ public class VmPoolMapper {
         }
         if (model.isSetCluster()) {
             if (model.getCluster().isSetId()) {
-                entity.setvds_group_id(new Guid(model.getCluster().getId()));
+                entity.setvds_group_id(GuidUtils.asGuid(model.getCluster().getId()));
             } else if (model.getCluster().isSetName()) {
                 entity.setvds_group_name(model.getCluster().getName());
             }
@@ -43,11 +43,11 @@ public class VmPoolMapper {
         entity.setVmDescription(model.getDescription());
         if (model.isSetTemplate() &&
             model.getTemplate().isSetId()) {
-            entity.setVmtGuid(new Guid(model.getTemplate().getId()));
+            entity.setVmtGuid(GuidUtils.asGuid(model.getTemplate().getId()));
         }
         if (model.isSetCluster() &&
             model.getCluster().isSetId()) {
-            entity.setVdsGroupId(new Guid(model.getCluster().getId()));
+            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         return entity;
     }

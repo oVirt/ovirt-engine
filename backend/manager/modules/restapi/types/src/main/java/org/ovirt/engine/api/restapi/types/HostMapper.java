@@ -31,6 +31,7 @@ import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.ValueObjectPair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class HostMapper {
@@ -56,13 +56,13 @@ public class HostMapper {
     public static VdsStatic map(Host model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setvds_name(model.getName());
         }
         if (model.isSetCluster() && model.getCluster().isSetId()) {
-            entity.setvds_group_id(new Guid(model.getCluster().getId()));
+            entity.setvds_group_id(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetAddress()) {
             entity.sethost_name(model.getAddress());

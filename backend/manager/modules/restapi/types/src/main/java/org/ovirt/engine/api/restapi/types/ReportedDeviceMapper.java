@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 public class ReportedDeviceMapper {
@@ -40,7 +40,7 @@ public class ReportedDeviceMapper {
     public static VmGuestAgentInterface map(ReportedDevice model, VmGuestAgentInterface template) {
         VmGuestAgentInterface entity = template != null ? template : new VmGuestAgentInterface();
         if (model.isSetVm() && model.getVm().isSetId()) {
-            entity.setVmId(new Guid(model.getVm().getId()));
+            entity.setVmId(GuidUtils.asGuid(model.getVm().getId()));
         }
         if (model.isSetName()) {
             entity.setInterfaceName(model.getName());

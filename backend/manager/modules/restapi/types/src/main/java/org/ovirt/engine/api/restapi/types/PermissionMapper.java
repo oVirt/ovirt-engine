@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,15 +22,15 @@ public class PermissionMapper {
     public static permissions map(Permission model, permissions template) {
         permissions entity = template != null ? template : new permissions();
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetRole() && model.getRole().isSetId()) {
-            entity.setrole_id(new Guid(model.getRole().getId()));
+            entity.setrole_id(GuidUtils.asGuid(model.getRole().getId()));
         }
         if (model.isSetUser() && model.getUser().isSetId()) {
-            entity.setad_element_id(new Guid(model.getUser().getId()));
+            entity.setad_element_id(GuidUtils.asGuid(model.getUser().getId()));
         } else if (model.isSetGroup() && model.getGroup().isSetId()) {
-            entity.setad_element_id(new Guid(model.getGroup().getId()));
+            entity.setad_element_id(GuidUtils.asGuid(model.getGroup().getId()));
         }
         entity.setObjectId(map(model, template != null ? template.getObjectId() : null));
         entity.setObjectType(map(model, template != null ? template.getObjectType() : null));
@@ -65,19 +66,19 @@ public class PermissionMapper {
     @Mapping(from = Permission.class, to = Guid.class)
     public static Guid map(Permission p, Guid template) {
         return p.isSetDataCenter() && p.getDataCenter().isSetId()
-               ? new Guid(p.getDataCenter().getId())
+               ? GuidUtils.asGuid(p.getDataCenter().getId())
                : p.isSetCluster() && p.getCluster().isSetId()
-                 ? new Guid(p.getCluster().getId())
+                 ? GuidUtils.asGuid(p.getCluster().getId())
                  : p.isSetHost() && p.getHost().isSetId()
-                   ? new Guid(p.getHost().getId())
+                   ? GuidUtils.asGuid(p.getHost().getId())
                    : p.isSetStorageDomain() && p.getStorageDomain().isSetId()
-                     ? new Guid(p.getStorageDomain().getId())
+                     ? GuidUtils.asGuid(p.getStorageDomain().getId())
                      : p.isSetVm() && p.getVm().isSetId()
-                       ? new Guid(p.getVm().getId())
+                       ? GuidUtils.asGuid(p.getVm().getId())
                        : p.isSetVmpool() && p.getVmpool().isSetId()
-                         ? new Guid(p.getVmpool().getId())
+                         ? GuidUtils.asGuid(p.getVmpool().getId())
                          : p.isSetTemplate() && p.getTemplate().isSetId()
-                           ? new Guid(p.getTemplate().getId())
+                           ? GuidUtils.asGuid(p.getTemplate().getId())
                            : template;
     }
 

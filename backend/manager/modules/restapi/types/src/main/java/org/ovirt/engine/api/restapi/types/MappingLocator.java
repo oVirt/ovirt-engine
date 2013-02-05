@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.api.common.util.PackageExplorer;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 
 /**
  * Discovers and manages type mappers.
@@ -113,6 +115,10 @@ public class MappingLocator {
             try {
                 // REVISIT support non-static mapping methods also
                 ret = method.invoke(null, from, template);
+            } catch (InvocationTargetException ite) {
+              if (ite.getTargetException() instanceof MalformedIdException) {
+                   throw (MalformedIdException) ite.getTargetException();
+              }
             } catch (Exception e) {
                 // REVISIT logging, fallback null-mapping
                 e.printStackTrace();

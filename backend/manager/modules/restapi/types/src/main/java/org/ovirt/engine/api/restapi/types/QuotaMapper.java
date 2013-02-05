@@ -2,7 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Quota;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
 
 public class QuotaMapper {
@@ -11,7 +11,7 @@ public class QuotaMapper {
     public static org.ovirt.engine.core.common.businessentities.Quota map(Quota model, org.ovirt.engine.core.common.businessentities.Quota template) {
         org.ovirt.engine.core.common.businessentities.Quota entity = (template==null) ? new org.ovirt.engine.core.common.businessentities.Quota() : template;
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setQuotaName(model.getName());
@@ -20,7 +20,7 @@ public class QuotaMapper {
             entity.setDescription(model.getDescription());
         }
         if (model.isSetDataCenter()) {
-            entity.setStoragePoolId(new Guid(model.getDataCenter().getId()));
+            entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
         return entity;
     }

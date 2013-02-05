@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
-import org.ovirt.engine.core.compat.Guid;
 
 public class MappingTestHelper {
 
@@ -218,7 +218,7 @@ public class MappingTestHelper {
     }
 
     private static Object garble(Method m) {
-        return m.getName().endsWith("Id") ? new Guid(UUID.randomUUID()).toString()
+        return m.getName().endsWith("Id") ? GuidUtils.asGuid(UUID.randomUUID().toString()).toString()
                 : new String(new byte[] { (byte) (65 + rand(26)), (byte) (65 + rand(26)),
                         (byte) (65 + rand(26)) });
     }

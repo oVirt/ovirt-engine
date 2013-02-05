@@ -5,18 +5,18 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
 
 public class NicMapper {
     @Mapping(from = NIC.class, to = VmNetworkInterface.class)
     public static VmNetworkInterface map(NIC model, VmNetworkInterface template) {
         VmNetworkInterface entity = template != null ? template : new VmNetworkInterface();
         if (model.isSetVm() && model.getVm().isSetId()) {
-            entity.setVmId(new Guid(model.getVm().getId()));
+            entity.setVmId(GuidUtils.asGuid(model.getVm().getId()));
         }
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setName(model.getName());

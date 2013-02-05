@@ -6,7 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
-import org.ovirt.engine.api.restapi.resource.BaseBackendResource.MalformedIdException;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 
 @Provider
 @ServerInterceptor

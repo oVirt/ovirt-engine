@@ -43,6 +43,7 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -56,7 +57,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -108,7 +108,7 @@ public class VmMapper {
             staticVm.setVmName(vm.getName());
         }
         if (vm.isSetId()) {
-            staticVm.setId(new Guid(vm.getId()));
+            staticVm.setId(GuidUtils.asGuid(vm.getId()));
         }
         if (vm.isSetDescription()) {
             staticVm.setDescription(vm.getDescription());
@@ -120,10 +120,10 @@ public class VmMapper {
             staticVm.setMemSizeMb(DEFAULT_MEMORY_SIZE);
         }
         if (vm.isSetTemplate() && vm.getTemplate().getId() != null) {
-            staticVm.setVmtGuid(new Guid(vm.getTemplate().getId()));
+            staticVm.setVmtGuid(GuidUtils.asGuid(vm.getTemplate().getId()));
         }
         if (vm.isSetCluster() && vm.getCluster().getId() != null) {
-            staticVm.setVdsGroupId(new Guid(vm.getCluster().getId()));
+            staticVm.setVdsGroupId(GuidUtils.asGuid(vm.getCluster().getId()));
         }
         if (vm.isSetCpu()) {
             if (vm.getCpu().isSetMode()) {
@@ -225,7 +225,7 @@ public class VmMapper {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
-            staticVm.setQuotaId(new Guid(vm.getQuota().getId()));
+            staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
         }
         return staticVm;
     }

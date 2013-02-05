@@ -10,10 +10,10 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class HostNicMapper {
@@ -29,7 +29,7 @@ public class HostNicMapper {
     public static VdsNetworkInterface map(HostNIC model, VdsNetworkInterface template) {
         VdsNetworkInterface entity = template != null ? template : new VdsNetworkInterface();
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetNetwork() && model.getNetwork().isSetName()) {
             entity.setNetworkName(model.getNetwork().getName());
