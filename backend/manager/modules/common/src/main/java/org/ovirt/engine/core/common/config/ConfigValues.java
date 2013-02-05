@@ -1155,7 +1155,7 @@ public enum ConfigValues {
         "trap \"chmod -R u+rwX \\\"${MYTMP}\\\" > /dev/null 2>&1; rm -fr \\\"${MYTMP}\\\" > /dev/null 2>&1\" 0; " +
         "rm -fr \"${MYTMP}\" && " +
         "mkdir \"${MYTMP}\" && " +
-        "python -c \"import sys, tarfile; tarfile.open(fileobj=sys.stdin, mode='r|').extractall(path='${MYTMP}')\" && " +
+        "tar -C \"${MYTMP}\" -x && " +
         "@ENVIRONMENT@ \"${MYTMP}\"/setup DIALOG/dialect=str:machine DIALOG/customization=bool:True"
     )
     BootstrapCommand(373),
