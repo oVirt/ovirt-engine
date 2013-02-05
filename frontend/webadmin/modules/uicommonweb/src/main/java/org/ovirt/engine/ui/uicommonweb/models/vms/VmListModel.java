@@ -1651,13 +1651,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             param.setUseVnc((Boolean) model.getDisplayConsole_Vnc_IsSelected().getEntity());
         }
 
-        Frontend.RunAction(VdcActionType.RunVmOnce, param,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                    }
-                }, this);
+        Frontend.RunAction(VdcActionType.RunVmOnce, param, null, this);
 
         Cancel();
     }

@@ -98,6 +98,8 @@ public class Frontend {
 
     private static Event frontendNotLoggedInEvent = new Event("NotLoggedIn", Frontend.class); //$NON-NLS-1$
 
+    private final static NullableFrontendActionAsyncCallback NULLABLE_ASYNC_CALLBACK = new NullableFrontendActionAsyncCallback();
+
     public static Event getFrontendFailureEvent() {
         return frontendFailureEvent;
     }
@@ -448,6 +450,16 @@ public class Frontend {
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final Object state) {
+        runActionImpl(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state);
+    }
+
+    /**
+     * Note: the given callback must not be null
+     */
+    private static void runActionImpl(final VdcActionType actionType,
+            final VdcActionParametersBase parameters,
+            final IFrontendActionAsyncCallback callback,
+            final Object state) {
         logger.finer("Invoking async runAction."); //$NON-NLS-1$
         dumpActionDetails(actionType, parameters);
 
@@ -496,7 +508,7 @@ public class Frontend {
             @Override
             public void onSuccess(VdcReturnValueBase result) {
                 logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-                handleActionResult(actionType, parameters, result, null, null);
+                handleActionResult(actionType, parameters, result, NULLABLE_ASYNC_CALLBACK, null);
             }
         });
     }
@@ -755,12 +767,10 @@ public class Frontend {
             failed.add(result);
             translateErrors(failed);
             getEventsHandler().runActionFailed(failed);
-            if (callback != null)
-                callback.Executed(f);
+            callback.Executed(f);
         } else if (result.getIsSyncronious() && result.getSucceeded() == false) {
             runActionExecutionFailed(actionType, result.getFault());
-            if (callback != null)
-                callback.Executed(f);
+            callback.Executed(f);
 
             // Prevent another (untranslated) error message pop-up display
             // ('runActionExecutionFailed' invokes an error pop-up displaying,
@@ -768,8 +778,7 @@ public class Frontend {
             success = true;
         } else {
             success = true;
-            if (callback != null)
-                callback.Executed(f);
+            callback.Executed(f);
         }
 
         if ((!success) && (getEventsHandler() != null)
@@ -844,4 +853,12 @@ public class Frontend {
         return false;
     }
 
+    /**
+     * Empty implementation of IFrontendActionAsyncCallback
+     */
+    private final static class NullableFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
+        @Override
+        public void Executed(FrontendActionAsyncResult result) {
+        }
+    }
 }

@@ -700,12 +700,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void CleanConnection(StorageServerConnections connection, Guid hostId) {
 
-        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId), new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-
-            }
-        }, this);
+        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
+                null, this);
     }
 
     private void remove()
@@ -781,13 +777,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             tempVar.setDoFormat((storage.getstorage_domain_type() == StorageDomainType.Data || storage.getstorage_domain_type() == StorageDomainType.Master) ? true
                 : (Boolean) model.getFormat().getEntity());
 
-            Frontend.RunAction(VdcActionType.RemoveStorageDomain, tempVar,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                    }
-                }, this);
+            Frontend.RunAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
         }
 
         Cancel();
@@ -1639,13 +1629,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     if (lunIds.size() > 0) {
                         Frontend.RunAction(VdcActionType.ExtendSANStorageDomain,
                             new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds, force),
-                            new IFrontendActionAsyncCallback() {
-                                @Override
-                                public void Executed(FrontendActionAsyncResult result1) {
-
-                                }
-                            },
-                            this);
+                            null, this);
                     }
                     storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
                 }
@@ -1656,13 +1640,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void AttachStorageToDataCenter(Guid storageId, Guid dataCenterId)
     {
         Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
-            dataCenterId),
-            new IFrontendActionAsyncCallback() {
-                @Override
-                public void Executed(FrontendActionAsyncResult result) {
-
-                }
-            }, this);
+            dataCenterId), null, this);
     }
 
     private void ImportNfsStorage(TaskContext context)

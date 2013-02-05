@@ -384,13 +384,7 @@ public class VmSnapshotListModel extends SearchableListModel
         if (vm != null)
         {
             Frontend.RunAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(snapshot.getId(),
-                    vm.getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                        }
-                    }, null);
+                    vm.getId()), null, null);
         }
 
         getCanSelectSnapshot().setEntity(false);
@@ -407,12 +401,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
             Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                        }
-                    },
+                    null,
                     null);
         }
     }
@@ -426,12 +415,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
             Frontend.RunAction(VdcActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), snapshot.getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                        }
-                    },
+                    null,
                     null);
         }
     }
@@ -445,12 +429,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
             Frontend.RunAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                     new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId()),
-                    new IFrontendActionAsyncCallback() {
-                        @Override
-                        public void Executed(FrontendActionAsyncResult result) {
-
-                        }
-                    },
+                    null,
                     null);
         }
     }

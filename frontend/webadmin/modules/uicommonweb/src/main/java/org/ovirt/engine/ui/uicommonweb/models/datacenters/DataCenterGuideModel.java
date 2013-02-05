@@ -17,17 +17,17 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
@@ -871,12 +871,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                    }
-                },
+                null,
                 this);
     }
 
@@ -1206,11 +1201,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         Frontend.RunAction(VdcActionType.AttachStorageDomainToPool, new StorageDomainPoolParametersBase(storageId,
                 dataCenterId),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-                    }
-                }, this);
+                null,
+                this);
     }
 
     public void OnAttachStorage()
@@ -1524,11 +1516,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                     Frontend.RunAction(VdcActionType.ApproveVds,
 
                                             new ApproveVdsParameters(selectedHost.getId()),
-                                            new IFrontendActionAsyncCallback() {
-                                                @Override
-                                                public void Executed(FrontendActionAsyncResult result) {
-                                                }
-                                            },
+                                            null,
                                             this);
                                 }
                             }

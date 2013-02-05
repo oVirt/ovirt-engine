@@ -27,8 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VmItemBehavior extends ItemBehavior
 {
@@ -110,12 +108,7 @@ public class VmItemBehavior extends ItemBehavior
         VM entity = (VM) getItem().getEntity();
 
         Frontend.RunAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void Executed(FrontendActionAsyncResult result) {
-
-                    }
-                }, null);
+                null, null);
     }
 
     private void Shutdown()
