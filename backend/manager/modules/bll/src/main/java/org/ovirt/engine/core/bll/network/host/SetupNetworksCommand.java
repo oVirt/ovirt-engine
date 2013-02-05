@@ -83,6 +83,11 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
     @Override
     protected void executeCommand() {
+        if (noChangesDetected()) {
+            setSucceeded(true);
+            return;
+        }
+
         T bckndCmdParams = getParameters();
         final SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
                 getVdsId(),
@@ -117,6 +122,11 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         } catch (TimeoutException e) {
             log.debugFormat("Setup networks command timed out for {0} seconds", timeout);
         }
+    }
+
+    private boolean noChangesDetected() {
+        return getNetworks().isEmpty() && getRemovedNetworks().isEmpty()
+                && getBonds().isEmpty() && getRemovedBonds().isEmpty();
     }
 
     private List<VdsNetworkInterface> getInterfaces() {
