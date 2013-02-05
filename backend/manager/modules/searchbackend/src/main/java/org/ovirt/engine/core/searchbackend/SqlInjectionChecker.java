@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashSet;
+import java.util.StringTokenizer;
 
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.core.compat.StringTokenizerCompat;
 
 
 public abstract class SqlInjectionChecker {
@@ -73,7 +73,7 @@ public abstract class SqlInjectionChecker {
         for (String s : QUOTES_INSIDE_VALUE_INDICATORES) {
             sql = sql.replaceAll(s, "");
         }
-        StringTokenizerCompat st = new StringTokenizerCompat(sql, DELIMITERS, true);
+        StringTokenizer st = new StringTokenizer(sql, DELIMITERS, true);
         while(st.hasMoreTokens()) {
             String token = st.nextToken();
             if (token.equals(QUOTE_STR)) {
