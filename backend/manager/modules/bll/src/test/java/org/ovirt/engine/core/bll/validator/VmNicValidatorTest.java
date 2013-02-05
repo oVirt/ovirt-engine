@@ -19,6 +19,11 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class VmNicValidatorTest {
 
+    private static final String CLUSTER_VERSION = "7";
+
+    private static final String CLUSTER_VERSION_REPLACEMENT =
+            String.format(VmNicValidator.CLUSTER_VERSION_REPLACEMENT_FORMAT, CLUSTER_VERSION);
+
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
 
@@ -32,14 +37,16 @@ public class VmNicValidatorTest {
 
     @Before
     public void setup() {
-        when(version.getValue()).thenReturn(null);
+        when(version.getValue()).thenReturn(CLUSTER_VERSION);
 
         validator = new VmNicValidator(nic, version);
     }
 
     @Test
     public void unlinkedWhenUnlinkingNotSupported() throws Exception {
-        unlinkingTest(new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED), false, false);
+        unlinkingTest(new ValidationResult(VdcBllMessages.UNLINKING_IS_NOT_SUPPORTED, CLUSTER_VERSION_REPLACEMENT),
+                false,
+                false);
     }
 
     @Test
@@ -59,7 +66,9 @@ public class VmNicValidatorTest {
 
     @Test
     public void nullNetworkNameWhenUnlinkingNotSupported() throws Exception {
-        networkNameTest(new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED), false, null);
+        networkNameTest(new ValidationResult(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED, CLUSTER_VERSION_REPLACEMENT),
+                false,
+                null);
     }
 
     @Test

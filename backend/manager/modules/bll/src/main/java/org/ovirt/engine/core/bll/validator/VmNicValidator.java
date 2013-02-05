@@ -11,6 +11,8 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  */
 public class VmNicValidator {
 
+    protected static final String CLUSTER_VERSION_REPLACEMENT_FORMAT = "$clusterVersion %s";
+
     protected VmNetworkInterface nic;
 
     protected Version version;
@@ -48,6 +50,6 @@ public class VmNicValidator {
     }
 
     protected String clusterVersion() {
-        return String.format("$clusterVersion %s", version.getValue());
+        return String.format(CLUSTER_VERSION_REPLACEMENT_FORMAT, version.getValue());
     }
 }

@@ -104,6 +104,7 @@ public final class ValidationResult {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getMessage() == null) ? 0 : getMessage().hashCode());
+        result = prime * result + ((getVariableReplacements() == null) ? 0 : getVariableReplacements().hashCode());
         return result;
     }
 
@@ -113,10 +114,15 @@ public final class ValidationResult {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ValidationResult))
+        if (getClass() != obj.getClass())
             return false;
         ValidationResult other = (ValidationResult) obj;
         if (getMessage() != other.getMessage())
+            return false;
+        if (getVariableReplacements() == null) {
+            if (other.getVariableReplacements() != null)
+                return false;
+        } else if (!getVariableReplacements().equals(other.getVariableReplacements()))
             return false;
         return true;
     }
@@ -126,6 +132,8 @@ public final class ValidationResult {
         StringBuilder builder = new StringBuilder();
         builder.append("ValidationResult [message=")
                 .append(getMessage())
+                .append(", variableReplacements=")
+                .append(getVariableReplacements())
                 .append("]");
         return builder.toString();
     }
