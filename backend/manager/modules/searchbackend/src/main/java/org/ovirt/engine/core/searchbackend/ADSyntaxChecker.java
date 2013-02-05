@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.StringBuilderCompat;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class ADSyntaxChecker implements ISyntaxChecker {
@@ -79,7 +77,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                         if (mPluralAC.validate(searchText.substring(idx + 1, idx + 1 + 1))) {
                             // Then just move things along.
                             idx++;
-                            StringBuilderCompat sb = new StringBuilderCompat(nextObject);
+                            StringBuilder sb = new StringBuilder(nextObject);
                             sb.append('S');
                             nextObject = sb.toString();
                         }
@@ -268,7 +266,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
     }
 
     private static String generateAdQueryFromSyntaxContainer(SyntaxContainer syntax) {
-        StringBuilderCompat retval = new StringBuilderCompat();
+        StringBuilder retval = new StringBuilder();
         if (syntax.getvalid()) {
             IConditionFieldAutoCompleter conditionFieldAC;
             if (syntax.getSearchObjectStr().toUpperCase().contains("ADUSER")) {
@@ -279,7 +277,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                 retval.append("(&(" + LDAP_GROUP_CATEGORY + ")");
                 conditionFieldAC = new AdGroupConditionFieldAutoCompleter();
             }
-            StringBuilderCompat phrase = new StringBuilderCompat();
+            StringBuilder phrase = new StringBuilder();
             boolean nonEqual = false;
             boolean findAll = false;
             for (SyntaxObject so : syntax) {
@@ -292,7 +290,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                          */
                         findAll = true;
                     } else {
-                        phrase.append(" (" + conditionFieldAC.getDbFieldName(so.getBody()));
+                        phrase.append(" (").append(conditionFieldAC.getDbFieldName(so.getBody()));
                     }
                     break;
                 case CONDITION_RELATION:
@@ -312,12 +310,12 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                          * replace all {value} occurences with the value searched. We escape the $ here for regex match,
                          * as it is used in replace.
                          */
-                        phrase.replace("{value}", so.getBody().replace("$", "\\$"));
+                        phrase = replaceAll(phrase, "{value}", so.getBody().replace("$", "\\$"));
                     } else {
-                        phrase.append(so.getBody() + ")");
+                        phrase.append(so.getBody()).append(")");
                     }
                     if (nonEqual) {
-                        retval.append(StringFormat.format("(!%1$s)", phrase));
+                        retval.append("(!").append(phrase).append(")");
                     } else {
                         retval.append(phrase.toString());
                     }
@@ -335,5 +333,10 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         retval.append(")");
         return retval.toString();
 
+    }
+
+    private static StringBuilder replaceAll(StringBuilder builder, String oldText, String newText) {
+        String t = builder.toString();
+        return new StringBuilder(t.replaceAll(StringHelper.quote(oldText), newText));
     }
 }

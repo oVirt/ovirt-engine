@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.compat.StringBuilderCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class SyntaxContainer implements Iterable<SyntaxObject> {
@@ -13,6 +12,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     private final LinkedList<SyntaxObject> mObjList = new LinkedList<SyntaxObject>();
     private final List<String> mCurrentCompletions = new ArrayList<String>();
 
+    private static final String LINE_SEPARATOR = "\n";
     private boolean mValid = false;
     private SyntaxError mError = SyntaxError.NO_ERROR;
     private final int[] mErrorPos = new int[2];
@@ -214,29 +214,33 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     @Override
     public String toString() {
-        StringBuilderCompat sb = new StringBuilderCompat("---------------- SyntaxContainer ---------------------");
-        sb.append("\n");
+        StringBuilder sb = new StringBuilder("---------------- SyntaxContainer ---------------------");
+        sb.append(LINE_SEPARATOR);
         sb.append("mOrigText       = ");
-        sb.AppendLine(mOrigText);
+        sb.append(mOrigText);
+        sb.append(LINE_SEPARATOR);
         sb.append("Valid           = ");
-        sb.AppendLine(Boolean.toString(mValid));
+        sb.append(Boolean.toString(mValid));
+        sb.append(LINE_SEPARATOR);
         sb.append("Error           = ");
-        sb.AppendLine(mError.toString());
+        sb.append(mError.toString());
+        sb.append(LINE_SEPARATOR);
         sb.append("CrossRefObjlist = ");
         for (String cro : getCrossRefObjList()) {
-            sb.append(cro + ", ");
+            sb.append(cro).append(", ");
         }
         sb.append("Syntax object list:");
 
         for (SyntaxObject obj : mObjList) {
-            sb.AppendLine("    ");
+            sb.append("    ");
+            sb.append(LINE_SEPARATOR);
             sb.append(obj.toString());
         }
         return sb.toString();
     }
 
     public String ToStringBr() {
-        StringBuilderCompat sb = new StringBuilderCompat("---------------- SyntaxContainer ---------------------");
+        StringBuilder sb = new StringBuilder("---------------- SyntaxContainer ---------------------");
         sb.append("<BR>mOrigText       = ");
         sb.append(mOrigText);
         sb.append("<BR>Valid           = ");
@@ -246,7 +250,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         sb.append("<BR>Syntax object list:");
         sb.append("<BR>CrossRefObjlist = ");
         for (String cro : getCrossRefObjList()) {
-            sb.append(cro + ", ");
+            sb.append(cro).append(", ");
         }
         for (SyntaxObject obj : mObjList) {
             sb.append("<BR>    ");

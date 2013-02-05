@@ -42,7 +42,6 @@
 		<include name="compat/RegEx.java" />
 
 		<!-- Required by SearchBackend's SyntaxContainer.java -->
-		<include name="compat/StringBuilderCompat.java" />
 		<include name="compat/StringTokenizerCompat.java" />
 
 		<!-- Required by common->action->VdcActionParametersBase.java -->
