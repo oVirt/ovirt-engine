@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.compat.DateFormatCompat;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
-import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.RefObject;
@@ -98,6 +98,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     }
 
+    @Override
     public boolean validateFieldValue(String fieldName, String fieldValue) {
         if (validationDict.containsKey(fieldName)) {
             final List<ValueValidationFunction> validationList = validationDict.get(fieldName);
@@ -110,6 +111,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return true;
     }
 
+    @Override
     public String getDbFieldName(String fieldName) {
         String retval = null;
         if (columnNameDict.containsKey(fieldName)) {
@@ -118,6 +120,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return retval;
     }
 
+    @Override
     public String getSortableDbField(String fieldName) {
         if (sortableFieldDict.containsKey(fieldName)) {
             return sortableFieldDict.get(fieldName);
@@ -126,6 +129,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     }
 
+    @Override
     public Class<?> getDbFieldType(String fieldName) {
         Class<?> retval = null;
         if (typeDict.containsKey(fieldName)) {
@@ -136,6 +140,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     // FIXME Probably Not Hibernate Friendly
+    @Override
     public final String buildFreeTextConditionSql(String tableName,
             String relations,
             String value,
@@ -172,12 +177,14 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     final static Regex validChar = new Regex("^[^\\<\\>&^#!']*$");
 
     public final static ValueValidationFunction validCharacters = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             return validChar.IsMatch(value);
         }
     };
 
     public final static ValueValidationFunction validDateTime = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             Date test = DateUtils.parse(value);
             if (test != null) {
@@ -200,24 +207,35 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     };
 
     public final static ValueValidationFunction validTimeSpan = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             return TimeSpan.tryParse(value) != null;
         }
     };
 
     public final static ValueValidationFunction validInteger = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             return IntegerCompat.tryParse(value) != null;
         }
     };
 
     public final static ValueValidationFunction validDecimal = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
-            return DoubleCompat.tryParse(value) != null;
+            try {
+                new BigDecimal(value); // No assignment, we just want to create a new instance and to see if there's an
+                                       // Exception
+                return true;
+            }
+            catch (NumberFormatException e) {
+                return false;
+            }
         }
     };
 
     public final ValueValidationFunction validateDateEnumValueByValueAC = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
@@ -245,6 +263,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     };
 
     public final ValueValidationFunction validateFieldValueByValueAC = new ValueValidationFunction() {
+        @Override
         public boolean isValid(String field, String value) {
             boolean retval = true;
             IConditionValueAutoCompleter vlaueAc = getFieldValueAutoCompleter(field);
@@ -255,14 +274,17 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
     };
 
+    @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
         return null;
     }
 
+    @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         return null;
     }
 
+    @Override
     public void formatValue(String fieldName,
             RefObject<String> relations,
             RefObject<String> value,
@@ -348,6 +370,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         return formatedValue.resetToMidnight();
     }
 
+    @Override
     public final String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
         RefObject<String> tempRefObject = new RefObject<String>(customizedRelation);

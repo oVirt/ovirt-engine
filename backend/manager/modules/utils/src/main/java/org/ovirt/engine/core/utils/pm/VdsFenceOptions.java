@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import org.ovirt.engine.core.compat.DoubleCompat;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -518,10 +517,9 @@ public class VdsFenceOptions implements Serializable {
                         }
                     }
                     else if (type.equalsIgnoreCase(DOUBLE)) {
-                        final Double doubleVal = DoubleCompat.tryParseDouble(fencingAgentInstanceOptions
-                                .get(key));
-                        if (doubleVal != null) {
-                            result = doubleVal;
+                        try {
+                            result = Double.parseDouble(fencingAgentInstanceOptions.get(key));
+                        } catch (NumberFormatException e) {
                         }
                     } else // return as string
                     {
