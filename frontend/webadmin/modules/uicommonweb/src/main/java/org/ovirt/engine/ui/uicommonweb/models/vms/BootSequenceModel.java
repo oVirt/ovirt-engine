@@ -46,6 +46,19 @@ public class BootSequenceModel extends ListModel
         super.setItems(value);
     }
 
+    public EntityModel getHardDiskOption()
+    {
+        for (EntityModel a : getItems())
+        {
+            if ((BootSequence) a.getEntity() == BootSequence.C)
+            {
+                return a;
+            }
+        }
+
+        throw new IndexOutOfBoundsException();
+    }
+
     public EntityModel getNetworkOption()
     {
         for (EntityModel a : getItems())

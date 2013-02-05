@@ -451,6 +451,16 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             }
         });
 
+        // Hard disk change handling
+        bootSequenceModel.getHardDiskOption().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                boolean isEnabled = bootSequenceModel.getHardDiskOption().getIsChangable();
+                String itemName = bootSequenceModel.getHardDiskOption().getTitle();
+                updateItemAvailability(itemName, isEnabled);
+            }
+        });
+
         // Change boot option handling
         bootSequenceBox.addChangeHandler(new ChangeHandler() {
             @Override

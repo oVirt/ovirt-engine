@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vm_pools;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -810,6 +812,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()), _asyncQuery2);
 
+        setIsBootFromHardDiskAllowedForVm(vm);
+
         UICommand tempVar3 = new UICommand("OnRunOnce", this); //$NON-NLS-1$
         tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar3.setIsDefault(true);
@@ -818,6 +822,40 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar4.setIsCancel(true);
         model.getCommands().add(tempVar4);
+    }
+
+    private void setIsBootFromHardDiskAllowedForVm(VM vm) {
+        AsyncQuery vmDisksQuery = new AsyncQuery();
+        vmDisksQuery.setModel(this);
+
+        vmDisksQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue)
+            {
+                UserPortalListModel userPortalListModel = (UserPortalListModel) model;
+                ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+
+                boolean hasBootableDisk = false;
+                for (Disk disk : vmDisks) {
+                    if (disk.isBoot()) {
+                        hasBootableDisk = true;
+                        break;
+                    }
+                }
+
+                if (!hasBootableDisk)
+                {
+                    BootSequenceModel bootSequenceModel =
+                            ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
+                    bootSequenceModel.getHardDiskOption().setIsChangable(false);
+                    bootSequenceModel.getHardDiskOption()
+                            .getChangeProhibitionReasons()
+                            .add("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
+                }
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()), vmDisksQuery);
     }
 
     protected void fillIsoList(VM vm) {

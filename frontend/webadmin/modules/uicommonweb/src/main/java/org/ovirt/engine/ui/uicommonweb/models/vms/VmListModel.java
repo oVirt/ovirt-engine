@@ -1443,6 +1443,42 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()), _asyncQuery);
+
+        setIsBootFromHardDiskAllowedForVm(vm);
+    }
+
+    private void setIsBootFromHardDiskAllowedForVm(VM vm) {
+        AsyncQuery vmDisksQuery = new AsyncQuery();
+        vmDisksQuery.setModel(this);
+
+        vmDisksQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object model, Object returnValue)
+            {
+                VmListModel userPortalListModel = (VmListModel) model;
+                ArrayList<Disk> vmDisks = (ArrayList<Disk>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+
+                boolean hasBootableDisk = false;
+                for (Disk disk : vmDisks) {
+                    if (disk.isBoot()) {
+                        hasBootableDisk = true;
+                        break;
+                    }
+                }
+
+                if (!hasBootableDisk)
+                {
+                    BootSequenceModel bootSequenceModel =
+                            ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
+                    bootSequenceModel.getHardDiskOption().setIsChangable(false);
+                    bootSequenceModel.getHardDiskOption()
+                            .getChangeProhibitionReasons()
+                            .add("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
+                }
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, new GetAllDisksByVmIdParameters(vm.getId()), vmDisksQuery);
     }
 
     private void RunOnceUpdateDomains()
