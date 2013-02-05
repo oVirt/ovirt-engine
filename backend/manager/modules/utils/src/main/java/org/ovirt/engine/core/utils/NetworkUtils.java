@@ -180,4 +180,15 @@ public final class NetworkUtils {
     public static boolean isNonVmNonVlanNetwork(Network network) {
         return !network.isVmNetwork() && network.getVlanId() == null;
     }
+
+    /**
+     * Determine if the network is management network.
+     *
+     * @param net
+     *            The network to check.
+     * @return <code>true</code> iff the network is a management network.
+     */
+    public static boolean isManagementNetwork(Network net) {
+        return Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(net.getName());
+    }
 }

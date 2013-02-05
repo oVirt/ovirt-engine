@@ -14,12 +14,20 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class NetworkUtilsTest {
 
     private static final String IFACE_NAME = "eth1";
+
+    private static final String MANAGEMENT_NETWORK = "mgmt";
+
     @Rule
     public static RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, MANAGEMENT_NETWORK));
 
     @Test
     public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {
@@ -150,6 +158,37 @@ public class NetworkUtilsTest {
     @Test
     public void interfaceBasedOnNullProposedVlan() {
         assertFalse(NetworkUtils.interfaceBasedOn(null, IFACE_NAME));
+    }
+
+    @Test
+    public void managementNetwork() throws Exception {
+        Network net = new Network();
+        net.setName(MANAGEMENT_NETWORK);
+
+        assertTrue(NetworkUtils.isManagementNetwork(net));
+    }
+
+    @Test
+    public void notManagementNetworkDifferentCase() throws Exception {
+        Network net = new Network();
+        net.setName(MANAGEMENT_NETWORK.toUpperCase());
+
+        assertFalse(NetworkUtils.isManagementNetwork(net));
+    }
+
+    @Test
+    public void notManagementNetwork() throws Exception {
+        Network net = new Network();
+        net.setName(MANAGEMENT_NETWORK + "1");
+
+        assertFalse(NetworkUtils.isManagementNetwork(net));
+    }
+
+    @Test
+    public void nullNotManagementNetwork() throws Exception {
+        Network net = new Network();
+
+        assertFalse(NetworkUtils.isManagementNetwork(net));
     }
 
     private String generateVlanName(String iface) {

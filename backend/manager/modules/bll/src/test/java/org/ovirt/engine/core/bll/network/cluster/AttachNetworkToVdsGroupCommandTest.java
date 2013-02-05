@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -21,12 +22,14 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,6 +38,10 @@ public class AttachNetworkToVdsGroupCommandTest {
     private VDSGroup existingGroup = new VDSGroup();
     private Network network = createNetwork();
     private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
+
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
+            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, "mgmt"));
 
     @Mock
     NetworkClusterDao networkClusterDAO;
