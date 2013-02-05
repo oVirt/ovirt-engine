@@ -34,15 +34,6 @@ public class Regex {
         return pattern.matcher(candidate).find();
     }
 
-    public MatchCollection Matches(String message) {
-        MatchCollection coll = new MatchCollection();
-        Matcher matcher = pattern.matcher(message);
-        while (matcher.find()) {
-            coll.add(new Match(matcher.toMatchResult(), true));
-        }
-        return coll;
-    }
-
     public static boolean IsMatch(String candidate, String regEx) {
         return (new Regex(regEx)).IsMatch(candidate);
     }
