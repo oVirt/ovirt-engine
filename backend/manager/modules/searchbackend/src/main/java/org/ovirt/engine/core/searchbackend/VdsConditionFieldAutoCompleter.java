@@ -2,7 +2,6 @@ package org.ovirt.engine.core.searchbackend;
 
 import org.ovirt.engine.core.common.businessentities.VDSNiceType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VdsConditionFieldAutoCompleter() {
@@ -76,14 +75,14 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "MEMORY") || StringHelper.EqOp(fieldName, "CPUS")
-                || StringHelper.EqOp(fieldName, "CPU_USAGE") || StringHelper.EqOp(fieldName, "MEM_USAGE")
-                || StringHelper.EqOp(fieldName, "LOAD") || StringHelper.EqOp(fieldName, "CPU_SPEED")
-                || StringHelper.EqOp(fieldName, "ACTIVE_VMS") || StringHelper.EqOp(fieldName, "NETWORK_USAGE")
-                || StringHelper.EqOp(fieldName, "COMMITTED_MEM")) {
+        if ("MEMORY".equals(fieldName) || "CPUS".equals(fieldName)
+                || "CPU_USAGE".equals(fieldName) || "MEM_USAGE".equals(fieldName)
+                || "LOAD".equals(fieldName) || "CPU_SPEED".equals(fieldName)
+                || "ACTIVE_VMS".equals(fieldName) || "NETWORK_USAGE".equals(fieldName)
+                || "COMMITTED_MEM".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         }
-        else if (StringHelper.EqOp(fieldName, "TAG")) {
+        else if ("TAG".equals(fieldName)) {
             return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
@@ -93,10 +92,10 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "STATUS")) {
+        if ("STATUS".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSStatus.class);
         }
-        else if (StringHelper.EqOp(fieldName, "TYPE")) {
+        else if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
         } else {
         }

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.compat.StringHelper;
-
 public class SyntaxContainer implements Iterable<SyntaxObject> {
 
     private final String mOrigText;
@@ -151,7 +149,8 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         for (SyntaxObject obj : mObjList) {
             if (obj.getType() == SyntaxObjectType.CROSS_REF_OBJ) {
                 String objSingularName = getObjSingularName(obj.getBody());
-                if ((!retval.contains(objSingularName)) && (!StringHelper.EqOp(searchObj, objSingularName))) {
+                if ((!retval.contains(objSingularName)) &&
+                        searchObj != null && !searchObj.equals(objSingularName)) {
                     retval.add(objSingularName);
                 }
             }

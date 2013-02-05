@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     private static final String NAME = "NAME";
@@ -58,7 +57,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter completer = null;
-        if (StringHelper.EqOp(fieldName, STP) || StringHelper.EqOp(fieldName, VM_NETWORK)) {
+        if (STP.equals(fieldName) || VM_NETWORK.equals(fieldName)) {
             completer = new BitValueAutoCompleter();
         }
         return completer;

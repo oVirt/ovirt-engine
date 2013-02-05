@@ -2,8 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.compat.StringHelper;
-
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 
@@ -186,7 +184,8 @@ public class StorageServerConnections implements Serializable {
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
         if (!returnValue && obj != null && obj instanceof StorageServerConnections) {
-            returnValue = (!"".equals(getid()) && StringHelper.EqOp(getid(), ((StorageServerConnections) obj).getid()));
+            returnValue =
+                    (getid() != null && !getid().isEmpty() && getid().equals(((StorageServerConnections) obj).getid()));
         }
         return returnValue;
     }

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.searchbackend;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
     private java.util.HashMap<String, Integer> mEnumValues = new java.util.HashMap<String, Integer>();
@@ -31,6 +30,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
 
     }
 
+    @Override
     public String convertFieldEnumValueToActualValue(String fieldValue) {
         if (DateUtils.parse(fieldValue) != null) {
             return fieldValue;
@@ -43,7 +43,7 @@ public class DateEnumValueAutoCompleter extends BaseAutoCompleter implements ICo
 
         // check for rest of the week
         for (DayOfWeek day : DayOfWeek.values()) {
-            if (StringHelper.EqOp(fieldValue.toUpperCase(), day.toString().toUpperCase())) {
+            if (day.toString().equalsIgnoreCase(fieldValue)) {
                 return day.toString();
             }
         }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 
 public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public StoragePoolFieldAutoCompleter() {
@@ -37,10 +37,10 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "STATUS")) {
+        if ("STATUS".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StoragePoolStatus.class);
         }
-        else if (StringHelper.EqOp(fieldName, "TYPE")) {
+        else if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageType.class);
         } else {
         }

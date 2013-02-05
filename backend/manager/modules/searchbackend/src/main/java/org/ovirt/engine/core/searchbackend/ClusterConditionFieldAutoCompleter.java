@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
 
 public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public ClusterConditionFieldAutoCompleter() {
@@ -33,7 +32,7 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "INITIALIZED")) {
+        if ("INITIALIZED".equals(fieldName)) {
             retval = new BitValueAutoCompleter();
         } else {
         }

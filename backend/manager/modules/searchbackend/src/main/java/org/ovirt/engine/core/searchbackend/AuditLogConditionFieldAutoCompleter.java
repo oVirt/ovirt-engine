@@ -2,7 +2,6 @@ package org.ovirt.engine.core.searchbackend;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public AuditLogConditionFieldAutoCompleter() {
@@ -89,23 +88,23 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     @SuppressWarnings("deprecation")
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(final String fieldName) {
-        if (StringHelper.EqOp(fieldName, "SEVERITY")) {
+        if ("SEVERITY".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         }
-        else if (StringHelper.EqOp(fieldName, "TIME")) {
+        else if ("TIME".equals(fieldName)) {
             return TimeConditionRelationAutoCompleter.INSTANCE;
         }
-        else if (StringHelper.EqOp(fieldName, "TYPE") || StringHelper.EqOp(fieldName, "MESSAGE")
-                || StringHelper.EqOp(fieldName, "USRNAME") || StringHelper.EqOp(fieldName, "EVENT_HOST")
-                || StringHelper.EqOp(fieldName, "_EVENT_HOST_ID")
-                || StringHelper.EqOp(fieldName, "EVENT_VM") || StringHelper.EqOp(fieldName, "_EVENT_VM_ID")
-                || StringHelper.EqOp(fieldName, "EVENT_TEMPLATE") || StringHelper.EqOp(fieldName, "_EVENT_TEMPLATE_ID")
-                || StringHelper.EqOp(fieldName, "EVENT_STORAGE") || StringHelper.EqOp(fieldName, "EVENT_DATACENTER")
-                || StringHelper.EqOp(fieldName, "_EVENT_DATACENTER_ID")
-                || StringHelper.EqOp(fieldName, "_EVENT_QUOTA_ID")
-                || StringHelper.EqOp(fieldName, "EVENT_VOLUME") || StringHelper.EqOp(fieldName, "_EVENT_VOLUME_ID") ||
-                StringHelper.EqOp(fieldName, "CORRELATION_ID") || StringHelper.EqOp(fieldName, "ORIGIN") ||
-                StringHelper.EqOp(fieldName, "CUSTOM_EVENT_ID") || StringHelper.EqOp(fieldName, "DELETED")) {
+        else if ("TYPE".equals(fieldName) || "MESSAGE".equals(fieldName)
+                || "USRNAME".equals(fieldName) || "EVENT_HOST".equals(fieldName)
+                || "_EVENT_HOST_ID".equals(fieldName)
+                || "EVENT_VM".equals(fieldName) || "_EVENT_VM_ID".equals(fieldName)
+                || "EVENT_TEMPLATE".equals(fieldName) || "_EVENT_TEMPLATE_ID".equals(fieldName)
+                || "EVENT_STORAGE".equals(fieldName) || "EVENT_DATACENTER".equals(fieldName)
+                || "_EVENT_DATACENTER_ID".equals(fieldName)
+                || "_EVENT_QUOTA_ID".equals(fieldName)
+                || "EVENT_VOLUME".equals(fieldName) || "_EVENT_VOLUME_ID".equals(fieldName) ||
+                "CORRELATION_ID".equals(fieldName) || "ORIGIN".equals(fieldName) ||
+                "CUSTOM_EVENT_ID".equals(fieldName) || "DELETED".equals(fieldName)) {
             return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return null;
@@ -114,10 +113,10 @@ public class AuditLogConditionFieldAutoCompleter extends BaseConditionFieldAutoC
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "SEVERITY")) {
+        if ("SEVERITY".equals(fieldName)) {
             return new EnumValueAutoCompleter(AuditLogSeverity.class);
         }
-        else if (StringHelper.EqOp(fieldName, "TIME")) {
+        else if ("TIME".equals(fieldName)) {
             return new DateEnumValueAutoCompleter(DateEnumForSearch.class);
         } else {
             return null;

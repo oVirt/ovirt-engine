@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
+import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public enum UserOrGroup {
@@ -57,7 +58,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "TAG")) {
+        if ("TAG".equals(fieldName)) {
             return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
@@ -67,7 +68,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "STATUS")) {
+        if ("STATUS".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(LdapRefStatus.class);
         }
         return retval;
@@ -75,12 +76,12 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
-        if (StringHelper.EqOp(fieldName, "STATUS")) {
+        if ("STATUS".equals(fieldName)) {
             String tmp = StringHelper.trim(value.argvalue, '\'');
-            if ((StringHelper.EqOp(relations.argvalue, "=")) && (StringHelper.EqOp(tmp, "1"))) {
+            if ("=".equals(relations.argvalue) && "1".equals(tmp)) {
                 relations.argvalue = ">=";
             }
-            if ((StringHelper.EqOp(relations.argvalue, "!=")) && (StringHelper.EqOp(tmp, "1"))) {
+            if ("!=".equals(relations.argvalue) && "1".equals(tmp)) {
                 relations.argvalue = "<";
             }
         } else {

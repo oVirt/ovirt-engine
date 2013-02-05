@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.*;
-import org.ovirt.engine.core.common.businessentities.*;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 
 public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public StorageDomainFieldAutoCompleter() {
@@ -40,8 +41,8 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if (StringHelper.EqOp(fieldName, "SIZE") || StringHelper.EqOp(fieldName, "USED")
-                || StringHelper.EqOp(fieldName, "COMMITTED")) {
+        if ("SIZE".equals(fieldName) || "USED".equals(fieldName)
+                || "COMMITTED".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
@@ -51,10 +52,10 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         IConditionValueAutoCompleter retval = null;
-        if (StringHelper.EqOp(fieldName, "TYPE")) {
+        if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageType.class);
         }
-        else if (StringHelper.EqOp(fieldName, "STATUS")) {
+        else if ("STATUS".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
         } else {
         }
