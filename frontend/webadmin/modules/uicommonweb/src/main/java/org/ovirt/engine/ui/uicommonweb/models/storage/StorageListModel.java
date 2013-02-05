@@ -699,8 +699,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     private void CleanConnection(StorageServerConnections connection, Guid hostId) {
-
-        Frontend.RunAction(VdcActionType.DisconnectStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
+        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
                 null, this);
     }
 
@@ -1213,6 +1212,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
+
             }
         };
 
@@ -1351,6 +1352,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1533,6 +1535,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
                 storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setid((String)vdcReturnValueBase.getActionReturnValue());
 
             }
         };

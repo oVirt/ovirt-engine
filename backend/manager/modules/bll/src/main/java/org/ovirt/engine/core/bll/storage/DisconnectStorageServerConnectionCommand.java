@@ -20,15 +20,7 @@ public class DisconnectStorageServerConnectionCommand<T extends StorageServerCon
 
     @Override
     protected void executeCommand() {
-        setSucceeded(Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.DisconnectStorageServer,
-                        new ConnectStorageServerVDSCommandParameters(getParameters().getVdsId(), getParameters()
-                                .getStoragePoolId(), getParameters().getStorageServerConnection().getstorage_type(),
-                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
-                                        .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded());
+        setSucceeded(disconnectStorage());
     }
 
     @Override
@@ -45,6 +37,17 @@ public class DisconnectStorageServerConnectionCommand<T extends StorageServerCon
         }
 
         return returnValue;
+    }
+
+    protected boolean disconnectStorage() {
+        return Backend.getInstance()
+               .getResourceManager()
+               .RunVdsCommand(
+                    VDSCommandType.DisconnectStorageServer,
+                        new ConnectStorageServerVDSCommandParameters(getParameters().getVdsId(), getParameters()
+                                .getStoragePoolId(), getParameters().getStorageServerConnection().getstorage_type(),
+                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
+                                        .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded() ;
     }
 
 }
