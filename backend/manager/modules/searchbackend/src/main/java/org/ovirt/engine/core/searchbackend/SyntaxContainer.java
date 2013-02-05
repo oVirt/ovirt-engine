@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.compat.StringBuilderCompat;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class SyntaxContainer implements Iterable<SyntaxObject> {
@@ -116,7 +115,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
                 retval = obj.getBody();
             }
         }
-        if ((StringHelper.EqOp(retval, ""))
+        if ("".equals(retval)
                 && ((type == SyntaxObjectType.CROSS_REF_OBJ) || (type == SyntaxObjectType.SEARCH_OBJECT))) {
             retval = mObjList.getFirst().getBody();
         }
@@ -166,56 +165,45 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         if (obj == null) {
             return null;
         }
-        if (StringHelper.EqOp(obj, SearchObjects.AD_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AD_USER_PLU_OBJ_NAME)) {
+        if (SearchObjects.AD_USER_OBJ_NAME.equals(obj) || SearchObjects.AD_USER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.AD_USER_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.AUDIT_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.AUDIT_PLU_OBJ_NAME)) {
+        else if (SearchObjects.AUDIT_OBJ_NAME.equals(obj) || SearchObjects.AUDIT_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.AUDIT_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.TEMPLATE_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.TEMPLATE_PLU_OBJ_NAME)) {
+        else if (SearchObjects.TEMPLATE_OBJ_NAME.equals(obj) || SearchObjects.TEMPLATE_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.TEMPLATE_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_USER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_USER_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VDC_USER_OBJ_NAME.equals(obj) || SearchObjects.VDC_USER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_USER_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDS_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDS_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VDS_OBJ_NAME.equals(obj) || SearchObjects.VDS_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDS_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VM_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VM_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VM_OBJ_NAME.equals(obj) || SearchObjects.VM_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VM_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.DISK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.DISK_PLU_OBJ_NAME)) {
+        else if (SearchObjects.DISK_OBJ_NAME.equals(obj) || SearchObjects.DISK_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.DISK_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.QUOTA_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.QUOTA_PLU_OBJ_NAME)) {
+        else if (SearchObjects.QUOTA_OBJ_NAME.equals(obj) || SearchObjects.QUOTA_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.QUOTA_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_POOL_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_POOL_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VDC_POOL_OBJ_NAME.equals(obj) || SearchObjects.VDC_POOL_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_POOL_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VDC_CLUSTER_OBJ_NAME.equals(obj) || SearchObjects.VDC_CLUSTER_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_CLUSTER_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME)) {
+        else if (SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME.equals(obj)
+                || SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME)) {
+        else if (SearchObjects.GLUSTER_VOLUME_OBJ_NAME.equals(obj)
+                || SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.GLUSTER_VOLUME_OBJ_NAME;
         }
-        else if (StringHelper.EqOp(obj, SearchObjects.NETWORK_OBJ_NAME)
-                || StringHelper.EqOp(obj, SearchObjects.NETWORK_PLU_OBJ_NAME)) {
+        else if (SearchObjects.NETWORK_OBJ_NAME.equals(obj) || SearchObjects.NETWORK_PLU_OBJ_NAME.equals(obj)) {
             retval = SearchObjects.NETWORK_OBJ_NAME;
         } else {
             retval = obj;
@@ -236,7 +224,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         sb.AppendLine(mError.toString());
         sb.append("CrossRefObjlist = ");
         for (String cro : getCrossRefObjList()) {
-            sb.append(StringFormat.format("%1$s, ", cro));
+            sb.append(cro + ", ");
         }
         sb.append("Syntax object list:");
 
@@ -258,7 +246,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
         sb.append("<BR>Syntax object list:");
         sb.append("<BR>CrossRefObjlist = ");
         for (String cro : getCrossRefObjList()) {
-            sb.append(StringFormat.format("%1$s, ", cro));
+            sb.append(cro + ", ");
         }
         for (SyntaxObject obj : mObjList) {
             sb.append("<BR>    ");
@@ -270,7 +258,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     public boolean contains(SyntaxObjectType type, String val) {
         boolean retval = false;
         for (SyntaxObject obj : mObjList) {
-            if ((obj.getType() == type) && (StringHelper.EqOp(obj.getBody().toUpperCase(), val.toUpperCase()))) {
+            if ((obj.getType() == type) && val.equalsIgnoreCase(obj.getBody())) {
                 retval = true;
                 break;
             }

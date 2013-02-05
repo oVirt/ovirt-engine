@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringFormat;
 
 public class tags implements Serializable {
     private static final long serialVersionUID = -6566155246916011274L;
@@ -168,20 +167,20 @@ public class tags implements Serializable {
 
     public StringBuilder GetTagIdAndChildrenIds() {
         StringBuilder builder = new StringBuilder();
-        builder.append(StringFormat.format("'%1$s'", gettag_id()));
+        builder.append("'").append(gettag_id()).append("'");
 
         for (tags tag : _children) {
-            builder.append(StringFormat.format(",%1$s", tag.GetTagIdAndChildrenIds()));
+            builder.append(",").append(tag.GetTagIdAndChildrenIds());
         }
         return builder;
     }
 
     public StringBuilder GetTagNameAndChildrenNames() {
         StringBuilder builder = new StringBuilder();
-        builder.append(StringFormat.format("'%1$s'", gettag_name()));
+        builder.append("'").append(gettag_name()).append("'");
 
         for (tags tag : _children) {
-            builder.append(StringFormat.format(",%1$s", tag.GetTagNameAndChildrenNames()));
+            builder.append("," + tag.GetTagNameAndChildrenNames());
         }
         return builder;
     }

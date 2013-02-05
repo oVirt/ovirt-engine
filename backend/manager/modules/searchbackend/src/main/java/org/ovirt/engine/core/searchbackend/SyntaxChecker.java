@@ -180,6 +180,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     }
 
+    @Override
     public SyntaxContainer analyzeSyntaxState(final String searchText, boolean final2) {
         final SyntaxContainer syntaxContainer = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter curConditionFieldAC = null;
@@ -591,6 +592,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     }
 
+    @Override
     public SyntaxContainer getCompletion(String searchText) {
         SyntaxContainer retval = analyzeSyntaxState(searchText, false);
         if (retval.getError() == SyntaxError.NO_ERROR) {
@@ -680,6 +682,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
+    @Override
     public String generateQueryFromSyntaxContainer(SyntaxContainer syntax, boolean isSafe) {
         String retval = "";
         if (syntax.getvalid()) {
@@ -843,7 +846,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     ListIterator<String> iter = whereBuilder.listIterator(0);
                     while (iter.hasNext()) {
                         String queryPart = iter.next();
-                        if (StringHelper.EqOp(queryPart, lookFor[idx])) {
+                        if (lookFor[idx].equals(queryPart)) {
                             iter.remove();
                             String nextPart = iter.next();
                             iter.remove();
@@ -871,7 +874,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
             // adding the sorting part if required
             if ("".equals(sortByPhrase)) {
-                sortByPhrase = StringFormat.format(" ORDER BY %1$s", mSearchObjectAC.getDefaultSort(searchObjStr));
+                sortByPhrase = " ORDER BY " + mSearchObjectAC.getDefaultSort(searchObjStr);
             }
             // adding the paging phrase
             String pagePhrase = getPagePhrase(syntax, pageNumber);
@@ -944,7 +947,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             type = PagingType.valueOf(val);
         } catch (Exception e) {
-            log.error(StringFormat.format("Unknown paging type %1$s", val));
+            log.error("Unknown paging type " + val);
         }
 
         return type;
@@ -1068,8 +1071,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         String customizedValue = safeValue;
         if (curType == String.class && !StringHelper.isNullOrEmpty(customizedValue)
                 && !"''".equals(customizedValue) && !"'*'".equals(customizedValue)) {
-            customizedValue =
-                    StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "%1$s", customizedValue);
+            customizedValue = BaseConditionFieldAutoCompleter.getI18NPrefix() + customizedValue;
         }
 
         if (conditionValueAC != null) {

@@ -191,13 +191,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 return true;
             } else { // check for enum
                 for (DateEnumForSearch val : DateEnumForSearch.values()) {
-                    if (StringHelper.EqOp(value.toUpperCase(), val.name().toUpperCase())) {
+                    if (val.name().equalsIgnoreCase(value)) {
                         return true;
                     }
                 }
                 // check for week before
                 for (DayOfWeek day : DayOfWeek.class.getEnumConstants()) {
-                    if (StringHelper.EqOp(value.toUpperCase(), day.toString().toUpperCase())) {
+                    if (day.toString().equalsIgnoreCase(value)) {
                         return true;
                     }
                 }
@@ -246,9 +246,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             if (!retval) // check for week before
             {
                 for (DayOfWeek day : DayOfWeek.values()) {
-                    if (StringHelper.EqOp(value.toUpperCase(), day.toString().toUpperCase())) // Enum.GetName(typeof(DayOfWeek),
-                                                                                              // day).ToUpper()
-                    {
+                    if (day.toString().equalsIgnoreCase(value)) {
                         return true;
                     }
                 }

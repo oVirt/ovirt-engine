@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -86,11 +85,11 @@ public class RemoveNetworksModel extends ConfirmationModel {
     @Override
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
-        if (StringHelper.stringsEqual(command.getName(), "onRemove")) //$NON-NLS-1$
+        if ("onRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "cancel")) //$NON-NLS-1$
+        else if ("cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

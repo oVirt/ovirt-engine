@@ -39,6 +39,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         mStateMap.put(SyntaxObjectType.CONDITION_VALUE, conditionValueArray);
     }
 
+    @Override
     public SyntaxContainer analyzeSyntaxState(String searchText, boolean final2) {
         SyntaxContainer retval = new SyntaxContainer(searchText);
         IConditionFieldAutoCompleter AdConditionFieldAC;
@@ -200,6 +201,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
 
     }
 
+    @Override
     public SyntaxContainer getCompletion(String searchText) {
         SyntaxContainer retval = analyzeSyntaxState(searchText, false);
         IConditionFieldAutoCompleter AdConditionFieldAC;
@@ -256,6 +258,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
+    @Override
     public String generateQueryFromSyntaxContainer(SyntaxContainer syntax, boolean isSafe) {
         String retval = "";
         if (syntax.getvalid()) {
@@ -282,14 +285,14 @@ public class ADSyntaxChecker implements ISyntaxChecker {
             for (SyntaxObject so : syntax) {
                 switch (so.getType()) {
                 case CONDITION_FIELD:
-                    if (StringHelper.EqOp(so.getBody(), "ALLNAMES")) {
+                    if ("ALLNAMES".equals(so.getBody())) {
                         phrase.append(" (|($GIVENNAME={value})(sn={value})($USER_ACCOUNT_NAME={value})($PRINCIPAL_NAME={value}))");
                         /**
                          * mark this search as findAll for later use
                          */
                         findAll = true;
                     } else {
-                        phrase.append(StringFormat.format(" (%1$s", conditionFieldAC.getDbFieldName(so.getBody())));
+                        phrase.append(" (" + conditionFieldAC.getDbFieldName(so.getBody()));
                     }
                     break;
                 case CONDITION_RELATION:
@@ -299,7 +302,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                     if (!findAll) {
                         phrase.append("=");
                     }
-                    if (StringHelper.EqOp(so.getBody(), "!=")) {
+                    if ("!=".equals(so.getBody())) {
                         nonEqual = true;
                     }
                     break;
@@ -311,7 +314,7 @@ public class ADSyntaxChecker implements ISyntaxChecker {
                          */
                         phrase.replace("{value}", so.getBody().replace("$", "\\$"));
                     } else {
-                        phrase.append(StringFormat.format("%1$s)", so.getBody()));
+                        phrase.append(so.getBody() + ")");
                     }
                     if (nonEqual) {
                         retval.append(StringFormat.format("(!%1$s)", phrase));
