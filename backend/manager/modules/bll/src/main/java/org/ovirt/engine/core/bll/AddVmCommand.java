@@ -46,9 +46,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -753,9 +753,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
-            return Collections.singletonMap(getParameters().getVm().getVmName(), LockingGroup.VM_NAME.name());
+            return Collections.singletonMap(getParameters().getVm().getVmName(), LockMessagesMatchUtil.VM_NAME);
         }
         return null;
     }

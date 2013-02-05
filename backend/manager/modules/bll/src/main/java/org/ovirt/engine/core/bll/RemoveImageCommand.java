@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -156,7 +156,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     private void lockVmSnapshotsWithWait(VM vm) {
         snapshotsEngineLock = new EngineLock();
-        Map<String, String> snapshotsExlusiveLockMap = Collections.singletonMap(vm.getId().toString(), LockingGroup.VM_SNAPSHOTS.name());
+        Map<String, Pair<String, String>> snapshotsExlusiveLockMap =
+                Collections.singletonMap(vm.getId().toString(), LockMessagesMatchUtil.VM_SNAPSHOTS);
         snapshotsEngineLock.setExclusiveLocks(snapshotsExlusiveLockMap);
         getLockManager().acquireLockWait(snapshotsEngineLock);
     }

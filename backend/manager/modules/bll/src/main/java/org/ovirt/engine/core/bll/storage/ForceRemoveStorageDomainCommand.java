@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -12,7 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -99,7 +100,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getStorageDomainId().toString(), LockingGroup.STORAGE.name());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(), LockMessagesMatchUtil.STORAGE);
     }
 }

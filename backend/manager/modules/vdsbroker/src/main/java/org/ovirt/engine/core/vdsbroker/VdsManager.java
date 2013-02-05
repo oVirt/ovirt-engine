@@ -137,7 +137,7 @@ public class VdsManager {
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
         monitoringLock = new EngineLock(Collections.singletonMap(_vdsId.toString(),
-                LockingGroup.VDS_INIT.name()), null);
+                new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
 
         if (_vds.getStatus() == VDSStatus.PreparingForMaintenance) {
             _vds.setPreviousStatus(_vds.getStatus());
@@ -199,7 +199,7 @@ public class VdsManager {
 
     @OnTimerMethodAnnotation("OnTimer")
     public void OnTimer() {
-        if (LockManagerFactory.getLockManager().acquireLock(monitoringLock)) {
+        if (LockManagerFactory.getLockManager().acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
                 Guid vdsId = null;

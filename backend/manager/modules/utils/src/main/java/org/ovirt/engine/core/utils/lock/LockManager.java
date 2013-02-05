@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.utils.lock;
 
+import java.util.Set;
+
+import org.ovirt.engine.core.common.utils.Pair;
+
 
 /**
  * The following interface is represent a lock mechanism
@@ -9,9 +13,9 @@ public interface LockManager {
     /**
      * The following method will try to acquire provided lock
      * @param lock
-     * @return true - in case of locked was acquired , false - otherwise
+     * @return true - in case of locked was acquired , false with set of appropriate error messages otherwise
      */
-    boolean acquireLock(EngineLock lock);
+    Pair<Boolean, Set<String>> acquireLock(EngineLock lock);
 
     /**
      * The following method will try to acquire lock and will wait until lock acquired The lock should be exclusive and

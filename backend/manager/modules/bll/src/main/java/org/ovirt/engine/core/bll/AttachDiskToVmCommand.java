@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -171,14 +171,14 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        Map<String, String> locks = new HashMap<String, String>();
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
         if (!disk.isShareable()) {
-            locks.put(disk.getId().toString(), LockingGroup.DISK.name());
+            locks.put(disk.getId().toString(), LockMessagesMatchUtil.DISK);
         }
 
         if (disk.isBoot()) {
-            locks.put(getParameters().getVmId().toString(), LockingGroup.VM_DISK_BOOT.name());
+            locks.put(getParameters().getVmId().toString(), LockMessagesMatchUtil.VM_DISK_BOOT);
         }
 
         return locks;

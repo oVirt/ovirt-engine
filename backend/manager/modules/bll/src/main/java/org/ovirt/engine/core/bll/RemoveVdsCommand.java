@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -233,17 +233,17 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        Map<String, String> locks = new HashMap<String, String>();
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
 
         VDSGroup cluster = getVdsGroup();
         if (cluster == null || cluster.supportsVirtService()) {
-            locks.put(getParameters().getVdsId().toString(), LockingGroup.VDS.name());
+            locks.put(getParameters().getVdsId().toString(), LockMessagesMatchUtil.VDS);
         }
 
         // Need to acquire lock on cluster if the host belongs to a gluster cluster
         if (cluster != null && cluster.supportsGlusterService()) {
-            locks.put(cluster.getId().toString(), LockingGroup.GLUSTER.name());
+            locks.put(cluster.getId().toString(), LockMessagesMatchUtil.GLUSTER);
         }
 
         return locks;

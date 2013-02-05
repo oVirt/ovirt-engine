@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -261,7 +262,7 @@ VmPoolUserCommandBase<T> {
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getAdUserId().toString(), getClass().getName());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getAdUserId().toString(), LockMessagesMatchUtil.USER_VM_POOL);
     }
 }

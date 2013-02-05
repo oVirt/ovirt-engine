@@ -2,36 +2,38 @@ package org.ovirt.engine.core.utils.lock;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.utils.Pair;
+
 /**
  *The following class is represent a lock which is used in the system
  */
 public class EngineLock {
 
-    private Map<String, String> exclusiveLocks;
-    private Map<String, String> sharedLocks;
+    private Map<String, Pair<String, String>> exclusiveLocks;
+    private Map<String, Pair<String, String>> sharedLocks;
 
     public EngineLock() {
 
     }
 
-    public EngineLock(Map<String, String> exclusiveLocks, Map<String, String> sharedLocks) {
+    public EngineLock(Map<String, Pair<String, String>> exclusiveLocks, Map<String, Pair<String, String>> sharedLocks) {
         this.exclusiveLocks = exclusiveLocks;
         this.sharedLocks = sharedLocks;
     }
 
-    public Map<String, String> getExclusiveLocks() {
+    public Map<String, Pair<String, String>> getExclusiveLocks() {
         return exclusiveLocks;
     }
 
-    public void setExclusiveLocks(Map<String, String> exclusiveLocks) {
+    public void setExclusiveLocks(Map<String, Pair<String, String>> exclusiveLocks) {
         this.exclusiveLocks = exclusiveLocks;
     }
 
-    public Map<String, String> getSharedLocks() {
+    public Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLocks;
     }
 
-    public void setSharedLocks(Map<String, String> sharedLocks) {
+    public void setSharedLocks(Map<String, Pair<String, String>> sharedLocks) {
         this.sharedLocks = sharedLocks;
     }
 
@@ -45,10 +47,10 @@ public class EngineLock {
         return message.toString();
     }
 
-    private void buildEntryStrings(Map<String, String> locks, StringBuilder message) {
+    private void buildEntryStrings(Map<String, Pair<String, String>> locks, StringBuilder message) {
         if (locks != null) {
-            for (Map.Entry<String, String> entry : locks.entrySet()) {
-                message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue()).append('\n');
+            for (Map.Entry<String, Pair<String, String>> entry : locks.entrySet()) {
+                message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue().getFirst()).append('\n');
             }
         }
     }

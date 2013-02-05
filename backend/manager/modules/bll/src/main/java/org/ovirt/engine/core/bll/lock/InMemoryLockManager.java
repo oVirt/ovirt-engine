@@ -2,10 +2,13 @@ package org.ovirt.engine.core.bll.lock;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,6 +25,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -37,6 +41,7 @@ import org.ovirt.engine.core.utils.lock.LockManager;
 @Local(LockManager.class)
 public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBean {
 
+    private static final Pair<Boolean, Set<String>> LOCK_INSERT_SUCCESS_RESULT = new Pair<Boolean, Set<String>>(Boolean.TRUE, Collections.<String>emptySet());
     /** A map which is contains all internal representation of locks **/
     private final Map<String, InternalLockView> locks = new HashMap<String, InternalLockView>();
     /** A lock which is used to synchronized acquireLock(), acquireLockWait() and releaseLock() operations **/
@@ -69,7 +74,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     }
 
     @Override
-    public boolean acquireLock(EngineLock lock) {
+    public Pair<Boolean, Set<String>> acquireLock(EngineLock lock) {
         log.debugFormat("Before acquiring lock {0}", lock);
         globalLock.lock();
         try {
@@ -85,7 +90,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         validateLockForAcquireAndWait(lock);
         globalLock.lock();
         try {
-            while (!acquireLockInternal(lock)) {
+            while (!acquireLockInternal(lock).getFirst()) {
                 log.infoFormat("Failed to acquire lock and wait lock {0}", lock);
                 releasedLock.await();
             }
@@ -109,12 +114,12 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         globalLock.lock();
         try {
             if (lock.getSharedLocks() != null) {
-                for (Entry<String, String> entry : lock.getSharedLocks().entrySet()) {
-                    releaseSharedLock(buildHashMapKey(entry));
+                for (Entry<String, Pair<String, String>> entry : lock.getSharedLocks().entrySet()) {
+                    releaseSharedLock(buildHashMapKey(entry), entry.getValue().getSecond());
                 }
             }
             if (lock.getExclusiveLocks() != null) {
-                for (Entry<String, String> entry : lock.getExclusiveLocks().entrySet()) {
+                for (Entry<String, Pair<String, String>> entry : lock.getExclusiveLocks().entrySet()) {
                     releaseExclusiveLock(buildHashMapKey(entry));
                 }
             }
@@ -138,7 +143,8 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     @Override
     public boolean releaseLock(String lockId) {
-        log.warnFormat("The following lock is going to be released via external call, lockId {0} ", lockId);
+        log.warnFormat("The following lock is going to be released via external call, lockId {0}, error message can be left for shared lock",
+                lockId);
         globalLock.lock();
         try {
             InternalLockView lock = locks.get(lockId);
@@ -149,7 +155,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
             if (lock.getExclusive()) {
                 releaseExclusiveLock(lockId);
             } else {
-                releaseSharedLock(lockId);
+                releaseSharedLock(lockId, null);
             }
             releasedLock.signalAll();
         } finally {
@@ -182,8 +188,8 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
      * @param entry
      * @return
      */
-    private String buildHashMapKey(Entry<String, String> entry) {
-        return entry.getKey() + entry.getValue();
+    private String buildHashMapKey(Entry<String, Pair<String, String>> entry) {
+        return entry.getKey() + entry.getValue().getFirst();
     }
 
     /**
@@ -193,69 +199,76 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
      * @param lock
      * @return
      */
-    private boolean acquireLockInternal(EngineLock lock) {
+    private Pair<Boolean, Set<String>> acquireLockInternal(EngineLock lock) {
         boolean checkOnly = true;
         for (int i = 0; i < 2; i++) {
             if (lock.getSharedLocks() != null) {
-                for (Entry<String, String> entry : lock.getSharedLocks().entrySet()) {
-                    if (!insertSharedLock(buildHashMapKey(entry), checkOnly)) {
+                for (Entry<String, Pair<String, String>> entry : lock.getSharedLocks().entrySet()) {
+                    Pair<Boolean, Set<String>> result =
+                            insertSharedLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
+                    if (!result.getFirst()) {
                         log.debugFormat("Failed to acquire lock. Shared lock is taken for key :{0} , value: {1}",
                                 entry.getKey(),
-                                entry.getValue());
-                        return false;
+                                entry.getValue().getFirst());
+                        return result;
                     }
                 }
             }
             if (lock.getExclusiveLocks() != null) {
-                for (Entry<String, String> entry : lock.getExclusiveLocks().entrySet()) {
-                    if (!insertExclusiveLock(buildHashMapKey(entry), checkOnly)) {
+                for (Entry<String, Pair<String, String>> entry : lock.getExclusiveLocks().entrySet()) {
+                    Pair<Boolean, Set<String>> result =
+                            insertExclusiveLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
+                    if (!result.getFirst()) {
                         log.debugFormat("Failed to acquire lock. Exclusive lock is taken for key: {0} , value: {1}",
                                 entry.getKey(),
-                                entry.getValue());
-                        return false;
+                                entry.getValue().getFirst());
+                        return result;
                     }
                 }
             }
             checkOnly = false;
         }
         log.debugFormat("Successed acquiring lock {0} succeeded ", lock);
-        return true;
+        return LOCK_INSERT_SUCCESS_RESULT;
     }
 
     /**
      * The following method should insert an "shared" internal lock
      * @param key
+     * @param message
+     *            - error message associated with lock
      * @param isCheckOnly
      *            - is insert or check if lock can be inserted
      * @return
      */
-    private boolean insertSharedLock(String key, boolean isCheckOnly) {
-        boolean result = true;
+    private Pair<Boolean, Set<String>> insertSharedLock(String key, String message, boolean isCheckOnly) {
         InternalLockView lock = locks.get(key);
         if (lock != null) {
             if (!isCheckOnly) {
                 lock.increaseCount();
+                lock.addMessage(message);
             } else if (lock.getExclusive()) {
-                result = false;
+                return new Pair<Boolean, Set<String>>(Boolean.FALSE, lock.getMessages());
             }
         } else if (!isCheckOnly) {
-            locks.put(key, new InternalLockView(1, false));
+            locks.put(key, new InternalLockView(1, message, false));
         }
-        return result;
+        return LOCK_INSERT_SUCCESS_RESULT;
     }
 
     /**
      * The following method will add exclusive lock, the exclusive key can be
      * added only if there is not exist any shared or exclusive lock for given key
      */
-    private boolean insertExclusiveLock(String key, boolean isCheckOnly) {
-        if (locks.containsKey(key)) {
-            return false;
+    private Pair<Boolean, Set<String>> insertExclusiveLock(String key, String message, boolean isCheckOnly) {
+        InternalLockView lock = locks.get(key);
+        if (lock != null) {
+            return new Pair<Boolean, Set<String>>(Boolean.FALSE, lock.getMessages());
         }
         if (!isCheckOnly) {
-            locks.put(key, new InternalLockView(0, true));
+            locks.put(key, new InternalLockView(0, message, true));
         }
-        return true;
+        return LOCK_INSERT_SUCCESS_RESULT;
     }
 
     private void releaseExclusiveLock(String key) {
@@ -270,7 +283,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         }
     }
 
-    private void releaseSharedLock(String key) {
+    private void releaseSharedLock(String key, String message) {
         InternalLockView lock = locks.get(key);
         if (lock != null) {
             if (lock.getCount() > 0) {
@@ -279,6 +292,8 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                 if (lock.getCount() == 0) {
                     locks.remove(key);
                     log.debugFormat("The shared lock for key {0} is removed from map", key);
+                } else {
+                    lock.removeMessage(message);
                 }
             } else {
                 log.warnFormat("Trying to decrease a shared lock for key: {0} , but shared index is 0", key);
@@ -289,7 +304,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     }
 
     /**
-     * The following class is represents different locks which are kept inside InMemoryLockManager
+     * The following class represents different locks which are kept inside InMemoryLockManager
      */
     private class InternalLockView {
 
@@ -297,10 +312,14 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         private int count;
         /** Indicate if the lock is exclusive and not allowing any other exclusive/shared locks with the same key **/
         private final boolean exclusive;
+        /** Contains error messages for that key **/
+        private List<String> messages;
 
-        public InternalLockView(int count, boolean exclusive) {
+        public InternalLockView(int count, String message, boolean exclusive) {
             this.count = count;
             this.exclusive = exclusive;
+            messages = new ArrayList<String>();
+            messages.add(message);
         }
 
         public boolean getExclusive() {
@@ -317,6 +336,20 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
         public void decreaseCount() {
             count--;
+        }
+
+        public Set<String> getMessages() {
+            return new HashSet<String>(messages);
+        }
+
+        public void addMessage(String message) {
+            messages.add(message);
+        }
+
+        public void removeMessage(String message) {
+            if (message != null) {
+                messages.remove(message);
+            }
         }
 
         @Override

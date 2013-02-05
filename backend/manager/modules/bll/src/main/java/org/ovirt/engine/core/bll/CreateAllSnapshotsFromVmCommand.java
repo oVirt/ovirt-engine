@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.SnapshotVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -352,9 +352,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return getParameters().isNeedsLocking() ?
-                Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name()) : null;
+                Collections.singletonMap(getVmId().toString(),LockMessagesMatchUtil.VM) : null;
     }
 
     @Override

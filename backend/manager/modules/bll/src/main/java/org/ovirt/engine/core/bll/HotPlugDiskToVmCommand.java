@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -99,8 +99,8 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
-        return Collections.singletonMap(getVmId().toString(), LockingGroup.VM.name());
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.singletonMap(getVmId().toString(), LockMessagesMatchUtil.VM);
     }
 
     @Override

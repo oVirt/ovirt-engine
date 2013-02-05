@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -78,8 +78,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getVmTemplateId().toString(), LockMessagesMatchUtil.TEMPLATE);
     }
 
     @Override

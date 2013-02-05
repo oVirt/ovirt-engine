@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
@@ -27,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -44,7 +45,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
 
-    private Map<String, String> sharedLocks;
+    private Map<String, Pair<String, String>> sharedLocks;
 
     public RemoveStoragePoolCommand(T parameters) {
         super(parameters);
@@ -326,9 +327,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         } else {
             List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
 
-            sharedLocks = new HashMap<String, String>();
+            sharedLocks = new HashMap<String, Pair<String, String>>();
             for (VDS host : poolHosts) {
-                sharedLocks.put(host.getId().toString(), LockingGroup.VDS.name());
+                sharedLocks.put(host.getId().toString(), LockMessagesMatchUtil.VDS);
             }
 
             if (!poolHosts.isEmpty() && acquireLockInternal()) {
@@ -389,7 +390,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLocks;
     }
 }

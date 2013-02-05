@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
@@ -341,9 +341,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
-            return Collections.singletonMap(getParameters().getVm().getVmName(), LockingGroup.VM_NAME.name());
+            return Collections.singletonMap(getParameters().getVm().getVmName(), LockMessagesMatchUtil.VM_NAME);
         }
         return null;
     }

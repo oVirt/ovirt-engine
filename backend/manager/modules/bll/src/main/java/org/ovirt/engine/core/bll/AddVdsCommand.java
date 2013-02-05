@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
@@ -445,10 +445,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         VDSGroup cluster = getVdsGroup();
         if (cluster != null && cluster.supportsGlusterService() && !isInternalExecution()) {
-            return Collections.singletonMap(cluster.getId().toString(), LockingGroup.GLUSTER.name());
+            return Collections.singletonMap(cluster.getId().toString(), LockMessagesMatchUtil.GLUSTER);
         }
         return null;
     }

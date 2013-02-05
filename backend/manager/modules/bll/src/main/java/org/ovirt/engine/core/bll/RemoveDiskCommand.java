@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -57,7 +57,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     private static final long serialVersionUID = -4520874214339816607L;
     private Disk disk;
-    private Map<String, String> sharedLockMap;
+    private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
 
@@ -152,14 +152,14 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         if (getDisk().getVmEntityType() == VmEntityType.VM) {
             List<VM> listVms = getVmsForDiskId();
             if (!listVms.isEmpty()) {
-                sharedLockMap = new HashMap<String, String>();
+                sharedLockMap = new HashMap<String, Pair<String, String>>();
                 for (VM vm : listVms) {
-                    sharedLockMap.put(vm.getId().toString(), LockingGroup.VM.name());
+                    sharedLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM);
                 }
             }
         } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
             setVmTemplateIdParameter();
-            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(), LockingGroup.TEMPLATE.name());
+            sharedLockMap = Collections.singletonMap(getVmTemplateId().toString(), LockMessagesMatchUtil.TEMPLATE);
         }
     }
 
@@ -356,12 +356,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getEntityId().toString(), LockingGroup.DISK.name());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getEntityId().toString(), LockMessagesMatchUtil.DISK);
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLockMap;
     }
 

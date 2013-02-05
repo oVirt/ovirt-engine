@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.Status;
@@ -61,6 +62,7 @@ import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -1455,16 +1457,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean acquireLockInternal() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
-            Map<String, String> exclusiveLocks = getExclusiveLocks();
-            Map<String, String> sharedLocks = getSharedLocks();
+            Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
+            Map<String, Pair<String, String>> sharedLocks = getSharedLocks();
             if (exclusiveLocks != null || sharedLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
-                if (getLockManager().acquireLock(lock)) {
+                Pair<Boolean, Set<String>> lockAcquireResult = getLockManager().acquireLock(lock);
+                if (lockAcquireResult.getFirst()) {
                     log.infoFormat("Lock Acquired to object {0}", lock);
                     commandLock = lock;
                 } else {
                     log.infoFormat("Failed to Acquire Lock to object {0}", lock);
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
+                    getReturnValue().getCanDoActionMessages().addAll(lockAcquireResult.getSecond());
+                    return false;
                 }
             }
         }
@@ -1474,7 +1478,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void acquireLockAndWait() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
-            Map<String, String> exclusiveLocks = getExclusiveLocks();
+            Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
             if (exclusiveLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, null);
                 getLockManager().acquireLockWait(lock);
@@ -1495,11 +1499,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return LockManagerFactory.getLockManager();
     }
 
-    protected Map<String, String> getExclusiveLocks() {
+    /**
+     * The following method should return a map which is represent exclusive lock
+     * @return
+     */
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return null;
     }
 
-    protected Map<String, String> getSharedLocks() {
+    /**
+     * The following method should return a map which is represent shared lock
+     * @return
+     */
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return null;
     }
 

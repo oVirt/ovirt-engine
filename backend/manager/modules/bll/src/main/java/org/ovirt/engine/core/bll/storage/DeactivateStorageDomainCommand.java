@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -16,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -307,13 +308,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         storage_domains storageDomain = getStorageDomain();
         if (storageDomain != null) {
-            Map<String, String> locks = new HashMap<String, String>();
-            locks.put(storageDomain.getId().toString(), LockingGroup.STORAGE.name());
+            Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+            locks.put(storageDomain.getId().toString(), LockMessagesMatchUtil.STORAGE);
             if (storageDomain.getstorage_domain_type() == StorageDomainType.Master) {
-                locks.put(storageDomain.getstorage_pool_id().toString(), LockingGroup.POOL.name());
+                locks.put(storageDomain.getstorage_pool_id().toString(), LockMessagesMatchUtil.POOL);
             }
             return locks;
         }
@@ -321,12 +322,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         storage_domains storageDomain = getStorageDomain();
         if (storageDomain != null && storageDomain.getstorage_domain_type() == StorageDomainType.Data
                 && storageDomain.getstorage_domain_type() != StorageDomainType.Master
                 && storageDomain.getstorage_pool_id() != null) {
-            return Collections.singletonMap(storageDomain.getstorage_pool_id().toString(), LockingGroup.POOL.name());
+            return Collections.singletonMap(storageDomain.getstorage_pool_id().toString(), LockMessagesMatchUtil.POOL);
         }
         return null;
     }

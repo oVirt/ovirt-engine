@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -40,8 +40,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private List<PermissionSubject> listPermissionSubjects;
     private final Disk oldDisk;
     private final Disk newDisk;
-    private Map<String, String> sharedLockMap;
-    private Map<String, String> exclusiveLockMap;
+    private Map<String, Pair<String, String>> sharedLockMap;
+    private Map<String, Pair<String, String>> exclusiveLockMap;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
@@ -83,17 +83,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
 
     private void buildSharedLockMap(List<VM> vmsDiskPluggedTo) {
-            sharedLockMap = new HashMap<String, String>();
+        sharedLockMap = new HashMap<String, Pair<String, String>>();
         for (VM vm : vmsDiskPluggedTo) {
-                sharedLockMap.put(vm.getId().toString(), LockingGroup.VM.name());
-            }
+            sharedLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM);
+        }
     }
 
     private void buildExclusiveLockMap(List<VM> vmsDiskPluggedTo) {
         if (newDisk.isBoot()) {
-            exclusiveLockMap = new HashMap<String, String>();
+            exclusiveLockMap = new HashMap<String, Pair<String, String>>();
             for (VM vm : vmsDiskPluggedTo) {
-                exclusiveLockMap.put(vm.getId().toString(), LockingGroup.VM_DISK_BOOT.name());
+                exclusiveLockMap.put(vm.getId().toString(), LockMessagesMatchUtil.VM_DISK_BOOT);
             }
         }
     }
@@ -266,12 +266,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLockMap;
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return exclusiveLockMap;
     }
 

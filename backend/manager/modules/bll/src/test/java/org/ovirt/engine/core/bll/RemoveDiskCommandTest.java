@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -91,8 +91,8 @@ public class RemoveDiskCommandTest {
     public void testCanDoActionFlowUnableToLock() {
         EngineLock lock =
                 new EngineLock
-                (Collections.singletonMap(vm.getId().toString(), LockingGroup.VM.name()),
-                        Collections.<String, String> emptyMap());
+                (Collections.singletonMap(vm.getId().toString(), LockMessagesMatchUtil.VM),
+                        Collections.<String, Pair<String, String>> emptyMap());
         lockManager.acquireLock(lock);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);

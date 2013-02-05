@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -42,7 +42,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
     private ArrayList<Guid> _vdsGroupIds;
     private final List<PermissionSubject> inspectedEntitiesMap;
-    private Map<String, String> sharedLockMap;
+    private Map<String, Pair<String, String>> sharedLockMap;
 
     public MaintananceNumberOfVdssCommand(T parameters) {
         super(parameters);
@@ -269,9 +269,9 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
 
     private void addSharedLockEntry(VDS vds) {
         if (sharedLockMap == null) {
-            sharedLockMap = new HashMap<String, String>();
+            sharedLockMap = new HashMap<String, Pair<String, String>>();
         }
-        sharedLockMap.put(vds.getStoragePoolId().toString(), LockingGroup.POOL.name());
+        sharedLockMap.put(vds.getStoragePoolId().toString(), LockMessagesMatchUtil.POOL);
     }
 
     /**
@@ -335,7 +335,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLockMap;
     }
 

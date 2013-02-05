@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtils;
@@ -33,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -154,7 +154,7 @@ public class GlusterManager {
      */
     private EngineLock getEngineLock(Guid clusterId) {
         return new EngineLock(Collections.singletonMap(clusterId.toString(),
-                LockingGroup.GLUSTER.name()), null);
+                LockMessagesMatchUtil.GLUSTER), null);
     }
 
     /**

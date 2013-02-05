@@ -11,8 +11,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ActivateVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -54,7 +55,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
         final VDS vds = getVds();
         EngineLock monitoringLock =
                 new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
-                        LockingGroup.VDS_INIT.name()), null);
+                        new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
         log.infoFormat("Before acquiring lock in order to prevent monitoring for host {0} from data-center {1}",
                 vds.getName(),
                 vds.getStoragePoolName());
@@ -113,8 +114,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getVdsId().toString(), LockingGroup.VDS.name());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getVdsId().toString(),
+                LockMessagesMatchUtil.VDS);
     }
 
     @Override

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -46,7 +46,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         implements QuotaStorageDependent {
 
     private static final long serialVersionUID = -7219975636530710384L;
-    private Map<String, String> sharedLockMap;
+    private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> permsList = null;
     private List<VM> listVms;
 
@@ -349,14 +349,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             } else {
                 VmTemplate vmTemplate = templates.iterator().next();
                 setVmTemplate(vmTemplate);
-                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(), LockingGroup.TEMPLATE.name());
+                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(), LockMessagesMatchUtil.TEMPLATE);
             }
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
             if (!vmsForDisk.isEmpty()) {
-                Map<String, String> lockMap = new HashMap<String, String>();
+                Map<String, Pair<String, String>> lockMap = new HashMap<String, Pair<String, String>>();
                 for (VM currVm : vmsForDisk) {
-                    lockMap.put(currVm.getId().toString(), LockingGroup.VM.name());
+                    lockMap.put(currVm.getId().toString(), LockMessagesMatchUtil.VM);
                 }
                 lockForMove(lockMap);
             }
@@ -364,17 +364,17 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return retValue;
     }
 
-    protected void lockForMove(Map<String, String> lockMap) {
+    protected void lockForMove(Map<String, Pair<String, String>> lockMap) {
         sharedLockMap = lockMap;
     }
 
     @Override
-    protected Map<String, String> getExclusiveLocks() {
-        return Collections.singletonMap(getImage().getId().toString(), LockingGroup.DISK.name());
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getImage().getId().toString(), LockMessagesMatchUtil.DISK);
     }
 
     @Override
-    protected Map<String, String> getSharedLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return sharedLockMap;
     }
 
