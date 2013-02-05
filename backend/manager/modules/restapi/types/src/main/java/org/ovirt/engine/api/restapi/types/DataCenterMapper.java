@@ -7,9 +7,9 @@ import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.Guid;
 
 public class DataCenterMapper {
 
@@ -17,7 +17,7 @@ public class DataCenterMapper {
     public static storage_pool map(DataCenter model, storage_pool template) {
         storage_pool entity = template != null ? template : new storage_pool();
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setname(model.getName());

@@ -17,12 +17,12 @@ import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.compat.Guid;
 
 public class TemplateMapper {
 
@@ -35,13 +35,13 @@ public class TemplateMapper {
             entity.setName(model.getName());
         }
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
         if (model.isSetCluster() && model.getCluster().getId() != null) {
-            entity.setVdsGroupId(new Guid(model.getCluster().getId()));
+            entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetHighAvailability()) {
             if (model.getHighAvailability().isSetEnabled()) {
@@ -140,13 +140,13 @@ public class TemplateMapper {
             staticVm.setName(model.getName());
         }
         if (model.isSetId()) {
-            staticVm.setId(new Guid(model.getId()));
+            staticVm.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetDescription()) {
             staticVm.setDescription(model.getDescription());
         }
         if (model.isSetCluster() && model.getCluster().getId() != null) {
-            staticVm.setVdsGroupId(new Guid(model.getCluster().getId()));
+            staticVm.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         if (model.isSetHighAvailability()) {
             if (model.getHighAvailability().isSetEnabled()) {

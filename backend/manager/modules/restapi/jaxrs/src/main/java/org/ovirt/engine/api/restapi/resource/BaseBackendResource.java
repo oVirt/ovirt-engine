@@ -21,6 +21,7 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -239,15 +240,6 @@ public class BaseBackendResource {
         ArrayList<T> list = new ArrayList<T>();
         list.add(t);
         return list;
-    }
-
-    public static class MalformedIdException extends IllegalArgumentException {
-
-        private static final long serialVersionUID = 1L;
-
-        public MalformedIdException(IllegalArgumentException e) {
-            super(e);
-        }
     }
 
     protected Guid asGuid(String id) {

@@ -14,11 +14,11 @@ import org.ovirt.engine.api.model.SchedulingPolicyThresholds;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapper {
 
@@ -28,7 +28,7 @@ public class ClusterMapper {
     public static VDSGroup map(Cluster model, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
         if (model.isSetId()) {
-            entity.setId(new Guid(model.getId()));
+            entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
             entity.setname(model.getName());
@@ -40,7 +40,7 @@ public class ClusterMapper {
             entity.setcpu_name(model.getCpu().getId());
         }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
-            entity.setStoragePoolId(new Guid(model.getDataCenter().getId()));
+            entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
         if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
             entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
