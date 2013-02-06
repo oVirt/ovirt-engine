@@ -282,6 +282,12 @@ public class PermitMapper {
             return ActionGroup.LOGIN;
         case INJECT_EXTERNAL_EVENTS:
             return ActionGroup.INJECT_EXTERNAL_EVENTS;
+        case CREATE_STORAGE_POOL_NETWORK:
+            return ActionGroup.CREATE_STORAGE_POOL_NETWORK;
+        case DELETE_STORAGE_POOL_NETWORK:
+            return ActionGroup.DELETE_STORAGE_POOL_NETWORK;
+        case ASSIGN_CLUSTER_NETWORK:
+            return ActionGroup.ASSIGN_CLUSTER_NETWORK;
         default:
             return null;
         }
@@ -290,6 +296,9 @@ public class PermitMapper {
     @Mapping(from = PermitType.class, to = Permit.class)
     public static Permit map(PermitType entity, Permit template) {
         ActionGroup actionGroup = map(entity, (ActionGroup) null);
+        if (actionGroup == null) {
+            return null;
+        }
         return map(actionGroup, (Permit) null);
     }
 }
