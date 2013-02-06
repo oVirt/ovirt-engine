@@ -18,9 +18,9 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -118,10 +118,9 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         if (getParameters().isRunSilent()) {
             return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN_ASYNC
                     : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED_ASYNC;
-        } else {
-            return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN
-                    : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED;
         }
+        return getSucceeded() ? AuditLogType.USER_ACTIVATED_STORAGE_DOMAIN
+                : AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED;
     }
 
     @Override
