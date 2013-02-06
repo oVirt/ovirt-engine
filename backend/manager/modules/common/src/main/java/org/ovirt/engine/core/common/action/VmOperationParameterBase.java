@@ -9,18 +9,18 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
     public VmOperationParameterBase() {
     }
 
-    private Guid _vmId = Guid.Empty;
+    private Guid vmId = Guid.Empty;
 
     public VmOperationParameterBase(Guid vmId) {
-        _vmId = vmId;
+        this.vmId = vmId;
     }
 
     public Guid getVmId() {
-        return _vmId;
+        return vmId;
     }
 
     public void setVmId(Guid value) {
-        _vmId = value;
+        vmId = value;
     }
 
     public Guid getQuotaId() {
