@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
@@ -46,6 +47,12 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+    }
+
+    @Override
     protected void executeCommand() {
         getNetworkClusterDAO().update(getNetworkCluster());
 
@@ -59,7 +66,10 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && validate(networkClusterAttachmentExists());
+        NetworkClusterValidator validator = new NetworkClusterValidator(getNetworkCluster());
+        return validate(networkClusterAttachmentExists())
+                && (!NetworkUtils.isManagementNetwork(getNetwork())
+                || validate(validator.managementNetworkAttachment(getNetworkName())));
     }
 
     private ValidationResult networkClusterAttachmentExists() {

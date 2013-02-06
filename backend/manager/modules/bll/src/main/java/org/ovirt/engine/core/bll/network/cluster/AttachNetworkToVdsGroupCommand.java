@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 @SuppressWarnings("serial")
 @CustomLogFields({ @CustomLogField("NetworkName") })
@@ -37,6 +38,12 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
+    }
+
+    @Override
     protected void executeCommand() {
         if (networkExists()) {
             getNetworkClusterDAO().update(getNetworkCluster());
@@ -53,7 +60,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected boolean canDoAction() {
-        return super.canDoAction() && vdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists();
+        NetworkClusterValidator validator = new NetworkClusterValidator(getNetworkCluster());
+        return vdsGroupExists() && changesAreClusterCompatible() && logicalNetworkExists()
+                && (!NetworkUtils.isManagementNetwork(getNetwork())
+                || validate(validator.managementNetworkAttachment(getNetworkName())));
     }
 
     private boolean logicalNetworkExists() {
