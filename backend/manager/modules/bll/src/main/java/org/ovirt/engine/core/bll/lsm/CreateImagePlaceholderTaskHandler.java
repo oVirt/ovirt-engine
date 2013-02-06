@@ -63,6 +63,12 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
     }
 
     @Override
+    public void endWithFailure() {
+        super.endWithFailure();
+        revertTask();
+    }
+
+    @Override
     protected VDSCommandType getRevertVDSCommandType() {
         return VDSCommandType.DeleteImageGroup;
     }
