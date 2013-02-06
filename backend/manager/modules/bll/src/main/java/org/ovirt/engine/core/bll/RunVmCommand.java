@@ -516,13 +516,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setConsoleUserId(null);
 
             getParameters().setRunAsStateless(getVmRunHandler().shouldVmRunAsStateless(getParameters(), getVm()));
-            // if Use Vnc is null it means runVM was launch not from the run
-            // once command
-            if (getParameters().getUseVnc() != null) {
-                getVm().setDisplayType(getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl);
-            } else {
-                getVm().setDisplayType(getVm().getDefaultDisplayType());
-            }
+
+            getVm().setDisplayType(getParameters().getUseVnc() == null ?
+                    getVm().getDefaultDisplayType() :
+                     // if Use Vnc is not null it means runVM was launch from the run once command, thus
+                     // the VM can run with display type which is different from its default display type
+                    (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
+
             if (getParameters().getReinitialize()) {
                 getVm().setUseSysPrep(true);
             }
