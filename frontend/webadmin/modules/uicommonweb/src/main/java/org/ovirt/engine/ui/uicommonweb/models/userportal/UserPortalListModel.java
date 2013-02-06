@@ -770,6 +770,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar2.setEntity(DisplayType.qxl);
         EntityModel qxlProtocol = tempVar2;
 
+        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vnc;
+        model.getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
+        model.getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
+
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
         items.add(vncProtocol);
         items.add(qxlProtocol);
@@ -946,6 +950,11 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         EntityModel displayProtocolSelectedItem = (EntityModel) model.getDisplayProtocol().getSelectedItem();
         param.setUseVnc((DisplayType) displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
+        if ((Boolean) model.getDisplayConsole_Vnc_IsSelected().getEntity()
+                || (Boolean) model.getDisplayConsole_Spice_IsSelected().getEntity())
+        {
+            param.setUseVnc((Boolean) model.getDisplayConsole_Vnc_IsSelected().getEntity());
+        }
 
         Frontend.RunAction(VdcActionType.RunVmOnce, param,
                 new IFrontendActionAsyncCallback() {
