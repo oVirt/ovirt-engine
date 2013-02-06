@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmTemplateParametersBase extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -8930994274659598061L;
     private boolean removeTemplateFromDb;
-    private Guid _vmTemplateId = new Guid();
+    private Guid vmTemplateId = Guid.Empty;
     private Guid quotaId;
     private boolean privateCheckDisksExists;
 
@@ -20,11 +20,11 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     }
 
     public VmTemplateParametersBase(Guid vmTemplateId) {
-        _vmTemplateId = vmTemplateId;
+        this.vmTemplateId = vmTemplateId;
     }
 
     public Guid getVmTemplateId() {
-        return _vmTemplateId;
+        return vmTemplateId;
     }
 
     private List<Guid> privateStorageDomainsList;
