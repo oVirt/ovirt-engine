@@ -9,8 +9,6 @@ import java.net.ConnectException;
 import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
@@ -294,11 +291,12 @@ public class EngineConfigLogic {
         String key = parser.getKey();
         String version = parser.getVersion();
         if (StringUtils.isBlank(version)) {
-            if (getConfigKey(key) == null) {
+            ConfigKey configKey = getConfigKey(key);
+            if (configKey == null) {
                 throw new RuntimeException("Error fetching " + key
                         + " value: no such entry. Please verify key name and property file support.");
             }
-            printAllValuesForKey(key);
+            printAllValuesForKey(configKey.getKey());
         } else {
             printKeyWithSpecifiedVersion(key, version);
         }
