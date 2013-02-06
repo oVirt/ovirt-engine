@@ -922,15 +922,17 @@ public class ManageDomains {
             throw new ManageDomainsResult(ManageDomainsResultEnum.DOMAIN_DOESNT_EXIST_IN_CONFIGURATION, domainName);
         }
 
+        //Prompt warning about last domain only if not "force delete", as using
+        //the force delete option should remove with no confirmation/warning
+        if (domainNameEntry.getDomainNames().size() == 1 && !forceDelete) {
+            System.out.println(String.format(WARNING_ABOUT_TO_DELETE_LAST_DOMAIN, domainName));
+        }
+
         if(!forceDelete && !confirmDeleteDomain(domainName)) {
             return;
         }
 
         domainNameEntry.removeValueForDomain(domainName);
-
-        if (domainNameEntry.isEntryEmpty()) {
-            System.out.println(String.format(WARNING_ABOUT_TO_DELETE_LAST_DOMAIN, domainName));
-        }
 
         // Assuming we got here, we need to change the configuration of the others as well
         String currentAdUserNameEntry = configurationProvider.getConfigValue(ConfigValues.AdUserName);
