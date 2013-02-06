@@ -548,6 +548,39 @@ select fn_db_update_config_value('IPTablesConfig','
 -A FORWARD -m physdev ! --physdev-is-bridged -j REJECT --reject-with icmp-host-prohibited
 COMMIT
 ','general');
+select fn_db_update_config_value('IPTablesConfigForGluster',
+'
+# glusterd
+-A INPUT -p tcp -m tcp --dport 24007 -j ACCEPT
+
+# portmapper
+-A INPUT -p udp -m udp --dport 111   -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 38465 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 38466 -j ACCEPT
+
+# nfs
+-A INPUT -p tcp -m tcp --dport 111   -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 38467 -j ACCEPT
+
+# status
+-A INPUT -p tcp -m tcp --dport 39543 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 55863 -j ACCEPT
+
+# nlockmgr
+-A INPUT -p tcp -m tcp --dport 38468 -j ACCEPT
+-A INPUT -p udp -m udp --dport 963   -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 965   -j ACCEPT
+
+# ctdbd
+-A INPUT -p tcp -m tcp --dport 4379  -j ACCEPT
+
+# smbd
+-A INPUT -p tcp -m tcp --dport 139   -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 445   -j ACCEPT
+
+# Ports for gluster volume bricks (default 100 ports)
+-A INPUT -p tcp -m tcp --dport 24009:24108 -j ACCEPT
+','general');
 select fn_db_update_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_update_config_value('keystoreUrl','keys/engine.p12','general');
 select fn_db_update_config_value('MaxNumOfVmCpus','64','3.0');
