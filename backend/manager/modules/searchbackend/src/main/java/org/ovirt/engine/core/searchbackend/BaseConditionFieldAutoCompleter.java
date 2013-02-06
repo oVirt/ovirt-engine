@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
-import org.ovirt.engine.core.compat.DateFormatCompat;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.core.compat.Guid;
@@ -305,12 +305,12 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 relations.argvalue = "between";
                 DateTime nextDay = result.AddDays(1);
                 value.argvalue = StringFormat.format("'%1$s' and '%2$s'",
-                        result.toString(DateUtils.getFormat(DateFormatCompat.DEFAULT, DateFormatCompat.SHORT)),
-                        nextDay.toString(DateUtils.getFormat(DateFormatCompat.DEFAULT, DateFormatCompat.SHORT)));
+                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)),
+                        nextDay.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)));
             } else { // ">" or "<"
                      // value.argvalue = String.format("'%1$s'", result);
                 value.argvalue = StringFormat.format("'%1$s'",
-                        result.toString(DateUtils.getFormat(DateFormatCompat.DEFAULT, DateFormatCompat.SHORT)));
+                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)));
             }
 
         }
