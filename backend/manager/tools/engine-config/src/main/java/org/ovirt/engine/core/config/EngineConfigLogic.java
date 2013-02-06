@@ -193,11 +193,15 @@ public class EngineConfigLogic {
      * @return The user's password
      */
     public static String startPasswordDialog(String user) throws IOException {
+        return startPasswordDialog(user, "Please enter a password");
+    }
+
+    public static String startPasswordDialog(String user, String msg) throws IOException {
         log.debug("starting password dialog.");
         if (user == null) {
-            System.out.printf("Please enter a password");
+            System.out.printf(msg);
         } else {
-            System.out.printf("Please enter a password for %s: ", user);
+            System.out.printf("%s for %s: ",msg , user);
         }
         return new String(System.console().readPassword());
     }

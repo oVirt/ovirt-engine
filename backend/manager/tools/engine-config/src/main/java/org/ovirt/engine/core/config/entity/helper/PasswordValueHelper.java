@@ -104,6 +104,11 @@ public class PasswordValueHelper implements ValueHelper {
         String password = null;
         if (StringUtils.isNotBlank(value) && value.equalsIgnoreCase(INTERACTIVE_MODE)) {
             password = EngineConfigLogic.startPasswordDialog(null);
+            String passwordConfirm = EngineConfigLogic.startPasswordDialog(null, "Please reenter password");
+            if (!password.equals(passwordConfirm)) {
+                log.error("Passwords don't match");
+                return extractPasswordValue(value);
+            }
         } else {
                 password =
                     EngineConfigLogic.getPassFromFile((StringUtils.isNotBlank(value)) ? value
