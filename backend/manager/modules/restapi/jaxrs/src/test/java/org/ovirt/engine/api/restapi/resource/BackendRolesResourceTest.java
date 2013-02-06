@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
@@ -115,12 +116,31 @@ public class BackendRolesResourceTest
         model.setName(NAMES[0].toString());
         model.setPermits(new Permits());
         model.getPermits().getPermits().add(new Permit());
-        model.getPermits().getPermits().get(0).setId("1");
+        model.getPermits().getPermits().get(0).setId(""+ActionGroup.CREATE_VM.getId());
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Role);
         verifyModel((Role) response.getEntity(), 0);
+    }
+
+    @Test
+    public void testAddRoleInvalidPermit() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        Role model = new Role();
+        model.setName(NAMES[0].toString());
+        model.setPermits(new Permits());
+        model.getPermits().getPermits().add(new Permit());
+        model.getPermits().getPermits().get(0).setId("1234");
+
+        try {
+            Response response = collection.add(model);
+            fail("expected WebApplicationException");
+        } catch(WebApplicationException wae) {
+            assertEquals(BAD_REQUEST, wae.getResponse().getStatus());
+            assertEquals(wae.getResponse().getEntity(), "1234 is not a valid permit ID.");
+        }
     }
 
     @Test
