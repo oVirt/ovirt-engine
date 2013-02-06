@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
@@ -79,6 +80,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
+@LockIdNameAttribute
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
         implements QuotaStorageDependent {
     private static final long serialVersionUID = -5500615685812075744L;
@@ -104,6 +106,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
         ensureDomainMap(imageList, getParameters().getDestDomainId());
+    }
+
+    @Override
+    protected Map<String, String> getExclusiveLocks() {
+        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
+            return Collections.singletonMap(getParameters().getVm().getVmName(), LockingGroup.VM_NAME.name());
+        }
+        return null;
     }
 
     protected ImportVmCommand(Guid commandId) {
@@ -544,6 +554,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 return null;
             }
         });
+        freeLock();
     }
 
     private void processImages() {
