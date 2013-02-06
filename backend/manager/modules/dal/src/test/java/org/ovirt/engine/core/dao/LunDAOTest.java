@@ -24,6 +24,7 @@ public class LunDAOTest extends BaseDAOTestCase {
 
         newLUN = new LUNs();
         newLUN.setLUN_id("oicu812");
+        newLUN.setvolume_group_id("");
     }
 
     /**
