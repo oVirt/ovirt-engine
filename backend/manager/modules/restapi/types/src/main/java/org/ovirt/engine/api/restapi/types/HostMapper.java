@@ -272,7 +272,11 @@ public class HostMapper {
                 * BYTES_IN_MEGABYTE));
         model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
 
-        if (entity.getLibvirtVersion() != null) {
+        if (entity.getLibvirtVersion() != null &&
+                entity.getLibvirtVersion().getMajor() != -1 &&
+                entity.getLibvirtVersion().getMinor() != -1 &&
+                entity.getLibvirtVersion().getRevision() != -1 &&
+                entity.getLibvirtVersion().getBuild() != -1) {
             Version version = new Version();
             version.setMajor(entity.getLibvirtVersion().getMajor());
             version.setMinor(entity.getLibvirtVersion().getMinor());
