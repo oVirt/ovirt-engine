@@ -65,7 +65,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 // set network status (this can change the network status to
                 // operational)
                 VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(params.getVdsId());
-                NetworkClusterHelper.setStatus(vdsStatic.getvds_group_id(), params
+                NetworkClusterHelper.setStatus(vdsStatic.getVdsGroupId(), params
                         .getNetwork());
                 setSucceeded(true);
             }
@@ -136,7 +136,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         // check that the network exists in current cluster
-        List<Network> networks = getNetworkDAO().getAllForCluster(getVds().getvds_group_id());
+        List<Network> networks = getNetworkDAO().getAllForCluster(getVds().getVdsGroupId());
         if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
             @Override
             public boolean eval(Network network) {

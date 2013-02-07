@@ -40,25 +40,25 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
     @Override
     protected void executeCommand() {
-        String vdsGroupCpuName = getVds().getvds_group_cpu_name();
+        String vdsGroupCpuName = getVds().getVdsGroupCpuName();
         boolean foundCPU = true;
         // if cluster doesn't have cpu then get the cpu from the vds
         if (StringUtils.isEmpty(vdsGroupCpuName)) {
-            ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getcpu_flags(), getVds()
-                    .getvds_group_compatibility_version());
+            ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
+                    .getVdsGroupCompatibilityVersion());
             if (sc == null) {
                 // if there are flags and no cpu found, mark to be non
                 // operational
-                if (!StringUtils.isEmpty(getVds().getcpu_flags())) {
+                if (!StringUtils.isEmpty(getVds().getCpuFlags())) {
                     foundCPU = false;
                 } else {
                     _hasFlags = false;
                 }
                 log.errorFormat("Could not find server cpu for server {0}:{1}, flags: {2}", getVdsId(), getVds()
-                        .getvds_name(), getVds().getcpu_flags());
+                        .getVdsName(), getVds().getCpuFlags());
             } else {
                 // update group with the cpu name
-                VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getvds_group_id());
+                VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
                 grp.setcpu_name(sc.getCpuName());
 
                 // use suppress in order to update group even if action fails
@@ -73,8 +73,8 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
         }
 
         List<String> missingFlags = CpuFlagsManagerHandler.missingServerCpuFlags(vdsGroupCpuName, getVds()
-                .getcpu_flags(), getVds().getvds_group_compatibility_version());
-        if (!StringUtils.isEmpty(getVds().getcpu_flags()) && (!foundCPU || missingFlags != null)) {
+                .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
+        if (!StringUtils.isEmpty(getVds().getCpuFlags()) && (!foundCPU || missingFlags != null)) {
             if (missingFlags != null) {
                 AddCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
                 if (missingFlags.contains("nx")) {

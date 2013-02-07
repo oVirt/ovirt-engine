@@ -23,7 +23,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         boolean retValue = true;
         if (getParameters().getParentCommand() == VdcActionType.Unknown) {
             retValue = super.canDoAction();
-            if (getVds() != null && getVds().getstatus() != VDSStatus.Maintenance) {
+            if (getVds() != null && getVds().getStatus() != VDSStatus.Maintenance) {
                 addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_STOP);
                 retValue = false;
             }

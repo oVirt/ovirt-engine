@@ -55,7 +55,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
 
     @Override
     protected void executeCommand() {
-        if (getVds().getstatus() == VDSStatus.Maintenance) {
+        if (getVds().getStatus() == VDSStatus.Maintenance) {
             // nothing to do
             setSucceeded(true);
         } else {
@@ -63,9 +63,9 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
             setSucceeded(MigrateAllVms(getExecutionContext()));
 
             // if non responsive move directly to maintenance
-            if (getVds().getstatus() == VDSStatus.NonResponsive
-                    || getVds().getstatus() == VDSStatus.Connecting
-                    || getVds().getstatus() == VDSStatus.Down) {
+            if (getVds().getStatus() == VDSStatus.NonResponsive
+                    || getVds().getStatus() == VDSStatus.Connecting
+                    || getVds().getStatus() == VDSStatus.Down) {
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.SetVdsStatus,
@@ -164,9 +164,9 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         // VDS vds = ResourceManager.Instance.getVds(vdsId);
         VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
         // we can get here when vds status was set already to Maintenance
-        if ((vds.getstatus() != VDSStatus.Maintenance) && (vds.getstatus() != VDSStatus.NonResponsive)
-                && (vds.getstatus() != VDSStatus.Up) && (vds.getstatus() != VDSStatus.Error)
-                && (vds.getstatus() != VDSStatus.PreparingForMaintenance) && (vds.getstatus() != VDSStatus.Down)) {
+        if ((vds.getStatus() != VDSStatus.Maintenance) && (vds.getStatus() != VDSStatus.NonResponsive)
+                && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
+                && (vds.getStatus() != VDSStatus.PreparingForMaintenance) && (vds.getStatus() != VDSStatus.Down)) {
             returnValue = false;
             reasons.add(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL.toString());
         }
@@ -199,7 +199,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,
                                 new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getStoragePoolId(), vds.getvds_spm_id()));
+                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
                 HostStoragePoolParametersBase params =
                         new HostStoragePoolParametersBase(storage_pool, vds);
                 Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
@@ -217,7 +217,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
-                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getvds_name());
+                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getVdsName());
                         return new EventResult(true, EventType.VDSCLEARCACHE);
                     }
                 });

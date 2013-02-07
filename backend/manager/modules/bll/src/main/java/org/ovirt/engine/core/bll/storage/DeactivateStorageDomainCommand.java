@@ -206,7 +206,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             }
             runVdsCommand(VDSCommandType.DisconnectStoragePool,
                     new DisconnectStoragePoolVDSCommandParameters(spm.getId(),
-                            getStoragePool().getId(), spm.getvds_spm_id()));
+                            getStoragePool().getId(), spm.getVdsSpmId()));
         }
 
         if (!getParameters().isInactive() && spm != null) {

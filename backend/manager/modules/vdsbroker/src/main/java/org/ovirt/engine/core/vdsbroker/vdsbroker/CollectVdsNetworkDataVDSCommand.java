@@ -60,7 +60,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
             @Override
             public Void runInTransaction() {
                 VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(getVds().getId());
-                vdsDynamic.setnet_config_dirty(getVds().getnet_config_dirty());
+                vdsDynamic.setnet_config_dirty(getVds().getNetConfigDirty());
                 ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVdsDynamicData,
                         new UpdateVdsDynamicDataVDSCommandParameters(vdsDynamic));
                 return null;
@@ -81,10 +81,10 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
     public static boolean persistAndEnforceNetworkCompliance(VDS vds) {
         persistTopology(vds);
 
-        if (vds.getstatus() != VDSStatus.Maintenance) {
+        if (vds.getStatus() != VDSStatus.Maintenance) {
 
             List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao()
-                    .getAllForCluster(vds.getvds_group_id());
+                    .getAllForCluster(vds.getVdsGroupId());
             Map<String, String> customLogValues;
 
             // here we check if the vds networks match it's cluster networks

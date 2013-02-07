@@ -60,18 +60,18 @@ public class HostMapper {
             entity.setId(new Guid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setvds_name(model.getName());
+            entity.setVdsName(model.getName());
         }
         if (model.isSetCluster() && model.getCluster().isSetId()) {
-            entity.setvds_group_id(new Guid(model.getCluster().getId()));
+            entity.setVdsGroupId(new Guid(model.getCluster().getId()));
         }
         if (model.isSetAddress()) {
-            entity.sethost_name(model.getAddress());
+            entity.setHostName(model.getAddress());
         }
         if (model.isSetPort() && model.getPort() > 0) {
-            entity.setport(model.getPort());
+            entity.setPort(model.getPort());
         } else {
-            entity.setport(DEFAULT_VDSM_PORT);
+            entity.setPort(DEFAULT_VDSM_PORT);
         }
         if (model.isSetPowerManagement()) {
             entity = map(model.getPowerManagement(), entity);
@@ -92,22 +92,22 @@ public class HostMapper {
     public static VdsStatic map(PowerManagement model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
         if (model.isSetType()) {
-            entity.setpm_type(model.getType());
+            entity.setPmType(model.getType());
         }
         if (model.isSetEnabled()) {
-            entity.setpm_enabled(model.isEnabled());
+            entity.setPmEnabled(model.isEnabled());
         }
         if (model.isSetAddress()) {
             entity.setManagmentIp(model.getAddress());
         }
         if (model.isSetUsername()) {
-            entity.setpm_user(model.getUsername());
+            entity.setPmUser(model.getUsername());
         }
         if (model.isSetPassword()) {
-            entity.setpm_password(model.getPassword());
+            entity.setPmPassword(model.getPassword());
         }
         if (model.isSetOptions()) {
-            entity.setpm_options(map(model.getOptions(), null));
+            entity.setPmOptions(map(model.getOptions(), null));
         }
         if (model.isSetPmProxies()) {
             String delim = "";
@@ -130,19 +130,19 @@ public class HostMapper {
                 if (order == 1) { // Primary
                     order++; // in case that order is not defined, secondary will still be defined correctly.
                     if (agent.isSetType()) {
-                        entity.setpm_type(agent.getType());
+                        entity.setPmType(agent.getType());
                     }
                     if (agent.isSetAddress()) {
                         entity.setManagmentIp(agent.getAddress());
                     }
                     if (agent.isSetUsername()) {
-                        entity.setpm_user(agent.getUsername());
+                        entity.setPmUser(agent.getUsername());
                     }
                     if (agent.isSetPassword()) {
-                        entity.setpm_password(agent.getPassword());
+                        entity.setPmPassword(agent.getPassword());
                     }
                     if (agent.isSetOptions()) {
-                        entity.setpm_options(map(agent.getOptions(), null));
+                        entity.setPmOptions(map(agent.getOptions(), null));
                     }
                 }
                 else if (order == 2) { // Secondary
@@ -198,24 +198,24 @@ public class HostMapper {
     public static Host map(VDS entity, Host template) {
         Host model = template != null ? template : new Host();
         model.setId(entity.getId().toString());
-        model.setName(entity.getvds_name());
-        if (entity.getvds_group_id() != null) {
+        model.setName(entity.getVdsName());
+        if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getvds_group_id().toString());
+            cluster.setId(entity.getVdsGroupId().toString());
             model.setCluster(cluster);
         }
-        model.setAddress(entity.gethost_name());
-        if (entity.getport() > 0) {
-            model.setPort(entity.getport());
+        model.setAddress(entity.getHostName());
+        if (entity.getPort() > 0) {
+            model.setPort(entity.getPort());
         }
-        HostStatus status = map(entity.getstatus(), null);
+        HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
         if (status==HostStatus.NON_OPERATIONAL) {
             model.getStatus().setDetail(entity.getNonOperationalReason().name().toLowerCase());
         }
         StorageManager sm = new StorageManager();
         sm.setPriority(entity.getVdsSpmPriority());
-        sm.setValue(entity.getspm_status() == VdsSpmStatus.SPM);
+        sm.setValue(entity.getSpmStatus() == VdsSpmStatus.SPM);
         model.setStorageManager(sm);
         if (entity.getVersion() != null &&
                 entity.getVersion().getMajor() != -1 &&
@@ -230,9 +230,9 @@ public class HostMapper {
             version.setFullVersion(entity.getVersion().getRpmName());
             model.setVersion(version);
         }
-        model.setOs(getHostOs(entity.gethost_os()));
+        model.setOs(getHostOs(entity.getHostOs()));
         model.setKsm(new KSM());
-        model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getksm_state()));
+        model.getKsm().setEnabled(Boolean.TRUE.equals(entity.getKsmState()));
         model.setTransparentHugepages(new TransparentHugePages());
         model.getTransparentHugepages().setEnabled(!(entity.getTransparentHugePagesState() == null ||
                 entity.getTransparentHugePagesState() == VdsTransparentHugePagesState.Never));
@@ -244,41 +244,41 @@ public class HostMapper {
         model.setHardwareInformation(map(entity, (HardwareInformation)null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
-        if (entity.getcpu_sockets() != null) {
-            cpuTopology.setSockets(entity.getcpu_sockets());
-            if (entity.getcpu_cores()!=null) {
-                cpuTopology.setCores(entity.getcpu_cores()/entity.getcpu_sockets());
+        if (entity.getCpuSockets() != null) {
+            cpuTopology.setSockets(entity.getCpuSockets());
+            if (entity.getCpuCores()!=null) {
+                cpuTopology.setCores(entity.getCpuCores()/entity.getCpuSockets());
                 if (entity.getCpuThreads() != null) {
-                    cpuTopology.setThreads(entity.getCpuThreads()/entity.getcpu_cores());
+                    cpuTopology.setThreads(entity.getCpuThreads()/entity.getCpuCores());
                 }
             }
         }
         cpu.setTopology(cpuTopology);
-        cpu.setName(entity.getcpu_model());
-        if (entity.getcpu_speed_mh()!=null) {
-            cpu.setSpeed(new BigDecimal(entity.getcpu_speed_mh()));
+        cpu.setName(entity.getCpuModel());
+        if (entity.getCpuSpeedMh()!=null) {
+            cpu.setSpeed(new BigDecimal(entity.getCpuSpeedMh()));
         }
         model.setCpu(cpu);
         VmSummary vmSummary = new VmSummary();
-        vmSummary.setActive(entity.getvm_active());
-        vmSummary.setMigrating(entity.getvm_migrating());
-        vmSummary.setTotal(entity.getvm_count());
+        vmSummary.setActive(entity.getVmActive());
+        vmSummary.setMigrating(entity.getVmMigrating());
+        vmSummary.setTotal(entity.getVmCount());
         model.setSummary(vmSummary);
-        if (entity.getvds_type() != null) {
-            HostType type = map(entity.getvds_type(), null);
+        if (entity.getVdsType() != null) {
+            HostType type = map(entity.getVdsType(), null);
             model.setType(type != null ? type.value() : null);
         }
-        model.setMemory(Long.valueOf(entity.getphysical_mem_mb() == null ? 0 : entity.getphysical_mem_mb()
+        model.setMemory(Long.valueOf(entity.getPhysicalMemMb() == null ? 0 : entity.getPhysicalMemMb()
                 * BYTES_IN_MEGABYTE));
         model.setMaxSchedulingMemory((int) entity.getMaxSchedulingMemory() * BYTES_IN_MEGABYTE);
 
-        if (entity.getlibvirt_version() != null) {
+        if (entity.getLibvirtVersion() != null) {
             Version version = new Version();
-            version.setMajor(entity.getlibvirt_version().getMajor());
-            version.setMinor(entity.getlibvirt_version().getMinor());
-            version.setRevision(entity.getlibvirt_version().getRevision());
-            version.setBuild(entity.getlibvirt_version().getBuild());
-            version.setFullVersion(entity.getlibvirt_version().getRpmName());
+            version.setMajor(entity.getLibvirtVersion().getMajor());
+            version.setMinor(entity.getLibvirtVersion().getMinor());
+            version.setRevision(entity.getLibvirtVersion().getRevision());
+            version.setBuild(entity.getLibvirtVersion().getBuild());
+            version.setFullVersion(entity.getLibvirtVersion().getRpmName());
             model.setLibvirtVersion(version);
         }
 
@@ -342,10 +342,10 @@ public class HostMapper {
     @Mapping(from = VDS.class, to = PowerManagement.class)
     public static PowerManagement map(VDS entity, PowerManagement template) {
         PowerManagement model = template != null ? template : new PowerManagement();
-        model.setType(entity.getpm_type());
+        model.setType(entity.getPmType());
         model.setEnabled(entity.getpm_enabled());
         model.setAddress(entity.getManagmentIp());
-        model.setUsername(entity.getpm_user());
+        model.setUsername(entity.getPmUser());
         if (entity.getPmOptionsMap() != null) {
             model.setOptions(map(entity.getPmOptionsMap(), null));
         }
@@ -363,9 +363,9 @@ public class HostMapper {
             // Set Primary Agent
             Agent agent = new Agent();
             if (!StringUtils.isEmpty(entity.getManagmentIp())) {
-                agent.setType(entity.getpm_type());
+                agent.setType(entity.getPmType());
                 agent.setAddress(entity.getManagmentIp());
-                agent.setUsername(entity.getpm_user());
+                agent.setUsername(entity.getPmUser());
                 if (entity.getPmOptionsMap() != null) {
                     agent.setOptions(map(entity.getPmOptionsMap(), null));
                 }

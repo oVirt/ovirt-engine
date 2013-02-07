@@ -62,8 +62,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MANUAL_FENCE);
         // check problematic vds status
-        if (IsLegalStatus(_problematicVds.getstatus())) {
-            if (_problematicVds.getspm_status() == VdsSpmStatus.SPM) {
+        if (IsLegalStatus(_problematicVds.getStatus())) {
+            if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
                 if(getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
                     returnValue = returnValue && InitializeVds();
                 }
@@ -75,7 +75,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 }
             }
         } else {
-            if (_problematicVds.getstatus() == VDSStatus.Connecting) {
+            if (_problematicVds.getStatus() == VDSStatus.Connecting) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
 
@@ -90,8 +90,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     protected void executeCommand() {
         boolean result = true;
-        setVdsName(_problematicVds.getvds_name());
-        if (_problematicVds.getspm_status() == VdsSpmStatus.SPM) {
+        setVdsName(_problematicVds.getVdsName());
+        if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             result = ActivateDataCenter();
         }
         if ((getParameters()).getClearVMs() && result) {
@@ -172,8 +172,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                                         new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
                                 .getReturnValue();
                         log.infoFormat("Trying to fence spm {0} via vds {1}",
-                                _problematicVds.getvds_name(),
-                                vds.getvds_name());
+                                _problematicVds.getVdsName(),
+                                vds.getVdsName());
                         if (Backend
                                 .getInstance()
                                 .getResourceManager()
@@ -190,7 +190,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                             break;
                         }
                     } catch (java.lang.Exception e) {
-                        log.warnFormat("Could not fence spm on vds {0}", vds.getvds_name());
+                        log.warnFormat("Could not fence spm on vds {0}", vds.getVdsName());
                     }
                 }
             } else {

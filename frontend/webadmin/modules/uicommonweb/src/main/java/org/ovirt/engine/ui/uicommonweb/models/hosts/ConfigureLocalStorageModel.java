@@ -221,7 +221,7 @@ public class ConfigureLocalStorageModel extends Model {
         ArrayList<storage_pool> dataCenters = context.dataCenterList;
         ArrayList<VDSGroup> clusters = context.clusterList;
 
-        setCommonName(host.getvds_name().replace('.', '-') + "-Local"); //$NON-NLS-1$
+        setCommonName(host.getVdsName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         storage_pool candidate = null;
 
@@ -241,7 +241,7 @@ public class ConfigureLocalStorageModel extends Model {
                     setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .noteLocalStorageAlreadyConfiguredForThisHostMsg()
-                            + " " + host.getstorage_pool_name() + " " + ConstantsManager.getInstance().getConstants().withLocalStorageDomainMsg()); //$NON-NLS-1$ //$NON-NLS-2$
+                            + " " + host.getStoragePoolName() + " " + ConstantsManager.getInstance().getConstants().withLocalStorageDomainMsg()); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -277,8 +277,8 @@ public class ConfigureLocalStorageModel extends Model {
             // If we use current settings there is no need to create cluster.
             if (useCurrentSettings) {
 
-                getCluster().setClusterId(host.getvds_group_id().getValue());
-                getCluster().getName().setEntity(host.getvds_group_name());
+                getCluster().setClusterId(host.getVdsGroupId().getValue());
+                getCluster().getName().setEntity(host.getVdsGroupName());
 
                 VDSGroup cluster = context.hostCluster;
                 if (cluster != null) {
@@ -345,10 +345,10 @@ public class ConfigureLocalStorageModel extends Model {
             getDataCenter().getName().setEntity(AvailableName(names));
 
             // Choose a Data Center version corresponding to the host.
-            if (!StringHelper.isNullOrEmpty(host.getsupported_cluster_levels())) {
+            if (!StringHelper.isNullOrEmpty(host.getSupportedClusterLevels())) {
 
                 // The supported_cluster_levels are sorted.
-                String[] array = host.getsupported_cluster_levels().split("[,]", -1); //$NON-NLS-1$
+                String[] array = host.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
                 Version maxVersion = null;
 
                 for (int i = 0; i < array.length; i++) {
@@ -525,7 +525,7 @@ public class ConfigureLocalStorageModel extends Model {
         VDS host = context.host;
 
         // Get cluster of the host.
-        if (host.getvds_group_id() != null) {
+        if (host.getVdsGroupId() != null) {
             AsyncDataProvider.GetClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -536,7 +536,7 @@ public class ConfigureLocalStorageModel extends Model {
                         }
                     },
                     frontendHash),
-                    host.getvds_group_id());
+                    host.getVdsGroupId());
         } else {
             SetDefaultNames3();
         }
@@ -568,7 +568,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         context.host = host;
 
-        setCommonName(host.getvds_name().replace('.', '-') + "-Local"); //$NON-NLS-1$
+        setCommonName(host.getVdsName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         SetDefaultNames1();
 

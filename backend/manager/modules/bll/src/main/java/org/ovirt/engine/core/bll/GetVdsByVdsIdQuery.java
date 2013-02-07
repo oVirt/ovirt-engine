@@ -15,8 +15,8 @@ public class GetVdsByVdsIdQuery<P extends GetVdsByVdsIdParameters> extends Queri
                 .get(getParameters().getVdsId(), getUserID(), getParameters().isFiltered());
 
         if (vds != null) {
-            vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
-                    vds.getvds_group_compatibility_version()));
+            vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),
+                    vds.getVdsGroupCompatibilityVersion()));
         }
 
         getQueryReturnValue().setReturnValue(vds);

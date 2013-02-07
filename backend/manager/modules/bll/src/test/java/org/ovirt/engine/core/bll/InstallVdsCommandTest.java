@@ -52,7 +52,7 @@ public class InstallVdsCommandTest {
     @Before
     public void mockVdsDAO() {
         VDS vds = new VDS();
-        vds.setvds_type(VDSType.oVirtNode);
+        vds.setVdsType(VDSType.oVirtNode);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
     }
 
@@ -64,8 +64,8 @@ public class InstallVdsCommandTest {
 
     private void mockVdsWithOsVersion(String osVersion) {
         VDS vds = new VDS();
-        vds.setvds_type(VDSType.oVirtNode);
-        vds.sethost_os(osVersion);
+        vds.setVdsType(VDSType.oVirtNode);
+        vds.setHostOs(osVersion);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
     }
 

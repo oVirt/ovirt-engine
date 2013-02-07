@@ -14,13 +14,13 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     @Override
     public boolean canMoveToMaintenance(VDS vds) {
         // We can only move to maintenance in case no VMs are running on the host
-        return (vds.getvm_count() == 0);
+        return (vds.getVmCount() == 0);
     }
 
     @Override
     public boolean isMonitoringNeeded(VDS vds) {
         // No need to update the run-time info for hosts that don't run VMs
-        return (vds.getstatus() != VDSStatus.NonOperational || vds.getvm_count() > 0);
+        return (vds.getStatus() != VDSStatus.NonOperational || vds.getVmCount() > 0);
     }
 
     @Override
@@ -28,13 +28,13 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         boolean softwareCapabilitiesAreMet = true;
 
         // If we can't test for those capabilities, we don't say they don't exist
-        if (vds.getkvm_enabled() != null && vds.getkvm_enabled().equals(false)) {
+        if (vds.getKvmEnabled() != null && vds.getKvmEnabled().equals(false)) {
             softwareCapabilitiesAreMet = false;
         }
 
-        if (!softwareCapabilitiesAreMet && vds.getstatus() != VDSStatus.NonOperational) {
+        if (!softwareCapabilitiesAreMet && vds.getStatus() != VDSStatus.NonOperational) {
             vdsNonOperational(vds);
-            vds.setstatus(VDSStatus.NonOperational);
+            vds.setStatus(VDSStatus.NonOperational);
         }
     }
 
@@ -49,7 +49,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     @Override
     public boolean processHardwareCapabilitiesNeeded(VDS oldVds, VDS newVds) {
-        return !StringUtils.equals(oldVds.getcpu_flags(), newVds.getcpu_flags());
+        return !StringUtils.equals(oldVds.getCpuFlags(), newVds.getCpuFlags());
     }
 }
 

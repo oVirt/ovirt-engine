@@ -48,7 +48,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
         if (!list.isEmpty()) {
             VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());
             Map<String, Network> networks = Entities.entitiesByName(
-                    getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getvds_group_id()));
+                    getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getVdsGroupId()));
             for (final VdsNetworkInterface i : list) {
                 if (i.getBonded() == null || (i.getBonded() != null && i.getBonded())
                             && LinqUtils.filter(list, new Predicate<VdsNetworkInterface>() {

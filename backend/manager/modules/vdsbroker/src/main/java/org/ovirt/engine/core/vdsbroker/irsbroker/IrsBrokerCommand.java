@@ -460,8 +460,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public void Init(VDS vds) {
             mCurrentVdsId = vds.getId();
-            setmIrsPort(vds.getport());
-            privatemCurrentIrsHost = vds.gethost_name();
+            setmIrsPort(vds.getPort());
+            privatemCurrentIrsHost = vds.getHostName();
         }
 
         public boolean failover() {
@@ -595,7 +595,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 selectedVds = prioritizedVdsInPool.get(0);
             } else if (!Guid.Empty.equals(curVdsId) && !getTriedVdssList().contains(curVdsId)) {
                 selectedVds = DbFacade.getInstance().getVdsDao().get(curVdsId);
-                if (selectedVds.getstatus() != VDSStatus.Up
+                if (selectedVds.getStatus() != VDSStatus.Up
                         || selectedVds.getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
                     selectedVds = null;
                 }
@@ -604,7 +604,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             if (selectedVds != null) {
                 // Stores origin host id in case and will be needed to disconnect from storage pool
                 Guid selectedVdsId = selectedVds.getId();
-                Integer selectedVdsSpmId = selectedVds.getvds_spm_id();
+                Integer selectedVdsSpmId = selectedVds.getVdsSpmId();
                 mTriedVdssList.add(selectedVdsId);
 
                 VDSReturnValue returnValueFromVds = ResourceManager.getInstance().runVdsCommand(
@@ -615,14 +615,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     mCurrentVdsId = selectedVds.getId();
                     boolean performedPoolConnect = false;
                     log.infoFormat("hostFromVds::selectedVds - {0}, spmStatus {1}, storage pool {2}",
-                            selectedVds.getvds_name(), spmStatus.getSpmStatus().toString(), storagePool.getname());
+                            selectedVds.getVdsName(), spmStatus.getSpmStatus().toString(), storagePool.getname());
                     if (spmStatus.getSpmStatus() == SpmStatus.Unknown_Pool) {
                         Guid masterId = DbFacade.getInstance().getStorageDomainDao()
                                 .getMasterStorageDomainIdForPool(_storagePoolId);
                         VDSReturnValue connectResult = ResourceManager.getInstance().runVdsCommand(
                                 VDSCommandType.ConnectStoragePool,
                                 new ConnectStoragePoolVDSCommandParameters(selectedVds.getId(), _storagePoolId,
-                                        selectedVds.getvds_spm_id(), masterId, storagePool.getmaster_domain_version()));
+                                        selectedVds.getVdsSpmId(), masterId, storagePool.getmaster_domain_version()));
                         if (!connectResult.getSucceeded()
                                 && connectResult.getExceptionObject() instanceof IRSNoMasterDomainException) {
                             throw connectResult.getExceptionObject();
@@ -640,7 +640,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 .getReturnValue();
                         log.infoFormat(
                                 "hostFromVds::Connected host to pool - selectedVds - {0}, spmStatus {1}, storage pool {2}",
-                                selectedVds.getvds_name(),
+                                selectedVds.getVdsName(),
                                 spmStatus.getSpmStatus().toString(),
                                 storagePool.getname());
                     }
@@ -670,7 +670,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 } else {
 
                     log.infoFormat("hostFromVds::selectedVds - {0}, spmStatus returned null!",
-                            selectedVds.getvds_name());
+                            selectedVds.getVdsName());
                     if (returnValueFromVds.getExceptionObject() instanceof IRSNoMasterDomainException) {
                         throw returnValueFromVds.getExceptionObject();
                     }
@@ -722,7 +722,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         .getEventListener()
                         .storagePoolStatusChanged(storagePool.getId(), storagePool.getstatus());
 
-                returnValue = selectedVds.argvalue.gethost_name();
+                returnValue = selectedVds.argvalue.getHostName();
                 log.infoFormat("Initialize Irs proxy from vds: {0}", returnValue);
                 AuditLogableBase logable = new AuditLogableBase(selectedVds.argvalue.getId());
                 logable.AddCustomValue("ServerIp", returnValue);
@@ -738,13 +738,13 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
          */
         private void waitForVdsIfIsInitializing(Guid curVdsId) {
             if (!Guid.Empty.equals(curVdsId)
-                    && DbFacade.getInstance().getVdsDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
+                    && DbFacade.getInstance().getVdsDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
                 final int DELAY = 5;// 5 Sec
                 int total = 0;
                 Integer maxSecToWait = Config.GetValue(ConfigValues.WaitForVdsInitInSec);
-                String vdsName = DbFacade.getInstance().getVdsDao().get(curVdsId).getvds_name();
+                String vdsName = DbFacade.getInstance().getVdsDao().get(curVdsId).getVdsName();
                 while (total <= maxSecToWait
-                        && DbFacade.getInstance().getVdsDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
+                        && DbFacade.getInstance().getVdsDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
                     try {
                         Thread.sleep(DELAY * 1000);
                     } catch (InterruptedException e) {
@@ -783,14 +783,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     int spmId = spmStatus.getSpmId();
                     Guid spmVdsId = Guid.Empty;
                     VDS spmVds = null;
-                    if (selectedVds.argvalue.getvds_spm_id() == spmId) {
+                    if (selectedVds.argvalue.getVdsSpmId() == spmId) {
                         spmVdsId = selectedVds.argvalue.getId();
                     } else {
                         for (VDS tempVds : vdsByPool) {
-                            if (tempVds.getvds_spm_id() == spmId) {
+                            if (tempVds.getVdsSpmId() == spmId) {
                                 log.infoFormat("Found spm host {0}, host name: {1}, according to spmId: {2}.",
                                         tempVds.getId(),
-                                        tempVds.getvds_name(),
+                                        tempVds.getVdsName(),
                                         spmId);
                                 spmVds = tempVds;
                                 break;
@@ -804,7 +804,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                             .getVdsDao()
                                             .getAllForStoragePoolAndStatus(_storagePoolId, VDSStatus.NonOperational);
                             for (VDS tempVds : nonOperationalVds) {
-                                if (tempVds.getvds_spm_id() == spmId) {
+                                if (tempVds.getVdsSpmId() == spmId) {
                                     spmVds = tempVds;
                                     break;
                                 }
@@ -815,8 +815,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             spmVdsId = spmVds.getId();
                         } else if (!curVdsId.equals(Guid.Empty)) {
                             VDS currentVds = DbFacade.getInstance().getVdsDao().get(curVdsId);
-                            if (currentVds != null && currentVds.getstatus() == VDSStatus.Up
-                                    && currentVds.getvds_spm_id() != null && currentVds.getvds_spm_id().equals(spmId)) {
+                            if (currentVds != null && currentVds.getStatus() == VDSStatus.Up
+                                    && currentVds.getVdsSpmId() != null && currentVds.getVdsSpmId().equals(spmId)) {
                                 spmVdsId = curVdsId;
                                 spmVds = currentVds;
                             }
@@ -836,10 +836,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                              */
                             if (destSpmStatus != null && destSpmStatus.getSpmStatus() == SpmStatus.SPM) {
                                 if (spmVdsId != selectedVds.argvalue.getId() && spmVds != null
-                                        && spmVds.getstatus() == VDSStatus.Up) {
+                                        && spmVds.getStatus() == VDSStatus.Up) {
                                     selectedVds.argvalue = spmVds;
                                     startSpm = false;
-                                    log.infoFormat("Using old spm server: {0}, no start needed", spmVds.getvds_name());
+                                    log.infoFormat("Using old spm server: {0}, no start needed", spmVds.getVdsName());
                                     return destSpmStatus;
                                 }
                                 // VDS is non-operational and SPM
@@ -873,8 +873,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (map != null) {
                         VDS vdsToFenceObject = DbFacade.getInstance().getVdsDao().get(map.getId());
                         if (vdsToFenceObject != null) {
-                            log.infoFormat("SPM selection - vds seems as spm {0}", vdsToFenceObject.getvds_name());
-                            if (vdsToFenceObject.getstatus() == VDSStatus.NonResponsive) {
+                            log.infoFormat("SPM selection - vds seems as spm {0}", vdsToFenceObject.getVdsName());
+                            if (vdsToFenceObject.getStatus() == VDSStatus.NonResponsive) {
                                 log.warn("spm vds is non responsive, stopping spm selection.");
                                 selectedVds.argvalue = null;
                                 return spmStatus;
@@ -910,7 +910,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     });
 
                     log.infoFormat("starting spm on vds {0}, storage pool {1}, prevId {2}, LVER {3}",
-                            selectedVds.argvalue.getvds_name(), storagePool.getname(), spmStatus.getSpmId(),
+                            selectedVds.argvalue.getVdsName(), storagePool.getname(), spmStatus.getSpmId(),
                             spmStatus.getSpmLVER());
                     spmStatus = (SpmStatusResult) ResourceManager
                             .getInstance()
@@ -1248,7 +1248,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             Map<Guid, VDS> vdsMap = new HashMap<Guid, VDS>();
             for (VDS tempVDS : allVds) {
                 vdsMap.put(tempVDS.getId(), tempVDS);
-                if (tempVDS.getstatus() == VDSStatus.Up) {
+                if (tempVDS.getStatus() == VDSStatus.Up) {
                     vdssInPool.add(tempVDS.getId());
                 }
             }
@@ -1287,24 +1287,24 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     "vds {0} reported domain {1} - as in problem but cannot find vds in db!!",
                                     vdsId,
                                     domainIdTuple);
-                        } else if (vds.getstatus() != VDSStatus.Maintenance
-                                && vds.getstatus() != VDSStatus.NonOperational) {
+                        } else if (vds.getStatus() != VDSStatus.Maintenance
+                                && vds.getStatus() != VDSStatus.NonOperational) {
                             log.warnFormat(
                                     "vds {0} reported domain {1} as in problem, moving the vds to status NonOperational",
-                                    vds.getvds_name(),
+                                    vds.getVdsName(),
                                     domainIdTuple);
                             ResourceManager
                                     .getInstance()
                                     .getEventListener()
                                     .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
                                             true, true, domainId);
-                            clearVdsFromCache(vdsId, vds.getvds_name());
+                            clearVdsFromCache(vdsId, vds.getVdsName());
                         } else {
                             log.warnFormat(
                                     "vds {0} reported domain {1} as in problem, vds is in status {3}, no need to move to nonoperational",
-                                    vds.getvds_name(),
+                                    vds.getVdsName(),
                                     domainIdTuple,
-                                    vds.getstatus());
+                                    vds.getStatus());
                         }
                     }
                 } else {

@@ -299,7 +299,7 @@ public final class VdcActionUtils {
 
         if (entity.getClass().getName().endsWith("VDS")) {
             return (entity instanceof VDS ?
-                    ((VDS) entity).getstatus() :
+                    ((VDS) entity).getStatus() :
                     null);
         } else if (entity.getClass().getName().endsWith("VM")) {
             return (entity instanceof VM ?

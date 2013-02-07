@@ -77,16 +77,16 @@ public class ReplaceGlusterVolumeBrickCommandTest {
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
-        vds.setvds_name("gfs1");
-        vds.setvds_group_id(clusterId);
-        vds.setstatus(status);
+        vds.setVdsName("gfs1");
+        vds.setVdsGroupId(clusterId);
+        vds.setStatus(status);
         return vds;
     }
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
-        vds.setvds_group_id(clusterId);
-        vds.sethost_name(serverName);
+        vds.setVdsGroupId(clusterId);
+        vds.setHostName(serverName);
         return vds;
     }
 

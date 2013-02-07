@@ -78,7 +78,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         hostsListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VDS) object).getvds_name();
+                return ((VDS) object).getVdsName();
             }
         });
     }

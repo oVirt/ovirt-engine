@@ -495,7 +495,7 @@ public class PoolGeneralModel extends EntityModel
                                 {
                                     if (host.getId().equals(poolGeneralModel1.getvm().getDedicatedVmForVds()))
                                     {
-                                        poolGeneralModel1.setDefaultHost(host.getvds_name());
+                                        poolGeneralModel1.setDefaultHost(host.getVdsName());
                                         break;
                                     }
                                 }

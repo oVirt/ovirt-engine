@@ -25,7 +25,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
 
         // Find the image corresponding to the status of the host:
-        VDSStatus status = vds.getstatus();
+        VDSStatus status = vds.getStatus();
         ImageResource statusImage = null;
         switch (status) {
         case Unassigned:
@@ -78,7 +78,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         sb.appendHtmlConstant("<div style=\"text-align: center; padding-top: 6px;\">"); //$NON-NLS-1$
         sb.append(statusImageHtml);
         boolean getnet_config_dirty =
-                vds.getnet_config_dirty() == null ? false : vds.getnet_config_dirty().booleanValue();
+                vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
         boolean getpm_enabled = vds.getpm_enabled();
         if (!getpm_enabled || getnet_config_dirty) {
             sb.append(alertImageHtml);

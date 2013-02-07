@@ -114,12 +114,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithName() {
-        List<VDS> result = dao.getAllWithName(existingVds.getvds_name());
+        List<VDS> result = dao.getAllWithName(existingVds.getVdsName());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getvds_name(), vds.getvds_name());
+            assertEquals(existingVds.getVdsName(), vds.getVdsName());
         }
     }
 
@@ -128,12 +128,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForHostname() {
-        List<VDS> result = dao.getAllForHostname(existingVds.gethost_name());
+        List<VDS> result = dao.getAllForHostname(existingVds.getHostName());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.gethost_name(), vds.gethost_name());
+            assertEquals(existingVds.getHostName(), vds.getHostName());
         }
     }
 
@@ -182,7 +182,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(VDSType.VDS, vds.getvds_type());
+            assertEquals(VDSType.VDS, vds.getVdsType());
         }
     }
 
@@ -207,7 +207,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(VDSType.VDS, vds.getvds_type());
+            assertEquals(VDSType.VDS, vds.getVdsType());
         }
     }
 
@@ -217,12 +217,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForVdsGroupWithoutMigrating() {
         List<VDS> result = dao.getAllForVdsGroupWithoutMigrating(existingVds
-                .getvds_group_id());
+                .getVdsGroupId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getvds_group_id(), vds.getvds_group_id());
+            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
         }
     }
 
@@ -274,12 +274,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsGroup() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id());
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getvds_group_id(), vds.getvds_group_id());
+            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
         }
     }
 
@@ -298,7 +298,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsGroupWithPermissionsForPriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), PRIVILEGED_USER_ID, true);
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), PRIVILEGED_USER_ID, true);
         assertGetAllForVdsGroupCorrectResult(result);
     }
 
@@ -307,7 +307,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsGroupWithPermissionsForUnpriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), UNPRIVILEGED_USER_ID, true);
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), UNPRIVILEGED_USER_ID, true);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -317,13 +317,13 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVdsGroupWithPermissionsDisabledForUnpriviligedUser() {
-        List<VDS> result = dao.getAllForVdsGroup(existingVds.getvds_group_id(), UNPRIVILEGED_USER_ID, false);
+        List<VDS> result = dao.getAllForVdsGroup(existingVds.getVdsGroupId(), UNPRIVILEGED_USER_ID, false);
         assertGetAllForVdsGroupCorrectResult(result);
     }
 
     @Test
     public void testGetAllForStoragePoolAndStatus() {
-        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), existingVds.getstatus());
+        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), existingVds.getStatus());
         assertCorrectGetAllResult(result);
     }
 
@@ -333,7 +333,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertEquals(result.iterator().next(), existingVds);
 
         for (VDS vds : result) {
-            assertEquals(vds.getvds_group_id(), existingVds.getvds_group_id());
+            assertEquals(vds.getVdsGroupId(), existingVds.getVdsGroupId());
         }
     }
 

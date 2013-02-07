@@ -169,7 +169,7 @@ public class GlusterManagerTest {
     private VDS createServer(Guid serverId, String hostname) {
         VdsStatic vdsStatic = new VdsStatic();
         vdsStatic.setId(serverId);
-        vdsStatic.sethost_name(hostname);
+        vdsStatic.setHostName(hostname);
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setstatus(VDSStatus.Up);
         return new VDS(vdsStatic, vdsDynamic, new VdsStatistics());

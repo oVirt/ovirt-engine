@@ -382,7 +382,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isHotPlugSupported() {
-        if (Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getvds_group_compatibility_version()
+        if (Config.<Boolean> GetValue(ConfigValues.HotPlugEnabled, getVds().getVdsGroupCompatibilityVersion()
                 .getValue())) {
             return true;
         }

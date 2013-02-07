@@ -303,24 +303,24 @@ public class VdsBrokerObjectsBuilder {
         updateNetworkData(vds, xmlRpcStruct);
 
         vds.setCpuThreads(AssignIntValue(xmlRpcStruct, VdsProperties.cpuThreads));
-        vds.setcpu_cores(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_cores));
-        vds.setcpu_sockets(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_sockets));
-        vds.setcpu_model(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_model));
-        vds.setcpu_speed_mh(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_speed_mh));
-        vds.setphysical_mem_mb(AssignIntValue(xmlRpcStruct, VdsProperties.physical_mem_mb));
+        vds.setCpuCores(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_cores));
+        vds.setCpuSockets(AssignIntValue(xmlRpcStruct, VdsProperties.cpu_sockets));
+        vds.setCpuModel(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_model));
+        vds.setCpuSpeedMh(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_speed_mh));
+        vds.setPhysicalMemMb(AssignIntValue(xmlRpcStruct, VdsProperties.physical_mem_mb));
 
-        vds.setkvm_enabled(AssignBoolValue(xmlRpcStruct, VdsProperties.kvm_enabled));
+        vds.setKvmEnabled(AssignBoolValue(xmlRpcStruct, VdsProperties.kvm_enabled));
 
-        vds.setreserved_mem(AssignIntValue(xmlRpcStruct, VdsProperties.reservedMem));
+        vds.setReservedMem(AssignIntValue(xmlRpcStruct, VdsProperties.reservedMem));
         Integer guestOverhead = AssignIntValue(xmlRpcStruct, VdsProperties.guestOverhead);
-        vds.setguest_overhead(guestOverhead != null ? guestOverhead : 0);
+        vds.setGuestOverhead(guestOverhead != null ? guestOverhead : 0);
 
-        vds.setcpu_flags(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_flags));
+        vds.setCpuFlags(AssignStringValue(xmlRpcStruct, VdsProperties.cpu_flags));
 
         UpdatePackagesVersions(vds, xmlRpcStruct);
 
-        vds.setsupported_cluster_levels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
-        vds.setsupported_engines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
+        vds.setSupportedClusterLevels(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_cluster_levels));
+        vds.setSupportedEngines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
         vds.setIScsiInitiatorName(AssignStringValue(xmlRpcStruct, VdsProperties.iSCSIInitiatorName));
 
         String hooksStr = ""; // default value if hooks is not in the xml rpc struct
@@ -360,11 +360,11 @@ public class VdsBrokerObjectsBuilder {
 
     private static void UpdatePackagesVersions(VDS vds, XmlRpcStruct xmlRpcStruct) {
 
-        vds.setversion_name(AssignStringValue(xmlRpcStruct, VdsProperties.version_name));
-        vds.setsoftware_version(AssignStringValue(xmlRpcStruct, VdsProperties.software_version));
-        vds.setbuild_name(AssignStringValue(xmlRpcStruct, VdsProperties.build_name));
+        vds.setVersionName(AssignStringValue(xmlRpcStruct, VdsProperties.version_name));
+        vds.setSoftwareVersion(AssignStringValue(xmlRpcStruct, VdsProperties.software_version));
+        vds.setBuildName(AssignStringValue(xmlRpcStruct, VdsProperties.build_name));
         if (xmlRpcStruct.contains(VdsProperties.host_os)) {
-            vds.sethost_os(GetPackageVersionFormated(
+            vds.setHostOs(GetPackageVersionFormated(
                     new XmlRpcStruct((Map) xmlRpcStruct.getItem(VdsProperties.host_os)), true));
         }
         if (xmlRpcStruct.contains(VdsProperties.packages)) {
@@ -374,11 +374,11 @@ public class VdsBrokerObjectsBuilder {
                 XmlRpcStruct hostPackage = new XmlRpcStruct((Map) hostPackageMap);
                 String packageName = AssignStringValue(hostPackage, VdsProperties.package_name);
                 if (VdsProperties.kvmPackageName.equals(packageName)) {
-                    vds.setkvm_version(GetPackageVersionFormated(hostPackage, false));
+                    vds.setKvmVersion(GetPackageVersionFormated(hostPackage, false));
                 } else if (VdsProperties.spicePackageName.equals(packageName)) {
-                    vds.setspice_version(GetPackageVersionFormated(hostPackage, false));
+                    vds.setSpiceVersion(GetPackageVersionFormated(hostPackage, false));
                 } else if (VdsProperties.kernelPackageName.equals(packageName)) {
-                    vds.setkernel_version(GetPackageVersionFormated(hostPackage, false));
+                    vds.setKernelVersion(GetPackageVersionFormated(hostPackage, false));
                 }
             }
         } else if (xmlRpcStruct.contains(VdsProperties.packages2)) {
@@ -390,19 +390,19 @@ public class VdsBrokerObjectsBuilder {
             }
             if (packages.containsKey(VdsProperties.qemuKvmPackageName)) {
                 Map kvm = (Map) packages.get(VdsProperties.qemuKvmPackageName);
-                vds.setkvm_version(getPackageVersionFormated2(kvm));
+                vds.setKvmVersion(getPackageVersionFormated2(kvm));
             }
             if (packages.containsKey(VdsProperties.libvirtPackageName)) {
                 Map libvirt = (Map) packages.get(VdsProperties.libvirtPackageName);
-                vds.setlibvirt_version(getPackageRpmVersion("libvirt", libvirt));
+                vds.setLibvirtVersion(getPackageRpmVersion("libvirt", libvirt));
             }
             if (packages.containsKey(VdsProperties.spiceServerPackageName)) {
                 Map spice = (Map) packages.get(VdsProperties.spiceServerPackageName);
-                vds.setspice_version(getPackageVersionFormated2(spice));
+                vds.setSpiceVersion(getPackageVersionFormated2(spice));
             }
             if (packages.containsKey(VdsProperties.kernelPackageName)) {
                 Map kernel = (Map) packages.get(VdsProperties.kernelPackageName);
-                vds.setkernel_version(getPackageVersionFormated2(kernel));
+                vds.setKernelVersion(getPackageVersionFormated2(kernel));
             }
         }
     }
@@ -497,7 +497,7 @@ public class VdsBrokerObjectsBuilder {
 
     public static void updateVDSStatisticsData(VDS vds, XmlRpcStruct xmlRpcStruct) {
         // ------------- vds memory usage ---------------------------
-        vds.setusage_mem_percent(AssignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
+        vds.setUsageMemPercent(AssignIntValue(xmlRpcStruct, VdsProperties.mem_usage));
 
         // ------------- vds network statistics ---------------------
         Map<String, Object> interfaces = (Map<String, Object>) ((xmlRpcStruct
@@ -541,21 +541,21 @@ public class VdsBrokerObjectsBuilder {
                     }
                 }
             }
-            vds.setusage_network_percent((networkUsage > 100) ? 100 : networkUsage);
+            vds.setUsageNetworkPercent((networkUsage > 100) ? 100 : networkUsage);
         }
 
         // ----------- vds cpu statistics info ---------------------
-        vds.setcpu_sys(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
-        vds.setcpu_user(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
-        if (vds.getcpu_sys() != null && vds.getcpu_user() != null) {
-            vds.setusage_cpu_percent((int) (vds.getcpu_sys() + vds.getcpu_user()));
-            if (vds.getusage_cpu_percent() >= vds.gethigh_utilization()
-                    || vds.getusage_cpu_percent() <= vds.getlow_utilization()) {
-                if (vds.getcpu_over_commit_time_stamp() == null) {
-                    vds.setcpu_over_commit_time_stamp(new Date());
+        vds.setCpuSys(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_sys));
+        vds.setCpuUser(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_user));
+        if (vds.getCpuSys() != null && vds.getCpuUser() != null) {
+            vds.setUsageCpuPercent((int) (vds.getCpuSys() + vds.getCpuUser()));
+            if (vds.getUsageCpuPercent() >= vds.getHighUtilization()
+                    || vds.getUsageCpuPercent() <= vds.getLowUtilization()) {
+                if (vds.getCpuOverCommitTimestamp() == null) {
+                    vds.setCpuOverCommitTimestamp(new Date());
                 }
             } else {
-                vds.setcpu_over_commit_time_stamp(null);
+                vds.setCpuOverCommitTimestamp(null);
             }
         }
         // CPU load reported by VDSM is in uptime-style format, i.e. normalized
@@ -563,16 +563,16 @@ public class VdsBrokerObjectsBuilder {
 
         Double d = AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_load);
         d = (d != null) ? d : 0;
-        vds.setcpu_load(d.doubleValue() * 100.0);
-        vds.setcpu_idle(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_idle));
-        vds.setmem_available(AssignLongValue(xmlRpcStruct, VdsProperties.mem_available));
-        vds.setmem_shared(AssignLongValue(xmlRpcStruct, VdsProperties.mem_shared));
+        vds.setCpuLoad(d.doubleValue() * 100.0);
+        vds.setCpuIdle(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_idle));
+        vds.setMemAvailable(AssignLongValue(xmlRpcStruct, VdsProperties.mem_available));
+        vds.setMemShared(AssignLongValue(xmlRpcStruct, VdsProperties.mem_shared));
 
-        vds.setswap_free(AssignLongValue(xmlRpcStruct, VdsProperties.swap_free));
-        vds.setswap_total(AssignLongValue(xmlRpcStruct, VdsProperties.swap_total));
-        vds.setksm_cpu_percent(AssignIntValue(xmlRpcStruct, VdsProperties.ksm_cpu_percent));
-        vds.setksm_pages(AssignLongValue(xmlRpcStruct, VdsProperties.ksm_pages));
-        vds.setksm_state(AssignBoolValue(xmlRpcStruct, VdsProperties.ksm_state));
+        vds.setSwapFree(AssignLongValue(xmlRpcStruct, VdsProperties.swap_free));
+        vds.setSwapTotal(AssignLongValue(xmlRpcStruct, VdsProperties.swap_total));
+        vds.setKsmCpuPercent(AssignIntValue(xmlRpcStruct, VdsProperties.ksm_cpu_percent));
+        vds.setKsmPages(AssignLongValue(xmlRpcStruct, VdsProperties.ksm_pages));
+        vds.setKsmState(AssignBoolValue(xmlRpcStruct, VdsProperties.ksm_state));
 
         // dynamic data got from GetVdsStats
         if (xmlRpcStruct.containsKey(VdsProperties.transparent_huge_pages_state)) {
@@ -582,15 +582,15 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.anonymous_transparent_huge_pages)) {
             vds.setAnonymousHugePages(AssignIntValue(xmlRpcStruct, VdsProperties.anonymous_transparent_huge_pages));
         }
-        vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+        vds.setNetConfigDirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
 
         vds.setImagesLastCheck(AssignDoubleValue(xmlRpcStruct, VdsProperties.images_last_check));
         vds.setImagesLastDelay(AssignDoubleValue(xmlRpcStruct, VdsProperties.images_last_delay));
 
         Integer vm_count = AssignIntValue(xmlRpcStruct, VdsProperties.vm_count);
-        vds.setvm_count(vm_count == null ? 0 : vm_count);
-        vds.setvm_active(AssignIntValue(xmlRpcStruct, VdsProperties.vm_active));
-        vds.setvm_migrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
+        vds.setVmCount(vm_count == null ? 0 : vm_count);
+        vds.setVmActive(AssignIntValue(xmlRpcStruct, VdsProperties.vm_active));
+        vds.setVmMigrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
         updateVDSDomainData(vds, xmlRpcStruct);
         updateLocalDisksUsage(vds, xmlRpcStruct);
     }
@@ -908,7 +908,7 @@ public class VdsBrokerObjectsBuilder {
 
         // This information was added in 3.1, so don't use it if it's not there.
         if (xmlRpcStruct.containsKey(VdsProperties.netConfigDirty)) {
-            vds.setnet_config_dirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
+            vds.setNetConfigDirty(AssignBoolValue(xmlRpcStruct, VdsProperties.netConfigDirty));
         }
     }
 
@@ -973,7 +973,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
 
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
-        if (FeatureSupported.bridgesReportByVdsm(vds.getvds_group_compatibility_version())) {
+        if (FeatureSupported.bridgesReportByVdsm(vds.getVdsGroupCompatibilityVersion())) {
             VdsNetworkInterface iface = null;
             String interfaceName = (String) network.get(VdsProperties.NETWORK_INTERFACE);
             if (interfaceName != null) {

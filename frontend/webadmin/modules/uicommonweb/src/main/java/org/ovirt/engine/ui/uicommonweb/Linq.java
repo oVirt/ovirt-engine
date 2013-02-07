@@ -299,7 +299,7 @@ public final class Linq
     {
         for (VDSGroup cluster : clusters)
         {
-            if (cluster.getId().equals(host.getvds_group_id()))
+            if (cluster.getId().equals(host.getVdsGroupId()))
             {
                 return true;
             }
@@ -1183,7 +1183,7 @@ public final class Linq
         @Override
         public boolean Match(VDS source)
         {
-            return source.getstatus().equals(status);
+            return source.getStatus().equals(status);
         }
     }
 

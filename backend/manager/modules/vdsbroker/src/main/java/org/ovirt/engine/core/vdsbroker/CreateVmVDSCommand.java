@@ -103,16 +103,16 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     private void HandleVdsInformation() {
-        getVds().setmem_commited(getVds().getmem_commited() + getParameters().getVm().getVmMemSizeMb());
-        getVds().setmem_commited(getVds().getmem_commited() + getVds().getguest_overhead());
-        getVds().setvm_count(getVds().getvm_count() + 1);
-        getVds().setvms_cores_count(getVds().getvms_cores_count() + getParameters().getVm().getNumOfCpus());
-        getVds().setpending_vcpus_count(
-                getVds().getpending_vcpus_count() + getParameters().getVm().getNumOfCpus());
-        getVds().setpending_vmem_size(
-                getVds().getpending_vmem_size() + getParameters().getVm().getMinAllocatedMem());
+        getVds().setMemCommited(getVds().getMemCommited() + getParameters().getVm().getVmMemSizeMb());
+        getVds().setMemCommited(getVds().getMemCommited() + getVds().getGuestOverhead());
+        getVds().setVmCount(getVds().getVmCount() + 1);
+        getVds().setVmsCoresCount(getVds().getVmsCoresCount() + getParameters().getVm().getNumOfCpus());
+        getVds().setPendingVcpusCount(
+                getVds().getPendingVcpusCount() + getParameters().getVm().getNumOfCpus());
+        getVds().setPendingVmemSize(
+                getVds().getPendingVmemSize() + getParameters().getVm().getMinAllocatedMem());
         log.infoFormat("IncreasePendingVms::CreateVmIncreasing vds {0} pending vcpu count, now {1}. Vm: {2}", getVds()
-                .getvds_name(), getVds().getpending_vcpus_count(), getParameters().getVm().getVmName());
+                .getVdsName(), getVds().getPendingVcpusCount(), getParameters().getVm().getVmName());
         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
     }
 
@@ -152,7 +152,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
                 log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getVmName(), getVds().getId(), getVds().getvds_name(),
+                        getParameters().getVm().getVmName(), getVds().getId(), getVds().getVdsName(),
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);

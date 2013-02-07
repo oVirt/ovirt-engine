@@ -40,13 +40,13 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() > vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
+                return p.getVmCount() > vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         Collections.sort(vdses, new Comparator<VDS>() {
             @Override
             public int compare(VDS o1, VDS o2) {
-                return o2.getvm_count() - o1.getvm_count();
+                return o2.getVmCount() - o1.getVmCount();
             }
         });
         setOverUtilizedServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
@@ -86,13 +86,13 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() < vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
+                return p.getVmCount() < vmCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         Collections.sort(vdses, new Comparator<VDS>() {
             @Override
             public int compare(VDS o1, VDS o2) {
-                return o1.getvm_count() - o2.getvm_count();
+                return o1.getVmCount() - o2.getVmCount();
             }
         });
         setUnderUtilizedServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {
@@ -132,8 +132,8 @@ public class VmCountVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm 
         List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getvm_count() < highVdsCountTemp * VdsSelector.getEffectiveCpuCores(p)
-                        && p.getvm_count() >= lowVdsCountTemp * VdsSelector.getEffectiveCpuCores(p);
+                return p.getVmCount() < highVdsCountTemp * VdsSelector.getEffectiveCpuCores(p)
+                        && p.getVmCount() >= lowVdsCountTemp * VdsSelector.getEffectiveCpuCores(p);
             }
         });
         setReadyToMigrationServers(LinqUtils.toMap(vdses, new DefaultMapper<VDS, Guid>() {

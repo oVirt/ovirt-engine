@@ -411,7 +411,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForHost() {
         VdsStatic vds = dbFacade.getVdsStaticDao().get(VDS_ID);
         assertNotNull(vds);
-        String name = vds.getvds_name();
+        String name = vds.getVdsName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS)));
     }
 

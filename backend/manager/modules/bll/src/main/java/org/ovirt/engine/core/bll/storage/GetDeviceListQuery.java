@@ -26,7 +26,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         List<LUNs> returnValue = new ArrayList<LUNs>();
         VDS vds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
         boolean filteringLUNsEnabled = Config.<Boolean> GetValue(ConfigValues.FilteringLUNsEnabled,
-                vds.getvds_group_compatibility_version().getValue());
+                vds.getVdsGroupCompatibilityVersion().getValue());
 
         // Get Device List
         VDSBrokerFrontend vdsBrokerFrontend = getVdsBroker();

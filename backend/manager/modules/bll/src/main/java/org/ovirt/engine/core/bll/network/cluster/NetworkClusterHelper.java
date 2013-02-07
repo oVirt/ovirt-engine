@@ -55,7 +55,7 @@ public class NetworkClusterHelper {
 
             if (networkCluster.isRequired()) {
                 for (VDS vds : vdsList) {
-                    if (vds.getstatus() != VDSStatus.Up) {
+                    if (vds.getStatus() != VDSStatus.Up) {
                         continue;
                     }
                     List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend

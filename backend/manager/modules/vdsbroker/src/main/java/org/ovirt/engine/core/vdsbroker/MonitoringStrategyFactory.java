@@ -26,7 +26,7 @@ public class MonitoringStrategyFactory {
      */
     public static MonitoringStrategy getMonitoringStrategyForVds(VDS vds) {
         MonitoringStrategy returnedStrategy = virtMonitoringStrategy;
-        Guid vdsGroupId = vds.getvds_group_id();
+        Guid vdsGroupId = vds.getVdsGroupId();
         VDSGroup vdsGroup = vdsGroupDao.get(vdsGroupId);
 
         if (vdsGroup.supportsVirtService() && vdsGroup.supportsGlusterService()) {

@@ -23,7 +23,7 @@ public class HostHardwareGeneralModel extends EntityModel
         VDS vds = (VDS) value;
         updateUpgradeAlert = vds == null || getEntity() == null
             || !vds.getId().equals(getEntity().getId())
-            || !vds.getstatus().equals(getEntity().getstatus());
+            || !vds.getStatus().equals(getEntity().getStatus());
 
         super.setEntity(value);
     }

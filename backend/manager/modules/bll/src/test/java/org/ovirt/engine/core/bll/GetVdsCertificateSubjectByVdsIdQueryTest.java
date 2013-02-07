@@ -28,7 +28,7 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
         Guid vdsID = Guid.NewGuid();
         VDS vds = new VDS();
         vds.setId(vdsID);
-        vds.sethost_name(hostName);
+        vds.setHostName(hostName);
 
         GetVdsByVdsIdParameters paramsMock = getQueryParameters();
         when(paramsMock.getVdsId()).thenReturn(vdsID);

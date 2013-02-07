@@ -75,12 +75,12 @@ public final class MultipleActionsRunnersFactory {
         Set<Guid> processed = new HashSet<Guid>();
         for (VdcActionParametersBase param : parameters) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(((RemoveVdsParameters) param).getVdsId());
-            if (vds != null && !processed.contains(vds.getvds_group_id())) {
-                VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vds.getvds_group_id());
+            if (vds != null && !processed.contains(vds.getVdsGroupId())) {
+                VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
                 if (cluster.supportsGlusterService()) {
                     return true;
                 }
-                processed.add(vds.getvds_group_id());
+                processed.add(vds.getVdsGroupId());
             }
         }
 

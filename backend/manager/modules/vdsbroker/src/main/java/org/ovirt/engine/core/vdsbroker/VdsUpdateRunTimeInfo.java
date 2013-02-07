@@ -276,7 +276,7 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getmem_available() < minAvailableThreshold
                 || stat.getusage_mem_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("HostName", _vds.getVdsName());
             logable.AddCustomValue("AvailableMemory", stat.getmem_available().toString());
             logable.AddCustomValue("UsedMemory", stat.getusage_mem_percent().toString());
             logable.AddCustomValue("Threshold", stat.getmem_available() < minAvailableThreshold ?
@@ -297,7 +297,7 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getusage_cpu_percent() != null
                 && stat.getusage_cpu_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("HostName", _vds.getVdsName());
             logable.AddCustomValue("UsedCpu", stat.getusage_cpu_percent().toString());
             logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
             auditLog(logable, AuditLogType.VDS_HIGH_CPU_USE);
@@ -315,7 +315,7 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getusage_network_percent() != null
                 && stat.getusage_network_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("HostName", _vds.getVdsName());
             logable.AddCustomValue("UsedNetwork", stat.getusage_network_percent().toString());
             logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
             auditLog(logable, AuditLogType.VDS_HIGH_NETWORK_USE);
@@ -345,7 +345,7 @@ public class VdsUpdateRunTimeInfo {
 
         if (stat.getswap_free() < minAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getvds_name());
+            logable.AddCustomValue("HostName", _vds.getVdsName());
             logable.AddCustomValue("UsedSwap", swapUsedPercent.toString());
             logable.AddCustomValue("AvailableSwapMemory", stat.getswap_free().toString());
             logable.AddCustomValue("Threshold", stat.getswap_free() < minAvailableThreshold ?
@@ -357,7 +357,7 @@ public class VdsUpdateRunTimeInfo {
     public VdsUpdateRunTimeInfo(VdsManager vdsManager, VDS vds) {
         _vdsManager = vdsManager;
         _vds = vds;
-        _firstStatus = _vds.getstatus();
+        _firstStatus = _vds.getStatus();
         monitoringStrategy = getMonitoringStrategyForVds(vds);
         _vmDict = getDbFacade().getVmDao().getAllRunningByVds(_vds.getId());
 
@@ -377,12 +377,12 @@ public class VdsUpdateRunTimeInfo {
             refreshVdsRunTimeInfo();
         } finally {
             try {
-                if (_firstStatus != _vds.getstatus() && _vds.getstatus() == VDSStatus.Up) {
+                if (_firstStatus != _vds.getStatus() && _vds.getStatus() == VDSStatus.Up) {
                     // use this lock in order to allow only one host updating DB and
                     // calling UpEvent in a time
                     VdsManager.cancelRecoveryJob(_vds.getId());
                     if (log.isDebugEnabled()) {
-                        log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getvds_name());
+                        log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getVdsName());
                     }
                     _vdsManager.setIsSetNonOperationalExecuted(!ResourceManager.getInstance()
                             .getEventListener()
@@ -410,7 +410,7 @@ public class VdsUpdateRunTimeInfo {
                 messagePrefix,
                 ExceptionUtils.getMessage(ex),
                 _vds.getId(),
-                _vds.getvds_name());
+                _vds.getVdsName());
     }
 
     public void AfterRefreshTreatment() {
@@ -425,14 +425,14 @@ public class VdsUpdateRunTimeInfo {
                 markIsSetNonOperationalExecuted();
             }
 
-            if (_vds.getstatus() == VDSStatus.Maintenance) {
+            if (_vds.getStatus() == VDSStatus.Maintenance) {
                 try {
                     ResourceManager.getInstance().getEventListener().vdsMovedToMaintanance(_vds);
                 } catch (RuntimeException ex) {
                     log.errorFormat("Host encounter a problem moving to maintenance mode, probably error during disconnecting it from pool {0}. The Host will stay in Maintenance",
                             ex.getMessage());
                 }
-            } else if (_vds.getstatus() == VDSStatus.NonOperational && _firstStatus != VDSStatus.NonOperational) {
+            } else if (_vds.getStatus() == VDSStatus.NonOperational && _firstStatus != VDSStatus.NonOperational) {
 
                 if (!_vdsManager.isSetNonOperationalExecuted()) {
                     ResourceManager
@@ -443,12 +443,12 @@ public class VdsUpdateRunTimeInfo {
                 } else {
                     log.infoFormat("Host {0} : {1} is already in NonOperational status. SetNonOperationalVds command is skipped.",
                             _vds.getId(),
-                            _vds.getvds_name());
+                            _vds.getVdsName());
                 }
             }
             // rerun all vms from rerun list
             for (Guid vm_guid : _vmsToRerun) {
-                log.errorFormat("Rerun vm {0}. Called from vds {1}", vm_guid, _vds.getvds_name());
+                log.errorFormat("Rerun vm {0}. Called from vds {1}", vm_guid, _vds.getVdsName());
                 ResourceManager.getInstance().RerunFailedCommand(vm_guid, _vds.getId());
 
             }
@@ -506,13 +506,13 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshVdsRunTimeInfo() {
-        boolean isVdsUpOrGoingToMaintanance = _vds.getstatus() == VDSStatus.Up
-                || _vds.getstatus() == VDSStatus.PreparingForMaintenance || _vds.getstatus() == VDSStatus.Error
-                || _vds.getstatus() == VDSStatus.NonOperational;
+        boolean isVdsUpOrGoingToMaintanance = _vds.getStatus() == VDSStatus.Up
+                || _vds.getStatus() == VDSStatus.PreparingForMaintenance || _vds.getStatus() == VDSStatus.Error
+                || _vds.getStatus() == VDSStatus.NonOperational;
         try {
             if (isVdsUpOrGoingToMaintanance) {
                 // check if its time for statistics refresh
-                if (_vdsManager.getRefreshStatistics() || _vds.getstatus() == VDSStatus.PreparingForMaintenance) {
+                if (_vdsManager.getRefreshStatistics() || _vds.getStatus() == VDSStatus.PreparingForMaintenance) {
                     refreshVdsStats();
                 } else {
                     /**
@@ -536,7 +536,7 @@ public class VdsUpdateRunTimeInfo {
         } catch (VDSRecoveringException e) {
             // if PreparingForMaintenance and vds is in install failed keep to
             // move vds to maintenance
-            if (_vds.getstatus() != VDSStatus.PreparingForMaintenance) {
+            if (_vds.getStatus() != VDSStatus.PreparingForMaintenance) {
                 throw e;
             }
         }
@@ -546,7 +546,7 @@ public class VdsUpdateRunTimeInfo {
     private void refreshVdsStats() {
         if (Config.<Boolean> GetValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vdsManager::refreshVdsStats entered, vds = {0} : {1}", _vds.getId(),
-                    _vds.getvds_name());
+                    _vds.getVdsName());
         }
         // get statistics data, images checks and vm_count data (dynamic)
         GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
@@ -563,10 +563,10 @@ public class VdsUpdateRunTimeInfo {
                     _saveVdsDynamic = true;
                 }
                 log.errorFormat("vds::refreshVdsStats Failed getVdsStats,  vds = {0} : {1}, error = {2}",
-                        _vds.getId(), _vds.getvds_name(), ExceptionUtils.getMessage(ex));
+                        _vds.getId(), _vds.getVdsName(), ExceptionUtils.getMessage(ex));
             } else {
                 log.errorFormat("vds::refreshVdsStats Failed getVdsStats,  vds = {0} : {1}, error = {2}",
-                        _vds.getId(), _vds.getvds_name(), vdsBrokerCommand.getVDSReturnValue().getExceptionString());
+                        _vds.getId(), _vds.getVdsName(), vdsBrokerCommand.getVDSReturnValue().getExceptionString());
             }
             throw vdsBrokerCommand.getVDSReturnValue().getExceptionObject();
         }
@@ -640,12 +640,12 @@ public class VdsUpdateRunTimeInfo {
     // Check if one of the Host interfaces is down, we set the host to non-operational
     // We cannot have Host that don't have all networks in cluster in status Up
     private void checkVdsInterfaces() {
-        if (_vds.getstatus() != VDSStatus.Up) {
+        if (_vds.getStatus() != VDSStatus.Up) {
             return;
         }
         Map<String, Boolean> bondsWithStatus = new HashMap<String, Boolean>();
         List<Network> clusterNetworks = getDbFacade().getNetworkDao()
-                .getAllForCluster(_vds.getvds_group_id());
+                .getAllForCluster(_vds.getVdsGroupId());
         List<String> networks = new ArrayList<String>();
         List<String> brokenNics = new ArrayList<String>();
         Map<String, List<String>> bondsWithListOfNics = new HashMap<String, List<String>>();
@@ -681,7 +681,7 @@ public class VdsUpdateRunTimeInfo {
                 }
             }
         } catch (Exception e) {
-            log.error(String.format("Failure on checkInterfaces on update runtimeinfo for vds: %s", _vds.getvds_name()),
+            log.error(String.format("Failure on checkInterfaces on update runtimeinfo for vds: %s", _vds.getVdsName()),
                     e);
         } finally {
             if (!brokenNics.isEmpty()) {
@@ -717,7 +717,7 @@ public class VdsUpdateRunTimeInfo {
                     String message =
                             String.format(
                                     "Host '%s' moved to Non-Operational state because interface/s '%s' are down which needed by network/s '%s' in the current cluster",
-                                    _vds.getvds_name(),
+                                    _vds.getVdsName(),
                                     sNics.toString(),
                                     sNetworks.toString());
 
@@ -730,7 +730,7 @@ public class VdsUpdateRunTimeInfo {
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",
-                            _vds.getvds_name()),
+                            _vds.getVdsName()),
                             e);
                 }
             } else {
@@ -898,11 +898,11 @@ public class VdsUpdateRunTimeInfo {
             // because get capabilities is called twice on a new server in same
             // loop!
             processHardwareCapsNeeded = (processHardwareCapsNeeded) ? processHardwareCapsNeeded : flagsChanged;
-        } else if (isVdsUpOrGoingToMaintanance || _vds.getstatus() == VDSStatus.Error) {
+        } else if (isVdsUpOrGoingToMaintanance || _vds.getStatus() == VDSStatus.Error) {
             return;
         }
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-        logable.AddCustomValue("VdsStatus", _vds.getstatus().toString());
+        logable.AddCustomValue("VdsStatus", _vds.getStatus().toString());
         auditLog(logable, AuditLogType.VDS_DETECTED);
     }
 
@@ -937,7 +937,7 @@ public class VdsUpdateRunTimeInfo {
 
             refreshCommitedMemory();
             // Handle VM devices were changed (for 3.1 cluster and above)
-            if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getvds_group_compatibility_version())) {
+            if (!VmDeviceCommonUtils.isOldClusterVersion(_vds.getVdsGroupCompatibilityVersion())) {
                 handleVmDeviceChange();
             }
 
@@ -946,13 +946,13 @@ public class VdsUpdateRunTimeInfo {
         } else if (command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSErrorException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
-                        _vds.getvds_name(), command.getVDSReturnValue().getExceptionString());
+                        _vds.getVdsName(), command.getVDSReturnValue().getExceptionString());
             } else if (command.getVDSReturnValue().getExceptionObject() instanceof VDSNetworkException) {
                 _saveVdsDynamic = _vdsManager.handleNetworkException((VDSNetworkException) command.getVDSReturnValue()
                         .getExceptionObject(), _vds);
             } else if (command.getVDSReturnValue().getExceptionObject() instanceof VDSProtocolException) {
                 log.errorFormat("Failed vds listing,  vds = {0} : {1}, error = {2}", _vds.getId(),
-                        _vds.getvds_name(), command.getVDSReturnValue().getExceptionString());
+                        _vds.getVdsName(), command.getVDSReturnValue().getExceptionString());
             }
             throw command.getVDSReturnValue().getExceptionObject();
         } else {
@@ -1535,7 +1535,7 @@ public class VdsUpdateRunTimeInfo {
                                 vmToRemove.getVmName()));
             }
             log.infoFormat("vm {0} running in db and not running in vds - add to rerun treatment. vds {1}",
-                    vmToRemove.getVmName(), _vds.getvds_name());
+                    vmToRemove.getVmName(), _vds.getVdsName());
 
             vmGuid = vmToRemove.getId();
             if (!isInMigration && !_vmsToRerun.contains(vmGuid)
@@ -1563,7 +1563,7 @@ public class VdsUpdateRunTimeInfo {
             log.infoFormat(
                     "RefreshVmList vm id '{0}' is migrating to vds '{1}' ignoring it in the refresh until migration is done",
                     runningVm.getId(),
-                    _vds.getvds_name());
+                    _vds.getVdsName());
             returnValue = true;
         } else if ((vmToUpdate == null && runningVm.getstatus() != VMStatus.MigratingFrom)) {
             // check if the vm exists on another vds
@@ -1574,7 +1574,7 @@ public class VdsUpdateRunTimeInfo {
                         "RefreshVmList vm id '{0}' status = {1} on vds {2} ignoring it in the refresh until migration is done",
                         runningVm.getId(),
                         runningVm.getstatus(),
-                        _vds.getvds_name());
+                        _vds.getVdsName());
                 returnValue = true;
             }
         }
@@ -1595,38 +1595,38 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void refreshCommitedMemory() {
-        Integer memCommited = _vds.getguest_overhead() != null ? 0 : null;
+        Integer memCommited = _vds.getGuestOverhead() != null ? 0 : null;
         int vmsCoresCount = 0;
         for (VM vm : _vmDict.values()) {
-            if (_vds.getguest_overhead() != null) {
+            if (_vds.getGuestOverhead() != null) {
                 memCommited += vm.getVmMemSizeMb();
-                memCommited += _vds.getguest_overhead();
+                memCommited += _vds.getGuestOverhead();
             }
             vmsCoresCount += vm.getNumOfCpus();
         }
-        if (memCommited == null || !memCommited.equals(_vds.getmem_commited())) {
-            _vds.setmem_commited(memCommited);
+        if (memCommited == null || !memCommited.equals(_vds.getMemCommited())) {
+            _vds.setMemCommited(memCommited);
             _saveVdsDynamic = true;
         }
-        if (_vds.getvms_cores_count() == null || !_vds.getvms_cores_count().equals(vmsCoresCount)) {
-            _vds.setvms_cores_count(vmsCoresCount);
-            _saveVdsDynamic = true;
-        }
-
-        if (_vds.getpending_vcpus_count() != 0 && runningVmsInTransition == 0) {
-            _vds.setpending_vcpus_count(0);
+        if (_vds.getVmsCoresCount() == null || !_vds.getVmsCoresCount().equals(vmsCoresCount)) {
+            _vds.setVmsCoresCount(vmsCoresCount);
             _saveVdsDynamic = true;
         }
 
-        if (_vds.getpending_vmem_size() != 0 && runningVmsInTransition == 0) {
+        if (_vds.getPendingVcpusCount() != 0 && runningVmsInTransition == 0) {
+            _vds.setPendingVcpusCount(0);
+            _saveVdsDynamic = true;
+        }
+
+        if (_vds.getPendingVmemSize() != 0 && runningVmsInTransition == 0) {
             // set also vmem size to 0
-            _vds.setpending_vmem_size(0);
+            _vds.setPendingVmemSize(0);
             _saveVdsDynamic = true;
         }
     }
 
     private void moveVDSToMaintenanceIfNeeded() {
-        if ((_vds.getstatus() == VDSStatus.PreparingForMaintenance)
+        if ((_vds.getStatus() == VDSStatus.PreparingForMaintenance)
                 && monitoringStrategy.canMoveToMaintenance(_vds)) {
             _vdsManager.setStatus(VDSStatus.Maintenance, _vds);
             _saveVdsDynamic = true;
@@ -1634,7 +1634,7 @@ public class VdsUpdateRunTimeInfo {
             log.infoFormat(
                     "Updated vds status from 'Preparing for Maintenance' to 'Maintenance' in database,  vds = {0} : {1}",
                     _vds.getId(),
-                    _vds.getvds_name());
+                    _vds.getVdsName());
         }
     }
 
@@ -1683,7 +1683,7 @@ public class VdsUpdateRunTimeInfo {
             }
             // if anything else changed
             if (props.size() > 0) {
-                vmToUpdate.argvalue.updateRunTimeDynamicData(vmNewDynamicData, _vds.getId(), _vds.getvds_name());
+                vmToUpdate.argvalue.updateRunTimeDynamicData(vmNewDynamicData, _vds.getId(), _vds.getVdsName());
                 returnValue = true;
             }
         } else {

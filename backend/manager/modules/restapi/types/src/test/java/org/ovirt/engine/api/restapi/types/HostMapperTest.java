@@ -29,10 +29,10 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     protected VDS getInverse(VdsStatic to) {
         VDS inverse = new VDS();
         inverse.setId(to.getId());
-        inverse.setvds_name(to.getvds_name());
-        inverse.sethost_name(to.gethost_name());
-        inverse.setvds_group_id(to.getvds_group_id());
-        inverse.setport(to.getport());
+        inverse.setVdsName(to.getVdsName());
+        inverse.setHostName(to.getHostName());
+        inverse.setVdsGroupId(to.getVdsGroupId());
+        inverse.setPort(to.getPort());
         inverse.setVdsSpmPriority(to.getVdsSpmPriority());
         inverse.setConsoleAddress(to.getConsoleAddress());
         return inverse;
@@ -55,11 +55,11 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testCpuMapping() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setcpu_cores(6);
-        vds.setcpu_sockets(3);
+        vds.setCpuCores(6);
+        vds.setCpuSockets(3);
         vds.setCpuThreads(12);
-        vds.setcpu_model("some cpu model");
-        vds.setcpu_speed_mh(5.5);
+        vds.setCpuModel("some cpu model");
+        vds.setCpuSpeedMh(5.5);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getCpu());
         assertEquals(new Integer(host.getCpu().getTopology().getCores()), new Integer(2));
@@ -73,9 +73,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testVmSummaryMapping() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setvm_count(2);
-        vds.setvm_active(1);
-        vds.setvm_migrating(1);
+        vds.setVmCount(2);
+        vds.setVmActive(1);
+        vds.setVmMigrating(1);
         Host host = HostMapper.map(vds, (Host) null);
         assertEquals(host.getSummary().getTotal(), new Integer(2));
         assertEquals(host.getSummary().getActive(), new Integer(1));
@@ -86,7 +86,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testMemoryMapping() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setphysical_mem_mb(4000);
+        vds.setPhysicalMemMb(4000);
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getMemory());
         assertEquals(new Long(host.getMemory()), new Long(4194304000L));
@@ -96,10 +96,10 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testMaxSchedulingMemory() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setphysical_mem_mb(4000);
-        vds.setmem_commited(1000);
-        vds.setmax_vds_memory_over_commit(150);
-        vds.setreserved_mem(65);
+        vds.setPhysicalMemMb(4000);
+        vds.setMemCommited(1000);
+        vds.setMaxVdsMemoryOverCommit(150);
+        vds.setReservedMem(65);
         vds.calculateFreeVirtualMemory();
         Host host = HostMapper.map(vds, (Host) null);
         long vdsValue = (long) vds.getMaxSchedulingMemory();
@@ -113,7 +113,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testHostOs() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.sethost_os("Fedora - 17 - 1");
+        vds.setHostOs("Fedora - 17 - 1");
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getOs());
         assertTrue(host.getOs().isSetVersion());
@@ -157,9 +157,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         vds.setId(Guid.Empty);
         vds.setpm_enabled(true);
         vds.setManagmentIp(ip[0]);
-        vds.setpm_type("apc");
-        vds.setpm_user("user");
-        vds.setpm_options("secure=true");
+        vds.setPmType("apc");
+        vds.setPmUser("user");
+        vds.setPmOptions("secure=true");
         vds.setPmSecondaryConcurrent(true);
         vds.setPmSecondaryIp(ip[1]);
         vds.setPmSecondaryType("apc");
@@ -186,7 +186,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     public void testLibvirtVersion() {
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
-        vds.setlibvirt_version(new RpmVersion("libvirt-0.9.10-21.el6_3.4", "libvirt-", true));
+        vds.setLibvirtVersion(new RpmVersion("libvirt-0.9.10-21.el6_3.4", "libvirt-", true));
         Host host = HostMapper.map(vds, (Host) null);
         assertNotNull(host.getLibvirtVersion());
         assertEquals(new Long(host.getLibvirtVersion().getMajor()), new Long(0));

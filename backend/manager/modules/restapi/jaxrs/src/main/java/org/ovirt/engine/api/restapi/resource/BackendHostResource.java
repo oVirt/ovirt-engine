@@ -78,7 +78,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateEnums(Host.class, incoming);
         QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
         VDS entity = getEntity(hostResolver, true);
-        if (incoming.isSetCluster() && incoming.getCluster().isSetId() && !asGuid(incoming.getCluster().getId()).equals(entity.getvds_group_id())) {
+        if (incoming.isSetCluster() && incoming.getCluster().isSetId() && !asGuid(incoming.getCluster().getId()).equals(entity.getVdsGroupId())) {
             performAction(VdcActionType.ChangeVDSCluster,
                           new ChangeVDSClusterParameters(asGuid(incoming.getCluster().getId()), guid));
         }
@@ -95,7 +95,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         // REVISIT fencing options
         VDS vds = getEntity();
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
-        if (vds.getvds_type()==VDSType.oVirtNode) {
+        if (vds.getVdsType()==VDSType.oVirtNode) {
             params.setIsReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());

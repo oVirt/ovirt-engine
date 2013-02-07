@@ -27,8 +27,8 @@ public class VdsStatisticsDAOTest extends BaseDAOTestCase {
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();
-        newStaticVds.sethost_name("farkle.redhat.com");
-        newStaticVds.setvds_group_id(existingVds.getvds_group_id());
+        newStaticVds.setHostName("farkle.redhat.com");
+        newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStatistics = new VdsStatistics();
 
     }

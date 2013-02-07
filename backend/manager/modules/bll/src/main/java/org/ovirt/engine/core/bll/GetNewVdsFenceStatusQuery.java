@@ -26,9 +26,9 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         if (getParameters().getOrder() == FenceAgentOrder.Primary) {
         tempVar.setManagmentIp(getParameters().getManagementIp());
         tempVar.setPmOptionsMap(getParameters().getFencingOptions());
-        tempVar.setpm_type(getParameters().getPmType());
-        tempVar.setpm_user(getParameters().getUser());
-        tempVar.setpm_password(getParameters().getPassword());
+        tempVar.setPmType(getParameters().getPmType());
+        tempVar.setPmUser(getParameters().getUser());
+        tempVar.setPmPassword(getParameters().getPassword());
         }
         else if (getParameters().getOrder() == FenceAgentOrder.Secondary) {
             tempVar.setPmSecondaryIp(getParameters().getManagementIp());

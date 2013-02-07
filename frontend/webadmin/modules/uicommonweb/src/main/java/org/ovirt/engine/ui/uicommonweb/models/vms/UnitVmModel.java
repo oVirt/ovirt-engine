@@ -1892,7 +1892,7 @@ public class UnitVmModel extends Model {
                 VDS host = (VDS) behavior.getSystemTreeSelectedItem().getEntity();
                 for (VDSGroup iterCluster : clusters)
                 {
-                    if (iterCluster.getId().equals(host.getvds_group_id()))
+                    if (iterCluster.getId().equals(host.getVdsGroupId()))
                     {
                         model.getCluster()
                                 .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { iterCluster })));

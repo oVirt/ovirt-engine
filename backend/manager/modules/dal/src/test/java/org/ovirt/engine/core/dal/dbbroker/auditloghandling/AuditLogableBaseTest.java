@@ -443,7 +443,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsName(null);
         final VDS v = new VDS();
-        v.setvds_name(NAME);
+        v.setVdsName(NAME);
         b.setVds(v);
         final String s = b.getVdsName();
         assertEquals(NAME, s);
@@ -891,7 +891,7 @@ public class AuditLogableBaseTest {
     public void getVdsGroupWithVds() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDS v = new VDS();
-        v.setvds_group_id(GUID);
+        v.setVdsGroupId(GUID);
         b.setVds(v);
         final VDSGroup g = b.getVdsGroup();
         assertEquals(GUID, g.getId());

@@ -1591,7 +1591,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         final List<VDS> hosts = (ArrayList<VDS>) returnValue;
                         final List<VDS> activeHosts = new ArrayList<VDS>();
                         for(VDS host : hosts) {
-                            if(VDSStatus.Up.equals(host.getstatus())) {
+                            if(VDSStatus.Up.equals(host.getStatus())) {
                                 activeHosts.add(host);
                             }
                         }

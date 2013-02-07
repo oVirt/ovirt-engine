@@ -65,9 +65,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     protected void HandleError() {
         MoveVMsToUnknown();
         // if fence failed on spm, move storage pool to non operational
-        if (getVds().getspm_status() != VdsSpmStatus.None) {
+        if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
-                    getVds().getvds_name(), getVds().getStoragePoolId());
+                    getVds().getVdsName(), getVds().getStoragePoolId());
             Backend.getInstance().runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
@@ -98,7 +98,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     private boolean shouldVdsBeFenced() {
         boolean result;
-        switch (getVds().getstatus()) {
+        switch (getVds().getStatus()) {
         case Down:
         case InstallFailed:
         case Maintenance:

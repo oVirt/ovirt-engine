@@ -127,7 +127,7 @@ public class VdsEventListener implements IVdsEventListener {
             public void run() {
                 log.infoFormat("ResourceManager::vdsNotResponding entered for Host {0}, {1}",
                         vds.getId(),
-                        vds.gethost_name());
+                        vds.getHostName());
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
                         new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
                         ExecutionHandler.createInternalJobContext());

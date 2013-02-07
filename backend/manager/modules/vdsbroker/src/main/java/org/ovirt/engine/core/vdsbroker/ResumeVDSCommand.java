@@ -25,7 +25,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
                 ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
             } else if (command.getVDSReturnValue().getExceptionObject() != null) {
                 log.errorFormat("VDS::pause Failed resume vm '{0}' in vds = {1} : {2}, error = {3}", parameters
-                        .getVmId(), getVds().getId(), getVds().getvds_name(), command.getVDSReturnValue()
+                        .getVmId(), getVds().getId(), getVds().getVdsName(), command.getVDSReturnValue()
                         .getExceptionString());
                 getVDSReturnValue().setSucceeded(false);
                 getVDSReturnValue().setExceptionString(command.getVDSReturnValue().getExceptionString());

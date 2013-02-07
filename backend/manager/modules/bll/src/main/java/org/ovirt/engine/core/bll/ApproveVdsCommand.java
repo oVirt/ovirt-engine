@@ -20,15 +20,15 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        if (getVds().getvds_type() != VDSType.oVirtNode) {
+        if (getVds().getVdsType() != VDSType.oVirtNode) {
             addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_WRONG_VDS_TYPE);
             returnValue = false;
         } else {
             if (getVds() == null) {
                 addCanDoActionMessage(VdcBllMessages.VDS_APPROVE_VDS_NOT_FOUND);
                 returnValue = false;
-            } else if (getVds().getstatus() != VDSStatus.PendingApproval
-                    && getVds().getstatus() != VDSStatus.InstallFailed) {
+            } else if (getVds().getStatus() != VDSStatus.PendingApproval
+                    && getVds().getStatus() != VDSStatus.InstallFailed) {
                 getReturnValue().getCanDoActionMessages()
                 .add(VdcBllMessages.VDS_APPROVE_VDS_IN_WRONG_STATUS.toString());
                 returnValue = false;

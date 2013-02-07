@@ -93,7 +93,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getvds_name();
+                return object.getVdsName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
@@ -101,7 +101,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.gethost_name();
+                return object.getHostName();
             }
         };
         getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
@@ -109,7 +109,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getvds_group_name();
+                return object.getVdsGroupName();
             }
         };
         getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             TextColumnWithTooltip<VDS> dcColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    return object.getstorage_pool_name();
+                    return object.getStoragePoolName();
                 }
             };
             getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             TextColumnWithTooltip<VDS> vmCountColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    return String.valueOf(object.getvm_count());
+                    return String.valueOf(object.getVmCount());
                 }
             };
             getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
@@ -145,7 +145,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
-                return object.getusage_mem_percent();
+                return object.getUsageMemPercent();
             }
         };
         getTable().addColumn(memColumn, constants.memoryHost(), "60px"); //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         PercentColumn<VDS> cpuColumn = new PercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
-                return object.getusage_cpu_percent();
+                return object.getUsageCpuPercent();
             }
         };
         getTable().addColumn(cpuColumn, constants.cpuHost(), "60px"); //$NON-NLS-1$
@@ -161,7 +161,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         PercentColumn<VDS> netColumn = new PercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
-                return object.getusage_network_percent();
+                return object.getUsageNetworkPercent();
             }
         };
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
@@ -174,8 +174,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                     int lowValue = defaultSpmPriority / 2;
                     int highValue = defaultSpmPriority + (maxSpmPriority - defaultSpmPriority) / 2;
 
-                    if (object.getspm_status() != VdsSpmStatus.None){
-                        return object.getspm_status().name();
+                    if (object.getSpmStatus() != VdsSpmStatus.None){
+                        return object.getSpmStatus().name();
                     }
 
                     if (value == -1) {

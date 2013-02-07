@@ -333,7 +333,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             if (!poolHosts.isEmpty() && acquireLockInternal()) {
                 for (VDS host : poolHosts) {
-                    if (host.getstatus() != VDSStatus.Maintenance) {
+                    if (host.getStatus() != VDSStatus.Maintenance) {
                         return failCanDoAction(VdcBllMessages.ERROR_CANNOT_FORCE_REMOVE_STORAGE_POOL_WITH_VDS_NOT_IN_MAINTENANCE);
                     }
                 }

@@ -27,7 +27,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         } else if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
             return false;
-        } else if (!vm.getVdsGroupId().equals(getDestinationVds().getvds_group_id())) {
+        } else if (!vm.getVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
             return false;
         } else {

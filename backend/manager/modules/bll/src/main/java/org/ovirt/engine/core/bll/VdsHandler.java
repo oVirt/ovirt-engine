@@ -37,14 +37,14 @@ public class VdsHandler extends BaseHandler {
                     new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "VDS", "VdsStatic",
                             "VdsDynamic" })),
                     VDSStatus.class);
-        mUpdateVdsStatic.AddPermittedField("vds_name");
+        mUpdateVdsStatic.AddPermittedField("vdsName");
         mUpdateVdsStatic.AddPermittedField("managmentIp");
-        mUpdateVdsStatic.AddPermittedField("pm_type");
-        mUpdateVdsStatic.AddPermittedField("pm_user");
-        mUpdateVdsStatic.AddPermittedField("pm_password");
-        mUpdateVdsStatic.AddPermittedField("pm_port");
-        mUpdateVdsStatic.AddPermittedField("pm_options");
-        mUpdateVdsStatic.AddPermittedField("pm_enabled");
+        mUpdateVdsStatic.AddPermittedField("pmType");
+        mUpdateVdsStatic.AddPermittedField("pmUser");
+        mUpdateVdsStatic.AddPermittedField("pmPassword");
+        mUpdateVdsStatic.AddPermittedField("pmPort");
+        mUpdateVdsStatic.AddPermittedField("pmOptions");
+        mUpdateVdsStatic.AddPermittedField("pmEnabled");
         mUpdateVdsStatic.AddPermittedField("pmProxyPreferences");
         mUpdateVdsStatic.AddPermittedField("PmOptionsMap");
         mUpdateVdsStatic.AddPermittedField("managmentIp");
@@ -62,7 +62,7 @@ public class VdsHandler extends BaseHandler {
         mUpdateVdsStatic.AddFields(
                 java.util.Arrays.asList(new Enum<?>[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
                         VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval }),
-                java.util.Arrays.asList(new String[] { "ip", "vds_unique_id", "host_name", "port", "vds_group_id" }));
+                java.util.Arrays.asList(new String[] { "ip", "vdsUniqueId", "hostName", "port", "vdsGroupId" }));
     }
 
     public VdsHandler() {
@@ -114,7 +114,7 @@ public class VdsHandler extends BaseHandler {
     }
 
     static public boolean isPendingOvirt(VDS vds) {
-        return isPendingOvirt(vds.getvds_type(), vds.getstatus());
+        return isPendingOvirt(vds.getVdsType(), vds.getStatus());
     }
 
     /**
@@ -127,12 +127,12 @@ public class VdsHandler extends BaseHandler {
     static public RpmVersion getOvirtHostOsVersion(VDS vds) {
         RpmVersion vdsOsVersion = null;
         try {
-            vdsOsVersion = new RpmVersion(vds.gethost_os(), "RHEV Hypervisor -", true);
+            vdsOsVersion = new RpmVersion(vds.getHostOs(), "RHEV Hypervisor -", true);
         } catch (RuntimeException e) {
             log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
                     vds.getId(),
-                    vds.getvds_name(),
-                    vds.gethost_os(),
+                    vds.getVdsName(),
+                    vds.getHostOs(),
                     ExceptionUtils.getMessage(e));
         }
         return vdsOsVersion;

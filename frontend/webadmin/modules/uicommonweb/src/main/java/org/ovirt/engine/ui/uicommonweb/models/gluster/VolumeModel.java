@@ -313,7 +313,7 @@ public class VolumeModel extends Model {
                 Iterator<VDS> iterator = hostList.iterator();
                 while (iterator.hasNext())
                 {
-                    if (iterator.next().getstatus() != VDSStatus.Up)
+                    if (iterator.next().getStatus() != VDSStatus.Up)
                     {
                         iterator.remove();
                     }
@@ -477,7 +477,7 @@ public class VolumeModel extends Model {
 
                     List<VDS> hostList = (List<VDS>) returnValue;
                     for (VDS host : hostList) {
-                        if (host.getstatus() == VDSStatus.Up) {
+                        if (host.getStatus() == VDSStatus.Up) {
                             getAddBricksCommand().setIsExecutionAllowed(true);
                             setMessage(null);
                             return;

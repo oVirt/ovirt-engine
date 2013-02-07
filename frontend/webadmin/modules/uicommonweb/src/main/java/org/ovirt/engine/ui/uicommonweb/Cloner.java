@@ -203,30 +203,30 @@ public final class Cloner
     {
         VDS obj = new VDS();
 
-        obj.sethost_name(instance.gethost_name());
+        obj.setHostName(instance.getHostName());
 
         obj.setManagmentIp(instance.getManagmentIp());
-        obj.setpm_user(instance.getpm_user());
-        obj.setpm_password(instance.getpm_password());
-        obj.setpm_type(instance.getpm_type());
+        obj.setPmUser(instance.getPmUser());
+        obj.setPmPassword(instance.getPmPassword());
+        obj.setPmType(instance.getPmType());
         obj.setPmOptionsMap(instance.getPmOptionsMap());
 
         obj.setPmSecondaryIp(instance.getManagmentIp());
-        obj.setPmSecondaryUser(instance.getpm_user());
-        obj.setPmSecondaryPassword(instance.getpm_password());
-        obj.setPmSecondaryType(instance.getpm_type());
+        obj.setPmSecondaryUser(instance.getPmUser());
+        obj.setPmSecondaryPassword(instance.getPmPassword());
+        obj.setPmSecondaryType(instance.getPmType());
         obj.setPmSecondaryOptionsMap(instance.getPmOptionsMap());
 
         obj.setpm_enabled(instance.getpm_enabled());
         obj.setPmSecondaryConcurrent(instance.isPmSecondaryConcurrent());
 
-        obj.setport(instance.getport());
-        obj.setserver_SSL_enabled(instance.getserver_SSL_enabled());
-        obj.setvds_group_id(instance.getvds_group_id());
+        obj.setPort(instance.getPort());
+        obj.setServerSslEnabled(instance.isServerSslEnabled());
+        obj.setVdsGroupId(instance.getVdsGroupId());
         obj.setId(instance.getId());
-        obj.setvds_name(instance.getvds_name());
-        obj.setvds_strength(instance.getvds_strength());
-        obj.setvds_type(instance.getvds_type());
+        obj.setVdsName(instance.getVdsName());
+        obj.setVdsStrength(instance.getVdsStrength());
+        obj.setVdsType(instance.getVdsType());
         obj.setUniqueId(instance.getUniqueId());
         obj.setVdsSpmPriority(instance.getVdsSpmPriority());
 

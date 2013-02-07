@@ -9,17 +9,17 @@ import org.ovirt.engine.core.common.businessentities.*;
 public class EvenlyDistributeVDComparer extends VdsComparer {
     @Override
     public boolean IsBetter(VDS x, VDS y, VM vm) {
-        if (x.getvms_cores_count() == null || y.getvms_cores_count() == null) {
+        if (x.getVmsCoresCount() == null || y.getVmsCoresCount() == null) {
             return false;
         }
         boolean returnValue;
-        returnValue = ((double) x.getvms_cores_count() / x.getcpu_cores()) > ((double) y.getvms_cores_count() / y
-                .getcpu_cores());
+        returnValue = ((double) x.getVmsCoresCount() / x.getCpuCores()) > ((double) y.getVmsCoresCount() / y
+                .getCpuCores());
         return returnValue;
     }
 
     @Override
     public void BestVdsProcedure(VDS x) {
-        x.setvm_count(x.getvm_count() + 1);
+        x.setVmCount(x.getVmCount() + 1);
     }
 }

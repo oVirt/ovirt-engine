@@ -80,7 +80,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getvds_name();
+                return ((VDS) object.getEntity()).getVdsName();
             }
         };
         table.addColumn(nameColumn, constants.nameHost());
@@ -88,7 +88,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         TextColumnWithTooltip<EntityModel> hostColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
-                return ((VDS) object.getEntity()).gethost_name();
+                return ((VDS) object.getEntity()).getHostName();
             }
         };
         table.addColumn(hostColumn, constants.ipHost());
@@ -96,7 +96,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         TextColumnWithTooltip<EntityModel> statusColumn = new EnumColumn<EntityModel, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getstatus();
+                return ((VDS) object.getEntity()).getStatus();
             }
         };
         table.addColumn(statusColumn, constants.statusHost(), "90px"); //$NON-NLS-1$

@@ -33,10 +33,10 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         List<VDS> relevantVdss = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return p.getusage_cpu_percent() >= p.gethigh_utilization()
-                        && p.getcpu_over_commit_time_stamp() != null
-                        && (new Date().getTime() - p.getcpu_over_commit_time_stamp().getTime()) >= p
-                                .getcpu_over_commit_duration_minutes() * 1000 * 60;
+                return p.getUsageCpuPercent() >= p.getHighUtilization()
+                        && p.getCpuOverCommitTimestamp() != null
+                        && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= p
+                                .getCpuOverCommitDurationMinutes() * 1000 * 60;
             }
         });
 
@@ -69,8 +69,8 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         List<VDS> relevantVdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return (p.getusage_cpu_percent() + CalcSpmCpuConsumption(p)) < highVdsCount
-                        && (isEvenlyDistribute || p.getusage_cpu_percent() > p.getlow_utilization());
+                return (p.getUsageCpuPercent() + CalcSpmCpuConsumption(p)) < highVdsCount
+                        && (isEvenlyDistribute || p.getUsageCpuPercent() > p.getLowUtilization());
             }
         });
         Collections.sort(relevantVdses, new VdsCpuUsageComparator());
@@ -87,9 +87,9 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
     }
 
     private int CalcSpmCpuConsumption(VDS vds) {
-        return ((vds.getspm_status() == VdsSpmStatus.None) ? 0 : Config
+        return ((vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer> GetValue(ConfigValues.SpmVCpuConsumption)
-                * Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage) / vds.getcpu_cores());
+                * Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores());
     }
 
     @Override
@@ -100,10 +100,10 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             List<VDS> vdses = LinqUtils.filter(getAllRelevantVdss(), new Predicate<VDS>() {
                 @Override
                 public boolean eval(VDS p) {
-                    return p.getusage_cpu_percent() <= p.getlow_utilization()
-                            && p.getcpu_over_commit_time_stamp() != null
-                            && (new Date().getTime() - p.getcpu_over_commit_time_stamp().getTime()) >= p
-                                    .getcpu_over_commit_duration_minutes() * 60 * 1000;
+                    return p.getUsageCpuPercent() <= p.getLowUtilization()
+                            && p.getCpuOverCommitTimestamp() != null
+                            && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= p
+                                    .getCpuOverCommitDurationMinutes() * 60 * 1000;
                 }
             });
             // The order of sorting will be from smallest to biggest. The vm will be
@@ -111,7 +111,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             Collections.sort(vdses, new Comparator<VDS>() {
                 @Override
                 public int compare(VDS o1, VDS o2) {
-                    int primary = o1.getvm_count() - o2.getvm_count();
+                    int primary = o1.getVmCount() - o2.getVmCount();
                     if (primary != 0)
                         return primary;
                     else {
@@ -172,7 +172,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         }
 
         private int calculateCpuUsage(VDS o1) {
-            return o1.getusage_cpu_percent() * VdsSelector.getEffectiveCpuCores(o1) / o1.getvds_strength();
+            return o1.getUsageCpuPercent() * VdsSelector.getEffectiveCpuCores(o1) / o1.getVdsStrength();
         }
     }
 

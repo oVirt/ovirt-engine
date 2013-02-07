@@ -30,10 +30,10 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 VDS powerclient = DbFacade.getInstance().getVdsDao().get(getParameters().getDestinationVdsId());
                 boolean powerClientLogDetection =
                         Config.<Boolean> GetValue(ConfigValues.PowerClientLogDetection);
-                if (powerclient != null && powerclient.getvds_type() == VDSType.PowerClient) {
+                if (powerclient != null && powerclient.getVdsType() == VDSType.PowerClient) {
                     if (powerClientLogDetection) {
                         log.infoFormat("VdcBLL::RunVmCommand - Powerclient id= {0}, name = {1} evaluated",
-                                powerclient.getId(), powerclient.getvds_name());
+                                powerclient.getId(), powerclient.getVdsName());
                     }
                     _destinationVds = powerclient;
                 } else {
@@ -61,12 +61,12 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
 
         int memory = -1;
         if (Config.<Boolean> GetValue(ConfigValues.PowerClientAutoAdjustMemoryBaseOnAvailableMemory)) {
-            if (vds.getmem_available() != null) {
-                memory = vds.getmem_available().intValue();
+            if (vds.getMemAvailable() != null) {
+                memory = vds.getMemAvailable().intValue();
             }
         } else {
-            if (vds.getphysical_mem_mb() != null) {
-                memory = vds.getphysical_mem_mb();
+            if (vds.getPhysicalMemMb() != null) {
+                memory = vds.getPhysicalMemMb();
             }
         }
         if (memory == -1) {

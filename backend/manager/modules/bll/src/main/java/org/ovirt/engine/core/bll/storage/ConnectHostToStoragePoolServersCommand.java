@@ -37,13 +37,13 @@ public class ConnectHostToStoragePoolServersCommand extends
         if (getNeedToConnectIso()) {
             if (!connectStorageServer(getIsoType(), getIsoConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Iso domain/s connections", getVds()
-                        .getvds_name(), getStoragePool().getname());
+                        .getVdsName(), getStoragePool().getname());
             }
         }
         if (getNeedToConnectExport()) {
             if (!connectStorageServer(getExportType(), getExportConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Export domain/s connections", getVds()
-                        .getvds_name(), getStoragePool().getname());
+                        .getVdsName(), getStoragePool().getname());
             }
         }
     }
@@ -60,7 +60,7 @@ public class ConnectHostToStoragePoolServersCommand extends
                                     getStoragePool().getId(), type, connections)).getReturnValue();
             connectSucceeded =
                     StorageHelperDirector.getInstance().getItem(type).isConnectSucceeded(retValues, connections);
-            log.infoFormat("Host {0} storage connection was {1} ", getVds().getvds_name(),
+            log.infoFormat("Host {0} storage connection was {1} ", getVds().getVdsName(),
                     connectSucceeded ? "succeeded" : "failed");
         }
         return connectSucceeded;

@@ -177,7 +177,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             boolean isAddedToStoragePool = oldGroup.getStoragePoolId() == null
                     && getVdsGroup().getStoragePoolId() != null;
             for (VDS vds : allForVdsGroup) {
-                if (vds.getstatus() == VDSStatus.Up) {
+                if (vds.getStatus() == VDSStatus.Up) {
                     if (isAddedToStoragePool) {
                         addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_VDS_UP);
                         return false;
@@ -308,7 +308,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     protected List<String> missingServerCpuFlags(VDS vds) {
         return CpuFlagsManagerHandler.missingServerCpuFlags(
                 getVdsGroup().getcpu_name(),
-                vds.getcpu_flags(),
+                vds.getCpuFlags(),
                 getVdsGroup().getcompatibility_version());
     }
 

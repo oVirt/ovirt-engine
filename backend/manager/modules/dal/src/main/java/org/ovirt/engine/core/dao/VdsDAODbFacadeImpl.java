@@ -205,83 +205,83 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             final VDS entity = new VDS();
             entity.setId(Guid.createGuidFromString(rs
                     .getString("vds_id")));
-            entity.setvds_group_id(Guid.createGuidFromString(rs
+            entity.setVdsGroupId(Guid.createGuidFromString(rs
                     .getString("vds_group_id")));
-            entity.setvds_group_name(rs.getString("vds_group_name"));
-            entity.setvds_group_description(rs
+            entity.setVdsGroupName(rs.getString("vds_group_name"));
+            entity.setVdsGroupDescription(rs
                     .getString("vds_group_description"));
-            entity.setvds_name(rs.getString("vds_name"));
+            entity.setVdsName(rs.getString("vds_name"));
             entity.setManagmentIp(rs.getString("ip"));
             entity.setUniqueId(rs.getString("vds_unique_id"));
-            entity.setserver_SSL_enabled(rs
+            entity.setServerSslEnabled(rs
                     .getBoolean("server_SSL_enabled"));
-            entity.sethost_name(rs.getString("host_name"));
-            entity.setport(rs.getInt("port"));
-            entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
-            entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
+            entity.setHostName(rs.getString("host_name"));
+            entity.setPort(rs.getInt("port"));
+            entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
+            entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
             entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
-            entity.setcpu_model(rs.getString("cpu_model"));
-            entity.setcpu_user(rs.getDouble("cpu_user"));
-            entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
-            entity.setif_total_speed(rs.getString("if_total_speed"));
-            entity.setkvm_enabled((Boolean) rs.getObject("kvm_enabled"));
-            entity.setphysical_mem_mb((Integer) rs
+            entity.setCpuModel(rs.getString("cpu_model"));
+            entity.setCpuUser(rs.getDouble("cpu_user"));
+            entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
+            entity.setIfTotalSpeed(rs.getString("if_total_speed"));
+            entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
+            entity.setPhysicalMemMb((Integer) rs
                     .getObject("physical_mem_mb"));
-            entity.setcpu_idle(rs.getDouble("cpu_idle"));
-            entity.setcpu_load(rs.getDouble("cpu_load"));
-            entity.setcpu_sys(rs.getDouble("cpu_sys"));
-            entity.setmem_commited((Integer) rs.getObject("mem_commited"));
-            entity.setvm_active((Integer) rs.getObject("vm_active"));
-            entity.setvm_count((Integer) rs.getObject("vm_count"));
-            entity.setvms_cores_count((Integer) rs
+            entity.setCpuIdle(rs.getDouble("cpu_idle"));
+            entity.setCpuLoad(rs.getDouble("cpu_load"));
+            entity.setCpuSys(rs.getDouble("cpu_sys"));
+            entity.setMemCommited((Integer) rs.getObject("mem_commited"));
+            entity.setVmActive((Integer) rs.getObject("vm_active"));
+            entity.setVmCount((Integer) rs.getObject("vm_count"));
+            entity.setVmsCoresCount((Integer) rs
                     .getObject("vms_cores_count"));
-            entity.setvm_migrating((Integer) rs.getObject("vm_migrating"));
-            entity.setusage_cpu_percent((Integer) rs
+            entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+            entity.setUsageCpuPercent((Integer) rs
                     .getObject("usage_cpu_percent"));
-            entity.setusage_mem_percent((Integer) rs
+            entity.setUsageMemPercent((Integer) rs
                     .getObject("usage_mem_percent"));
-            entity.setusage_network_percent((Integer) rs
+            entity.setUsageNetworkPercent((Integer) rs
                     .getObject("usage_network_percent"));
-            entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
-            entity.setguest_overhead((Integer) rs
+            entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
+            entity.setGuestOverhead((Integer) rs
                     .getObject("guest_overhead"));
             entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
-            entity.setsoftware_version(rs.getString("software_version"));
-            entity.setversion_name(rs.getString("version_name"));
-            entity.setprevious_status(VDSStatus.forValue(rs
+            entity.setSoftwareVersion(rs.getString("software_version"));
+            entity.setVersionName(rs.getString("version_name"));
+            entity.setPreviousStatus(VDSStatus.forValue(rs
                     .getInt("previous_status")));
-            entity.setmem_available(rs.getLong("mem_available"));
-            entity.setmem_shared(rs.getLong("mem_shared"));
-            entity.setvds_type(VDSType.forValue(rs.getInt("vds_type")));
-            entity.setcpu_flags(rs.getString("cpu_flags"));
-            entity.setvds_group_cpu_name(rs.getString("vds_group_cpu_name"));
+            entity.setMemAvailable(rs.getLong("mem_available"));
+            entity.setMemShared(rs.getLong("mem_shared"));
+            entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
+            entity.setCpuFlags(rs.getString("cpu_flags"));
+            entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
             entity.setStoragePoolId(Guid.createGuidFromString(rs
                     .getString("storage_pool_id")));
-            entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
+            entity.setStoragePoolName(rs.getString("storage_pool_name"));
+            entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs
                     .getInt("selection_algorithm")));
-            entity.setpending_vcpus_count((Integer) rs
+            entity.setPendingVcpusCount((Integer) rs
                     .getObject("pending_vcpus_count"));
-            entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
+            entity.setCpuOverCommitTimestamp(DbFacadeUtils.fromDate(rs
                     .getTimestamp("cpu_over_commit_time_stamp")));
-            entity.sethigh_utilization(rs.getInt("high_utilization"));
-            entity.setlow_utilization(rs.getInt("low_utilization"));
-            entity.setcpu_over_commit_duration_minutes(rs
+            entity.setHighUtilization(rs.getInt("high_utilization"));
+            entity.setLowUtilization(rs.getInt("low_utilization"));
+            entity.setCpuOverCommitDurationMinutes(rs
                     .getInt("cpu_over_commit_duration_minutes"));
 
-            entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
-            entity.setvds_strength(rs.getInt("vds_strength"));
-            entity.setmax_vds_memory_over_commit(rs
+            entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
+            entity.setVdsStrength(rs.getInt("vds_strength"));
+            entity.setMaxVdsMemoryOverCommit(rs
                     .getInt("max_vds_memory_over_commit"));
-            entity.setcpu_sockets((Integer) rs.getObject("cpu_sockets"));
-            entity.setvds_spm_id((Integer) rs.getObject("vds_spm_id"));
-            entity.setnet_config_dirty((Boolean) rs
+            entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
+            entity.setVdsSpmId((Integer) rs.getObject("vds_spm_id"));
+            entity.setNetConfigDirty((Boolean) rs
                     .getObject("net_config_dirty"));
-            entity.setpm_type(rs.getString("pm_type"));
-            entity.setpm_user(rs.getString("pm_user"));
-            entity.setpm_password(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
-            entity.setpm_port((Integer) rs.getObject("pm_port"));
-            entity.setpm_options(rs.getString("pm_options"));
+            entity.setPmType(rs.getString("pm_type"));
+            entity.setPmUser(rs.getString("pm_user"));
+            entity.setPmPassword(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
+            entity.setPmPort((Integer) rs.getObject("pm_port"));
+            entity.setPmOptions(rs.getString("pm_options"));
             entity.setpm_enabled(rs.getBoolean("pm_enabled"));
             entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
             entity.setPmSecondaryIp((rs.getString("pm_secondary_ip")));
@@ -291,24 +291,24 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setPmSecondaryPort((Integer) rs.getObject("pm_secondary_port"));
             entity.setPmSecondaryOptions(rs.getString("pm_secondary_options"));
             entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
-            entity.setspm_status(VdsSpmStatus.forValue(rs
+            entity.setSpmStatus(VdsSpmStatus.forValue(rs
                     .getInt("spm_status")));
-            entity.setswap_free(rs.getLong("swap_free"));
-            entity.setswap_total(rs.getLong("swap_total"));
-            entity.setksm_cpu_percent((Integer) rs
+            entity.setSwapFree(rs.getLong("swap_free"));
+            entity.setSwapTotal(rs.getLong("swap_total"));
+            entity.setKsmCpuPercent((Integer) rs
                     .getObject("ksm_cpu_percent"));
-            entity.setksm_pages(rs.getLong("ksm_pages"));
-            entity.setksm_state((Boolean) rs.getObject("ksm_state"));
-            entity.setsupported_cluster_levels(rs
+            entity.setKsmPages(rs.getLong("ksm_pages"));
+            entity.setKsmState((Boolean) rs.getObject("ksm_state"));
+            entity.setSupportedClusterLevels(rs
                     .getString("supported_cluster_levels"));
-            entity.setsupported_engines(rs.getString("supported_engines"));
-            entity.setvds_group_compatibility_version(new Version(rs
+            entity.setSupportedEngines(rs.getString("supported_engines"));
+            entity.setVdsGroupCompatibilityVersion(new Version(rs
                     .getString("vds_group_compatibility_version")));
-            entity.sethost_os(rs.getString("host_os"));
-            entity.setkvm_version(rs.getString("kvm_version"));
-            entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
-            entity.setspice_version(rs.getString("spice_version"));
-            entity.setkernel_version(rs.getString("kernel_version"));
+            entity.setHostOs(rs.getString("host_os"));
+            entity.setKvmVersion(rs.getString("kvm_version"));
+            entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
+            entity.setSpiceVersion(rs.getString("spice_version"));
+            entity.setKernelVersion(rs.getString("kernel_version"));
             entity.setIScsiInitiatorName(rs
                     .getString("iscsi_initiator_name"));
             entity.setTransparentHugePagesState(VdsTransparentHugePagesState

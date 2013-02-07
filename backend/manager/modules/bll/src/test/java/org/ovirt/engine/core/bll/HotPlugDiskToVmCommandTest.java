@@ -218,7 +218,7 @@ public class HotPlugDiskToVmCommandTest {
      */
     protected void mockVds() {
         VDS vds = new VDS();
-        vds.setvds_group_compatibility_version(new Version("3.1"));
+        vds.setVdsGroupCompatibilityVersion(new Version("3.1"));
         doReturn(vdsDao).when(command).getVdsDAO();
         when(vdsDao.get(Mockito.any(Guid.class))).thenReturn(vds);
     }

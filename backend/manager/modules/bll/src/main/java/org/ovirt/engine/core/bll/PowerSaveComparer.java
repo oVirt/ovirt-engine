@@ -14,8 +14,8 @@ public class PowerSaveComparer extends EvenlyDistributeComparer {
 
         boolean returnValue = false;
 
-        boolean x_has_zero = (x.getvm_count() == 0);
-        boolean y_has_zero = (y.getvm_count() == 0);
+        boolean x_has_zero = (x.getVmCount() == 0);
+        boolean y_has_zero = (y.getVmCount() == 0);
 
         if (x_has_zero) {
             if (!y_has_zero) {

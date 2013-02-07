@@ -109,7 +109,7 @@ public class VdsDeploy implements SSHDialog.Sink {
 
         log.infoFormat(
             "Host {0} reports unique id {1}",
-            _vds.gethost_name(),
+            _vds.getHostName(),
             vdsmid
         );
 
@@ -129,25 +129,25 @@ public class VdsDeploy implements SSHDialog.Sink {
                 if (hosts.length() > 0) {
                     hosts.append(", ");
                 }
-                hosts.append(v.getvds_name());
+                hosts.append(v.getVdsName());
             }
 
             log.errorFormat(
                 "Host {0} reports duplicate unique id {1} of following hosts {2}",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 vdsmid,
                 hosts
             );
             throw new SoftError(
                 String.format(
                     "Host %1$s reports unique id which already registered for %2$s",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     hosts
                 )
             );
         }
 
-        log.infoFormat("Assigning unique id {0} to Host {1}", vdsmid, _vds.gethost_name());
+        log.infoFormat("Assigning unique id {0} to Host {1}", vdsmid, _vds.getHostName());
         _vds.setUniqueId(vdsmid);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -165,7 +165,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     private void _setNode() {
         _isNode = true;
 
-        _vds.setvds_type(VDSType.oVirtNode);
+        _vds.setVdsType(VDSType.oVirtNode);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -182,7 +182,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      * @param status new status.
      */
     private void _setVdsStatus(VDSStatus status) {
-        _vds.setstatus(status);
+        _vds.setStatus(status);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -252,7 +252,7 @@ public class VdsDeploy implements SSHDialog.Sink {
      */
     private String _getIpTables() {
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-            _vds.getvds_group_id()
+            _vds.getVdsGroupId()
         );
 
         String ipTablesConfig = Config.<String> GetValue(ConfigValues.IPTablesConfig);
@@ -384,7 +384,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     "%saddresses/management_port",
                     VdsmEnv.CONFIG_PREFIX
                 ),
-                Integer.toString(_vds.getport())
+                Integer.toString(_vds.getPort())
             );
             return null;
         }},
@@ -424,7 +424,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         }},
         new Callable<Object>() { public Object call() throws Exception {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _vds.getvds_group_id()
+                _vds.getVdsGroupId()
             );
             _parser.cliEnvironmentSet(
                 VdsmEnv.CHECK_VIRT_HARDWARE,
@@ -441,7 +441,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         }},
         new Callable<Object>() { public Object call() throws Exception {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
-                _vds.getvds_group_id()
+                _vds.getVdsGroupId()
             );
             _parser.cliEnvironmentSet(
                 GlusterEnv.ENABLE,
@@ -490,7 +490,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         catch (SoftError e) {
             log.errorFormat(
                 "Soft error during host {0} customization dialog",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 e
             );
             _failException = e;
@@ -574,7 +574,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     new SimpleDateFormat("yyyyMMddHHmmss").format(
                         Calendar.getInstance().getTime()
                     ),
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     _correlationId
                 )
             );
@@ -645,7 +645,7 @@ public class VdsDeploy implements SSHDialog.Sink {
 
                 log.debugFormat(
                     "Installation of {0}: Event {1}",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     bevent
                 );
 
@@ -681,7 +681,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                     else {
                         log.warnFormat(
                             "Installation of {0}: Not confirming {1}: ${2}",
-                            _vds.gethost_name(),
+                            _vds.getHostName(),
                             event.what,
                             event.description
                         );
@@ -749,8 +749,8 @@ public class VdsDeploy implements SSHDialog.Sink {
                         );
                         _certificate = OpenSslCAWrapper.SignCertificateRequest(
                             StringUtils.join(event.value, "\n"),
-                            _vds.gethost_name(),
-                            _vds.gethost_name()
+                            _vds.getHostName(),
+                            _vds.getHostName()
                         );
                     }
                 }
@@ -884,13 +884,13 @@ public class VdsDeploy implements SSHDialog.Sink {
         try {
             _setVdsStatus(VDSStatus.Installing);
 
-            _dialog.setHost(_vds.gethost_name());
+            _dialog.setHost(_vds.getHostName());
             _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(
                     "Connected to host %1$s with SSH key fingerprint: %2$s",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     _dialog.getHostFingerprint()
                 )
             );
@@ -906,7 +906,7 @@ public class VdsDeploy implements SSHDialog.Sink {
 
             log.infoFormat(
                 "Installation of {0}. Executing command via SSH {1} < {2}",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 command,
                 s_deployPackage.getFileNoUse()
             );
@@ -942,7 +942,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         catch (TimeLimitExceededException e){
             log.errorFormat(
                 "Timeout during host {0} install",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 e
             );
             _messages.post(
@@ -955,7 +955,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         catch(Exception e) {
             log.errorFormat(
                 "Error during host {0} install",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 e
             );
             _setVdsStatus(VDSStatus.InstallFailed);
@@ -966,7 +966,7 @@ public class VdsDeploy implements SSHDialog.Sink {
             else {
                 log.errorFormat(
                     "Error during host {0} install, prefering first exception",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     _failException
                 );
                 throw _failException;

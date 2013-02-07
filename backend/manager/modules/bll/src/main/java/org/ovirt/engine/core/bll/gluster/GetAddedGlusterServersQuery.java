@@ -67,7 +67,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     private boolean serverExists(List<VDS> serversList, GlusterServerInfo glusterServer) {
         for (VDS server : serversList) {
             String serverHostnameOrIp =
-                    server.gethost_name().isEmpty() ? server.getManagmentIp() : server.gethost_name();
+                    server.getHostName().isEmpty() ? server.getManagmentIp() : server.getHostName();
             if (serverHostnameOrIp.equalsIgnoreCase(glusterServer.getHostnameOrIp())) {
                 return true;
             }

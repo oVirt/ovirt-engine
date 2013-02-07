@@ -66,7 +66,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         } else if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             returnValue = false;
-        } else if (getVds().getstatus() != VDSStatus.Up) {
+        } else if (getVds().getStatus() != VDSStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
             returnValue = false;
         }

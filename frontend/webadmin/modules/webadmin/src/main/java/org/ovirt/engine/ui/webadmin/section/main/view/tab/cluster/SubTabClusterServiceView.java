@@ -81,7 +81,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
             @Override
             public String renderNullSafe(Object object) {
                 if (object != null) {
-                    return ((VDS) object).gethost_name();
+                    return ((VDS) object).getHostName();
                 }
                 else {
                     return ""; //$NON-NLS-1$

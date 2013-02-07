@@ -222,7 +222,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getVdsName() {
         if (mVdsName == null && getVds() != null) {
-            mVdsName = getVds().getvds_name();
+            mVdsName = getVds().getVdsName();
         }
         return mVdsName;
     }
@@ -395,7 +395,7 @@ public class AuditLogableBase extends TimeoutBase {
             if (mVdsGroupId != null) {
                 mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
             } else if (getVds() != null) {
-                mVdsGroupId = getVds().getvds_group_id();
+                mVdsGroupId = getVds().getVdsGroupId();
                 mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);
             } else if (getVm() != null) {
                 mVdsGroupId = getVm().getVdsGroupId();

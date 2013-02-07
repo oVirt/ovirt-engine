@@ -791,23 +791,23 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         VDS host = model.getIsNew() ? new VDS() : (VDS) Cloner.clone(getSelectedItem());
 
         // Save changes.
-        host.setvds_name((String) model.getName().getEntity());
-        host.sethost_name((String) model.getHost().getEntity());
-        host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
+        host.setVdsName((String) model.getName().getEntity());
+        host.setHostName((String) model.getHost().getEntity());
+        host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());
-        Guid oldClusterId = host.getvds_group_id();
+        Guid oldClusterId = host.getVdsGroupId();
         Guid newClusterId = ((VDSGroup) model.getCluster().getSelectedItem()).getId();
-        host.setvds_group_id(newClusterId);
+        host.setVdsGroupId(newClusterId);
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         host.setPmProxyPreferences(model.getPmProxyPreferences());
 
         // Save primary PM parameters.
         host.setManagmentIp((String) model.getManagementIp().getEntity());
-        host.setpm_user((String) model.getPmUserName().getEntity());
-        host.setpm_password((String) model.getPmPassword().getEntity());
-        host.setpm_type((String) model.getPmType().getSelectedItem());
+        host.setPmUser((String) model.getPmUserName().getEntity());
+        host.setPmPassword((String) model.getPmPassword().getEntity());
+        host.setPmType((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
 
         // Save secondary PM parameters.
@@ -951,8 +951,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ArrayList<String> list = new ArrayList<String>();
         for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
         {
-            list.add(item.getvds_name());
-            clusters.add(item.getvds_group_id());
+            list.add(item.getVdsName());
+            clusters.add(item.getVdsGroupId());
         }
         model.setItems(list);
 
@@ -1052,7 +1052,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            vdss.add(vds.getvds_name());
+            vdss.add(vds.getVdsName());
         }
         model.setItems(vdss);
 
@@ -1141,27 +1141,27 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
         model.setSpmPriorityValue(vds.getVdsSpmPriority());
-        model.setOriginalName(vds.getvds_name());
-        model.getName().setEntity(vds.getvds_name());
-        model.getHost().setEntity(vds.gethost_name());
-        model.getPort().setEntity(vds.getport());
+        model.setOriginalName(vds.getVdsName());
+        model.getName().setEntity(vds.getVdsName());
+        model.getHost().setEntity(vds.getHostName());
+        model.getPort().setEntity(vds.getPort());
 
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
         model.getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
         model.getConsoleAddress().setEntity(vds.getConsoleAddress());
         model.getConsoleAddress().setIsChangable(consoleAddressEnabled);
 
-        if (vds.getstatus() != VDSStatus.InstallFailed)
+        if (vds.getStatus() != VDSStatus.InstallFailed)
         {
             model.getHost().setIsChangable(false);
         }
 
         // Set primary PM parameters.
         model.getManagementIp().setEntity(vds.getManagmentIp());
-        model.getPmUserName().setEntity(vds.getpm_user());
-        model.getPmPassword().setEntity(vds.getpm_password());
-        model.getPmType().setSelectedItem(vds.getpm_type());
-        model.setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getpm_options()).asMap());
+        model.getPmUserName().setEntity(vds.getPmUser());
+        model.getPmPassword().setEntity(vds.getPmPassword());
+        model.getPmType().setSelectedItem(vds.getPmType());
+        model.setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()).asMap());
 
         // Set secondary PM parameters.
         model.getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
@@ -1196,21 +1196,21 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         if (model.getCluster().getItems() == null)
         {
             VDSGroup tempVar = new VDSGroup();
-            tempVar.setname(vds.getvds_group_name());
-            tempVar.setId(vds.getvds_group_id());
-            tempVar.setcompatibility_version(vds.getvds_group_compatibility_version());
+            tempVar.setname(vds.getVdsGroupName());
+            tempVar.setId(vds.getVdsGroupId());
+            tempVar.setcompatibility_version(vds.getVdsGroupCompatibilityVersion());
             model.getCluster()
                     .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
         }
         clusters = (ArrayList<VDSGroup>) model.getCluster().getItems();
         model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters,
-                new Linq.ClusterPredicate(vds.getvds_group_id())));
+                new Linq.ClusterPredicate(vds.getVdsGroupId())));
         if (model.getCluster().getSelectedItem() == null)
         {
             model.getCluster().setSelectedItem(Linq.FirstOrDefault(clusters));
         }
 
-        if (vds.getstatus() != VDSStatus.Maintenance && vds.getstatus() != VDSStatus.PendingApproval)
+        if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval)
         {
             model.getDataCenter().setIsChangable(false);
             model.getDataCenter()
@@ -1265,7 +1265,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            items.add(vds.getvds_name());
+            items.add(vds.getVdsName());
         }
         model.setItems(items);
 
@@ -1340,7 +1340,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            items.add(vds.getvds_name());
+            items.add(vds.getVdsName());
         }
         model.setItems(items);
 
@@ -1398,7 +1398,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.setTitle(ConstantsManager.getInstance().getConstants().configureLocalStorageTitle());
         model.setHashName("configure_local_storage"); //$NON-NLS-1$
 
-        if (host.getvds_type() == VDSType.oVirtNode) {
+        if (host.getVdsType() == VDSType.oVirtNode) {
             configureLocalStorage2(model);
         } else {
             configureLocalStorage3(model);
@@ -1435,9 +1435,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         boolean hostSupportLocalStorage = false;
         Version version3_0 = new Version(3, 0);
 
-        if (host.getsupported_cluster_levels() != null) {
+        if (host.getSupportedClusterLevels() != null) {
 
-            String[] array = host.getsupported_cluster_levels().split("[,]", -1); //$NON-NLS-1$
+            String[] array = host.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
 
             for (int i = 0; i < array.length; i++) {
                 if (version3_0.compareTo(new Version(array[i])) <= 0) {
@@ -1644,7 +1644,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         boolean approveAvailability =
                 items.size() == 1
                         && (VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
-                                .getstatus() == VDSStatus.InstallFailed && items.get(0).getvds_type() == VDSType.oVirtNode));
+                                .getStatus() == VDSStatus.InstallFailed && items.get(0).getVdsType() == VDSType.oVirtNode));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
         getApproveCommand().setIsAvailable(approveAvailability);
 
@@ -1728,7 +1728,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ArrayList<VDS> items = getSelectedItems() != null ? Linq.<VDS> Cast(getSelectedItems()) : new ArrayList<VDS>();
 
         getConfigureLocalStorageCommand().setIsExecutionAllowed(items.size() == 1
-                && items.get(0).getstatus() == VDSStatus.Maintenance);
+                && items.get(0).getStatus() == VDSStatus.Maintenance);
 
         if (!hasAdminSystemPermission && getConfigureLocalStorageCommand().getIsExecutionAllowed()) {
 

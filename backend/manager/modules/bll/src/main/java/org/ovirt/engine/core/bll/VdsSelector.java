@@ -134,9 +134,9 @@ public class VdsSelector {
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
+                    getDestinationVdsId(), target_vds.getVdsName(), target_vds.getHostName());
             VmHandler.UpdateVmGuestAgentVersion(getVm());
-            if (target_vds.getvds_type() == VDSType.PowerClient
+            if (target_vds.getVdsType() == VDSType.PowerClient
                     && !Config.<Boolean> GetValue(ConfigValues.PowerClientAllowRunningGuestsWithoutTools)
                     && getVm() != null && getVm().getHasAgent()) {
                 log.infoFormat(
@@ -160,7 +160,7 @@ public class VdsSelector {
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getvds_name(), target_vds.gethost_name());
+                    getDestinationVdsId(), target_vds.getVdsName(), target_vds.getHostName());
             returnValue = canFindVdsToRun(messages, isMigrate,
                     new ArrayList<VDS>(Arrays.asList(target_vds)));
         }
@@ -232,14 +232,14 @@ public class VdsSelector {
     }
 
     public static Integer getEffectiveCpuCores(VDS vds) {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getvds_group_id());
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
 
         if (vds.getCpuThreads() != null
                 && vdsGroup != null
                 && Boolean.TRUE.equals(vdsGroup.getCountThreadsAsCores())) {
             return vds.getCpuThreads();
         } else {
-            return vds.getcpu_cores();
+            return vds.getCpuCores();
         }
     }
 
@@ -250,7 +250,7 @@ public class VdsSelector {
 
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
-                    if ((!vds.getvds_group_id().equals(getVm().getVdsGroupId())) || (vds.getstatus() != VDSStatus.Up)) {
+                    if ((!vds.getVdsGroupId().equals(getVm().getVdsGroupId())) || (vds.getStatus() != VDSStatus.Up)) {
                         sb.append("is not in up status or belongs to the VM's cluster");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CLUSTER;
                     }
@@ -346,7 +346,7 @@ public class VdsSelector {
 
     private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
         // buffer the mismatches as we go
-        sb.append(" VDS ").append(vds.getvds_name()).append(" ").append(vds.getId()).append(" ");
+        sb.append(" VDS ").append(vds.getVdsName()).append(" ").append(vds.getId()).append(" ");
 
         for(HostValidator validator : this.hostValidators) {
             VdcBllMessages result = validator.validate(vds, sb, isMigrate);
@@ -386,15 +386,15 @@ public class VdsSelector {
             return true;
         }
 
-        if (vds.getswap_total() == null || vds.getswap_free() == null || vds.getmem_available() == null
-                || vds.getmem_available() <= 0 || vds.getphysical_mem_mb() == null || vds.getphysical_mem_mb() <= 0) {
+        if (vds.getSwapTotal() == null || vds.getSwapFree() == null || vds.getMemAvailable() == null
+                || vds.getMemAvailable() <= 0 || vds.getPhysicalMemMb() == null || vds.getPhysicalMemMb() <= 0) {
             return true;
         }
 
-        long swap_total = vds.getswap_total();
-        long swap_free = vds.getswap_free();
-        long mem_available = vds.getmem_available();
-        long physical_mem_mb = vds.getphysical_mem_mb();
+        long swap_total = vds.getSwapTotal();
+        long swap_free = vds.getSwapFree();
+        long mem_available = vds.getMemAvailable();
+        long physical_mem_mb = vds.getPhysicalMemMb();
 
         return ((swap_total - swap_free - mem_available) * 100 / physical_mem_mb) <= Config
                 .<Integer> GetValue(ConfigValues.BlockMigrationOnSwapUsagePercentage);
@@ -431,7 +431,7 @@ public class VdsSelector {
     */
     private boolean areRequiredNetworksAvailable(VDS vds) {
         final List<VdsNetworkInterface> allInterfacesForVds = getInterfaceDAO().getAllInterfacesForVds(vds.getId());
-        final List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(vds.getvds_group_id());
+        final List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(vds.getVdsGroupId());
         final Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
 
         boolean onlyRequiredNetworks =
@@ -482,7 +482,7 @@ public class VdsSelector {
     }
 
     private Guid getBestVdsToRun(List<VDS> list) {
-        VdsComparer comparer = VdsComparer.CreateComparer(list.get(0).getselection_algorithm());
+        VdsComparer comparer = VdsComparer.CreateComparer(list.get(0).getSelectionAlgorithm());
         VDS bestVDS = list.get(0);
         for (int i = 1; i < list.size(); i++) {
             VDS curVds = list.get(i);

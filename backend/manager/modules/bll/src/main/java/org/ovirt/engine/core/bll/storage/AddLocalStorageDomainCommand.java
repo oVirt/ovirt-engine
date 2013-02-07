@@ -55,7 +55,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
             }
 
             // we limit RHEV-H local storage to its persistence mount - /data/images/rhev/
-            if (retVal && this.getVds().getvds_type() == VDSType.oVirtNode) {
+            if (retVal && this.getVds().getVdsType() == VDSType.oVirtNode) {
 
                 StorageServerConnections conn =
                         DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()

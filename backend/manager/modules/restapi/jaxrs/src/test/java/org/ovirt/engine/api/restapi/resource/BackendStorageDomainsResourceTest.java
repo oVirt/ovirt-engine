@@ -634,7 +634,7 @@ public class BackendStorageDomainsResourceTest
     protected VDS setUpVDS(int index) {
         VDS vds = new VDS();
         vds.setId(GUIDS[index]);
-        vds.setvds_name(NAMES[index]);
+        vds.setVdsName(NAMES[index]);
         return vds;
     }
 

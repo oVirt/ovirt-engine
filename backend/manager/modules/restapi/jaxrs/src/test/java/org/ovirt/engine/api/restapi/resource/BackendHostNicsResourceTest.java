@@ -512,7 +512,7 @@ public class BackendHostNicsResourceTest
     protected void setGetVdsQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             VDS vds = new VDS();
-            vds.setvds_group_id(GUIDS[0]);
+            vds.setVdsGroupId(GUIDS[0]);
             setUpEntityQueryExpectations(VdcQueryType.GetVdsByVdsId,
                     GetVdsByVdsIdParameters.class,
                     new String[] { "VdsId" },

@@ -207,7 +207,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (model != null && model.getSelectedItem() != null) {
 
             // Perform rollback only when the host is in maintenance.
-            if (host.getstatus() != VDSStatus.Maintenance) {
+            if (host.getStatus() != VDSStatus.Maintenance) {
                 abort = true;
             }
         } else {

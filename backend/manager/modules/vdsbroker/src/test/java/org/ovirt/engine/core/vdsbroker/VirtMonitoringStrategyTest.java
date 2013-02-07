@@ -23,45 +23,45 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testVirtCanMoveToMaintenance() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.PreparingForMaintenance);
-        vds.setvm_count(1);
+        vds.setStatus(VDSStatus.PreparingForMaintenance);
+        vds.setVmCount(1);
         assertFalse(virtStrategy.canMoveToMaintenance(vds));
-        vds.setvm_count(0);
+        vds.setVmCount(0);
         assertTrue(virtStrategy.canMoveToMaintenance(vds));
     }
 
     @Test
     public void testVirtIsMonitoringNeeded() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.NonOperational);
-        vds.setvm_count(1);
+        vds.setStatus(VDSStatus.NonOperational);
+        vds.setVmCount(1);
         assertTrue(virtStrategy.isMonitoringNeeded(vds));
-        vds.setvm_count(0);
+        vds.setVmCount(0);
         assertFalse(virtStrategy.isMonitoringNeeded(vds));
-        vds.setstatus(VDSStatus.Up);
+        vds.setStatus(VDSStatus.Up);
         assertTrue(virtStrategy.isMonitoringNeeded(vds));
     }
 
     @Test
     public void testProcessSpecialSoftwareCapabilities() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.Up);
+        vds.setStatus(VDSStatus.Up);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getstatus().equals(VDSStatus.Up));
-        vds.setkvm_enabled(Boolean.TRUE);
+        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        vds.setKvmEnabled(Boolean.TRUE);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getstatus().equals(VDSStatus.Up));
-        vds.setkvm_enabled(Boolean.FALSE);
+        assertTrue(vds.getStatus().equals(VDSStatus.Up));
+        vds.setKvmEnabled(Boolean.FALSE);
         virtStrategy.processSoftwareCapabilities(vds);
-        assertTrue(vds.getstatus().equals(VDSStatus.NonOperational));
+        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
     }
 
     @Test
     public void testNeedToProcessHardwareCapsFalse() {
         VDS oldVds = new VDS();
-        oldVds.setvds_group_id(Guid.NewGuid());
+        oldVds.setVdsGroupId(Guid.NewGuid());
         oldVds.setId(Guid.NewGuid());
-        oldVds.setcpu_flags("flag1");
+        oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
         assertFalse(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
@@ -69,11 +69,11 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testNeedToProcessHardwareCapsTrue() {
         VDS oldVds = new VDS();
-        oldVds.setvds_group_id(Guid.NewGuid());
+        oldVds.setVdsGroupId(Guid.NewGuid());
         oldVds.setId(Guid.NewGuid());
-        oldVds.setcpu_flags("flag1");
+        oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
-        newVds.setcpu_flags("flag2");
+        newVds.setCpuFlags("flag2");
         assertTrue(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
     }
 

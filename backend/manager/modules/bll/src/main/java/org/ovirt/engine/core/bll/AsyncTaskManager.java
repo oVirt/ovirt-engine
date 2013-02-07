@@ -364,10 +364,10 @@ public final class AsyncTaskManager {
             storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolID);
             if (storagePool != null && storagePool.getspm_vds_id() != null) {
                 VDS vds = DbFacade.getInstance().getVdsDao().get(storagePool.getspm_vds_id());
-                if (vds != null && vds.getstatus() == VDSStatus.NonOperational) {
+                if (vds != null && vds.getStatus() == VDSStatus.NonOperational) {
                     log.infoFormat(
                             "Vds {0} is spm and non-operational, calling SetNonOperationalVds",
-                            vds.getvds_name());
+                            vds.getVdsName());
                     SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vds.getId(),
                             NonOperationalReason.GENERAL);
                     tempVar.setSaveToDb(true);

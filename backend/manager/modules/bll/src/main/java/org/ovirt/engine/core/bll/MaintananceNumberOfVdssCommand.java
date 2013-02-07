@@ -58,7 +58,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     private void MoveVdssToGoingToMaintananceMode() {
         List<VDS> spms = new ArrayList<VDS>();
         for (VDS vds : vdssToMaintenance.values()) {
-            if (vds.getspm_status() != VdsSpmStatus.SPM) {
+            if (vds.getSpmStatus() != VdsSpmStatus.SPM) {
                 setVdsStatusToPrepareForMaintaice(vds);
             } else {
                 spms.add(vds);
@@ -71,8 +71,8 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
     }
 
     private void setVdsStatusToPrepareForMaintaice(VDS vds) {
-        if (vds.getstatus() != VDSStatus.PreparingForMaintenance && vds.getstatus() != VDSStatus.NonResponsive
-                && vds.getstatus() != VDSStatus.Down) {
+        if (vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.NonResponsive
+                && vds.getStatus() != VDSStatus.Down) {
             runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance));
         }
@@ -134,7 +134,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
             }
             if (!vdssToMaintenance.containsKey(vdsId)) {
                 vdssToMaintenance.put(vdsId, vds);
-                if (vds.getspm_status() == VdsSpmStatus.SPM) {
+                if (vds.getSpmStatus() == VdsSpmStatus.SPM) {
                     addSharedLockEntry(vds);
                 }
             }
@@ -150,7 +150,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     if (vms.size() > 0) {
                         vdsWithRunningVMs.add(vdsId);
                     }
-                    _vdsGroupIds.add(vds.getvds_group_id());
+                    _vdsGroupIds.add(vds.getVdsGroupId());
                     List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                     for (VM vm : vms) {
                         if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
@@ -159,26 +159,26 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     }
 
                     if (nonMigratableVmDescriptionsToFrontEnd.size() > 0) {
-                        hostsWithNonMigratableVms.add(vds.getvds_name());
+                        hostsWithNonMigratableVms.add(vds.getVdsName());
                         nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
 
                         // The non migratable VM names will be comma separated
                         log.error(String.format("VDS %1$s contains non migratable VMs", vdsId));
                         result = false;
 
-                    } else if (vds.getstatus() == VDSStatus.Maintenance) {
+                    } else if (vds.getStatus() == VDSStatus.Maintenance) {
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
                         result = false;
-                    } else if (vds.getspm_status() == VdsSpmStatus.Contending) {
+                    } else if (vds.getSpmStatus() == VdsSpmStatus.Contending) {
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_CONTENDING);
                         result = false;
-                    } else if (vds.getstatus() == VDSStatus.NonResponsive && vds.getvm_count() > 0) {
+                    } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
                         result = false;
-                        hostNotRespondingList.add(vds.getvds_name());
-                    } else if (vds.getstatus() == VDSStatus.NonResponsive && vds.getspm_status() != VdsSpmStatus.None) {
+                        hostNotRespondingList.add(vds.getVdsName());
+                    } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getSpmStatus() != VdsSpmStatus.None) {
                         result = false;
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
-                    } else if (vds.getspm_status() == VdsSpmStatus.SPM && vds.getstatus() == VDSStatus.Up) {
+                    } else if (vds.getSpmStatus() == VdsSpmStatus.SPM && vds.getStatus() == VDSStatus.Up) {
                         try {
                             @SuppressWarnings("unchecked")
                             HashMap<Guid, AsyncTaskStatus> taskStatuses =
@@ -240,7 +240,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                         List<String> candidateHostsWithRunningVms = new ArrayList<String>();
                         for (VDS vdsInCluster : vdsList) {
                             if (vdsWithRunningVMs.contains(vdsInCluster.getId())) {
-                                candidateHostsWithRunningVms.add(vdsInCluster.getvds_name());
+                                candidateHostsWithRunningVms.add(vdsInCluster.getVdsName());
                             }
                         }
                         // Passed on all vds in cluster - if map is not empty (host found with VMs) -
@@ -298,7 +298,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
         // a VDS to migrate to
         Set<Guid> upVdsIDsInCluster = new HashSet<Guid>();
         for (VDS vds : vdsInCluster) {
-            if (vds.getstatus() == VDSStatus.Up) {
+            if (vds.getStatus() == VDSStatus.Up) {
                 upVdsIDsInCluster.add(vds.getId());
             }
         }

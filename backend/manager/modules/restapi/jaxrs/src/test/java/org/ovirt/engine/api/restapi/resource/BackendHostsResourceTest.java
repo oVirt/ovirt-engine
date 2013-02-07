@@ -306,9 +306,9 @@ public class BackendHostsResourceTest
 
     static VDS setUpEntityExpectations(VDS entity, VdsStatistics statistics, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getvds_name()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.gethost_name()).andReturn(ADDRESSES[index]).anyTimes();
-        expect(entity.getstatus()).andReturn(VDS_STATUS[index]).anyTimes();
+        expect(entity.getVdsName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getHostName()).andReturn(ADDRESSES[index]).anyTimes();
+        expect(entity.getStatus()).andReturn(VDS_STATUS[index]).anyTimes();
         if (statistics != null) {
             setUpStatisticalEntityExpectations(entity, statistics);
         }
@@ -316,7 +316,7 @@ public class BackendHostsResourceTest
     }
 
     static VDS setUpStatisticalEntityExpectations(VDS entity, VdsStatistics statistics) {
-        expect(entity.getphysical_mem_mb()).andReturn(5120).anyTimes();
+        expect(entity.getPhysicalMemMb()).andReturn(5120).anyTimes();
         expect(entity.getStatisticsData()).andReturn(statistics).anyTimes();
         expect(statistics.getusage_mem_percent()).andReturn(20).anyTimes();
         expect(statistics.getswap_free()).andReturn(25L).anyTimes();

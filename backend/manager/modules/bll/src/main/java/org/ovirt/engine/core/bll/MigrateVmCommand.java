@@ -45,7 +45,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     // this property is used for audit log events
     public String getVdsDestination() {
         if (getDestinationVds() != null) {
-            return getDestinationVds().getvds_name();
+            return getDestinationVds().getVdsName();
         } else {
             return null;
         }
@@ -114,9 +114,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private void perform() {
         getVm().setMigratingToVds(_vdsDestinationId);
 
-        String srcVdsHost = getVds().gethost_name();
-        String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().gethost_name(), getDestinationVds()
-                .getport());
+        String srcVdsHost = getVds().getHostName();
+        String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().getHostName(), getDestinationVds()
+                .getPort());
         Boolean tunnelMigration = null;
         if (FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
             // if vm has no override for tunnel migration (its null),
@@ -161,7 +161,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                                 : AuditLogType.VM_MIGRATION_START
                 : _isRerun ?
                         AuditLogType.VM_MIGRATION_TRYING_RERUN
-                        : getVds().getstatus() == VDSStatus.PreparingForMaintenance ?
+                        : getVds().getStatus() == VDSStatus.PreparingForMaintenance ?
                                 AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTANANCE
                                 : AuditLogType.VM_MIGRATION_FAILED;
     }
@@ -207,7 +207,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             } else if (!vm.isQualifyToMigrate()) {
                 retValue = false;
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING.name());
-            } else if (getDestinationVds() != null && getDestinationVds().getstatus() != VDSStatus.Up) {
+            } else if (getDestinationVds() != null && getDestinationVds().getStatus() != VDSStatus.Up) {
                 retValue = false;
                 reasons.add(VdcBllMessages.VAR__HOST_STATUS__UP.name());
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.name());

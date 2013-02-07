@@ -99,22 +99,22 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      * @return Does this host has enough CPU (without exceeding the threshold) to run the VM.
      */
     public static boolean hasCpuToRunVM(VDS vds, VM vm) {
-        if (vds.getusage_cpu_percent() == null || vm.getUsageCpuPercent() == null) {
+        if (vds.getUsageCpuPercent() == null || vm.getUsageCpuPercent() == null) {
             return false;
         }
 
         // The predicted CPU is actually the CPU that the VM will take considering how many cores it has and now many
         // cores the host has. This is why we take both parameters into consideration.
         int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / VdsSelector.getEffectiveCpuCores(vds);
-        boolean result = vds.getusage_cpu_percent() + predictedVmCpu <= vds.gethigh_utilization();
+        boolean result = vds.getUsageCpuPercent() + predictedVmCpu <= vds.getHighUtilization();
         if (log.isDebugEnabled()) {
             log.debugFormat("Host {0} has {1}% CPU load; VM {2} is predicted to have {3}% CPU load; " +
                     "High threshold is {4}%. Host is {5}suitable in terms of CPU.",
-                    vds.getvds_name(),
-                    vds.getusage_cpu_percent(),
+                    vds.getVdsName(),
+                    vds.getUsageCpuPercent(),
                     vm.getVmName(),
                     predictedVmCpu,
-                    vds.gethigh_utilization(),
+                    vds.getHighUtilization(),
                     (result ? "" : "not "));
         }
 
@@ -123,19 +123,19 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     public static boolean hasMemoryToRunVM(VDS curVds, VM vm) {
         boolean retVal = false;
-        if (curVds.getmem_commited() != null && curVds.getphysical_mem_mb() != null && curVds.getreserved_mem() != null) {
+        if (curVds.getMemCommited() != null && curVds.getPhysicalMemMb() != null && curVds.getReservedMem() != null) {
             double vdsCurrentMem =
-                    curVds.getmem_commited() + curVds.getpending_vmem_size() + curVds.getguest_overhead() + curVds
-                            .getreserved_mem() + vm.getMinAllocatedMem();
-            double vdsMemLimit = curVds.getmax_vds_memory_over_commit() * curVds.getphysical_mem_mb() / 100.0;
+                    curVds.getMemCommited() + curVds.getPendingVmemSize() + curVds.getGuestOverhead() + curVds
+                            .getReservedMem() + vm.getMinAllocatedMem();
+            double vdsMemLimit = curVds.getMaxVdsMemoryOverCommit() * curVds.getPhysicalMemMb() / 100.0;
             if (log.isDebugEnabled()) {
                 log.debugFormat("hasMemoryToRunVM: host {0} pending vmem size is : {1} MB",
-                        curVds.getvds_name(),
-                        curVds.getpending_vmem_size());
+                        curVds.getVdsName(),
+                        curVds.getPendingVmemSize());
                 log.debugFormat("Host Mem Conmmitted: {0}, Host Reserved Mem: {1}, Host Guest Overhead {2}, VM Min Allocated Mem {3}",
-                        curVds.getmem_commited(),
-                        curVds.getreserved_mem(),
-                        curVds.getguest_overhead(),
+                        curVds.getMemCommited(),
+                        curVds.getReservedMem(),
+                        curVds.getGuestOverhead(),
                         vm.getMinAllocatedMem());
                 log.debugFormat("{0} <= ???  {1}", vdsCurrentMem, vdsMemLimit);
             }
@@ -146,13 +146,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     public static boolean hasCapacityToRunVM(VDS curVds) {
         boolean hasCapacity = true;
-        if (curVds.getvds_type() == VDSType.PowerClient) {
+        if (curVds.getVdsType() == VDSType.PowerClient) {
             log.infoFormat(
                     "Checking capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
                     curVds.getId(),
-                    curVds.getvds_name(),
-                    curVds.gethost_name(),
-                    curVds.getvm_count(),
+                    curVds.getVdsName(),
+                    curVds.getHostName(),
+                    curVds.getVmCount(),
                     Config.<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs));
             int pending_vm_count = 0;
             if (Config.<Boolean> GetValue(ConfigValues.PowerClientRunVmShouldVerifyPendingVMsAsWell)
@@ -162,13 +162,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
             final int powerClientMaxNumberOfConcurrentVMs = Config
             .<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs);
-            if ((curVds.getvm_count() + pending_vm_count + 1) > powerClientMaxNumberOfConcurrentVMs) {
+            if ((curVds.getVmCount() + pending_vm_count + 1) > powerClientMaxNumberOfConcurrentVMs) {
                 log.infoFormat(
                         "No capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
                         curVds.getId(),
-                        curVds.getvds_name(),
-                        curVds.gethost_name(),
-                        curVds.getvm_count(),
+                        curVds.getVdsName(),
+                        curVds.getHostName(),
+                        curVds.getVmCount(),
                         powerClientMaxNumberOfConcurrentVMs);
                 hasCapacity = false;
             }
@@ -179,11 +179,11 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public static void doCompressionCheck(VDS vds, VmDynamic vm) {
         if (Config.<Boolean> GetValue(ConfigValues.PowerClientSpiceDynamicCompressionManagement)) {
             // compression always enabled on VDS
-            if (vds.getvds_type() != VDSType.PowerClient) {
+            if (vds.getVdsType() != VDSType.PowerClient) {
                 return;
             } else {
                 String compression_enabled = "on";
-                if (StringUtils.equals(vds.gethost_name(), vm.getclient_ip())) {
+                if (StringUtils.equals(vds.getHostName(), vm.getclient_ip())) {
                     compression_enabled = "off";
                 }
                 log.infoFormat(
@@ -390,33 +390,33 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             if (vds == null)
                 return;
             // VCPU
-            if (vds.getpending_vcpus_count() != null && !vds.getpending_vcpus_count().equals(0)) {
-                vds.setpending_vcpus_count(vds.getpending_vcpus_count() - getVm().getNumOfCpus());
+            if (vds.getPendingVcpusCount() != null && !vds.getPendingVcpusCount().equals(0)) {
+                vds.setPendingVcpusCount(vds.getPendingVcpusCount() - getVm().getNumOfCpus());
                 updateDynamic = true;
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vcpu count failed, its already 0 or null",
-                        vds.getvds_name(), getVm().getVmName());
+                        vds.getVdsName(), getVm().getVmName());
             }
             // VMEM
-            if (vds.getpending_vmem_size() > 0) {
+            if (vds.getPendingVmemSize() > 0) {
                 // decrease min memory assigned, because it is already taken in account when VM is up
                 updateDynamic = true;
-                if (vds.getpending_vmem_size() >= getVm().getMinAllocatedMem()) {
-                    vds.setpending_vmem_size(vds.getpending_vmem_size() - getVm().getMinAllocatedMem());
+                if (vds.getPendingVmemSize() >= getVm().getMinAllocatedMem()) {
+                    vds.setPendingVmemSize(vds.getPendingVmemSize() - getVm().getMinAllocatedMem());
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debugFormat("Pending host {0} vmem {1} is smaller than VM min allocated memory {2},Setting pending host vmem to 0.",
-                                vds.getvds_name(),
-                                vds.getpending_vmem_size(),
+                                vds.getVdsName(),
+                                vds.getPendingVmemSize(),
                                 getVm().getMinAllocatedMem());
                     }
-                    vds.setpending_vmem_size(0);
+                    vds.setPendingVmemSize(0);
                 }
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vmem size failed, its already 0 or null",
-                        vds.getvds_name(), getVm().getVmName());
+                        vds.getVdsName(), getVm().getVmName());
             }
             if (updateDynamic) {
                 Backend.getInstance()
@@ -425,9 +425,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                                 new UpdateVdsDynamicDataVDSCommandParameters(vds.getDynamicData()));
                 if (log.isDebugEnabled()) {
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, now {1}. Vm: {2}",
-                            vds.getvds_name(), vds.getpending_vcpus_count(), getVm().getVmName());
+                            vds.getVdsName(), vds.getPendingVcpusCount(), getVm().getVmName());
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, now {1}. Vm: {2}",
-                            vds.getvds_name(), vds.getpending_vmem_size(), getVm().getVmName());
+                            vds.getVdsName(), vds.getPendingVmemSize(), getVm().getVmName());
                 }
             }
             getDecreseCondition(vdsId).signal();

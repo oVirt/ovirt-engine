@@ -234,7 +234,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                 systemTreeModel2.setHostMap(new HashMap<Guid, ArrayList<VDS>>());
                                 for (VDS host : hosts)
                                 {
-                                    Guid key = host.getvds_group_id();
+                                    Guid key = host.getVdsGroupId();
                                     if (!systemTreeModel2.getHostMap().containsKey(key))
                                     {
                                         systemTreeModel2.getHostMap().put(key, new ArrayList<VDS>());
@@ -497,7 +497,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         {
                             SystemTreeItemModel hostItem = new SystemTreeItemModel();
                             hostItem.setType(SystemTreeItemType.Host);
-                            hostItem.setTitle(host.getvds_name());
+                            hostItem.setTitle(host.getVdsName());
                             hostItem.setParent(clusterItem);
                             hostItem.setEntity(host);
                             hostsItem.getChildren().add(hostItem);

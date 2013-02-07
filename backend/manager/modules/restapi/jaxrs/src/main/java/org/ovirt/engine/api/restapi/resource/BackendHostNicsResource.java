@@ -334,7 +334,7 @@ public class BackendHostNicsResource
     @SuppressWarnings("unchecked")
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getClusterNetworks(){
         VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new GetVdsByVdsIdParameters(Guid.createGuidFromString(getHostId())), "Host");
-        return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getvds_group_id()), "Networks");
+        return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getVdsGroupId()), "Networks");
     }
 
     public org.ovirt.engine.core.common.businessentities.network.Network lookupClusterNetwork(Network net) {

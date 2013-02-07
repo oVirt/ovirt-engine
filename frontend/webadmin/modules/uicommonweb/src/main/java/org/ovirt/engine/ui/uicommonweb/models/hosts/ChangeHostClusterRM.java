@@ -35,9 +35,9 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
 
         VDS host = (VDS) model.getSelectedItem();
 
-        if (!enlistmentContext.getClusterId().equals(host.getvds_group_id())) {
+        if (!enlistmentContext.getClusterId().equals(host.getVdsGroupId())) {
 
-            enlistmentContext.setOldClusterId(host.getvds_group_id());
+            enlistmentContext.setOldClusterId(host.getVdsGroupId());
             ChangeVDSClusterParameters parameters =
                     new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId());
             parameters.setCorrelationId(getCorrelationId());

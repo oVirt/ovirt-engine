@@ -973,7 +973,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void EditManagementNetwork()
@@ -1100,7 +1100,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void OnEditManagementNetworkConfirmation(boolean isBond)
@@ -1431,7 +1431,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void PostBond(HostInterfaceListModel hostInterfaceListModel,
@@ -1803,7 +1803,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void OnSave()
@@ -1913,7 +1913,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 hostInterfaceListModel);
                     }
                 };
-                AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+                AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
             }
         }
         else
@@ -2144,7 +2144,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         hostInterfaceListModel);
             }
         };
-        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void Cancel()
@@ -2178,12 +2178,12 @@ public class HostInterfaceListModel extends SearchableListModel
         ArrayList<VdsNetworkInterface> selectedItems = getSelectedItems();
 
         getEditCommand().setIsExecutionAllowed(host != null
-                && host.getstatus() != VDSStatus.NonResponsive && selectedItem != null
+                && host.getStatus() != VDSStatus.NonResponsive && selectedItem != null
                 && selectedItems.size() == 1 && StringHelper.isNullOrEmpty(selectedItem.getBondName())
                 && !selectedItem.getIsManagement());
 
         getBondCommand().setIsExecutionAllowed(host != null
-                && host.getstatus() != VDSStatus.NonResponsive
+                && host.getStatus() != VDSStatus.NonResponsive
                 && selectedItems.size() >= 2
                 && !IsAnyBond(selectedItems)
                 && Linq.FindAllInterfaceNetworkNameNotEmpty(Linq.VdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
@@ -2218,22 +2218,22 @@ public class HostInterfaceListModel extends SearchableListModel
         }
 
         getDetachCommand().setIsExecutionAllowed(host != null
-                && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
+                && host.getStatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && !StringHelper.isNullOrEmpty(selectedItem.getNetworkName())
                 && !selectedItem.getIsManagement());
 
         getSaveNetworkConfigCommand().setIsExecutionAllowed(host != null
-                && (host.getnet_config_dirty() == null ? false : host.getnet_config_dirty()));
+                && (host.getNetConfigDirty() == null ? false : host.getNetConfigDirty()));
 
         getEditManagementNetworkCommand().setIsExecutionAllowed(host != null
-                && host.getstatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
+                && host.getStatus() != VDSStatus.NonResponsive && selectedItems.size() == 1
                 && selectedItem != null && selectedItem.getIsManagement());
 
         // Setup Networks is only available on 3.1 Clusters, all the other commands (except save network configuration)
         // available only on less than 3.1 Clusters
         if (host != null) {
             Version v31 = new Version(3, 1);
-            boolean isLessThan31 = host.getvds_group_compatibility_version().compareTo(v31) < 0;
+            boolean isLessThan31 = host.getVdsGroupCompatibilityVersion().compareTo(v31) < 0;
 
             getSetupNetworksCommand().setIsAvailable(!isLessThan31);
 

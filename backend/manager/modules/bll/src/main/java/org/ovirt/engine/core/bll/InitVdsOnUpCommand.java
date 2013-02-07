@@ -107,7 +107,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
     }
 
     private void processStoragePoolStatus() {
-        if (getVds().getspm_status() != VdsSpmStatus.None) {
+        if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             storage_pool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
             if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
                 pool.setstatus(StoragePoolStatus.Problematic);
@@ -179,7 +179,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         try {
             runVdsCommand(VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
-                            vds.getvds_spm_id(), masterDomainIdFromDb,
+                            vds.getVdsSpmId(), masterDomainIdFromDb,
                             storagePool.getmaster_domain_version())).getSucceeded();
         } catch (VdcBLLException e) {
             if (e.getErrorCode() == VdcBllErrors.StoragePoolWrongMaster
@@ -191,12 +191,12 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
                                                 masterDomainIdFromDb, vds.getId(), true)).getSucceeded();
                 result = new EventResult(returnValue, EventType.RECONSTRUCT);
             } else {
-                log.errorFormat("Could not connect host {0} to pool {1}", vds.getvds_name(), storagePool
+                log.errorFormat("Could not connect host {0} to pool {1}", vds.getVdsName(), storagePool
                         .getname());
                 result.setSuccess(false);
             }
         } catch (RuntimeException exp) {
-            log.errorFormat("Could not connect host {0} to pool {1}", vds.getvds_name(), storagePool
+            log.errorFormat("Could not connect host {0} to pool {1}", vds.getVdsName(), storagePool
                     .getname());
             result.setSuccess(false);
         }
@@ -216,14 +216,14 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
             if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains())) {
                 log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
-                        getVds().getvds_name(),
+                        getVds().getVdsName(),
                         getStoragePool()
                                 .getname());
                 returnValue = false;
             }
         } catch (VdcBLLException e) {
             log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
-                    getVds().getvds_name(),
+                    getVds().getVdsName(),
                     e);
             returnValue = false;
         }
@@ -290,14 +290,14 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             if (upServer != null) {
                 List<GlusterServerInfo> glusterServers = getGlusterPeers(upServer.getId());
                 Map<String, String> customLogValues = new HashMap<String, String>();
-                customLogValues.put("Server", upServer.gethost_name());
+                customLogValues.put("Server", upServer.getHostName());
                 if (glusterServers.size() == 0) {
                     customLogValues.put("Command", "gluster peer status");
                     setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                     return false;
                 } else if (!hostExists(glusterServers, getVds())) {
-                    if (!glusterPeerProbe(upServer.getId(), getVds().gethost_name())) {
-                        customLogValues.put("Command", "gluster peer probe " + getVds().gethost_name());
+                    if (!glusterPeerProbe(upServer.getId(), getVds().getHostName())) {
+                        customLogValues.put("Command", "gluster peer probe " + getVds().getHostName());
                         setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                         return false;
                     }
@@ -309,7 +309,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private boolean hostExists(List<GlusterServerInfo> glusterServers, VDS server) {
         for (GlusterServerInfo glusterServer : glusterServers) {
-            if (glusterServer.getHostnameOrIp().equals(server.gethost_name())) {
+            if (glusterServer.getHostnameOrIp().equals(server.getHostName())) {
                 return true;
             }
             for (VdsNetworkInterface vdsNwInterface : getVdsInterfaces(server.getId())) {
@@ -359,7 +359,7 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
             return returnValue.getSucceeded();
         } catch (Exception e) {
             log.errorFormat("Could not peer probe the gluster server {0}. Error: {1}",
-                    getVds().gethost_name(),
+                    getVds().getHostName(),
                     e.getMessage());
             _glusterPeerProbeSucceeded = false;
             return false;

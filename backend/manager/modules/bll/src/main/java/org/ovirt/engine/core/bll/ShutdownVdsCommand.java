@@ -26,7 +26,7 @@ public class ShutdownVdsCommand<T extends VdsShutdownParameters> extends VdsComm
         if (result == null || (VDSStatus) result.getReturnValue() != VDSStatus.Down) {
             throw new VdcBLLException(VdcBllErrors.VDS_SHUTDOWN_ERROR);
         }
-        getVds().setstatus((VDSStatus) result.getReturnValue());
+        getVds().setStatus((VDSStatus) result.getReturnValue());
         setSucceeded(true);
     }
 
@@ -37,7 +37,7 @@ public class ShutdownVdsCommand<T extends VdsShutdownParameters> extends VdsComm
             addCanDoActionMessage(VdcBllMessages.VDS_SHUTDOWN_VDS_NOT_FOUND);
             returnValue = false;
         }
-        if (getVds().getstatus() == VDSStatus.Down || getVds().getstatus() == VDSStatus.NonResponsive) {
+        if (getVds().getStatus() == VDSStatus.Down || getVds().getStatus() == VDSStatus.NonResponsive) {
             addCanDoActionMessage(VdcBllMessages.VDS_SHUTDOWN_NO_RESPONSE);
             returnValue = false;
         }

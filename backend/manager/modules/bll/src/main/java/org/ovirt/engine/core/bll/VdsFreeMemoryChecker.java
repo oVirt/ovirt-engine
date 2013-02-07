@@ -20,7 +20,7 @@ public class VdsFreeMemoryChecker {
         // first check if this host has enough memory run the VM.
         if (!RunVmCommandBase.hasMemoryToRunVM(vds, vm)) {
 
-            if (vds.getpending_vmem_size() == 0) {
+            if (vds.getPendingVmemSize() == 0) {
                 // there are no pending VMs to run - we hit the hard limit of memory, no special treatment
                 return false;
             }

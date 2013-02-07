@@ -89,16 +89,16 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.infoFormat(
                     "Execute upgrade host {0}, {1}",
                     getVds().getId(),
-                    getVds().getvds_name()
+                    getVds().getVdsName()
                 );
                 upgrade.execute();
                 log.infoFormat(
                     "After upgrade host {0}, {1}: success",
                     getVds().getId(),
-                    getVds().getvds_name()
+                    getVds().getVdsName()
                 );
                 setSucceeded(true);
-                if (getVds().getstatus() == VDSStatus.Reboot) {
+                if (getVds().getStatus() == VDSStatus.Reboot) {
                     RunSleepOnReboot();
                 }
             }
@@ -106,7 +106,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.errorFormat(
                     "Host installation failed for host {0}, {1}.",
                     getVds().getId(),
-                    getVds().getvds_name(),
+                    getVds().getVdsName(),
                     e
                 );
                 setSucceeded(false);
@@ -127,14 +127,14 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.infoFormat(
                     "Before Installation host {0}, {1}",
                     getVds().getId(),
-                    getVds().getvds_name()
+                    getVds().getVdsName()
                 );
 
                 T parameters = getParameters();
                 installer = new VdsDeploy(getVds());
                 installer.setCorrelationId(getCorrelationId());
                 installer.setReboot(parameters.isRebootAfterInstallation());
-                switch (getVds().getvds_type()) {
+                switch (getVds().getVdsType()) {
                 case VDS:
                     installer.setUser("root");
                     installer.setPassword(parameters.getRootPassword());
@@ -145,8 +145,8 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     if (parameters.getOverrideFirewall()) {
                         log.warnFormat(
                             "Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
-                            getVds().getvds_name(),
-                            getVds().getvds_type().name()
+                            getVds().getVdsName(),
+                            getVds().getVdsType().name()
                         );
                     }
                     installer.setUser("root");
@@ -156,18 +156,18 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     throw new IllegalArgumentException(
                         String.format(
                             "Not handled VDS type: %1$s",
-                            getVds().getvds_type()
+                            getVds().getVdsType()
                         )
                     );
                 }
                 installer.execute();
-                if (getVds().getstatus() == VDSStatus.Reboot) {
+                if (getVds().getStatus() == VDSStatus.Reboot) {
                     RunSleepOnReboot();
                 }
                 log.infoFormat(
                     "After Installation host {0}, {1}",
-                    getVds().getvds_name(),
-                    getVds().getvds_type().name()
+                    getVds().getVdsName(),
+                    getVds().getVdsType().name()
                 );
                 setSucceeded(true);
             }
@@ -175,7 +175,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.errorFormat(
                     "Host installation failed for host {0}, {1}.",
                     getVds().getId(),
-                    getVds().getvds_name(),
+                    getVds().getVdsName(),
                     e
                 );
                 setSucceeded(false);
@@ -221,7 +221,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     }
 
     private boolean isOvirtReInstallOrUpgrade() {
-        return getParameters().getIsReinstallOrUpgrade() && getVds().getvds_type() == VDSType.oVirtNode;
+        return getParameters().getIsReinstallOrUpgrade() && getVds().getVdsType() == VDSType.oVirtNode;
     }
 
     protected String getErrorMessage(String msg) {

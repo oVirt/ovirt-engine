@@ -67,21 +67,21 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getvds_name();
+            return object.getSecond().getVdsName();
         }
     };
 
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getvds_group_name();
+            return object.getSecond().getVdsGroupName();
         }
     };
 
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> dcColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getstorage_pool_name();
+            return object.getSecond().getStoragePoolName();
         }
     };
 

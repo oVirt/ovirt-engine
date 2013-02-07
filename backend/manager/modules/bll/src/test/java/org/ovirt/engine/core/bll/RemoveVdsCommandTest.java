@@ -85,9 +85,9 @@ public class RemoveVdsCommandTest {
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
-        vds.setvds_name("gfs1");
-        vds.setvds_group_id(CLUSTER_ID);
-        vds.setstatus(status);
+        vds.setVdsName("gfs1");
+        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setStatus(status);
         return vds;
         }
 
@@ -203,7 +203,7 @@ public class RemoveVdsCommandTest {
      */
     private void mockVdsWithStatus(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setstatus(status);
+        vds.setStatus(status);
         when(vdsDAO.get(command.getParameters().getVdsId())).thenReturn(vds);
     }
 

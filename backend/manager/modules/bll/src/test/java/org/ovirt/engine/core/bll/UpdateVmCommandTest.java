@@ -159,7 +159,7 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
 
         VDS vds = new VDS();
-        vds.setvds_group_id(Guid.NewGuid());
+        vds.setVdsGroupId(Guid.NewGuid());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
         vmStatic.setDedicatedVmForVds(Guid.NewGuid());
@@ -173,7 +173,7 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
 
         VDS vds = new VDS();
-        vds.setvds_group_id(group.getId());
+        vds.setVdsGroupId(group.getId());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
         vmStatic.setDedicatedVmForVds(Guid.NewGuid());

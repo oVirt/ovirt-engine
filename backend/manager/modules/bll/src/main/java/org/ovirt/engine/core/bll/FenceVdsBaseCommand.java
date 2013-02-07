@@ -119,7 +119,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         ?
                         0
                         :
-                        DbFacade.getInstance().getAuditLogDao().getTimeToWaitForNextPmOp(getVds().getvds_name(), event);
+                        DbFacade.getInstance().getAuditLogDao().getTimeToWaitForNextPmOp(getVds().getVdsName(), event);
                 if (secondsLeftToNextPmOp <= 0) {
                     // try to get vds status
                     executor = createExecutorForProxyCheck();
@@ -155,7 +155,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     @Override
     protected void executeCommand() {
-        VDSStatus lastStatus = getVds().getstatus();
+        VDSStatus lastStatus = getVds().getStatus();
         VDSReturnValue vdsReturnValue = null;
         try {
             // Set status immediately to prevent a race (BZ 636950/656224)
@@ -193,7 +193,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                if (waitForStatus(getVds().getvds_name(), getParameters().getAction(), FenceAgentOrder.Primary)) {
+                if (waitForStatus(getVds().getVdsName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
                     handleWaitFailure(lastStatus);
@@ -216,14 +216,14 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                if (waitForStatus(getVds().getvds_name(), getParameters().getAction(), FenceAgentOrder.Primary)) {
+                if (waitForStatus(getVds().getVdsName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
                     vdsReturnValue = executor.Fence(FenceAgentOrder.Secondary);
                     setFenceSucceeded(vdsReturnValue.getSucceeded());
                     if (getFenceSucceeded()) {
                         executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                        if (waitForStatus(getVds().getvds_name(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
+                        if (waitForStatus(getVds().getVdsName(), getParameters().getAction(),FenceAgentOrder.Secondary)) {
                             handleSpecificCommandActions();
                         }
                         else {
@@ -345,7 +345,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         fenceInvocationResult.setValue(fenceExecutor.Fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
             this.executor = new FenceExecutor(getVds(), FenceActionType.Status);
-            fenceInvocationResult.setSucceeded(waitForStatus(getVds().getvds_name(), getParameters().getAction(), order));
+            fenceInvocationResult.setSucceeded(waitForStatus(getVds().getVdsName(), getParameters().getAction(), order));
         }
         return fenceInvocationResult;
     }
@@ -361,7 +361,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
                 executor = new FenceExecutor(getVds(), FenceActionType.Status);
-                if (waitForStatus(getVds().getvds_name(), FenceActionType.Start, FenceAgentOrder.Primary)) {
+                if (waitForStatus(getVds().getVdsName(), FenceActionType.Start, FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
                     setFenceSucceeded(false);
@@ -527,7 +527,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void setStatus(VDSStatus status) {
-        if (getVds().getstatus() != status) {
+        if (getVds().getStatus() != status) {
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.SetVdsStatus,

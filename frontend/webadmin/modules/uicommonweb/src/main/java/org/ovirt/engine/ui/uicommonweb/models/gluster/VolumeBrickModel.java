@@ -292,7 +292,7 @@ public class VolumeBrickModel extends Model {
 
         GlusterBrickEntity brickEntity = new GlusterBrickEntity();
         brickEntity.setServerId(server.getId());
-        brickEntity.setServerName(server.gethost_name());
+        brickEntity.setServerName(server.getHostName());
         brickEntity.setBrickDirectory((String) brickDirectory.getEntity());
 
         EntityModel entityModel = new EntityModel(brickEntity);

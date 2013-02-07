@@ -33,34 +33,34 @@ public class MultipleServicesMonitoringStrategyTest {
     @Test
     public void testCanMoveVdsToMaintenanceFalse() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.PreparingForMaintenance);
-        vds.setvm_count(1);
+        vds.setStatus(VDSStatus.PreparingForMaintenance);
+        vds.setVmCount(1);
         assertFalse(strategy.canMoveToMaintenance(vds));
     }
 
     @Test
     public void testCanMoveVdsToMaintenanceTrue() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.PreparingForMaintenance);
-        vds.setvm_count(0);
+        vds.setStatus(VDSStatus.PreparingForMaintenance);
+        vds.setVmCount(0);
         assertTrue(strategy.canMoveToMaintenance(vds));
     }
 
     @Test
     public void testIsmonitoringNeededTrue() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.NonOperational);
-        vds.setvm_count(1);
+        vds.setStatus(VDSStatus.NonOperational);
+        vds.setVmCount(1);
         assertTrue(strategy.isMonitoringNeeded(vds));
-        vds.setstatus(VDSStatus.Up);
+        vds.setStatus(VDSStatus.Up);
         assertTrue(strategy.isMonitoringNeeded(vds));
     }
 
     @Test
     public void testIsmonitoringNeededGlusterTrue() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.NonOperational);
-        vds.setvm_count(0);
+        vds.setStatus(VDSStatus.NonOperational);
+        vds.setVmCount(0);
         assertTrue(strategy.isMonitoringNeeded(vds));
     }
 

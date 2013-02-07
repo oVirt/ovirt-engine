@@ -127,7 +127,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         HostListModel model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
-        if (context.host.getstatus() != VDSStatus.Up) {
+        if (context.host.getStatus() != VDSStatus.Up) {
             prepare3();
         } else {
 

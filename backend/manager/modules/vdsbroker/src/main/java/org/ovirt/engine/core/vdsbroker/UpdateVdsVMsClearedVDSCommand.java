@@ -11,10 +11,10 @@ public class UpdateVdsVMsClearedVDSCommand<P extends UpdateVdsVMsClearedVDSComma
     @Override
     protected void ExecuteVdsIdCommand() {
         if (_vdsManager != null) {
-            getVds().setvm_count(0);
-            getVds().setvms_cores_count(0);
-            getVds().setvm_active(0);
-            getVds().setvm_migrating(0);
+            getVds().setVmCount(0);
+            getVds().setVmsCoresCount(0);
+            getVds().setVmActive(0);
+            getVds().setVmMigrating(0);
             _vdsManager.UpdateDynamicData(getVds().getDynamicData());
         } else {
             getVDSReturnValue().setSucceeded(false);

@@ -166,7 +166,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, clusterId);
         } else {
             brick.setServerId(server.getId());
-            brick.setServerName(server.gethost_name());
+            brick.setServerName(server.getHostName());
         }
         return brick;
     }
@@ -195,7 +195,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         if(ifaces.size() == 1) {
             for(VdsNetworkInterface iface : ifaces) {
                 VDS server = getVdsDao().get(iface.getVdsId());
-                if(server.getvds_group_id().equals(clusterId)) {
+                if(server.getVdsGroupId().equals(clusterId)) {
                     return server;
                 }
             }
@@ -213,7 +213,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
     private VDS getServerOfCluster(Guid clusterId, List<VDS> servers) {
         for(VDS server : servers) {
-            if(server.getvds_group_id().equals(clusterId)) {
+            if(server.getVdsGroupId().equals(clusterId)) {
                 return server;
             }
         }

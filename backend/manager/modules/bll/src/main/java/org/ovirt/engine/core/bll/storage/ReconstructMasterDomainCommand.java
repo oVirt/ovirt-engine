@@ -109,7 +109,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             commandSucceeded = runVdsCommand(
                     VDSCommandType.DisconnectStoragePool,
                     new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),
-                            getStoragePool().getId(), getVds().getvds_spm_id())
+                            getStoragePool().getId(), getVds().getVdsSpmId())
                     ).getSucceeded();
         }
 
@@ -126,7 +126,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         setActionReturnValue(true);
         return runVdsCommand(VDSCommandType.ReconstructMaster,
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
-                        getVds().getvds_spm_id(), getStoragePool().getId(),
+                        getVds().getVdsSpmId(), getStoragePool().getId(),
                         getStoragePool().getname(), _newMasterStorageDomainId, domains,
                         getStoragePool().getmaster_domain_version())).getSucceeded();
 
@@ -180,7 +180,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                             .RunVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
 
                 // if spm host is up switch to use it in the following logic
-                if (spm.getstatus() == VDSStatus.Up) {
+                if (spm.getStatus() == VDSStatus.Up) {
                     setVdsId(spm.getId());
                     setVds(spm);
                 }
@@ -232,7 +232,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         VDSReturnValue returnVal = runVdsCommand(
                                                 VDSCommandType.ConnectStoragePool,
                                                 new ConnectStoragePoolVDSCommandParameters(vds.getId(),
-                                                        getStoragePool().getId(), vds.getvds_spm_id(),
+                                                        getStoragePool().getId(), vds.getVdsSpmId(),
                                                         _newMasterStorageDomainId, getStoragePool()
                                                                 .getmaster_domain_version()));
                                         if (!returnVal.getSucceeded()) {

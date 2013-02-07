@@ -130,10 +130,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         VDS vds = getVdsDAO().get(vdsId);
 
         if (vds != null) {
-            return ((vds.getstatus() == VDSStatus.NonResponsive) || (vds.getstatus() == VDSStatus.Maintenance)
-                    || (vds.getstatus() == VDSStatus.Down) || (vds.getstatus() == VDSStatus.Unassigned)
-                    || (vds.getstatus() == VDSStatus.InstallFailed) || (vds.getstatus() == VDSStatus.PendingApproval) || (vds
-                    .getstatus() == VDSStatus.NonOperational));
+            return ((vds.getStatus() == VDSStatus.NonResponsive) || (vds.getStatus() == VDSStatus.Maintenance)
+                    || (vds.getStatus() == VDSStatus.Down) || (vds.getStatus() == VDSStatus.Unassigned)
+                    || (vds.getStatus() == VDSStatus.InstallFailed) || (vds.getStatus() == VDSStatus.PendingApproval) || (vds
+                    .getStatus() == VDSStatus.NonOperational));
         }
         return false;
     }
@@ -216,7 +216,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                     runVdsCommand(
                             VDSCommandType.RemoveGlusterServer,
                             new RemoveGlusterServerVDSParameters(upServer.getId(),
-                                    getVds().gethost_name(),
+                                    getVds().getHostName(),
                                     getParameters().isForceAction()));
             setSucceeded(returnValue.getSucceeded());
             if (!getSucceeded()) {

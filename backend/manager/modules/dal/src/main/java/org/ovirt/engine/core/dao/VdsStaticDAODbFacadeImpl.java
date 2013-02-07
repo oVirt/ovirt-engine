@@ -76,22 +76,22 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
 
     private MapSqlParameterSource getInsertOrUpdateParams(final VdsStatic vds) {
         return getCustomMapSqlParameterSource()
-                .addValue("host_name", vds.gethost_name())
+                .addValue("host_name", vds.getHostName())
                 .addValue("ip", vds.getManagmentIp())
                 .addValue("vds_unique_id", vds.getUniqueID())
-                .addValue("port", vds.getport())
-                .addValue("vds_group_id", vds.getvds_group_id())
+                .addValue("port", vds.getPort())
+                .addValue("vds_group_id", vds.getVdsGroupId())
                 .addValue("vds_id", vds.getId())
-                .addValue("vds_name", vds.getvds_name())
-                .addValue("server_SSL_enabled", vds.getserver_SSL_enabled())
-                .addValue("vds_type", vds.getvds_type())
-                .addValue("vds_strength", vds.getvds_strength())
-                .addValue("pm_type", vds.getpm_type())
-                .addValue("pm_user", vds.getpm_user())
-                .addValue("pm_password", DbFacadeUtils.encryptPassword(vds.getpm_password()))
-                .addValue("pm_port", vds.getpm_port())
-                .addValue("pm_options", vds.getpm_options())
-                .addValue("pm_enabled", vds.getpm_enabled())
+                .addValue("vds_name", vds.getVdsName())
+                .addValue("server_SSL_enabled", vds.isServerSslEnabled())
+                .addValue("vds_type", vds.getVdsType())
+                .addValue("vds_strength", vds.getVdsStrength())
+                .addValue("pm_type", vds.getPmType())
+                .addValue("pm_user", vds.getPmUser())
+                .addValue("pm_password", DbFacadeUtils.encryptPassword(vds.getPmPassword()))
+                .addValue("pm_port", vds.getPmPort())
+                .addValue("pm_options", vds.getPmOptions())
+                .addValue("pm_enabled", vds.isPmEnabled())
                 .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
                 .addValue("pm_secondary_ip", vds.getPmSecondaryIp())
                 .addValue("pm_secondary_type", vds.getPmSecondaryType())
@@ -124,25 +124,25 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
         public VdsStatic mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             VdsStatic entity = new VdsStatic();
-            entity.sethost_name(rs.getString("host_name"));
+            entity.setHostName(rs.getString("host_name"));
             entity.setManagmentIp(rs.getString("ip"));
             entity.setUniqueID(rs.getString("vds_unique_id"));
-            entity.setport(rs.getInt("port"));
-            entity.setvds_group_id(Guid.createGuidFromString(rs
+            entity.setPort(rs.getInt("port"));
+            entity.setVdsGroupId(Guid.createGuidFromString(rs
                     .getString("vds_group_id")));
             entity.setId(Guid.createGuidFromString(rs
                     .getString("vds_id")));
-            entity.setvds_name(rs.getString("vds_name"));
-            entity.setserver_SSL_enabled(rs
+            entity.setVdsName(rs.getString("vds_name"));
+            entity.setServerSslEnabled(rs
                     .getBoolean("server_SSL_enabled"));
-            entity.setvds_type(VDSType.forValue(rs.getInt("vds_type")));
-            entity.setvds_strength(rs.getInt("vds_strength"));
-            entity.setpm_type(rs.getString("pm_type"));
-            entity.setpm_user(rs.getString("pm_user"));
-            entity.setpm_password(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
-            entity.setpm_port((Integer) rs.getObject("pm_port"));
-            entity.setpm_options(rs.getString("pm_options"));
-            entity.setpm_enabled(rs.getBoolean("pm_enabled"));
+            entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
+            entity.setVdsStrength(rs.getInt("vds_strength"));
+            entity.setPmType(rs.getString("pm_type"));
+            entity.setPmUser(rs.getString("pm_user"));
+            entity.setPmPassword(DbFacadeUtils.decryptPassword(rs.getString("pm_password")));
+            entity.setPmPort((Integer) rs.getObject("pm_port"));
+            entity.setPmOptions(rs.getString("pm_options"));
+            entity.setPmEnabled(rs.getBoolean("pm_enabled"));
             entity.setPmProxyPreferences(rs.getString("pm_proxy_preferences"));
             entity.setPmSecondaryIp((rs.getString("pm_secondary_ip")));
             entity.setPmSecondaryType(rs.getString("pm_secondary_type"));

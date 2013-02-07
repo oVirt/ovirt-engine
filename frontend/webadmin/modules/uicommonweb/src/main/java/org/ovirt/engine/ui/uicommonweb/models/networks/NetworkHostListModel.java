@@ -102,13 +102,13 @@ public class NetworkHostListModel extends SearchableListModel
                     public int compare(PairQueryable<VdsNetworkInterface, VDS> arg0,
                             PairQueryable<VdsNetworkInterface, VDS> arg1) {
                         int compareValue =
-                                arg0.getSecond().getvds_group_name().compareTo(arg1.getSecond().getvds_group_name());
+                                arg0.getSecond().getVdsGroupName().compareTo(arg1.getSecond().getVdsGroupName());
 
                         if (compareValue != 0) {
                             return compareValue;
                         }
 
-                        return arg0.getSecond().getvds_name().compareTo(arg1.getSecond().getvds_name());
+                        return arg0.getSecond().getVdsName().compareTo(arg1.getSecond().getVdsName());
                     }
                 });
         super.setItems(value);
@@ -153,7 +153,7 @@ public class NetworkHostListModel extends SearchableListModel
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
 
         getSetupNetworksCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && selectedItems.get(0).getSecond().getvds_group_compatibility_version().compareTo(Version.v3_1) >= 0);
+                && selectedItems.get(0).getSecond().getVdsGroupCompatibilityVersion().compareTo(Version.v3_1) >= 0);
     }
 
     @Override

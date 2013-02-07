@@ -31,8 +31,8 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         newStaticVds = new VdsStatic();
-        newStaticVds.sethost_name("farkle.redhat.com");
-        newStaticVds.setvds_group_id(existingVds.getvds_group_id());
+        newStaticVds.setHostName("farkle.redhat.com");
+        newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setSSHKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
         newStaticVds.setPmSecondaryOptionsMap(new ValueObjectMap());
     }
@@ -73,10 +73,10 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        VdsStatic result = dao.get(existingVds.getvds_name());
+        VdsStatic result = dao.get(existingVds.getVdsName());
 
         assertNotNull(result);
-        assertEquals(existingVds.getvds_name(), result.getvds_name());
+        assertEquals(existingVds.getVdsName(), result.getVdsName());
     }
 
 
@@ -86,12 +86,12 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForHost() {
         List<VdsStatic> result = dao.getAllForHost(existingVds
-                .gethost_name());
+                .getHostName());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VdsStatic vds : result) {
-            assertEquals(existingVds.gethost_name(), vds.gethost_name());
+            assertEquals(existingVds.getHostName(), vds.getHostName());
         }
     }
 
@@ -112,12 +112,12 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForVdsGroup() {
         List<VdsStatic> result = dao.getAllForVdsGroup(existingVds
-                .getvds_group_id());
+                .getVdsGroupId());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VdsStatic vds : result) {
-            assertEquals(existingVds.getvds_group_id(), vds.getvds_group_id());
+            assertEquals(existingVds.getVdsGroupId(), vds.getVdsGroupId());
         }
     }
 

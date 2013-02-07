@@ -49,7 +49,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
      * @param status new status.
      */
     private void _setVdsStatus(VDSStatus status) {
-        _vds.setstatus(status);
+        _vds.setStatus(status);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -72,7 +72,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
                 _incoming != null &&
                 (line = _incoming.readLine()) != null
             ) {
-                log.infoFormat("update from host {0}: {1}", _vds.gethost_name(), line);
+                log.infoFormat("update from host {0}: {1}", _vds.getHostName(), line);
                 error = _messages.postOldXmlFormat(line) || error;
             }
 
@@ -143,13 +143,13 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
             _setVdsStatus(VDSStatus.Installing);
 
             _dialog.useDefaultKeyPair();
-            _dialog.setHost(_vds.gethost_name());
+            _dialog.setHost(_vds.getHostName());
             _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(
                     "Connected to host %1$s with SSH key fingerprint: %2$s",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     _dialog.getHostFingerprint()
                 )
             );
@@ -226,7 +226,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
         catch (TimeLimitExceededException e){
             log.errorFormat(
                 "Timeout during node {0} upgrade",
-                _vds.gethost_name(),
+                _vds.getHostName(),
                 e
             );
             _messages.post(
@@ -237,7 +237,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
             throw e;
         }
         catch (Exception e) {
-            log.errorFormat("Error during node {0} upgrade", _vds.gethost_name(), e);
+            log.errorFormat("Error during node {0} upgrade", _vds.getHostName(), e);
             _setVdsStatus(VDSStatus.InstallFailed);
 
             if (_failException == null) {
@@ -246,7 +246,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
             else {
                 log.errorFormat(
                     "Error during node {0} upgrade, prefering first exception",
-                    _vds.gethost_name(),
+                    _vds.getHostName(),
                     _failException
                 );
                 throw _failException;

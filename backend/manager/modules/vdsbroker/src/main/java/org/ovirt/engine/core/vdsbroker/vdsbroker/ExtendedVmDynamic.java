@@ -16,7 +16,7 @@ public class ExtendedVmDynamic extends VmDynamic {
         if (host.getConsoleAddress() != null) {
             super.setdisplay_ip(host.getConsoleAddress());
         } else if (value.startsWith("0")) {
-            super.setdisplay_ip(host.gethost_name());
+            super.setdisplay_ip(host.getHostName());
         } else {
             super.setdisplay_ip(value);
         }

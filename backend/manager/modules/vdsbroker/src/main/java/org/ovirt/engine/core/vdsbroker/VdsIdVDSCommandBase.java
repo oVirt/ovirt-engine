@@ -29,7 +29,7 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
     @Override
     protected String getAdditionalInformation() {
         if (getVds() != null) {
-            return String.format("HostName = %1$s", getVds().getvds_name());
+            return String.format("HostName = %1$s", getVds().getVdsName());
         } else {
             return super.getAdditionalInformation();
         }

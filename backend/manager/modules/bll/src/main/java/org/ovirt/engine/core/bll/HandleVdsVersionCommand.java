@@ -36,7 +36,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         if (getVds() == null) {
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             result = false;
-        } else if (getVds().getstatus() == VDSStatus.Connecting || getVds().getstatus() == VDSStatus.NonResponsive) {
+        } else if (getVds().getStatus() == VDSStatus.Connecting || getVds().getStatus() == VDSStatus.NonResponsive) {
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CHECK_VERSION_HOST_NON_RESPONSIVE);
             result = false;
         }
@@ -56,7 +56,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         Version vdsmVersion = new Version(vdsVersion.getMajor(),vdsVersion.getMinor());
         boolean vdsmVersionSupported =
                 Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion);
-        if (!vdsmVersionSupported && !StringUtils.isEmpty(vds.getsupported_engines())) {
+        if (!vdsmVersionSupported && !StringUtils.isEmpty(vds.getSupportedEngines())) {
             try {
                 vdsmVersionSupported = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);
             } catch (RuntimeException e) {
@@ -70,7 +70,7 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
                 || !VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
             Map<String, String> customLogValues = new HashMap<String, String>();
             customLogValues.put("CompatibilityVersion", cluster.getcompatibility_version().toString());
-            customLogValues.put("VdsSupportedVersions", vds.getsupported_cluster_levels());
+            customLogValues.put("VdsSupportedVersions", vds.getSupportedClusterLevels());
             SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                     VERSION_INCOMPATIBLE_WITH_CLUSTER,
                     customLogValues);

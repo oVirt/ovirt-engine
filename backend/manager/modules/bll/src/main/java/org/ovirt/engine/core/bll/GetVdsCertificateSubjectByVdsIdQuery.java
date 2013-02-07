@@ -21,7 +21,7 @@ public class GetVdsCertificateSubjectByVdsIdQuery<P extends GetVdsByVdsIdParamet
             getQueryReturnValue()
                     .setReturnValue(
                             String.format("O=%1$s,CN=%2$s", getOrganizationName()
-                                    .replace("\\", "\\\\").replace(",", "\\,"), vds.gethost_name()
+                                    .replace("\\", "\\\\").replace(",", "\\,"), vds.getHostName()
                                     .replace("\\", "\\\\").replace(",", "\\,")));
         }
     }

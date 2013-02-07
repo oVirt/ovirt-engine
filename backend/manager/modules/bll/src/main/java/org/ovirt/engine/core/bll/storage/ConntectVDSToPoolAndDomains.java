@@ -30,16 +30,16 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
                 ResourceManager.getInstance().runVdsCommand(
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(vds.getId(), getStoragePool().getId(), vds
-                                .getvds_spm_id(), getStorageDomain().getId(), getStoragePool()
+                                .getVdsSpmId(), getStorageDomain().getId(), getStoragePool()
                                 .getmaster_domain_version()));
             } else {
                 log.errorFormat("Failed to connect host {0} to domain {1}",
-                        vds.getvds_name(),
+                        vds.getVdsName(),
                         getStorageDomain().getstorage_name());
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}",
-                    vds.getvds_name(),
+                    vds.getVdsName(),
                     getStoragePool().getname(),
                     e);
         }

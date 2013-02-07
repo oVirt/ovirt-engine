@@ -120,8 +120,8 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
 
         VDS vds = getVdsDAO().get(getParameters().getVdsId());
         // check if network in cluster and vds active
-        if (vds.getstatus() == VDSStatus.Up || vds.getstatus() == VDSStatus.Installing) {
-            List<Network> networks = getNetworkDAO().getAllForCluster(vds.getvds_group_id());
+        if (vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Installing) {
+            List<Network> networks = getNetworkDAO().getAllForCluster(vds.getVdsGroupId());
             if (null != LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
                 public boolean eval(Network n) {
@@ -134,7 +134,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
         }
 
         // check if network in use by vm
-        List<VM> vmList = getVmDAO().getAllForVdsGroup(vds.getvds_group_id());
+        List<VM> vmList = getVmDAO().getAllForVdsGroup(vds.getVdsGroupId());
         for (VM vm : vmList) {
             if (vm.getStatus() != VMStatus.Down) {
                 List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());

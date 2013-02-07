@@ -91,7 +91,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
                             new VdsIdAndVdsVDSCommandParametersBase(getParameters().getVdsId()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getvds_group_id();
+                Guid groupId = getVdsDAO().get(getParameters().getVdsId()).getVdsGroupId();
                 NetworkClusterHelper.setStatus(groupId, getParameters().getNetwork());
                 setSucceeded(true);
             }
@@ -166,7 +166,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         VDS vds = getVdsDAO().get(getParameters().getVdsId());
-        if (vds.getstatus() != VDSStatus.Maintenance) {
+        if (vds.getStatus() != VDSStatus.Maintenance) {
             // check that the old network exists in host
             VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {
                 @Override

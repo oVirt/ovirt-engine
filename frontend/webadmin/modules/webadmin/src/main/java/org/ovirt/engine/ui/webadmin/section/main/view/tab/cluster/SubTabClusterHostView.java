@@ -34,7 +34,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getvds_name();
+                return object.getVdsName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameClusterHost());
@@ -42,7 +42,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.gethost_name();
+                return object.getHostName();
             }
         };
         getTable().addColumn(hostColumn, constants.hostIpClusterHost());
@@ -50,7 +50,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusClusterHost());
@@ -59,7 +59,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
             TextColumnWithTooltip<VDS> loadColumn = new TextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
-                    int numOfActiveVMs = object.getvm_active() != null ? object.getvm_active() : 0;
+                    int numOfActiveVMs = object.getVmActive() != null ? object.getVmActive() : 0;
                     return ConstantsManager.getInstance().getMessages().numberOfVmsForHostsLoad(numOfActiveVMs);
                 }
             };

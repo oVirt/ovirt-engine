@@ -40,7 +40,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
         dao = dbFacade.getVdsGroupDao();
 
-        existingVdsGroup = dao.get(existingVds.getvds_group_id());
+        existingVdsGroup = dao.get(existingVds.getVdsGroupId());
         groupWithNoRunningVms = dbFacade.getVdsGroupDao().get(FixturesTool.VDS_GROUP_NO_RUNNING_VMS);
 
         newGroup = new VDSGroup();

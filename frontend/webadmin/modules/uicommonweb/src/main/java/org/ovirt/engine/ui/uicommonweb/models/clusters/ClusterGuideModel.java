@@ -144,8 +144,8 @@ public class ClusterGuideModel extends GuideModel
         ArrayList<VDS> availableHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
-            if (!getEntity().getId().equals(vds.getvds_group_id())
-                && (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+            if (!getEntity().getId().equals(vds.getVdsGroupId())
+                && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                 && vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
             {
                 availableHosts.add(vds);
@@ -302,7 +302,7 @@ public class ClusterGuideModel extends GuideModel
         for (VDS host : model.getSelectedHosts())
         {
             // Try to change host's cluster as neccessary.
-            if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getId()))
+            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId()))
             {
                 paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
@@ -323,7 +323,7 @@ public class ClusterGuideModel extends GuideModel
                             int i = 0;
                             for (VDS selectedHost : hosts)
                             {
-                                if (selectedHost.getstatus() == VDSStatus.PendingApproval && retVals.get(i) != null
+                                if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
                                     Frontend.RunAction(VdcActionType.ApproveVds,
@@ -436,17 +436,17 @@ public class ClusterGuideModel extends GuideModel
 
         // Save changes.
         VDS host = new VDS();
-        host.setvds_name((String) model.getName().getEntity());
-        host.sethost_name((String) model.getHost().getEntity());
-        host.setport((Integer) model.getPort().getEntity());
-        host.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        host.setVdsName((String) model.getName().getEntity());
+        host.setHostName((String) model.getHost().getEntity());
+        host.setPort((Integer) model.getPort().getEntity());
+        host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save primary PM parameters.
         host.setManagmentIp((String) model.getManagementIp().getEntity());
-        host.setpm_user((String) model.getPmUserName().getEntity());
-        host.setpm_password((String) model.getPmPassword().getEntity());
-        host.setpm_type((String) model.getPmType().getSelectedItem());
+        host.setPmUser((String) model.getPmUserName().getEntity());
+        host.setPmPassword((String) model.getPmPassword().getEntity());
+        host.setPmType((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
 
         // Save secondary PM parameters.

@@ -211,7 +211,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         Iterator<VDS> iterator = hostList.iterator();
                         while (iterator.hasNext())
                         {
-                            if (iterator.next().getstatus() != VDSStatus.Up)
+                            if (iterator.next().getStatus() != VDSStatus.Up)
                             {
                                 iterator.remove();
                             }
@@ -721,7 +721,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
         newBrick.setVolumeId(volumeEntity.getId());
         newBrick.setServerId(server.getId());
-        newBrick.setServerName(server.gethost_name());
+        newBrick.setServerName(server.getHostName());
         newBrick.setBrickDirectory((String) replaceBrickModel.getBrickDirectory().getEntity());
 
         replaceBrickModel.StartProgress(null);

@@ -35,8 +35,8 @@ public class FenceExecutor {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
         if (! vds.getId().equals(Guid.Empty)) {
             VDS dbVds =  DbFacade.getInstance().getVdsDao().get(vds.getId());
-            if (vds.getvds_group_id() == null) {
-                vds.setvds_group_id(dbVds.getvds_group_id());
+            if (vds.getVdsGroupId() == null) {
+                vds.setVdsGroupId(dbVds.getVdsGroupId());
             }
             if (vds.getPmProxyPreferences() == null) {
                 vds.setPmProxyPreferences(dbVds.getPmProxyPreferences());
@@ -85,7 +85,7 @@ public class FenceExecutor {
                 }
                 if (proxyHost != null) {
                     proxyHostId = proxyHost.getId();
-                    proxyHostName = proxyHost.getvds_name();
+                    proxyHostName = proxyHost.getVdsName();
                     proxyFound=true;
                 }
             } else {
@@ -98,7 +98,7 @@ public class FenceExecutor {
                     }
                     if (proxyHost != null) {
                         proxyHostId = proxyHost.getId();
-                        proxyHostName = proxyHost.getvds_name();
+                        proxyHostName = proxyHost.getVdsName();
                         proxyFound=true;
                         break;
                     }
@@ -120,14 +120,14 @@ public class FenceExecutor {
         }
         if (NO_VDS.equals(proxyHostId)) {
             log.errorFormat("Failed to run Power Management command on Host {0}, no running proxy Host was found.",
-                    _vds.getvds_name());
+                    _vds.getVdsName());
         }
         else {
             log.infoFormat("Using Host {0} from {1} as proxy to execute {2} command on Host {3}" ,
-                    proxyHost.getvds_name(),
+                    proxyHost.getVdsName(),
                     proxyOption.name(),
                     _action.name(),
-                    _vds.getvds_name());
+                    _vds.getVdsName());
         }
         return !NO_VDS.equals(proxyHostId);
     }
@@ -142,10 +142,10 @@ public class FenceExecutor {
             // skip following code in case of testing a new host status
             if (_vds.getId() != null && !_vds.getId().equals(Guid.Empty)) {
                 // get the host spm status again from the database in order to test it's current state.
-                _vds.setspm_status((DbFacade.getInstance().getVdsDao().get(_vds.getId()).getspm_status()));
+                _vds.setSpmStatus((DbFacade.getInstance().getVdsDao().get(_vds.getId()).getSpmStatus()));
                 // try to stop SPM if action is Restart or Stop and the vds is SPM
                 if ((_action == FenceActionType.Restart || _action == FenceActionType.Stop)
-                        && (_vds.getspm_status() != VdsSpmStatus.None)) {
+                        && (_vds.getSpmStatus() != VdsSpmStatus.None)) {
                     Backend.getInstance()
                             .getResourceManager()
                             .RunVdsCommand(VDSCommandType.SpmStop,
@@ -186,7 +186,7 @@ public class FenceExecutor {
 
         log.infoFormat("Executing <{0}> Power Management command, Proxy Host:{1}, "
                 + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}", actionType, proxyHostName,
-                managementAgent, _vds.getvds_name(), managementIp, managementUser, managementOptions);
+                managementAgent, _vds.getVdsName(), managementIp, managementUser, managementOptions);
         return Backend
                     .getInstance()
                     .getResourceManager()
@@ -200,7 +200,7 @@ public class FenceExecutor {
     private String getManagementOptions(FenceAgentOrder order) {
         String managementOptions = "";
         if (order == FenceAgentOrder.Primary) {
-            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getpm_type(), _vds.getpm_options());
+            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getPmType(), _vds.getPmOptions());
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementOptions =
@@ -212,7 +212,7 @@ public class FenceExecutor {
     private String getManagementPassword(FenceAgentOrder order) {
         String managementPassword = "";
         if (order == FenceAgentOrder.Primary) {
-            managementPassword = _vds.getpm_password();
+            managementPassword = _vds.getPmPassword();
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementPassword = _vds.getPmSecondaryPassword();
@@ -223,7 +223,7 @@ public class FenceExecutor {
     private String getManagementUser(FenceAgentOrder order) {
         String managementUser = "";
         if (order == FenceAgentOrder.Primary) {
-            managementUser = _vds.getpm_user();
+            managementUser = _vds.getPmUser();
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementUser = _vds.getPmSecondaryuser();
@@ -235,7 +235,7 @@ public class FenceExecutor {
         String agent = "";
      // get real agent and default parameters
         if (order == FenceAgentOrder.Primary) {
-            agent = VdsFenceOptions.getRealAgent(_vds.getpm_type());
+            agent = VdsFenceOptions.getRealAgent(_vds.getPmType());
         }
         else if (order == FenceAgentOrder.Secondary) {
             agent = VdsFenceOptions.getRealAgent(_vds.getPmSecondaryType());
@@ -246,8 +246,8 @@ public class FenceExecutor {
     private String getManagementPort(FenceAgentOrder order) {
         String managementPort = "";
         if (order == FenceAgentOrder.Primary) {
-            if (_vds.getpm_port() != null && _vds.getpm_port() != 0) {
-                managementPort = _vds.getpm_port().toString();
+            if (_vds.getPmPort() != null && _vds.getPmPort() != 0) {
+                managementPort = _vds.getPmPort().toString();
             }
         }
         else if (order == FenceAgentOrder.Secondary) {
@@ -283,22 +283,22 @@ public class FenceExecutor {
                     if (onlyUpHost) {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
-                                    && vds.getvds_group_id().equals(_vds.getvds_group_id())
-                                    && vds.getstatus() == VDSStatus.Up;
+                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId())
+                                    && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getstatus() == VDSStatus.Up
-                                    && vds.getvds_group_id().equals(_vds.getvds_group_id());
+                            return vds.getStatus() == VDSStatus.Up
+                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
                         }
                     }
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId()) && vds.getvds_group_id().equals(_vds.getvds_group_id());
+                                    !vds.getId().equals(_vds.getId()) && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
                         }
                         else {
                             return !isHostNetworkUnreacable(vds) &&
-                                    vds.getvds_group_id().equals(_vds.getvds_group_id());
+                                    vds.getVdsGroupId().equals(_vds.getVdsGroupId());
 
                         }
                     }
@@ -308,10 +308,10 @@ public class FenceExecutor {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
                                     && vds.getStoragePoolId().equals(_vds.getStoragePoolId())
-                                    && vds.getstatus() == VDSStatus.Up;
+                                    && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getstatus() == VDSStatus.Up
+                            return vds.getStatus() == VDSStatus.Up
                                     && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                     }

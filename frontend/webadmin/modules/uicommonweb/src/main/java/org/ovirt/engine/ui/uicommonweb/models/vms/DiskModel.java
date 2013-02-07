@@ -819,7 +819,7 @@ public class DiskModel extends Model
 
     private boolean isHostAvailable(VDS host)
     {
-        boolean isStatusUp = host.getstatus() == VDSStatus.Up;
+        boolean isStatusUp = host.getStatus() == VDSStatus.Up;
 
         return isStatusUp;
     }

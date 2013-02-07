@@ -330,7 +330,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             {
                 getSelectedItem().getUpdateCommand().Execute();
 
-                VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getvds_type();
+                VDSType vdsType = ((VDS) this.getHost().getSelectedItem()).getVdsType();
                 String prefix = vdsType.equals(VDSType.oVirtNode) ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix))
                 {
@@ -566,7 +566,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         {
             for (VDS host : hosts)
             {
-                if (host.getvds_group_compatibility_version().compareTo(new Version("2.2")) >= 0) //$NON-NLS-1$
+                if (host.getVdsGroupCompatibilityVersion().compareTo(new Version("2.2")) >= 0) //$NON-NLS-1$
                 {
                     list.add(host);
                 }
@@ -598,7 +598,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     private VDS getSPM(Iterable<VDS> hosts) {
         for (VDS host : hosts) {
-            if (host.getspm_status() == VdsSpmStatus.SPM) {
+            if (host.getSpmStatus() == VdsSpmStatus.SPM) {
                 return host;
             }
         }

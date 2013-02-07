@@ -58,7 +58,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             return false;
         }
-        if (!ObjectIdentityChecker.CanUpdateField(vds, "vds_group_id", vds.getstatus())) {
+        if (!ObjectIdentityChecker.CanUpdateField(vds, "vds_group_id", vds.getStatus())) {
             addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
@@ -118,7 +118,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             public Void runInTransaction() {
                 VdsStatic staticData = getVds().getStaticData();
                 getCompensationContext().snapshotEntity(staticData);
-                staticData.setvds_group_id(targetClusterId);
+                staticData.setVdsGroupId(targetClusterId);
                 DbFacade.getInstance().getVdsStaticDao().update(staticData);
                 getCompensationContext().stateChanged();
                 return null;
@@ -185,8 +185,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean glusterHostRemove(Guid sourceClusterId) {
         String hostName =
-                (getVds().gethost_name().isEmpty()) ? getVds().getManagmentIp()
-                        : getVds().gethost_name();
+                (getVds().getHostName().isEmpty()) ? getVds().getManagmentIp()
+                        : getVds().getHostName();
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.RemoveGlusterServer,
@@ -204,8 +204,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean glusterHostAdd(Guid targetClusterId) {
         String hostName =
-                (getVds().gethost_name().isEmpty()) ? getVds().getManagmentIp()
-                        : getVds().gethost_name();
+                (getVds().getHostName().isEmpty()) ? getVds().getManagmentIp()
+                        : getVds().getHostName();
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.AddGlusterServer,

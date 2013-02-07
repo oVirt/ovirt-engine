@@ -30,7 +30,7 @@ public class VmManagementCommandBaseTest {
         vmStatic.setDedicatedVmForVds(Guid.Empty);
         final VDS dedicatedVds = new VDS();
         dedicatedVds.setCpuThreads(16);
-        dedicatedVds.setvds_group_compatibility_version(Version.v3_2);
+        dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_2);
 
         doReturn(dedicatedVds).when(test).getVds(Guid.Empty);
 
@@ -113,7 +113,7 @@ public class VmManagementCommandBaseTest {
         }
 
         // making sure cluster < 3.2 does not get validated on pCPU as we cant tell the number for sure
-        dedicatedVds.setvds_group_compatibility_version(Version.v3_1);
+        dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_1);
         Assert.assertTrue(test.isCpuPinningValid("10#1,2,3_11#1-20,^3", vmStatic));
 
     }

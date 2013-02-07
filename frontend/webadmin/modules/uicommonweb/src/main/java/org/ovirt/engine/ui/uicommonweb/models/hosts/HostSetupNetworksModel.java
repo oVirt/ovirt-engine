@@ -732,7 +732,7 @@ public class HostSetupNetworksModel extends EntityModel {
         };
 
         VDS vds = (VDS) getEntity();
-        AsyncDataProvider.GetClusterNetworkList(asyncQuery, vds.getvds_group_id());
+        AsyncDataProvider.GetClusterNetworkList(asyncQuery, vds.getVdsGroupId());
     }
 
     private void initDcNetworkParams() {

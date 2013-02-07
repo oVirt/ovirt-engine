@@ -135,7 +135,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         when(getQueryParameters().getStorageType()).thenReturn(storageType);
 
         vds = new VDS();
-        vds.setvds_group_compatibility_version(Version.v3_1);
+        vds.setVdsGroupCompatibilityVersion(Version.v3_1);
         when(vdsDAOMock.get(getQueryParameters().getVdsId())).thenReturn(vds);
 
         List<storage_domains> domainsList = Collections.emptyList();

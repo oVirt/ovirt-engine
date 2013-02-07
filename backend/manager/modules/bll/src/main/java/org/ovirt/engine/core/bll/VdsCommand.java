@@ -115,7 +115,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             return;
         }
 
-        if (!vdsStatic.getpm_enabled() || StringUtils.isEmpty(vdsStatic.getpm_type())) {
+        if (!vdsStatic.isPmEnabled() || StringUtils.isEmpty(vdsStatic.getPmType())) {
             Alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             // remove any test failure alerts
             AlertDirector.RemoveVdsAlert(vdsStatic.getId(),
@@ -133,7 +133,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            The VDS static.
      */
     protected void TestVdsPowerManagementStatus(VdsStatic vdsStatic) {
-        if (vdsStatic.getpm_enabled()) {
+        if (vdsStatic.isPmEnabled()) {
             Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsFenceStatus,
                     new VdsIdParametersBase(vdsStatic.getId()));
         }
@@ -163,20 +163,20 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected boolean IsPowerManagementLegal(VdsStatic vdsStatic, String clsuterCompatibilityVersion) {
         boolean result = true;
 
-        if (vdsStatic.getpm_enabled()) {
+        if (vdsStatic.isPmEnabled()) {
             // check if pm_type is not null and if it in the supported fence types by version
-            if (StringUtils.isEmpty(vdsStatic.getpm_type())) {
+            if (StringUtils.isEmpty(vdsStatic.getPmType())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 result = false;
             } else if (!Regex.IsMatch(Config.<String> GetValue(ConfigValues.VdsFenceType,
                     clsuterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
-                    vdsStatic.getpm_type()))) {
+                    vdsStatic.getPmType()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
                 result = false;
             }
             // Do not allow to pass empty/null value as the user/password agent credentials
-            else if (StringUtils.isEmpty(vdsStatic.getpm_user()) ||
-                    StringUtils.isEmpty(vdsStatic.getpm_password())) {
+            else if (StringUtils.isEmpty(vdsStatic.getPmUser()) ||
+                    StringUtils.isEmpty(vdsStatic.getPmPassword())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT_CREDENTIALS);
                 result = false;
             }

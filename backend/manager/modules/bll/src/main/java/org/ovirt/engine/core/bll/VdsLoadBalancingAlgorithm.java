@@ -140,7 +140,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 });
         for (Guid vdsId : overUtilizedServersIds) {
             VDS vds = getOverUtilizedServers().get(vdsId);
-            log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getvds_name());
+            log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getVdsName());
             java.util.List<VM> vms = getMigrableVmsRunningOnVds(vdsId);
             if (vms.size() != 0) {
 
@@ -172,7 +172,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 if (destinationVds == null) {
                     log.infoFormat(
                             "VdsLoadBalancer: Server {0} detected as overutilized. Failed to found another server to migrate its vms",
-                            vds.getvds_name());
+                            vds.getVdsName());
                 } else {
                     Guid destinationVdsId = destinationVds.getId();
                     /**
@@ -188,7 +188,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                      */
                     currentList.remove(destinationVdsId);
                     log.infoFormat("VdsLoadBalancer: Desktop {0} migrated from overutilized server {1} to server {2}",
-                            vm.getVmName(), vds.getvds_name(), destinationVds.getvds_name());
+                            vm.getVmName(), vds.getVdsName(), destinationVds.getVdsName());
 
                 }
             } else {
@@ -238,7 +238,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                             destinationVds = Collections.max(candidates, new Comparator<VDS>() {
                                 @Override
                                 public int compare(VDS o1, VDS o2) {
-                                    return o1.getvm_count() - o2.getvm_count();
+                                    return o1.getVmCount() - o2.getVmCount();
                                 }
                             });
                         }
@@ -248,7 +248,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                     if (destinationVds == null) {
                         log.infoFormat(
                                 "Server {0} detected as underutilized. Failed to found another server to migrate its vms",
-                                vds.getvds_name());
+                                vds.getVdsName());
                     } else {
                         Guid destinationVdsId = destinationVds.getId();
                         MigrateVmToServerParameters parameters =
@@ -259,11 +259,11 @@ public abstract class VdsLoadBalancingAlgorithm {
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",
-                                vm.getVmName(), vds.getvds_name(), destinationVds.getvds_name());
+                                vm.getVmName(), vds.getVdsName(), destinationVds.getVdsName());
                         processed.add(destinationVdsId);
                     }
                 } else {
-                    log.infoFormat("VdsLoadBalancer: No vms found to migrate on this server {0}", vds.getvds_name());
+                    log.infoFormat("VdsLoadBalancer: No vms found to migrate on this server {0}", vds.getVdsName());
                 }
                 getUnderUtilizedServers().remove(vdsId); // remove the smallest
                                                          // underutilized vds
@@ -292,7 +292,7 @@ public abstract class VdsLoadBalancingAlgorithm {
         return LinqUtils.filter(list.values(), new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
-                return (p.getvds_group_id().equals(vm.getVdsGroupId())
+                return (p.getVdsGroupId().equals(vm.getVdsGroupId())
                         && RunVmCommandBase.hasMemoryToRunVM(p, vm)
                         && RunVmCommandBase.hasCpuToRunVM(p, vm));
             }

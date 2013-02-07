@@ -22,7 +22,7 @@ public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends 
                 .RunVdsCommand(VDSCommandType.SetSafeNetworkConfig,
                         new VdsIdVDSCommandParametersBase(getParameters().getVdsId()));
 
-        getVds().setnet_config_dirty(false);
+        getVds().setNetConfigDirty(false);
         getDbFacade().getVdsDynamicDao().update(getVds().getDynamicData());
         setSucceeded(retVal.getSucceeded());
     }

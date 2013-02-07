@@ -39,11 +39,11 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                             .RunVdsCommand(
                                     VDSCommandType.ConnectStoragePool,
                                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
-                                            getStoragePool().getId(), getVdss().get(iterationId).getvds_spm_id(),
+                                            getStoragePool().getId(), getVdss().get(iterationId).getVdsSpmId(),
                                             masterDomainIdFromDb, getStoragePool().getmaster_domain_version()));
                 } catch (java.lang.Exception e) {
                     log.errorFormat("Could not connect vds {0} to pool {1} - moving host to non-operational", getVdss()
-                            .get(iterationId).getvds_name(), getStoragePool().getname());
+                            .get(iterationId).getVdsName(), getStoragePool().getname());
                     synchronized (_vdsIdsToSetNonOperational) {
                         _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
                     }
@@ -56,13 +56,13 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                                 new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                         getStoragePool().getId(), masterDomainIdFromDb, getStoragePool()
                                                 .getmaster_domain_version()));
-                log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getvds_name(),
+                log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getVdsName(),
                         getStoragePool().getname());
             }
 
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect/refresh storagePool. Host {0} to storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getvds_name(), getStoragePool().getname(), e);
+                    getVdss().get(iterationId).getVdsName(), getStoragePool().getname(), e);
         }
     }
 

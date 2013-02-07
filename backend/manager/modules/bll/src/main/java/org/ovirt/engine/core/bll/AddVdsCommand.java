@@ -74,7 +74,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     public AddVdsCommand(T parametars) {
         super(parametars);
-        setVdsGroupId(parametars.getvds().getvds_group_id());
+        setVdsGroupId(parametars.getvds().getVdsGroupId());
     }
 
     @Override
@@ -146,7 +146,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
-            values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getvds_name());
+            values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getVdsName());
             Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.INSTALLING_HOST,
@@ -171,8 +171,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             // Also gluster peer probe is not needed when importing an existing gluster cluster
             if (isGlusterSupportEnabled() && getAllVds(getVdsGroupId()).size() > 1) {
                 String hostName =
-                        (getParameters().getvds().gethost_name().isEmpty()) ? getParameters().getvds().getManagmentIp()
-                                : getParameters().getvds().gethost_name();
+                        (getParameters().getvds().getHostName().isEmpty()) ? getParameters().getvds().getManagmentIp()
+                                : getParameters().getvds().getHostName();
                 VDSReturnValue returnValue =
                         runVdsCommand(
                                 VDSCommandType.AddGlusterServer,
@@ -209,11 +209,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return false;
         }
 
-        String vdsName = getParameters().getVdsStaticData().getvds_name();
+        String vdsName = getParameters().getVdsStaticData().getVdsName();
         log.infoFormat("Host {0}, id {1} of type {2} is being re-registered as Host {3}",
-                vds.getvds_name(),
+                vds.getVdsName(),
                 vds.getId(),
-                vds.getvds_type().name(),
+                vds.getVdsType().name(),
                 vdsName);
         VdcReturnValueBase result =
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<VdcReturnValueBase>() {
@@ -229,13 +229,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     result.getCanDoAction() ? result.getFault().getError().name()
                             : StringUtils.join(result.getCanDoActionMessages(), ",");
             log.warnFormat("Failed to remove Host {0}, id {1}, re-registering it as Host {2} fails with errors {3}",
-                    vds.getvds_name(),
+                    vds.getVdsName(),
                     vds.getId(),
                     vdsName,
                     errors);
         } else {
             log.infoFormat("Host {0} is now known as Host {2}",
-                    vds.getvds_name(),
+                    vds.getVdsName(),
                     vdsName);
         }
 
@@ -248,7 +248,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private void AddVdsStaticToDb() {
-        getParameters().getVdsStaticData().setserver_SSL_enabled(
+        getParameters().getVdsStaticData().setServerSslEnabled(
                 Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers));
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
@@ -261,7 +261,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         vdsDynamic.setId(getParameters().getVdsStaticData().getId());
         // TODO: oVirt type - here oVirt behaves like power client?
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds)
-                && getParameters().getVdsStaticData().getvds_type() == VDSType.VDS) {
+                && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
             vdsDynamic.setstatus(VDSStatus.Installing);
         } else if (getParameters().getAddPending()) {
             vdsDynamic.setstatus(VDSStatus.PendingApproval);
@@ -280,7 +280,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        setVdsGroupId(getParameters().getVdsStaticData().getvds_group_id());
+        setVdsGroupId(getParameters().getVdsStaticData().getVdsGroupId());
         getParameters().setVdsForUniqueId(null);
         // Check if this is a valid cluster
         if (getVdsGroup() == null) {
@@ -288,8 +288,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             returnValue = false;
         } else {
             VDS vds = getParameters().getvds();
-            String vdsName = vds.getvds_name();
-            String hostName = vds.gethost_name();
+            String vdsName = vds.getVdsName();
+            String hostName = vds.getHostName();
             int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
             // check that vds name is not null or empty
             if (vdsName == null || vdsName.isEmpty()) {
@@ -348,7 +348,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         boolean returnValue = true;
 
         // execute the connectivity and id uniqueness validation for VDS type hosts
-        if (vds.getvds_type() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+        if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
             SSHClient sshclient = null;
             try {
                 Long timeout =
@@ -357,7 +357,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 sshclient = getSSHClient();
                 sshclient.setHardTimeout(timeout);
                 sshclient.setSoftTimeout(timeout);
-                sshclient.setHost(vds.gethost_name());
+                sshclient.setHost(vds.getHostName());
                 sshclient.setUser(USER_NAME);
                 sshclient.setPassword(getParameters().getRootPassword());
                 sshclient.connect();
@@ -365,7 +365,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } catch (AuthenticationException e) {
                 log.errorFormat(
                         "Failed to authenticate session with host {0}",
-                        vds.getvds_name(),
+                        vds.getVdsName(),
                         e
                         );
 
@@ -374,7 +374,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } catch (Exception e) {
                 log.errorFormat(
                         "Failed to establish session with host {0}",
-                        vds.getvds_name(),
+                        vds.getVdsName(),
                         e
                         );
 
@@ -393,12 +393,12 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private boolean validateSingleHostAttachedToLocalStorage() {
         boolean retrunValue = true;
         storage_pool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
-                getParameters().getVdsStaticData().getvds_group_id());
+                getParameters().getVdsStaticData().getVdsGroupId());
 
         if (storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance()
                     .getVdsStaticDao()
-                    .getAllForVdsGroup(getParameters().getVdsStaticData().getvds_group_id())
+                    .getAllForVdsGroup(getParameters().getVdsStaticData().getVdsGroupId())
                     .isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 retrunValue = false;
@@ -416,7 +416,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Override
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
-        if (getParameters().getVdsStaticData().getpm_enabled()) {
+        if (getParameters().getVdsStaticData().isPmEnabled()) {
             addValidationGroup(PowerManagementCheck.class);
         }
         return super.getValidationGroups();
@@ -428,7 +428,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             jobProperties = super.getJobMessageProperties();
             VDS vds = getParameters().getvds();
 
-            String vdsName = (vds != null && vds.getvds_name() != null) ? vds.getvds_name() : "";
+            String vdsName = (vds != null && vds.getVdsName() != null) ? vds.getVdsName() : "";
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vdsName);
         }
         return jobProperties;

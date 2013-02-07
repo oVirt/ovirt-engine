@@ -104,13 +104,13 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     protected boolean updateBrickServerName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
         VdsStatic server = getVdsStaticDao().get(brick.getServerId());
-        if ((server == null || !server.getvds_group_id().equals(getVdsGroupId()))) {
+        if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
             if (addCanDoActionMessage) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
             }
             return false;
         }
-        brick.setServerName(server.gethost_name());
+        brick.setServerName(server.getHostName());
         return true;
     }
 

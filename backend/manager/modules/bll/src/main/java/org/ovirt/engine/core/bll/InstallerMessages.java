@@ -37,18 +37,18 @@ public class InstallerMessages {
         switch (severity) {
         case INFO:
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS;
-            log.infoFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            log.infoFormat("Installation {0}: {1}", _vds.getHostName(), text);
             break;
         default:
         case WARNING:
             logable.setCustomId(_sequence++);
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
-            log.warnFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            log.warnFormat("Installation {0}: {1}", _vds.getHostName(), text);
             break;
         case ERROR:
             logable.setCustomId(_sequence++);
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
-            log.errorFormat("Installation {0}: {1}", _vds.gethost_name(), text);
+            log.errorFormat("Installation {0}: {1}", _vds.getHostName(), text);
             break;
         }
         AuditLogDirector.log(logable, logType);

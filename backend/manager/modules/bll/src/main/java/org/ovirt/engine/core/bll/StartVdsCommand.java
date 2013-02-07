@@ -20,7 +20,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
         boolean retValue = super.canDoAction();
         VDS vds = getVds();
         if (vds != null) {
-            VDSStatus vdsStatus = vds.getstatus();
+            VDSStatus vdsStatus = vds.getStatus();
             if (vdsStatus == VDSStatus.Connecting) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_INTERMITENT_CONNECTIVITY);
@@ -28,7 +28,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
             } else if (!legalStatusForStartingVds(vdsStatus)) {
                 addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_START);
                 retValue = false;
-                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getId(), vds.getvds_name(), vdsStatus);
+                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getId(), vds.getVdsName(), vdsStatus);
             }
         }
         return retValue;

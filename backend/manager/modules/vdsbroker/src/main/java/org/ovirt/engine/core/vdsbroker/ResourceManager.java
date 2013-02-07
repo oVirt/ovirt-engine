@@ -65,7 +65,7 @@ public class ResourceManager {
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
         for (VDS helper_vds : allVdsList) {
-            if (helper_vds.getstatus() == VDSStatus.NonResponsive) {
+            if (helper_vds.getStatus() == VDSStatus.NonResponsive) {
                 nonResponsiveVdss.add(helper_vds.getId());
             }
         }
@@ -161,8 +161,8 @@ public class ResourceManager {
     public void AddVds(VDS vds, boolean isInternal) {
         VdsManager vdsManager = VdsManager.buildVdsManager(vds);
         if (isInternal) {
-            VDSStatus status = vds.getstatus();
-            switch (vds.getstatus()) {
+            VDSStatus status = vds.getStatus();
+            switch (vds.getStatus()) {
             case Error:
                 status = VDSStatus.Up;
                 break;
@@ -173,13 +173,13 @@ public class ResourceManager {
                 status = VDSStatus.Unassigned;
                 break;
             }
-            if (status != vds.getstatus()) {
+            if (status != vds.getStatus()) {
                 vdsManager.setStatus(status, vds);
                 vdsManager.UpdateStatisticsData(vds.getStatisticsData());
             }
 
             // set pending to 0
-            vds.setpending_vcpus_count(0);
+            vds.setPendingVcpusCount(0);
             vdsManager.UpdateDynamicData(vds.getDynamicData());
         }
         vdsManager.schedulJobs();

@@ -80,15 +80,15 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
         synchronized (vdsManager.getLockObj()) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsManager.getVdsId());
             try {
-                vds.setvm_count(vds.getvm_count() + 1);
-                vds.setpending_vcpus_count(vds.getpending_vcpus_count() + vm.getNumOfCpus());
-                vds.setpending_vmem_size(vds.getpending_vmem_size() + vm.getMinAllocatedMem());
+                vds.setVmCount(vds.getVmCount() + 1);
+                vds.setPendingVcpusCount(vds.getPendingVcpusCount() + vm.getNumOfCpus());
+                vds.setPendingVmemSize(vds.getPendingVmemSize() + vm.getMinAllocatedMem());
                 if (log.isDebugEnabled()) {
                     log.debugFormat(
                             "IncreasePendingVms::MigrateVm Increasing vds {0} pending vcpu count, now {1}, and pending vmem size, now {2}. Vm: {3}",
-                            vds.getvds_name(),
-                            vds.getpending_vcpus_count(),
-                            vds.getpending_vmem_size(),
+                            vds.getVdsName(),
+                            vds.getPendingVcpusCount(),
+                            vds.getPendingVmemSize(),
                             vm.getVmName());
                 }
                 vdsManager.UpdateDynamicData(vds.getDynamicData());
@@ -103,7 +103,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                     log.fatalFormat(
                             "VDS::migrate:: Could not update destination vds commited memory to db. vds {0} : {1}, error: {2}, {3}",
                             vds.getId(),
-                            vds.getvds_name(),
+                            vds.getVdsName(),
                             ex.toString(),
                             ex.getStackTrace()[0]);
                 }

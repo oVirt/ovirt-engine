@@ -22,7 +22,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
         String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
         boolean isForce = getParameters().isForce();
         boolean supportForceCreateVG = Config.<Boolean> GetValue(
-                ConfigValues.SupportForceCreateVG, getVds().getvds_group_compatibility_version().toString());
+                ConfigValues.SupportForceCreateVG, getVds().getVdsGroupCompatibilityVersion().toString());
 
         _result = supportForceCreateVG ?
                 getBroker().createVG(storageDomainId, deviceArray, isForce) :

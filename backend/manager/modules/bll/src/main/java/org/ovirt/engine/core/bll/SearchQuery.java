@@ -162,8 +162,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             @Override
             public List<VDS> filter(List<VDS> data) {
                 for (VDS vds : data) {
-                    vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getcpu_flags(),
-                            vds.getvds_group_compatibility_version()));
+                    vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),
+                            vds.getVdsGroupCompatibilityVersion()));
                 }
                 return data;
             }

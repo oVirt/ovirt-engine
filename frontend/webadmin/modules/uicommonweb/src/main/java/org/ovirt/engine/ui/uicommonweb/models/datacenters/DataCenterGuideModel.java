@@ -275,18 +275,18 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<VDS> upHosts = new ArrayList<VDS>();
         for (VDS vds : allHosts)
         {
-            if (Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id()))
+            if (Linq.IsClusterItemExistInList(clusters, vds.getVdsGroupId()))
             {
                 hosts.add(vds);
             }
 
-            if ((vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+            if ((vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                 && doesHostSupportAnyCluster(clusters, vds))
             {
                 availableHosts.add(vds);
             }
 
-            if (vds.getstatus() == VDSStatus.Up && Linq.IsClusterItemExistInList(clusters, vds.getvds_group_id()))
+            if (vds.getStatus() == VDSStatus.Up && Linq.IsClusterItemExistInList(clusters, vds.getVdsGroupId()))
             {
                 upHosts.add(vds);
             }
@@ -477,7 +477,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             Version version3_0 = new Version(3, 0);
             for (VDS vds : allHosts)
             {
-                String[] hostVersions = vds.getsupported_cluster_levels().split("[,]", -1); //$NON-NLS-1$
+                String[] hostVersions = vds.getSupportedClusterLevels().split("[,]", -1); //$NON-NLS-1$
                 for (String hostVersion : hostVersions)
                 {
                     if (version3_0.compareTo(new Version(hostVersion)) <= 0)
@@ -500,7 +500,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 addHostAction.setIsExecutionAllowed(false);
                 selectHost.getExecuteProhibitionReasons().add(hasHostReason);
                 selectHost.setIsExecutionAllowed(false);
-                if (localStorageHost.getstatus() == VDSStatus.Up)
+                if (localStorageHost.getStatus() == VDSStatus.Up)
                 {
                     UICommand tempVar8 = new UICommand("AddLocalStorage", this); //$NON-NLS-1$
                     tempVar8.setTitle(ConstantsManager.getInstance().getConstants().addLocalStorageTitle());
@@ -1486,7 +1486,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         for (VDS host : model.getSelectedHosts())
         {
             // Try to change host's cluster as neccessary.
-            if (host.getvds_group_id() != null && !host.getvds_group_id().equals(cluster.getId()))
+            if (host.getVdsGroupId() != null && !host.getVdsGroupId().equals(cluster.getId()))
             {
                 paramerterList.add(new ChangeVDSClusterParameters(cluster.getId(), host.getId()));
 
@@ -1510,7 +1510,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             int i = 0;
                             for (VDS selectedHost : hosts)
                             {
-                                if (selectedHost.getstatus() == VDSStatus.PendingApproval && retVals.get(i) != null
+                                if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded())
                                 {
                                     Frontend.RunAction(VdcActionType.ApproveVds,
@@ -1600,17 +1600,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         // Save changes.
         VDS host = new VDS();
-        host.setvds_name((String) model.getName().getEntity());
-        host.sethost_name((String) model.getHost().getEntity());
-        host.setport(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setvds_group_id(((VDSGroup) model.getCluster().getSelectedItem()).getId());
+        host.setVdsName((String) model.getName().getEntity());
+        host.setHostName((String) model.getHost().getEntity());
+        host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
+        host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save primary PM parameters.
         host.setManagmentIp((String) model.getManagementIp().getEntity());
-        host.setpm_user((String) model.getPmUserName().getEntity());
-        host.setpm_password((String) model.getPmPassword().getEntity());
-        host.setpm_type((String) model.getPmType().getSelectedItem());
+        host.setPmUser((String) model.getPmUserName().getEntity());
+        host.setPmPassword((String) model.getPmPassword().getEntity());
+        host.setPmType((String) model.getPmType().getSelectedItem());
         host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
 
         // Save secondary PM parameters.

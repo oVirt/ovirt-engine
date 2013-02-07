@@ -79,7 +79,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                             new VdsIdAndVdsVDSCommandParametersBase(params.getVdsId()));
 
             if (retVal.getSucceeded()) {
-                Guid groupId = getVdsDAO().get(params.getVdsId()).getvds_group_id();
+                Guid groupId = getVdsDAO().get(params.getVdsId()).getVdsGroupId();
                 NetworkClusterHelper.setStatus(groupId, params.getNetwork());
                 setSucceeded(true);
             }
@@ -124,7 +124,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check that the network exists in current cluster
 
         Map<String, Network> networksByName =
-                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVds().getvds_group_id()));
+                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVds().getVdsGroupId()));
 
         if (!networksByName.containsKey(params.getNetwork().getName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);

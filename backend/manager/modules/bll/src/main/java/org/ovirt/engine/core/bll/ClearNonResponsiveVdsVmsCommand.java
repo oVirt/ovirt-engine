@@ -82,7 +82,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             returnValue = false;
 
-        } else if (hasVMs() && getVds().getstatus() != VDSStatus.NonResponsive) {
+        } else if (hasVMs() && getVds().getStatus() != VDSStatus.NonResponsive) {
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_CLEAR_VMS_WRONG_STATUS);
             returnValue = false;
         }

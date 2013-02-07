@@ -129,14 +129,14 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     private boolean isNewerVersion(Version isoClusterVersion) {
         VDS vds = getVdsByVdsId(getParameters().getVdsId());
-        Version vdsClusterVersion = vds.getvds_group_compatibility_version();
+        Version vdsClusterVersion = vds.getVdsGroupCompatibilityVersion();
         return (vdsClusterVersion.getMajor() == isoClusterVersion.getMajor() && vdsClusterVersion.getMinor() <= isoClusterVersion.getMinor());
     }
 
     private RpmVersion getOvirtOsVersion() {
         VDS vds = getVdsByVdsId(getParameters().getVdsId());
         RpmVersion vdsOsVersion = null;
-        if (vds != null && vds.getvds_type() == VDSType.oVirtNode) {
+        if (vds != null && vds.getVdsType() == VDSType.oVirtNode) {
             vdsOsVersion = VdsHandler.getOvirtHostOsVersion(vds);
         }
         return vdsOsVersion;

@@ -42,7 +42,7 @@ public class VersionSupport implements Serializable {
      * @return true if the version is supported, else false
      */
     public static boolean checkClusterVersionSupported(Version clusterCompatibilityVersion, VDS vds) {
-        boolean isVersionSupported = !StringUtils.isEmpty(vds.getsupported_cluster_levels());
+        boolean isVersionSupported = !StringUtils.isEmpty(vds.getSupportedClusterLevels());
         if (isVersionSupported) {
             try {
                 isVersionSupported = vds.getSupportedClusterVersionsSet().contains(clusterCompatibilityVersion);

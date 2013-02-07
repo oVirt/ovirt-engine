@@ -77,7 +77,7 @@ public class PowerClientMigrateOnConnectCheckCommand<T extends PowerClientMigrat
             returnValue = false;
         } else if (powerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient) {
             log.infoFormat("VdcBll.PowerClientMigrateOnConnectCheck - checking PowerClientAutoMigrateFromPowerClientToVdsWhenConnectingFromRegularClient");
-            if (getVds().getvds_type() != VDSType.PowerClient) {
+            if (getVds().getVdsType() != VDSType.PowerClient) {
                 addCanDoActionMessage(VdcBllMessages.AUTO_MIGRATE_ALREADY_RUNNING_ON_VDS);
                 returnValue = false;
             } else if (getPowerClient() != null && getVdsId().equals(getPowerClient().getId())) {

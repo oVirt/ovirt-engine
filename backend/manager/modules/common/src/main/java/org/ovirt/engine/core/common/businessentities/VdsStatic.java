@@ -128,7 +128,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
     public VdsStatic() {
         serverSslEnabled = false;
         vdsStrength = 100;
-        this.setpm_options("");
+        this.setPmOptions("");
         this.setPmSecondaryOptions("");
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
@@ -145,25 +145,25 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.id = vds_id;
         this.name = vds_name;
         this.serverSslEnabled = server_SSL_enabled;
-        this.setvds_type(vds_type);
-        this.setpm_options("");
+        this.setVdsType(vds_type);
+        this.setPmOptions("");
         this.setPmSecondaryOptions("");
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
-    public boolean getserver_SSL_enabled() {
+    public boolean isServerSslEnabled() {
         return serverSslEnabled;
     }
 
-    public void setserver_SSL_enabled(boolean value) {
+    public void setServerSslEnabled(boolean value) {
         serverSslEnabled = value;
     }
 
-    public String gethost_name() {
+    public String getHostName() {
         return this.hostname;
     }
 
-    public void sethost_name(String value) {
+    public void setHostName(String value) {
         this.hostname = value;
     }
 
@@ -183,19 +183,19 @@ public class VdsStatic implements BusinessEntity<Guid> {
         uniqueId = value;
     }
 
-    public int getport() {
+    public int getPort() {
         return this.port;
     }
 
-    public void setport(int value) {
+    public void setPort(int value) {
         this.port = value;
     }
 
-    public Guid getvds_group_id() {
+    public Guid getVdsGroupId() {
         return this.vdsGroupId;
     }
 
-    public void setvds_group_id(Guid value) {
+    public void setVdsGroupId(Guid value) {
         this.vdsGroupId = value;
     }
 
@@ -209,68 +209,68 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    public String getvds_name() {
+    public String getVdsName() {
         return this.name;
     }
 
-    public void setvds_name(String value) {
+    public void setVdsName(String value) {
         this.name = value;
     }
 
-    public VDSType getvds_type() {
+    public VDSType getVdsType() {
         return this.vdsType;
     }
 
-    public void setvds_type(VDSType value) {
+    public void setVdsType(VDSType value) {
         this.vdsType = value;
     }
 
-    public int getvds_strength() {
+    public int getVdsStrength() {
         return this.vdsStrength;
     }
 
-    public void setvds_strength(int value) {
+    public void setVdsStrength(int value) {
         // strength should be between 1 and 100
         this.vdsStrength = value < 1 ? 1 : value > 100 ? 100 : value;
     }
 
-    public String getpm_type() {
+    public String getPmType() {
         return pmType;
     }
 
-    public void setpm_type(String value) {
+    public void setPmType(String value) {
         pmType = value;
     }
 
-    public String getpm_user() {
+    public String getPmUser() {
         return pmUser;
     }
 
-    public void setpm_user(String value) {
+    public void setPmUser(String value) {
         pmUser = value;
     }
 
-    public String getpm_password() {
+    public String getPmPassword() {
         return pmPassword;
     }
 
-    public void setpm_password(String value) {
+    public void setPmPassword(String value) {
         pmPassword = value;
     }
 
-    public Integer getpm_port() {
+    public Integer getPmPort() {
         return pmPort;
     }
 
-    public void setpm_port(Integer value) {
+    public void setPmPort(Integer value) {
         pmPort = value;
     }
 
-    public String getpm_options() {
+    public String getPmOptions() {
         return pmOptions;
     }
 
-    public void setpm_options(String value) {
+    public void setPmOptions(String value) {
         pmOptions = value;
         // set pmOptionsMap value content to match the given string.
         pmOptionsMap = PmOptionsStringToMap(value);
@@ -285,11 +285,11 @@ public class VdsStatic implements BusinessEntity<Guid> {
         pmOptions = PmOptionsMapToString(value);
     }
 
-    public boolean getpm_enabled() {
+    public boolean isPmEnabled() {
         return pmEnabled;
     }
 
-    public void setpm_enabled(boolean value) {
+    public void setPmEnabled(boolean value) {
         pmEnabled = value;
     }
 

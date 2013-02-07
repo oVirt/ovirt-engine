@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -36,11 +37,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_cpuName == null) ? 0 : _cpuName.hashCode());
+        result = prime * result + ((cpuName == null) ? 0 : cpuName.hashCode());
         result = prime * result + ((_spm_status == null) ? 0 : _spm_status.hashCode());
-        result = prime * result + cpu_over_commit_duration_minutesField;
-        result = prime * result + high_utilizationField;
-        result = prime * result + low_utilizationField;
+        result = prime * result + cpuOverCommitDurationMinutes;
+        result = prime * result + highUtilization;
+        result = prime * result + lowUtilization;
         result = prime * result + ((mImagesLastCheck == null) ? 0 : mImagesLastCheck.hashCode());
         result = prime * result + ((mImagesLastDelay == null) ? 0 : mImagesLastDelay.hashCode());
         result = prime * result + ((mInterfaceList == null) ? 0 : mInterfaceList.hashCode());
@@ -48,20 +49,20 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         result = prime * result + ((mVdsDynamic == null) ? 0 : mVdsDynamic.hashCode());
         result = prime * result + ((mVdsStatic == null) ? 0 : mVdsStatic.hashCode());
         result = prime * result + ((mVdsStatistics == null) ? 0 : mVdsStatistics.hashCode());
-        result = prime * result + max_vds_memory_over_commitField;
+        result = prime * result + maxVdsMemoryOverCommit;
         result = prime * result + ((privateDomains == null) ? 0 : privateDomains.hashCode());
-        result = prime * result + ((privatevds_spm_id == null) ? 0 : privatevds_spm_id.hashCode());
-        result = prime * result + ((selection_algorithmField == null) ? 0 : selection_algorithmField.hashCode());
-        result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
-        result = prime * result + ((storage_pool_nameField == null) ? 0 : storage_pool_nameField.hashCode());
+        result = prime * result + ((vdsSpmId == null) ? 0 : vdsSpmId.hashCode());
+        result = prime * result + ((selectionAlgorithm == null) ? 0 : selectionAlgorithm.hashCode());
+        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result =
                 prime
                         * result
-                        + ((vds_group_compatibility_versionField == null) ? 0
-                                : vds_group_compatibility_versionField.hashCode());
-        result = prime * result + ((vds_group_cpu_nameField == null) ? 0 : vds_group_cpu_nameField.hashCode());
-        result = prime * result + ((vds_group_descriptionField == null) ? 0 : vds_group_descriptionField.hashCode());
-        result = prime * result + ((vds_group_nameField == null) ? 0 : vds_group_nameField.hashCode());
+                        + ((vdsGroupCompatibilityVersion == null) ? 0
+                                : vdsGroupCompatibilityVersion.hashCode());
+        result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
+        result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
+        result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
         return result;
     }
 
@@ -74,18 +75,18 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         if (getClass() != obj.getClass())
             return false;
         VDS other = (VDS) obj;
-        if (_cpuName == null) {
-            if (other._cpuName != null)
+        if (cpuName == null) {
+            if (other.cpuName != null)
                 return false;
-        } else if (!_cpuName.equals(other._cpuName))
+        } else if (!cpuName.equals(other.cpuName))
             return false;
         if (_spm_status != other._spm_status)
             return false;
-        if (cpu_over_commit_duration_minutesField != other.cpu_over_commit_duration_minutesField)
+        if (cpuOverCommitDurationMinutes != other.cpuOverCommitDurationMinutes)
             return false;
-        if (high_utilizationField != other.high_utilizationField)
+        if (highUtilization != other.highUtilization)
             return false;
-        if (low_utilizationField != other.low_utilizationField)
+        if (lowUtilization != other.lowUtilization)
             return false;
         if (mImagesLastCheck == null) {
             if (other.mImagesLastCheck != null)
@@ -112,49 +113,49 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                 return false;
         } else if (!mVdsStatic.equals(other.mVdsStatic))
             return false;
-        if (max_vds_memory_over_commitField != other.max_vds_memory_over_commitField)
+        if (maxVdsMemoryOverCommit != other.maxVdsMemoryOverCommit)
             return false;
         if (privateDomains == null) {
             if (other.privateDomains != null)
                 return false;
         } else if (!privateDomains.equals(other.privateDomains))
             return false;
-        if (privatevds_spm_id == null) {
-            if (other.privatevds_spm_id != null)
+        if (vdsSpmId == null) {
+            if (other.vdsSpmId != null)
                 return false;
-        } else if (!privatevds_spm_id.equals(other.privatevds_spm_id))
+        } else if (!vdsSpmId.equals(other.vdsSpmId))
             return false;
-        if (selection_algorithmField != other.selection_algorithmField)
+        if (selectionAlgorithm != other.selectionAlgorithm)
             return false;
-        if (storage_pool_idField == null) {
-            if (other.storage_pool_idField != null)
+        if (storagePoolId == null) {
+            if (other.storagePoolId != null)
                 return false;
-        } else if (!storage_pool_idField.equals(other.storage_pool_idField))
+        } else if (!storagePoolId.equals(other.storagePoolId))
             return false;
-        if (storage_pool_nameField == null) {
-            if (other.storage_pool_nameField != null)
+        if (storagePoolName == null) {
+            if (other.storagePoolName != null)
                 return false;
-        } else if (!storage_pool_nameField.equals(other.storage_pool_nameField))
+        } else if (!storagePoolName.equals(other.storagePoolName))
             return false;
-        if (vds_group_compatibility_versionField == null) {
-            if (other.vds_group_compatibility_versionField != null)
+        if (vdsGroupCompatibilityVersion == null) {
+            if (other.vdsGroupCompatibilityVersion != null)
                 return false;
-        } else if (!vds_group_compatibility_versionField.equals(other.vds_group_compatibility_versionField))
+        } else if (!vdsGroupCompatibilityVersion.equals(other.vdsGroupCompatibilityVersion))
             return false;
-        if (vds_group_cpu_nameField == null) {
-            if (other.vds_group_cpu_nameField != null)
+        if (vdsGroupCpuName == null) {
+            if (other.vdsGroupCpuName != null)
                 return false;
-        } else if (!vds_group_cpu_nameField.equals(other.vds_group_cpu_nameField))
+        } else if (!vdsGroupCpuName.equals(other.vdsGroupCpuName))
             return false;
-        if (vds_group_descriptionField == null) {
-            if (other.vds_group_descriptionField != null)
+        if (vdsGroupDescription == null) {
+            if (other.vdsGroupDescription != null)
                 return false;
-        } else if (!vds_group_descriptionField.equals(other.vds_group_descriptionField))
+        } else if (!vdsGroupDescription.equals(other.vdsGroupDescription))
             return false;
-        if (vds_group_nameField == null) {
-            if (other.vds_group_nameField != null)
+        if (vdsGroupName == null) {
+            if (other.vdsGroupName != null)
                 return false;
-        } else if (!vds_group_nameField.equals(other.vds_group_nameField))
+        } else if (!vdsGroupName.equals(other.vdsGroupName))
             return false;
         return true;
     }
@@ -179,57 +180,57 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatistics = new VdsStatistics();
         mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
         mNetworkList = new java.util.ArrayList<Network>();
-        this.setvds_group_id(vds_group_id);
-        this.vds_group_nameField = vds_group_name;
-        this.vds_group_descriptionField = vds_group_description;
+        this.setVdsGroupId(vds_group_id);
+        this.vdsGroupName = vds_group_name;
+        this.vdsGroupDescription = vds_group_description;
         this.setId(vds_id);
-        this.setvds_name(vds_name);
+        this.setVdsName(vds_name);
         this.setManagmentIp(ip);
-        this.sethost_name(host_name);
-        this.setport(port);
-        this.setstatus(VDSStatus.forValue(status));
+        this.setHostName(host_name);
+        this.setPort(port);
+        this.setStatus(VDSStatus.forValue(status));
         this.setHardwareManufacturer(hwManufacturer);
         this.setHardwareProductName(hwProductName);
         this.setHardwareVersion(hwVersion);
         this.setHardwareSerialNumber(hwSerialNumber);
         this.setHardwareUUID(hwUUID);
         this.setHardwareFamily(hwFamily);
-        this.setcpu_cores(cpu_cores);
+        this.setCpuCores(cpu_cores);
         this.setCpuThreads(cpuThreads);
-        this.setcpu_model(cpu_model);
-        this.setcpu_speed_mh(cpu_speed_mh);
-        this.setif_total_speed(if_total_speed);
-        this.setkvm_enabled(kvm_enabled);
-        this.setphysical_mem_mb(physical_mem_mb);
-        this.setcpu_idle(cpu_idle);
-        this.setcpu_load(cpu_load);
-        this.setcpu_sys(cpu_sys);
-        this.setcpu_user(cpu_user);
-        this.setmem_commited(mem_commited);
-        this.setvm_active(vm_active);
-        this.setvm_count(vm_count);
-        this.setvm_migrating(vm_migrating);
-        this.setusage_mem_percent(usage_mem_percent);
-        this.setusage_cpu_percent(usage_cpu_percent);
-        this.setusage_network_percent(usage_network_percent);
-        this.setreserved_mem(reserved_mem);
-        this.setguest_overhead(guest_overhead);
-        this.setprevious_status(previous_status);
-        this.setmem_available(mem_available);
-        this.setmem_shared(mem_shared);
-        this.setsoftware_version(software_version);
-        this.setversion_name(version_name);
-        this.setserver_SSL_enabled(server_SSL_enabled);
-        this.vds_group_cpu_nameField = vds_group_cpu_name;
-        this.setcpu_flags(getcpu_flags());
-        this.setnet_config_dirty(net_config_dirty);
+        this.setCpuModel(cpu_model);
+        this.setCpuSpeedMh(cpu_speed_mh);
+        this.setIfTotalSpeed(if_total_speed);
+        this.setKvmEnabled(kvm_enabled);
+        this.setPhysicalMemMb(physical_mem_mb);
+        this.setCpuIdle(cpu_idle);
+        this.setCpuLoad(cpu_load);
+        this.setCpuSys(cpu_sys);
+        this.setCpuUser(cpu_user);
+        this.setMemCommited(mem_commited);
+        this.setVmActive(vm_active);
+        this.setVmCount(vm_count);
+        this.setVmMigrating(vm_migrating);
+        this.setUsageMemPercent(usage_mem_percent);
+        this.setUsageCpuPercent(usage_cpu_percent);
+        this.setUsageNetworkPercent(usage_network_percent);
+        this.setReservedMem(reserved_mem);
+        this.setGuestOverhead(guest_overhead);
+        this.setPreviousStatus(previous_status);
+        this.setMemAvailable(mem_available);
+        this.setMemShared(mem_shared);
+        this.setSoftwareVersion(software_version);
+        this.setVersionName(version_name);
+        this.setServerSslEnabled(server_SSL_enabled);
+        this.vdsGroupCpuName = vds_group_cpu_name;
+        this.setCpuFlags(getCpuFlags());
+        this.setNetConfigDirty(net_config_dirty);
         // Power Management
         this.setpm_enabled(pm_enabled);
-        this.setpm_password(pm_password);
-        this.setpm_port(pm_port);
-        this.setpm_options(pm_options);
-        this.setpm_type(pm_type);
-        this.setpm_user(pm_user);
+        this.setPmPassword(pm_password);
+        this.setPmPort(pm_port);
+        this.setPmOptions(pm_options);
+        this.setPmType(pm_type);
+        this.setPmUser(pm_user);
         this.setPmSecondaryIp(pmSecondaryIp);
         this.setPmSecondaryType(pmSecondaryType);
         this.setPmSecondaryPort(pmSecondaryPort);
@@ -247,56 +248,56 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public VDS clone() {
         VDS vds =
-                new VDS(Guid.createGuidFromString(getvds_group_id().toString()),
-                        getvds_group_name(),
-                        getvds_group_description(),
+                new VDS(Guid.createGuidFromString(getVdsGroupId().toString()),
+                        getVdsGroupName(),
+                        getVdsGroupDescription(),
                         Guid.createGuidFromString(getId().toString()),
-                        getvds_name(),
+                        getVdsName(),
                         getManagmentIp(),
-                        gethost_name(),
-                        getport(),
-                        getstatus().getValue(),
-                        getcpu_cores(),
+                        getHostName(),
+                        getPort(),
+                        getStatus().getValue(),
+                        getCpuCores(),
                         getCpuThreads(),
-                        getcpu_model(),
+                        getCpuModel(),
                         getHardwareManufacturer(),
                         getHardwareProductName(),
                         getHardwareVersion(),
                         getHardwareSerialNumber(),
                         getHardwareUUID(),
                         getHardwareFamily(),
-                        getcpu_speed_mh(),
-                        getif_total_speed(),
-                        getkvm_enabled(),
-                        getphysical_mem_mb(),
-                        getcpu_idle(),
-                        getcpu_load(),
-                        getcpu_sys(),
-                        getcpu_user(),
-                        getmem_commited(),
-                        getvm_active(),
-                        getvm_count(),
-                        getvm_migrating(),
-                        getusage_mem_percent(),
-                        getusage_cpu_percent(),
-                        getusage_network_percent(),
-                        getreserved_mem(),
-                        getguest_overhead(),
-                        getprevious_status(),
-                        getsoftware_version(),
-                        getversion_name(),
-                        getbuild_name(),
-                        getmem_available(),
-                        getmem_shared(),
-                        getserver_SSL_enabled(),
-                        getvds_group_cpu_name(),
+                        getCpuSpeedMh(),
+                        getIfTotalSpeed(),
+                        getKvmEnabled(),
+                        getPhysicalMemMb(),
+                        getCpuIdle(),
+                        getCpuLoad(),
+                        getCpuSys(),
+                        getCpuUser(),
+                        getMemCommited(),
+                        getVmActive(),
+                        getVmCount(),
+                        getVmMigrating(),
+                        getUsageMemPercent(),
+                        getUsageCpuPercent(),
+                        getUsageNetworkPercent(),
+                        getReservedMem(),
+                        getGuestOverhead(),
+                        getPreviousStatus(),
+                        getSoftwareVersion(),
+                        getVersionName(),
+                        getBuildName(),
+                        getMemAvailable(),
+                        getMemShared(),
+                        isServerSslEnabled(),
+                        getVdsGroupCpuName(),
                         "",
-                        getnet_config_dirty(),
-                        getpm_type(),
-                        getpm_user(),
-                        getpm_password(),
-                        getpm_port(),
-                        getpm_options(),
+                        getNetConfigDirty(),
+                        getPmType(),
+                        getPmUser(),
+                        getPmPassword(),
+                        getPmPort(),
+                        getPmOptions(),
                         getpm_enabled(),
                         getPmSecondaryIp(),
                         getPmSecondaryType(),
@@ -307,21 +308,21 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         isPmSecondaryConcurrent(),
                         getConsoleAddress());
 
-        vds.setcpu_flags(getcpu_flags());
+        vds.setCpuFlags(getCpuFlags());
         vds.setVdsSpmPriority(getVdsSpmPriority());
         vds.setOtpValidity(getOtpValidity());
-        vds.setkernel_version(getkernel_version());
-        vds.setkvm_version(getkvm_version());
-        vds.setlibvirt_version(getlibvirt_version());
+        vds.setKernelVersion(getKernelVersion());
+        vds.setKvmVersion(getKvmVersion());
+        vds.setLibvirtVersion(getLibvirtVersion());
         vds.setHooksStr(getHooksStr());
 
         return vds;
     }
 
-    private Version vds_group_compatibility_versionField;
+    private Version vdsGroupCompatibilityVersion;
 
-    public Version getvds_group_compatibility_version() {
-        return this.vds_group_compatibility_versionField;
+    public Version getVdsGroupCompatibilityVersion() {
+        return this.vdsGroupCompatibilityVersion;
     }
 
     public boolean getContainingHooks() {
@@ -344,48 +345,48 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return getDynamicData().getHooksStr();
     }
 
-    public void setvds_group_compatibility_version(Version value) {
-        if (Version.OpInequality(vds_group_compatibility_versionField, value)) {
-            this.vds_group_compatibility_versionField = value;
+    public void setVdsGroupCompatibilityVersion(Version value) {
+        if (Version.OpInequality(vdsGroupCompatibilityVersion, value)) {
+            this.vdsGroupCompatibilityVersion = value;
         }
     }
 
-    public Guid getvds_group_id() {
-        return this.mVdsStatic.getvds_group_id();
+    public Guid getVdsGroupId() {
+        return this.mVdsStatic.getVdsGroupId();
     }
 
-    public void setvds_group_id(Guid value) {
-        this.mVdsStatic.setvds_group_id(value);
+    public void setVdsGroupId(Guid value) {
+        this.mVdsStatic.setVdsGroupId(value);
     }
 
-    private String vds_group_nameField;
+    private String vdsGroupName;
 
-    public String getvds_group_name() {
-        return this.vds_group_nameField;
+    public String getVdsGroupName() {
+        return this.vdsGroupName;
     }
 
-    public void setvds_group_name(String value) {
-        this.vds_group_nameField = value;
+    public void setVdsGroupName(String value) {
+        this.vdsGroupName = value;
     }
 
-    private String vds_group_descriptionField;
+    private String vdsGroupDescription;
 
-    public String getvds_group_description() {
-        return this.vds_group_descriptionField;
+    public String getVdsGroupDescription() {
+        return this.vdsGroupDescription;
     }
 
-    public void setvds_group_description(String value) {
-        this.vds_group_descriptionField = value;
+    public void setVdsGroupDescription(String value) {
+        this.vdsGroupDescription = value;
     }
 
-    private String vds_group_cpu_nameField;
+    private String vdsGroupCpuName;
 
-    public String getvds_group_cpu_name() {
-        return this.vds_group_cpu_nameField;
+    public String getVdsGroupCpuName() {
+        return this.vdsGroupCpuName;
     }
 
-    public void setvds_group_cpu_name(String value) {
-        this.vds_group_cpu_nameField = value;
+    public void setVdsGroupCpuName(String value) {
+        this.vdsGroupCpuName = value;
     }
 
     @Override
@@ -400,12 +401,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsStatistics.setId(value);
     }
 
-    public String getvds_name() {
-        return this.mVdsStatic.getvds_name();
+    public String getVdsName() {
+        return this.mVdsStatic.getVdsName();
     }
 
-    public void setvds_name(String value) {
-        this.mVdsStatic.setvds_name(value);
+    public void setVdsName(String value) {
+        this.mVdsStatic.setVdsName(value);
     }
 
     public String getManagmentIp() {
@@ -424,51 +425,51 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setUniqueID(value);
     }
 
-    public String gethost_name() {
-        return this.mVdsStatic.gethost_name();
+    public String getHostName() {
+        return this.mVdsStatic.getHostName();
     }
 
-    public void sethost_name(String value) {
-        this.mVdsStatic.sethost_name(value);
+    public void setHostName(String value) {
+        this.mVdsStatic.setHostName(value);
     }
 
-    public int getport() {
-        return this.mVdsStatic.getport();
+    public int getPort() {
+        return this.mVdsStatic.getPort();
     }
 
-    public void setport(int value) {
-        this.mVdsStatic.setport(value);
+    public void setPort(int value) {
+        this.mVdsStatic.setPort(value);
     }
 
-    public boolean getserver_SSL_enabled() {
-        return this.mVdsStatic.getserver_SSL_enabled();
+    public boolean isServerSslEnabled() {
+        return this.mVdsStatic.isServerSslEnabled();
     }
 
-    public void setserver_SSL_enabled(boolean value) {
-        this.mVdsStatic.setserver_SSL_enabled(value);
+    public void setServerSslEnabled(boolean value) {
+        this.mVdsStatic.setServerSslEnabled(value);
     }
 
-    public VDSType getvds_type() {
-        return this.mVdsStatic.getvds_type();
+    public VDSType getVdsType() {
+        return this.mVdsStatic.getVdsType();
     }
 
-    public void setvds_type(VDSType value) {
-        this.mVdsStatic.setvds_type(value);
+    public void setVdsType(VDSType value) {
+        this.mVdsStatic.setVdsType(value);
     }
 
-    public VDSStatus getstatus() {
+    public VDSStatus getStatus() {
         return this.mVdsDynamic.getstatus();
     }
 
-    public void setstatus(VDSStatus value) {
+    public void setStatus(VDSStatus value) {
         this.mVdsDynamic.setstatus(value);
     }
 
-    public Integer getcpu_cores() {
+    public Integer getCpuCores() {
         return this.mVdsDynamic.getcpu_cores();
     }
 
-    public void setcpu_cores(Integer value) {
+    public void setCpuCores(Integer value) {
         this.mVdsDynamic.setcpu_cores(value);
     }
 
@@ -528,59 +529,59 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsDynamic.setHardwareManufacturer(value);
     }
 
-    public Integer getcpu_sockets() {
+    public Integer getCpuSockets() {
         return this.mVdsDynamic.getcpu_sockets();
     }
 
-    public void setcpu_sockets(Integer value) {
+    public void setCpuSockets(Integer value) {
         this.mVdsDynamic.setcpu_sockets(value);
     }
 
-    public String getcpu_model() {
+    public String getCpuModel() {
         return this.mVdsDynamic.getcpu_model();
     }
 
-    public void setcpu_model(String value) {
+    public void setCpuModel(String value) {
         this.mVdsDynamic.setcpu_model(value);
     }
 
-    public Double getcpu_speed_mh() {
+    public Double getCpuSpeedMh() {
         return this.mVdsDynamic.getcpu_speed_mh();
     }
 
-    public void setcpu_speed_mh(Double value) {
+    public void setCpuSpeedMh(Double value) {
         this.mVdsDynamic.setcpu_speed_mh(value);
     }
 
-    public String getif_total_speed() {
+    public String getIfTotalSpeed() {
         return this.mVdsDynamic.getif_total_speed();
     }
 
-    public void setif_total_speed(String value) {
+    public void setIfTotalSpeed(String value) {
         this.mVdsDynamic.setif_total_speed(value);
     }
 
-    public Boolean getkvm_enabled() {
+    public Boolean getKvmEnabled() {
         return this.mVdsDynamic.getkvm_enabled();
     }
 
-    public void setkvm_enabled(Boolean value) {
+    public void setKvmEnabled(Boolean value) {
         this.mVdsDynamic.setkvm_enabled(value);
     }
 
-    public Integer getphysical_mem_mb() {
+    public Integer getPhysicalMemMb() {
         return this.mVdsDynamic.getphysical_mem_mb();
     }
 
-    public void setphysical_mem_mb(Integer value) {
+    public void setPhysicalMemMb(Integer value) {
         this.mVdsDynamic.setphysical_mem_mb(value);
     }
 
-    public String getsupported_cluster_levels() {
+    public String getSupportedClusterLevels() {
         return this.mVdsDynamic.getsupported_cluster_levels();
     }
 
-    public void setsupported_cluster_levels(String value) {
+    public void setSupportedClusterLevels(String value) {
         this.mVdsDynamic.setsupported_cluster_levels(value);
     }
 
@@ -588,11 +589,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return this.mVdsDynamic.getSupportedClusterVersionsSet();
     }
 
-    public String getsupported_engines() {
+    public String getSupportedEngines() {
         return this.mVdsDynamic.getsupported_engines();
     }
 
-    public void setsupported_engines(String value) {
+    public void setSupportedEngines(String value) {
         this.mVdsDynamic.setsupported_engines(value);
     }
 
@@ -600,140 +601,140 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return this.mVdsDynamic.getSupportedENGINESVersionsSet();
     }
 
-    public Double getcpu_idle() {
+    public Double getCpuIdle() {
         return this.mVdsStatistics.getcpu_idle();
     }
 
-    public void setcpu_idle(Double value) {
+    public void setCpuIdle(Double value) {
         this.mVdsStatistics.setcpu_idle(value);
     }
 
-    public Double getcpu_load() {
+    public Double getCpuLoad() {
         return this.mVdsStatistics.getcpu_load();
     }
 
-    public void setcpu_load(Double value) {
+    public void setCpuLoad(Double value) {
         this.mVdsStatistics.setcpu_load(value);
     }
 
-    public Double getcpu_sys() {
+    public Double getCpuSys() {
         return this.mVdsStatistics.getcpu_sys();
     }
 
-    public void setcpu_sys(Double value) {
+    public void setCpuSys(Double value) {
         this.mVdsStatistics.setcpu_sys(value);
     }
 
-    public Double getcpu_user() {
+    public Double getCpuUser() {
         return this.mVdsStatistics.getcpu_user();
     }
 
-    public void setcpu_user(Double value) {
+    public void setCpuUser(Double value) {
         this.mVdsStatistics.setcpu_user(value);
     }
 
-    public Integer getmem_commited() {
+    public Integer getMemCommited() {
         return this.mVdsDynamic.getmem_commited();
     }
 
-    public void setmem_commited(Integer value) {
+    public void setMemCommited(Integer value) {
         this.mVdsDynamic.setmem_commited(value);
         calculateFreeVirtualMemory();
     }
 
-    public Integer getvm_active() {
+    public Integer getVmActive() {
         return this.mVdsDynamic.getvm_active();
     }
 
-    public void setvm_active(Integer value) {
+    public void setVmActive(Integer value) {
         this.mVdsDynamic.setvm_active(value);
     }
 
-    public int getvm_count() {
+    public int getVmCount() {
         return this.mVdsDynamic.getvm_count();
     }
 
-    public void setvm_count(int value) {
+    public void setVmCount(int value) {
         this.mVdsDynamic.setvm_count(value);
     }
 
-    public Integer getvms_cores_count() {
+    public Integer getVmsCoresCount() {
         return this.mVdsDynamic.getvms_cores_count();
     }
 
-    public void setvms_cores_count(Integer value) {
+    public void setVmsCoresCount(Integer value) {
         this.mVdsDynamic.setvms_cores_count(value);
     }
 
-    public Integer getvm_migrating() {
+    public Integer getVmMigrating() {
         return this.mVdsDynamic.getvm_migrating();
     }
 
-    public void setvm_migrating(Integer value) {
+    public void setVmMigrating(Integer value) {
         this.mVdsDynamic.setvm_migrating(value);
     }
 
-    public Integer getusage_mem_percent() {
+    public Integer getUsageMemPercent() {
         return this.mVdsStatistics.getusage_mem_percent();
     }
 
-    public void setusage_mem_percent(Integer value) {
+    public void setUsageMemPercent(Integer value) {
         this.mVdsStatistics.setusage_mem_percent(value);
     }
 
-    public Integer getusage_cpu_percent() {
+    public Integer getUsageCpuPercent() {
         return this.mVdsStatistics.getusage_cpu_percent();
     }
 
-    public void setusage_cpu_percent(Integer value) {
+    public void setUsageCpuPercent(Integer value) {
         this.mVdsStatistics.setusage_cpu_percent(value);
     }
 
-    public Integer getusage_network_percent() {
+    public Integer getUsageNetworkPercent() {
         return this.mVdsStatistics.getusage_network_percent();
     }
 
-    public void setusage_network_percent(Integer value) {
+    public void setUsageNetworkPercent(Integer value) {
         this.mVdsStatistics.setusage_network_percent(value);
     }
 
-    public Integer getguest_overhead() {
+    public Integer getGuestOverhead() {
         return this.mVdsDynamic.getguest_overhead();
     }
 
-    public void setguest_overhead(Integer value) {
+    public void setGuestOverhead(Integer value) {
         this.mVdsDynamic.setguest_overhead(value);
     }
 
-    public Integer getreserved_mem() {
+    public Integer getReservedMem() {
         return this.mVdsDynamic.getreserved_mem();
     }
 
-    public void setreserved_mem(Integer value) {
+    public void setReservedMem(Integer value) {
         this.mVdsDynamic.setreserved_mem(value);
     }
 
-    public VDSStatus getprevious_status() {
+    public VDSStatus getPreviousStatus() {
         return this.mVdsDynamic.getprevious_status();
     }
 
-    public void setprevious_status(VDSStatus value) {
+    public void setPreviousStatus(VDSStatus value) {
         this.mVdsDynamic.setprevious_status(value);
     }
 
-    public Long getmem_available() {
+    public Long getMemAvailable() {
         return this.mVdsStatistics.getmem_available();
     }
 
-    public void setmem_available(Long value) {
+    public void setMemAvailable(Long value) {
         this.mVdsStatistics.setmem_available(value);
     }
 
-    public Long getmem_shared() {
+    public Long getMemShared() {
         return this.mVdsStatistics.getmem_shared();
     }
 
-    public void setmem_shared(Long value) {
+    public void setMemShared(Long value) {
         this.mVdsStatistics.setmem_shared(value);
     }
 
@@ -745,7 +746,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setConsoleAddress(value);
     }
 
-    public Integer getmem_commited_percent() {
+    public Integer getMemCommitedPercent() {
         Integer commited = mVdsDynamic.getmem_commited();
         Integer physical = mVdsDynamic.getphysical_mem_mb();
 
@@ -763,11 +764,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
      * @param value
      */
     @Deprecated
-    public void setmem_commited_percent(Integer value) {
+    public void setMemCommitedPercent(Integer value) {
 
     }
 
-    public Integer getmem_shared_percent() {
+    public Integer getMemSharedPercent() {
         Long shared = mVdsStatistics.getmem_shared();
         Integer physical = mVdsDynamic.getphysical_mem_mb();
 
@@ -785,232 +786,232 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
      * @param value
      */
     @Deprecated
-    public void setmem_shared_percent(Integer value) {
+    public void setMemSharedPercent(Integer value) {
 
     }
 
-    public Long getswap_free() {
+    public Long getSwapFree() {
         return this.mVdsStatistics.getswap_free();
     }
 
-    public void setswap_free(Long value) {
+    public void setSwapFree(Long value) {
         this.mVdsStatistics.setswap_free(value);
     }
 
-    public Long getswap_total() {
+    public Long getSwapTotal() {
         return this.mVdsStatistics.getswap_total();
     }
 
-    public void setswap_total(Long value) {
+    public void setSwapTotal(Long value) {
         this.mVdsStatistics.setswap_total(value);
     }
 
-    public Integer getksm_cpu_percent() {
+    public Integer getKsmCpuPercent() {
         return this.mVdsStatistics.getksm_cpu_percent();
     }
 
-    public void setksm_cpu_percent(Integer value) {
+    public void setKsmCpuPercent(Integer value) {
         this.mVdsStatistics.setksm_cpu_percent(value);
     }
 
-    public Long getksm_pages() {
+    public Long getKsmPages() {
         return this.mVdsStatistics.getksm_pages();
     }
 
-    public void setksm_pages(Long value) {
+    public void setKsmPages(Long value) {
         this.mVdsStatistics.setksm_pages(value);
     }
 
-    public Boolean getksm_state() {
+    public Boolean getKsmState() {
         return this.mVdsStatistics.getksm_state();
     }
 
-    public void setksm_state(Boolean value) {
+    public void setKsmState(Boolean value) {
         this.mVdsStatistics.setksm_state(value);
     }
 
-    public String getsoftware_version() {
+    public String getSoftwareVersion() {
         return this.mVdsDynamic.getsoftware_version();
     }
 
-    public void setsoftware_version(String value) {
+    public void setSoftwareVersion(String value) {
         this.mVdsDynamic.setsoftware_version(value);
     }
 
-    public String getversion_name() {
+    public String getVersionName() {
         return this.mVdsDynamic.getversion_name();
     }
 
-    public void setversion_name(String value) {
+    public void setVersionName(String value) {
         this.mVdsDynamic.setversion_name(value);
     }
 
-    public String getbuild_name() {
+    public String getBuildName() {
         return this.mVdsDynamic.getbuild_name();
     }
 
-    public void setbuild_name(String value) {
+    public void setBuildName(String value) {
         this.mVdsDynamic.setbuild_name(value);
     }
 
-    public String getcpu_flags() {
+    public String getCpuFlags() {
         return mVdsDynamic.getcpu_flags();
     }
 
-    public void setcpu_flags(String value) {
+    public void setCpuFlags(String value) {
         mVdsDynamic.setcpu_flags(value);
     }
 
-    public java.util.Date getcpu_over_commit_time_stamp() {
+    public Date getCpuOverCommitTimestamp() {
         return mVdsDynamic.getcpu_over_commit_time_stamp();
     }
 
-    public void setcpu_over_commit_time_stamp(java.util.Date value) {
+    public void setCpuOverCommitTimestamp(java.util.Date value) {
         mVdsDynamic.setcpu_over_commit_time_stamp(value);
     }
 
-    public int getvds_strength() {
-        return this.mVdsStatic.getvds_strength();
+    public int getVdsStrength() {
+        return this.mVdsStatic.getVdsStrength();
     }
 
-    public void setvds_strength(int value) {
-        this.mVdsStatic.setvds_strength(value);
+    public void setVdsStrength(int value) {
+        this.mVdsStatic.setVdsStrength(value);
     }
 
-    private int high_utilizationField;
+    private int highUtilization;
 
-    public int gethigh_utilization() {
-        return this.high_utilizationField;
+    public int getHighUtilization() {
+        return this.highUtilization;
     }
 
-    public void sethigh_utilization(int value) {
-        this.high_utilizationField = value;
+    public void setHighUtilization(int value) {
+        this.highUtilization = value;
     }
 
-    private int low_utilizationField;
+    private int lowUtilization;
 
-    public int getlow_utilization() {
-        return this.low_utilizationField;
+    public int getLowUtilization() {
+        return this.lowUtilization;
     }
 
-    public void setlow_utilization(int value) {
-        this.low_utilizationField = value;
+    public void setLowUtilization(int value) {
+        this.lowUtilization = value;
     }
 
-    private int cpu_over_commit_duration_minutesField;
+    private int cpuOverCommitDurationMinutes;
 
-    public int getcpu_over_commit_duration_minutes() {
-        return this.cpu_over_commit_duration_minutesField;
+    public int getCpuOverCommitDurationMinutes() {
+        return this.cpuOverCommitDurationMinutes;
     }
 
-    public void setcpu_over_commit_duration_minutes(int value) {
-        this.cpu_over_commit_duration_minutesField = value;
+    public void setCpuOverCommitDurationMinutes(int value) {
+        this.cpuOverCommitDurationMinutes = value;
     }
 
-    private Guid storage_pool_idField = new Guid();
+    private Guid storagePoolId = new Guid();
 
     @Override
     public Guid getStoragePoolId() {
-        return this.storage_pool_idField;
+        return this.storagePoolId;
     }
 
     @Override
     public void setStoragePoolId(Guid value) {
-        this.storage_pool_idField = value;
+        this.storagePoolId = value;
     }
 
-    private String storage_pool_nameField;
+    private String storagePoolName;
 
-    public String getstorage_pool_name() {
-        return this.storage_pool_nameField;
+    public String getStoragePoolName() {
+        return this.storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
-        this.storage_pool_nameField = value;
+    public void setStoragePoolName(String value) {
+        this.storagePoolName = value;
     }
 
-    private VdsSelectionAlgorithm selection_algorithmField = VdsSelectionAlgorithm.forValue(0);
+    private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.forValue(0);
 
-    public VdsSelectionAlgorithm getselection_algorithm() {
-        return this.selection_algorithmField;
+    public VdsSelectionAlgorithm getSelectionAlgorithm() {
+        return this.selectionAlgorithm;
     }
 
-    public void setselection_algorithm(VdsSelectionAlgorithm value) {
-        this.selection_algorithmField = value;
+    public void setSelectionAlgorithm(VdsSelectionAlgorithm value) {
+        this.selectionAlgorithm = value;
     }
 
-    private int max_vds_memory_over_commitField;
+    private int maxVdsMemoryOverCommit;
 
-    public int getmax_vds_memory_over_commit() {
-        return this.max_vds_memory_over_commitField;
+    public int getMaxVdsMemoryOverCommit() {
+        return this.maxVdsMemoryOverCommit;
     }
 
-    public void setmax_vds_memory_over_commit(int value) {
-        this.max_vds_memory_over_commitField = value;
+    public void setMaxVdsMemoryOverCommit(int value) {
+        this.maxVdsMemoryOverCommit = value;
     }
 
-    public Integer getpending_vcpus_count() {
+    public Integer getPendingVcpusCount() {
         return mVdsDynamic.getpending_vcpus_count();
     }
 
-    public void setpending_vcpus_count(Integer value) {
+    public void setPendingVcpusCount(Integer value) {
         mVdsDynamic.setpending_vcpus_count(value);
     }
 
-    public int getpending_vmem_size() {
+    public int getPendingVmemSize() {
         return mVdsDynamic.getpending_vmem_size();
     }
 
-    public void setpending_vmem_size(int value) {
+    public void setPendingVmemSize(int value) {
         mVdsDynamic.setpending_vmem_size(value);
     }
 
-    public Boolean getnet_config_dirty() {
+    public Boolean getNetConfigDirty() {
         return mVdsDynamic.getnet_config_dirty();
     }
 
-    public void setnet_config_dirty(Boolean value) {
+    public void setNetConfigDirty(Boolean value) {
         mVdsDynamic.setnet_config_dirty(value);
     }
 
-    public String getpm_type() {
-        return mVdsStatic.getpm_type();
+    public String getPmType() {
+        return mVdsStatic.getPmType();
     }
 
-    public void setpm_type(String value) {
-        mVdsStatic.setpm_type(value);
+    public void setPmType(String value) {
+        mVdsStatic.setPmType(value);
     }
 
-    public String getpm_user() {
-        return mVdsStatic.getpm_user();
+    public String getPmUser() {
+        return mVdsStatic.getPmUser();
     }
 
-    public void setpm_user(String value) {
-        mVdsStatic.setpm_user(value);
+    public void setPmUser(String value) {
+        mVdsStatic.setPmUser(value);
     }
 
-    public String getpm_password() {
-        return mVdsStatic.getpm_password();
+    public String getPmPassword() {
+        return mVdsStatic.getPmPassword();
     }
 
-    public void setpm_password(String value) {
-        mVdsStatic.setpm_password(value);
+    public void setPmPassword(String value) {
+        mVdsStatic.setPmPassword(value);
     }
 
-    public Integer getpm_port() {
-        return mVdsStatic.getpm_port();
+    public Integer getPmPort() {
+        return mVdsStatic.getPmPort();
     }
 
-    public void setpm_port(Integer value) {
-        mVdsStatic.setpm_port(value);
+    public void setPmPort(Integer value) {
+        mVdsStatic.setPmPort(value);
     }
 
-    public String getpm_options() {
-        return mVdsStatic.getpm_options();
+    public String getPmOptions() {
+        return mVdsStatic.getPmOptions();
     }
 
-    public void setpm_options(String value) {
-        mVdsStatic.setpm_options(value);
+    public void setPmOptions(String value) {
+        mVdsStatic.setPmOptions(value);
     }
 
     public ValueObjectMap getPmOptionsMap() {
@@ -1029,11 +1030,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     }
 
     public boolean getpm_enabled() {
-        return mVdsStatic.getpm_enabled();
+        return mVdsStatic.isPmEnabled();
     }
 
     public void setpm_enabled(boolean value) {
-        mVdsStatic.setpm_enabled(value);
+        mVdsStatic.setPmEnabled(value);
     }
 
     public String getPmProxyPreferences() {
@@ -1104,43 +1105,43 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setPmSecondaryConcurrent(value);
     }
 
-    public String gethost_os() {
+    public String getHostOs() {
         return this.mVdsDynamic.gethost_os();
     }
 
-    public void sethost_os(String value) {
+    public void setHostOs(String value) {
         this.mVdsDynamic.sethost_os(value);
     }
 
-    public String getkvm_version() {
+    public String getKvmVersion() {
         return this.mVdsDynamic.getkvm_version();
     }
 
-    public void setkvm_version(String value) {
+    public void setKvmVersion(String value) {
         this.mVdsDynamic.setkvm_version(value);
     }
 
-    public RpmVersion getlibvirt_version() {
+    public RpmVersion getLibvirtVersion() {
         return this.mVdsDynamic.getlibvirt_version();
     }
 
-    public void setlibvirt_version(RpmVersion value) {
+    public void setLibvirtVersion(RpmVersion value) {
         this.mVdsDynamic.setlibvirt_version(value);
     }
 
-    public String getspice_version() {
+    public String getSpiceVersion() {
         return this.mVdsDynamic.getspice_version();
     }
 
-    public void setspice_version(String value) {
+    public void setSpiceVersion(String value) {
         this.mVdsDynamic.setspice_version(value);
     }
 
-    public String getkernel_version() {
+    public String getKernelVersion() {
         return this.mVdsDynamic.getkernel_version();
     }
 
-    public void setkernel_version(String value) {
+    public void setKernelVersion(String value) {
         this.mVdsDynamic.setkernel_version(value);
     }
 
@@ -1241,24 +1242,24 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return mVdsDynamic.getVersion().getValue().substring(0, 2);
     }
 
-    private ServerCpu _cpuName;
+    private ServerCpu cpuName;
 
     public ServerCpu getCpuName() {
-        return _cpuName;
+        return cpuName;
     }
 
     public void setCpuName(ServerCpu value) {
-        _cpuName = value;
+        cpuName = value;
     }
 
-    private Integer privatevds_spm_id;
+    private Integer vdsSpmId;
 
-    public Integer getvds_spm_id() {
-        return privatevds_spm_id;
+    public Integer getVdsSpmId() {
+        return vdsSpmId;
     }
 
-    public void setvds_spm_id(Integer value) {
-        privatevds_spm_id = value;
+    public void setVdsSpmId(Integer value) {
+        vdsSpmId = value;
     }
 
     public long getOtpValidity() {
@@ -1284,11 +1285,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     private VdsSpmStatus _spm_status = VdsSpmStatus.forValue(0);
 
-    public VdsSpmStatus getspm_status() {
+    public VdsSpmStatus getSpmStatus() {
         return _spm_status;
     }
 
-    public void setspm_status(VdsSpmStatus value) {
+    public void setSpmStatus(VdsSpmStatus value) {
         _spm_status = value;
     }
 
@@ -1327,9 +1328,9 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     private float maxSchedulingMemory;
 
     public void calculateFreeVirtualMemory() {
-        if (getmem_commited() != null && getphysical_mem_mb() != null && getreserved_mem() != null) {
-            maxSchedulingMemory = (getmax_vds_memory_over_commit() * getphysical_mem_mb() / 100.0f) -
-                    (getmem_commited() + getreserved_mem());
+        if (getMemCommited() != null && getPhysicalMemMb() != null && getReservedMem() != null) {
+            maxSchedulingMemory = (getMaxVdsMemoryOverCommit() * getPhysicalMemMb() / 100.0f) -
+                    (getMemCommited() + getReservedMem());
             // avoid negative values
             maxSchedulingMemory = maxSchedulingMemory > 0 ? maxSchedulingMemory : 0;
         }
@@ -1341,12 +1342,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     @Override
     public String getName() {
-        return getvds_name();
+        return getVdsName();
     }
 
     public String toString() {
         // note that mVdsStatic may be null, so the getName with no null protection
         // is not enough, remove this once mVdsStatic can not be null
-        return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getvds_name()) + "]";
+        return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getVdsName()) + "]";
     }
 }

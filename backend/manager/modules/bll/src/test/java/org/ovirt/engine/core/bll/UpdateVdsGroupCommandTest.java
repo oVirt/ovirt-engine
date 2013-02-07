@@ -387,7 +387,7 @@ public class UpdateVdsGroupCommandTest {
 
     private void VdsExistWithHigherVersion() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.Up);
+        vds.setStatus(VDSStatus.Up);
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
         when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);
@@ -405,8 +405,8 @@ public class UpdateVdsGroupCommandTest {
 
     private void clusterHasVds() {
         VDS vds = new VDS();
-        vds.setstatus(VDSStatus.Up);
-        vds.setsupported_cluster_levels(VERSION_1_1.toString());
+        vds.setStatus(VDSStatus.Up);
+        vds.setSupportedClusterLevels(VERSION_1_1.toString());
         List<VDS> vdsList = new ArrayList<VDS>();
         vdsList.add(vds);
         when(vdsDAO.getAllForVdsGroup(any(Guid.class))).thenReturn(vdsList);

@@ -47,7 +47,7 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
     public GlusterBrickEntity(Guid volumeId, VdsStatic server, String brickDirectory, GlusterStatus brickStatus) {
         setVolumeId(volumeId);
         setServerId(server.getId());
-        setServerName(server.gethost_name());
+        setServerName(server.getHostName());
         setBrickDirectory(brickDirectory);
         setStatus(brickStatus);
     }

@@ -111,7 +111,7 @@ public class ClusterServiceModel extends EntityModel {
         List<VDS> hostList = (List<VDS>) getHostList().getItems();
         if (hostList != null && hostList.size() > 1) {
             for(VDS vds : hostList) {
-                if (vds != null && !vds.getvds_group_name().equals(getEntity().getname())) {
+                if (vds != null && !vds.getVdsGroupName().equals(getEntity().getname())) {
                     refreshNeeded = true;
                     break;
                 }
@@ -173,7 +173,7 @@ public class ClusterServiceModel extends EntityModel {
         ServiceType serviceType = (ServiceType) serviceTypeList.getSelectedItem();
         ArrayList<EntityModel> list = new ArrayList<EntityModel>();
         for (ServiceInfo service : getActualServiceList()) {
-            if ((selectedVds == null || service.getHostName().equals(selectedVds.gethost_name()))
+            if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {
                 list.add(new EntityModel(service));
             }

@@ -127,7 +127,7 @@ public class HostGeneralModel extends EntityModel
         VDS vds = (VDS) value;
         updateUpgradeAlert = vds == null || getEntity() == null
             || !vds.getId().equals(getEntity().getId())
-            || !vds.getstatus().equals(getEntity().getstatus());
+            || !vds.getStatus().equals(getEntity().getStatus());
 
         super.setEntity(value);
     }
@@ -819,11 +819,11 @@ public class HostGeneralModel extends EntityModel
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
 
-        model.getHostVersion().setEntity(getEntity().gethost_os());
+        model.getHostVersion().setEntity(getEntity().getHostOs());
         model.getHostVersion().setIsAvailable(false);
 
         getWindow().StartProgress(null);
-        if (getEntity().getvds_type() == VDSType.oVirtNode) {
+        if (getEntity().getVdsType() == VDSType.oVirtNode) {
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(model,
                     new INewAsyncCallback() {
                         @Override
@@ -855,7 +855,7 @@ public class HostGeneralModel extends EntityModel
             model.getRootPassword().setIsChangable(true);
 
             Version v3 = new Version(3, 0);
-            boolean isLessThan3 = getEntity().getvds_group_compatibility_version().compareTo(v3) < 0;
+            boolean isLessThan3 = getEntity().getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
 
             if (!isLessThan3) {
                 model.getOverrideIpTables().setIsAvailable(true);
@@ -893,7 +893,7 @@ public class HostGeneralModel extends EntityModel
     public void OnInstall()
     {
         InstallModel model = (InstallModel) getWindow();
-        boolean isOVirt = getEntity().getvds_type() == VDSType.oVirtNode;
+        boolean isOVirt = getEntity().getVdsType() == VDSType.oVirtNode;
 
         if (!model.Validate(isOVirt))
         {
@@ -970,38 +970,38 @@ public class HostGeneralModel extends EntityModel
     {
         VDS vds = getEntity();
 
-        setOS(vds.gethost_os());
-        setKernelVersion(vds.getkernel_version());
-        setKvmVersion(vds.getkvm_version());
-        setLibvirtVersion(vds.getlibvirt_version());
+        setOS(vds.getHostOs());
+        setKernelVersion(vds.getKernelVersion());
+        setKvmVersion(vds.getKvmVersion());
+        setLibvirtVersion(vds.getLibvirtVersion());
         setVdsmVersion(vds.getVersion());
-        setSpiceVersion(vds.getspice_version());
+        setSpiceVersion(vds.getSpiceVersion());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
 
         setSpmPriorityValue(vds.getVdsSpmPriority());
-        setActiveVms(vds.getvm_active());
+        setActiveVms(vds.getVmActive());
         setCpuName(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
-        setCpuType(vds.getcpu_model());
-        setNumberOfSockets(vds.getcpu_sockets());
-        setCoresPerSocket((vds.getcpu_cores() != null && vds.getcpu_sockets() != null)
-                ? vds.getcpu_cores() / vds.getcpu_sockets() : null);
+        setCpuType(vds.getCpuModel());
+        setNumberOfSockets(vds.getCpuSockets());
+        setCoresPerSocket((vds.getCpuCores() != null && vds.getCpuSockets() != null)
+                ? vds.getCpuCores() / vds.getCpuSockets() : null);
 
-        if (vds.getvds_group_compatibility_version() != null
-                && Version.v3_2.compareTo(vds.getvds_group_compatibility_version()) > 0) {
+        if (vds.getVdsGroupCompatibilityVersion() != null
+                && Version.v3_2.compareTo(vds.getVdsGroupCompatibilityVersion()) > 0) {
             // Members of pre-3.2 clusters don't support SMT; here we act like a 3.1 engine
             setThreadsPerCore("Unsupported"); //$NON-NLS-1$
-        } else if (vds.getCpuThreads() == null || vds.getcpu_cores() == null) {
+        } else if (vds.getCpuThreads() == null || vds.getCpuCores() == null) {
             setThreadsPerCore("Unknown"); //$NON-NLS-1$
         } else {
-            Integer threads = vds.getCpuThreads() / vds.getcpu_cores();
+            Integer threads = vds.getCpuThreads() / vds.getCpuCores();
             setThreadsPerCore(threads.toString() + (threads > 1 ? " (SMT Enabled)" : " (SMT Disabled)")); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        setPhysicalMemory(vds.getphysical_mem_mb());
-        setSwapTotal(vds.getswap_total());
-        setSwapFree(vds.getswap_free());
-        setSharedMemory(vds.getmem_shared_percent());
-        setMemoryPageSharing(vds.getksm_state());
+        setPhysicalMemory(vds.getPhysicalMemMb());
+        setSwapTotal(vds.getSwapTotal());
+        setSwapFree(vds.getSwapFree());
+        setSharedMemory(vds.getMemSharedPercent());
+        setMemoryPageSharing(vds.getKsmState());
         setAutomaticLargePage(vds.getTransparentHugePagesState());
     }
 
@@ -1024,12 +1024,12 @@ public class HostGeneralModel extends EntityModel
                 VDS.class,
                 VdcActionType.UpdateVds));
         // Check the network alert presense.
-        setHasNICsAlert((getEntity().getnet_config_dirty() == null ? false : getEntity().getnet_config_dirty()));
+        setHasNICsAlert((getEntity().getNetConfigDirty() == null ? false : getEntity().getNetConfigDirty()));
 
         // Check manual fence alert presense.
-        if (getEntity().getstatus() == VDSStatus.NonResponsive
+        if (getEntity().getStatus() == VDSStatus.NonResponsive
                 && !getEntity().getpm_enabled()
-                && ((getEntity().getvm_active() == null ? 0 : getEntity().getvm_active()) > 0 || getEntity().getspm_status() == VdsSpmStatus.SPM))
+                && ((getEntity().getVmActive() == null ? 0 : getEntity().getVmActive()) > 0 || getEntity().getSpmStatus() == VdsSpmStatus.SPM))
         {
             setHasManualFenceAlert(true);
         }
@@ -1039,15 +1039,15 @@ public class HostGeneralModel extends EntityModel
         }
 
         // Check the reinstall alert presense.
-        if (getEntity().getstatus() == VDSStatus.NonResponsive)
+        if (getEntity().getStatus() == VDSStatus.NonResponsive)
         {
             setHasReinstallAlertNonResponsive(true);
         }
-        else if (getEntity().getstatus() == VDSStatus.InstallFailed)
+        else if (getEntity().getStatus() == VDSStatus.InstallFailed)
         {
             setHasReinstallAlertInstallFailed(true);
         }
-        else if (getEntity().getstatus() == VDSStatus.Maintenance)
+        else if (getEntity().getStatus() == VDSStatus.Maintenance)
         {
             setHasReinstallAlertMaintenance(true);
         }
@@ -1055,7 +1055,7 @@ public class HostGeneralModel extends EntityModel
         // TODO: Need to come up with a logic to show the Upgrade action-item.
         // Currently, this action-item will be shown for all oVirts assuming there are
         // available oVirt ISOs that are returned by the backend's GetoVirtISOs query.
-        else if (getEntity().getvds_type() == VDSType.oVirtNode && updateUpgradeAlert)
+        else if (getEntity().getVdsType() == VDSType.oVirtNode && updateUpgradeAlert)
         {
             AsyncDataProvider.GetoVirtISOsList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -1069,11 +1069,11 @@ public class HostGeneralModel extends EntityModel
                                 VDS vds = hostGeneralModel.getEntity();
                                 hostGeneralModel.setHasUpgradeAlert(true);
 
-                                boolean executionAllowed = vds.getstatus() != VDSStatus.Up
-                                    && vds.getstatus() != VDSStatus.Installing
-                                    && vds.getstatus() != VDSStatus.PreparingForMaintenance
-                                    && vds.getstatus() != VDSStatus.Reboot
-                                    && vds.getstatus() != VDSStatus.PendingApproval;
+                                boolean executionAllowed = vds.getStatus() != VDSStatus.Up
+                                    && vds.getStatus() != VDSStatus.Installing
+                                    && vds.getStatus() != VDSStatus.PreparingForMaintenance
+                                    && vds.getStatus() != VDSStatus.Reboot
+                                    && vds.getStatus() != VDSStatus.PendingApproval;
 
                                 if (!executionAllowed)
                                 {
@@ -1108,19 +1108,19 @@ public class HostGeneralModel extends EntityModel
     {
         setFreeMemory(null);
         setUsedMemory(null);
-        if (getEntity().getphysical_mem_mb() != null && getEntity().getusage_mem_percent() != null)
+        if (getEntity().getPhysicalMemMb() != null && getEntity().getUsageMemPercent() != null)
         {
-            setUsedMemory((int) Math.round(getEntity().getphysical_mem_mb() * (getEntity().getusage_mem_percent() / 100.0)));
-            setFreeMemory(getEntity().getphysical_mem_mb() - getUsedMemory());
+            setUsedMemory((int) Math.round(getEntity().getPhysicalMemMb() * (getEntity().getUsageMemPercent() / 100.0)));
+            setFreeMemory(getEntity().getPhysicalMemMb() - getUsedMemory());
         }
     }
 
     private void UpdateSwapUsed()
     {
         setUsedSwap(null);
-        if (getEntity().getswap_total() != null && getEntity().getswap_free() != null)
+        if (getEntity().getSwapTotal() != null && getEntity().getSwapFree() != null)
         {
-            setUsedSwap(getEntity().getswap_total() - getEntity().getswap_free());
+            setUsedSwap(getEntity().getSwapTotal() - getEntity().getSwapFree());
         }
     }
 

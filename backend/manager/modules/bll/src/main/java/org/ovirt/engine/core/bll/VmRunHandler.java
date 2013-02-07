@@ -147,7 +147,7 @@ public class VmRunHandler {
                             } else if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
                                 VDS vds = DbFacade.getInstance().getVdsDao().get(
                                         new Guid(vm.getRunOnVds().toString()));
-                                if (vds.getstatus() != VDSStatus.Up) {
+                                if (vds.getStatus() != VDSStatus.Up) {
                                     retValue = false;
                                     message.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
                                     message.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());

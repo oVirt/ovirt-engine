@@ -51,9 +51,9 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(new Guid());
-        vds.setvds_name("gfs1");
-        vds.setvds_group_id(CLUSTER_ID);
-        vds.setstatus(status);
+        vds.setVdsName("gfs1");
+        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setStatus(status);
         return vds;
     }
 
@@ -64,19 +64,19 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private void setupServersList() {
         serversList = new ArrayList<VDS>();
         VDS server = new VDS();
-        server.setvds_group_id(CLUSTER_ID);
-        server.setvds_group_name("default");
+        server.setVdsGroupId(CLUSTER_ID);
+        server.setVdsGroupName("default");
         server.setId(server_id1);
-        server.setvds_name("test_server1");
-        server.sethost_name("test_server1");
+        server.setVdsName("test_server1");
+        server.setHostName("test_server1");
         serversList.add(server);
 
         server = new VDS();
-        server.setvds_group_id(CLUSTER_ID);
-        server.setvds_group_name("default");
+        server.setVdsGroupId(CLUSTER_ID);
+        server.setVdsGroupName("default");
         server.setId(server_id2);
-        server.setvds_name("test_server2");
-        server.sethost_name("test_server2");
+        server.setVdsName("test_server2");
+        server.setHostName("test_server2");
         serversList.add(server);
     }
 

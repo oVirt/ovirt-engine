@@ -33,10 +33,10 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
                 } catch (java.lang.Exception e2) {
                     log.infoFormat("SpmStopVDSCommand::Could not get tasks on vds {0} stopping SPM",
-                            getVds().getvds_name());
+                            getVds().getVdsName());
                 }
                 if (performSpmStop) {
-                    log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getvds_name(),
+                    log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getVdsName(),
                             getParameters().getStoragePoolId());
                     status = getBroker().spmStop(getParameters().getStoragePoolId().toString());
                     ProceedProxyReturnValue();
@@ -48,12 +48,12 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                 } else if (getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
                     log.infoFormat(
                             "SpmStopVDSCommand::Could not get tasks on vds {0} - network exception, not stopping spm! pool id {1}",
-                            getVds().getvds_name(),
+                            getVds().getVdsName(),
                             getParameters().getStoragePoolId());
                 }
             } else {
                 log.infoFormat("SpmStopVDSCommand:: vds {0} is in {1} status - not performing spm stop, pool id {2}",
-                        getVds().getvds_name(), getVds().getstatus(), getParameters().getStoragePoolId());
+                        getVds().getVdsName(), getVds().getStatus(), getParameters().getStoragePoolId());
                 getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR,
                         "Vds is in incorrect status"));
                 getVDSReturnValue().setSucceeded(false);
@@ -72,11 +72,11 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
      * @return Can the VDS be reached or not?
      */
     private boolean canVdsBeReached() {
-        VDSStatus vdsStatus = getVds().getstatus();
+        VDSStatus vdsStatus = getVds().getStatus();
         if (vdsStatus == VDSStatus.Down || vdsStatus == VDSStatus.Reboot) {
-            vdsStatus = getVds().getprevious_status();
+            vdsStatus = getVds().getPreviousStatus();
         }
-        return vdsStatus != VDSStatus.NonResponsive && getVds().getstatus() != VDSStatus.Connecting;
+        return vdsStatus != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Connecting;
     }
 
     @Override

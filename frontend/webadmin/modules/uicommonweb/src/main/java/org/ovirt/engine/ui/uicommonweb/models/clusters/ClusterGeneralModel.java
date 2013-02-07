@@ -319,12 +319,12 @@ public class ClusterGeneralModel extends EntityModel {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
 
             VDS host = new VDS();
-            host.setvds_name(hostDetailModel.getName());
-            host.sethost_name(hostDetailModel.getAddress());
+            host.setVdsName(hostDetailModel.getName());
+            host.setHostName(hostDetailModel.getAddress());
             host.setSSHKeyFingerprint(hostDetailModel.getFingerprint());
-            host.setport(54321);
+            host.setPort(54321);
 
-            host.setvds_group_id(getEntity().getId());
+            host.setVdsGroupId(getEntity().getId());
             host.setpm_enabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();

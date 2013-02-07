@@ -66,7 +66,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     @Override
     protected String getAdditionalInformation() {
         if (getVds() != null) {
-            return String.format("HostName = %1$s", getVds().getvds_name());
+            return String.format("HostName = %1$s", getVds().getVdsName());
         } else {
             return super.getAdditionalInformation();
         }
@@ -125,7 +125,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
                         getCommandName(), getParameters().getVdsId());
             } else {
                 log.errorFormat("Failed in {0} method, for vds: {1}; host: {2}",
-                        getCommandName(), getVds().getvds_name(), getVds().gethost_name());
+                        getCommandName(), getVds().getVdsName(), getVds().getHostName());
             }
             throw e;
         }

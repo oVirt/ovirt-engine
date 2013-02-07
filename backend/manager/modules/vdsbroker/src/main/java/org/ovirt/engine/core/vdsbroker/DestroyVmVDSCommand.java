@@ -57,9 +57,9 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                                 DbFacade.getInstance().getVmNetworkStatisticsDao().update(stats);
                             }
                         }
-                        getVds().setmem_commited(getVds().getmem_commited() - curVm.getVmMemSizeMb());
-                        getVds().setmem_commited(getVds().getmem_commited() - getVds().getguest_overhead());
-                        getVds().setvms_cores_count(getVds().getvms_cores_count() - curVm.getNumOfCpus());
+                        getVds().setMemCommited(getVds().getMemCommited() - curVm.getVmMemSizeMb());
+                        getVds().setMemCommited(getVds().getMemCommited() - getVds().getGuestOverhead());
+                        getVds().setVmsCoresCount(getVds().getVmsCoresCount() - curVm.getNumOfCpus());
                         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
                         return null;
                     }
@@ -76,7 +76,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 log.errorFormat("VDS::destroy Failed destroying vm '{0}' in vds = {1} : {2}, error = {3}",
                         parameters.getVmId(),
                         getVds().getId(),
-                        getVds().getvds_name(),
+                        getVds().getVdsName(),
                         vdsBrokerCommand
                                 .getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setSucceeded(false);

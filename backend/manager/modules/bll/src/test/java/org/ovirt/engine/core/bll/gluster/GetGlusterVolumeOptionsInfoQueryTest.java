@@ -46,9 +46,9 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(new Guid());
-        vds.setvds_name("gfs1");
-        vds.setvds_group_id(CLUSTER_ID);
-        vds.setstatus(status);
+        vds.setVdsName("gfs1");
+        vds.setVdsGroupId(CLUSTER_ID);
+        vds.setStatus(status);
         return vds;
     }
 

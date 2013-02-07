@@ -231,9 +231,9 @@ public class GlusterManager {
 
     private void removeDetachedServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
         for (VDS server : existingServers) {
-            if (isRemovableStatus(server.getstatus()) && serverDetached(server, fetchedServers)) {
+            if (isRemovableStatus(server.getStatus()) && serverDetached(server, fetchedServers)) {
                 log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
-                        server.getvds_name());
+                        server.getVdsName());
                 logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
 
                 try {
@@ -241,7 +241,7 @@ public class GlusterManager {
                     // remove the server from resource manager
                     runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
                 } catch (Exception e) {
-                    log.errorFormat("Error while removing server {0} from database!", server.getvds_name(), e);
+                    log.errorFormat("Error while removing server {0} from database!", server.getVdsName(), e);
                 }
             }
         }
@@ -294,7 +294,7 @@ public class GlusterManager {
     private boolean serverDetached(VDS server, List<GlusterServerInfo> fetchedServers) {
         List<String> vdsIps = getVdsIps(server);
         for (GlusterServerInfo fetchedServer : fetchedServers) {
-            if (fetchedServer.getHostnameOrIp().equals(server.gethost_name())
+            if (fetchedServer.getHostnameOrIp().equals(server.getHostName())
                     || vdsIps.contains(fetchedServer.getHostnameOrIp())) {
                 return false;
             }
@@ -327,7 +327,7 @@ public class GlusterManager {
             // It's possible that the server we are using to get list of servers itself has been removed from the
             // cluster, and hence is returning a single server (itself)
             GlusterServerInfo server = fetchedServers.iterator().next();
-            if (server.getHostnameOrIp().equals(upServer.gethost_name())
+            if (server.getHostnameOrIp().equals(upServer.getHostName())
                     || getVdsIps(upServer).contains(server.getHostnameOrIp())) {
                 // Find a different UP server, and get servers list from it
                 tempServers.remove(upServer);
@@ -404,7 +404,7 @@ public class GlusterManager {
      */
     private VDS getNewUpServer(List<VDS> servers, VDS exceptServer) {
         for (VDS server : servers) {
-            if (server.getstatus() == VDSStatus.Up && !server.getId().equals(exceptServer.getId())) {
+            if (server.getStatus() == VDSStatus.Up && !server.getId().equals(exceptServer.getId())) {
                 return server;
             }
         }
@@ -460,7 +460,7 @@ public class GlusterManager {
     protected Map<Guid, GlusterVolumeEntity> fetchVolumes(VDS upServer) {
         VDSReturnValue result =
                 runVdsCommand(VDSCommandType.GlusterVolumesList, new GlusterVolumesListVDSParameters(upServer.getId(),
-                        upServer.getvds_group_id()));
+                        upServer.getVdsGroupId()));
 
         return result.getSucceeded() ? (Map<Guid, GlusterVolumeEntity>) result.getReturnValue() : null;
     }

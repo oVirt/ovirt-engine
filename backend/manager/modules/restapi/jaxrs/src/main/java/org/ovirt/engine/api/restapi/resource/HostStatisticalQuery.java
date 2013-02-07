@@ -38,7 +38,7 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
     public List<Statistic> getStatistics(VDS entity) {
         VdsStatistics s = entity.getStatisticsData();
         // if user queries host statistics before host installation completed, null values are possible (therefore added checks).
-        long memTotal = entity.getphysical_mem_mb()==null ? 0 : entity.getphysical_mem_mb() * Mb;
+        long memTotal = entity.getPhysicalMemMb()==null ? 0 : entity.getPhysicalMemMb() * Mb;
         long memUsed = (s==null || s.getusage_mem_percent()==null) ? 0 : memTotal * s.getusage_mem_percent() / 100;
         return asList(setDatum(clone(MEM_TOTAL),   memTotal),
                       setDatum(clone(MEM_USED),    memUsed),

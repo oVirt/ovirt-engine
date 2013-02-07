@@ -83,8 +83,8 @@ public class MoveHost extends ListModel
 
         for (VDS vds : hosts)
         {
-            if (!cluster.getId().equals(vds.getvds_group_id()) &&
-                    (vds.getstatus() == VDSStatus.Maintenance || vds.getstatus() == VDSStatus.PendingApproval)
+            if (!cluster.getId().equals(vds.getVdsGroupId()) &&
+                    (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version()))
             {
                 EntityModel entity = new EntityModel();

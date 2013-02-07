@@ -58,7 +58,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             Guid guid = vm.getDedicatedVmForVds().getValue();
             // get dedicated host cluster and comparing it to VM cluster
             VDS vds = getVdsDAO().get(guid);
-            result = vds != null && (vm.getVdsGroupId().equals(vds.getvds_group_id()));
+            result = vds != null && (vm.getVdsGroupId().equals(vds.getVdsGroupId()));
         }
         if (!result) {
             getReturnValue().getCanDoActionMessages()
@@ -130,8 +130,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 VDS dedicatedVds = getVds(vmStatic.getDedicatedVmForVds().getValue());
                 // check only from cluster version 3.2
                 if (dedicatedVds != null &&
-                        dedicatedVds.getvds_group_compatibility_version() != null &&
-                        dedicatedVds.getvds_group_compatibility_version().compareTo(Version.v3_2) >= 0 &&
+                        dedicatedVds.getVdsGroupCompatibilityVersion() != null &&
+                        dedicatedVds.getVdsGroupCompatibilityVersion().compareTo(Version.v3_2) >= 0 &&
                         dedicatedVds.getCpuThreads() != null) {
                     if (Collections.max(currPcpus) >= dedicatedVds.getCpuThreads()) {
                         // ERROR maps to a non existent pcpu

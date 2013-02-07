@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.*;
 public class MemoryVdsComparer extends VdsComparer {
     @Override
     public boolean IsBetter(VDS x, VDS y, VM vm) {
-        return ((x.getphysical_mem_mb() - x.getmem_commited()) < (y.getphysical_mem_mb() - y.getmem_commited()));
+        return ((x.getPhysicalMemMb() - x.getMemCommited()) < (y.getPhysicalMemMb() - y.getMemCommited()));
 
     }
 
