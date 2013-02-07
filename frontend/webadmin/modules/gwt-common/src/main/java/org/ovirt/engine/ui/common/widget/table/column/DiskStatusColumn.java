@@ -13,8 +13,8 @@ public class DiskStatusColumn extends ImageResourceColumn<Disk> {
         if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE)) {
             DiskImage diskImage = (DiskImage) disk;
 
-            if (diskImage.getimageStatus().equals(ImageStatus.LOCKED)) {
-                setEnumTitle(diskImage.getimageStatus());
+            if (diskImage.getImageStatus().equals(ImageStatus.LOCKED)) {
+                setEnumTitle(diskImage.getImageStatus());
                 return new DiskImageStatusColumn().getValue(diskImage);
             }
         }

@@ -133,7 +133,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 retValue && validate(validator.isDomainExistAndActive())
                         && validate(validator.domainIsValidDestination());
 
-        if (retValue && diskImage.getimageStatus() == ImageStatus.LOCKED) {
+        if (retValue && diskImage.getImageStatus() == ImageStatus.LOCKED) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED);
         }

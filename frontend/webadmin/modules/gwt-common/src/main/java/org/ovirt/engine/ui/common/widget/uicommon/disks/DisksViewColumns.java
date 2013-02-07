@@ -157,7 +157,7 @@ public class DisksViewColumns {
         @Override
         protected ImageStatus getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getimageStatus() : null;
+                    ((DiskImage) object).getImageStatus() : null;
         }
     };
 

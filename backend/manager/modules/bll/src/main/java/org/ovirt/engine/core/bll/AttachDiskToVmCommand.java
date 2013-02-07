@@ -57,14 +57,14 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
         boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
-        if (isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.ILLEGAL) {
+        if (isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.ILLEGAL) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_DISK_OPERATION);
             return false;
         }
 
         retValue = acquireLockInternal();
 
-        if (retValue && isImageDisk && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED) {
+        if (retValue && isImageDisk && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
             addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", disk.getDiskAlias()));
             return false;

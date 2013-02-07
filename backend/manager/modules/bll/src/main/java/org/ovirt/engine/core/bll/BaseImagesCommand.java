@@ -172,8 +172,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                     new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                             getImage().getImageId())).getReturnValue();
 
-            if (image.getimageStatus() != ImageStatus.OK) {
-                diskImage.setimageStatus(image.getimageStatus());
+            if (image.getImageStatus() != ImageStatus.OK) {
+                diskImage.setImageStatus(image.getImageStatus());
                 getImageDao().update(diskImage.getImage());
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
@@ -338,7 +338,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), diskImage.getimageStatus());
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), diskImage.getImageStatus());
                 getCompensationContext().stateChanged();
                 setImageStatus(ImageStatus.LOCKED);
                 return null;
@@ -351,7 +351,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setImageStatus(ImageStatus imageStatus) {
         DiskImage diskImage = getRelevantDiskImage();
-        diskImage.setimageStatus(imageStatus);
+        diskImage.setImageStatus(imageStatus);
         ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
     }
 
@@ -381,7 +381,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             }
 
             // Unlock destination image:
-            getDestinationDiskImage().setimageStatus(ImageStatus.OK);
+            getDestinationDiskImage().setImageStatus(ImageStatus.OK);
             getImageDao().update(getDestinationDiskImage().getImage());
         }
 

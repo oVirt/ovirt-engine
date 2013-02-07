@@ -625,7 +625,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         Disk disk = (Disk) getSelectedItem();
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
+                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
         getNewCommand().setIsExecutionAllowed(true);
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && !isDiskLocked);
@@ -671,7 +671,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
             DiskImage diskImage = (DiskImage) disk;
             if (disk.getDiskStorageType() != DiskStorageType.IMAGE ||
-                    diskImage.getimageStatus() != ImageStatus.OK ||
+                    diskImage.getImageStatus() != ImageStatus.OK ||
                     disk.getVmEntityType() == VmEntityType.TEMPLATE ||
                     !datacenterId.equals(diskImage.getstorage_pool_id()))
             {
@@ -696,7 +696,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         for (Disk disk : disks)
         {
             DiskImage diskImage = (DiskImage) disk;
-            if (diskImage.getimageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
+            if (diskImage.getImageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
                     !datacenterId.equals(diskImage.getstorage_pool_id()))
             {
                 return false;
@@ -714,7 +714,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         {
             boolean isTemplateDisk = disk.getVmEntityType() == VmEntityType.TEMPLATE;
             boolean isImageLocked = disk.getDiskStorageType() == DiskStorageType.IMAGE
-                    && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
+                    && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
             if (isTemplateDisk || isImageLocked)
             {

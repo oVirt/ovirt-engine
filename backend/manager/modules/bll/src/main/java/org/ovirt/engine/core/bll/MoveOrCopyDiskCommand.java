@@ -101,7 +101,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean isImageNotLocked() {
         DiskImage diskImage = getImage();
-        if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+        if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
             if (getParameters().getOperation() == ImageOperation.Move) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
                 addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));

@@ -53,7 +53,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         mNewCreatedDiskImage.setcreation_date(new Date());
         mNewCreatedDiskImage.setlastModified(new Date());
         mNewCreatedDiskImage.setactive(true);
-        mNewCreatedDiskImage.setimageStatus(ImageStatus.LOCKED);
+        mNewCreatedDiskImage.setImageStatus(ImageStatus.LOCKED);
         mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
         mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 

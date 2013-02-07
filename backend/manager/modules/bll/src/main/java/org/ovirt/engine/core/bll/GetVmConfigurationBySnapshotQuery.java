@@ -98,7 +98,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
                 log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());
-                fromConfigImg.setimageStatus(ImageStatus.ILLEGAL);
+                fromConfigImg.setImageStatus(ImageStatus.ILLEGAL);
             }
         }
     }

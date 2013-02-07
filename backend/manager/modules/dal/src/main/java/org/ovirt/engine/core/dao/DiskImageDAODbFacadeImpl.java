@@ -138,7 +138,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setsize(rs.getLong("size"));
             entity.setParentId(Guid.createGuidFromString(rs
                     .getString("ParentId")));
-            entity.setimageStatus(ImageStatus.forValue(rs
+            entity.setImageStatus(ImageStatus.forValue(rs
                     .getInt("imageStatus")));
             entity.setlastModified(DbFacadeUtils.fromDate(rs
                     .getTimestamp("lastModified")));

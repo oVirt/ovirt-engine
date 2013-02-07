@@ -102,7 +102,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             } else {
                 if (vmtImages != null) {
                     for (DiskImage image : vmtImages) {
-                        if (image.getimageStatus() == ImageStatus.LOCKED) {
+                        if (image.getImageStatus() == ImageStatus.LOCKED) {
                             returnValue = false;
                             break;
                         }

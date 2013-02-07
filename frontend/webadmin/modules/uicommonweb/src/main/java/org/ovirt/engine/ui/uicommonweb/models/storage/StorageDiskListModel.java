@@ -120,7 +120,7 @@ public class StorageDiskListModel extends SearchableListModel
 
     private boolean isRemoveCommandAvailable(ArrayList<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            boolean isImageLocked = disk.getimageStatus() == ImageStatus.LOCKED;
+            boolean isImageLocked = disk.getImageStatus() == ImageStatus.LOCKED;
 
             if (isImageLocked) {
                 return false;

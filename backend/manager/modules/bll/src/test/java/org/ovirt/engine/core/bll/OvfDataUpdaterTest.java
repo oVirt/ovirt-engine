@@ -319,7 +319,7 @@ public class OvfDataUpdaterTest {
     private DiskImage createDiskImage(ImageStatus status) {
         DiskImage disk = new DiskImage();
         disk.setId(Guid.NewGuid());
-        disk.setimageStatus(status);
+        disk.setImageStatus(status);
         return disk;
     }
 

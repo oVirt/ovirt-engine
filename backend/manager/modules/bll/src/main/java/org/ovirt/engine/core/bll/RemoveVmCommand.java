@@ -300,7 +300,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         // If the VM still has disk images related to it, change their status to Illegal.
         if (!diskImages.isEmpty()) {
             for (DiskImage diskImage : diskImages) {
-                if (diskImage.getimageStatus() != ImageStatus.ILLEGAL) {
+                if (diskImage.getImageStatus() != ImageStatus.ILLEGAL) {
                     log.errorFormat("Disk {0} which is part of VM {1} was not at ILLEGAL state.",
                             diskImage.getDiskAlias(),
                             getVm().getVmName());

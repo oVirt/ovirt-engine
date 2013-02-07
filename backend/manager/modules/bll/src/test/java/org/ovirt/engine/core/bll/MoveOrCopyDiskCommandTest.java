@@ -148,7 +148,7 @@ public class MoveOrCopyDiskCommandTest {
         initializeCommand(ImageOperation.Move);
         initVmDiskImage();
         initVm();
-        command.getImage().setimageStatus(ImageStatus.LOCKED);
+        command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
@@ -159,7 +159,7 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionTemplateImageIsLocked() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initTemplateDiskImage();
-        command.getImage().setimageStatus(ImageStatus.LOCKED);
+        command.getImage().setImageStatus(ImageStatus.LOCKED);
         doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
 
         Map<Boolean, VmTemplate> map = Collections.singletonMap(true, new VmTemplate());

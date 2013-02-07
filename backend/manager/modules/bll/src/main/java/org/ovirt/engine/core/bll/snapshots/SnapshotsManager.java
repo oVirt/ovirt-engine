@@ -209,7 +209,7 @@ public class SnapshotsManager {
      */
     public void removeAllIllegalDisks(Guid snapshotId, Guid vmId) {
         for (DiskImage diskImage : getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId)) {
-            if (diskImage.getimageStatus() == ImageStatus.ILLEGAL) {
+            if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                 ImagesHandler.removeDiskImage(diskImage, vmId);
             }
         }
@@ -378,7 +378,7 @@ public class SnapshotsManager {
             } else {
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
-                    diskImage.setimageStatus(ImageStatus.ILLEGAL);
+                    diskImage.setImageStatus(ImageStatus.ILLEGAL);
                     diskImage.setvm_snapshot_id(activeSnapshotId);
 
                     ImagesHandler.addImage(diskImage, true, (diskImage.getstorage_ids() == null) ? null :

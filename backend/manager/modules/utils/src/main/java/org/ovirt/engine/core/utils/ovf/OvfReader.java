@@ -488,7 +488,7 @@ public abstract class OvfReader implements IOvfBuilder {
             image.setId(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
             // Default values:
             image.setactive(true);
-            image.setimageStatus(ImageStatus.OK);
+            image.setImageStatus(ImageStatus.OK);
             image.setdescription(node.Attributes.get("ovf:description").getValue());
             _images.add(image);
         }

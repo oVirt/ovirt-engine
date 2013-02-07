@@ -118,7 +118,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                     // For illegal image check if it was snapshot as illegal (therefore
                     // still exists at DB, or was it erased after snapshot - therefore the
                     // query returned to UI an illegal image)
-                    if (diskImage.getimageStatus() == ImageStatus.ILLEGAL) {
+                    if (diskImage.getImageStatus() == ImageStatus.ILLEGAL) {
                         DiskImage snapshotImageInDb =
                                 getDiskImageDao().getSnapshotById(diskImage.getImageId());
                         if (snapshotImageInDb == null) {
@@ -315,7 +315,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         // of images on a given storage domain
         int result = 0;
         for (DiskImage img : getDiskImagesFromConfiguration()) {
-            if (img.getimageStatus() != ImageStatus.ILLEGAL) {
+            if (img.getImageStatus() != ImageStatus.ILLEGAL) {
                 if (img.getstorage_ids().get(0).getValue().equals(storageDomainId)) {
                     result = result + (int) Math.ceil(img.getActualSize());
                 }

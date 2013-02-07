@@ -8,9 +8,9 @@ public class DiskImageStatusColumn extends ImageResourceColumn<DiskImage> {
 
     @Override
     public ImageResource getValue(DiskImage diskImage) {
-        setEnumTitle(diskImage.getimageStatus());
+        setEnumTitle(diskImage.getImageStatus());
 
-        switch (diskImage.getimageStatus()) {
+        switch (diskImage.getImageStatus()) {
         case OK:
             return getCommonResources().upImage();
         case LOCKED:

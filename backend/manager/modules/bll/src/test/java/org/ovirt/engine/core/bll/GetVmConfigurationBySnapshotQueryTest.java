@@ -129,7 +129,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         assertNotNull("Return value from query cannot be null", returnValue);
         VM vm = (VM) returnValue.getReturnValue();
         for (Disk diskImage : vm.getDiskMap().values()) {
-            assertEquals(((DiskImage)diskImage).getimageStatus(), ImageStatus.ILLEGAL);
+            assertEquals(((DiskImage)diskImage).getImageStatus(), ImageStatus.ILLEGAL);
         }
     }
 

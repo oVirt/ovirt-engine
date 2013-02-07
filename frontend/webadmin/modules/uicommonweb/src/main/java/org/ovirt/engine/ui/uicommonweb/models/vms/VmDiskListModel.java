@@ -905,7 +905,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         VM vm = getEntity();
         Disk disk = (Disk) getSelectedItem();
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
+                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
         getNewCommand().setIsExecutionAllowed(true);
 
@@ -968,7 +968,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         {
             boolean isLocked =
                     disk.getDiskStorageType() == DiskStorageType.IMAGE
-                            && ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED;
+                            && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
             if (disk.getPlugged() == plug || isLocked || (disk.getDiskInterface() == DiskInterface.IDE && !isVmDown()))
             {
@@ -981,7 +981,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private boolean isImageDiskOK(Disk disk) {
         return disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getimageStatus() == ImageStatus.OK;
+                ((DiskImage) disk).getImageStatus() == ImageStatus.OK;
     }
 
     private boolean isMoveCommandAvailable() {
@@ -1026,7 +1026,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         for (Disk disk : disks)
         {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    ((DiskImage) disk).getimageStatus() == ImageStatus.LOCKED || (!isVmDown() && disk.getPlugged()))
+                    ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED || (!isVmDown() && disk.getPlugged()))
             {
                 return false;
             }

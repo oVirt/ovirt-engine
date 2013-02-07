@@ -161,7 +161,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(DiskImage object) {
-                return object.getimageStatus();
+                return object.getImageStatus();
             }
         };
         disksTable.addColumn(statusColumn, constants.statusDisk(), "60px"); //$NON-NLS-1$

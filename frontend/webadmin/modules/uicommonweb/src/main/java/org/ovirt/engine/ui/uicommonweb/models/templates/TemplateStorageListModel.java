@@ -261,7 +261,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
         for (DiskModel disk : disks)
         {
-            if (((DiskImage) disk.getDisk()).getimageStatus() == ImageStatus.LOCKED
+            if (((DiskImage) disk.getDisk()).getImageStatus() == ImageStatus.LOCKED
                     || ((DiskImage) disk.getDisk()).getstorage_ids().size() == 1)
             {
                 return false;

@@ -1006,7 +1006,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         for (DiskModel diskModel : disks) {
             Disk disk = diskModel.getDisk();
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    ((DiskImage) disk).getimageStatus() == status) {
+                    ((DiskImage) disk).getImageStatus() == status) {
 
                 disksAliases.add(disk.getDiskAlias());
             }

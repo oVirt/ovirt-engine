@@ -481,7 +481,7 @@ public final class ImagesHandler {
         boolean returnValue = true;
         List<String> lockedDisksAliases = new ArrayList<String>();
         for (DiskImage diskImage : images) {
-            if (diskImage.getimageStatus() == ImageStatus.LOCKED) {
+            if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
                 lockedDisksAliases.add(diskImage.getDiskAlias());
                 returnValue = false;
             }
@@ -595,8 +595,8 @@ public final class ImagesHandler {
         for (DiskImage diskImage : images) {
             if (diskImage != null) {
                 DiskImage image = irsImages.get(i++);
-                if (image.getimageStatus() != ImageStatus.OK) {
-                    diskImage.setimageStatus(image.getimageStatus());
+                if (image.getImageStatus() != ImageStatus.OK) {
+                    diskImage.setImageStatus(image.getImageStatus());
                     DbFacade.getInstance().getImageDao().update(diskImage.getImage());
                     returnValue = false;
                     ListUtils.nullSafeAdd(messages,

@@ -81,7 +81,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
 
             newImage.setParentId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.parent)));
             newImage.setdescription((String) xmlRpcStruct.getItem(IrsProperties.description));
-            newImage.setimageStatus(EnumUtils.valueOf(ImageStatus.class,
+            newImage.setImageStatus(EnumUtils.valueOf(ImageStatus.class,
                     (String) xmlRpcStruct.getItem(IrsProperties.ImageStatus), true));
             if (xmlRpcStruct.contains(IrsProperties.size)) {
                 newImage.setsize(Long.parseLong(xmlRpcStruct.getItem(IrsProperties.size).toString()) * 512);

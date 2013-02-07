@@ -257,7 +257,7 @@ public class OvfDataUpdater {
      */
     protected boolean verifyDisksNotLocked(List<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            if (disk.getimageStatus() == ImageStatus.LOCKED) {
+            if (disk.getImageStatus() == ImageStatus.LOCKED) {
                 return false;
             }
         }

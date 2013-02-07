@@ -104,7 +104,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 getDbFacade().getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId());
         for (DiskImage diskSnapshot : snapshotDisks) {
             diskSnapshot.setvm_snapshot_id(null);
-            diskSnapshot.setimageStatus(ImageStatus.ILLEGAL);
+            diskSnapshot.setImageStatus(ImageStatus.ILLEGAL);
             getDbFacade().getImageDao().update(diskSnapshot.getImage());
         }
     }

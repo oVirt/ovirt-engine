@@ -101,7 +101,7 @@ public class DiskMapper {
             }
         }
         if (disk.isSetStatus()) {
-            diskImage.setimageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
+            diskImage.setImageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
         }
         if (disk.isSetSparse()) {
             diskImage.setvolume_type(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
@@ -152,8 +152,8 @@ public class DiskMapper {
         if (entity.getvolume_format() != null) {
             model.setFormat(map(entity.getvolume_format(), null));
         }
-        if (entity.getimageStatus() != null) {
-            DiskStatus status = map(entity.getimageStatus());
+        if (entity.getImageStatus() != null) {
+            DiskStatus status = map(entity.getImageStatus());
             model.setStatus(StatusUtils.create(status == null ? null : status.value()));
         }
         model.setSparse(VolumeType.Sparse == entity.getvolume_type());

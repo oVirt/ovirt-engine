@@ -99,7 +99,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();
         expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
-        expect(entity.getimageStatus()).andReturn(ImageStatus.OK).anyTimes();
+        expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
         expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
         expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();

@@ -97,7 +97,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         boolean succeeded = true;
         for (DiskImage image : getImagesList()) {
-            if (image.getimageStatus() != ImageStatus.ILLEGAL) {
+            if (image.getImageStatus() != ImageStatus.ILLEGAL) {
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
                         getVmId(), targetSnapshot, removedSnapshotId);
                 VdcReturnValueBase returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);

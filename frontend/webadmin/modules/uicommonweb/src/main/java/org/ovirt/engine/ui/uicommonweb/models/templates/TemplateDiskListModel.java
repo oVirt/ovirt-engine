@@ -237,7 +237,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
         for (DiskImage disk : disks)
         {
-            if (disk.getimageStatus() != ImageStatus.OK)
+            if (disk.getImageStatus() != ImageStatus.OK)
             {
                 return false;
             }

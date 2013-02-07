@@ -84,7 +84,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         setit_guid(it_guid);
         this.setsize(size);
         this.setParentId(parentId);
-        this.setimageStatus(imageStatus);
+        this.setImageStatus(imageStatus);
         this.setlastModified(lastModified);
         this.setappList(appList);
         this.setVmEntityType(vmEntityType);
@@ -228,11 +228,11 @@ public class DiskImage extends DiskImageBase implements IImage {
         getImage().setParentId(value);
     }
 
-    public ImageStatus getimageStatus() {
+    public ImageStatus getImageStatus() {
         return getImage().getStatus();
     }
 
-    public void setimageStatus(ImageStatus value) {
+    public void setImageStatus(ImageStatus value) {
         getImage().setStatus(value);
     }
 
@@ -379,7 +379,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.appList = diskImage.appList;
         di.setit_guid(new Guid(diskImage.getit_guid().getUuid()));
         di.setParentId(new Guid(diskImage.getParentId().getUuid()));
-        di.setimageStatus(diskImage.getimageStatus());
+        di.setImageStatus(diskImage.getImageStatus());
         di.setlastModified(new Date(diskImage.getlastModified().getTime()));
         di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
         di.setvm_snapshot_id(diskImage.getvm_snapshot_id());
@@ -403,7 +403,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setcreation_date(new Date());
         di.setlastModified(new Date());
         di.setactive(true);
-        di.setimageStatus(ImageStatus.LOCKED);
+        di.setImageStatus(ImageStatus.LOCKED);
 
         return di;
     }
