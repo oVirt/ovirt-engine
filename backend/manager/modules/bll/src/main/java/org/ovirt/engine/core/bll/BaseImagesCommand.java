@@ -59,14 +59,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected DiskImage getImage() {
         if (mImage == null) {
-            DiskImage image = getDiskImageDao().get(getImageId());
-            if (image != null) {
-                mImage = image;
-            } else {
-                image = getDiskImageDao().getSnapshotById(getImageId());
-                if (image != null) {
-                    mImage = image;
-                }
+            mImage = getDiskImageDao().get(getImageId());
+            if (mImage == null) {
+                mImage = getDiskImageDao().getSnapshotById(getImageId());
             }
         }
         return mImage;
