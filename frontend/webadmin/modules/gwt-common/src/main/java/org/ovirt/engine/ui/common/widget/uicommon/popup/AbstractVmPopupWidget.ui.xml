@@ -156,17 +156,17 @@
             margin-bottom: 10px;
         }
         
-        .poolEditVms {
+        .poolEditVms, .name {
 			line-height: 30px;
 			padding: 0 5px;
 			padding-bottom: 35px;
         }
         
-        .prestartedVmsEditorContent {
+        .prestartedVmsEditorContent,.nameEditorContent {
         	width: 230px;
         }
         
-        .prestartedVmsEditor {
+        .prestartedVmsEditor,.nameEditor {
         	float: right;
         	width: 230px;
         }
@@ -176,7 +176,7 @@
         	padding-right: 10px;
         }
         
-        .prestartedVmsIcon {
+        .prestartedVmsIcon, .poolNameIcon {
         	float: left;
         	padding-top: 5px;
             padding-left: 2px;
@@ -191,7 +191,7 @@
         	width: 230px;
         }
         
-        .prestartedLabel {
+        .prestartedLabel, .nameLabel {
         	float: left;
         	color: #333333;
         }
@@ -213,7 +213,13 @@
 							<e:ListModelListBoxEditor ui:field="quotaEditor" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+							<g:FlowPanel addStyleNames="{style.name}">
+								<g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
+									<g:Label ui:field="nameLabel" addStyleNames="{style.nameLabel}" />
+									<d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.poolNameIcon}" />
+								</g:FlowPanel>
+								<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}" contentWidgetStyleName="{style.nameEditorContent}"/>
+							</g:FlowPanel>
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 
 <!-- 						New VM Pool							 -->

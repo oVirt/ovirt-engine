@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common;
 
+import org.ovirt.engine.core.common.businessentities.VmPool;
+
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonApplicationMessages extends Messages {
@@ -57,6 +59,12 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("Number of Prestarted VMs defines the number of VMs in Run state , that are waiting to be attached to Users. Accepted values: 0 to the Number of VMs that already exists in the Pool.")
     String prestartedHelp();
+
+    @DefaultMessage("It is possible to specify mask for the VM indexes, for example: for pool ''my"
+            + VmPool.MASK_CHARACTER
+            + VmPool.MASK_CHARACTER
+            + "pool'' the generated names will be: my01pool,my02pool,...my99pool")
+    String poolNameHelp();
 
     @DefaultMessage("Free: {0} vCPU")
     String quotaFreeCpus(int numOfVCPU);

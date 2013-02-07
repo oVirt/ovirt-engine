@@ -118,9 +118,17 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     public ListModelListBoxEditor<Object> quotaEditor;
 
     @UiField
+    @Ignore
+    public Label nameLabel;
+
+    @UiField
     @Path(value = "name.entity")
     @WithElementId("name")
-    public EntityModelTextBoxEditor nameEditor;
+    public EntityModelTextBoxOnlyEditor nameEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon poolNameIcon;
 
     @UiField
     @Path(value = "description.entity")
@@ -527,6 +535,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         editPoolPrestartedVmsIcon =
                 new InfoIcon(applicationTemplates.italicText(messages.prestartedHelp()), resources);
 
+        poolNameIcon =
+                new InfoIcon(applicationTemplates.italicText(messages.poolNameHelp()), resources);
+
+        poolNameIcon.setVisible(false);
+
         outOfxInPool = new ValueLabel<Object>(new AbstractRenderer<Object>() {
 
             @Override
@@ -678,7 +691,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         dataCenterEditor.setLabel(constants.dcVmPopup());
         clusterEditor.setLabel(constants.hostClusterVmPopup());
         quotaEditor.setLabel(constants.quotaVmPopup());
-        nameEditor.setLabel(constants.nameVmPopup());
+        nameLabel.setText(constants.nameVmPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         templateEditor.setLabel(constants.basedOnTemplateVmPopup());
         memSizeEditor.setLabel(constants.memSizeVmPopup());

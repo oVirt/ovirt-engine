@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.businessentities.VmPool;
+
 
 
 
@@ -613,6 +615,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters.")
     String i18NNameValidationMsg();
+
+    @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters, and optionally one sequence of '" + VmPool.MASK_CHARACTER + "' to specify mask for the VM indexes")
+    String poolNameValidationMsg();
 
     @DefaultStringValue("UTF characters are not allowed.")
     String nonUtfValidationMsg();

@@ -546,6 +546,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected Storage Domain does not contain the VM Template.")
     String ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN();
 
+    @DefaultStringValue("Can not ${action} ${type}. The given name is invalid for pool name. Only lower-case and upper-case letters, numbers, '_', '-', '.', and one mask sequence are allowed.")
+    String ACTION_TYPE_FAILED_INVALID_POOL_NAME();
+
     @DefaultStringValue("Cannot ${action} ${type}. There is no active Host in the Data Center.")
     String ACTION_TYPE_FAILED_NO_VDS_IN_POOL();
 

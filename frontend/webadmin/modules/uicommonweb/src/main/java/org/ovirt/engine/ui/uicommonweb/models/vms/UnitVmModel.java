@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -1960,7 +1961,7 @@ public class UnitVmModel extends Model {
                             new LengthValidation(
                                 (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
                                     ? VM_TEMPLATE_NAME_MAX_LIMIT : AsyncDataProvider.IsWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
-                            new I18NNameValidation()
+                            isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
             getDescription().ValidateEntity(

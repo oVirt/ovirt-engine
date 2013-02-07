@@ -49,6 +49,8 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     private int vmPoolRunningCount = 1;
 
+    public static final char MASK_CHARACTER = '?';
+
     public VmPool() {
     }
 
