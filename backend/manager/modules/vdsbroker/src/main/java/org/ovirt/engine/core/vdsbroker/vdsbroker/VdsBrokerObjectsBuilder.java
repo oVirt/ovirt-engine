@@ -1320,13 +1320,18 @@ public class VdsBrokerObjectsBuilder {
             VmGuestAgentInterface nic = new VmGuestAgentInterface();
             XmlRpcStruct ifaceMap = new XmlRpcStruct((Map) ifaceStruct);
             nic.setInterfaceName(AssignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_NAME));
-            nic.setMacAddress(AssignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_MAC_ADDRESS));
+            nic.setMacAddress(getMacAddress(ifaceMap));
             nic.setIpv4Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV4_ADDRESSES));
             nic.setIpv6Addresses(extracStringtList(ifaceMap, VdsProperties.VM_IPV6_ADDRESSES));
             nic.setVmId(vmId);
             interfaces.add(nic);
         }
         return interfaces;
+    }
+
+    private static String getMacAddress(XmlRpcStruct ifaceMap) {
+        String macAddress = AssignStringValue(ifaceMap, VdsProperties.VM_INTERFACE_MAC_ADDRESS);
+        return macAddress != null ? macAddress.replace('-', ':') : null;
     }
 
     private static List<String> extracStringtList(XmlRpcStruct xmlRpcStruct, String propertyName) {
