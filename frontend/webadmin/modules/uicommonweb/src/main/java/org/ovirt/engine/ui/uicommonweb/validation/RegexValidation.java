@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.RegexOptions;
 
 @SuppressWarnings("unused")
 public class RegexValidation implements IValidation
@@ -81,8 +80,8 @@ public class RegexValidation implements IValidation
 
         if (value != null
                 && value instanceof String
-                && (getIsNegate() ? Regex.IsMatch(value.toString(), getExpression(), RegexOptions.None)
-                        : !Regex.IsMatch(value.toString(), getExpression(), RegexOptions.None)))
+                && (getIsNegate() ? Regex.IsMatch(value.toString(), getExpression())
+                        : !Regex.IsMatch(value.toString(), getExpression())))
         {
             result.setSuccess(false);
             result.getReasons().add(getMessage());
