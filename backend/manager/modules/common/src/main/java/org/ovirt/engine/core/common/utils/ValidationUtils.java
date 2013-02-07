@@ -13,6 +13,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public class ValidationUtils {
 
@@ -28,24 +29,24 @@ public class ValidationUtils {
     public static final String NO_TRIMMING_WHITE_SPACES_PATTERN = "^$|\\S.*\\S";
     public static final String IP_PATTERN =
             "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
-    // NULLABLE_MAC_ADDRESS can be valid mac address: xx:xx:xx:xx:xx:xx or empty string,
-    // We need it for VMs that is not sending custom MAC address and we provide MAC address from
-    // the MAC pool - this values came as empty string and we don't want the validation fail.
+    /** NULLABLE_MAC_ADDRESS can be valid mac address: xx:xx:xx:xx:xx:xx or empty string,
+     * We need it for VMs that is not sending custom MAC address and we provide MAC address from
+     * the MAC pool - this values came as empty string and we don't want the validation fail. */
     public static final String NULLABLE_MAC_ADDRESS = "^((\\d|([a-f]|[A-F])){2}:){5}(\\d|([a-f]|[A-F])){2}$|^$";
-    // Invalid mac address (for now just checking 00:00:00:00:00:00
+    /** Invalid mac address (for now just checking 00:00:00:00:00:00 */
     public static final String INVALID_NULLABLE_MAC_ADDRESS = "^(00:){5}00$";
+    /** the mask will be replaced with zero-padded number in the generated names of the VMs in the pool,
+     * see NameForVmInPoolGeneratorTest PoolNameValidationTest for valid and invalid expressions of this pattern */
+    public static final String POOL_NAME_PATTERN = "^[\\p{L}0-9._-]+[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]*$|^[\\p{L}0-9._-]*[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]+$";
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     public static boolean containsIlegalCharacters(String s) {
-
         return !Pattern.matches(NO_SPECIAL_CHARACTERS, s);
-
     }
 
     public static boolean containsIlegalCharactersOrDash(String s) {
         return !Pattern.matches(NO_SPECIAL_CHARACTERS_OR_DASH, s);
-
     }
 
     /***

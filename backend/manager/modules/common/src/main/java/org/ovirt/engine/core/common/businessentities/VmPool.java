@@ -21,7 +21,7 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     @NotNull(message = "VALIDATION.VM_POOLS.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_POOL_NAME_SIZE)
-    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
+    @Pattern(regexp = ValidationUtils.POOL_NAME_PATTERN, message = "ACTION_TYPE_FAILED_INVALID_POOL_NAME", groups = { CreateEntity.class,
             UpdateEntity.class })
     private String name;
 

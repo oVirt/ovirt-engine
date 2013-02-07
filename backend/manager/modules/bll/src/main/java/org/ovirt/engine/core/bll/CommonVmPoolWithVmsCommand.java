@@ -19,13 +19,13 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Step;
@@ -40,6 +40,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogField;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.CustomLogFields;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
 
 /**
@@ -98,7 +99,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
-        String vmName = getParameters().getVmStaticData().getName();
+        String poolName = getParameters().getVmStaticData().getName();
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> GetValue(ConfigValues.VmPoolMaxSubsequentFailures);
         for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
@@ -106,7 +107,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             number--;
             do {
                 number++;
-                currentVmName = String.format("%1$s-%2$s", vmName, number);
+                currentVmName = NameForVmInPoolGenerator.generateVmName(poolName, number);
             } while ((Boolean) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
