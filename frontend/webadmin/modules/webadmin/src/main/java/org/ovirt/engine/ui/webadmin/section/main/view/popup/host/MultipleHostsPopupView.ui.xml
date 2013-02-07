@@ -8,7 +8,7 @@
 	<ui:style>
 		.tablePanel {
 			height: 300px;
-			width: 100%;
+			width: 875px;
 			border: 1px solid #CED8DF;
 		}
 		.messageLabel {
