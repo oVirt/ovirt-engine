@@ -5,21 +5,27 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class ClusterGlusterHookListModel extends SearchableListModel {
@@ -29,6 +35,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
     private UICommand disableHookCommand;
 
     private UICommand viewHookCommand;
+
+    private UICommand resolveConflictsCommand;
 
     public UICommand getEnableHookCommand() {
         return enableHookCommand;
@@ -54,6 +62,14 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         this.viewHookCommand = viewHookCommand;
     }
 
+    public UICommand getResolveConflictsCommand() {
+        return resolveConflictsCommand;
+    }
+
+    public void setResolveConflictsCommand(UICommand resolveConflictsCommand) {
+        this.resolveConflictsCommand = resolveConflictsCommand;
+    }
+
     @Override
     public VDSGroup getEntity() {
         return (VDSGroup) super.getEntity();
@@ -72,6 +88,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         setViewHookCommand(new UICommand("ViewContent", this)); //$NON-NLS-1$
         getViewHookCommand().setIsExecutionAllowed(false);
+
+        setResolveConflictsCommand(new UICommand("ResolveConflicts", this)); //$NON-NLS-1$
+        getResolveConflictsCommand().setIsExecutionAllowed(false);
     }
 
     private void enableHook() {
@@ -155,6 +174,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         setConfirmWindow(null);
     }
 
+    private void cancel() {
+        setWindow(null);
+    }
+
     private void viewHook() {
         if (getWindow() != null) {
             return;
@@ -201,13 +224,178 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         contentModel.getCommands().add(command);
     }
 
-    private void cancel() {
-        setWindow(null);
+    private void resolveConflicts() {
+        if (getWindow() != null)
+        {
+            return;
+        }
+
+        final GlusterHookEntity hookEntity = (GlusterHookEntity) getSelectedItem();
+
+        if (hookEntity == null)
+        {
+            return;
+        }
+
+        GlusterHookResolveConflictsModel conflictsModel = new GlusterHookResolveConflictsModel();
+        conflictsModel.setTitle(ConstantsManager.getInstance().getConstants().resolveConflictsGlusterHookTitle());
+        conflictsModel.setHashName("gluster_hook_resolve_conflicts"); //$NON-NLS-1$
+        hookEntity.setServerHooks(new ArrayList<GlusterServerHook>());
+        conflictsModel.setGlusterHookEntity(hookEntity);
+        setWindow(conflictsModel);
+        conflictsModel.startProgress(null);
+
+        AsyncDataProvider.getGlusterHook(new AsyncQuery(conflictsModel, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+
+                GlusterHookResolveConflictsModel innerConflictsModel = (GlusterHookResolveConflictsModel) model;
+                List<GlusterServerHook> serverHooks = ((GlusterHookEntity) returnValue).getServerHooks();
+                hookEntity.setServerHooks(serverHooks);
+
+                ArrayList<EntityModel> serverHookModels = new ArrayList<EntityModel>();
+                GlusterServerHook engineCopy = new GlusterServerHook();
+                engineCopy.setHookId(hookEntity.getId());
+                engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
+                engineCopy.setStatus(hookEntity.getStatus());
+                EntityModel engineCopyModel = new EntityModel(engineCopy);
+                serverHookModels.add(engineCopyModel);
+
+                for (GlusterServerHook serverHook : serverHooks) {
+                    serverHookModels.add(new EntityModel(serverHook));
+                }
+
+                innerConflictsModel.getHookSources().setItems(serverHookModels);
+                innerConflictsModel.getHookSources().setSelectedItem(engineCopyModel);
+
+                ArrayList<GlusterServerHook> serverHooksWithEngine = new ArrayList<GlusterServerHook>(serverHooks);
+                serverHooksWithEngine.add(0, engineCopy);
+                innerConflictsModel.getServerHooksList().setItems(serverHooksWithEngine);
+                innerConflictsModel.getServerHooksList().setSelectedItem(engineCopy);
+
+                innerConflictsModel.stopProgress();
+
+                UICommand command = new UICommand("OnResolveConflicts", ClusterGlusterHookListModel.this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                innerConflictsModel.getCommands().add(command);
+
+                command = new UICommand("Cancel", ClusterGlusterHookListModel.this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().close());
+                command.setIsCancel(true);
+                innerConflictsModel.getCommands().add(command);
+            }
+        }), hookEntity.getId(), true);
+    }
+
+    /*
+     * If there are multiple types of conflicts found for a hook and the user choose to resolve them. The conflicts will
+     * be resolved in the following order 1)Content Conflict, 2)Status Conflict, 3)Missing Conflict
+     *
+     * If any conflict resolution is failed the next one will not be executed
+     */
+
+    private void onResolveConflicts() {
+
+        final GlusterHookResolveConflictsModel resolveConflictsModel = (GlusterHookResolveConflictsModel) getWindow();
+
+        if (resolveConflictsModel == null) {
+            return;
+        }
+
+        if (!resolveConflictsModel.isAnyResolveActionSelected()) {
+            resolveConflictsModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .noResolveActionSelectedGlusterHook());
+            return;
+        }
+
+        resolveConflictsModel.startProgress(null);
+
+        GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntiry();
+
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
+
+        if ((Boolean) resolveConflictsModel.getResolveContentConflict().getEntity()) {
+            actionTypes.add(VdcActionType.UpdateGlusterHook);
+            GlusterServerHook serverHook =
+                    (GlusterServerHook) resolveConflictsModel.getServerHooksList().getSelectedItem();
+            Guid serverId = (serverHook == null) ? null : serverHook.getServerId();
+            parameters.add(new GlusterHookManageParameters(hookEntity.getId(), serverId));
+            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    if (result.getReturnValue().getSucceeded()) {
+                        resolveConflictsModel.getResolveContentConflict().setEntity(Boolean.FALSE);
+                        resolveConflictsModel.getResolveContentConflict().setIsChangable(Boolean.FALSE);
+                    }
+                }
+            };
+            callbacks.add(callback);
+        }
+
+        if ((Boolean) resolveConflictsModel.getResolveStatusConflict().getEntity()) {
+            boolean isEnable = (Boolean) resolveConflictsModel.getResolveStatusConflictEnable().getEntity();
+            actionTypes.add(isEnable ? VdcActionType.EnableGlusterHook : VdcActionType.DisableGlusterHook);
+            parameters.add(new GlusterHookParameters(hookEntity.getId()));
+            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    if (result.getReturnValue().getSucceeded()) {
+                        resolveConflictsModel.getResolveStatusConflict().setEntity(Boolean.FALSE);
+                        resolveConflictsModel.getResolveStatusConflict().setIsChangable(Boolean.FALSE);
+                    }
+                }
+            };
+            callbacks.add(callback);
+        }
+
+        if ((Boolean) resolveConflictsModel.getResolveMissingConflict().getEntity()) {
+            boolean isAdd = (Boolean) resolveConflictsModel.getResolveMissingConflictCopy().getEntity();
+            actionTypes.add(isAdd ? VdcActionType.AddGlusterHook : VdcActionType.RemoveGlusterHook);
+            parameters.add(new GlusterHookManageParameters(hookEntity.getId()));
+            IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    if (result.getReturnValue().getSucceeded()) {
+                        resolveConflictsModel.getResolveMissingConflict().setEntity(Boolean.FALSE);
+                        resolveConflictsModel.getResolveMissingConflict().setIsChangable(Boolean.FALSE);
+                    }
+                }
+            };
+            callbacks.add(callback);
+        }
+
+        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                if (result.getReturnValue().getSucceeded()) {
+                    resolveConflictsModel.stopProgress();
+                    cancel();
+                    syncSearch();
+                }
+            }
+        };
+
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                    resolveConflictsModel.stopProgress();
+            }
+        };
+
+        // Replacing the last callback with onFinishCallback, as we just want to close the dialog and execute the search
+        if (callbacks.size() > 0) {
+            callbacks.remove(callbacks.size() - 1);
+            callbacks.add(onFinishCallback);
+            Frontend.RunMultipleActions(actionTypes, parameters, callbacks, failureCallback, null);
+        }
     }
 
     @Override
-    protected void onSelectedItemChanged()
-    {
+    protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
     }
@@ -222,10 +410,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         boolean allowEnable = true;
         boolean allowDisable = true;
         boolean allowViewContent = true;
+        boolean allowResolveConflict = true;
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowEnable = false;
             allowDisable = false;
             allowViewContent = false;
+            allowResolveConflict = false;
         }
         else {
             for (Object item : getSelectedItems()) {
@@ -242,10 +432,13 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             }
             allowViewContent = (getSelectedItems().size() == 1
                     && ((GlusterHookEntity) getSelectedItems().get(0)).getContentType() == GlusterHookContentType.TEXT);
+            allowResolveConflict = (getSelectedItems().size() == 1
+                    && ((GlusterHookEntity) getSelectedItems().get(0)).hasConflicts());
         }
         getEnableHookCommand().setIsExecutionAllowed(allowEnable);
         getDisableHookCommand().setIsExecutionAllowed(allowDisable);
         getViewHookCommand().setIsExecutionAllowed(allowViewContent);
+        getResolveConflictsCommand().setIsExecutionAllowed(allowResolveConflict);
     }
 
     @Override
@@ -299,6 +492,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
         else if (command.equals(getViewHookCommand())) {
             viewHook();
+        }
+        else if (command.equals(getResolveConflictsCommand())) {
+            resolveConflicts();
+        }
+        else if (command.getName().equals("OnResolveConflicts")) { //$NON-NLS-1$
+            onResolveConflicts();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();

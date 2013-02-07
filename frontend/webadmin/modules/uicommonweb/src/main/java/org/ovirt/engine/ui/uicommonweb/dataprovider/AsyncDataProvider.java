@@ -110,6 +110,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
@@ -1168,6 +1169,19 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetGlusterHooks,  new GlusterParameters(clusterId), aQuery);
+    }
+
+    public static void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetGlusterHookById,
+                new GlusterHookQueryParameters(hookId, includeServerHooks),
+                aQuery);
     }
 
     public static void getGlusterHookContent(AsyncQuery aQuery, Guid hookId, Guid serverId) {

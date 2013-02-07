@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookResolveConflictsPopupView.WidgetStyle">
+		.sectionHeaderLabel {
+			font-weight: bold;
+		}
+
+		.conflictReasonLabel {
+			padding-left: 50px;
+		}
+
+		.contentPanel {
+			height: 200px;
+			width: 100%;
+			border: 1px solid #CED8DF;
+		}
+
+		.contentListPanel {
+			padding-right: 20px;
+		}
+
+		.contentSourcesLabel {
+			padding: 5px;
+		}
+
+		.tablePanel {
+			height: 200px;
+			width: 300px;
+			border: 1px solid #CED8DF;
+		}
+
+		.contentViewWidget{
+			width: 400px;
+			border-width: 0px;
+		}
+
+		.contentEditor textarea {
+			height: 150px;
+		}
+
+		.resolveConflictInternalPanel {
+			padding-left: 50px;
+		}
+
+		.useContentSourceEditor {
+			width: 375px;
+		}
+
+		.hookStatusLabel {
+			padding-top: 5px;
+			padding-left: 5px;
+			padding-right: 85px;
+		}
+
+		.hookStatusEditor {
+			width: 150px;
+		}
+
+		.messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-top: 5px;
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="900px" height="600px">
+		<d:content>
+			<g:VerticalPanel spacing="5" >
+				<g:HorizontalPanel>
+					<g:Label ui:field="conflictReasonsLabel" addStyleNames="{style.sectionHeaderLabel}"/>
+					<g:VerticalPanel>
+						<g:Label ui:field="conflictReasonsContentDiffLabel" addStyleNames="{style.conflictReasonLabel}"/>
+						<g:Label ui:field="conflictReasonsStatusDiffLabel" addStyleNames="{style.conflictReasonLabel}"/>
+						<g:Label ui:field="conflictReasonsMissingHookLabel" addStyleNames="{style.conflictReasonLabel}"/>
+					</g:VerticalPanel>
+				</g:HorizontalPanel>
+
+				<g:HorizontalPanel spacing= "5" addStyleNames="{style.contentPanel}">
+					<g:VerticalPanel addStyleNames="{style.contentListPanel}">
+						<g:Label ui:field="contentSourcesLabel" addStyleNames="{style.contentSourcesLabel}"/>
+						<g:ScrollPanel addStyleNames="{style.tablePanel}">
+							<e:EntityModelCellTable ui:field="contentSourcesTable"/>
+						</g:ScrollPanel>
+					</g:VerticalPanel>
+					<g:VerticalPanel>
+						<e:EntityModelTextAreaLabelEditor ui:field="contentEditor" addStyleNames="{style.contentEditor}"/>
+						<e:EntityModelLabelEditor ui:field="checksumEditor"/>
+						<e:EntityModelLabelEditor ui:field="statusEditor"/>
+					</g:VerticalPanel>
+				</g:HorizontalPanel>
+
+				<g:VerticalPanel ui:field="resolvePanel">
+					<g:Label ui:field="resolveHeaderLabel" addStyleNames="{style.sectionHeaderLabel}"/>
+
+					<g:VerticalPanel ui:field="resolveContentConflictPanel">
+						<g:HorizontalPanel>
+							<e:EntityModelCheckBoxEditor ui:field="resolveContentConflict"/>
+							<g:Label ui:field="useContentSourceWarning" addStyleNames="{style.messageLabel}"/>
+						</g:HorizontalPanel>
+						<g:HorizontalPanel addStyleNames="{style.resolveConflictInternalPanel}">
+							<e:ListModelListBoxEditor ui:field="useContentSourceEditor" addStyleNames="{style.useContentSourceEditor}"/>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+
+					<g:VerticalPanel ui:field="resolveStatusConflictPanel">
+						<e:EntityModelCheckBoxEditor ui:field="resolveStatusConflict"/>
+						<g:HorizontalPanel addStyleNames="{style.resolveConflictInternalPanel}">
+							<g:Label ui:field="hookStatusLabel" addStyleNames="{style.hookStatusLabel}"/>
+							<e:EntityModelRadioButtonEditor ui:field="resolveStatusConflictEnable" addStyleNames="{style.hookStatusEditor}"/>
+							<e:EntityModelRadioButtonEditor ui:field="resolveStatusConflictDisable" addStyleNames="{style.hookStatusEditor}"/>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+
+					<g:VerticalPanel ui:field="resolveMissingConflictPanel">
+						<e:EntityModelCheckBoxEditor ui:field="resolveMissingConflict"/>
+						<g:HorizontalPanel addStyleNames="{style.resolveConflictInternalPanel}">
+							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictCopyEditor"/>
+							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictRemoveEditor"/>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:VerticalPanel>
+
+				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

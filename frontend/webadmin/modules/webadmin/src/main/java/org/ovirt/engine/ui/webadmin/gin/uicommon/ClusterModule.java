@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookResolveConflictsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
@@ -181,7 +182,8 @@ public class ClusterModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(ClientGinjector ginjector,
             final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider,
-            final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider) {
+            final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider,
+            final Provider<GlusterHookResolveConflictsPopupPresenterWidget> resolveConflictsPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(ginjector,
                 ClusterListModel.class,
                 ClusterGlusterHookListModel.class) {
@@ -190,6 +192,9 @@ public class ClusterModule extends AbstractGinModule {
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getViewHookCommand()) {
                     return contentPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getResolveConflictsCommand()) {
+                    return resolveConflictsPopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

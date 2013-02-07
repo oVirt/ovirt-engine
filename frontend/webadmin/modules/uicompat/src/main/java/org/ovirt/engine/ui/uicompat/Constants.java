@@ -1567,6 +1567,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Hook content is empty or binary")
     String viewContentEmptyGlusterHook();
 
+    @DefaultStringValue("Resolve Conflicts")
+    String resolveConflictsGlusterHookTitle();
+
     @DefaultStringValue("VMs already exist")
     String vmAlreadyExistsMsg();
 
@@ -1872,4 +1875,8 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Provider(s)")
     String providersMsg();
+
+    // Gluster Hook
+    @DefaultStringValue("Please select a resolve action to continue")
+    String noResolveActionSelectedGlusterHook();
 }

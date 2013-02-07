@@ -1737,6 +1737,69 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("View Content")
     String viewHookContent();
 
+    @DefaultStringValue("Resolve Conflicts")
+    String resolveConflictsGlusterHook();
+
+    @DefaultStringValue("Conflicts Reasons")
+    String conflictReasonsGlusterHook();
+
+    @DefaultStringValue("Hook content is different in some servers compared to Master copy(Engine)")
+    String conflictReasonContentGlusterHook();
+
+    @DefaultStringValue("Hook status is inconsistent (Enabled/Disabled) across servers")
+    String conflictReasonStatusGlusterHook();
+
+    @DefaultStringValue("Hook is missing in some of the servers")
+    String conflictReasonMissingGlusterHook();
+
+    @DefaultStringValue("Select the source to view the content")
+    String contentSourcesGlusterHook();
+
+    @DefaultStringValue("Source")
+    String sourceGlusterHook();
+
+    @DefaultStringValue("Content")
+    String contentGlusterHook();
+
+    @DefaultStringValue("MD5 Checksum")
+    String checksumGlusterHook();
+
+    @DefaultStringValue("Status")
+    String statusGlusterHook();
+
+    @DefaultStringValue("Resolve Actions")
+    String resolveActionsGlusterHook();
+
+    @DefaultStringValue("Resolve Content Conflict")
+    String resolveContentConflictGlusterHook();
+
+    @DefaultStringValue("Use content from")
+    String useContentSourceGlusterHook();
+
+    @DefaultStringValue("NOTE: The hook content will be overwritten in all the servers and in Engine")
+    String useContentSourceWarningGlusterHook();
+
+    @DefaultStringValue("Resolve Status Conflict")
+    String resolveStatusConflictGlusterHook();
+
+    @DefaultStringValue("Enable")
+    String statusEnableGlusterHook();
+
+    @DefaultStringValue("Disable")
+    String statusDisableGlusterHook();
+
+    @DefaultStringValue("Resolve Missing Hook Conflict")
+    String resolveMissingConflictGlusterHook();
+
+    @DefaultStringValue("Copy the hook to all the servers")
+    String resolveMissingConflictCopyGlusterHook();
+
+    @DefaultStringValue("Remove the missing hook")
+    String resolveMissingConflictRemoveGlusterHook();
+
+    @DefaultStringValue("NOTE: Master copy of the hook will be removed from Engine, this cannot be restored later")
+    String removeMissingWarningGlusterHook();
+
     // Interface
     @DefaultStringValue("Empty")
     String emptyInterface();
