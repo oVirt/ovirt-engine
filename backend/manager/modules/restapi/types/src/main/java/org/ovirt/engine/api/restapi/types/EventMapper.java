@@ -126,8 +126,12 @@ public class EventMapper {
         if (event.isSetOrigin()) {
             auditLog.setOrigin(event.getOrigin());
         }
-        auditLog.setCustomEventId(event.getCustomId());
-        auditLog.setEventFloodInSec(event.getFloodRate());
+        if (event.isSetCustomId()) {
+            auditLog.setCustomEventId(event.getCustomId());
+        }
+        if (event.isSetFloodRate()) {
+            auditLog.setEventFloodInSec(event.getFloodRate());
+        }
         if (event.isSetCustomData()) {
             auditLog.setCustomData(event.getCustomData());
         }
