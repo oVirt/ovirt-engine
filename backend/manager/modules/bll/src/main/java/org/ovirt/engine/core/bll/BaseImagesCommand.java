@@ -385,8 +385,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             getImageDao().update(getDestinationDiskImage().getImage());
         }
 
-        if (getDiskImage() != null) {
-            // Unlock source image:
+        if (getRelevantDiskImage() != null) {
             unLockImage();
         }
 
@@ -405,8 +404,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             removeSnapshot(getDestinationDiskImage());
         }
 
-        if (getDiskImage() != null) {
-            // Unlock source image:
+        if (getRelevantDiskImage() != null) {
             unLockImage();
         }
     }
