@@ -182,6 +182,7 @@
 		<include name="common/AuditLogSeverity.java" />
 		<include name="common/users/VdcUser.java" />
 		<include name="common/utils/EnumUtils.java" />
+		<include name="common/utils/LexoNumericComparator.java" />
 		<include name="common/utils/ListUtils.java" />
 		<include name="common/utils/StringUtil.java"/>
 		<include name="common/utils/ObjectUtils.java" />

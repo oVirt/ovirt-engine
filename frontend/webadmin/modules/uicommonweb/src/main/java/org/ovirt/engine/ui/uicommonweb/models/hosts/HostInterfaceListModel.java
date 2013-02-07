@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,14 +16,18 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.LexoNumericComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.NGuid;
@@ -448,112 +453,146 @@ public class HostInterfaceListModel extends SearchableListModel
     {
         ArrayList<HostInterfaceLineModel> items = new ArrayList<HostInterfaceLineModel>();
         setOriginalItems((ArrayList<VdsNetworkInterface>) source);
-        // Add bonded interfaces.
-        for (VdsNetworkInterface nic : source)
-        {
-            if ((nic.getBonded() == null ? false : nic.getBonded()))
-            {
-                HostInterfaceLineModel model = new HostInterfaceLineModel();
-                model.setInterfaces(new ArrayList<HostInterface>());
-                model.setInterface(nic);
-                model.setVLans(new ArrayList<HostVLan>());
-                model.setIsBonded(true);
-                model.setBondName(nic.getName());
-                model.setAddress(nic.getAddress());
-                model.setNetworkName(nic.getNetworkName());
-                model.setIsManagement(nic.getIsManagement());
 
-                items.add(model);
-            }
-        }
+        List<Bond> nonEmptyBonds = new ArrayList<Bond>();
+        List<Nic> independentNics = new ArrayList<Nic>();
+        Map<String, List<Nic>> bondToNics = new HashMap<String, List<Nic>>();
+        Map<String, List<Vlan>> nicToVlans = new HashMap<String, List<Vlan>>();
 
-        // Find for each bond containing interfaces.
-        for (HostInterfaceLineModel model : items)
-        {
-            if (model.getIsBonded())
-            {
-                for (VdsNetworkInterface nic : source)
-                {
-                    if (StringHelper.stringsEqual(nic.getBondName(), model.getBondName()))
-                    {
-                        HostInterface hi = new HostInterface();
-                        hi.setInterface(nic);
-                        hi.setName(nic.getName());
-                        hi.setAddress(nic.getAddress());
-                        hi.setMAC(nic.getMacAddress());
-                        hi.setSpeed(nic.getSpeed());
-                        hi.setRxRate(nic.getStatistics().getReceiveRate());
-                        hi.setRxDrop(nic.getStatistics().getReceiveDropRate());
-                        hi.setTxRate(nic.getStatistics().getTransmitRate());
-                        hi.setTxDrop(nic.getStatistics().getTransmitDropRate());
-                        hi.setStatus(nic.getStatistics().getStatus());
-                        hi.getPropertyChangedEvent().addListener(this);
+        sortNics();
+        classifyNics(nonEmptyBonds, independentNics, bondToNics, nicToVlans);
 
-                        model.getInterfaces().add(hi);
-                    }
-                }
-            }
-        }
+        // create all bond models
+        for (Bond bond : nonEmptyBonds) {
+            HostInterfaceLineModel model = lineModelFromBond(bond);
+            items.add(model);
 
-        // Add not bonded interfaces with no vlan.
-        for (VdsNetworkInterface nic : source)
-        {
-            if (!(nic.getBonded() == null ? false : nic.getBonded()) && StringHelper.isNullOrEmpty(nic.getBondName())
-                    && nic.getVlanId() == null)
-            {
-                HostInterfaceLineModel model = new HostInterfaceLineModel();
-                model.setInterfaces(new ArrayList<HostInterface>());
-                model.setVLans(new ArrayList<HostVLan>());
-                model.setNetworkName(nic.getNetworkName());
-                model.setIsManagement(nic.getIsManagement());
-
-                // There is only one interface.
-                HostInterface hi = new HostInterface();
-                hi.setInterface(nic);
-                hi.setName(nic.getName());
-                hi.setAddress(nic.getAddress());
-                hi.setMAC(nic.getMacAddress());
-                hi.setSpeed(nic.getSpeed());
-                hi.setRxRate(nic.getStatistics().getReceiveRate());
-                hi.setRxDrop(nic.getStatistics().getReceiveDropRate());
-                hi.setTxRate(nic.getStatistics().getTransmitRate());
-                hi.setTxDrop(nic.getStatistics().getTransmitDropRate());
-                hi.setStatus(nic.getStatistics().getStatus());
-                hi.getPropertyChangedEvent().addListener(this);
-
-                model.getInterfaces().add(hi);
-
-                items.add(model);
-            }
-        }
-
-        // Find vlans.
-        for (HostInterfaceLineModel model : items)
-        {
-            String nicName = model.getIsBonded() ? model.getBondName() : model.getInterfaces().get(0).getName();
-
-            for (VdsNetworkInterface nic : source)
-            {
-                if (nic.getVlanId() != null
-                        && StringHelper.stringsEqual(nicName + "." + nic.getVlanId(), nic.getName())) //$NON-NLS-1$
-                {
-                    HostVLan hv = new HostVLan();
-                    hv.setInterface(nic);
-                    hv.setName(nic.getName());
-                    hv.setNetworkName(nic.getNetworkName());
-                    hv.setAddress(nic.getAddress());
-                    hv.getPropertyChangedEvent().addListener(this);
-
-                    model.getVLans().add(hv);
+            // add contained interface models - should exist, but check just in case
+            if (bondToNics.containsKey(bond.getName())) {
+                for (Nic nic : bondToNics.get(bond.getName())) {
+                    model.getInterfaces().add(hostInterfaceFromNic(nic));
                 }
             }
 
-            ArrayList<HostVLan> list = model.getVLans();
-            Collections.sort(list, new HostVLanByNameComparer());
+            // add any corresponding VLAN bridge models
+            model.getVLans().addAll(gatherVlans(bond, nicToVlans));
+        }
+
+        // create all independent NIC models
+        for (Nic nic : independentNics) {
+            HostInterfaceLineModel model = lineModelFromInterface(nic);
+            model.getInterfaces().add(hostInterfaceFromNic(nic));
+            items.add(model);
+
+            // add any corresponding VLAN bridge models
+            model.getVLans().addAll(gatherVlans(nic, nicToVlans));
         }
 
         setItems(items);
         UpdateActionAvailability();
+    }
+
+    private List<HostVLan> gatherVlans(VdsNetworkInterface nic, Map<String, List<Vlan>> nicToVlans) {
+        List<HostVLan> hostVlanList = new ArrayList<HostVLan>();
+        if (nicToVlans.containsKey(nic.getName())) {
+            for (Vlan vlan : nicToVlans.get(nic.getName())) {
+                hostVlanList.add(hostVlanFromNic(vlan));
+            }
+        }
+        return hostVlanList;
+    }
+
+    private void sortNics() {
+        Collections.sort(getOriginalItems(), new Comparator<VdsNetworkInterface>() {
+
+            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+            @Override
+            public int compare(VdsNetworkInterface nic1, VdsNetworkInterface nic2) {
+                return lexoNumeric.compare(nic1.getName(), nic2.getName());
+            }
+
+        });
+    }
+
+    private void classifyNics(List<Bond> nonEmptyBonds,
+            List<Nic> independentNics,
+            Map<String, List<Nic>> bondToNics,
+            Map<String, List<Vlan>> nicToVlans) {
+        for (VdsNetworkInterface nic : getOriginalItems()) {
+            if (nic instanceof Bond) {
+                nonEmptyBonds.add((Bond) nic);
+            } else if (nic instanceof Nic) {
+                if (nic.getBondName() == null) {
+                    independentNics.add((Nic) nic);
+                } else {
+                    if (bondToNics.containsKey(nic.getBondName())) {
+                        bondToNics.get(nic.getBondName()).add((Nic) nic);
+                    } else {
+                        List<Nic> nicList = new ArrayList<Nic>();
+                        nicList.add((Nic) nic);
+                        bondToNics.put(nic.getBondName(), nicList);
+                    }
+                }
+            } else if (nic instanceof Vlan) {
+                String nameWithoutVlan = nic.getName().substring(0, nic.getName().lastIndexOf('.'));
+                if (nicToVlans.containsKey(nameWithoutVlan)) {
+                    nicToVlans.get(nameWithoutVlan).add((Vlan) nic);
+                } else {
+                    List<Vlan> vlanList = new ArrayList<Vlan>();
+                    vlanList.add((Vlan) nic);
+                    nicToVlans.put(nameWithoutVlan, vlanList);
+                }
+            }
+        }
+    }
+
+    private HostInterfaceLineModel lineModelFromInterface(VdsNetworkInterface nic) {
+        HostInterfaceLineModel model = new HostInterfaceLineModel();
+        model.setInterfaces(new ArrayList<HostInterface>());
+        model.setVLans(new ArrayList<HostVLan>());
+        model.setNetworkName(nic.getNetworkName());
+        model.setIsManagement(nic.getIsManagement());
+
+        return model;
+    }
+
+    private HostInterfaceLineModel lineModelFromBond(VdsNetworkInterface nic) {
+        HostInterfaceLineModel model = lineModelFromInterface(nic);
+        model.setInterface(nic);
+        model.setIsBonded(true);
+        model.setBondName(nic.getName());
+        model.setAddress(nic.getAddress());
+
+        return model;
+    }
+
+    private HostInterface hostInterfaceFromNic(VdsNetworkInterface nic) {
+        HostInterface hi = new HostInterface();
+        hi.setInterface(nic);
+        hi.setName(nic.getName());
+        hi.setAddress(nic.getAddress());
+        hi.setMAC(nic.getMacAddress());
+        hi.setSpeed(nic.getSpeed());
+        hi.setRxRate(nic.getStatistics().getReceiveRate());
+        hi.setRxDrop(nic.getStatistics().getReceiveDropRate());
+        hi.setTxRate(nic.getStatistics().getTransmitRate());
+        hi.setTxDrop(nic.getStatistics().getTransmitDropRate());
+        hi.setStatus(nic.getStatistics().getStatus());
+        hi.getPropertyChangedEvent().addListener(this);
+
+        return hi;
+    }
+
+    private HostVLan hostVlanFromNic(VdsNetworkInterface nic) {
+        HostVLan hv = new HostVLan();
+        hv.setInterface(nic);
+        hv.setName(nic.getName());
+        hv.setNetworkName(nic.getNetworkName());
+        hv.setAddress(nic.getAddress());
+        hv.getPropertyChangedEvent().addListener(this);
+
+        return hv;
     }
 
     @Override
