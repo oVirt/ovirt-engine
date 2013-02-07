@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 public class ExistingPoolNameLengthValidationTest {
 
     @Test
-    public void getPoolName_noVmsAlloved() {
+    public void getPoolName_noVmsAllowed() {
         assertGeneratesCorrect(5, 4, 0);
     }
 
