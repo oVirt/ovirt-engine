@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -22,6 +25,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -29,6 +33,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.utils.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -186,9 +191,46 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (!validateImageNotActive()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
             }
+
+            if (!isEnoughSpaceToMergeSnapshots()) {
+                return false;
+            }
         }
 
         return true;
+    }
+
+    /**
+     * Validates if each storage domain has enough free space to perform removeSnapshot. <BR/>
+     * The remove snapshot logic in VDSM include creating a new temporary volume which might be large as the disk's
+     * actual size. <BR/>
+     * Hence, as part of the validation, we sum up all the disks virtual sizes, for each storage domain.
+     *
+     * @return True if there is enough space in all relevant storage domains. False otherwise.
+     */
+    protected boolean isEnoughSpaceToMergeSnapshots() {
+        for (final Entry<Guid, List<DiskImage>> storageToDiskEntry : getStorageToDiskMap().entrySet()) {
+            Guid storageDomainId = storageToDiskEntry.getKey();
+            List<DiskImage> diskImages = storageToDiskEntry.getValue();
+            long sizeRequested = 0l;
+            for (DiskImage diskImage : diskImages) {
+                sizeRequested += diskImage.getActualSize();
+            }
+            StorageDomain storageDomain =
+                    getStorageDomainDAO().getForStoragePool(storageDomainId, getStoragePoolId());
+            if (!validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested, false))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Map<Guid, List<DiskImage>> getStorageToDiskMap() {
+        Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+        for (DiskImage disk : getSourceImages()) {
+            MultiValueMapUtils.addToMap(disk.getStorageIds().get(0), disk, storageToDisksMap);
+        }
+        return storageToDisksMap;
     }
 
     @Override
@@ -212,7 +254,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean validateImages() {
         return ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
-                true, true, true, true, true, true, getDiskDao().getAllForVm(getVmId()));
+                false, true, true, true, true, true, getDiskDao().getAllForVm(getVmId()));
     }
 
     protected boolean validateImageNotInTemplate() {

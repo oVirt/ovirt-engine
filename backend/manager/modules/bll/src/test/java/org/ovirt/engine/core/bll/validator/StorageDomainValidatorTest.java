@@ -70,6 +70,21 @@ public class StorageDomainValidatorTest {
     }
 
     @Test
+    public void testDomainWithNotEnoughSpaceForRequestWithoutThreshold() {
+        validator = new StorageDomainValidator(mockStorageDomain(12, 748, StorageType.NFS));
+        assertEquals("Wrong failure for not enough space for request",
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                validator.isDomainHasSpaceForRequest(13, false).getMessage());
+    }
+
+    @Test
+    public void testDomainWithEnoughSpaceForRequestWithoutThreshold() {
+        validator = new StorageDomainValidator(mockStorageDomain(12, 748, StorageType.NFS));
+        assertTrue("Domain should have enough space for request.", validator.isDomainHasSpaceForRequest(12, false)
+                .isValid());
+    }
+
+    @Test
     public void testDomainWithEnoughSpaceForRequest() {
         validator = new StorageDomainValidator(mockStorageDomain(16, 748, StorageType.NFS));
         assertTrue("Domain should have more space then threshold", validator.isDomainHasSpaceForRequest(10).isValid());

@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,8 +56,13 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainHasSpaceForRequest(final long requestedSize) {
+        return isDomainHasSpaceForRequest(requestedSize, true);
+    }
+
+    public ValidationResult isDomainHasSpaceForRequest(final long requestedSize, final boolean useThresHold) {
+        long size = useThresHold ? getLowDiskSpaceThreshold() : 0l;
         if (storageDomain.getAvailableDiskSize() != null &&
-                storageDomain.getAvailableDiskSize() - requestedSize < getLowDiskSpaceThreshold()) {
+                storageDomain.getAvailableDiskSize() - requestedSize < size) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
                     storageName());
         }
