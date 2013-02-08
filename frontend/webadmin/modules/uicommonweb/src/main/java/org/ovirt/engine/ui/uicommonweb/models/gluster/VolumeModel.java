@@ -549,7 +549,8 @@ public class VolumeModel extends Model {
                 }
             };
 
-            AsyncDataProvider.GetClusterList(_asyncQuery, dataCenter.getId());
+            // load clusters of Gluster type
+            AsyncDataProvider.GetClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
         }
     }
 

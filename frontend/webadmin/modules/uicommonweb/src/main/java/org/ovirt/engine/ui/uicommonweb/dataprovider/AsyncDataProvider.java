@@ -64,6 +64,7 @@ import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -71,6 +72,7 @@ import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetStoragePoolsByClusterServiceParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
@@ -372,6 +374,28 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void GetDataCenterByClusterServiceList(AsyncQuery aQuery, boolean supportsVirtService, boolean supportsGlusterService) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<storage_pool>();
+                }
+
+                // sort data centers
+                final ArrayList<storage_pool> storagePoolList = (ArrayList<storage_pool>) source;
+                Collections.sort(storagePoolList, new Linq.StoragePoolByNameComparer());
+                return source;
+            }
+        };
+
+        final GetStoragePoolsByClusterServiceParameters parameters = new GetStoragePoolsByClusterServiceParameters();
+        parameters.setSupportsVirtService(supportsVirtService);
+        parameters.setSupportsGlusterService(supportsGlusterService);
+
+        Frontend.RunQuery(VdcQueryType.GetStoragePoolsByClusterService, parameters, aQuery);
+    }
+
     public static void GetDataCenterListByName(AsyncQuery aQuery, String name) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -558,6 +582,23 @@ public final class AsyncDataProvider {
                     return list;
                 }
                 return new ArrayList<VDSGroup>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
+                new StoragePoolQueryParametersBase(dataCenterId),
+                aQuery);
+    }
+
+    public static void GetClusterByServiceList(AsyncQuery aQuery, Guid dataCenterId,
+        final boolean supportsVirtService, final boolean supportsGlusterService) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VDSGroup>();
+                }
+                final ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
+                return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVdsGroupsByStoragePoolId,
@@ -1233,7 +1274,8 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name), aQuery);
     }
 
-    public static void GetDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup) {
+    public static void GetDataCentersWithPermittedActionOnClusters(AsyncQuery aQuery, ActionGroup actionGroup,
+            final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1246,15 +1288,19 @@ public final class AsyncDataProvider {
             }
         };
 
-        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
-                new GetEntitiesWithPermittedActionParameters();
-        getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
+        GetDataCentersWithPermittedActionOnClustersParameters getDataCentersWithPermittedActionOnClustersParameters =
+                new GetDataCentersWithPermittedActionOnClustersParameters();
+        getDataCentersWithPermittedActionOnClustersParameters.setActionGroup(actionGroup);
+        getDataCentersWithPermittedActionOnClustersParameters.setSupportsVirtService(supportsVirtService);
+        getDataCentersWithPermittedActionOnClustersParameters.setSupportsGlusterService(supportsGlusterService);
+
         Frontend.RunQuery(VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
-                getEntitiesWithPermittedActionParameters,
+                getDataCentersWithPermittedActionOnClustersParameters,
                 aQuery);
     }
 
-    public static void GetClustersWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
+    public static void GetClustersWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup,
+            final boolean supportsVirtService, final boolean supportsGlusterService) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1262,8 +1308,7 @@ public final class AsyncDataProvider {
                 if (source != null)
                 {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
-                    Collections.sort(list, new Linq.VdsGroupByNameComparer());
-                    return list;
+                    return getClusterByServiceList(list, supportsVirtService, supportsGlusterService);
                 }
                 return new ArrayList<VDSGroup>();
             }
@@ -2900,4 +2945,19 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
+    private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
+            boolean supportsVirtService,
+            boolean supportsGlusterService) {
+        final ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
+        for (VDSGroup cluster : list) {
+            if ((supportsVirtService && cluster.supportsVirtService())
+                    || (supportsGlusterService && cluster.supportsGlusterService())) {
+                filteredList.add(cluster);
+            }
+        }
+
+        // sort by cluster name
+        Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
+        return filteredList;
+    }
 }

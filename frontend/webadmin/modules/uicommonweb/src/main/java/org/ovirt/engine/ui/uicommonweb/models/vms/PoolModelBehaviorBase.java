@@ -54,7 +54,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);
 
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.GetDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
@@ -70,7 +70,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
 
             }
-        }, getModel().getHash()));
+        }, getModel().getHash()), true, false);
     }
 
     @Override
@@ -83,7 +83,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
+        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() }, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
 
@@ -96,7 +96,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 behavior.InitCdImage();
 
             }
-        }, getModel().getHash()), dataCenter.getId());
+        }, getModel().getHash()), dataCenter.getId(), true, false);
 
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);

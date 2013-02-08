@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 
-public class GetDataCentersWithPermittedActionOnClustersQuery<P extends GetEntitiesWithPermittedActionParameters>
+public class GetDataCentersWithPermittedActionOnClustersQuery<P extends GetDataCentersWithPermittedActionOnClustersParameters>
         extends QueriesCommandBase<P> {
 
     public GetDataCentersWithPermittedActionOnClustersQuery(P parameters) {
@@ -13,6 +13,7 @@ public class GetDataCentersWithPermittedActionOnClustersQuery<P extends GetEntit
     protected void executeQueryCommand() {
         P params = getParameters();
         setReturnValue(getDbFacade().getStoragePoolDao().
-                getDataCentersWithPermittedActionOnClusters(getUserID(), params.getActionGroup()));
+                getDataCentersWithPermittedActionOnClusters(getUserID(), params.getActionGroup(),
+                        params.isSupportsVirtService(), params.isSupportsGlusterService()));
     }
 }

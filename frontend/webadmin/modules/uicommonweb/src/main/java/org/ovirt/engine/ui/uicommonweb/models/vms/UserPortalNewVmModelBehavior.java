@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetHostsByClusterIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -60,7 +61,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         model.SetDataCenter(model, list);
 
                     }
-                }, getModel().getHash()), CREATE_VM);
+                }, getModel().getHash()), CREATE_VM, true, false);
     }
 
     @Override
@@ -73,13 +74,18 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         queryTypeList.add(VdcQueryType.GetClustersWithPermittedAction);
         queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
 
-        GetEntitiesWithPermittedActionParameters tempVar = new GetEntitiesWithPermittedActionParameters();
-        tempVar.setActionGroup(CREATE_VM);
-        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters = tempVar;
+        GetDataCentersWithPermittedActionOnClustersParameters getDataCentersWithPermittedActionOnClustersParameters =
+                new GetDataCentersWithPermittedActionOnClustersParameters();
+        getDataCentersWithPermittedActionOnClustersParameters.setActionGroup(CREATE_VM);
+        getDataCentersWithPermittedActionOnClustersParameters.setSupportsVirtService(true);
+        getDataCentersWithPermittedActionOnClustersParameters.setSupportsGlusterService(false);
+
+        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters = new GetEntitiesWithPermittedActionParameters();
+        getEntitiesWithPermittedActionParameters.setActionGroup(CREATE_VM);
 
         ArrayList<VdcQueryParametersBase> parametersList =
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
-                        getEntitiesWithPermittedActionParameters, getEntitiesWithPermittedActionParameters }));
+                        getDataCentersWithPermittedActionOnClustersParameters, getEntitiesWithPermittedActionParameters }));
 
         // Get clusters and templates
         Frontend.RunMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
@@ -99,12 +105,12 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         ArrayList<VmTemplate> templates =
                 (ArrayList<VmTemplate>) returnValueList.get(1).getReturnValue();
 
-        InitClusters(clusters);
+        InitClusters(clusters, true, false);
         InitTemplates(templates);
         InitCdImage();
     }
 
-    private void InitClusters(ArrayList<VDSGroup> clusters)
+    private void InitClusters(ArrayList<VDSGroup> clusters, boolean supportsVirtService, boolean supportsGlusterService)
     {
         // Filter clusters list (include only clusters that belong to the selected datacenter)
         ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();
@@ -112,7 +118,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         for (VDSGroup cluster : clusters)
         {
-            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()))
+            if (cluster.getStoragePoolId() != null && selectedDataCenter.getId().equals(cluster.getStoragePoolId()) &&
+                    ((supportsVirtService && cluster.supportsVirtService()) || (supportsGlusterService && cluster.supportsGlusterService())))
             {
                 filteredList.add(cluster);
             }

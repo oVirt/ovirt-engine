@@ -183,8 +183,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                     getCluster().getSelectedItemChangedEvent().addListener(quotaClusterListener);
                 }
                 // get cluster
-                AsyncDataProvider.GetClusterList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
-
+                AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
@@ -219,7 +218,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 getStoragePool().getId());
                     }
                 }),
-                        dataCenter.getId());
+                dataCenter.getId(), true, false);
             }
         }),
                 storageDomainId);

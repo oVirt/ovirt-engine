@@ -60,7 +60,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         behavior.InitCdImage();
 
                     }
-                }, getModel().getHash()), CREATE_VM);
+                }, getModel().getHash()), CREATE_VM, true, false);
 
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);

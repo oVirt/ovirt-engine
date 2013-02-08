@@ -7,9 +7,10 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 /**
@@ -18,7 +19,15 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
  */
 public class GetDataCentersWithPermittedActionOnClustersQueryTest
         extends AbstractGetEntitiesWithPermittedActionParametersQueryTest
-        <GetEntitiesWithPermittedActionParameters, GetDataCentersWithPermittedActionOnClustersQuery<GetEntitiesWithPermittedActionParameters>> {
+        <GetDataCentersWithPermittedActionOnClustersParameters, GetDataCentersWithPermittedActionOnClustersQuery<GetDataCentersWithPermittedActionOnClustersParameters>> {
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        when(((GetDataCentersWithPermittedActionOnClustersParameters) getQueryParameters()).isSupportsVirtService()).thenReturn(true);
+        when(((GetDataCentersWithPermittedActionOnClustersParameters) getQueryParameters()).isSupportsGlusterService()).thenReturn(false);
+    }
 
     @Test
     public void testQueryExecution() {
@@ -27,7 +36,7 @@ public class GetDataCentersWithPermittedActionOnClustersQueryTest
 
         // Mock the DAO
         StoragePoolDAO storagePoolDAOMock = mock(StoragePoolDAO.class);
-        when(storagePoolDAOMock.getDataCentersWithPermittedActionOnClusters(getUser().getUserId(), getActionGroup())).thenReturn(Collections.singletonList(expected));
+        when(storagePoolDAOMock.getDataCentersWithPermittedActionOnClusters(getUser().getUserId(), getActionGroup(), true, false)).thenReturn(Collections.singletonList(expected));
         when(getDbFacadeMockInstance().getStoragePoolDao()).thenReturn(storagePoolDAOMock);
 
         getQuery().executeQueryCommand();

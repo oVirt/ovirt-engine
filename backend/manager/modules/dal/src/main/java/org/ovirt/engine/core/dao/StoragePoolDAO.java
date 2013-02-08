@@ -111,6 +111,13 @@ public interface StoragePoolDAO extends GenericDao<storage_pool, Guid>, StatusAw
      * @param actionGroup
      * @return list of data centers
      */
-    List<storage_pool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup);
+    List<storage_pool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup, boolean supportsVirtService, boolean supportsGlusterService);
+
+    /**
+     * Retrieves data centers with at least one cluster with virt service specified
+     *
+     * @return list of data centers
+     */
+    List<storage_pool> getDataCentersByClusterService(boolean supportsVirtService, boolean supportsGlusterService);
 
 }

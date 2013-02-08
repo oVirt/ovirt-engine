@@ -234,7 +234,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 innerVolumeModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.GetDataCenterList(_asyncQuery);
+        AsyncDataProvider.GetDataCenterByClusterServiceList(_asyncQuery, false, true);
 
     }
 

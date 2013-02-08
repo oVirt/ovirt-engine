@@ -295,6 +295,14 @@ public final class Linq
 
     }
 
+    public static class StoragePoolByNameComparer implements Comparator<storage_pool> {
+
+        @Override
+        public int compare(storage_pool x, storage_pool y) {
+            return x.getname().compareTo(y.getname());
+        }
+    }
+
     public static boolean IsHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
     {
         for (VDSGroup cluster : clusters)

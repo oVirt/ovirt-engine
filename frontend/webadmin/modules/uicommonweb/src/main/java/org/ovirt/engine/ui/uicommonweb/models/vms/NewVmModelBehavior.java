@@ -27,7 +27,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     public void Initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.Initialize(systemTreeSelectedItem);
-        AsyncDataProvider.GetDataCenterList(new AsyncQuery(getModel(),
+        AsyncDataProvider.GetDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -44,7 +44,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                         model.SetDataCenter(model, list);
 
                     }
-                }, getModel().getHash()));
+                }, getModel().getHash()), true, false);
         InitPriority(0);
     }
 
@@ -55,7 +55,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -69,7 +69,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                         behavior.InitCdImage();
 
                     }
-                }, getModel().getHash()), dataCenter.getId());
+                }, getModel().getHash()), dataCenter.getId(), true, false);
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
         } else {

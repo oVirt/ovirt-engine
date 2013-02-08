@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -369,9 +370,13 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
     }
 
     @Override
-    public List<storage_pool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup) {
+    public List<storage_pool> getDataCentersWithPermittedActionOnClusters(Guid userId, ActionGroup actionGroup,
+            boolean supportsVirtService, boolean supportsGlusterService) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", userId).addValue("action_group_id", actionGroup.getId());
+                .addValue("user_id", userId)
+                .addValue("action_group_id", actionGroup.getId())
+                .addValue("supports_virt_service", supportsVirtService)
+                .addValue("supports_gluster_service", supportsGlusterService);
 
         StoragePoolRawMapper mapper = new StoragePoolRawMapper();
 
@@ -385,6 +390,16 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
         return getCallsHandler().executeModificationReturnResult("IncreaseStoragePoolMasterVersion", parameterSource);
+    }
+
+    @Override
+    public List<storage_pool> getDataCentersByClusterService(boolean supportsVirtService, boolean supportsGlusterService) {
+        final MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        parameterSource
+            .addValue("supports_virt_service", supportsVirtService)
+            .addValue("supports_gluster_service", supportsGlusterService);
+        final StoragePoolRawMapper mapper = new StoragePoolRawMapper();
+        return getCallsHandler().executeReadList("GetStoragePoolsByClusterService", mapper, parameterSource);
     }
 
 }

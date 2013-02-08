@@ -623,18 +623,19 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 --This SP returns all data centers containing clusters with permissions to run the given action by user
-Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer) RETURNS SETOF storage_pool
+Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer, v_supports_virt_service boolean, v_supports_gluster_service boolean) RETURNS SETOF storage_pool
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT *
-      FROM storage_pool
-      WHERE storage_pool.id in
-	(SELECT storage_pool_id
-	 FROM vds_groups
-	 WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vds_groups.vds_group_id, 9)) IS NOT NULL);
+      RETURN QUERY SELECT sp.*
+      FROM storage_pool sp
+      WHERE sp.id in
+        (SELECT vg.storage_pool_id
+         FROM vds_groups vg
+         WHERE (SELECT get_entity_permissions(v_user_id, v_action_group_id, vg.vds_group_id, 9)) IS NOT NULL
+         AND ((v_supports_virt_service = TRUE AND vg.virt_service = TRUE) OR (v_supports_gluster_service = TRUE AND vg.gluster_service = TRUE))
+        );
 END; $procedure$
 LANGUAGE plpgsql;
-
 
 Create or replace FUNCTION Getstorage_domains_By_storage_pool_id_and_connection(v_storage_pool_id UUID, v_connection CHARACTER VARYING)
 RETURNS SETOF storage_domains
@@ -669,3 +670,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+CREATE OR REPLACE FUNCTION GetStoragePoolsByClusterService(
+    v_supports_virt_service BOOLEAN,
+    v_supports_gluster_service BOOLEAN) RETURNS SETOF storage_pool
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT sp.* FROM storage_pool SP
+   WHERE EXISTS (SELECT 1 FROM vds_groups vg
+       WHERE ((v_supports_virt_service = TRUE AND vg.virt_service = TRUE) OR
+              (v_supports_gluster_service = TRUE AND vg.gluster_service = TRUE)) AND vg.storage_pool_id = sp.id);
+END; $procedure$
+LANGUAGE plpgsql;

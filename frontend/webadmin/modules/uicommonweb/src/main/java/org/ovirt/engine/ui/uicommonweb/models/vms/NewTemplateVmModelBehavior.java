@@ -83,7 +83,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -96,7 +96,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         behavior.InitTemplate();
 
                     }
-                }, getModel().getHash()), dataCenter.getId());
+                }, getModel().getHash()), dataCenter.getId(), true, false);
 
         // If a VM has at least one disk, present its storage domain.
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,

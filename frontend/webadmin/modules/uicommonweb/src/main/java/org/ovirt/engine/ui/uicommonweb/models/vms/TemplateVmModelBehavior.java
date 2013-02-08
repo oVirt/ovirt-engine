@@ -71,7 +71,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
         getModel().setIsHostAvailable(dataCenter.getstorage_pool_type() != StorageType.LOCALFS);
 
-        AsyncDataProvider.GetClusterList(new AsyncQuery(new Object[] { this, getModel() },
+        AsyncDataProvider.GetClusterByServiceList(new AsyncQuery(new Object[] { this, getModel() },
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -81,12 +81,20 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                         UnitVmModel model = (UnitVmModel) array[1];
                         VmTemplate vmTemplate = ((TemplateVmModelBehavior) (array[0])).template;
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
-                        model.SetClusters(model, clusters, vmTemplate.getVdsGroupId().getValue());
+                        ArrayList<VDSGroup> filteredClusters = new ArrayList<VDSGroup>();
+                        // filter clusters supporting virt service only
+                        for (VDSGroup cluster : clusters) {
+                            if (cluster.supportsVirtService()) {
+                                filteredClusters.add(cluster);
+                            }
+                        }
+
+                        model.SetClusters(model, filteredClusters, vmTemplate.getVdsGroupId().getValue());
                         behavior.InitTemplate();
                         behavior.InitCdImage();
 
                     }
-                }, getModel().getHash()), dataCenter.getId());
+                }, getModel().getHash()), dataCenter.getId(), true, false);
         if (dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
             getModel().getQuota().setIsAvailable(true);
         } else {
