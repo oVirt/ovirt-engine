@@ -44,8 +44,15 @@ public class MainTabBasicListView extends AbstractView implements MainTabBasicLi
     }
 
     @Override
-    public void clear() {
-        vmPanel.clear();
+    public void setInSlot(Object slot, Widget content) {
+        if (slot == MainTabBasicListPresenterWidget.TYPE_VmListContent) {
+            vmPanel.clear();
+            if (content != null) {
+                vmPanel.add(content);
+            }
+        } else {
+            super.setInSlot(slot, content);
+        }
     }
 
     @Override

@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionButton;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,19 +29,13 @@ public class MainTabBasicListItemActionButton extends AbstractActionButton imple
     @UiField
     Panel stylableButtonHolder;
 
-    public MainTabBasicListItemActionButton() {
+    public MainTabBasicListItemActionButton(String title, ImageResource enabledImage, ImageResource disabledImage,
+            String additionalStyle) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-    }
-
-    public void initialize(UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition, String additionalStyle) {
-        initialize(buttonDefinition);
+        setTitle(title);
+        setEnabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML()));
+        setDisabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML()));
         stylableButtonHolder.addStyleName(additionalStyle);
-    }
-
-    public void initialize(UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition) {
-        button.getUpFace().setHTML(buttonDefinition.getEnabledHtml());
-        button.getUpDisabledFace().setHTML(buttonDefinition.getDisabledHtml());
-        button.setTitle(buttonDefinition.getTitle());
     }
 
     @Override

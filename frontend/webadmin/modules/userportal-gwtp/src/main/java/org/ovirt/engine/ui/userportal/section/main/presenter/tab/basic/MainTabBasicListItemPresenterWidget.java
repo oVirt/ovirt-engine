@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -54,9 +55,17 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         void setNotSelected(boolean vmIsUp);
 
         void showErrorDialog(String message);
+
+        HasClickHandlers addRunButton(UserPortalItemModel model, UICommand command);
+
+        HasClickHandlers addShutdownButton(UserPortalItemModel model, UICommand command);
+
+        HasClickHandlers addSuspendButton(UserPortalItemModel model, UICommand command);
     }
 
     private final ConsoleUtils consoleUtils;
+    private final ConsoleManager consoleManager;
+    private final UserPortalBasicListProvider listModelProvider;
 
     private ConsoleProtocol selectedProtocol;
 
@@ -64,23 +73,18 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     private UserPortalBasicListModel listModel;
 
-    private final UserPortalBasicListProvider modelProvider;
-
-    private final ConsoleManager consoleManager;
+    private IEventListener selectedItemChangeListener;
 
     @Inject
-    public MainTabBasicListItemPresenterWidget(EventBus eventBus,
-            ViewDef view,
-            ConsoleUtils consoleUtils,
-            final UserPortalBasicListProvider modelProvider,
-            ConsoleManager consoleManager) {
+    public MainTabBasicListItemPresenterWidget(EventBus eventBus, ViewDef view,
+            ConsoleUtils consoleUtils, ConsoleManager consoleManager,
+            final UserPortalBasicListProvider listModelProvider) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
-        this.modelProvider = modelProvider;
         this.consoleManager = consoleManager;
+        this.listModelProvider = listModelProvider;
 
-        eventBus.addHandler(ConsoleModelChangedEvent.getType(), new ConsoleModelChangedHandler() {
-
+        registerHandler(eventBus.addHandler(ConsoleModelChangedEvent.getType(), new ConsoleModelChangedHandler() {
             @Override
             public void onConsoleModelChanged(ConsoleModelChangedEvent event) {
                 // update only when my model has changed
@@ -89,22 +93,20 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
                 }
             }
 
-        });
+        }));
 
-        getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
-
+        registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
             @Override
             public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-                listenOnSelectedItemChanged(modelProvider);
+                updateListModel(listModelProvider.getModel());
             }
-        });
+        }));
 
-        listenOnSelectedItemChanged(modelProvider);
+        updateListModel(listModelProvider.getModel());
     }
 
-    private void listenOnSelectedItemChanged(UserPortalBasicListProvider modelProvider) {
-        modelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
-
+    void addSelectedItemChangeHandler() {
+        selectedItemChangeListener = new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (!sameEntity(listModel.getSelectedItem(), model)) {
@@ -113,16 +115,58 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
                     getView().setSelected();
                 }
             }
-        });
-
+        };
+        listModel.getSelectedItemChangedEvent().addListener(selectedItemChangeListener);
     }
 
-    public void setModel(final UserPortalItemModel model) {
+    void removeSelectedItemChangeHandler() {
+        if (listModel != null && selectedItemChangeListener != null) {
+            listModel.getSelectedItemChangedEvent().removeListener(selectedItemChangeListener);
+            selectedItemChangeListener = null;
+        }
+    }
+
+    void updateListModel(UserPortalBasicListModel newListModel) {
+        // Remove SelectedItemChangedEvent listener from current list model
+        removeSelectedItemChangeHandler();
+
+        // Update current list model
+        this.listModel = newListModel;
+
+        // Add electedItemChangedEvent listener to new list model
+        addSelectedItemChangeHandler();
+    }
+
+    public void setModel(UserPortalItemModel model) {
         this.model = model;
-        this.listModel = modelProvider.getModel();
 
         setupSelectedProtocol(model);
         setupDefaultVmStyles();
+
+        final UICommand runCommand = model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
+        registerHandler(getView().addRunButton(model, runCommand).addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(runCommand);
+            }
+        }));
+
+        final UICommand shutdownCommand = model.getShutdownCommand();
+        registerHandler(getView().addShutdownButton(model, shutdownCommand).addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(shutdownCommand);
+            }
+        }));
+
+        final UICommand suspendCommand = model.getPauseCommand();
+        registerHandler(getView().addSuspendButton(model, suspendCommand).addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                executeCommand(suspendCommand);
+            }
+        }));
+
         getView().edit(model);
 
         if (sameEntity(listModel.getSelectedItem(), model)) {
@@ -130,15 +174,21 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         }
     }
 
-    protected void setupSelectedProtocol(final UserPortalItemModel model) {
+    void executeCommand(UICommand command) {
+        if (command != null) {
+            command.Execute();
+        }
+    }
+
+    protected void setupSelectedProtocol(UserPortalItemModel model) {
         selectedProtocol = consoleUtils.determineConnectionProtocol(model);
     }
 
-    protected boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
+    boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
         if (prevModel == null || newModel == null) {
             return false;
         }
-        return modelProvider.getKey(prevModel).equals(modelProvider.getKey(newModel));
+        return listModelProvider.getKey(prevModel).equals(listModelProvider.getKey(newModel));
     }
 
     @Override
@@ -151,12 +201,18 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     @Override
+    protected void onUnbind() {
+        super.onUnbind();
+        removeSelectedItemChangeHandler();
+    }
+
+    @Override
     public void onMouseOut(MouseOutEvent event) {
         getView().hideDoubleClickBanner();
         setupDefaultVmStyles();
     }
 
-    private void setupDefaultVmStyles() {
+    void setupDefaultVmStyles() {
         if (!isSelected()) {
             if (model.IsVmUp()) {
                 getView().setVmUpStyle();
@@ -168,15 +224,12 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     @Override
     public void onMouseOver(MouseOverEvent event) {
-
         if (!isSelected()) {
             getView().setMouseOverStyle();
         }
-
         if (canShowConsole()) {
             getView().showDoubleClickBanner();
         }
-
     }
 
     @Override
@@ -194,13 +247,13 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         }
     }
 
-    protected void setSelectedItem() {
+    void setSelectedItem() {
         listModel.setSelectedItem(model);
-        modelProvider.setSelectedItems(Arrays.asList(model));
+        listModelProvider.setSelectedItems(Arrays.asList(model));
         getView().setSelected();
     }
 
-    private boolean canShowConsole() {
+    boolean canShowConsole() {
         return consoleUtils.canShowConsole(selectedProtocol, model);
     }
 

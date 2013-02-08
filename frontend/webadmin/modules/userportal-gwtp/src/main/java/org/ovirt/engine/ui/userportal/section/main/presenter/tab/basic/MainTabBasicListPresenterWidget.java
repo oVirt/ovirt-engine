@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -21,8 +22,6 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
 
     public interface ViewDef extends View {
 
-        void clear();
-
         String getElementId();
 
     }
@@ -33,6 +32,8 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     private final Provider<MainTabBasicListItemPresenterWidget> basicVmPresenterWidgetProvider;
 
     private final UserPortalBasicListProvider modelProvider;
+
+    private final List<MainTabBasicListItemPresenterWidget> currentItemPresenterWidgets = new ArrayList<MainTabBasicListItemPresenterWidget>();
 
     @Inject
     public MainTabBasicListPresenterWidget(EventBus eventBus, ViewDef view,
@@ -52,13 +53,21 @@ public class MainTabBasicListPresenterWidget extends PresenterWidget<MainTabBasi
     @Override
     public void onDataChange(List<UserPortalItemModel> items) {
         // TODO optimize
+        //Cleanup existing item presenter widgets.
+        for (MainTabBasicListItemPresenterWidget itemPresenterwidget : currentItemPresenterWidgets) {
+            itemPresenterwidget.unbind();
+            removeFromSlot(TYPE_VmListContent, itemPresenterwidget);
+        }
+        clearSlot(TYPE_VmListContent);
+        currentItemPresenterWidgets.clear();
+
         int vmIndex = 0;
-        getView().clear();
         for (UserPortalItemModel item : items) {
             MainTabBasicListItemPresenterWidget basicVmPresenterWidget = basicVmPresenterWidgetProvider.get();
             basicVmPresenterWidget.getView().setElementId(
                     ElementIdUtils.createElementId(getView().getElementId(), "vm" + vmIndex++)); //$NON-NLS-1$
             basicVmPresenterWidget.setModel(item);
+            currentItemPresenterWidgets.add(basicVmPresenterWidget);
             addToSlot(TYPE_VmListContent, basicVmPresenterWidget);
         }
 

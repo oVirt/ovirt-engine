@@ -4,14 +4,11 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
-import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionButton;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.basic.OsTypeImage;
@@ -24,12 +21,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.InitializeEvent;
-import com.google.gwt.event.logical.shared.InitializeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -115,21 +111,20 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @UiField
     Style style;
 
-    private final ApplicationResources applicationResources;
-
-    private final ErrorPopupManager errorPopupManager;
-
+    private final ApplicationResources resources;
     private final ApplicationConstants constants;
+    private final ErrorPopupManager errorPopupManager;
 
     private String elementId = DOM.createUniqueId();
 
     @Inject
     public MainTabBasicListItemView(
             ApplicationResources applicationResources,
-            final MainTabBasicListItemMessagesTranslator translator,
+            ApplicationResources resources,
             ApplicationConstants constants,
-            ErrorPopupManager errorPopupManager) {
-        this.applicationResources = applicationResources;
+            ErrorPopupManager errorPopupManager,
+            final MainTabBasicListItemMessagesTranslator translator) {
+        this.resources = resources;
         this.constants = constants;
         this.errorPopupManager = errorPopupManager;
 
@@ -146,79 +141,50 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         Driver.driver.initialize(this);
     }
 
-    protected void initButtons(ApplicationResources applicationResources, final UserPortalItemModel model) {
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
+    @Override
+    public HasClickHandlers addRunButton(UserPortalItemModel model, UICommand command) {
+        MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
                 model.getIsPool() ? constants.takeVm() : constants.runVm(),
-                applicationResources.playIcon(),
-                applicationResources.playDisabledIcon()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
-            }
-
-        }, style.runButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
-
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                constants.shutdownVm(),
-                applicationResources.stopIcon(),
-                applicationResources.stopDisabledIcon()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return model.getShutdownCommand();
-            }
-
-        }, style.shutdownButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
-
-        addButton(new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                constants.suspendVm(),
-                applicationResources.pauseIcon(),
-                applicationResources.pauseDisabledIcon()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return model.getPauseCommand();
-            }
-
-        }, style.suspendButtonAdditionalStyle(), ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
+                        resources.playIcon(), resources.playDisabledIcon(),
+                        style.runButtonAdditionalStyle());
+        button.setElementId(ElementIdUtils.createElementId(elementId, "runButton")); //$NON-NLS-1$
+        addButtonToPanel(button);
+        updateButton(button, command);
+        return button;
     }
 
-    private void addButton(final UserPortalImageButtonDefinition<UserPortalItemModel> buttonDefinition,
-            String additionalStyle, String elementId) {
-        final MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton();
-        button.initialize(buttonDefinition, additionalStyle);
-        button.setElementId(elementId);
+    @Override
+    public HasClickHandlers addShutdownButton(UserPortalItemModel model, UICommand command) {
+        MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
+                constants.shutdownVm(), resources.stopIcon(), resources.stopDisabledIcon(),
+                style.shutdownButtonAdditionalStyle());
+        button.setElementId(ElementIdUtils.createElementId(elementId, "shutdownButton")); //$NON-NLS-1$
+        addButtonToPanel(button);
+        updateButton(button, command);
+        return button;
+    }
 
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buttonDefinition.onClick(null);
-            }
-        });
+    @Override
+    public HasClickHandlers addSuspendButton(UserPortalItemModel model, UICommand command) {
+        MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
+                constants.suspendVm(), resources.pauseIcon(), resources.pauseDisabledIcon(),
+                style.suspendButtonAdditionalStyle());
+        button.setElementId(ElementIdUtils.createElementId(elementId, "suspendButton")); //$NON-NLS-1$
+        addButtonToPanel(button);
+        updateButton(button, command);
+        return button;
+    }
 
+    void addButtonToPanel(MainTabBasicListItemActionButton button) {
         buttonsPanel.add(button);
-
-        buttonDefinition.addInitializeHandler(new InitializeHandler() {
-            @Override
-            public void onInitialize(InitializeEvent event) {
-                updateActionButton(button, buttonDefinition);
-            }
-        });
-
-        updateActionButton(button, buttonDefinition);
     }
 
-    /**
-     * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
-     */
-    private void updateActionButton(ActionButton button, ActionButtonDefinition<UserPortalItemModel> buttonDef) {
-        button.setEnabled(buttonDef.isEnabled(null));
+    void updateButton(MainTabBasicListItemActionButton button, UICommand command) {
+        button.setEnabled(command != null ? command.getIsExecutionAllowed() : false);
     }
 
     @Override
     public void edit(UserPortalItemModel model) {
-        initButtons(applicationResources, model);
         Driver.driver.edit(model);
     }
 
@@ -229,7 +195,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        // no-op, the handlers are on the widget
+        // No-op, the handlers are on the widget itself.
     }
 
     @Override

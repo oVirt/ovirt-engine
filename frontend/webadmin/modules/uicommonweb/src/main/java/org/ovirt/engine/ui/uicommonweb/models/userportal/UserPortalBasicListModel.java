@@ -166,6 +166,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     public void setItems(Iterable value) {
         if (items != value)
         {
+            if(items != null) {
+                //Clear circular references inside the model.
+                for (UserPortalItemModel itemModel : (Iterable<UserPortalItemModel>) items) {
+                    itemModel.clearReferences();
+                }
+            }
             ItemsChanging(value, items);
             items = value;
             ItemsChanged();

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -37,6 +38,9 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
     protected final EventBus eventBus;
 
     private UICommand command;
+    private IEventListener propertyChangeListener;
+
+    private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
     private final SafeHtml title;
 
@@ -72,12 +76,12 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         update();
 
         // Add handler to be notified when UiCommon models are (re)initialized
-        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+        registerHandler(eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
             @Override
             public void onUiCommonInit(UiCommonInitEvent event) {
                 update();
             }
-        });
+        }));
     }
 
     /**
@@ -115,18 +119,34 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
         UICommand newCommand = command != null ? command : EMPTY_COMMAND;
 
         if (this.command != newCommand) {
+            // Remove property change handler from current command
+            removePropertyChangeEventHandler();
+
+            // Update current command
             this.command = newCommand;
             InitializeEvent.fire(UiCommandButtonDefinition.this);
 
-            // Register property change handler
+            // Add property change handler to new command
             if (newCommand != EMPTY_COMMAND) {
-                newCommand.getPropertyChangedEvent().addListener(new IEventListener() {
-                    @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        InitializeEvent.fire(UiCommandButtonDefinition.this);
-                    }
-                });
+                addPropertyChangeEventHandler();
             }
+        }
+    }
+
+    void addPropertyChangeEventHandler() {
+        propertyChangeListener = new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                InitializeEvent.fire(UiCommandButtonDefinition.this);
+            }
+        };
+        command.getPropertyChangedEvent().addListener(propertyChangeListener);
+    }
+
+    void removePropertyChangeEventHandler() {
+        if (command != null && propertyChangeListener != null) {
+            command.getPropertyChangedEvent().removeListener(propertyChangeListener);
+            propertyChangeListener = null;
         }
     }
 
@@ -136,6 +156,22 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
      * Returning {@code null} is equivalent to returning an empty command.
      */
     protected abstract UICommand resolveCommand();
+
+    /**
+     * Releases all handlers associated with this button definition.
+     */
+    public void releaseAllHandlers() {
+        removePropertyChangeEventHandler();
+
+        for (HandlerRegistration reg : handlerRegistrations) {
+            reg.removeHandler();
+        }
+        handlerRegistrations.clear();
+    }
+
+    void registerHandler(HandlerRegistration reg) {
+        handlerRegistrations.add(reg);
+    }
 
     /**
      * {@inheritDoc}
@@ -149,7 +185,9 @@ public abstract class UiCommandButtonDefinition<T> implements ActionButtonDefini
 
     @Override
     public HandlerRegistration addInitializeHandler(InitializeHandler handler) {
-        return eventBus.addHandler(InitializeEvent.getType(), handler);
+        HandlerRegistration reg = eventBus.addHandler(InitializeEvent.getType(), handler);
+        registerHandler(reg);
+        return reg;
     }
 
     @Override

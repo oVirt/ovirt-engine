@@ -373,6 +373,31 @@ public class UserPortalItemModel extends EntityModel
         behavior.OnEntityChanged();
     }
 
+    public void clearReferences() {
+        clearBehavior();
+        clearCommands();
+    }
+
+    private void clearBehavior() {
+        behavior = null;
+    }
+
+    private void clearCommands() {
+        pauseCommand.setTarget(null);
+        pauseCommand = null;
+        returnVmCommand.setTarget(null);
+        returnVmCommand = null;
+        runCommand.setTarget(null);
+        runCommand = null;
+        shutdownCommand.setTarget(null);
+        shutdownCommand = null;
+        stopCommand.setTarget(null);
+        stopCommand = null;
+        takeVmCommand.setTarget(null);
+        takeVmCommand = null;
+        setCommands(null);
+    }
+
     public boolean IsVmUp()
     {
         switch (getStatus())

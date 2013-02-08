@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetai
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.utils.ConsoleManager;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
-import org.ovirt.engine.ui.userportal.widget.action.UserPortalImageButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
@@ -45,6 +44,7 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
@@ -53,7 +53,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
-        implements SideTabExtendedVirtualMachinePresenter.ViewDef {
+implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SideTabExtendedVirtualMachineView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -161,11 +161,11 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
         Column<UserPortalItemModel, UserPortalItemModel> nameAndDescriptionColumn =
                 new Column<UserPortalItemModel, UserPortalItemModel>(nameAndDescriptionCell) {
-                    @Override
-                    public UserPortalItemModel getValue(UserPortalItemModel item) {
-                        return item;
-                    }
-                };
+            @Override
+            public UserPortalItemModel getValue(UserPortalItemModel item) {
+                return item;
+            }
+        };
         getTable().addColumn(nameAndDescriptionColumn, constants.empty(), "400px"); //$NON-NLS-1$
 
         getTable().addColumn(new Column<UserPortalItemModel, UserPortalItemModel>(createActionsCompositeCell(elementIdPrefix)) {
@@ -268,7 +268,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
                 return row.IsVmUp() ?
                         applicationResources.sideTabExtendedVmStyle().vmUpRow() :
-                        applicationResources.sideTabExtendedVmStyle().vmDownRow();
+                            applicationResources.sideTabExtendedVmStyle().vmDownRow();
             }
 
             protected boolean isSelectedRow(UserPortalItemModel row) {
@@ -299,82 +299,65 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
     }
 
     protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
-        ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell() {
+        ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
+                applicationResources.playIcon(), applicationResources.playDisabledIcon()) {
             @Override
-            protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
-                return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        data.getIsPool() ? constants.takeVmLabel() : constants.runVmLabel(),
-                        applicationResources.playIcon(),
-                        applicationResources.playDisabledIcon()
-                ) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return data.getIsPool() ? data.getTakeVmCommand() : data.getRunCommand();
-                    }
+            protected String getTitle(UserPortalItemModel value) {
+                return value.getIsPool() ? constants.takeVmLabel() : constants.runVmLabel();
+            }
 
-                };
+            @Override
+            protected UICommand resolveCommand(UserPortalItemModel value) {
+                return value.getIsPool() ? value.getTakeVmCommand() : value.getRunCommand();
             }
         };
         runCell.setElementIdPrefix(elementIdPrefix);
         runCell.setColumnId("runButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell() {
+        ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
+                applicationResources.stopIcon(), applicationResources.stopDisabledIcon()) {
             @Override
-            protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
-                return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        data.getIsPool() ? constants.returnVmLabel() : constants.shutDownVm(),
-                        applicationResources.stopIcon(),
-                        applicationResources.stopDisabledIcon()
-                ) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return data.getIsPool() ? data.getReturnVmCommand() : data.getShutdownCommand();
-                    }
+            protected String getTitle(UserPortalItemModel value) {
+                return value.getIsPool() ? constants.returnVmLabel() : constants.shutDownVm();
+            }
 
-                };
+            @Override
+            protected UICommand resolveCommand(UserPortalItemModel value) {
+                return value.getIsPool() ? value.getReturnVmCommand() : value.getShutdownCommand();
             }
         };
         shutdownCell.setElementIdPrefix(elementIdPrefix);
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell() {
+        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
+                applicationResources.pauseIcon(), applicationResources.pauseDisabledIcon()) {
             @Override
-            protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
-                return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        constants.suspendVmLabel(),
-                        applicationResources.pauseIcon(),
-                        applicationResources.pauseDisabledIcon()
-                ) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return data.getPauseCommand();
-                    }
+            protected String getTitle(UserPortalItemModel value) {
+                return constants.suspendVmLabel();
+            }
 
-                };
+            @Override
+            protected UICommand resolveCommand(UserPortalItemModel value) {
+                return value.getPauseCommand();
             }
         };
         suspendCell.setElementIdPrefix(elementIdPrefix);
         suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell() {
+        ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
+                applicationResources.powerIcon(), applicationResources.powerDisabledIcon()) {
             @Override
-            protected UserPortalImageButtonDefinition<UserPortalItemModel> createButtonDefinition(final UserPortalItemModel data) {
-                return new UserPortalImageButtonDefinition<UserPortalItemModel>(
-                        constants.powerOffVm(),
-                        applicationResources.powerIcon(),
-                        applicationResources.powerDisabledIcon()
-                ) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return data.getStopCommand();
-                    }
+            protected String getTitle(UserPortalItemModel value) {
+                return constants.powerOffVm();
+            }
 
-                };
+            @Override
+            protected UICommand resolveCommand(UserPortalItemModel value) {
+                return value.getStopCommand();
             }
         };
         stopCell.setElementIdPrefix(elementIdPrefix);
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
-
         CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(
                 new ArrayList<HasCell<UserPortalItemModel, ?>>(Arrays.asList(
                         new UserPortalItemSimpleColumn(runCell),
@@ -396,11 +379,10 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
     abstract class VmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
 
-        public VmButtonsImageButtonCell() {
-            super(applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
-                    applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
+        public VmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
+            super(enabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
+                    disabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
         }
-
     }
 
 }

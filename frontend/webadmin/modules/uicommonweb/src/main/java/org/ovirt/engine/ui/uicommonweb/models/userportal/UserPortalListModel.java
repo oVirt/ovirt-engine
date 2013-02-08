@@ -323,6 +323,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         if (items != value)
         {
+            if(items != null) {
+                //Clear circular references inside the model.
+                for (UserPortalItemModel itemModel : (Iterable<UserPortalItemModel>) items) {
+                    itemModel.clearReferences();
+                }
+            }
+
             ItemsChanging(value, items);
             items = value;
             getItemsChangedEvent().raise(this, EventArgs.Empty);
@@ -1480,13 +1487,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     parameters.add(param);
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
-                                @Override
-                                public void Executed(FrontendMultipleActionAsyncResult a) {
-                                    stopProgress(a.getState());
-                                    cancel();
-                                }
-                            },
-                            this);
+                        @Override
+                        public void Executed(FrontendMultipleActionAsyncResult a) {
+                            stopProgress(a.getState());
+                            cancel();
+                        }
+                    },
+                    this);
                 }
             }
         }
@@ -1498,20 +1505,20 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 Frontend.RunAction(VdcActionType.ChangeVMCluster, new ChangeVMClusterParameters(newClusterID,
                         gettempVm().getId()),
                         new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+
+                        Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
+                                new IFrontendActionAsyncCallback() {
                             @Override
-                            public void Executed(FrontendActionAsyncResult result) {
-
-                                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
-                                        new IFrontendActionAsyncCallback() {
-                                            @Override
-                                            public void Executed(FrontendActionAsyncResult a) {
-                                                stopProgress(a.getState());
-                                                cancel();
-                                            }
-                                        }, this);
-
+                            public void Executed(FrontendActionAsyncResult a) {
+                                stopProgress(a.getState());
+                                cancel();
                             }
                         }, this);
+
+                    }
+                }, this);
             }
             else
             {
