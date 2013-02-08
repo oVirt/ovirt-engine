@@ -16,12 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -29,6 +25,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
 {
     public MoveDiskModel() {
         super();
+
+        setIsSourceStorageDomainNameAvailable(true);
     }
 
     @Override
@@ -65,37 +63,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected void postCopyOrMoveInit() {
-        ICommandTarget target = (ICommandTarget) getEntity();
-
-        if (!getStorageDomain().getItems().iterator().hasNext())
-        {
-            setWarningAvailable(false);
-            setMessage(ConstantsManager.getInstance().getConstants()
-                    .theSystemCouldNotFindAvailableTargetStorageDomainMsg());
-
-            UICommand tempVar = new UICommand("Cancel", target); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            getCommands().add(tempVar);
-        }
-        else
-        {
-            UICommand tempVar2 = new UICommand("OnMove", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", target); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            getCommands().add(tempVar3);
-        }
-
-        StopProgress();
-    }
-
-    @Override
     protected void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
             DiskModel diskModel) {
 
@@ -113,6 +80,21 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
+    protected String getWarning() {
+        return constants.cannotMoveDisks();
+    }
+
+    @Override
+    protected String getNoActiveSourceDomainMessage() {
+        return constants.sourceStorageDomainIsNotActiveMsg();
+    }
+
+    @Override
+    protected String getNoActiveTargetDomainMessage() {
+        return constants.noActiveTargetStorageDomainAvailableMsg();
+    }
+
+    @Override
     protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
             DiskImage disk) {
@@ -125,15 +107,19 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     protected void OnExecute() {
         super.OnExecute();
 
-        MoveDisksParameters parameters = new MoveDisksParameters((List) getParameters());
-        Frontend.RunAction(getActionType(), parameters,
+        ArrayList<VdcActionParametersBase> parameters = getParameters();
+        if (parameters.isEmpty()) {
+            cancel();
+            return;
+        }
+
+        MoveDisksParameters moveDisksParameters = new MoveDisksParameters((List) parameters);
+        Frontend.RunAction(getActionType(), moveDisksParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
                         MoveDiskModel localModel = (MoveDiskModel) result.getState();
-                        localModel.StopProgress();
-                        ListModel listModel = (ListModel) localModel.getEntity();
-                        listModel.setWindow(null);
+                        localModel.cancel();
                     }
                 }, this);
     }

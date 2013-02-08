@@ -5,7 +5,7 @@
 	xmlns:e="urn:import:org.ovirt.engine.ui.webadmin.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage">
 
 	<ui:style>
-		.messageLabel {
+		.messagePanel {
 			color: #CD2127;
 			text-align: center;
 			padding: 10px;
@@ -15,8 +15,8 @@
 	<d:SimpleDialogPanel width="540px" height="400px">
 		<d:content>
 			<g:FlowPanel>
-				<g:Label ui:field="messageLabel" visible="false" addStyleNames="{style.messageLabel}" />
-				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="260px" listWidth="525px" showSource="true" />
+				<g:FlowPanel ui:field="messagePanel" visible="false" addStyleNames="{style.messagePanel}" />
+				<w:DisksAllocationView ui:field="disksAllocationView" listHeight="245px" listWidth="525px" showSource="true" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

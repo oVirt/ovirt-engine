@@ -16,13 +16,13 @@ import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
@@ -42,22 +42,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         {
             allDisks = value;
             OnPropertyChanged(new PropertyChangedEventArgs("All Disks")); //$NON-NLS-1$
-        }
-    }
-
-    private ArrayList<storage_domains> storageDomains;
-
-    public ArrayList<storage_domains> getStorageDomains()
-    {
-        return storageDomains;
-    }
-
-    public void setStorageDomains(ArrayList<storage_domains> value)
-    {
-        if (storageDomains != value)
-        {
-            storageDomains = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("Storage Domains")); //$NON-NLS-1$
         }
     }
 
@@ -87,20 +71,20 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         this.vmId = vmId;
     }
 
-    protected ArrayList<storage_domains> activeStorageDomains;
-    protected ArrayList<storage_domains> intersectStorageDomains;
-    protected ArrayList<storage_domains> unionStorageDomains;
-
     public abstract void init(ArrayList<DiskImage> diskImages);
 
     protected abstract void initStorageDomains();
 
-    protected abstract void postCopyOrMoveInit();
-
-    protected abstract void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
-            DiskModel diskModel);
-
     protected abstract VdcActionType getActionType();
+
+    protected abstract String getWarning();
+
+    protected abstract String getNoActiveSourceDomainMessage();
+
+    protected abstract String getNoActiveTargetDomainMessage();
+
+    protected abstract void updateMoveOrCopySingleDiskParameters(
+            ArrayList<VdcActionParametersBase> parameters, DiskModel diskModel);
 
     protected abstract MoveOrCopyImageGroupParameters createParameters(
             Guid sourceStorageDomainGuid,
@@ -108,8 +92,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskImage disk);
 
     public MoveOrCopyDiskModel() {
-        allDisks = new ArrayList<DiskModel>();
-        storageDomains = new ArrayList<storage_domains>();
+        setAllDisks(new ArrayList<DiskModel>());
+        setActiveStorageDomains(new ArrayList<storage_domains>());
     }
 
     protected void onInitDisks() {
@@ -135,12 +119,12 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     protected void onInitStorageDomains(ArrayList<storage_domains> storages) {
         for (storage_domains storage : storages) {
             if (Linq.IsDataActiveStorageDomain(storage)) {
-                storageDomains.add(storage);
+                getActiveStorageDomains().add(storage);
             }
         }
-        Collections.sort(storageDomains, new Linq.StorageDomainByNameComparer());
+        Collections.sort(getActiveStorageDomains(), new Linq.StorageDomainByNameComparer());
 
-        if (!storageDomains.isEmpty()) {
+        if (!getActiveStorageDomains().isEmpty()) {
             AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object target, Object returnValue) {
@@ -150,7 +134,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }
-            }), storageDomains.get(0).getstorage_pool_id().getValue());
+            }), getActiveStorageDomains().get(0).getstorage_pool_id().getValue());
         }
         else {
             postInitStorageDomains();
@@ -158,52 +142,91 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected void postInitStorageDomains() {
-        activeStorageDomains = getStorageDomains();
-
-        ArrayList<ArrayList<storage_domains>> allSourceStorages = new ArrayList<ArrayList<storage_domains>>();
-        ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
+        boolean showWarning = false;
 
         for (DiskModel disk : getDisks()) {
             DiskImage diskImage = ((DiskImage) disk.getDisk());
 
-            // Source storages
+            // Source storage domains
             ArrayList<Guid> diskStorageIds = diskImage.getstorage_ids();
-            ArrayList<storage_domains> diskStorages = Linq.getStorageDomainsByIds(diskStorageIds, activeStorageDomains);
-            disk.getSourceStorageDomain().setItems(diskStorages);
-            allSourceStorages.add(diskStorages);
+            ArrayList<storage_domains> sourceStorageDomains =
+                    Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 
-            // Destination storages
-            ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, diskStorages);
-            ArrayList<storage_domains> diskMissingStorageDomains = new ArrayList<storage_domains>();
+            // Destination storage domains
+            ArrayList<storage_domains> destStorageDomains =
+                    Linq.Except(getActiveStorageDomains(), sourceStorageDomains);
+            destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getstorage_pool_id());
 
-            // Filter storages with missing template disk
-            if (!diskImage.getParentId().equals(NGuid.Empty)) {
-                diskMissingStorageDomains = getMissingStorages(destStorageDomains, disk);
-            }
-            missingStorageDomains.addAll(diskMissingStorageDomains);
-            destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
-
-            // Filter storages on different datacenters
-            if (!diskStorages.isEmpty()) {
-                NGuid diskDatacenterId = diskStorages.get(0).getstorage_pool_id();
-                destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskDatacenterId);
+            // Filter storage domains with missing template disk
+            boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(NGuid.Empty);
+            if (isDiskBasedOnTemplate) {
+                destStorageDomains = Linq.Except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
             }
 
+            // Add prohibition reasons
+            if (sourceStorageDomains.isEmpty() || destStorageDomains.isEmpty()) {
+                showWarning = true;
+                updateChangeability(disk, isDiskBasedOnTemplate,
+                        sourceStorageDomains.isEmpty(), destStorageDomains.isEmpty());
+            }
+
+            // Sort and add storage domains
             Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
+            Collections.sort(sourceStorageDomains, new Linq.StorageDomainByNameComparer());
             disk.getStorageDomain().setItems(destStorageDomains);
+            disk.getSourceStorageDomain().setItems(sourceStorageDomains);
+            addSourceStorageDomainName(disk, sourceStorageDomains);
         }
 
-        intersectStorageDomains = Linq.Intersection(allSourceStorages);
-        unionStorageDomains = Linq.Union(allSourceStorages);
-
-        ArrayList<storage_domains> destStorageDomains = Linq.Except(activeStorageDomains, intersectStorageDomains);
-        destStorageDomains = Linq.Except(destStorageDomains, missingStorageDomains);
-        Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
-
-        getStorageDomain().setItems(destStorageDomains);
         sortDisks();
+        postCopyOrMoveInit(showWarning);
+    }
 
-        postCopyOrMoveInit();
+    private void updateChangeability(DiskModel disk, boolean isDiskBasedOnTemplate, boolean noSources, boolean noTargets) {
+        disk.getStorageDomain().setIsChangable(!noTargets);
+        disk.getSourceStorageDomain().setIsChangable(!noSources);
+        disk.getSourceStorageDomainName().setIsChangable(!noSources);
+        disk.getStorageDomain().getChangeProhibitionReasons().add(isDiskBasedOnTemplate ?
+                constants.noActiveStorageDomainWithTemplateMsg() : getNoActiveTargetDomainMessage());
+        disk.getSourceStorageDomain().getChangeProhibitionReasons().add(getNoActiveSourceDomainMessage());
+        disk.getSourceStorageDomainName().getChangeProhibitionReasons().add(getNoActiveSourceDomainMessage());
+    }
+
+    private void addSourceStorageDomainName(DiskModel disk, ArrayList<storage_domains> sourceStorageDomains) {
+        String sourceStorageName = sourceStorageDomains.isEmpty() ?
+                constants.notAvailableLabel() : sourceStorageDomains.get(0).getstorage_name();
+        disk.getSourceStorageDomainName().setEntity(sourceStorageName);
+    }
+
+    protected void postCopyOrMoveInit(boolean showWarning) {
+        ICommandTarget target = (ICommandTarget) getEntity();
+
+        if (getActiveStorageDomains().isEmpty()) {
+            setMessage(constants.noStorageDomainAvailableMsg());
+
+            UICommand closeCommand = new UICommand("Cancel", target); //$NON-NLS-1$
+            closeCommand.setTitle(constants.close());
+            closeCommand.setIsDefault(true);
+            closeCommand.setIsCancel(true);
+            getCommands().add(closeCommand);
+        }
+        else
+        {
+            if (showWarning) {
+                setMessage(getWarning());
+            }
+
+            UICommand actionCommand = new UICommand("OnExecute", this); //$NON-NLS-1$
+            actionCommand.setTitle(constants.ok());
+            actionCommand.setIsDefault(true);
+            getCommands().add(actionCommand);
+            UICommand cancelCommand = new UICommand("Cancel", target); //$NON-NLS-1$
+            cancelCommand.setTitle(constants.cancel());
+            cancelCommand.setIsCancel(true);
+            getCommands().add(cancelCommand);
+        }
+
+        StopProgress();
     }
 
     protected ArrayList<storage_domains> filterStoragesByDatacenterId(ArrayList<storage_domains> storageDomains,
@@ -284,8 +307,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 updateMoveOrCopySingleDiskParameters(parameters, diskModel);
             }
             else {
-                if (destStorageDomain == null
-                        || ((DiskImage) diskModel.getDisk()).getstorage_ids().contains(destStorageDomain.getId())) {
+                if (destStorageDomain == null || sourceStorageDomain == null) {
                     continue;
                 }
 
@@ -316,11 +338,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     {
         super.ExecuteCommand(command);
 
-        if (StringHelper.stringsEqual(command.getName(), "OnMove") || //$NON-NLS-1$
-                StringHelper.stringsEqual(command.getName(), "OnCopy")) //$NON-NLS-1$
-        {
-            OnExecute();
-        }
+        OnExecute();
     }
 
     public boolean Validate() {
@@ -336,5 +354,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
 
         return isValid;
+    }
+
+    protected void cancel() {
+        StopProgress();
+        ((ListModel) getEntity()).setWindow(null);
     }
 }

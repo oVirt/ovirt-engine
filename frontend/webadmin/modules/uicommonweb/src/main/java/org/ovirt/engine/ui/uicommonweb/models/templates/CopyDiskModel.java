@@ -14,13 +14,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -30,7 +26,6 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
         super();
 
         setIsSourceStorageDomainAvailable(true);
-        setIsSourceStorageDomainChangable(true);
     }
 
     @Override
@@ -68,42 +63,6 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected void postCopyOrMoveInit() {
-        ICommandTarget target = (ICommandTarget) getEntity();
-
-        boolean noSingleStorageDomain = !getStorageDomain().getItems().iterator().hasNext();
-        boolean noDestStorageDomain = intersectStorageDomains.containsAll(activeStorageDomains);
-
-        if (activeStorageDomains.isEmpty() || noDestStorageDomain) {
-            if (activeStorageDomains.isEmpty()) {
-                setMessage(ConstantsManager.getInstance().getConstants().noSDAvailableMsg());
-            }
-            else if (noDestStorageDomain) {
-                setMessage(ConstantsManager.getInstance().getConstants().disksAlreadyExistMsg());
-            }
-
-            UICommand tempVar = new UICommand("Cancel", target); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-            tempVar.setIsDefault(true);
-            tempVar.setIsCancel(true);
-            getCommands().add(tempVar);
-        }
-        else
-        {
-            UICommand tempVar2 = new UICommand("OnCopy", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", target); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            getCommands().add(tempVar3);
-        }
-
-        StopProgress();
-    }
-
-    @Override
     protected void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
             DiskModel diskModel) {
 
@@ -129,6 +88,21 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
+    protected String getWarning() {
+        return constants.cannotCopyDisks();
+    }
+
+    @Override
+    protected String getNoActiveSourceDomainMessage() {
+        return constants.noActiveSourceStorageDomainAvailableMsg();
+    }
+
+    @Override
+    protected String getNoActiveTargetDomainMessage() {
+        return constants.diskExistsOnAllActiveStorageDomainsMsg();
+    }
+
+    @Override
     protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
             DiskImage disk) {
@@ -142,14 +116,18 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     protected void OnExecute() {
         super.OnExecute();
 
-        Frontend.RunMultipleAction(getActionType(), getParameters(),
+        ArrayList<VdcActionParametersBase> parameters = getParameters();
+        if (parameters.isEmpty()) {
+            cancel();
+            return;
+        }
+
+        Frontend.RunMultipleAction(getActionType(), parameters,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendMultipleActionAsyncResult result) {
                         CopyDiskModel localModel = (CopyDiskModel) result.getState();
-                        localModel.StopProgress();
-                        ListModel listModel = (ListModel) localModel.getEntity();
-                        listModel.setWindow(null);
+                        localModel.cancel();
                     }
                 }, this);
     }

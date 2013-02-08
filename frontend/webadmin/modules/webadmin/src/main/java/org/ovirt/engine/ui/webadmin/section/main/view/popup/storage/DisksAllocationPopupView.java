@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -22,7 +23,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     }
 
     @UiField
-    Label messageLabel;
+    FlowPanel messagePanel;
 
     @UiField(provided = true)
     @Ignore
@@ -54,9 +55,8 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
         super.setMessage(message);
 
         boolean isMessageEmpty = message == null || message.isEmpty();
-        disksAllocationView.setVisible(isMessageEmpty || disksAllocationModel.isWarningAvailable());
-        messageLabel.setVisible(!isMessageEmpty);
-        messageLabel.setText(message);
+        messagePanel.setVisible(!isMessageEmpty);
+        messagePanel.add(new Label(message));
     }
 
 }

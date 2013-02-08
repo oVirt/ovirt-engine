@@ -1000,7 +1000,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().moveVirtualMachineTitle());
         model.setHashName("move_virtual_machine"); //$NON-NLS-1$
-        model.setIsSourceStorageDomainNameAvailable(true);
         model.setEntity(this);
         model.StartProgress(null);
 

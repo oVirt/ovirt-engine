@@ -656,9 +656,6 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Permission")
     String permissionMsg();
 
-    @DefaultStringValue("No Storage Domain is available - check Storage Domains and Hosts status.")
-    String noSDAvailableMsg();
-
     @DefaultStringValue("Disks already exist on all available Storage Domains.")
     String disksAlreadyExistMsg();
 
@@ -800,8 +797,29 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Tag(s)")
     String tagsMsg();
 
-    @DefaultStringValue("The system could not find available target Storage Domain.\nPossible reasons:\n  - No active Storage Domain available\n  - The Template that the VM is based on does not exist on active Storage Domain")
-    String theSystemCouldNotFindAvailableTargetStorageDomainMsg();
+    @DefaultStringValue("No active Storage Domain is available - check Storage Domains and Hosts status.")
+    String noStorageDomainAvailableMsg();
+
+    @DefaultStringValue("Source Storage Domain is not active")
+    String sourceStorageDomainIsNotActiveMsg();
+
+    @DefaultStringValue("No active target Storage Domain is available")
+    String noActiveTargetStorageDomainAvailableMsg();
+
+    @DefaultStringValue("No active source Storage Domain is available")
+    String noActiveSourceStorageDomainAvailableMsg();
+
+    @DefaultStringValue("Disk exists on all active Storage Domains")
+    String diskExistsOnAllActiveStorageDomainsMsg();
+
+    @DefaultStringValue("The Template that the VM is based on does not exist on any active Storage Domain")
+    String noActiveStorageDomainWithTemplateMsg();
+
+    @DefaultStringValue("Warning: Some of the disks cannot be moved")
+    String cannotMoveDisks();
+
+    @DefaultStringValue("Warning: Some of the disks cannot be copied")
+    String cannotCopyDisks();
 
     @DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
     String fieldValueShouldFollowMsg();

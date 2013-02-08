@@ -25,10 +25,13 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class DisksAllocationModel extends EntityModel
 {
+    protected static Constants constants = ConstantsManager.getInstance().getConstants();
+
     private final IEventListener quota_storageEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -168,7 +171,6 @@ public class DisksAllocationModel extends EntityModel
     private boolean isVolumeFormatChangable;
     private boolean isAliasChangable;
     private boolean isSourceStorageDomainAvailable;
-    private boolean isSourceStorageDomainChangable;
     private boolean isSourceStorageDomainNameAvailable;
     private boolean isWarningAvailable;
 
@@ -302,23 +304,11 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : disks) {
-            boolean isDestStoragesEmpty = diskModel.getStorageDomain().getItems() != null ?
-                    ((ArrayList) diskModel.getStorageDomain().getItems()).isEmpty() : true;
-
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
-            diskModel.getSourceStorageDomain().setIsChangable(!isSingleStorageDomain && isSourceStorageDomainChangable);
+            diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
             diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
             diskModel.getVolumeType().setIsChangable(isVolumeFormatChangable);
             diskModel.getAlias().setIsChangable(isAliasChangable);
-
-            if (diskModel.getSourceStorageDomain().getItems() != null
-                    && diskModel.getSourceStorageDomain().getItems().iterator().hasNext()) {
-                storage_domains sourceStorage =
-                        ((storage_domains) diskModel.getSourceStorageDomain().getItems().iterator().next());
-                String sourceStorageName = sourceStorage != null ? sourceStorage.getstorage_name() : ""; //$NON-NLS-1$
-                diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
-                diskModel.getSourceStorageDomainName().setEntity(sourceStorageName);
-            }
         }
     }
 
@@ -392,7 +382,7 @@ public class DisksAllocationModel extends EntityModel
         for (DiskModel diskModel : getDisks()) {
             if (!diskModel.getStorageDomain().getItems().iterator().hasNext()) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(
-                        ConstantsManager.getInstance().getConstants().storageDomainMustBeSpecifiedInvalidReason());
+                        constants.storageDomainMustBeSpecifiedInvalidReason());
                 diskModel.getStorageDomain().setIsValid(false);
                 setIsValid(false);
             }
@@ -421,10 +411,6 @@ public class DisksAllocationModel extends EntityModel
 
     public void setIsSourceStorageDomainAvailable(boolean isSourceStorageDomainAvailable) {
         this.isSourceStorageDomainAvailable = isSourceStorageDomainAvailable;
-    }
-
-    public void setIsSourceStorageDomainChangable(boolean isSourceStorageDomainChangable) {
-        this.isSourceStorageDomainChangable = isSourceStorageDomainChangable;
     }
 
     public void setIsSourceStorageDomainNameAvailable(boolean isSourceStorageDomainNameAvailable) {

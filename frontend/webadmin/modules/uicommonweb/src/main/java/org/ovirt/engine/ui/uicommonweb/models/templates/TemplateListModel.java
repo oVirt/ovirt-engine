@@ -175,8 +175,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.setTitle(ConstantsManager.getInstance().getConstants().copyTemplateTitle());
         model.setHashName("copy_template"); //$NON-NLS-1$
         model.setIsVolumeFormatAvailable(false);
-        model.setIsSourceStorageDomainAvailable(true);
-        model.setIsSourceStorageDomainChangable(true);
         model.setEntity(this);
 
         model.StartProgress(null);
