@@ -24,9 +24,9 @@ public class FrontendFailureEventListener implements IEventListener {
         FrontendFailureEventArgs failureArgs = (FrontendFailureEventArgs) args;
 
         if (failureArgs.getMessage() != null) {
-            errorPopupManager.show(MESSAGES.uiCommonFrontendFailure(ErrorMessageFormatter.formatMessage(failureArgs.getMessage())));
+            errorPopupManager.show(MESSAGES.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessage(failureArgs.getMessage())));
         } else if (failureArgs.getMessages() != null) {
-            errorPopupManager.show(MESSAGES.uiCommonFrontendFailure(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
+            errorPopupManager.show(MESSAGES.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(failureArgs.getMessages())));
         }
     }
 

@@ -18,9 +18,6 @@ public interface CommonApplicationMessages extends Messages {
 
     // UiCommon related error messages
 
-    @DefaultMessage("Error: {0}")
-    String uiCommonFrontendFailure(String reason);
-
     @DefaultMessage("Error while executing action: {0}")
     String uiCommonRunActionFailed(String reason);
 

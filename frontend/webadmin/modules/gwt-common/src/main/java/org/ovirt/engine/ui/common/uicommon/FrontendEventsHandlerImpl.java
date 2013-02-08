@@ -82,7 +82,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
             }
         }
 
-        errorPopupManager.show(ErrorMessageFormatter.formatMessages(errors));
+        errorPopupManager.show(messages.uiCommonRunActionFailed(ErrorMessageFormatter.formatMessages(errors)));
     }
 
     @Override
