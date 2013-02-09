@@ -519,11 +519,8 @@ public class PoolListModel extends ListWithDetailsModel
                                         .Integer(), 0);
 
                         param.setStorageDomainId(Guid.Empty);
-                        param.setDiskInfoDestinationMap(
-                                model.getDisksAllocationModel()
-                                        .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
-                                                .getIsSingleStorageDomain()
-                                                .getEntity()));
+                        param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
+                                .getImageToDestinationDomainMap());
 
                         if (model.getQuota().getSelectedItem() != null) {
                             desktop.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());

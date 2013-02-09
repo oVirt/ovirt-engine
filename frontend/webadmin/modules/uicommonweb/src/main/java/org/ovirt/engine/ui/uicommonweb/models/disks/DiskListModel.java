@@ -464,7 +464,6 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         }
 
         MoveDiskModel model = new MoveDiskModel();
-        model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().moveDisksTitle());
         model.setHashName("move_disks"); //$NON-NLS-1$
@@ -540,7 +539,6 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         }
 
         CopyDiskModel model = new CopyDiskModel();
-        model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().copyDisksTitle());
         model.setHashName("copy_disks"); //$NON-NLS-1$

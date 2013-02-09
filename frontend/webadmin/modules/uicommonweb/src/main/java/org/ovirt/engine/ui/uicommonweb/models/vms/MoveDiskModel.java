@@ -63,18 +63,6 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected void updateMoveOrCopySingleDiskParameters(ArrayList<VdcActionParametersBase> parameters,
-            DiskModel diskModel) {
-
-        storage_domains selectedStorageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
-
-        addMoveOrCopyParameters(parameters,
-                Guid.Empty,
-                selectedStorageDomain.getId(),
-                (DiskImage) diskModel.getDisk());
-    }
-
-    @Override
     protected VdcActionType getActionType() {
         return VdcActionType.MoveDisks;
     }

@@ -677,11 +677,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             newvm.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
 
-        addVmTemplateParameters.setDiskInfoDestinationMap(
-                model.getDisksAllocationModel()
-                        .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
-                                .getIsSingleStorageDomain()
-                                .getEntity()));
+        addVmTemplateParameters.setDiskInfoDestinationMap(model.getDisksAllocationModel()
+                .getImageToDestinationDomainMap());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {

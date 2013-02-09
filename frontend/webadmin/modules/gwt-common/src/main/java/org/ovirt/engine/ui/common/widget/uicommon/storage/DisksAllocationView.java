@@ -2,9 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.IEventListener;
@@ -14,23 +12,15 @@ import org.ovirt.engine.ui.common.PopupSimpleTableResources;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
-import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -51,34 +41,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface WidgetStyle extends CssResource {
-        String isSingleStorageEditorContent();
-
-        String editorLabel();
-
-        String editorContent();
-
-        String editorWrapper();
-    }
-
-    @UiField
-    WidgetStyle style;
-
-    @UiField(provided = true)
-    @Path(value = "isSingleStorageDomain.entity")
-    EntityModelCheckBoxEditor isSingleStorageEditor;
-
-    @UiField(provided = true)
-    @Path(value = "storageDomain.selectedItem")
-    ListModelListBoxEditor<Object> singleStorageEditor;
-
-    @UiField(provided = true)
-    @Path(value = "quota.selectedItem")
-    ListModelListBoxEditor<Object> singleQuotaEditor;
-
-    @UiField
-    FlowPanel singleStoragePanel;
-
     @UiField
     FlowPanel diskListPanel;
 
@@ -92,10 +54,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     boolean showSource;
     boolean showQuota;
 
-    @Ignore
-    IVdcQueryableCellTable<storage_domains, ListModel> storageTable;
-
-    CommonApplicationConstants constants;
+    private CommonApplicationConstants constants;
 
     private String elementId = DOM.createUniqueId();
 
@@ -115,32 +74,8 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     public DisksAllocationView(CommonApplicationConstants constants) {
         this.constants = constants;
-        initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
-        addStyles();
         Driver.driver.initialize(this);
-
-        // Hide single destination storage and quota panel
-        singleStoragePanel.setVisible(false);
-    }
-
-    void initListBoxEditors() {
-        isSingleStorageEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
-        singleStorageEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((storage_domains) object).getstorage_name();
-            }
-        });
-
-        singleQuotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
-            }
-        });
     }
 
     void updateListHeader(DisksAllocationModel model) {
@@ -170,32 +105,12 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     void updateColumnsAvailability(DisksAllocationModel model) {
         setShowVolumeType(model.getIsVolumeFormatAvailable());
         setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
-        localize(constants);
-    }
-
-    void addStyles() {
-        isSingleStorageEditor.addContentWidgetStyleName(style.isSingleStorageEditorContent());
-
-        updateEditorStyle(singleStorageEditor);
-        updateEditorStyle(singleQuotaEditor);
-    }
-
-    private void updateEditorStyle(AbstractValidatedWidgetWithLabel editor) {
-        editor.addContentWidgetStyleName(style.editorContent());
-        editor.addWrapperStyleName(style.editorWrapper());
-        editor.setLabelStyleName(style.editorLabel());
-    }
-
-    void localize(CommonApplicationConstants constants) {
-        isSingleStorageEditor.setLabel(!showQuota ? constants.singleDestinationStorage() :
-                constants.singleDestinationStorage() + constants.singleQuota());
     }
 
     @Override
     public void edit(DisksAllocationModel model) {
         Driver.driver.edit(model);
         initListerners(model);
-        InitStorageTable(model.getIsSingleDiskCopy());
         updateColumnsAvailability(model);
         updateListHeader(model);
     }
@@ -231,35 +146,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
                     ElementIdUtils.createElementId(elementId, "disk" + (diskIndex++))); //$NON-NLS-1$
             diskListPanel.add(disksAllocationItemView);
         }
-
-        if (model.getIsSingleDiskMove() || model.getIsSingleDiskCopy()) {
-            singleStoragePanel.setVisible(false);
-            model.getIsSingleStorageDomain().setEntity(false);
-        }
-    }
-
-    public void InitStorageTable(boolean multiSelection) {
-        storageTable = new IVdcQueryableCellTable<storage_domains, ListModel>(multiSelection);
-
-        // Table Entity Columns
-        storageTable.addColumn(new TextColumnWithTooltip<storage_domains>() {
-            @Override
-            public String getValue(storage_domains storage) {
-                return storage.getstorage_name();
-            }
-        }, constants.nameDisk());
-
-        storageTable.addColumn(new TextColumnWithTooltip<storage_domains>() {
-            @Override
-            public String getValue(storage_domains storage) {
-                if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
-                    return "< 1 GB"; //$NON-NLS-1$
-                }
-                return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
-            }
-        }, constants.freeSpaceDisk());
-
-        storageTable.setWidth("100%", true); //$NON-NLS-1$
     }
 
     @Override
@@ -287,11 +173,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         this.showQuota = showQuota;
     }
 
-    public void setEnabled(boolean enabled) {
-        isSingleStorageEditor.setEnabled(enabled);
-        singleStorageEditor.setEnabled(enabled);
-    }
-
     public void addDiskListPanelStyle(String style) {
         diskListPanel.addStyleName(style);
     }
@@ -299,13 +180,6 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     @Override
     public void setElementId(String elementId) {
         this.elementId = elementId;
-
-        isSingleStorageEditor.setElementId(
-                ElementIdUtils.createElementId(elementId, "isSingleStorage")); //$NON-NLS-1$
-        singleStorageEditor.setElementId(
-                ElementIdUtils.createElementId(elementId, "singleStorage")); //$NON-NLS-1$
-        singleQuotaEditor.setElementId(
-                ElementIdUtils.createElementId(elementId, "singleQuota")); //$NON-NLS-1$
     }
 
 }

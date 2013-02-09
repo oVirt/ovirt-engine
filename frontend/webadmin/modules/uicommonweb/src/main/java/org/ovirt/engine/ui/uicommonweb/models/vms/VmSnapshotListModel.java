@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -668,19 +667,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
-        storage_domains storageDomain =
-                ((storage_domains) model.getDisksAllocationModel().getStorageDomain().getSelectedItem());
         ArrayList<DiskImage> diskInfoList = CreateDiskInfoList();
-
-        if ((Boolean) model.getDisksAllocationModel().getIsSingleStorageDomain().getEntity()) {
-            for (Guid key : imageToDestinationDomainMap.keySet()) {
-                ArrayList<Guid> storageIdList = new ArrayList<Guid>();
-                storageIdList.add(storageDomain.getId());
-                DiskImage diskImage = new DiskImage();
-                diskImage.setstorage_ids(storageIdList);
-                imageToDestinationDomainMap.put(key, diskImage);
-            }
-        }
 
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());

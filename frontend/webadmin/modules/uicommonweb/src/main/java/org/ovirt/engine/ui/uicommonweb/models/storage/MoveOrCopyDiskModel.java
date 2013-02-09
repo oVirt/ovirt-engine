@@ -83,9 +83,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected abstract String getNoActiveTargetDomainMessage();
 
-    protected abstract void updateMoveOrCopySingleDiskParameters(
-            ArrayList<VdcActionParametersBase> parameters, DiskModel diskModel);
-
     protected abstract MoveOrCopyImageGroupParameters createParameters(
             Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
@@ -281,42 +278,28 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected ArrayList<VdcActionParametersBase> getParameters() {
-        boolean iSingleStorageDomain = (Boolean) getIsSingleStorageDomain().getEntity();
-
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DiskModel diskModel : getDisks())
         {
-            storage_domains destStorageDomain = iSingleStorageDomain ?
-                    (storage_domains) getStorageDomain().getSelectedItem() :
-                    (storage_domains) diskModel.getStorageDomain().getSelectedItem();
-
+            storage_domains destStorageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
             storage_domains sourceStorageDomain =
                     (storage_domains) diskModel.getSourceStorageDomain().getSelectedItem();
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
             DiskImage disk = (DiskImage) diskModel.getDisk();
             if (diskModel.getQuota().getSelectedItem() != null) {
-                if (iSingleStorageDomain) {
-                    disk.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
-                } else {
-                    disk.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
-                }
+                disk.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
             }
 
-            if (iSingleStorageDomain && getDisks().size() == 1) {
-                updateMoveOrCopySingleDiskParameters(parameters, diskModel);
+            if (destStorageDomain == null || sourceStorageDomain == null) {
+                continue;
             }
-            else {
-                if (destStorageDomain == null || sourceStorageDomain == null) {
-                    continue;
-                }
 
-                Guid destStorageDomainGuid = destStorageDomain.getId();
-                addMoveOrCopyParameters(parameters,
-                        sourceStorageDomainGuid,
-                        destStorageDomainGuid,
-                        disk);
-            }
+            Guid destStorageDomainGuid = destStorageDomain.getId();
+            addMoveOrCopyParameters(parameters,
+                    sourceStorageDomainGuid,
+                    destStorageDomainGuid,
+                    disk);
         }
 
         return parameters;

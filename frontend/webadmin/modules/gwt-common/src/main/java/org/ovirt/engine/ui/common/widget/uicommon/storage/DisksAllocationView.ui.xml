@@ -3,54 +3,15 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView.WidgetStyle">
-		.container {
-			text-align: right;
-		}		
-			
-		.isSingleStorageEditorContent {
-			width: 250px;
-			padding: 0px;
-		}
-		
-		.isSingleStorageEditor {
-			float: left;
-		}
-		
-		.editorLabel {
-			display: none;
-		}
-		
-		.editorContent {
-			width: 110px;
-		}
-		
-		.editorWrapper {
-			display: inline-block;
-		}
-				
-		.singleStoragePanel {
-			width: 100%;
-			border-bottom: 1px solid black;
-			margin-bottom: 5px;
-		}
-		
+	<ui:style>
 		.diskListPanel {
 			overflow: auto;
 			position: absolute;
 			width: 100%;
 		}
-		
-	</ui:style>	
+	</ui:style>
 
 	<g:FlowPanel>
-		<g:FlowPanel ui:field="singleStoragePanel" addStyleNames="{style.singleStoragePanel}">		
-			<e:EntityModelCheckBoxEditor ui:field="isSingleStorageEditor" addStyleNames="{style.isSingleStorageEditor}"/>				
-			<g:FlowPanel addStyleNames="{style.container}">
-				<e:ListModelListBoxEditor ui:field="singleStorageEditor" />
-				<e:ListModelListBoxEditor ui:field="singleQuotaEditor" />
-			</g:FlowPanel>
-		</g:FlowPanel>
 		<g:SimplePanel ui:field="diskListHeaderPanel" />
 		<g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel}"/>
 	</g:FlowPanel>

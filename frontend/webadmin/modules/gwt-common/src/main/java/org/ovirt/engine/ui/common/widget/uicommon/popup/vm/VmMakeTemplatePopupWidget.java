@@ -140,15 +140,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
             }
         });
 
-        model.getStorageDomain().getPropertyChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isDisksAllocationEnabled = model.getDisks() != null && !model.getDisks().isEmpty();
-                disksAllocationView.setEnabled(isDisksAllocationEnabled);
-                disksAllocationLabel.getElement().getStyle().setColor(isDisksAllocationEnabled ? "black" : "grey"); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-        });
-
         model.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -162,7 +153,6 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     private void addDiskAllocation(UnitVmModel model) {
         disksAllocationView.edit(model.getDisksAllocationModel());
-        model.getDisksAllocationModel().getStorageDomain().setItems(model.getStorageDomain().getItems());
         model.getDisksAllocationModel().setDisks(model.getDisks());
     }
 

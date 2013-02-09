@@ -821,9 +821,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Close")
     String closeText();
 
-    @DefaultStringValue("Storage domain can be modified only when 'Single Destination Domain' is unchecked")
-    String importVmTemplateSingleStorageCheckedLabel();
-
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String importAllocationModifiedSingleVM();
 

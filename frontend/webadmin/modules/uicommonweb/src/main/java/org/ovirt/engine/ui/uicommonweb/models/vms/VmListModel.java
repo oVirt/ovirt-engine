@@ -1832,10 +1832,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         addVmTemplateParameters.setPublicUse((Boolean) model.getIsTemplatePublic().getEntity());
 
         addVmTemplateParameters.setDiskInfoDestinationMap(
-                model.getDisksAllocationModel()
-                        .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
-                                .getIsSingleStorageDomain()
-                                .getEntity()));
+                model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
         model.StartProgress(null);
 
@@ -2487,10 +2484,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             ArrayList<storage_domains> activeStorageDomains =
                                     unitVmModel.getDisksAllocationModel().getActiveStorageDomains();
 
-                            HashMap<Guid, DiskImage> dict = unitVmModel.getDisksAllocationModel()
-                                    .getImageToDestinationDomainMap((Boolean) unitVmModel.getDisksAllocationModel()
-                                            .getIsSingleStorageDomain()
-                                            .getEntity());
+                            HashMap<Guid, DiskImage> dict =
+                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap();
                             for (DiskImage templateDisk : templateDisks)
                             {
                                 DiskModel disk = null;
@@ -2524,13 +2519,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 }
                             }
 
-                            storage_domains storageDomain =
-                                    (storage_domains) unitVmModel.getDisksAllocationModel()
-                                            .getStorageDomain().getSelectedItem();
-
                             AddVmFromTemplateParameters param =
-                                    new AddVmFromTemplateParameters(vmListModel.getcurrentVm(),
-                                            dict, storageDomain.getId());
+                                    new AddVmFromTemplateParameters(vmListModel.getcurrentVm(), dict, Guid.Empty);
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             parameters.add(param);
@@ -2559,11 +2549,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     model.StartProgress(null);
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
-                    params.setDiskInfoDestinationMap(
-                            model.getDisksAllocationModel()
-                                    .getImageToDestinationDomainMap((Boolean) model.getDisksAllocationModel()
-                                            .getIsSingleStorageDomain()
-                                            .getEntity()));
+                    params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);

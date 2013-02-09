@@ -840,7 +840,6 @@ public class VmDiskListModel extends VmDiskListModelBase
         VM vm = getEntity();
 
         MoveDiskModel model = new MoveDiskModel();
-        model.setIsSingleDiskMove(disks.size() == 1);
         setWindow(model);
         model.setVmId(vm.getStatus() == VMStatus.Up ? vm.getId() : null);
         model.setWarningAvailable(vm.getStatus() == VMStatus.Up);
