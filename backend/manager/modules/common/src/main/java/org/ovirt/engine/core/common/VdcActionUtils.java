@@ -140,7 +140,7 @@ public final class VdcActionUtils {
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.ExportVm,
                         VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
-                        VdcActionType.RemoveVmInterface)));
+                        VdcActionType.RemoveVmInterface, VdcActionType.CreateAllSnapshotsFromVm)));
         vmMatrix.put(
                 VMStatus.PoweredDown,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.HibernateVm,
@@ -195,7 +195,7 @@ public final class VdcActionUtils {
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.AddVmTemplate,
                         VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
-                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
+                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface, VdcActionType.CreateAllSnapshotsFromVm,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
         vmMatrix.put(
                 VMStatus.ImageLocked,
@@ -203,7 +203,7 @@ public final class VdcActionUtils {
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
-                        VdcActionType.ImportVm, VdcActionType.ChangeDisk,
+                        VdcActionType.ImportVm, VdcActionType.ChangeDisk, VdcActionType.CreateAllSnapshotsFromVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
         vmMatrix.put(
@@ -221,7 +221,7 @@ public final class VdcActionUtils {
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
-                        VdcActionType.ImportVm, VdcActionType.ChangeDisk,
+                        VdcActionType.ImportVm, VdcActionType.ChangeDisk, VdcActionType.CreateAllSnapshotsFromVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
         vmMatrix.put(
@@ -230,7 +230,7 @@ public final class VdcActionUtils {
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
                         VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
                         VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
-                        VdcActionType.ImportVm, VdcActionType.ChangeDisk,
+                        VdcActionType.ImportVm, VdcActionType.ChangeDisk, VdcActionType.CreateAllSnapshotsFromVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm)));
         _matrix.put(VM.class, vmMatrix);

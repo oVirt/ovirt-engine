@@ -737,8 +737,14 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Disk(s)")
     String disksMsg();
 
-    @DefaultStringValue("Snapshot cannot be created since the VM has no Virtual Disks")
-    String snapshotCannotBeCreatedSinceTheVMHasNoDisksMsg();
+    @DefaultStringValue("Snapshot cannot be created since the VM is performing an operation on a Snapshot.")
+    String snapshotCannotBeCreatedLockedSnapshotMsg();
+
+    @DefaultStringValue("Snapshot cannot be created since the VM is previewing a Snapshot.")
+    String snapshotCannotBeCreatedPreviewSnapshotMsg();
+
+    @DefaultStringValue("Snapshot cannot be created since the VM contains a stateless Snapshot.")
+    String snapshotCannotBeCreatedStatelessSnapshotMsg();
 
     @DefaultStringValue("At least one disk must be marked.")
     String atLeastOneDiskMustBeMarkedMsg();

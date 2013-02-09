@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -55,6 +56,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -1914,6 +1916,18 @@ public final class AsyncDataProvider {
         };
 
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(id), aQuery);
+    }
+
+    public static void GetVmSnapshotList(AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<Snapshot>) source : new ArrayList<Snapshot>();
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.GetAllVmSnapshotsByVmId, new GetAllVmSnapshotsByVmIdParameters(id), aQuery);
     }
 
     public static void GetVmDiskList(AsyncQuery aQuery, Guid id) {

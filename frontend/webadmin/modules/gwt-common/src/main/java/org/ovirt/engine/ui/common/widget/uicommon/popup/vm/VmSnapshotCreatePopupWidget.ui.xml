@@ -13,8 +13,9 @@
 
 		.messagePanel {
 			color: #CD2127;
-			margin-top: 10px;
 			margin-left: 5px;
+			margin-right: 5px;
+			text-align: center;
 		}
 	</ui:style>
 

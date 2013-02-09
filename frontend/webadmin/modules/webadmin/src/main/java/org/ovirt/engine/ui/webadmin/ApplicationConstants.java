@@ -1326,6 +1326,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Export")
     String exportVm();
 
+    @DefaultStringValue("Create Snapshot")
+    String createSnapshotVM();
+
     @DefaultStringValue("Move")
     String moveVm();
 

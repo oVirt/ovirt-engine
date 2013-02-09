@@ -248,6 +248,18 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         privateExportCommand = value;
     }
 
+    private UICommand privateCreateSnapshotCommand;
+
+    public UICommand getCreateSnapshotCommand()
+    {
+        return privateCreateSnapshotCommand;
+    }
+
+    private void setCreateSnapshotCommand(UICommand value)
+    {
+        privateCreateSnapshotCommand = value;
+    }
+
     private UICommand privateMoveCommand;
 
     public UICommand getMoveCommand()
@@ -451,6 +463,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setNewTemplateCommand(new UICommand("NewTemplate", this)); //$NON-NLS-1$
         setRunOnceCommand(new UICommand("RunOnce", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setCreateSnapshotCommand(new UICommand("CreateSnapshot", this)); //$NON-NLS-1$
         setMoveCommand(new UICommand("Move", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setRetrieveIsoImagesCommand(new UICommand("RetrieveIsoImages", this)); //$NON-NLS-1$
@@ -981,6 +994,32 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     .removeVmDisksAllSharedMsg());
             return;
         }
+    }
+
+    private void CreateSnapshot() {
+        VM vm = (VM) getSelectedItem();
+        if (vm == null || getWindow() != null) {
+            return;
+        }
+
+        SnapshotModel model = new SnapshotModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
+        model.setHashName("create_snapshot"); //$NON-NLS-1$
+
+        model.setVm(vm);
+        model.setValidateByVmSnapshots(true);
+        model.Initialize();
+
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        closeCommand.setIsCancel(true);
+
+        model.setCancelCommand(cancelCommand);
+        model.setCloseCommand(closeCommand);
     }
 
     private void Move()
@@ -2781,6 +2820,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RunVmOnce));
         getExportCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ExportVm));
+        getCreateSnapshotCommand().setIsExecutionAllowed(items.size() == 1
+                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getMoveCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.MoveVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(items.size() == 1
@@ -2869,6 +2910,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else if (command == getExportCommand())
         {
             Export(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
+        }
+        else if (command == getCreateSnapshotCommand())
+        {
+            CreateSnapshot();
         }
         else if (command == getMoveCommand())
         {

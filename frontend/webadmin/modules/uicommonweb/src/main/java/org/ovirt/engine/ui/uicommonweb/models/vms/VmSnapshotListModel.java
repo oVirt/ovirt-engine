@@ -1,19 +1,18 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -49,9 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
 public class VmSnapshotListModel extends SearchableListModel
@@ -451,70 +448,18 @@ public class VmSnapshotListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().createSnapshotTitle());
         model.setHashName("create_snapshot"); //$NON-NLS-1$
 
-        model.StartProgress(null);
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
-                        SnapshotModel snapshotModel = (SnapshotModel) vmSnapshotListModel.getWindow();
-                        ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+        model.setVm(vm);
+        model.Initialize();
 
-                        vmSnapshotListModel.PostNew(disks);
-                        // show message
-                        snapshotModel.sendWarningForNonExportableDisks(disks);
-                        snapshotModel.StopProgress();
-                    }
-                }),
-                vm.getId());
-    }
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        UICommand closeCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        closeCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+        closeCommand.setIsCancel(true);
 
-    public void PostNew(ArrayList<Disk> disks) {
-        SnapshotModel model = (SnapshotModel) getWindow();
-        UICommand tempVar2 = new UICommand("OnNew", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar2.setIsDefault(true);
-        model.getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
-        model.getCommands().add(tempVar3);
-    }
-
-    private void OnNew() {
-
-        VM vm = (VM) getEntity();
-        if (vm == null) {
-            return;
-        }
-
-        SnapshotModel model = (SnapshotModel) getWindow();
-
-        if (model.getProgress() != null) {
-            return;
-        }
-
-        if (!model.Validate()) {
-            return;
-        }
-
-        model.StartProgress(null);
-
-        ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
-        CreateAllSnapshotsFromVmParameters param = new CreateAllSnapshotsFromVmParameters(vm.getId(), (String) model.getDescription().getEntity());
-        param.setQuotaId(vm.getQuotaId());
-        params.add(param);
-
-        Frontend.RunMultipleAction(VdcActionType.CreateAllSnapshotsFromVm, params,
-            new IFrontendMultipleActionAsyncCallback() {
-                @Override
-                public void Executed(FrontendMultipleActionAsyncResult result) {
-
-                    VmSnapshotListModel localModel = (VmSnapshotListModel) result.getState();
-                    localModel.PostOnNew(result.getReturnValue());
-
-                }
-            }, this);
+        model.setCancelCommand(cancelCommand);
+        model.setCloseCommand(closeCommand);
     }
 
     public void PostOnNew(List<VdcReturnValueBase> returnValues) {
@@ -732,7 +677,8 @@ public class VmSnapshotListModel extends SearchableListModel
         boolean isStateless = getIsStateless();
         boolean isCloneVmSupported = getIsCloneVmSupported();
 
-        getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
+        getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
+                && VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);
@@ -871,10 +817,6 @@ public class VmSnapshotListModel extends SearchableListModel
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnNew")) //$NON-NLS-1$
-        {
-            OnNew();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnCloneVM")) //$NON-NLS-1$
         {

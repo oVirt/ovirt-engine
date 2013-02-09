@@ -71,6 +71,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             final Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
+            final Provider<VmSnapshotCreatePopupPresenterWidget> createSnapshotPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<VmDesktopNewPopupPresenterWidget> newDesktopVmPopupProvider,
@@ -94,6 +95,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return changeCDPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getExportCommand()) {
                     return exportPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
+                    return createSnapshotPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMigrateCommand()) {
                     return migratePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
