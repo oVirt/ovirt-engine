@@ -11,26 +11,30 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDynamicDAO{
 
+    private static final class StorageDomainDynamicRowMapper implements ParameterizedRowMapper<StorageDomainDynamic> {
+        public static final StorageDomainDynamicRowMapper instance = new StorageDomainDynamicRowMapper();
+
+        @Override
+        public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            StorageDomainDynamic entity = new StorageDomainDynamic();
+            entity.setAvailableDiskSize((Integer) rs
+                    .getObject("available_disk_size"));
+            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setUsedDiskSize((Integer) rs
+                    .getObject("used_disk_size"));
+            return entity;
+        }
+    }
+
+
     @Override
     public StorageDomainDynamic get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
-
-        ParameterizedRowMapper<StorageDomainDynamic> mapper = new ParameterizedRowMapper<StorageDomainDynamic>() {
-            @Override
-            public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                StorageDomainDynamic entity = new StorageDomainDynamic();
-                entity.setAvailableDiskSize((Integer) rs
-                        .getObject("available_disk_size"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setUsedDiskSize((Integer) rs
-                        .getObject("used_disk_size"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("Getstorage_domain_dynamicByid", mapper, parameterSource);
+        return getCallsHandler().executeRead("Getstorage_domain_dynamicByid",
+                StorageDomainDynamicRowMapper.instance,
+                parameterSource);
     }
 
 
@@ -68,22 +72,8 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
     @Override
     public List<StorageDomainDynamic> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<StorageDomainDynamic> mapper = new ParameterizedRowMapper<StorageDomainDynamic>() {
-            @Override
-            public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                StorageDomainDynamic entity = new StorageDomainDynamic();
-                entity.setAvailableDiskSize((Integer) rs
-                        .getObject("available_disk_size"));
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setUsedDiskSize((Integer) rs
-                        .getObject("used_disk_size"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetAllFromstorage_domain_dynamic", mapper,
+        return getCallsHandler().executeReadList("GetAllFromstorage_domain_dynamic",
+                StorageDomainDynamicRowMapper.instance,
                 parameterSource);
     }
 
