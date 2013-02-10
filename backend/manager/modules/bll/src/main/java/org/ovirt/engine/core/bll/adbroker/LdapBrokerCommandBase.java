@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -68,9 +69,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
             executeQuery(directorySearcher);
         } catch (RuntimeException e) {
-            log.errorFormat(
-                    "Failed to run command {0}. Domain is {1}. User is {2}.}",
-                    getClass().getSimpleName(), getDomain(), getLoginName());
+            log.error(String.format("Failed to run command %s. Domain is %s. User is %s.",
+                    getClass().getSimpleName(), getDomain(), getLoginName()));
+            _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
         }
         return _ldapReturnValue;
     }

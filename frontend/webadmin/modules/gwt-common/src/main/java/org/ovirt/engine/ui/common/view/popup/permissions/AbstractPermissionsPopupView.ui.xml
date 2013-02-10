@@ -19,7 +19,7 @@
 
 		.searchItemsPanel {
 			width: 100%;
-			height: 74%;
+			height: 70%;
 			border-bottom: 1px solid #BBBBBB;
 			border-top: 1px solid #BBBBBB;
 		}
@@ -39,8 +39,17 @@
 		}
 
 		.rolePanel {
-			height: 5%;
+			height: 9%;
 		}
+
+        .errorPanel {
+            width: 100%;
+            text-align: center;
+        }
+
+        .errorLabel {
+            color: #CD2127;
+        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="700px" height="500px">
@@ -64,6 +73,11 @@
 					<g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}" text="{constants.roleToAssignPermissionsPopup}" />
 					<e:ListModelListBoxEditor ui:field="roleSelection" />
 				</g:HorizontalPanel>
+                <g:HorizontalPanel addStyleNames="{style.errorPanel}">
+                    <g:cell horizontalAlignment="CENTER">
+                        <g:Label ui:field="errorMessage" addStyleNames="{style.errorLabel}" />
+                    </g:cell>
+                </g:HorizontalPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

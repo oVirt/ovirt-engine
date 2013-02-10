@@ -90,6 +90,10 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField
     public ScrollPanel searchItemsScrollPanel;
 
+    @UiField
+    @Ignore
+    Label errorMessage;
+
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
     public AbstractPermissionsPopupView(EventBus eventBus, CommonApplicationResources resources,
@@ -229,4 +233,9 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         everyonePanel.setVisible(!indic);
     }
 
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        errorMessage.setText(message);
+    }
 }

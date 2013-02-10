@@ -246,6 +246,11 @@ public class AdElementListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
+                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
+                if (handleQueryError(queryReturnValue, adElementListModel)) {
+                    return;
+                }
+
                 HashSet<Guid> excludeUsers = new HashSet<Guid>();
                 if (getExcludeItems() != null)
                 {
@@ -286,11 +291,17 @@ public class AdElementListModel extends SearchableListModel
 
         _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
+        _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
                 AdElementListModel adElementListModel = (AdElementListModel) model;
+                VdcQueryReturnValue queryReturnValue = (VdcQueryReturnValue) ReturnValue;
+                if (handleQueryError(queryReturnValue, adElementListModel)) {
+                    return;
+                }
+
                 HashSet<Guid> excludeUsers = new HashSet<Guid>();
                 if (adElementListModel.getExcludeItems() != null)
                 {
@@ -412,4 +423,24 @@ public class AdElementListModel extends SearchableListModel
     protected String getListName() {
         return "AdElementListModel"; //$NON-NLS-1$
     }
+
+    /**
+     * Handle error message in case of a query failure
+     * @param returnValue query return value
+     * @param model the model being currently displayed
+     * @return true if a query failure has occurred
+     */
+    private boolean handleQueryError(VdcQueryReturnValue returnValue, AdElementListModel model) {
+        model.setMessage(null);
+        if (!returnValue.getSucceeded()) {
+            model.setMessage(Frontend.getAppErrorsTranslator()
+                    .TranslateErrorTextSingle(returnValue.getExceptionString()));
+            getSearchInProgress().setEntity(false);
+
+            return true;
+        }
+
+        return false;
+    }
+
 }

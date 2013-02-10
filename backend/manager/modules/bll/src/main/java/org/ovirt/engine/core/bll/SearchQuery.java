@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryData;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryDataImpl;
 import org.ovirt.engine.core.bll.adbroker.LdapQueryType;
+import org.ovirt.engine.core.bll.adbroker.LdapReturnValueBase;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByQueryParameters;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
@@ -196,11 +197,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ldapQueryData.setDomain(data.getDomain());
         ldapQueryData.setFilterParameters(new Object[] { data.getQueryForAdBroker() });
 
+        LdapReturnValueBase returnValue =
+                getLdapFactory(data.getDomain()).RunAdAction(adActionType,
+                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData));
+        getQueryReturnValue().setSucceeded(returnValue.getSucceeded());
+        getQueryReturnValue().setExceptionString(returnValue.getExceptionString());
         @SuppressWarnings("unchecked")
-        List<T> result = (List<T>) getLdapFactory(data.getDomain())
-                .RunAdAction(adActionType,
-                        new LdapSearchByQueryParameters(data.getDomain(), ldapQueryData))
-                .getReturnValue();
+        List<T> result = (List<T>) returnValue.getReturnValue();
+
         return (result != null) ? result : new ArrayList<T>();
     }
 
