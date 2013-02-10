@@ -22,7 +22,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     @Override
     public VdsStatic get(Guid id) {
         return getCallsHandler().executeRead("GetVdsStaticByVdsId",
-                new VdsStaticRowMapper(),
+                VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id));
     }
@@ -30,7 +30,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     @Override
     public VdsStatic getByVdsName(String name) {
         return getCallsHandler().executeRead("GetVdsStaticByVdsName",
-                new VdsStaticRowMapper(),
+                VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));
     }
@@ -38,7 +38,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     @Override
     public VdsStatic getByHostName(String host) {
         return getCallsHandler().executeRead("GetVdsStaticByHostName",
-                new VdsStaticRowMapper(),
+                VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", host));
     }
@@ -46,7 +46,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     @Override
     public List<VdsStatic> getAllWithIpAddress(String address) {
         return getCallsHandler().executeReadList("GetVdsStaticByIp",
-                new VdsStaticRowMapper(),
+                VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("ip", address));
     }
@@ -54,7 +54,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     @Override
     public List<VdsStatic> getAllForVdsGroup(Guid vdsGroup) {
         return getCallsHandler().executeReadList("GetVdsStaticByVdsGroupId",
-                new VdsStaticRowMapper(),
+                VdsStaticRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", vdsGroup));
     }
@@ -120,6 +120,8 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     }
 
     private final static class VdsStaticRowMapper implements ParameterizedRowMapper<VdsStatic> {
+        public static final VdsStaticRowMapper instance = new VdsStaticRowMapper();
+
         @Override
         public VdsStatic mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
