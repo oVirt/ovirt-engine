@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,7 +21,7 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
     @Override
     public LdapGroup get(Guid id) {
         return getCallsHandler().executeRead("Getad_groupsByid",
-                new ADGroupRowMapper(),
+                ADGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("id", id));
     }
@@ -28,7 +29,7 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
     @Override
     public LdapGroup getByName(String name) {
         return getCallsHandler().executeRead("Getad_groupsByName",
-                new ADGroupRowMapper(),
+                ADGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("name", name));
     }
@@ -36,14 +37,14 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
     @Override
     public List<LdapGroup> getAll() {
         return getCallsHandler().executeReadList("GetAllFromad_groups",
-                new ADGroupRowMapper(),
+                ADGroupRowMapper.instance,
                 getCustomMapSqlParameterSource());
     }
 
     @Override
     public List<LdapGroup> getAllTimeLeasedForPool(int id) {
         return getCallsHandler().executeReadList("Gettime_leasedad_groups_by_vm_pool_id",
-                new ADGroupRowMapper(),
+                ADGroupRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("vmPoolId", id));
     }
@@ -76,6 +77,8 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
     }
 
     private static final class ADGroupRowMapper implements ParameterizedRowMapper<LdapGroup> {
+        public static final ADGroupRowMapper instance = new ADGroupRowMapper();
+
         @Override
         public LdapGroup mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             LdapGroup entity = new LdapGroup();
