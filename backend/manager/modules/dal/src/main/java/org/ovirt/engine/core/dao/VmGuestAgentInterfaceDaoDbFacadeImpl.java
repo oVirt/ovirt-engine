@@ -15,6 +15,7 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
 
     private static final String DELIMITER = ",";
 
+    @Override
     public List<VmGuestAgentInterface> getAllForVm(Guid vmId) {
         return getAllForVm(vmId, null, false);
     }
@@ -28,11 +29,13 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
                         .addValue("filtered", filtered));
     }
 
+    @Override
     public void save(VmGuestAgentInterface vmGuestAgentInterface) {
         getCallsHandler().executeModification("InsertVmGuestAgentInterface",
                 createFullParametersMapper(vmGuestAgentInterface));
     }
 
+    @Override
     public void removeAllForVm(Guid vmId) {
         getCallsHandler().executeModification("DeleteVmGuestAgentInterfacesByVmId",
                 getCustomMapSqlParameterSource().addValue("vm_id", vmId));
@@ -47,12 +50,12 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
                 .addValue("ipv6_addresses", getIpAddressesAsString(entity.getIpv6Addresses()));
     }
 
-    private String getIpAddressesAsString(List<String> ipAddresses) {
+    private static String getIpAddressesAsString(List<String> ipAddresses) {
         return StringUtils.join(ipAddresses, DELIMITER);
     }
 
     protected final static class VmGuestAgentInterfaceRowMapper implements ParameterizedRowMapper<VmGuestAgentInterface> {
-        public static VmGuestAgentInterfaceRowMapper instance = new VmGuestAgentInterfaceRowMapper();
+        public static final VmGuestAgentInterfaceRowMapper instance = new VmGuestAgentInterfaceRowMapper();
 
         @Override
         public VmGuestAgentInterface mapRow(ResultSet rs, int rowNum)
@@ -66,7 +69,7 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
             return vmGuestAgentInterface;
         }
 
-        private List<String> getListOfIpAddresses(String ipAddressesAsString) {
+        private static List<String> getListOfIpAddresses(String ipAddressesAsString) {
             return ipAddressesAsString == null ? null
                     : Arrays.asList(StringUtils.split(ipAddressesAsString, DELIMITER));
         }
