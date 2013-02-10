@@ -167,7 +167,7 @@ public class VmRunHandler {
                                 message.add(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA.toString());
                             }
 
-                            if (retValue && isStatelessVm && !hasSpaceForSnapthosts(vm, message)) {
+                            if (retValue && isStatelessVm && !hasSpaceForSnapshots(vm, message)) {
                                 return false;
                             }
 
@@ -197,7 +197,7 @@ public class VmRunHandler {
      * @param vm
      * @return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
-    public boolean hasSpaceForSnapthosts(VM vm, ArrayList<String> message) {
+    public boolean hasSpaceForSnapshots(VM vm, ArrayList<String> message) {
         Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
         for (Entry<storage_domains, Integer> e : mapStorageDomainsToNumOfDisks(vm).entrySet()) {
             if (!destinationHasSpace(e.getKey(), minSnapshotSize * e.getValue(), message)) {

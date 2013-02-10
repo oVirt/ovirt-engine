@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * This command responcible to make snapshot of some Vm mapped to some drive be
+ * This command responsible to make snapshot of some Vm mapped to some drive be
  * active snapshot. All children snapshots and other snapshot mapped to same
  * drive will be removed.
  */

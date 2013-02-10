@@ -230,7 +230,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
          * make Vm property to null in order to refresh it from db.
          */
         setVm(null);
-        determineMigrationFailueForAuditLog();
+        determineMigrationFailureForAuditLog();
         /**
          * if vm is up and rerun is called then it got up on the source, try to
          * rerun
@@ -252,7 +252,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     /**
      * Log that the migration had failed with the error code that is in the VDS and needs to be retrieved.
      */
-    protected void determineMigrationFailueForAuditLog() {
+    protected void determineMigrationFailureForAuditLog() {
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             try {
                 Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.MigrateStatus,

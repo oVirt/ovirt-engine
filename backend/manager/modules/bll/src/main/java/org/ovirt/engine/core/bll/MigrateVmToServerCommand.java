@@ -45,7 +45,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         _isRerun = false;
         setSucceeded(false);
 
-        determineMigrationFailueForAuditLog();
+        determineMigrationFailureForAuditLog();
         log();
     }
 }

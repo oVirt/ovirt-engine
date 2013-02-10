@@ -74,7 +74,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
     @Override
     protected void executeVmCommand() {
         if (getVm().getStatus() == VMStatus.Up) {
-            performPlugCommnad(getPlugAction(), disk, oldVmDevice);
+            performPlugCommand(getPlugAction(), disk, oldVmDevice);
         }
 
         //Update boot order and isPlugged fields

@@ -48,8 +48,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         super(commandId);
     }
 
-    protected void performPlugCommnad(VDSCommandType commandType,
-            Disk disk, VmDevice vmDevice) {
+    protected void performPlugCommand(VDSCommandType commandType,
+                                      Disk disk, VmDevice vmDevice) {
         if (disk.getDiskStorageType() == DiskStorageType.LUN) {
             LunDisk lunDisk = (LunDisk) disk;
             if (commandType == VDSCommandType.HotPlugDisk) {
@@ -127,7 +127,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return returnValue;
     }
 
-    /** Update's the VM's disks from the database */
+    /** Updates the VM's disks from the database */
     protected void updateDisksFromDb() {
         VmHandler.updateDisksFromDb(getVm());
     }

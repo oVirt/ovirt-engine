@@ -87,7 +87,7 @@ public class OvfDataUpdater {
             try {
                 log.infoFormat("Attempting to update VM OVFs in Data Center {0}",
                         pool.getname());
-                initProccessedInfoLists();
+                initProcessedInfoLists();
 
                 updateOvfForVmsOfStoragePool(pool.getId());
 
@@ -98,14 +98,14 @@ public class OvfDataUpdater {
 
                 updateOvfForTemplatesOfStoragePool(pool.getId());
 
-                log.infoFormat("Succesfully updated templates OVFs in Data Center {0}",
+                log.infoFormat("Successfully updated templates OVFs in Data Center {0}",
                         pool.getname());
-                log.infoFormat("Attempting to remove uneeded template/vm OVFs in Data Center {0}",
+                log.infoFormat("Attempting to remove unneeded template/vm OVFs in Data Center {0}",
                         pool.getname());
 
                 removeOvfForTemplatesAndVmsOfStoragePool(pool.getId());
 
-                log.infoFormat("Succesfully removed unneeded template/vm OVFs in Data Center {0}",
+                log.infoFormat("Successfully removed unneeded template/vm OVFs in Data Center {0}",
                         pool.getname());
             } catch (Exception ex) {
                 addAuditLogError(pool.getname());
@@ -167,7 +167,7 @@ public class OvfDataUpdater {
             List<Long> ovfGenerationsForUpdate = proccessedOvfGenerationsInfo.subList(i, i + sizeToUpdate);
             getVmAndTemplatesGenerationsDao().updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate);
             i += sizeToUpdate;
-            initProccessedInfoLists();
+            initProcessedInfoLists();
         }
     }
 
@@ -366,7 +366,7 @@ public class OvfDataUpdater {
     /**
      * Init the lists contain the processed info.
      */
-    private void initProccessedInfoLists() {
+    private void initProcessedInfoLists() {
         proccessedIdsInfo = new LinkedList<Guid>();
         proccessedOvfGenerationsInfo = new LinkedList<Long>();
     }

@@ -174,10 +174,10 @@ public class VdsSelector {
 
     /**
      * This function used in CanDoAction function. Purpose is to check if there
-     * are Vds avalable to run vm in CanDoAction - before concrete running
+     * are Vds available to run vm in CanDoAction - before concrete running
      * action This function goes over all available vdss and check if current
      * vds can run vm. If vds cannot running vm - reason stored. If there is no
-     * any vds, avalable too run vm - returning reason with highest value.
+     * any vds, available too run vm - returning reason with highest value.
      * Reasons sorted in VdcBllMessages by their priorities
      */
     private boolean canFindVdsToRun(List<String> messages, boolean isMigrate, Iterable<VDS> vdss) {
@@ -289,7 +289,7 @@ public class VdsSelector {
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate) {
                     // check capacity to run power clients
                     if (!RunVmCommandBase.hasCapacityToRunVM(vds)) {
-                        sb.append("has insuffient capacity to run power client");
+                        sb.append("has insufficient capacity to run power client");
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;
                     }
                     return null;
@@ -360,7 +360,7 @@ public class VdsSelector {
 
     /**
      * Determine if specific vds already failed to run vm - to prevent
-     * sequentual running of vm on problematic vds
+     * sequential running of vm on problematic vds
      *
      * @param vdsId
      * @return

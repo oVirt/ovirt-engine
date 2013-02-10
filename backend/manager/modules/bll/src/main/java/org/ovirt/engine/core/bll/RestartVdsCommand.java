@@ -54,7 +54,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         // execute StopVds action
         returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Stop, VdcActionType.StopVds);
         if (returnValueBase.getSucceeded()) {
-            executeFenceVdsManulalyAction(vdsId, sessionId);
+            executeFenceVdsManuallyAction(vdsId, sessionId);
 
             // execute StartVds action
             returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Start, VdcActionType.StartVds);
@@ -65,7 +65,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         }
     }
 
-    private void executeFenceVdsManulalyAction(final Guid vdsId, String sessionId) {
+    private void executeFenceVdsManuallyAction(final Guid vdsId, String sessionId) {
         FenceVdsManualyParameters fenceVdsManuallyParams = new FenceVdsManualyParameters(false);
         fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
         fenceVdsManuallyParams.setVdsId(vdsId);

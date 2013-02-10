@@ -120,7 +120,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         // update vm device boot order
         updateBootOrderInVmDevice();
         if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down) {
-            performPlugCommnad(VDSCommandType.HotPlugDisk, disk, vmDevice);
+            performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
         setSucceeded(true);
     }
