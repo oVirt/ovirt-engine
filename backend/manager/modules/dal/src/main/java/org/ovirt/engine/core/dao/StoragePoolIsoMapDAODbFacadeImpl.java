@@ -3,36 +3,39 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainOwnerType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolIsoMapDAO {
+
+    private static final class StoragePoolIsoMapRowMapper implements ParameterizedRowMapper<StoragePoolIsoMap> {
+        public static final StoragePoolIsoMapRowMapper instance = new StoragePoolIsoMapRowMapper();
+
+        @Override
+        public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            StoragePoolIsoMap entity = new StoragePoolIsoMap();
+            entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
+            entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
+            entity.setowner(StorageDomainOwnerType.forValue(rs.getInt("owner")));
+            return entity;
+        }
+    }
 
     @Override
     public StoragePoolIsoMap get(StoragePoolIsoMapId id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", id.getStorageId())
                 .addValue("storage_pool_id", id.getStoragePoolId());
 
-        ParameterizedRowMapper<StoragePoolIsoMap> mapper = new ParameterizedRowMapper<StoragePoolIsoMap>() {
-            @Override
-            public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                StoragePoolIsoMap entity = new StoragePoolIsoMap();
-                entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
-                entity.setowner(StorageDomainOwnerType.forValue(rs.getInt("owner")));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getstorage_pool_iso_mapBystorage_idAndBystorage_pool_id",
-                mapper,
+                StoragePoolIsoMapRowMapper.instance,
                 parameterSource);
     }
 
@@ -66,20 +69,8 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
     public List<StoragePoolIsoMap> getAllForStoragePool(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", Guid.Empty)
                 .addValue("storage_pool_id", storagePoolId);
-
-        ParameterizedRowMapper<StoragePoolIsoMap> mapper = new ParameterizedRowMapper<StoragePoolIsoMap>() {
-            @Override
-            public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                StoragePoolIsoMap entity = new StoragePoolIsoMap();
-                entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
-                entity.setowner(StorageDomainOwnerType.forValue(rs.getInt("owner")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsByBystorage_pool_id", mapper,
+        return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsByBystorage_pool_id",
+                StoragePoolIsoMapRowMapper.instance,
                 parameterSource);
     }
 
@@ -87,20 +78,8 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
     @Override
     public List<StoragePoolIsoMap> getAllForStorage(Guid isoId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id", isoId);
-
-        ParameterizedRowMapper<StoragePoolIsoMap> mapper = new ParameterizedRowMapper<StoragePoolIsoMap>() {
-            @Override
-            public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                StoragePoolIsoMap entity = new StoragePoolIsoMap();
-                entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
-                entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
-                entity.setowner(StorageDomainOwnerType.forValue(rs.getInt("owner")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsBystorage_id", mapper,
+        return getCallsHandler().executeReadList("Getstorage_pool_iso_mapsBystorage_id",
+                StoragePoolIsoMapRowMapper.instance,
                 parameterSource);
     }
 
