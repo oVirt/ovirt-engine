@@ -84,7 +84,7 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Edit {0} Virtual Machine")
     String editVmTitle(String vmType);
 
-    @DefaultMessage("Import process has begun for Template(s): {0}.\nYou can check import status in the ''Events'' tab of the specific destination storage domain, or in the main ''Events'' tab")
+    @DefaultMessage("Import process has begun for Template(s): {0}.\nYou can check import status in the main ''Events'' tab")
     String importProcessHasBegunForTemplates(String importedTemplates);
 
     @DefaultMessage("Template(s): {0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
