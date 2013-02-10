@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
@@ -100,6 +101,17 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             }
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface());
+
+        BooleanColumn<VmNetworkInterface> linkStateColumn =
+                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
+                        constants.unlinkedNetworkInteface()) {
+                    @Override
+                    protected Boolean getRawValue(VmNetworkInterface object) {
+                        return object.isLinked();
+                    }
+                };
+
+        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInteface(), "65px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
