@@ -415,7 +415,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * Delete the compensation data, so that we don't accidentaly try to compensate it at a later time.
      */
     private void cleanUpCompensationData() {
-        getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
+        if (!(getCompensationContext() instanceof NoOpCompensationContext)) {
+            getBusinessEntitySnapshotDAO().removeAllForCommandId(commandId);
+        }
     }
 
     public VdcReturnValueBase endAction() {
