@@ -19,41 +19,44 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements VdsStatisticsDAO {
 
+    private static final class VdsStatisticsRowMapper implements ParameterizedRowMapper<VdsStatistics> {
+        public static final VdsStatisticsRowMapper instance = new VdsStatisticsRowMapper();
+
+        @Override
+        public VdsStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VdsStatistics entity = new VdsStatistics();
+            entity.setcpu_idle(rs.getDouble("cpu_idle"));
+            entity.setcpu_load(rs.getDouble("cpu_load"));
+            entity.setcpu_sys(rs.getDouble("cpu_sys"));
+            entity.setcpu_user(rs.getDouble("cpu_user"));
+            entity.setusage_cpu_percent((Integer) rs
+                    .getObject("usage_cpu_percent"));
+            entity.setusage_mem_percent((Integer) rs
+                    .getObject("usage_mem_percent"));
+            entity.setusage_network_percent((Integer) rs
+                    .getObject("usage_network_percent"));
+            entity.setId(Guid.createGuidFromString(rs
+                    .getString("vds_id")));
+            entity.setmem_available(rs.getLong("mem_available"));
+            entity.setmem_shared(rs.getLong("mem_shared"));
+            entity.setswap_free(rs.getLong("swap_free"));
+            entity.setswap_total(rs.getLong("swap_total"));
+            entity.setksm_cpu_percent((Integer) rs
+                    .getObject("ksm_cpu_percent"));
+            entity.setksm_pages(rs.getLong("ksm_pages"));
+            entity.setksm_state((Boolean) rs.getObject("ksm_state"));
+            return entity;
+        }
+    }
+
     @Override
     public VdsStatistics get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id);
 
-        ParameterizedRowMapper<VdsStatistics> mapper = new ParameterizedRowMapper<VdsStatistics>() {
-            @Override
-            public VdsStatistics mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdsStatistics entity = new VdsStatistics();
-                entity.setcpu_idle(rs.getDouble("cpu_idle"));
-                entity.setcpu_load(rs.getDouble("cpu_load"));
-                entity.setcpu_sys(rs.getDouble("cpu_sys"));
-                entity.setcpu_user(rs.getDouble("cpu_user"));
-                entity.setusage_cpu_percent((Integer) rs
-                        .getObject("usage_cpu_percent"));
-                entity.setusage_mem_percent((Integer) rs
-                        .getObject("usage_mem_percent"));
-                entity.setusage_network_percent((Integer) rs
-                        .getObject("usage_network_percent"));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("vds_id")));
-                entity.setmem_available(rs.getLong("mem_available"));
-                entity.setmem_shared(rs.getLong("mem_shared"));
-                entity.setswap_free(rs.getLong("swap_free"));
-                entity.setswap_total(rs.getLong("swap_total"));
-                entity.setksm_cpu_percent((Integer) rs
-                        .getObject("ksm_cpu_percent"));
-                entity.setksm_pages(rs.getLong("ksm_pages"));
-                entity.setksm_state((Boolean) rs.getObject("ksm_state"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVdsStatisticsByVdsId", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdsStatisticsByVdsId",
+                VdsStatisticsRowMapper.instance,
+                parameterSource);
     }
 
     @Override
