@@ -23,7 +23,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid EXISTING_DEVICE_ID = new Guid("e14ed6f0-3b12-11e1-b614-63d00126418d");
-    private static final int TOTAL_DEVICES = 8;
+    private static final int TOTAL_DEVICES = 9;
     private static final int TOTAL_DEVICES_FOR_EXISTING_VM = 2;
 
 

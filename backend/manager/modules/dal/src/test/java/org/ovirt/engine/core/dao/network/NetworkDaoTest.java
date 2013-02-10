@@ -20,7 +20,8 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     private Guid cluster;
     private Guid datacenter;
     private Network new_net;
-    final static private String EXISTING_NETWORK_NAME = "engine";
+    private static final String EXISTING_NETWORK_NAME = "engine";
+    private static final int NUM_OF_NETWORKS = 4;
 
     @Override
     public void setUp() throws Exception {
@@ -88,7 +89,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         List<Network> result = dao.getAll();
 
         assertNotNull(result);
-        assertEquals(3, result.size());
+        assertEquals(NUM_OF_NETWORKS, result.size());
     }
 
     /**
