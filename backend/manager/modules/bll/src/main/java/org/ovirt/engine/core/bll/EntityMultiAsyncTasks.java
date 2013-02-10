@@ -152,7 +152,7 @@ public class EntityMultiAsyncTasks {
             java.util.ArrayList<EntityAsyncTask> CurrentActionTypeTasks = GetCurrentActionTypeTasks();
 
             for (EntityAsyncTask task : CurrentActionTypeTasks) {
-                task.ClearAsyncTask();
+                task.clearAsyncTask();
             }
 
             StartPollingNextTask();

@@ -185,7 +185,7 @@ public class SPMAsyncTask {
 
             // Try to clear task which failed to be cleared before SPM and DB
             case ClearFailed:
-                ClearAsyncTask();
+                clearAsyncTask();
                 break;
             }
         }
@@ -260,7 +260,7 @@ public class SPMAsyncTask {
 
     protected void OnTaskEndSuccess() {
         LogEndTaskSuccess();
-        ClearAsyncTask();
+        clearAsyncTask();
     }
 
     protected void LogEndTaskSuccess() {
@@ -274,7 +274,7 @@ public class SPMAsyncTask {
 
     protected void OnTaskEndFailure() {
         LogEndTaskFailure();
-        ClearAsyncTask();
+        clearAsyncTask();
     }
 
     protected void LogEndTaskFailure() {
@@ -293,7 +293,7 @@ public class SPMAsyncTask {
 
     protected void OnTaskDoesNotExist() {
         LogTaskDoesntExist();
-        ClearAsyncTask();
+        clearAsyncTask();
     }
 
     protected void LogTaskDoesntExist() {
@@ -433,7 +433,7 @@ public class SPMAsyncTask {
         return returnValue;
     }
 
-    public void StopTask() {
+    public void stopTask() {
         if (getState() != AsyncTaskState.AttemptingEndAction && getState() != AsyncTaskState.Cleared
                 && getState() != AsyncTaskState.ClearFailed && !getLastTaskStatus().getTaskIsInUnusualState()) {
             try {
@@ -457,7 +457,7 @@ public class SPMAsyncTask {
         }
     }
 
-    public void ClearAsyncTask() {
+    public void clearAsyncTask() {
         VDSReturnValue vdsReturnValue = null;
 
         try {

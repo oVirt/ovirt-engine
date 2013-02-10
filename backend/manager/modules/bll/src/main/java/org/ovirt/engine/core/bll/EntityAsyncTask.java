@@ -83,7 +83,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                     getContainerId(),
                     getTaskID());
 
-            ClearAsyncTask();
+            clearAsyncTask();
         }
 
         else if (entityInfo.ShouldEndAction()) {

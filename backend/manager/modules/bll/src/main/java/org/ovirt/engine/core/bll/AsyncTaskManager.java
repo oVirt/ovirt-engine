@@ -102,7 +102,7 @@ public final class AsyncTaskManager {
 
             // check for zombie tasks
             if (_tasks.size() > 0) {
-                CleanZombieTasks();
+                cleanZombieTasks();
             }
         }
     }
@@ -169,7 +169,7 @@ public final class AsyncTaskManager {
                 && (task.getState() != AsyncTaskState.ClearFailed);
     }
 
-    private void CleanZombieTasks() {
+    private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
                 .AddMinutes((-1) * Config.<Integer> GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMAsyncTask task : _tasks.values()) {
@@ -189,7 +189,7 @@ public final class AsyncTaskManager {
                             task.getParameters().getDbAsyncTask().getaction_type(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
-                    task.StopTask();
+                    task.stopTask();
                 } else {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
@@ -197,7 +197,7 @@ public final class AsyncTaskManager {
                             task.getParameters().getDbAsyncTask().getaction_type(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
-                    task.ClearAsyncTask();
+                    task.clearAsyncTask();
                 }
             }
         }
@@ -586,7 +586,7 @@ public final class AsyncTaskManager {
             }
         });
         for (SPMAsyncTask task : list) {
-            task.StopTask();
+            task.stopTask();
         }
     }
 
@@ -605,7 +605,7 @@ public final class AsyncTaskManager {
     public synchronized void CancelTask(Guid taskID) {
         if (_tasks.containsKey(taskID)) {
             log.infoFormat("Attempting to cancel task '{0}'.", taskID);
-            _tasks.get(taskID).StopTask();
+            _tasks.get(taskID).stopTask();
             _tasks.get(taskID).ConcreteStartPollingTask();
         }
     }
