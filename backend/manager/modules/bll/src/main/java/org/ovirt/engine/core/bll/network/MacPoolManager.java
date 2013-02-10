@@ -302,17 +302,19 @@ public class MacPoolManager {
     }
 
     public void freeMacs(List<String> macs) {
-        lockObj.writeLock().lock();
-        try {
-            if (!initialized) {
-                logInitializationError("Failed to free MAC addresses.");
-            }
-            for (String mac : macs) {
-                internalFreeMac(mac);
-            }
+        if (!macs.isEmpty()) {
+            lockObj.writeLock().lock();
+            try {
+                if (!initialized) {
+                    logInitializationError("Failed to free MAC addresses.");
+                }
+                for (String mac : macs) {
+                    internalFreeMac(mac);
+                }
 
-        } finally {
-            lockObj.writeLock().unlock();
+            } finally {
+                lockObj.writeLock().unlock();
+            }
         }
     }
 
