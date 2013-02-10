@@ -4,8 +4,8 @@ package org.ovirt.engine.core.searchbackend;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.DateFormatCompat;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,11 +22,11 @@ class DateUtils {
     public static DateTimeFormat getFormat(int dateStyle) {
         switch (dateStyle)
         {
-            case DateFormatCompat.FULL:
+            case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);               
-            case DateFormatCompat.LONG:
+            case DateFormat.LONG:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_LONG);
-            case DateFormatCompat.SHORT:
+            case DateFormat.SHORT:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
             default:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM);
@@ -36,11 +36,11 @@ class DateUtils {
     public static DateTimeFormat getFormat(int dateStyle, int timeStyle) {
         switch (timeStyle)
         {
-            case DateFormatCompat.FULL:
+            case DateFormat.FULL:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);               
-            case DateFormatCompat.LONG:
+            case DateFormat.LONG:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_LONG);
-            case DateFormatCompat.SHORT:
+            case DateFormat.SHORT:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
             default:
                 return DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);

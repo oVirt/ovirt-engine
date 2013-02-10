@@ -1,6 +1,6 @@
-package org.ovirt.engine.core.compat;
+package java.text;
 
-public class DateFormatCompat {
+public class DateFormat {
    
     /** DateFormat styling constants */
     
