@@ -97,7 +97,7 @@ public class AuditLogableBase extends TimeoutBase {
         this.glusterVolumeId = auditLog.getGlusterVolumeId();
         this.glusterVolumeName = auditLog.getGlusterVolumeName();
         this.jobId = auditLog.getJobId();
-        this.mUserId = (NGuid) auditLog.getuser_id();
+        this.mUserId = auditLog.getuser_id();
         this.mUserName = auditLog.getuser_name();
         this.mVdsGroupId = (Guid) auditLog.getvds_group_id();
         this.mVdsId = auditLog.getvds_id();
