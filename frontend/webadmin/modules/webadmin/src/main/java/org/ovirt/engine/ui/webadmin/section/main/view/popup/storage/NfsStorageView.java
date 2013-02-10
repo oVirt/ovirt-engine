@@ -171,15 +171,15 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
         versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
 
-        pathHintLabel.setVisible(object.getPath().getIsAvailable() && !object.getIsEditMode());
+        pathHintLabel.setVisible(object.getPath().getIsChangable());
 
-        styleTextBoxEditor(pathEditor, !object.getIsEditMode());
-        styleTextBoxEditor(timeoutEditor, !object.getIsEditMode());
-        styleTextBoxEditor(retransmissionsEditor, !object.getIsEditMode());
-        styleTextBoxEditor(versionReadOnlyEditor, !object.getIsEditMode());
+        styleTextBoxEditor(pathEditor, object.getPath().getIsChangable());
+        styleTextBoxEditor(timeoutEditor,  object.getOverride().getIsChangable());
+        styleTextBoxEditor(retransmissionsEditor, object.getOverride().getIsChangable());
+        styleTextBoxEditor(versionReadOnlyEditor, object.getOverride().getIsChangable());
 
-        setElementVisibility(versionEditor, !object.getIsEditMode() && object.getVersion().getIsAvailable());
-        setElementVisibility(versionReadOnlyEditor, object.getIsEditMode() || !object.getVersion().getIsAvailable());
+        setElementVisibility(versionEditor,  object.getOverride().getIsChangable());
+        setElementVisibility(versionReadOnlyEditor, !object.getOverride().getIsChangable());
         setElementVisibility(versionLabel, object.getVersion().getIsAvailable());
         setElementVisibility(retransmissionsLabel, object.getRetransmissions().getIsAvailable());
         setElementVisibility(timeoutLabel, object.getTimeout().getIsAvailable());

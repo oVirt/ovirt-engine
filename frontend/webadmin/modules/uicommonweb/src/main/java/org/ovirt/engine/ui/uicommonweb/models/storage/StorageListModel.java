@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -360,17 +361,22 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getDataCenter().setIsChangable(false);
         model.getFormat().setIsChangable(false);
 
-        boolean isStorageActive = model.isStorageActive();
-
+        boolean isStorageEditable = model.isStorageActive() || model.isNewStorage();
         model.getHost().setIsChangable(false);
-        model.getName().setIsChangable(isStorageActive);
-        model.getAvailableStorageItems().setIsChangable(isStorageActive);
-        model.setIsChangable(isStorageActive);
+        model.getName().setIsChangable(isStorageEditable);
+        model.getDescription().setIsChangable(isStorageEditable);
+        model.getAvailableStorageItems().setIsChangable(isStorageEditable);
+        model.setIsChangable(isStorageEditable);
 
         IStorageModel item = null;
         switch (storage.getStorageType()) {
             case NFS:
                 item = PrepareNfsStorageForEdit(storage);
+                boolean isNfsPathEditable = isNfsPathEditable(storage);
+                isStorageEditable = isStorageEditable || isNfsPathEditable;
+                //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
+                //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
+                model.getHost().setIsChangable(isNfsPathEditable);
                 break;
 
             case FCP:
@@ -411,8 +417,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }
         }
 
+
         UICommand command;
-        if (isStorageActive) {
+        if (isStorageEditable) {
             command = new UICommand("OnSave", this); //$NON-NLS-1$
             command.setTitle(ConstantsManager.getInstance().getConstants().ok());
             command.setIsDefault(true);
@@ -435,7 +442,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getStorageDomainType());
-        model.setIsEditMode(true);
+
+        boolean isNfsPathEditable = isNfsPathEditable(storage);
+
+        model.getPath().setIsChangable(isNfsPathEditable);
+        model.getOverride().setIsChangable(isNfsPathEditable);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
@@ -447,7 +458,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 model.getTimeout().setEntity(connection.getNfsTimeo());
 
                 for (Object item : model.getVersion().getItems()) {
-
                     EntityModel itemModel = (EntityModel) item;
                     boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
                     boolean foundNfsVersion = itemModel.getEntity() != null &&
@@ -469,6 +479,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }), storage.getStorage(), true);
 
         return model;
+    }
+
+    private boolean isNfsPathEditable(StorageDomain storage) {
+        return (storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && storage.getStatus() == StorageDomainStatus.Maintenance;
     }
 
     private IStorageModel PrepareLocalStorageForEdit(StorageDomain storage)
@@ -560,9 +574,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void PrepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        boolean isStorageActive = storageModel.isStorageActive();
+        StorageDomain storage = (StorageDomain) getSelectedItem();
+        boolean isStorageEditable = storageModel.isStorageActive() || storageModel.isNewStorage();
 
-        if (isStorageActive) {
+        if (isStorageEditable) {
             storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
                 @Override
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -1112,11 +1127,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             return false;
         }
 
+        boolean isEditAvailable;
         boolean isActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
                 || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
+        boolean isInMaintenance = (storageDomain.getStatus() == StorageDomainStatus.Maintenance);
+        boolean isDataDomain = (storageDomain.getStorageDomainType() == StorageDomainType.Data) || (storageDomain.getStorageDomainType() == StorageDomainType.Master);
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
-        return isBlockStorage ? true : isActive;
+        isEditAvailable = isActive || isBlockStorage || ( isInMaintenance && isDataDomain)  ;
+        return isEditAvailable;
     }
 
     @Override
@@ -1448,6 +1467,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
+        connection = new StorageServerConnections();
+        connection.setid(selectedItem.getStorage());
+
         if (isNew)
         {
             AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1472,18 +1494,54 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain),
+            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            if(isNfsPathEditable(storageDomain)) {
+                updateNfsPath();
+            }
+            else {
+               Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void Executed(FrontendActionAsyncResult result) {
-
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
 
                     }
                 }, this);
+            }
         }
     }
+
+    private void updateNfsPath() {
+        StorageModel model = (StorageModel) getWindow();
+        NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
+        VDS host = (VDS) model.getHost().getSelectedItem();
+        Guid hostId = Guid.Empty;
+        Guid storagePoolId = Guid.Empty;
+        if(host != null) {
+           hostId = host.getId();
+           storagePoolId = host.getStoragePoolId();
+        }
+        connection.setconnection(path);
+        connection.setstorage_type(nfsModel.getType());
+        if ((Boolean) nfsModel.getOverride().getEntity()) {
+            connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
+            connection.setNfsRetrans(nfsModel.getRetransmissions().AsConvertible().nullableShort());
+            connection.setNfsTimeo(nfsModel.getTimeout().AsConvertible().nullableShort());
+        }
+        StorageServerConnectionParametersBase parameters = new StorageServerConnectionParametersBase(connection, hostId);
+        parameters.setStoragePoolId(storagePoolId);
+        Frontend.RunAction(VdcActionType.UpdateStorageServerConnection, parameters,
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void Executed(FrontendActionAsyncResult result) {
+                        StorageListModel storageListModel = (StorageListModel) result.getState();
+                        storageListModel.OnFinish(storageListModel.context, true, storageListModel.storageModel);
+
+                    }
+                }, this);
+    }
+
 
     public void SaveNewNfsStorage()
     {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
@@ -151,7 +153,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      * Ensures updating a connection works as expected.
      */
     @Test
-    public void testUpdateServerConnection() {
+    public void testUpdateIscsiServerConnection() {
         existingConnection.setiqn("1.2.3.4");
 
         dao.update(existingConnection);
@@ -159,6 +161,37 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         StorageServerConnections result = dao.get(existingConnection.getid());
 
         assertEquals(existingConnection, result);
+    }
+
+    @Test
+    public void testUpdateNfsServerConnection() {
+        //create a new connection
+        StorageServerConnections newNFSServerConnection = new StorageServerConnections();
+        newNFSServerConnection.setid("0cb136e8-e5ed-472b-8914-260bc48c2987");
+        newNFSServerConnection.setstorage_type(StorageType.NFS);
+        newNFSServerConnection.setconnection("host/lib/data");
+        newNFSServerConnection.setNfsVersion(NfsVersion.V4);
+        newNFSServerConnection.setNfsRetrans((short) 0);
+        dao.save(newNFSServerConnection);
+
+        //get it from db
+        StorageServerConnections newNFSServerConnectionFromDB = dao.get("0cb136e8-e5ed-472b-8914-260bc48c2987");
+
+        //update its properties and save back to db (update)
+        newNFSServerConnectionFromDB.setconnection("/host2/lib/data");
+        newNFSServerConnectionFromDB.setNfsRetrans((short) 3);
+        newNFSServerConnectionFromDB.setNfsTimeo((short)100);
+        dao.update(newNFSServerConnectionFromDB);
+
+        //get it again after the update
+        StorageServerConnections updatedNFSServerConnectionFromDB = dao.get("0cb136e8-e5ed-472b-8914-260bc48c2987");
+        assertEquals(updatedNFSServerConnectionFromDB.getconnection(),newNFSServerConnectionFromDB.getconnection());
+        assertEquals(updatedNFSServerConnectionFromDB.getid(),newNFSServerConnectionFromDB.getid());
+        assertEquals(updatedNFSServerConnectionFromDB.getNfsRetrans(),newNFSServerConnectionFromDB.getNfsRetrans());
+        assertEquals(updatedNFSServerConnectionFromDB.getNfsTimeo(),newNFSServerConnectionFromDB.getNfsTimeo());
+        assertNotSame(newNFSServerConnection.getconnection(), updatedNFSServerConnectionFromDB.getconnection());
+        //cleanup...
+        dao.remove("0cb136e8-e5ed-472b-8914-260bc48c2987");
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -39,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -585,8 +587,9 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         VDS oldSelectedItem = (VDS) getHost().getSelectedItem();
         VDS selectedItem = null;
 
-        // On Edit - only SPM is available.
-        if (getStorage() != null) {
+        // On Edit of active storage - only SPM is available. In edit of storage in maintenance,
+        //any host can perform the operation, thus no need to filter to use just the SPM
+        if (getStorage() != null && getStorage().getStatus() != StorageDomainStatus.Maintenance) {
             hosts = Collections.singletonList(getSPM(hosts));
         }
 
@@ -706,9 +709,17 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         behavior.UpdateItemsAvailability();
     }
 
-    public boolean Validate()
-    {
-        getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+    public boolean Validate() {
+        ValidationResult result = new NotEmptyValidation().validate(getHost().getSelectedItem());
+        if (!result.getSuccess()) {
+            getHost().setIsValid(false);
+            for (String reason : result.getReasons()) {
+                getHost().getInvalidityReasons().add(reason);
+            }
+        }
+        else {
+            getHost().setIsValid(true);
+        }
         ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
         getDescription().ValidateEntity(new IValidation[] {
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
@@ -732,8 +743,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     }
 
     public boolean isStorageActive() {
-        return getStorage() == null
-                || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
+         return
+                getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
                 || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
+    }
+
+    public boolean isNewStorage() {
+        return getStorage() == null;
     }
 }

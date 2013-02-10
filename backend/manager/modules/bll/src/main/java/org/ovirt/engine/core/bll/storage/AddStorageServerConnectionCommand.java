@@ -1,14 +1,19 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,6 +21,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @SuppressWarnings("serial")
+@LockIdNameAttribute(isReleaseAtEndOfExecute = true)
 @InternalCommandAttribute
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         ConnectStorageToVdsCommand<T> {
@@ -87,5 +93,12 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        //lock the path to NFS to avoid at the same time if some other user tries to:
+        // add new storage domain to same path or edit another storage server connection to point to same path
+        return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(), LockMessagesMatchUtil.STORAGE_CONNECTION);
     }
 }

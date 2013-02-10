@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class LockMessagesMatchUtil {
-
     public static final Pair<String, String> POOL         = makeLockingPair(LockingGroup.POOL);
     public static final Pair<String, String> VDS          = makeLockingPair(LockingGroup.VDS);
     public static final Pair<String, String> VDS_FENCE    = makeLockingPair(LockingGroup.VDS_FENCE);
@@ -15,6 +14,7 @@ public class LockMessagesMatchUtil {
     public static final Pair<String, String> VM_DISK_BOOT = makeLockingPair(LockingGroup.VM_DISK_BOOT);
     public static final Pair<String, String> VM_NAME      = makeLockingPair(LockingGroup.VM_NAME);
     public static final Pair<String, String> STORAGE      = makeLockingPair(LockingGroup.STORAGE);
+    public static final Pair<String, String> STORAGE_CONNECTION = makeLockingPair(LockingGroup.STORAGE_CONNECTION);
     public static final Pair<String, String> REGISTER_VDS = makeLockingPair(LockingGroup.REGISTER_VDS);
     public static final Pair<String, String> VM_SNAPSHOTS = makeLockingPair(LockingGroup.VM_SNAPSHOTS);
     public static final Pair<String, String> GLUSTER      = makeLockingPair(LockingGroup.GLUSTER);

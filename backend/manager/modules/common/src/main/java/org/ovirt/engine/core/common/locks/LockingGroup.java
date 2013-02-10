@@ -12,6 +12,7 @@ public enum LockingGroup {
     VM_DISK_BOOT,
     VM_NAME,
     STORAGE,
+    STORAGE_CONNECTION,
     REGISTER_VDS,
     VM_SNAPSHOTS,
     GLUSTER,

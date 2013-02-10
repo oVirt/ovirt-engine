@@ -123,7 +123,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     {
         super.UpdateInternal();
 
-        if (!getContainer().isStorageActive()) {
+        if (!(getContainer().isNewStorage() || getContainer().isStorageActive())) {
             return;
         }
 

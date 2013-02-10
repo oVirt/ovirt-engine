@@ -132,22 +132,6 @@ public class NfsStorageModel extends Model implements IStorageModel {
         timeout = value;
     }
 
-    private boolean isEditMode;
-
-    public void setIsEditMode(boolean isEditMode) {
-        boolean isChangable = !isEditMode && (Boolean) getOverride().getEntity();
-        getPath().setIsChangable(isChangable);
-        getOverride().setIsChangable(isChangable);
-        getVersion().setIsChangable(isChangable);
-        getRetransmissions().setIsChangable(isChangable);
-        getTimeout().setIsChangable(isChangable);
-        this.isEditMode = isEditMode;
-    }
-
-    public boolean getIsEditMode() {
-        return isEditMode;
-    }
-
 
     static {
 
@@ -187,12 +171,10 @@ public class NfsStorageModel extends Model implements IStorageModel {
     private void Override_EntityChanged(EventArgs e) {
         // Advanced options are editable only if override checkbox is enabled
         // and the dialog is not editing existing nfs storage.
-        if (!getIsEditMode()) {
-            boolean isChangable = (Boolean) getOverride().getEntity();
-            getVersion().setIsChangable(isChangable);
-            getRetransmissions().setIsChangable(isChangable);
-            getTimeout().setIsChangable(isChangable);
-        }
+        boolean isChangeable = (Boolean) getOverride().getEntity();
+        getVersion().setIsChangable(isChangeable);
+        getRetransmissions().setIsChangable(isChangeable);
+        getTimeout().setIsChangable(isChangeable);
     }
 
     @Override

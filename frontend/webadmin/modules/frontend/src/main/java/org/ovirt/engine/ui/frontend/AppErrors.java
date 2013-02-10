@@ -211,8 +211,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Invalid Host Id.")
     String VDS_INVALID_SERVER_ID();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Host name cannot be empty.")
-    String VDS_EMPTY_NAME();
+    @DefaultStringValue("Cannot ${action} ${type}. Empty host name or id.")
+    String VDS_EMPTY_NAME_OR_ID();
 
     @DefaultStringValue("Cannot install Host with empty password.")
     String VDS_CANNOT_INSTALL_EMPTY_PASSWORD();
@@ -942,6 +942,15 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS data domains in maintenance.")
+    String  ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are related to more than one storage domain")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Connection parameters are invalid for this storage type.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_WRONG_PARAMETERS_FOR_STORAGE_TYPE();
