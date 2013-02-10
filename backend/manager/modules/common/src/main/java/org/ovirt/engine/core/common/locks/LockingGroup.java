@@ -4,6 +4,7 @@ public enum LockingGroup {
 
     POOL,
     VDS,
+    VDS_INIT,
     VDS_FENCE,
     VM,
     TEMPLATE,

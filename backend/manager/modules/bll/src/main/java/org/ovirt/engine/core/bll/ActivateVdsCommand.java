@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -51,36 +52,52 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
 
         final VDS vds = getVds();
-        ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getstatus());
-                Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
-                        new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
-
-        setSucceeded(Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()))
-                .getSucceeded());
-        if (getSucceeded()) {
+        EngineLock monitoringLock =
+                new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
+                        LockingGroup.VDS_INIT.name()), null);
+        log.infoFormat("Before acquiring lock in order to prevent monitoring for host {0} from data-center {1}",
+                vds.getName(),
+                vds.getstorage_pool_name());
+        getLockManager().acquireLockWait(monitoringLock);
+        log.infoFormat("Lock acquired, from now a monitoring of host will be skipped for host {0} from data-center {1}",
+                vds.getName(),
+                vds.getstorage_pool_name());
+        try {
+            ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintananceVds, false);
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
-                    // set network to operational / non-operational
-                    List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                            .getAllForCluster(vds.getvds_group_id());
-                    for (Network net : networks) {
-                        NetworkClusterHelper.setStatus(vds.getvds_group_id(), net);
-                    }
+                    getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getstatus());
+                    runVdsCommand(VDSCommandType.SetVdsStatus,
+                            new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
+                    getCompensationContext().stateChanged();
                     return null;
                 }
             });
+
+            setSucceeded(runVdsCommand(VDSCommandType.ActivateVds, new ActivateVdsVDSCommandParameters(getVdsId()))
+                    .getSucceeded());
+            if (getSucceeded()) {
+                TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+
+                    @Override
+                    public Void runInTransaction() {
+                        // set network to operational / non-operational
+                        List<Network> networks = DbFacade.getInstance().getNetworkDao()
+                                .getAllForCluster(vds.getvds_group_id());
+                        for (Network net : networks) {
+                            NetworkClusterHelper.setStatus(vds.getvds_group_id(), net);
+                        }
+                        return null;
+                    }
+                });
+            }
+        } finally {
+            getLockManager().releaseLock(monitoringLock);
+            log.infoFormat("Activate finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
+                    vds.getName(),
+                    vds.getstorage_pool_name());
         }
     }
 

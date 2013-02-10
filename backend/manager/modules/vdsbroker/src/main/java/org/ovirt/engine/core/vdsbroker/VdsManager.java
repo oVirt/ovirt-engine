@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -32,6 +34,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.FileUtil;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -70,6 +74,7 @@ public class VdsManager {
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
+    private EngineLock monitoringLock;
     public Object getLockObj() {
         return _lockObj;
     }
@@ -131,6 +136,8 @@ public class VdsManager {
         monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
+        monitoringLock = new EngineLock(Collections.singletonMap(_vdsId.toString(),
+                LockingGroup.VDS_INIT.name()), null);
 
         if (_vds.getstatus() == VDSStatus.PreparingForMaintenance) {
             _vds.setprevious_status(_vds.getstatus());
@@ -139,7 +146,7 @@ public class VdsManager {
         }
         // if ssl is on and no certificate file
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                    && !FileUtil.fileExists(Config.resolveCertificatePath())) {
+                && !FileUtil.fileExists(Config.resolveCertificatePath())) {
             if (_vds.getstatus() != VDSStatus.Maintenance && _vds.getstatus() != VDSStatus.InstallFailed) {
                 setStatus(VDSStatus.NonResponsive, _vds);
                 UpdateDynamicData(_vds.getDynamicData());
@@ -192,85 +199,90 @@ public class VdsManager {
 
     @OnTimerMethodAnnotation("OnTimer")
     public void OnTimer() {
-        try {
-            setIsSetNonOperationalExecuted(false);
-            Guid vdsId = null;
-            Guid storagePoolId = null;
-            String vdsName = null;
-            ArrayList<VDSDomainsData> domainsList = null;
+        if (LockManagerFactory.getLockManager().acquireLock(monitoringLock)) {
+            try {
+                setIsSetNonOperationalExecuted(false);
+                Guid vdsId = null;
+                Guid storagePoolId = null;
+                String vdsName = null;
+                ArrayList<VDSDomainsData> domainsList = null;
 
-            synchronized (getLockObj()) {
-                _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
-                if (_vds == null) {
-                    log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
-                            getVdsId());
-                    return;
-                }
+                synchronized (getLockObj()) {
+                    _vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+                    if (_vds == null) {
+                        log.errorFormat("VdsManager::refreshVdsRunTimeInfo - OnTimer is NULL for {0}",
+                                getVdsId());
+                        return;
+                    }
 
-                try {
-                    if (_refreshIteration == _numberRefreshesBeforeSave) {
-                        _refreshIteration = 1;
-                    } else {
-                        _refreshIteration++;
-                    }
-                    if (isMonitoringNeeded()) {
-                        setStartTime();
-                        _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
-                        _vdsUpdater.Refresh();
-                        mUnrespondedAttempts.set(0);
-                        setLastUpdate();
-                    }
-                    if (!getInitialized() && _vds.getstatus() != VDSStatus.NonResponsive
-                            && _vds.getstatus() != VDSStatus.PendingApproval) {
-                        log.infoFormat("Initializing Host: {0}",  _vds.getvds_name());
-                        ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
-                        setInitialized(true);
-                    }
-                } catch (VDSNetworkException e) {
-                    logNetworkException(e);
-                } catch (VDSRecoveringException ex) {
-                    HandleVdsRecoveringException(ex);
-                } catch (IRSErrorException ex) {
-                    logFailureMessage(ex);
-                } catch (RuntimeException ex) {
-                    logFailureMessage(ex);
-                }
-                try {
-                    if (_vdsUpdater != null) {
-                        _vdsUpdater.AfterRefreshTreatment();
-
-                        // Get vds data for updating domains list, ignoring vds which is down, since it's not connected
-                        // to
-                        // the storage anymore (so there is no sense in updating the domains list in that case).
-                        if (_vds != null && _vds.getstatus() != VDSStatus.Maintenance) {
-                            vdsId = _vds.getId();
-                            vdsName = _vds.getvds_name();
-                            storagePoolId = _vds.getStoragePoolId();
-                            domainsList = _vds.getDomains();
+                    try {
+                        if (_refreshIteration == _numberRefreshesBeforeSave) {
+                            _refreshIteration = 1;
+                        } else {
+                            _refreshIteration++;
                         }
+                        if (isMonitoringNeeded()) {
+                            setStartTime();
+                            _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds);
+                            _vdsUpdater.Refresh();
+                            mUnrespondedAttempts.set(0);
+                            setLastUpdate();
+                        }
+                        if (!getInitialized() && _vds.getstatus() != VDSStatus.NonResponsive
+                                && _vds.getstatus() != VDSStatus.PendingApproval) {
+                            log.infoFormat("Initializing Host: {0}", _vds.getvds_name());
+                            ResourceManager.getInstance().HandleVdsFinishedInit(_vds.getId());
+                            setInitialized(true);
+                        }
+                    } catch (VDSNetworkException e) {
+                        logNetworkException(e);
+                    } catch (VDSRecoveringException ex) {
+                        HandleVdsRecoveringException(ex);
+                    } catch (IRSErrorException ex) {
+                        logFailureMessage(ex);
+                    } catch (RuntimeException ex) {
+                        logFailureMessage(ex);
                     }
+                    try {
+                        if (_vdsUpdater != null) {
+                            _vdsUpdater.AfterRefreshTreatment();
 
-                    _vds = null;
-                    _vdsUpdater = null;
-                } catch (IRSErrorException ex) {
-                    logAfterRefreshFailureMessage(ex);
-                    if (log.isDebugEnabled()) {
+                            // Get vds data for updating domains list, ignoring vds which is down, since it's not
+                            // connected
+                            // to
+                            // the storage anymore (so there is no sense in updating the domains list in that case).
+                            if (_vds != null && _vds.getstatus() != VDSStatus.Maintenance) {
+                                vdsId = _vds.getId();
+                                vdsName = _vds.getvds_name();
+                                storagePoolId = _vds.getStoragePoolId();
+                                domainsList = _vds.getDomains();
+                            }
+                        }
+
+                        _vds = null;
+                        _vdsUpdater = null;
+                    } catch (IRSErrorException ex) {
+                        logAfterRefreshFailureMessage(ex);
+                        if (log.isDebugEnabled()) {
+                            logException(ex);
+                        }
+                    } catch (RuntimeException ex) {
+                        logAfterRefreshFailureMessage(ex);
                         logException(ex);
                     }
-                } catch (RuntimeException ex) {
-                    logAfterRefreshFailureMessage(ex);
-                    logException(ex);
+
                 }
 
+                // Now update the status of domains, this code should not be in
+                // synchronized part of code
+                if (domainsList != null) {
+                    IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, domainsList);
+                }
+            } catch (Exception e) {
+                log.error("Timer update runtimeinfo failed. Exception:", e);
+            } finally {
+                LockManagerFactory.getLockManager().releaseLock(monitoringLock);
             }
-
-            // Now update the status of domains, this code should not be in
-            // synchronized part of code
-            if (domainsList != null) {
-                IrsBrokerCommand.UpdateVdsDomainsData(vdsId, vdsName, storagePoolId, domainsList);
-            }
-        } catch (Exception e) {
-            log.error("Timer update runtimeinfo failed. Exception:", e);
         }
     }
 
