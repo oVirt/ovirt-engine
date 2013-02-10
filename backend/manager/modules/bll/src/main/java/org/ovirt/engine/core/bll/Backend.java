@@ -125,7 +125,7 @@ public class Backend implements BackendInternal {
         long waitBetweenInterval = DbFacade.getInstance().getConnectionCheckInterval();
         while (!dbUp && System.currentTimeMillis() < expectedTimeout) {
             try {
-                dbUp = DbFacade.getInstance().CheckDBConnection();
+                dbUp = DbFacade.getInstance().checkDBConnection();
             } catch (RuntimeException ex) {
                 log.error("Error in getting DB connection. The database is inaccessible. " +
                         "Original exception is: " + ExceptionUtils.getMessage(ex));

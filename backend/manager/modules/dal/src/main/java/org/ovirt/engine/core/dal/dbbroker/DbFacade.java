@@ -277,7 +277,7 @@ public class DbFacade {
         return dbResults.get(resultKey) != null ? ((Integer)dbResults.get(resultKey)).intValue() : -1;
     }
 
-    public boolean IsStoragePoolMasterUp(Guid storagePoolId) {
+    public boolean isStoragePoolMasterUp(Guid storagePoolId) {
         List<storage_domains> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
         storage_domains master = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
             @Override
@@ -289,7 +289,7 @@ public class DbFacade {
                 && (master.getstatus() == StorageDomainStatus.Active || master.getstatus() == StorageDomainStatus.Unknown);
     }
 
-    public Integer GetSystemStatisticsValue(String entity, String status) {
+    public Integer getSystemStatisticsValue(String entity, String status) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("entity", entity).addValue(
                 "status", status);
 
@@ -352,7 +352,7 @@ public class DbFacade {
      *
      * @return True if DB is up & running.
      */
-    public boolean CheckDBConnection() {
+    public boolean checkDBConnection() {
         return (new SimpleJdbcCall(jdbcTemplate).withProcedureName("CheckDBConnection").execute() != null);
     }
 

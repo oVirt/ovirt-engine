@@ -58,7 +58,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
         java.util.HashMap<String, Integer> res = new java.util.HashMap<String, Integer>();
 
         // VMs:
-        int total_vms = DbFacade.getInstance().GetSystemStatisticsValue("VM", "");
+        int total_vms = DbFacade.getInstance().getSystemStatisticsValue("VM", "");
         String[] activeVmStatuses = { (String.valueOf(VMStatus.Up.getValue())),
                 (String.valueOf(VMStatus.PoweringUp.getValue())),
                 (String.valueOf(VMStatus.PoweredDown.getValue())),
@@ -69,28 +69,28 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
                 (String.valueOf(VMStatus.Paused.getValue())),
                 (String.valueOf(VMStatus.Unknown.getValue())) };
         int active_vms = DbFacade.getInstance()
-                .GetSystemStatisticsValue("VM", StringUtils.join(activeVmStatuses, ','));
+                .getSystemStatisticsValue("VM", StringUtils.join(activeVmStatuses, ','));
 
         int down_vms = (total_vms - active_vms) < 0 ? 0 : (total_vms - active_vms);
 
         // Hosts:
-        int total_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST", "");
+        int total_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST", "");
 
         String[] activeVdsStatuses = { (String.valueOf(VDSStatus.Up.getValue())),
                 (String.valueOf(VDSStatus.PreparingForMaintenance.getValue()))};
-        int active_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
+        int active_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST",
                 StringUtils.join(activeVdsStatuses, ','));
-        int maintenance_vds = DbFacade.getInstance().GetSystemStatisticsValue("HOST",
+        int maintenance_vds = DbFacade.getInstance().getSystemStatisticsValue("HOST",
                 (String.valueOf(VDSStatus.Maintenance.getValue())));
         int down_vds = (total_vds - active_vds - maintenance_vds) < 0 ? 0 : (total_vds - active_vds - maintenance_vds);
 
         // Users:
-        int total_users = DbFacade.getInstance().GetSystemStatisticsValue("USER", "");
-        int active_users = DbFacade.getInstance().GetSystemStatisticsValue("USER", "1");
+        int total_users = DbFacade.getInstance().getSystemStatisticsValue("USER", "");
+        int active_users = DbFacade.getInstance().getSystemStatisticsValue("USER", "1");
 
         // Storage Domains:
-        int total_storage_domains = DbFacade.getInstance().GetSystemStatisticsValue("TSD", "");
-        int active_storage_domains = DbFacade.getInstance().GetSystemStatisticsValue("ASD",
+        int total_storage_domains = DbFacade.getInstance().getSystemStatisticsValue("TSD", "");
+        int active_storage_domains = DbFacade.getInstance().getSystemStatisticsValue("ASD",
                 (Integer.toString(StorageDomainStatus.Active.getValue())));
 
         res.put("total_vms", total_vms);

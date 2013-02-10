@@ -537,7 +537,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 @Override
                 public void run() {
                     try {
-                        if (DbFacade.getInstance().IsStoragePoolMasterUp(_storagePoolId)) {
+                        if (DbFacade.getInstance().isStoragePoolMasterUp(_storagePoolId)) {
                             ResourceManager.getInstance()
                                     .getEventListener()
                                     .storagePoolUpEvent(storagePool, _isSpmStartCalled);

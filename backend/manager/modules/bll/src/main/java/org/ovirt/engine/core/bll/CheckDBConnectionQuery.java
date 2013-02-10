@@ -11,7 +11,7 @@ public class CheckDBConnectionQuery<P extends VdcQueryParametersBase> extends Qu
     @Override
     protected void executeQueryCommand() {
         log.debug("Start checking connection to db");
-        getQueryReturnValue().setReturnValue(getDbFacade().CheckDBConnection());
+        getQueryReturnValue().setReturnValue(getDbFacade().checkDBConnection());
         log.debug("Completed checking connection to db");
     }
 }

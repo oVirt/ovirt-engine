@@ -113,7 +113,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testDBConnectionWithConnection() {
-        assertTrue(dbFacade.CheckDBConnection());
+        assertTrue(dbFacade.checkDBConnection());
     }
 
     /**
@@ -143,7 +143,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
             DbFacade localDbFacade = new DbFacade();
             localDbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
             localDbFacade.setTemplate(localDbFacade.getDbEngineDialect().createJdbcTemplate(result));
-            localDbFacade.CheckDBConnection();
+            localDbFacade.checkDBConnection();
             fail("Connection should be down since the DataSource has an invalid username");
             // If DataAccessException is thrown - the test has succeeded. Was unable to do
             // with "expected" annotation, presumably since we are using DbUnit
@@ -358,13 +358,13 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetSystemStatisticsValueWithSpecifiedStatus() {
-        int numOfVmWithStatusMigratingFrom = dbFacade.GetSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
+        int numOfVmWithStatusMigratingFrom = dbFacade.getSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
         assertTrue(numOfVmWithStatusMigratingFrom == NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM);
     }
 
     @Test
     public void testGetSystemStatisticsValueWithoutSpecifiedStatus() {
-        int numOfUsers = dbFacade.GetSystemStatisticsValue("User", "");
+        int numOfUsers = dbFacade.getSystemStatisticsValue("User", "");
         assertTrue(numOfUsers == NUM_OF_USERS_IN_FIXTURES);
     }
 
@@ -383,12 +383,12 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         storagePoolIsoMapToCheck.setstatus(StorageDomainStatus.InActive);
         dbFacade.getStoragePoolIsoMapDao().update(storagePoolIsoMapToCheck);
-        assertFalse(dbFacade.IsStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_DOWN));
+        assertFalse(dbFacade.isStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_DOWN));
     }
 
     @Test
     public void testIsStoragePoolMasterUpWhenUp() {
-        assertTrue(dbFacade.IsStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_UP));
+        assertTrue(dbFacade.isStoragePoolMasterUp(STORAGE_POOL_WITH_MASTER_UP));
     }
 
     @Test
