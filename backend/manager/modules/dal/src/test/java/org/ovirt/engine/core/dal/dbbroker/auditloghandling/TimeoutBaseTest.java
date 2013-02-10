@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.junit.Test;
 
@@ -35,15 +34,15 @@ public class TimeoutBaseTest {
     public void defaultEndtime() {
         final long epochOffset = 0;
         final TestTimeoutBase t = new TestTimeoutBase();
-        assertEquals(epochOffset, t.getEndTime().getTime());
+        assertEquals(epochOffset, t.getEndTime());
     }
 
     @Test
     public void endTime() {
         final TestTimeoutBase t = new TestTimeoutBase();
-        final Date d = Calendar.getInstance().getTime();
-        t.setEndTime(d);
-        assertEquals(d, t.getEndTime());
+        final long c = Calendar.getInstance().getTime().getTime();
+        t.setEndTime(c);
+        assertEquals(c, t.getEndTime());
     }
 
     @Test
@@ -92,8 +91,7 @@ public class TimeoutBaseTest {
         t.setUseTimout(true);
         long c = System.currentTimeMillis();
         c -= 1000;
-        final Date d = new Date(c);
-        t.setEndTime(d);
+        t.setEndTime(c);
         final String s = "legal-timeout";
         t.setTimeoutObjectId(s);
         // get it into the hashtable
@@ -110,8 +108,7 @@ public class TimeoutBaseTest {
         t.setTimeoutObjectId(s);
         long c = System.currentTimeMillis();
         c += 5000;
-        final Date d = new Date(c);
-        t.setEndTime(d);
+        t.setEndTime(c);
         // get it into the hashtable
         t.getLegal();
         final boolean result = t.getLegal();

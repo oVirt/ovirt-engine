@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.ApplicationException;
-import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -877,7 +877,7 @@ public final class AuditLogDirector {
                 :
                 logType.getDuplicateEventsIntervalValue();
         if (duplicateEventsIntrvalValue > 0) {
-            auditLogable.setEndTime(DateTime.getNow().AddSeconds(logType.getDuplicateEventsIntervalValue()));
+            auditLogable.setEndTime(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(duplicateEventsIntrvalValue));
             auditLogable.setTimeoutObjectId(composeObjectId(auditLogable, logType));
         }
     }

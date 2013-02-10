@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +9,7 @@ public abstract class TimeoutBase implements Serializable {
     private static final Map<String, TimeoutBase> mHandler = new HashMap<String, TimeoutBase>();
     private static final Object mLock = new Object();
     private boolean mUseTimeout;
-    private Date mEndTime = new Date(0);
+    private long mEndTime = 0L;
 
     public boolean getUseTimout() {
         return mUseTimeout;
@@ -20,11 +19,11 @@ public abstract class TimeoutBase implements Serializable {
         mUseTimeout = value;
     }
 
-    public Date getEndTime() {
+    public long getEndTime() {
         return mEndTime;
     }
 
-    public void setEndTime(Date value) {
+    public void setEndTime(long value) {
         mUseTimeout = true;
         mEndTime = value;
     }
@@ -58,7 +57,7 @@ public abstract class TimeoutBase implements Serializable {
 
                 if (timeoutBase != null) {
                     // not first try. check if timeout passed
-                    if (System.currentTimeMillis() < timeoutBase.getEndTime().getTime()) {
+                    if (System.currentTimeMillis() < timeoutBase.getEndTime()) {
                         returnValue = false;
                     } else {
                         // timeout over. Clean data
