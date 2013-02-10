@@ -434,6 +434,10 @@ public class SPMAsyncTask {
     }
 
     public void stopTask() {
+        stopTask(false);
+    }
+
+    public void stopTask(boolean forceFinish) {
         if (getState() != AsyncTaskState.AttemptingEndAction && getState() != AsyncTaskState.Cleared
                 && getState() != AsyncTaskState.ClearFailed && !getLastTaskStatus().getTaskIsInUnusualState()) {
             try {
@@ -452,12 +456,22 @@ public class SPMAsyncTask {
                         String.format("SPMAsyncTask::StopTask: Stopping task '%1$s' threw an exception.", getTaskID()),
                         e);
             } finally {
-                setState(AsyncTaskState.Polling);
+                if (forceFinish) {
+                    //Force finish flag allows to force the task completion, regardless of the result from call to SPMStopTask
+                    setState(AsyncTaskState.Ended);
+                    setLastTaskStatus(new AsyncTaskStatus(AsyncTaskStatusEnum.finished));
+                } else {
+                    setState(AsyncTaskState.Polling);
+                }
             }
         }
     }
 
     public void clearAsyncTask() {
+        clearAsyncTask(false);
+    }
+
+    public void clearAsyncTask(boolean forceDelete) {
         VDSReturnValue vdsReturnValue = null;
 
         try {
@@ -474,14 +488,19 @@ public class SPMAsyncTask {
                     getTaskID()), e);
         }
 
+        boolean shouldGracefullyDeleteTask = false;
         if (!isTaskStateError(vdsReturnValue)) {
             if (vdsReturnValue == null || !vdsReturnValue.getSucceeded()) {
                 setState(AsyncTaskState.ClearFailed);
                 OnTaskCleanFailure();
             } else {
                 setState(AsyncTaskState.Cleared);
-                RemoveTaskFromDB();
+                shouldGracefullyDeleteTask =  true;
             }
+        }
+        //A task should be removed from DB if forceDelete is set to true, or if it was cleared successfully.
+        if (shouldGracefullyDeleteTask || forceDelete) {
+            RemoveTaskFromDB();
         }
     }
 

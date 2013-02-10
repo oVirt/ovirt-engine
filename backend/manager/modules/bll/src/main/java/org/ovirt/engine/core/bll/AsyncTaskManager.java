@@ -189,7 +189,7 @@ public final class AsyncTaskManager {
                             task.getParameters().getDbAsyncTask().getaction_type(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
-                    task.stopTask();
+                    task.stopTask(true);
                 } else {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
@@ -197,7 +197,7 @@ public final class AsyncTaskManager {
                             task.getParameters().getDbAsyncTask().getaction_type(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
-                    task.clearAsyncTask();
+                    task.clearAsyncTask(true);
                 }
             }
         }
