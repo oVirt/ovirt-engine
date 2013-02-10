@@ -393,7 +393,7 @@ public class OvfDataUpdater {
 
     protected void addAuditLogError(String storagePoolName) {
         AuditLogableBase logable = new AuditLogableBase();
-        logable.AddCustomValue("StoragePoolName", storagePoolName);
+        logable.addCustomValue("StoragePoolName", storagePoolName);
         AuditLogDirector.log(logable, AuditLogType.UPDATE_OVF_FOR_STORAGE_POOL_FAILED);
     }
 }

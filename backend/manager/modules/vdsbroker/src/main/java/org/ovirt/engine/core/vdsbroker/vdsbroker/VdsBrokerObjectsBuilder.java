@@ -340,8 +340,8 @@ public class VdsBrokerObjectsBuilder {
                         TimeUnit.MILLISECONDS.toSeconds(Math.abs(hostDate.getTime() - System.currentTimeMillis()));
                 if (timeDrift > maxTimeDriftAllowed) {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
-                    logable.AddCustomValue("Actual", timeDrift.toString());
-                    logable.AddCustomValue("Max", maxTimeDriftAllowed.toString());
+                    logable.addCustomValue("Actual", timeDrift.toString());
+                    logable.addCustomValue("Max", maxTimeDriftAllowed.toString());
                     AuditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
                 }
             } else {
@@ -960,8 +960,8 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces.size() != 1) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVdsId(vds.getId());
-            logable.AddCustomValue("NetworkName", network.getName());
-            logable.AddCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
+            logable.addCustomValue("NetworkName", network.getName());
+            logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
             AuditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
     }

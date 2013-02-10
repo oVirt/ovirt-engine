@@ -98,7 +98,7 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
 
         if (failedDomainNames.length() > 0) {
             AuditLogableBase logable = new AuditLogableBase(getParameters().getVdsId());
-            logable.AddCustomValue("failedStorageDomains", failedDomainNames.toString());
+            logable.addCustomValue("failedStorageDomains", failedDomainNames.toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_STORAGES_CONNECTION_FAILED);
         }
     }

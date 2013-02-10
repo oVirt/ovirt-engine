@@ -318,7 +318,7 @@ public class VdsManager {
             setStatus(VDSStatus.Initializing, _vds);
             UpdateDynamicData(_vds.getDynamicData());
             AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-            logable.AddCustomValue("ErrorMessage", ex.getMessage());
+            logable.addCustomValue("ErrorMessage", ex.getMessage());
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
             log.warnFormat(
                     "Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
@@ -497,7 +497,7 @@ public class VdsManager {
 
             SchedulerUtilQuartzImpl.getInstance().resumeJob(duringFailureJobId);
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.AddCustomValue("Time", Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
+            logable.addCustomValue("Time", Config.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes)
                     .toString());
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getVdsName(),

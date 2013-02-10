@@ -432,11 +432,11 @@ public class AuditLogableBase extends TimeoutBase {
         }
     }
 
-    public void AddCustomValue(final String name, final String value) {
+    public void addCustomValue(final String name, final String value) {
         customValues.put(name.toLowerCase(), value);
     }
 
-    public void AppendCustomValue(final String name, final String value, final String separator) {
+    public void appendCustomValue(final String name, final String value, final String separator) {
         final String key = name.toLowerCase();
         String newValue = value;
         if (customValues.containsKey(key)) {
@@ -454,7 +454,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getAuditLogTypeValue().toString();
     }
 
-    public String GetCustomValue(final String name) {
+    public String getCustomValue(final String name) {
         if (customValues.containsKey(name)) {
             return customValues.get(name);
         }

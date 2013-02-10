@@ -126,7 +126,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends VdsIdAndVdsVDSCommandPara
 
         if (!networkNames.isEmpty()) {
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
-            logable.AddCustomValue("Networks", StringUtils.join(networkNames, ","));
+            logable.addCustomValue("Networks", StringUtils.join(networkNames, ","));
             AuditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
         }
     }

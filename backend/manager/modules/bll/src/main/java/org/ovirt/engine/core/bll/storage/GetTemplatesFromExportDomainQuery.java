@@ -57,11 +57,11 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                     }
                 } catch (OvfReaderException ex) {
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.AddCustomValue("Template", ex.getName());
+                    logable.addCustomValue("Template", ex.getName());
                     AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
                 } catch (RuntimeException ex) {
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.AddCustomValue("Template", "[Unknown name]");
+                    logable.addCustomValue("Template", "[Unknown name]");
                     AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
                 }
 

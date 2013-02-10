@@ -20,14 +20,14 @@ public class AttachVmsToTagCommand<T extends AttachEntityToTagParameters> extend
                 VM vm = DbFacade.getInstance().getVmDao().get(vmGuid);
                 if (DbFacade.getInstance().getTagDao().getTagVmByTagIdAndByVmId(getTagId(), vmGuid) == null) {
                     if (vm != null) {
-                        AppendCustomValue("VmsNames", vm.getVmName(), ", ");
+                        appendCustomValue("VmsNames", vm.getVmName(), ", ");
                     }
                     TagsVmMap map = new TagsVmMap(getTagId(), vmGuid);
                     DbFacade.getInstance().getTagDao().attachVmToTag(map);
                     noActionDone = false;
                 } else {
                     if (vm != null) {
-                        AppendCustomValue("VmsNamesExists", vm.getVmName(), ", ");
+                        appendCustomValue("VmsNamesExists", vm.getVmName(), ", ");
                     }
                 }
             }

@@ -137,12 +137,12 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
         String connectionField = getConnectionDescription(connections, connection) +
                 (lun == null ? "" : " (LUN " + lun.getLUN_id() + ")");
-        logable.AddCustomValue("Connection", connectionField);
+        logable.addCustomValue("Connection", connectionField);
 
         // Get translated error by error code ,if no translation found (should not happened) ,
         // will set the error code instead.
         String translatedError = getTranslatedStorageError(errorCode);
-        logable.AddCustomValue("ErrorMessage", translatedError);
+        logable.addCustomValue("ErrorMessage", translatedError);
         AuditLogDirector.log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
         return connectionField;
     }

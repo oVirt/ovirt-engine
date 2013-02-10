@@ -110,7 +110,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     )
                 );
                 AuditLogableBase logable = new AuditLogableBase();
-                logable.AddCustomValue("VdsHostName", hostName);
+                logable.addCustomValue("VdsHostName", hostName);
                 AuditLogDirector.log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
                 return false;
             }
@@ -196,7 +196,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 log.debug("RegisterVdsQuery::ExecuteCommand - VdsName empty, using VdsUnique ID as name");
             }
 
-            logable.AddCustomValue("VdsName1", getParameters().getVdsName());
+            logable.addCustomValue("VdsName1", getParameters().getVdsName());
 
             Guid vdsGroupId;
             if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
@@ -389,7 +389,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
                         if (ret == null || !ret.getSucceeded()) {
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
-                            logable.AddCustomValue("VdsName2", vds_byHostName.getStaticData().getVdsName());
+                            logable.addCustomValue("VdsName2", vds_byHostName.getStaticData().getVdsName());
+
                             log.errorFormat(
                                     "RegisterVdsQuery::HandleOldVdssWithSameHostName - could not update VDS {0}",
                                     vds_byHostName.getStaticData().getVdsName());
@@ -461,7 +462,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);
                         if (ret == null || !ret.getSucceeded()) {
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_NAME;
-                            logable.AddCustomValue("VdsName2", newName);
+                            logable.addCustomValue("VdsName2", newName);
                             log.errorFormat("could not update VDS {0}", nameToRegister);
                             CaptureCommandErrorsToLogger(ret, "RegisterVdsQuery::HandleOldVdssWithSameName");
                             return false;

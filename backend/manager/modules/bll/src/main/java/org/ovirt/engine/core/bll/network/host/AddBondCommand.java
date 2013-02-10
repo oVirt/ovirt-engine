@@ -26,7 +26,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         super(parameters);
         if (parameters.getNics() != null) {
             for (String nic : parameters.getNics()) {
-                AppendCustomValue("Interfaces", nic, ", ");
+                appendCustomValue("Interfaces", nic, ", ");
             }
         }
     }

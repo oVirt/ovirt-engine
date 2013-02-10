@@ -100,7 +100,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
-        alert.AddCustomValue("Operation",op);
+        alert.addCustomValue("Operation",op);
         AlertDirector.Alert(alert, logType);
     }
 

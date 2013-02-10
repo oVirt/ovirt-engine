@@ -27,8 +27,8 @@ public class SetGlusterVolumeOptionCommand extends GlusterVolumeCommandBase<Glus
 
     @Override
     public Map<String, String> getCustomValues() {
-        AddCustomValue(GlusterConstants.OPTION_KEY, getParameters().getVolumeOption().getKey());
-        AddCustomValue(GlusterConstants.OPTION_VALUE, getParameters().getVolumeOption().getValue());
+        addCustomValue(GlusterConstants.OPTION_KEY, getParameters().getVolumeOption().getKey());
+        addCustomValue(GlusterConstants.OPTION_VALUE, getParameters().getVolumeOption().getValue());
         return super.getCustomValues();
     }
 

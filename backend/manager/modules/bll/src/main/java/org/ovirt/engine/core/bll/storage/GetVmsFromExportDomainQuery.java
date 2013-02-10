@@ -55,7 +55,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
             return retVal;
         } catch (RuntimeException e) {
             AuditLogableBase logable = new AuditLogableBase();
-            logable.AddCustomValue("StorageDomainName", storage.getstorage_name());
+            logable.addCustomValue("StorageDomainName", storage.getstorage_name());
             AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
             throw e;
         }
@@ -102,11 +102,11 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                     }
                 } catch (OvfReaderException ex) {
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.AddCustomValue("ImportedVmName", ex.getName());
+                    logable.addCustomValue("ImportedVmName", ex.getName());
                     AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
                 } catch (RuntimeException ex) {
                     AuditLogableBase logable = new AuditLogableBase();
-                    logable.AddCustomValue("ImportedVmName", "[Unknown name]");
+                    logable.addCustomValue("ImportedVmName", "[Unknown name]");
                     AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
                 }
             }

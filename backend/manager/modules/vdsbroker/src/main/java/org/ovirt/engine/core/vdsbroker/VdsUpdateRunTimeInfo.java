@@ -276,10 +276,10 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getmem_available() < minAvailableThreshold
                 || stat.getusage_mem_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getVdsName());
-            logable.AddCustomValue("AvailableMemory", stat.getmem_available().toString());
-            logable.AddCustomValue("UsedMemory", stat.getusage_mem_percent().toString());
-            logable.AddCustomValue("Threshold", stat.getmem_available() < minAvailableThreshold ?
+            logable.addCustomValue("HostName", _vds.getVdsName());
+            logable.addCustomValue("AvailableMemory", stat.getmem_available().toString());
+            logable.addCustomValue("UsedMemory", stat.getusage_mem_percent().toString());
+            logable.addCustomValue("Threshold", stat.getmem_available() < minAvailableThreshold ?
                     minAvailableThreshold.toString() :
                     maxUsedPercentageThreshold.toString());
             auditLog(logable, valueToLog);
@@ -297,9 +297,9 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getusage_cpu_percent() != null
                 && stat.getusage_cpu_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getVdsName());
-            logable.AddCustomValue("UsedCpu", stat.getusage_cpu_percent().toString());
-            logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
+            logable.addCustomValue("HostName", _vds.getVdsName());
+            logable.addCustomValue("UsedCpu", stat.getusage_cpu_percent().toString());
+            logable.addCustomValue("Threshold", maxUsedPercentageThreshold.toString());
             auditLog(logable, AuditLogType.VDS_HIGH_CPU_USE);
         }
     }
@@ -315,9 +315,9 @@ public class VdsUpdateRunTimeInfo {
         if (stat.getusage_network_percent() != null
                 && stat.getusage_network_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getVdsName());
-            logable.AddCustomValue("UsedNetwork", stat.getusage_network_percent().toString());
-            logable.AddCustomValue("Threshold", maxUsedPercentageThreshold.toString());
+            logable.addCustomValue("HostName", _vds.getVdsName());
+            logable.addCustomValue("UsedNetwork", stat.getusage_network_percent().toString());
+            logable.addCustomValue("Threshold", maxUsedPercentageThreshold.toString());
             auditLog(logable, AuditLogType.VDS_HIGH_NETWORK_USE);
         }
     }
@@ -345,10 +345,10 @@ public class VdsUpdateRunTimeInfo {
 
         if (stat.getswap_free() < minAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
-            logable.AddCustomValue("HostName", _vds.getVdsName());
-            logable.AddCustomValue("UsedSwap", swapUsedPercent.toString());
-            logable.AddCustomValue("AvailableSwapMemory", stat.getswap_free().toString());
-            logable.AddCustomValue("Threshold", stat.getswap_free() < minAvailableThreshold ?
+            logable.addCustomValue("HostName", _vds.getVdsName());
+            logable.addCustomValue("UsedSwap", swapUsedPercent.toString());
+            logable.addCustomValue("AvailableSwapMemory", stat.getswap_free().toString());
+            logable.addCustomValue("Threshold", stat.getswap_free() < minAvailableThreshold ?
                     minAvailableThreshold.toString() : maxUsedPercentageThreshold.toString());
             auditLog(logable, valueToLog);
         }
@@ -631,8 +631,8 @@ public class VdsUpdateRunTimeInfo {
             AuditLogType logType) {
         if (!disksWithLowSpace.isEmpty()) {
             AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-            logable.AddCustomValue("DiskSpace", lowSpaceThreshold.toString());
-            logable.AddCustomValue("Disks", StringUtils.join(disksWithLowSpace, ", "));
+            logable.addCustomValue("DiskSpace", lowSpaceThreshold.toString());
+            logable.addCustomValue("Disks", StringUtils.join(disksWithLowSpace, ", "));
             auditLog(logable, logType);
         }
     }
@@ -725,8 +725,8 @@ public class VdsUpdateRunTimeInfo {
                     log.info(message);
 
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-                    logable.AddCustomValue("Networks", StringUtils.stripEnd(sNetworks.toString(), ", "));
-                    logable.AddCustomValue("Interfaces", StringUtils.stripEnd(sNics.toString(), ", "));
+                    logable.addCustomValue("Networks", StringUtils.stripEnd(sNetworks.toString(), ", "));
+                    logable.addCustomValue("Interfaces", StringUtils.stripEnd(sNics.toString(), ", "));
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
                 } catch (Exception e) {
                     log.error(String.format("checkInterface: Failure on moving host: %s to non-operational.",
@@ -902,7 +902,7 @@ public class VdsUpdateRunTimeInfo {
             return;
         }
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
-        logable.AddCustomValue("VdsStatus", _vds.getStatus().toString());
+        logable.addCustomValue("VdsStatus", _vds.getStatus().toString());
         auditLog(logable, AuditLogType.VDS_DETECTED);
     }
 
@@ -1323,7 +1323,7 @@ public class VdsUpdateRunTimeInfo {
         AuditLogType type = exitStatus == VmExitStatus.Normal ? AuditLogType.VM_DOWN : AuditLogType.VM_DOWN_ERROR;
         AuditLogableBase logable = new AuditLogableBase(_vds.getId(), vmStatisticsId);
         if (exitMessage != null) {
-            logable.AddCustomValue("ExitMessage", "Exit message: " + exitMessage);
+            logable.addCustomValue("ExitMessage", "Exit message: " + exitMessage);
         }
         auditLog(logable, type);
     }
@@ -1368,14 +1368,14 @@ public class VdsUpdateRunTimeInfo {
                 addVmStatisticsToList(curVm.getStatisticsData());
                 addVmInterfaceStatisticsToList(curVm.getInterfaces());
                 type = AuditLogType.VM_MIGRATION_ABORT;
-                logable.AddCustomValue("MigrationError", vmDynamic.getExitMessage());
+                logable.addCustomValue("MigrationError", vmDynamic.getExitMessage());
 
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
             }
             break;
         }
         case PoweredDown: {
-            logable.AddCustomValue("VmStatus", "PoweredDown");
+            logable.addCustomValue("VmStatus", "PoweredDown");
             type = AuditLogType.VM_DOWN;
             break;
         }

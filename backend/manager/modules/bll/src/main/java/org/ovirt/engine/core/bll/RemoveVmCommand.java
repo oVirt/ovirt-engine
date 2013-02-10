@@ -309,7 +309,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
                 disksLeftInVm.add(diskImage.getDiskAlias());
             }
-            AddCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
+            addCustomValue("DisksNames", StringUtils.join(disksLeftInVm, ","));
         }
     }
 

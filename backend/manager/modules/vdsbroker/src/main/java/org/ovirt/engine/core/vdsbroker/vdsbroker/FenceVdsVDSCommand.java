@@ -29,7 +29,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     private void Alert(AuditLogType logType, String reason) {
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getParameters().getTargetVdsID());
-        alert.AddCustomValue("Reason", reason);
+        alert.addCustomValue("Reason", reason);
         AlertDirector.Alert(alert, logType);
     }
 
@@ -84,10 +84,10 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     private void handleSkippedOperation() {
         FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED, "");
         AuditLogableBase auditLogable = new AuditLogableBase();
-        auditLogable.AddCustomValue("HostName",
+        auditLogable.addCustomValue("HostName",
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getVdsName());
-        auditLogable.AddCustomValue("AgentStatus", GetActualActionName());
-        auditLogable.AddCustomValue("Operation", getParameters().getAction().toString());
+        auditLogable.addCustomValue("AgentStatus", GetActualActionName());
+        auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
         getVDSReturnValue().setSucceeded(true);
         setReturnValue(fenceStatusReturnValue);

@@ -86,7 +86,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
     @Override
     public AuditLogType getAuditLogTypeValue() {
         for (Entry<String, String> e : getParameters().getCustomLogValues().entrySet()) {
-            AddCustomValue(e.getKey(), e.getValue());
+            addCustomValue(e.getKey(), e.getValue());
         }
         switch (getParameters().getNonOperationalReason()) {
         case NETWORK_UNREACHABLE:

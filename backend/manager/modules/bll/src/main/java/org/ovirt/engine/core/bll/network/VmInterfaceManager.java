@@ -60,8 +60,8 @@ public class VmInterfaceManager {
             @Override
             public Void runInTransaction() {
                 AuditLogableBase logable = new AuditLogableBase();
-                logable.AddCustomValue("MACAddr", iface.getMacAddress());
-                logable.AddCustomValue("VmName", iface.getVmName());
+                logable.addCustomValue("MACAddr", iface.getMacAddress());
+                logable.addCustomValue("VmName", iface.getVmName());
                 log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
                 return null;
             }

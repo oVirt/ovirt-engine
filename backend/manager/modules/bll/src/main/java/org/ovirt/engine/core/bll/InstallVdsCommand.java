@@ -66,7 +66,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         } else {
             // In case of failure - add to audit log the error as achieved from
             // the host
-            AddCustomValue("FailedInstallMessage", getErrorMessage(_failureMessage));
+            addCustomValue("FailedInstallMessage", getErrorMessage(_failureMessage));
             result = AuditLogType.VDS_INSTALL_FAILED;
         }
         return result;
@@ -111,7 +111,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 );
                 setSucceeded(false);
                 _failureMessage = getErrorMessage(e.getMessage());
-                AddCustomValue("FailedInstallMessage", _failureMessage);
+                addCustomValue("FailedInstallMessage", _failureMessage);
             }
             finally {
                 if (upgrade != null) {
@@ -180,7 +180,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 );
                 setSucceeded(false);
                 _failureMessage = getErrorMessage(e.getMessage());
-                AddCustomValue("FailedInstallMessage", _failureMessage);
+                addCustomValue("FailedInstallMessage", _failureMessage);
             }
             finally {
                 if (installer != null) {

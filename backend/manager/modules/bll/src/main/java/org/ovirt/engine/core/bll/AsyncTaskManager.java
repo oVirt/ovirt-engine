@@ -176,8 +176,8 @@ public final class AsyncTaskManager {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
                 AuditLogableBase logable = new AuditLogableBase();
-                logable.AddCustomValue("CommandName", task.getParameters().getDbAsyncTask().getaction_type().toString());
-                logable.AddCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
+                logable.addCustomValue("CommandName", task.getParameters().getDbAsyncTask().getaction_type().toString());
+                logable.addCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
 
                 // if task is not finish and not unknown then it's in running
                 // status

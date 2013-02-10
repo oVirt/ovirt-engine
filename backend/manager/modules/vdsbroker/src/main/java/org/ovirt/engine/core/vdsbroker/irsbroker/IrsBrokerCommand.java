@@ -378,7 +378,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             AuditLogableBase logable = new AuditLogableBase();
                             logable.setStorageDomain(data);
                             logable.setStoragePoolId(_storagePoolId);
-                            logable.AddCustomValue("DiskSpace", (data.getavailable_disk_size()).toString());
+                            logable.addCustomValue("DiskSpace", (data.getavailable_disk_size()).toString());
                             data.setstorage_name(domainFromDb.getstorage_name());
                             AuditLogDirector.log(logable, type);
 
@@ -725,7 +725,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 returnValue = selectedVds.argvalue.getHostName();
                 log.infoFormat("Initialize Irs proxy from vds: {0}", returnValue);
                 AuditLogableBase logable = new AuditLogableBase(selectedVds.argvalue.getId());
-                logable.AddCustomValue("ServerIp", returnValue);
+                logable.addCustomValue("ServerIp", returnValue);
                 AuditLogDirector.log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
             }
             return returnValue;
@@ -1095,7 +1095,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVdsId(vdsId);
             logable.setStorageDomainId(tempData.getDomainId());
-            logable.AddCustomValue("Delay",
+            logable.addCustomValue("Delay",
                     Double.toString(tempData.getDelay()));
             AuditLogDirector.log(logable,
                     AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);

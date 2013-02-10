@@ -76,7 +76,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 .getCpuFlags(), getVds().getVdsGroupCompatibilityVersion());
         if (!StringUtils.isEmpty(getVds().getCpuFlags()) && (!foundCPU || missingFlags != null)) {
             if (missingFlags != null) {
-                AddCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
+                addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
                 if (missingFlags.contains("nx")) {
                     AuditLogableBase logable = new AuditLogableBase(getVds().getId());
                     AuditLogDirector.log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);

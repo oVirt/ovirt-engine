@@ -50,7 +50,7 @@ public class DetachActionGroupsFromRoleCommand<T extends ActionGroupsToRoleParam
         List<ActionGroup> groupsToDetach = getParameters().getActionGroups();
         for (ActionGroup group : groupsToDetach) {
             getRoleGroupMapDAO().remove(group, getParameters().getRoleId());
-            AppendCustomValue("ActionGroup", group.toString(), ", ");
+            appendCustomValue("ActionGroup", group.toString(), ", ");
         }
 
         // If the role didn't allow viewing children in the first place, removing action groups won't change that

@@ -223,7 +223,7 @@ public class MacPoolManager {
     private void logInitializationError(String message) {
         log.error("The MAC addresses pool is not initialized");
         AuditLogableBase logable = new AuditLogableBase();
-        logable.AddCustomValue("Message", message);
+        logable.addCustomValue("Message", message);
         AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESSES_POOL_NOT_INITIALIZED);
     }
 

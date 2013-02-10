@@ -259,11 +259,11 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
         AuditLogableBase logable = new AuditLogableBase(getVds().getId());
         if (getVds().getpm_enabled()) {
             if (!_vdsProxyFound) {
-                logable.AddCustomValue("Reason",
-                        AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                logable.addCustomValue("Reason",
+                        AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
                 AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             } else if (!_fenceStatusReturnValue.getIsSucceeded()) {
-                logable.AddCustomValue("Reason", _fenceStatusReturnValue.getMessage());
+                logable.addCustomValue("Reason", _fenceStatusReturnValue.getMessage());
                 AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             }
         } else {

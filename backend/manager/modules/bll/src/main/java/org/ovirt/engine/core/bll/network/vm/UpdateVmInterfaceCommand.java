@@ -65,7 +65,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     @Override
     protected void executeVmCommand() {
-        AddCustomValue("InterfaceType",
+        addCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
 
         boolean succeeded = false;

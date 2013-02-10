@@ -513,8 +513,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             String actionName = (getParameters().getParentCommand() == VdcActionType.RestartVds) ?
                     FenceActionType.Restart.name() : ACTION_NAME;
             AuditLogableBase auditLogable = new AuditLogableBase();
-            auditLogable.AddCustomValue("Host", vdsName);
-            auditLogable.AddCustomValue("Status", actionName);
+            auditLogable.addCustomValue("Host", vdsName);
+            auditLogable.addCustomValue("Status", actionName);
             AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
             log.errorFormat("Failed to verify host {0} {1} status. Have retried {2} times with delay of {3} seconds between each retry.",
                     vdsName,

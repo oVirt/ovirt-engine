@@ -52,7 +52,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
                     "Failed to run Power Management command on Host %1$s, no running proxy Host was found.",
                     vds.getVdsName());
             getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
-            AlertPowerManagementStatusFailed(AuditLogDirector.GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+            AlertPowerManagementStatusFailed(AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
         }
     }
 

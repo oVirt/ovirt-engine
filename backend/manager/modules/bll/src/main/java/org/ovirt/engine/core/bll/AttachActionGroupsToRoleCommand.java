@@ -68,7 +68,7 @@ public class AttachActionGroupsToRoleCommand<T extends ActionGroupsToRoleParamet
         for (ActionGroup group : groups) {
             addedGroupThatAllowsViewingChildren |= group.allowsViewingChildren();
             getRoleGroupMapDAO().save(new RoleGroupMap(group, getParameters().getRoleId()));
-            AppendCustomValue("ActionGroup", group.toString(), ", ");
+            appendCustomValue("ActionGroup", group.toString(), ", ");
         }
 
         // Only adding groups that allow viewing children could make a role allow viewing its children

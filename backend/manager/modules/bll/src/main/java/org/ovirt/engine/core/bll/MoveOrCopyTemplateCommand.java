@@ -360,8 +360,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected void auditInvalidInterfaces(List<String> invalidNetworkNames, List<String> invalidIfaceNames) {
         if (invalidNetworkNames.size() > 0) {
             AuditLogableBase logable = new AuditLogableBase();
-            logable.AddCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
-            logable.AddCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
+            logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
+            logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
             AuditLogDirector.log(logable, getAuditLogTypeForInvalidInterfaces());
         }
     }

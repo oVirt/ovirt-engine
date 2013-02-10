@@ -31,7 +31,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
         Guid userId = null;
         String domain = null;
         if (getParameters().getVdcUser() != null) {
-            AddCustomValue("NewUserName", getParameters().getVdcUser().getUserName());
+            addCustomValue("NewUserName", getParameters().getVdcUser().getUserName());
             userId = getParameters().getVdcUser().getUserId();
             domain = getParameters().getVdcUser().getDomainControler();
             LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
@@ -43,7 +43,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             // set the AD user on the parameters to save another roundtrip to the AD when adding the user
             getParameters().setAdUser(adUser);
         } else if (getParameters().getAdGroup() != null) {
-            AddCustomValue("NewUserName", getParameters().getAdGroup().getname());
+            addCustomValue("NewUserName", getParameters().getAdGroup().getname());
             userId = getParameters().getAdGroup().getid();
             domain = getParameters().getAdGroup().getdomain();
             LdapGroup adGroup =

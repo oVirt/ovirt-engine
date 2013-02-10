@@ -773,7 +773,7 @@ public final class AuditLogDirector {
      *            Type of the log.
      * @return
      */
-    public static String GetMessage(AuditLogType logType) {
+    public static String getMessage(AuditLogType logType) {
         String value = "";
         if (messages.containsKey(logType)) {
             value = messages.get(logType);
@@ -874,7 +874,7 @@ public final class AuditLogDirector {
                 logType.getDuplicateEventsIntervalValue();
         if (duplicateEventsIntrvalValue > 0) {
             auditLogable.setEndTime(DateTime.getNow().AddSeconds(logType.getDuplicateEventsIntervalValue()));
-            auditLogable.setTimeoutObjectId(ComposeObjectId(auditLogable, logType));
+            auditLogable.setTimeoutObjectId(composeObjectId(auditLogable, logType));
         }
     }
 
@@ -890,7 +890,7 @@ public final class AuditLogDirector {
      *            the log type associated with the object
      * @return a unique object id
      */
-    private static String ComposeObjectId(AuditLogableBase logable, AuditLogType logType) {
+    private static String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
         final char DELIMITER = ',';
         StringBuilder sb = new StringBuilder();
         sb.append("type=");

@@ -938,8 +938,8 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final String key = null;
         final String value = NAME;
-        b.AddCustomValue(key, value);
-        final String v = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        final String v = b.getCustomValue(key);
         assertEquals(value, v);
     }
 
@@ -948,8 +948,8 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final String key = NAME;
         final String value = null;
-        b.AddCustomValue(key, value);
-        final String v = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        final String v = b.getCustomValue(key);
         assertEquals("", v);
     }
 
@@ -958,8 +958,8 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
-        b.AddCustomValue(key, value);
-        final String v = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        final String v = b.getCustomValue(key);
         assertEquals(value, v);
     }
 
@@ -968,12 +968,12 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final String key = "foo";
         final String value = NAME;
-        b.AddCustomValue(key, value);
-        final String v = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        final String v = b.getCustomValue(key);
         assertEquals(value, v);
         final Map<String, String> m = b.getCustomValues();
         m.clear();
-        final String s = b.GetCustomValue(key);
+        final String s = b.getCustomValue(key);
         assertEquals("", s);
     }
 
@@ -983,8 +983,8 @@ public class AuditLogableBaseTest {
         final String key = "foo";
         final String value = NAME;
         final String sep = "_";
-        b.AppendCustomValue(key, value, sep);
-        final String s = b.GetCustomValue(key);
+        b.appendCustomValue(key, value, sep);
+        final String s = b.getCustomValue(key);
         assertEquals(value, s);
     }
 
@@ -995,9 +995,9 @@ public class AuditLogableBaseTest {
         final String value = NAME;
         final String newVal = "bar";
         final String sep = "_";
-        b.AddCustomValue(key, value);
-        b.AppendCustomValue(key, newVal, sep);
-        final String s = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        b.appendCustomValue(key, newVal, sep);
+        final String s = b.getCustomValue(key);
         assertEquals(value + sep + newVal, s);
     }
 
@@ -1007,8 +1007,8 @@ public class AuditLogableBaseTest {
         final String key = null;
         final String value = NAME;
         final String sep = "_";
-        b.AppendCustomValue(key, value, sep);
-        final String s = b.GetCustomValue(key);
+        b.appendCustomValue(key, value, sep);
+        final String s = b.getCustomValue(key);
         assertEquals(value, s);
     }
 
@@ -1019,9 +1019,9 @@ public class AuditLogableBaseTest {
         final String value = null;
         final String newVal = "bar";
         final String sep = "_";
-        b.AddCustomValue(key, value);
-        b.AppendCustomValue(key, newVal, sep);
-        final String s = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        b.appendCustomValue(key, newVal, sep);
+        final String s = b.getCustomValue(key);
         assertEquals(value + sep + newVal, s);
     }
 
@@ -1032,16 +1032,16 @@ public class AuditLogableBaseTest {
         final String value = NAME;
         final String newVal = "bar";
         final String sep = null;
-        b.AddCustomValue(key, value);
-        b.AppendCustomValue(key, newVal, sep);
-        final String s = b.GetCustomValue(key);
+        b.addCustomValue(key, value);
+        b.appendCustomValue(key, newVal, sep);
+        final String s = b.getCustomValue(key);
         assertEquals(value + sep + newVal, s);
     }
 
     @Test
     public void getCustomValueFromEmptyMap() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        final String s = b.GetCustomValue(NAME);
+        final String s = b.getCustomValue(NAME);
         assertEquals("", s);
     }
 

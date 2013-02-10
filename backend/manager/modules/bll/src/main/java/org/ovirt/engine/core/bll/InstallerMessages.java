@@ -33,7 +33,7 @@ public class InstallerMessages {
         AuditLogType logType;
         AuditLogableBase logable = new AuditLogableBase(_vds.getId());
         logable.setCorrelationId(_correlationId);
-        logable.AddCustomValue("Message", text);
+        logable.addCustomValue("Message", text);
         switch (severity) {
         case INFO:
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS;

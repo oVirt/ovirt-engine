@@ -23,11 +23,11 @@ public class AttachUserGroupToTagCommand<T extends AttachEntityToTagParameters> 
                     DbFacade.getInstance().getTagDao().attachUserGroupToTag(map);
                     noActionDone = false;
                     if (group != null) {
-                        AppendCustomValue("AttachGroupsNames", group.getname(), ", ");
+                        appendCustomValue("AttachGroupsNames", group.getname(), ", ");
                     }
                 } else {
                     if (group != null) {
-                        AppendCustomValue("AttachGroupsNamesExists", group.getname(), ", ");
+                        appendCustomValue("AttachGroupsNamesExists", group.getname(), ", ");
                     }
                 }
             }

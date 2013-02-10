@@ -14,9 +14,9 @@ public class QuotaManagerAuditLogger {
             String quotaName,
             double storageUsagePercentage,
             double storageRequestedPercentage) {
-        auditLogableBase.AddCustomValue("QuotaName", quotaName);
-        auditLogableBase.AddCustomValue("CurrentStorage", percentageFormatter.format(storageUsagePercentage));
-        auditLogableBase.AddCustomValue("Requested", percentageFormatter.format(storageRequestedPercentage));
+        auditLogableBase.addCustomValue("QuotaName", quotaName);
+        auditLogableBase.addCustomValue("CurrentStorage", percentageFormatter.format(storageUsagePercentage));
+        auditLogableBase.addCustomValue("Requested", percentageFormatter.format(storageRequestedPercentage));
     }
 
     protected void addCustomValuesVdsGroup(AuditLogableBase auditLogableBase,
@@ -28,7 +28,7 @@ public class QuotaManagerAuditLogger {
             boolean cpuOverLimit,
             boolean memOverLimit) {
 
-        auditLogableBase.AddCustomValue("QuotaName", quotaName);
+        auditLogableBase.addCustomValue("QuotaName", quotaName);
 
         StringBuilder currentUtilization = new StringBuilder();
         if (cpuOverLimit) {
@@ -46,8 +46,8 @@ public class QuotaManagerAuditLogger {
             request.append("mem:").append(percentageFormatter.format(memRequestPercentage)).append("%");
         }
 
-        auditLogableBase.AddCustomValue("Utilization", currentUtilization.toString());
-        auditLogableBase.AddCustomValue("Requested", request.toString());
+        auditLogableBase.addCustomValue("Utilization", currentUtilization.toString());
+        auditLogableBase.addCustomValue("Requested", request.toString());
     }
 
     public void auditLog(AuditLogType auditLogType, AuditLogableBase auditLogable) {

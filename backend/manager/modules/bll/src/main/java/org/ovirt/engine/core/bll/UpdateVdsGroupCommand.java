@@ -227,7 +227,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                             // are running VMs - but we should warn they
                             // cannot not be hibernated
                             AuditLogableBase logable = new AuditLogableBase();
-                            logable.AddCustomValue("VdsGroup", getParameters().getVdsGroup().getname());
+                            logable.addCustomValue("VdsGroup", getParameters().getVdsGroup().getname());
                             AuditLogDirector.log(logable,
                                     AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                         }

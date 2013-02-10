@@ -18,7 +18,7 @@ public class DetachUserFromTagCommand<T extends AttachEntityToTagParameters> ext
                 DbUser user = DbFacade.getInstance().getDbUserDao().get(userGuid);
                 if (DbFacade.getInstance().getTagDao().getTagUserByTagIdAndByuserId(getTagId(), userGuid) != null) {
                     if (user != null) {
-                        AppendCustomValue("DetachUsersNames", user.getusername(), ", ");
+                        appendCustomValue("DetachUsersNames", user.getusername(), ", ");
                     }
                     DbFacade.getInstance().getTagDao().detachUserFromTag(getTagId(), userGuid);
                     noActionDone = false;

@@ -907,9 +907,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
         String vmName = vmStaticFromOvf.getVmName();
         AuditLogableBase logable = new AuditLogableBase();
-        logable.AddCustomValue("FieldName", fieldName);
-        logable.AddCustomValue("VmName", vmName);
-        logable.AddCustomValue("FieldValue", fieldValue);
+        logable.addCustomValue("FieldName", fieldName);
+        logable.addCustomValue("VmName", vmName);
+        logable.addCustomValue("FieldValue", fieldValue);
         AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 

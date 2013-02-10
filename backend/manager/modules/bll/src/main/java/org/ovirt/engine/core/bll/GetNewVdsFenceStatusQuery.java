@@ -48,7 +48,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
             getQueryReturnValue().setSucceeded(false);
             getQueryReturnValue().setReturnValue(
                     new FenceStatusReturnValue(UNKNOWN, AuditLogDirector
-                            .GetMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST)));
+                            .getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST)));
         }
     }
 }
