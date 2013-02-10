@@ -52,12 +52,12 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
             Map<String, Object> outputParameters = super.extractOutputParameters(cs, parameters);
             Map<String, Object> returnMap = new HashMap<String, Object>(outputParameters.size());
 
-            for (String parameter : outputParameters.keySet()) {
-
+            for (Map.Entry<String, Object> outputEntry : outputParameters.entrySet()) {
                 // Get the value before we change the key (otherwise we won't be able to get it later when we need it).
-                Object value = outputParameters.get(parameter);
+                String parameter = outputEntry.getKey();
+                Object value = outputEntry.getValue();
                 if (parameter != null && parameter.length() > PREFIX.length() && parameter.startsWith(PREFIX)) {
-                    parameter = ((String) parameter).substring(PREFIX.length());
+                    parameter = parameter.substring(PREFIX.length());
                 }
 
                 returnMap.put(parameter, value);
