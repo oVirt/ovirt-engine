@@ -15,22 +15,14 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSpmIdMapDAO{
+
+
     @Override
     public vds_spm_id_map get(Guid vdsId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vds_id", vdsId);
-
-        ParameterizedRowMapper<vds_spm_id_map> mapper = new ParameterizedRowMapper<vds_spm_id_map>() {
-            @Override
-            public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vds_spm_id_map entity = new vds_spm_id_map();
-                entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setId(Guid.createGuidFromString(rs.getString("vds_id")));
-                entity.setvds_spm_id(rs.getInt("vds_spm_id"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("Getvds_spm_id_mapByvds_id", mapper, parameterSource);
+        return getCallsHandler().executeRead("Getvds_spm_id_mapByvds_id",
+                VdsSpmIdMapRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -53,19 +45,9 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
     public List<vds_spm_id_map> getAll(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId);
-
-        ParameterizedRowMapper<vds_spm_id_map> mapper = new ParameterizedRowMapper<vds_spm_id_map>() {
-            @Override
-            public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vds_spm_id_map entity = new vds_spm_id_map();
-                entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setId(Guid.createGuidFromString(rs.getString("vds_id")));
-                entity.setvds_spm_id(rs.getInt("vds_spm_id"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("Getvds_spm_id_mapBystorage_pool_id", mapper, parameterSource);
+        return getCallsHandler().executeReadList("Getvds_spm_id_mapBystorage_pool_id",
+                VdsSpmIdMapRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -80,20 +62,8 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
     public vds_spm_id_map get(Guid storagePoolId, int spmId ) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_pool_id",
                 storagePoolId).addValue("vds_spm_id", spmId);
-
-        ParameterizedRowMapper<vds_spm_id_map> mapper = new ParameterizedRowMapper<vds_spm_id_map>() {
-            @Override
-            public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                vds_spm_id_map entity = new vds_spm_id_map();
-                entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
-                entity.setId(Guid.createGuidFromString(rs.getString("vds_id")));
-                entity.setvds_spm_id(rs.getInt("vds_spm_id"));
-                return entity;
-            }
-        };
-
         return getCallsHandler().executeRead("Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id",
-                mapper,
+                VdsSpmIdMapRowMapper.instance,
                 parameterSource);
     }
 
@@ -105,5 +75,18 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
     @Override
     public void update(vds_spm_id_map entity) {
         throw new NotImplementedException();
+    }
+
+    private static final class VdsSpmIdMapRowMapper implements ParameterizedRowMapper<vds_spm_id_map> {
+        public static final VdsSpmIdMapRowMapper instance = new VdsSpmIdMapRowMapper();
+
+        @Override
+        public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
+            vds_spm_id_map entity = new vds_spm_id_map();
+            entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setId(Guid.createGuidFromString(rs.getString("vds_id")));
+            entity.setvds_spm_id(rs.getInt("vds_spm_id"));
+            return entity;
+        }
     }
 }
