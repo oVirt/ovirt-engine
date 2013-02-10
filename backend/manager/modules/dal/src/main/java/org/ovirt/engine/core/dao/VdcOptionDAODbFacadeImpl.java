@@ -3,9 +3,10 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.ovirt.engine.core.common.businessentities.VdcOption;
 
 /**
  * <code>VdcOptionDAODbFacadeImpl</code> provides a concrete implementation of {@link VdcOptionDAO} using code
@@ -15,25 +16,27 @@ import org.ovirt.engine.core.common.businessentities.VdcOption;
  */
 public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOptionDAO {
 
+    private static final class VdcOptionRowMapper implements ParameterizedRowMapper<VdcOption> {
+        public static final VdcOptionRowMapper instance = new VdcOptionRowMapper();
+
+        @Override
+        public VdcOption mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            VdcOption entity = new VdcOption();
+            entity.setoption_name(rs.getString("option_name"));
+            entity.setoption_value(rs.getString("option_value"));
+            entity.setoption_id(rs.getInt("option_id"));
+            entity.setversion(rs.getString("version"));
+            return entity;
+        }
+    }
+
     @Override
     public VdcOption get(int id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("option_id", id);
 
-        ParameterizedRowMapper<VdcOption> mapper = new ParameterizedRowMapper<VdcOption>() {
-            @Override
-            public VdcOption mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdcOption entity = new VdcOption();
-                entity.setoption_name(rs.getString("option_name"));
-                entity.setoption_value(rs.getString("option_value"));
-                entity.setoption_id(rs.getInt("option_id"));
-                entity.setversion(rs.getString("version"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVdcOptionById", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdcOptionById", VdcOptionRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -41,20 +44,7 @@ public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOpti
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("option_name", name).addValue("version", version);
 
-        ParameterizedRowMapper<VdcOption> mapper = new ParameterizedRowMapper<VdcOption>() {
-            @Override
-            public VdcOption mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdcOption entity = new VdcOption();
-                entity.setoption_name(rs.getString("option_name"));
-                entity.setoption_value(rs.getString("option_value"));
-                entity.setoption_id(rs.getInt("option_id"));
-                entity.setversion(rs.getString("version"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVdcOptionByName", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdcOptionByName", VdcOptionRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -62,20 +52,7 @@ public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOpti
     public List<VdcOption> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
-        ParameterizedRowMapper<VdcOption> mapper = new ParameterizedRowMapper<VdcOption>() {
-            @Override
-            public VdcOption mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdcOption entity = new VdcOption();
-                entity.setoption_name(rs.getString("option_name"));
-                entity.setoption_value(rs.getString("option_value"));
-                entity.setoption_id(rs.getInt("option_id"));
-                entity.setversion(rs.getString("version"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetAllFromVdcOption", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllFromVdcOption", VdcOptionRowMapper.instance, parameterSource);
     }
 
     @Override
