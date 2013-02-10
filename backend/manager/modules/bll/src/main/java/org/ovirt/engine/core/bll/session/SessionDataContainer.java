@@ -1,15 +1,11 @@
 package org.ovirt.engine.core.bll.session;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -153,28 +149,11 @@ public class SessionDataContainer {
     }
 
     /**
-     * Will run the process of cleaning expired sessions. At case when session
-     * connected to user, it will be also deleted from DB
+     * Will run the process of cleaning expired sessions.
      */
     @OnTimerMethodAnnotation("cleanExpiredUsersSessions")
     public final void cleanExpiredUsersSessions() {
-        Map<String, Map<String, Object>> map = deleteOldGeneration();
-        if (map != null && !map.isEmpty()) {
-            Map<String, Guid> userSessionMap = new HashMap<String, Guid>();
-            for (Map.Entry<String, Map<String, Object>> entry : map.entrySet()) {
-                IVdcUser user = (IVdcUser) entry.getValue().get(VDC_USER_PARAMETER_NAME);
-                if (user != null) {
-                    userSessionMap.put(entry.getKey(), user.getUserId());
-                }
-            }
-            if (!userSessionMap.isEmpty()) {
-                getDbUserDAO().removeUserSessions(userSessionMap);
-            }
-        }
-    }
-
-    protected DbUserDAO getDbUserDAO() {
-        return DbFacade.getInstance().getDbUserDao();
+        deleteOldGeneration();
     }
 
     /**

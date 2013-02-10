@@ -5,18 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
-import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /**
@@ -135,7 +130,7 @@ public class SessionDataContainerTest {
 
     @Test
     public void testCleanNotExpiredUsersSessionsNoUsers() {
-        DbUserDAO dbUserDAOMcok = initDataForClearTest(TEST_KEY);
+        initDataForClearTest(TEST_KEY);
 
         // Clear expired sessions - data is moved to older generation
         // nothing should happen as far as the user is concerned
@@ -143,12 +138,11 @@ public class SessionDataContainerTest {
 
         assertNotNull("Get should return the value since the session was not removed",
                 container.GetData(TEST_SESSION_ID, TEST_KEY, false));
-        verifyZeroInteractions(dbUserDAOMcok);
     }
 
     @Test
     public void testCleanExpiredUsersSessionsNoUsers() {
-        DbUserDAO dbUserDAOMcok = initDataForClearTest(TEST_KEY);
+        initDataForClearTest(TEST_KEY);
 
         // Clear expired sessions twice - data is moved to older generation, then removed
         container.cleanExpiredUsersSessions();
@@ -156,12 +150,11 @@ public class SessionDataContainerTest {
 
         assertNull("Get should return null since the session was removed",
                 container.GetData(TEST_SESSION_ID, TEST_KEY, false));
-        verifyZeroInteractions(dbUserDAOMcok);
     }
 
     @Test
     public void testCleanNotExpiredUsersSessionsWithUsers() {
-        DbUserDAO dbUserDAOMcok = initDataForClearTest(USER);
+        initDataForClearTest(USER);
 
         // Clear expired sessions - data is moved to older generation
         // nothing should happen as far as the user is concerned
@@ -171,13 +164,11 @@ public class SessionDataContainerTest {
                 container.GetData(TEST_SESSION_ID, USER, false));
         assertNotNull("Get should return the value since the session was not removed",
                 container.getUser(TEST_SESSION_ID, false));
-        verifyZeroInteractions(dbUserDAOMcok);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testCleanExpiredUsersSessionsWithUsers() {
-        DbUserDAO dbUserDAOMcok = initDataForClearTest(USER);
+        initDataForClearTest(USER);
 
         // Clear expired sessions twice - data is moved to older generation, then removed
         container.cleanExpiredUsersSessions();
@@ -187,16 +178,11 @@ public class SessionDataContainerTest {
                 container.GetData(TEST_SESSION_ID, USER, false));
         assertNull("Get should return null since the session was removed",
                 container.getUser(TEST_SESSION_ID, false));
-        verify(dbUserDAOMcok).removeUserSessions(anyMap());
     }
 
-    private DbUserDAO initDataForClearTest(String key) {
-        DbUserDAO dbUserDAOMcok = mock(DbUserDAO.class);
-        doReturn(dbUserDAOMcok).when(container).getDbUserDAO();
-
-        // Set some data
+    /** Initializes the {@link #key} data */
+    private void initDataForClearTest(String key) {
         container.SetData(TEST_SESSION_ID, key, mock(IVdcUser.class));
-        return dbUserDAOMcok;
     }
 
     @Test

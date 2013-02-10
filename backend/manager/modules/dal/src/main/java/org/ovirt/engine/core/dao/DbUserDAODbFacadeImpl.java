@@ -3,13 +3,10 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -40,7 +37,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setsurname(rs.getString("surname"));
             entity.setuser_icon_path(rs.getString("user_icon_path"));
             entity.setuser_id(Guid.createGuidFromString(rs.getString("user_id")));
-            entity.setsession_count(rs.getInt("session_count"));
             entity.setusername(rs.getString("username"));
             entity.setLastAdminCheckStatus(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
@@ -64,7 +60,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("surname", user.getsurname());
             addValue("user_icon_path", user.getuser_icon_path());
             addValue("user_id", user.getuser_id());
-            addValue("session_count", user.getsession_count());
             addValue("username", user.getusername());
             addValue("last_admin_check_status", user.getLastAdminCheckStatus());
             addValue("group_ids", user.getGroupIds());
@@ -111,30 +106,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
-    public List<user_sessions> getAllUserSessions() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        ParameterizedRowMapper<user_sessions> mapper = new ParameterizedRowMapper<user_sessions>() {
-            @Override
-            public user_sessions mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                user_sessions entity = new user_sessions();
-                entity.setbrowser(rs.getString("browser"));
-                entity.setclient_type(rs.getString("client_type"));
-                entity.setlogin_time(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("login_time")));
-                entity.setos(rs.getString("os"));
-                entity.setsession_id(rs.getString("session_id"));
-                entity.setuser_id(Guid.createGuidFromString(rs
-                        .getString("user_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetAllFromuser_sessions", mapper, parameterSource);
-    }
-
-    @Override
     public List<DbUser> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
@@ -144,21 +115,6 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     @Override
     public void save(DbUser user) {
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertUser").execute(new DbUserMapSqlParameterSource(user));
-    }
-
-    @Override
-    public void saveSession(user_sessions session) {
-        if (!"".equals(session.getsession_id())) {
-            MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                    .addValue("browser", session.getbrowser())
-                    .addValue("client_type", session.getclient_type())
-                    .addValue("login_time", session.getlogin_time())
-                    .addValue("os", session.getos())
-                    .addValue("session_id", session.getsession_id())
-                    .addValue("user_id", session.getuser_id());
-
-            getCallsHandler().executeModification("Insertuser_sessions", parameterSource);
-        }
     }
 
     @Override
@@ -172,27 +128,5 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
                 .addValue("user_id", id);
 
         getCallsHandler().executeModification("DeleteUser", parameterSource);
-    }
-
-    @Override
-    public void removeUserSession(String sessionid, Guid userid) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("session_id", sessionid).addValue("user_id", userid);
-
-        new SimpleJdbcCall(jdbcTemplate).withProcedureName("Deleteuser_sessions").execute(parameterSource);
-    }
-
-    @Override
-    public void removeUserSessions(Map<String, Guid> sessionmap) {
-        for (Map.Entry<String, Guid> entry : sessionmap.entrySet()) {
-            removeUserSession(entry.getKey(), entry.getValue());
-        }
-    }
-
-    @Override
-    public void removeAllSessions() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-
-        new SimpleJdbcCall(jdbcTemplate).withProcedureName("DeleteAlluser_sessions").execute(parameterSource);
     }
 }

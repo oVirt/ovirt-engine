@@ -38,14 +38,13 @@ Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
 	v_surname VARCHAR(255) ,
 	v_user_icon_path VARCHAR(255) ,
 	v_user_id UUID,
-    v_session_count INTEGER,
 	v_username VARCHAR(255),
 	v_group_ids VARCHAR(2048))
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO users(department, desktop_device, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, session_count, username, group_ids)
-	VALUES(v_department, v_desktop_device, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_session_count, v_username, v_group_ids);
+INSERT INTO users(department, desktop_device, domain, email, groups, name, note, role, status, surname, user_icon_path, user_id, username, group_ids)
+	VALUES(v_department, v_desktop_device, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_icon_path, v_user_id, v_username, v_group_ids);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -65,7 +64,6 @@ Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
 	v_surname VARCHAR(255) ,
 	v_user_icon_path VARCHAR(255) ,
 	v_user_id UUID,
-    v_session_count INTEGER,
 	v_username VARCHAR(255),
 	v_last_admin_check_status BOOLEAN,
 	v_group_ids VARCHAR(2048))
@@ -78,7 +76,7 @@ BEGIN
       SET department = v_department,desktop_device = v_desktop_device,domain = v_domain,
       email = v_email,groups = v_groups,name = v_name,note = v_note,
       role = v_role,status = v_status,surname = v_surname,user_icon_path = v_user_icon_path,
-      username = v_username,session_count = v_session_count,
+      username = v_username,
       last_admin_check_status = v_last_admin_check_status,
       group_ids = v_group_ids
       WHERE user_id = v_user_id;
@@ -157,128 +155,6 @@ BEGIN
       and	permissions.object_id = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
-----------------------------------------------------------------
--- [user_sessions] Table
-----------------------------------------------------------------
-
-
-Create or replace FUNCTION Insertuser_sessions(v_browser CHAR(10) ,
-	v_client_type CHAR(10) ,
-	v_login_time TIMESTAMP WITH TIME ZONE ,
-	v_os CHAR(10) ,
-	v_session_id CHAR(32),
-	v_user_id UUID)
-RETURNS VOID
-   AS $procedure$
-BEGIN
-      if (not exists(select session_id from user_sessions
-      where session_id = v_session_id and user_id = v_user_id)) then
-
-INSERT INTO user_sessions(browser, client_type, login_time, os, session_id, user_id)
-				VALUES(v_browser, v_client_type, v_login_time, v_os, v_session_id, v_user_id);
-
-         UPDATE users
-         SET session_count = session_count+1
-         WHERE
-         user_id = v_user_id;
-      end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION Deleteuser_sessions(v_session_id CHAR(32),
-	v_user_id UUID)
-RETURNS VOID
-   AS $procedure$
-   DECLARE
-   v_counter  INTEGER;
-   SWV_RowCount INTEGER;
-BEGIN
-      DELETE FROM user_sessions
-      WHERE session_id = v_session_id AND user_id = v_user_id;
-      GET DIAGNOSTICS SWV_RowCount = ROW_COUNT;
-      if (SWV_RowCount > 0) then
-         select   session_count INTO v_counter from users WHERE
-         user_id = v_user_id;
-         if (v_counter > 0) then
-            UPDATE users
-            SET session_count = session_count -1
-            WHERE
-            user_id = v_user_id;
-         end if;
-      end if;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION Deleteuser_sessionsByuser_id(v_user_id UUID)
-RETURNS VOID
-   AS $procedure$
-BEGIN
-      DELETE FROM user_sessions
-      WHERE user_id = v_user_id;
-      UPDATE users
-      SET session_count = 0
-      WHERE
-      user_id = v_user_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-
-Create or replace FUNCTION GetAllFromuser_sessions() RETURNS SETOF user_sessions
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT user_sessions.*
-      FROM user_sessions;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION Getuser_sessionsBysession_idAndByuser_id(v_session_id CHAR(32),
-	v_user_id UUID) RETURNS SETOF user_sessions
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT user_sessions.*
-      FROM user_sessions
-      WHERE session_id = v_session_id AND user_id = v_user_id;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION DeleteAlluser_sessions()
-RETURNS VOID
-   AS $procedure$
-BEGIN
-      TRUNCATE TABLE user_sessions;
-      UPDATE users
-      SET session_count = 0
-      WHERE
-      session_count > 0;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 
 
 

@@ -2637,7 +2637,6 @@
       <column>email</column>
       <column>note</column>
       <column>status</column>
-      <column>session_count</column>
       <column>last_admin_check_status</column>
       <column>group_ids</column>
       <row>
@@ -2654,7 +2653,6 @@
           <null />
           <null />
           <value>2</value>
-          <value>0</value>
           <value>0</value>
           <value>35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364</value>
       </row>
@@ -2673,58 +2671,8 @@
           <null />
           <value>2</value>
           <value>0</value>
-          <value>0</value>
           <value>26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7</value>
       </row>
-    </table>
-
-    <table name="user_sessions">
-        <column>session_id</column>
-        <column>user_id</column>
-        <column>os</column>
-        <column>browser</column>
-        <column>client_type</column>
-        <column>login_time</column>
-        <row>
-            <value>12345678901234567890123456789012</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
-            <value></value>
-            <value></value>
-            <value></value>
-            <value>2010-12-31 07:33</value>
-        </row>
-        <row>
-            <value>12345678901234567890123456789013</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
-            <value></value>
-            <value></value>
-            <value></value>
-            <value>2010-12-31 07:33</value>
-        </row>
-        <row>
-            <value>12345678901234567890123456789014</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
-            <value></value>
-            <value></value>
-            <value></value>
-            <value>2010-12-31 07:33</value>
-        </row>
-        <row>
-            <value>12345678901234567890123456789015</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
-            <value></value>
-            <value></value>
-            <value></value>
-            <value>2010-12-31 07:33</value>
-        </row>
-        <row>
-            <value>12345678901234567890123456789016</value>
-            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
-            <value></value>
-            <value></value>
-            <value></value>
-            <value>2010-12-31 07:33</value>
-        </row>
     </table>
 
     <table name="tags_user_map">

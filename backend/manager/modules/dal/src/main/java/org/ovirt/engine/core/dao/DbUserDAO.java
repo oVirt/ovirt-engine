@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 
 /**
  * <code>DbUserDAO</code> defines a type for performing CRUD operations on instances of {@link DbUser}.
@@ -58,27 +56,12 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     List<DbUser> getAll();
 
     /**
-     * Retrieves all sessions.
-     *
-     * @return the list of sessions
-     */
-    List<user_sessions> getAllUserSessions();
-
-    /**
      * Saves the user.
      *
      * @param user
      *            the user
      */
     void save(DbUser user);
-
-    /**
-     * Saves the specified user session. Admin users, though, are not saved.
-     *
-     * @param session
-     *            the session
-     */
-    void saveSession(user_sessions session);
 
     /**
      * Updates the specified user in the database.
@@ -95,27 +78,4 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
      *            the user id
      */
     void remove(Guid user);
-
-    /**
-     * Removes the specified session for the specified user.
-     *
-     * @param session
-     *            the session
-     * @param user
-     *            the user
-     */
-    void removeUserSession(String session, Guid user);
-
-    /**
-     * Removes the specified user sessions.
-     *
-     * @param sessionmap
-     *            the session map
-     */
-    void removeUserSessions(Map<String, Guid> sessionmap);
-
-    /**
-     * Removes all user sessions.
-     */
-    void removeAllSessions();
 }

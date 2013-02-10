@@ -45,10 +45,6 @@ public class DbUser extends IVdcQueryable {
 
     private int status;
 
-    private int sessionCount;
-
-    private boolean isLoggedIn;
-
     /**
      * GUI flag only. Do not use for internal logic. The sole purpose of calculating this field is for the GUI user to
      * understand who is admin in a snap on the user-grid
@@ -66,7 +62,7 @@ public class DbUser extends IVdcQueryable {
 
     public DbUser(String department, String desktop_device, String domain, String email, String groups, String name,
             String note, String role, int status, String surname, String user_icon_path, Guid user_id, String username,
-            int sessionCount, String groupIds) {
+            String groupIds) {
         this.department = department;
         this.desktopDevice = desktop_device;
         this.domain = domain;
@@ -80,7 +76,6 @@ public class DbUser extends IVdcQueryable {
         this.userIconPath = user_icon_path;
         this.id = user_id;
         this.username = username;
-        this.sessionCount = sessionCount;
         this.setGroupIds(groupIds);
     }
 
@@ -100,7 +95,6 @@ public class DbUser extends IVdcQueryable {
                 + ((email == null) ? 0 : email.hashCode());
         result = prime * result
                 + ((groups == null) ? 0 : groups.hashCode());
-        result = prime * result + (isLoggedIn ? 1231 : 1237);
         result = prime * result + (lastAdminCheckStatus ? 1231 : 1237);
         result = prime * result
                 + ((name == null) ? 0 : name.hashCode());
@@ -108,7 +102,6 @@ public class DbUser extends IVdcQueryable {
                 + ((note == null) ? 0 : note.hashCode());
         result = prime * result
                 + ((role == null) ? 0 : role.hashCode());
-        result = prime * result + sessionCount;
         result = prime * result + status;
         result = prime * result
                 + ((surname == null) ? 0 : surname.hashCode());
@@ -157,8 +150,6 @@ public class DbUser extends IVdcQueryable {
                 return false;
         } else if (!groups.equals(other.groups))
             return false;
-        if (isLoggedIn != other.isLoggedIn)
-            return false;
         if (lastAdminCheckStatus != other.lastAdminCheckStatus)
             return false;
         if (name == null) {
@@ -175,8 +166,6 @@ public class DbUser extends IVdcQueryable {
             if (other.role != null)
                 return false;
         } else if (!role.equals(other.role))
-            return false;
-        if (sessionCount != other.sessionCount)
             return false;
         if (status != other.status)
             return false;
@@ -305,23 +294,6 @@ public class DbUser extends IVdcQueryable {
 
     public void setusername(String value) {
         this.username = value;
-    }
-
-    public int getsession_count() {
-        return sessionCount;
-    }
-
-    public void setsession_count(int value) {
-        sessionCount = value;
-        setIsLogedin((sessionCount > 0));
-    }
-
-    public boolean getIsLogedin() {
-        return isLoggedIn;
-    }
-
-    public void setIsLogedin(boolean value) {
-        isLoggedIn = value;
     }
 
     public DbUser(LdapUser ldapUser) {

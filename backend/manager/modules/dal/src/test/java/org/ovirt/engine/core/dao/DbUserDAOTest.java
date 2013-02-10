@@ -5,9 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,17 +13,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.user_sessions;
 
 public class DbUserDAOTest extends BaseDAOTestCase {
-    private static final int USER_SESSION_COUNT = 5;
-    private static final String SESSION_ID = "21098765432109876543210987654321";
     private DbUserDAO dao;
     private DbUser existingUser;
     private DbUser deletableUser;
     private DbUser newUser;
     private Guid vm;
-    private user_sessions newSession;
 
     @Override
     @Before
@@ -47,13 +41,6 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         newUser.setemail("newuser@redhat.com");
         newUser.setdomain("domain");
         newUser.setgroups("groups");
-
-        newSession = new user_sessions();
-        newSession.setsession_id(SESSION_ID);
-        newSession.setuser_id(existingUser.getuser_id());
-        Date now = new Date();
-        now.setTime(System.currentTimeMillis());
-        newSession.setlogin_time(now);
     }
 
     /**
@@ -145,18 +132,6 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that the right number of sessions are returned.
-     */
-    @Test
-    public void testGetAllUserSessions() {
-        List<user_sessions> result = dao.getAllUserSessions();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(USER_SESSION_COUNT, result.size());
-    }
-
-    /**
      * Ensures that saving a user works as expected.
      */
     @Test
@@ -191,27 +166,6 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that saving a user session works as expected.
-     */
-    @Test
-    public void testSaveSession() {
-        List<user_sessions> before = dao.getAllUserSessions();
-
-        dao.saveSession(newSession);
-
-        List<user_sessions> after = dao.getAllUserSessions();
-        assertTrue(after.size() > before.size());
-
-        boolean itWorked = false;
-
-        for (user_sessions session : after) {
-            itWorked |= newSession.equals(session);
-        }
-
-        assertTrue(itWorked);
-    }
-
-    /**
      * Ensures that updating a user works as expected.
      */
     @Test
@@ -236,37 +190,5 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         DbUser result = dao.get(deletableUser.getuser_id());
 
         assertNull(result);
-    }
-
-    /**
-     * Ensures that removing a single session works as expected.
-     */
-    @Test
-    public void testRemoveUserSession() {
-        List<user_sessions> before = dao.getAllUserSessions();
-        user_sessions deadSession = before.get(0);
-
-        dao.removeUserSession(deadSession.getsession_id(), deadSession.getuser_id());
-
-        List<user_sessions> after = dao.getAllUserSessions();
-
-        assertTrue(after.size() < before.size());
-        for (user_sessions session : after) {
-            if (deadSession.equals(session))
-                fail("The session should have been deleted.");
-        }
-    }
-
-    /**
-     * Ensures that removing all sessions works as expected.
-     */
-    @Test
-    public void testRemoveAllSessions() {
-        dao.removeAllSessions();
-
-        List<user_sessions> result = dao.getAllUserSessions();
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
     }
 }
