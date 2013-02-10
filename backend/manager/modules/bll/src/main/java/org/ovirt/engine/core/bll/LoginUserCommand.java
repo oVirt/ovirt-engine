@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.adbroker.UserAuthenticationResult;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
+@NonTransactiveCommandAttribute
 public class LoginUserCommand<T extends LoginUserParameters> extends LoginBaseCommand<T> {
     public LoginUserCommand(T parameters) {
         super(parameters);
