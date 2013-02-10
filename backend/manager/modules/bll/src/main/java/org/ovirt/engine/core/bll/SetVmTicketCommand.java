@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -20,7 +21,6 @@ import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-@InternalCommandAttribute
 public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOperationCommandBase<T> {
 
     // The log:
@@ -185,12 +185,17 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             .getInstance()
             .getResourceManager()
             .RunVdsCommand(VDSCommandType.SetVmTicket,
-                new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getUserName(), user.getUserId())).getSucceeded();
+                    new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getUserName(), user.getUserId())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:
         if (sent) {
             setActionReturnValue(mTicket);
         }
         setSucceeded(sent);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.VM_SET_TICKET : AuditLogType.VM_SET_TICKET_FAILED;
     }
 }
