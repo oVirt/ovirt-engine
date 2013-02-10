@@ -15,6 +15,28 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<DiskImageDynamic, Guid>
         implements DiskImageDynamicDAO {
 
+    private static final class DiskImageDynamicRowMapper implements ParameterizedRowMapper<DiskImageDynamic> {
+        public static final DiskImageDynamicRowMapper instance = new DiskImageDynamicRowMapper();
+
+        @Override
+        public DiskImageDynamic mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            DiskImageDynamic entity = new DiskImageDynamic();
+            entity.setId(Guid.createGuidFromString(rs
+                    .getString("image_id")));
+            entity.setread_rate((Integer) rs.getObject("read_rate"));
+            entity.setwrite_rate((Integer) rs.getObject("write_rate"));
+            entity.setactual_size(rs.getLong("actual_size"));
+            entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
+                    : null);
+            entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")
+                    : null);
+            entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
+                    : null);
+            return entity;
+        }
+    }
+
     public DiskImageDynamicDAODbFacadeImpl() {
         super("disk_image_dynamic");
         setProcedureNameForGet("Getdisk_image_dynamicByimage_id");
@@ -40,24 +62,6 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
 
     @Override
     protected ParameterizedRowMapper<DiskImageDynamic> createEntityRowMapper() {
-        return new ParameterizedRowMapper<DiskImageDynamic>() {
-            @Override
-            public DiskImageDynamic mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                DiskImageDynamic entity = new DiskImageDynamic();
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("image_id")));
-                entity.setread_rate((Integer) rs.getObject("read_rate"));
-                entity.setwrite_rate((Integer) rs.getObject("write_rate"));
-                entity.setactual_size(rs.getLong("actual_size"));
-                entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
-                        : null);
-                entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")
-                        : null);
-                entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
-                        : null);
-                return entity;
-            }
-        };
+        return DiskImageDynamicRowMapper.instance;
     }
 }
