@@ -500,10 +500,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             }
         });
 
+        setClusterPolicyModel(object.getClusterPolicyModel());
         object.getClusterPolicyModel().getOverCommitTime().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setClusterPolicyModel(object.getClusterPolicyModel());
                 if (getClusterPolicyModel().getSelectionAlgorithm().equals(VdsSelectionAlgorithm.PowerSave)) {
                     policyRadioButton_powerSave.setValue(true);
                 } else if (getClusterPolicyModel().getSelectionAlgorithm()
