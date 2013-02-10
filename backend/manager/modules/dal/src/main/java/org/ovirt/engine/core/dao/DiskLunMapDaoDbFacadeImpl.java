@@ -12,6 +12,20 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLunMap, DiskLunMapId>
         implements DiskLunMapDao {
 
+    private static final class DiskLunMapRowMapper implements ParameterizedRowMapper<DiskLunMap> {
+        public static final DiskLunMapRowMapper instance = new DiskLunMapRowMapper();
+
+        @Override
+        public DiskLunMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DiskLunMap diskLunMap = new DiskLunMap();
+
+            diskLunMap.setDiskId(Guid.createGuidFromString(rs.getString("disk_id")));
+            diskLunMap.setLunId(rs.getString("lun_id"));
+
+            return diskLunMap;
+        }
+    }
+
     public DiskLunMapDaoDbFacadeImpl() {
         super("DiskLunMap");
     }
@@ -33,18 +47,7 @@ public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLun
 
     @Override
     protected ParameterizedRowMapper<DiskLunMap> createEntityRowMapper() {
-        return new ParameterizedRowMapper<DiskLunMap>() {
-
-            @Override
-            public DiskLunMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                DiskLunMap diskLunMap = new DiskLunMap();
-
-                diskLunMap.setDiskId(Guid.createGuidFromString(rs.getString("disk_id")));
-                diskLunMap.setLunId(rs.getString("lun_id"));
-
-                return diskLunMap;
-            }
-        };
+        return DiskLunMapRowMapper.instance;
     }
 
     @Override
