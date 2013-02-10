@@ -23,78 +23,79 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
  */
 public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDynamicDAO {
 
+    private static final class VdcDynamicRowMapper implements ParameterizedRowMapper<VdsDynamic> {
+        public static final VdcDynamicRowMapper instance = new VdcDynamicRowMapper();
+
+        @Override
+        public VdsDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VdsDynamic entity = new VdsDynamic();
+            entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
+            entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
+            entity.setcpu_model(rs.getString("cpu_model"));
+            entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
+            entity.setif_total_speed(rs.getString("if_total_speed"));
+            entity.setkvm_enabled((Boolean) rs.getObject("kvm_enabled"));
+            entity.setmem_commited((Integer) rs.getObject("mem_commited"));
+            entity.setphysical_mem_mb((Integer) rs
+                    .getObject("physical_mem_mb"));
+            entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
+            entity.setId(Guid.createGuidFromString(rs
+                    .getString("vds_id")));
+            entity.setvm_active((Integer) rs.getObject("vm_active"));
+            entity.setvm_count((Integer) rs.getObject("vm_count"));
+            entity.setvms_cores_count((Integer) rs
+                    .getObject("vms_cores_count"));
+            entity.setvm_migrating((Integer) rs.getObject("vm_migrating"));
+            entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
+            entity.setguest_overhead((Integer) rs
+                    .getObject("guest_overhead"));
+            entity.setsoftware_version(rs.getString("software_version"));
+            entity.setversion_name(rs.getString("version_name"));
+            entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
+            entity.setbuild_name(rs.getString("build_name"));
+            entity.setprevious_status(VDSStatus.forValue(rs
+                    .getInt("previous_status")));
+            entity.setcpu_flags(rs.getString("cpu_flags"));
+            entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
+                    .getTimestamp("cpu_over_commit_time_stamp")));
+            entity.setpending_vcpus_count((Integer) rs
+                    .getObject("pending_vcpus_count"));
+            entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
+            entity.setcpu_sockets((Integer) rs.getObject("cpu_sockets"));
+            entity.setnet_config_dirty((Boolean) rs
+                    .getObject("net_config_dirty"));
+            entity.setsupported_cluster_levels(rs
+                    .getString("supported_cluster_levels"));
+            entity.setsupported_engines(rs.getString("supported_engines"));
+            entity.sethost_os(rs.getString("host_os"));
+            entity.setkvm_version(rs.getString("kvm_version"));
+            entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
+            entity.setspice_version(rs.getString("spice_version"));
+            entity.setkernel_version(rs.getString("kernel_version"));
+            entity.setIScsiInitiatorName(rs
+                    .getString("iscsi_initiator_name"));
+            entity.setTransparentHugePagesState(VdsTransparentHugePagesState
+                    .forValue(rs.getInt("transparent_hugepages_state")));
+            entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
+            entity.setHooksStr(rs.getString("hooks"));
+            entity.setNonOperationalReason(NonOperationalReason.forValue(rs
+                    .getInt("non_operational_reason")));
+            entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
+            entity.setHardwareProductName(rs.getString("hw_product_name"));
+            entity.setHardwareVersion(rs.getString("hw_version"));
+            entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
+            entity.setHardwareUUID(rs.getString("hw_uuid"));
+            entity.setHardwareFamily(rs.getString("hw_family"));
+            return entity;
+        }
+    }
+
     @Override
     public VdsDynamic get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_id", id);
 
-        ParameterizedRowMapper<VdsDynamic> mapper = new ParameterizedRowMapper<VdsDynamic>() {
-            @Override
-            public VdsDynamic mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VdsDynamic entity = new VdsDynamic();
-                entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
-                entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
-                entity.setcpu_model(rs.getString("cpu_model"));
-                entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
-                entity.setif_total_speed(rs.getString("if_total_speed"));
-                entity.setkvm_enabled((Boolean) rs.getObject("kvm_enabled"));
-                entity.setmem_commited((Integer) rs.getObject("mem_commited"));
-                entity.setphysical_mem_mb((Integer) rs
-                        .getObject("physical_mem_mb"));
-                entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
-                entity.setId(Guid.createGuidFromString(rs
-                        .getString("vds_id")));
-                entity.setvm_active((Integer) rs.getObject("vm_active"));
-                entity.setvm_count((Integer) rs.getObject("vm_count"));
-                entity.setvms_cores_count((Integer) rs
-                        .getObject("vms_cores_count"));
-                entity.setvm_migrating((Integer) rs.getObject("vm_migrating"));
-                entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
-                entity.setguest_overhead((Integer) rs
-                        .getObject("guest_overhead"));
-                entity.setsoftware_version(rs.getString("software_version"));
-                entity.setversion_name(rs.getString("version_name"));
-                entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
-                entity.setbuild_name(rs.getString("build_name"));
-                entity.setprevious_status(VDSStatus.forValue(rs
-                        .getInt("previous_status")));
-                entity.setcpu_flags(rs.getString("cpu_flags"));
-                entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
-                        .getTimestamp("cpu_over_commit_time_stamp")));
-                entity.setpending_vcpus_count((Integer) rs
-                        .getObject("pending_vcpus_count"));
-                entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
-                entity.setcpu_sockets((Integer) rs.getObject("cpu_sockets"));
-                entity.setnet_config_dirty((Boolean) rs
-                        .getObject("net_config_dirty"));
-                entity.setsupported_cluster_levels(rs
-                        .getString("supported_cluster_levels"));
-                entity.setsupported_engines(rs.getString("supported_engines"));
-                entity.sethost_os(rs.getString("host_os"));
-                entity.setkvm_version(rs.getString("kvm_version"));
-                entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
-                entity.setspice_version(rs.getString("spice_version"));
-                entity.setkernel_version(rs.getString("kernel_version"));
-                entity.setIScsiInitiatorName(rs
-                        .getString("iscsi_initiator_name"));
-                entity.setTransparentHugePagesState(VdsTransparentHugePagesState
-                        .forValue(rs.getInt("transparent_hugepages_state")));
-                entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
-                entity.setHooksStr(rs.getString("hooks"));
-                entity.setNonOperationalReason(NonOperationalReason.forValue(rs
-                        .getInt("non_operational_reason")));
-                entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
-                entity.setHardwareProductName(rs.getString("hw_product_name"));
-                entity.setHardwareVersion(rs.getString("hw_version"));
-                entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
-                entity.setHardwareUUID(rs.getString("hw_uuid"));
-                entity.setHardwareFamily(rs.getString("hw_family"));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVdsDynamicByVdsId", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVdsDynamicByVdsId", VdcDynamicRowMapper.instance, parameterSource);
     }
 
     @Override
