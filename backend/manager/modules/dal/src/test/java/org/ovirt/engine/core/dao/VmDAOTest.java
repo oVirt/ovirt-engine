@@ -395,4 +395,20 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals("wrong number of VMs attached to pool", 2, result.size());
     }
+
+    @Test
+    public void testSaveIsInitialized() {
+        Guid vmId = existingVm.getId();
+        boolean origInitialized = existingVm.isInitialized();
+
+        // Switch is_initialized
+        dao.saveIsInitialized(vmId, !origInitialized);
+        VM updatedVm = dao.get(vmId);
+        assertEquals("VM's is_initiazlied was not updated", !origInitialized, updatedVm.isInitialized());
+
+        // Switch it back, just to make sure
+        dao.saveIsInitialized(vmId, origInitialized);
+        updatedVm = dao.get(vmId);
+        assertEquals("VM's is_initiazlied was not updated", origInitialized, updatedVm.isInitialized());
+    }
 }

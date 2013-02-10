@@ -169,7 +169,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 new TransactionMethod<Void>() {
                     @Override
                     public Void runInTransaction() {
-                        DbFacade.getInstance().SaveIsInitialized(vmId, true);
+                        DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
                         return null;
                     }
                 });

@@ -237,6 +237,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public void saveIsInitialized(Guid vmid, boolean isInitialized) {
+        getCallsHandler().executeModification("UpdateIsInitialized",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", vmid)
+                        .addValue("is_initialized", isInitialized));
+    }
+
+    @Override
     public void remove(Guid id) {
         getCallsHandler().executeModification("DeleteVm", getCustomMapSqlParameterSource()
                 .addValue("vm_guid", id));

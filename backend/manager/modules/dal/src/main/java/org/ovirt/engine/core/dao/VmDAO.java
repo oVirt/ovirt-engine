@@ -197,6 +197,15 @@ public interface VmDAO extends DAO {
     void save(VM vm);
 
     /**
+     * Saves the is_initialized property of the VM.
+     *
+     * @param vmid
+     *            The VM's ID
+     * @param isInitialized
+     *            Whether or not the VM is initialized.
+     */
+    void saveIsInitialized(Guid vmid, boolean isInitialized);
+    /**
      * Removes the VM with the specified id.
      *
      * @param vm

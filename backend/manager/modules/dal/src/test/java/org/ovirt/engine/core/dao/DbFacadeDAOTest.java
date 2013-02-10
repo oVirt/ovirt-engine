@@ -20,25 +20,25 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
@@ -258,10 +258,10 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         vmStaticArray = vmStatics.toArray(vmStaticArray);
 
         // initialize the VMs with equal settings: non HA, priority 1 and MIGRATABLE
-        for (int i = 0; i < vmStaticArray.length; i++) {
-            vmStaticArray[i].setAutoStartup(false);
-            vmStaticArray[i].setPriority(1);
-            vmStaticArray[i].setMigrationSupport(MigrationSupport.MIGRATABLE);
+        for (VmStatic element : vmStaticArray) {
+            element.setAutoStartup(false);
+            element.setPriority(1);
+            element.setMigrationSupport(MigrationSupport.MIGRATABLE);
         }
 
         // set higher migration support value for the first VM
@@ -334,8 +334,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      * Updates the given array of vmStatics in the Database
      */
     private void updateArrayOfVmStaticsInDb(VmStatic[] vmStaticArray) {
-        for (int i = 0; i < vmStaticArray.length; i++) {
-            dbFacade.getVmStaticDao().update(vmStaticArray[i]);
+        for (VmStatic element : vmStaticArray) {
+            dbFacade.getVmStaticDao().update(element);
         }
     }
 
@@ -501,26 +501,6 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertNotNull(network);
         String name = network.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
-    }
-
-    @Test
-    public void testSaveIsInitialized(){
-        // The vm starts out as initialized
-        VmStatic vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
-        assertNotNull(vmStaticForTest);
-        assertTrue(vmStaticForTest.isInitialized());
-
-        // Change it into uninitialized and make sure that the change succeeded
-        dbFacade.SaveIsInitialized(vmStaticForTest.getId(), !INITIALIZED);
-        vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
-        assertNotNull(vmStaticForTest);
-        assertFalse(vmStaticForTest.isInitialized());
-
-        // Change it back to initialized and make sure that the change succeeded
-        dbFacade.SaveIsInitialized(vmStaticForTest.getId(), INITIALIZED);
-        vmStaticForTest = dbFacade.getVmStaticDao().get(VM_STATIC_GUID);
-        assertNotNull(vmStaticForTest);
-        assertTrue(vmStaticForTest.isInitialized());
     }
 
     @Test
