@@ -379,7 +379,7 @@ public class HostMapper {
                 agent = new Agent();
                 agent.setType(entity.getPmSecondaryType());
                 agent.setAddress(entity.getPmSecondaryIp());
-                agent.setUsername(entity.getPmSecondaryuser());
+                agent.setUsername(entity.getPmSecondaryUser());
                 if (entity.getPmOptionsMap() != null) {
                     agent.setOptions(map(entity.getPmSecondaryOptionsMap(), null));
                 }

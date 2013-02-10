@@ -301,7 +301,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getpm_enabled(),
                         getPmSecondaryIp(),
                         getPmSecondaryType(),
-                        getPmSecondaryuser(),
+                        getPmSecondaryUser(),
                         getPmSecondaryPassword(),
                         getPmSecondaryPort(),
                         getPmSecondaryOptions(),
@@ -1061,8 +1061,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setPmSecondaryType(value);
     }
 
-    public String getPmSecondaryuser() {
-        return mVdsStatic.getPmSecondaryuser();
+    public String getPmSecondaryUser() {
+        return mVdsStatic.getPmSecondaryUser();
     }
 
     public void setPmSecondaryUser(String value) {

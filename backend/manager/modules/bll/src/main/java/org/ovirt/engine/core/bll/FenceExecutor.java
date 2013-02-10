@@ -226,7 +226,7 @@ public class FenceExecutor {
             managementUser = _vds.getPmUser();
         }
         else if (order == FenceAgentOrder.Secondary) {
-            managementUser = _vds.getPmSecondaryuser();
+            managementUser = _vds.getPmSecondaryUser();
         }
         return managementUser;
     }

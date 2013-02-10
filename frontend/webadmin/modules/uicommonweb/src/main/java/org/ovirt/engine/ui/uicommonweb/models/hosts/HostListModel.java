@@ -1165,7 +1165,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         // Set secondary PM parameters.
         model.getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
-        model.getPmSecondaryUserName().setEntity(vds.getPmSecondaryuser());
+        model.getPmSecondaryUserName().setEntity(vds.getPmSecondaryUser());
         model.getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
         model.getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
         model.setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap().asMap());

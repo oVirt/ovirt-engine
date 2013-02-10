@@ -316,7 +316,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         pmSecondaryType = value;
     }
 
-    public String getPmSecondaryuser() {
+    public String getPmSecondaryUser() {
         return pmSecondaryUser;
     }
 
