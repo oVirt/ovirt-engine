@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.common.users;
 
-import java.io.Serializable;
-
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdcUser implements IVdcUser, Serializable {
+public class VdcUser implements IVdcUser {
     private static final long serialVersionUID = -5689096270467866486L;
 
     private Guid mUserId = new Guid();
@@ -17,10 +15,12 @@ public class VdcUser implements IVdcUser, Serializable {
     private String mGroupNames;
     private String groupIds;
 
+    @Override
     public String getGroupIds() {
         return groupIds;
     }
 
+    @Override
     public void setGroupIds(String groupIds) {
         this.groupIds = groupIds;
     }

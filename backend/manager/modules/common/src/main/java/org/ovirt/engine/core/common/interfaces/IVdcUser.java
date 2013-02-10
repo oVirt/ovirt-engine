@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.common.interfaces;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.Guid;
 
-public interface IVdcUser {
+public interface IVdcUser extends Serializable {
     String getPassword();
 
     void setPassword(String value);
