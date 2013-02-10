@@ -5,12 +5,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.TagsType;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.TagsUserGroupMap;
 import org.ovirt.engine.core.common.businessentities.TagsUserMap;
 import org.ovirt.engine.core.common.businessentities.TagsVdsMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,12 +18,12 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
 /**
  * <code>TagDAODbFacadeImpl</code> provides an implementation of {@link TagDAO} that uses code refactored from the
- * {@link DbFacade} class.
- *
- *
+ * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
 public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
-    private class TagRowMapper implements ParameterizedRowMapper<tags> {
+    private static class TagRowMapper implements ParameterizedRowMapper<tags> {
+        public static final TagRowMapper instance = new TagRowMapper();
+
         @Override
         public tags mapRow(ResultSet rs, int rowNum) throws SQLException {
             tags entity = new tags();
@@ -58,7 +58,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_id", id);
 
         return getCallsHandler()
-                        .executeRead("GettagsBytag_id", new TagRowMapper(), parameterSource);
+                .executeRead("GettagsBytag_id", TagRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_name", name);
 
         return getCallsHandler()
-                .executeRead("GettagsBytag_name", new TagRowMapper(), parameterSource);
+                .executeRead("GettagsBytag_name", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler()
-                .executeReadList("GetAllFromtags", new TagRowMapper(), parameterSource);
+                .executeReadList("GetAllFromtags", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -86,7 +86,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("parent_id", id);
 
         return getCallsHandler()
-                .executeReadList("GettagsByparent_id", new TagRowMapper(), parameterSource);
+                .executeReadList("GettagsByparent_id", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -96,7 +96,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("group_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetTagsByUserGroupId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetTagsByUserGroupId", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -106,7 +106,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetUserGroupTagsByTagIds", new TagRowMapper(), parameterSource);
+                .executeReadList("GetUserGroupTagsByTagIds", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -116,7 +116,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("user_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetTagsByUserId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetTagsByUserId", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -126,7 +126,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetUserTagsByTagIds", new TagRowMapper(), parameterSource);
+                .executeReadList("GetUserTagsByTagIds", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -136,7 +136,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("vds_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetTagsByVdsId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetTagsByVdsId", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -146,7 +146,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetVdsTagsByTagIds", new TagRowMapper(), parameterSource);
+                .executeReadList("GetVdsTagsByTagIds", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -156,7 +156,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("vm_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetTagsByVmId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetTagsByVmId", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -166,7 +166,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("tag_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetVmTagsByTagId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetVmTagsByTagId", TagRowMapper.instance, parameterSource);
     }
 
     @SuppressWarnings("unchecked")
@@ -176,7 +176,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
                 .addValue("vm_pool_ids", ids);
 
         return getCallsHandler()
-                .executeReadList("GetTagsByVmpoolId", new TagRowMapper(), parameterSource);
+                .executeReadList("GetTagsByVmpoolId", TagRowMapper.instance, parameterSource);
     }
 
     @Override
