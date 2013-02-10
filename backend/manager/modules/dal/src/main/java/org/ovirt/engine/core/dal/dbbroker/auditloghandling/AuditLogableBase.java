@@ -432,9 +432,6 @@ public class AuditLogableBase extends TimeoutBase {
         }
     }
 
-    public void DefaultLog() {
-    }
-
     public void AddCustomValue(final String name, final String value) {
         customValues.put(name.toLowerCase(), value);
     }

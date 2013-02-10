@@ -856,7 +856,6 @@ public final class AuditLogDirector {
             }
         } else if (auditLogable != null) {
             log.infoFormat("No string for {0} type. Use default Log", auditLogable.getAuditLogTypeValue());
-            defaultLog(auditLogable);
         }
     }
 
@@ -987,9 +986,5 @@ public final class AuditLogDirector {
             TypeCompat.getPropertyValues(logable, new HashSet<String>(attributes), returnValue);
         }
         return returnValue;
-    }
-
-    private static void defaultLog(AuditLogableBase auditLogable) {
-        auditLogable.DefaultLog();
     }
 }
