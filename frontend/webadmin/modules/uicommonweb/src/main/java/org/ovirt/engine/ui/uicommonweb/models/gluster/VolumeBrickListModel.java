@@ -160,19 +160,44 @@ public class VolumeBrickListModel extends SearchableListModel {
         OnEntityChanged();
     }
 
-    private void addBricks() {
-
-        if (getWindow() != null)
-        {
+    private void checkUpServerAndAddBricks() {
+        if (getWindow() != null) {
             return;
         }
 
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
-        if (volumeEntity == null)
-        {
+        if (volumeEntity == null) {
             return;
         }
+
+        AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(volumeEntity, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object entity, Object returnValue) {
+                boolean clusterHasUpHost = (Boolean) returnValue;
+                if (clusterHasUpHost) {
+                    addBricks((GlusterVolumeEntity) entity);
+                }
+                else {
+                    ConfirmationModel model = new ConfirmationModel();
+                    setWindow(model);
+                    model.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
+                    model.setMessage(ConstantsManager.getInstance()
+                            .getConstants()
+                            .cannotAddBricksNoUpServerFound());
+                    model.setHashName("cannot_add_bricks"); //$NON-NLS-1$
+
+                    UICommand command = new UICommand("Cancel", VolumeBrickListModel.this); //$NON-NLS-1$
+                    command.setTitle(ConstantsManager.getInstance().getConstants().close());
+                    command.setIsCancel(true);
+                    model.getCommands().add(command);
+                    return;
+                }
+            }
+        }), volumeEntity.getVdsGroupName());
+    }
+
+    private void addBricks(GlusterVolumeEntity volumeEntity) {
 
         VolumeBrickModel volumeBrickModel = new VolumeBrickModel();
 
@@ -808,7 +833,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     public void ExecuteCommand(UICommand command) {
         super.ExecuteCommand(command);
         if (command.equals(getAddBricksCommand())) {
-            addBricks();
+            checkUpServerAndAddBricks();
         } else if (command.getName().equals("OnAddBricks")) { //$NON-NLS-1$
             onAddBricks();
         } else if (command.getName().equals("OnAddBricksInternal")) { //$NON-NLS-1$

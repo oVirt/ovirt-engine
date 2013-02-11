@@ -1459,6 +1459,9 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Replace Brick")
     String replaceBrickTitle();
 
+    @DefaultStringValue("Could not find any host in Up status in the cluster. Please try again later.")
+    String cannotAddBricksNoUpServerFound();
+
     @DefaultStringValue("Brick Details")
     String advancedDetailsBrickTitle();
 
