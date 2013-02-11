@@ -2147,6 +2147,7 @@
         <column>_create_date</column>
         <column>_update_date</column>
         <column>last_time_used_as_master</column>
+        <column>storage_description</column>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
@@ -2156,6 +2157,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>5</value>
+            <value>description1</value>
         </row>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ac</value>
@@ -2166,6 +2168,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>15</value>
+            <value>description2</value>
         </row>
         <row>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
@@ -2176,6 +2179,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>0</value>
+            <value>description3</value>
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
@@ -2186,6 +2190,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>5</value>
+            <value>description4</value>
         </row>
         <row>
             <value>17e7489d-d490-4681-a322-073ca19bd33d</value>
@@ -2196,6 +2201,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>0</value>
+            <value>description5</value>
         </row>
         <row>
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
@@ -2206,6 +2212,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>0</value>
+            <value>description6</value>
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa32</value>
@@ -2216,6 +2223,7 @@
             <value>2010-11-23 10:47:55</value>
             <value>2010-11-23 10:48:10</value>
             <value>7</value>
+            <value>description7</value>
         </row>
     </table>
 

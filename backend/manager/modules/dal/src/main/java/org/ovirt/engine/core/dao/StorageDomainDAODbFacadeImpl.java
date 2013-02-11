@@ -137,6 +137,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));
+            entity.setDescription(rs.getString("storage_description"));
             entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstorage_type(StorageType.forValue(rs.getInt("storage_type")));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));

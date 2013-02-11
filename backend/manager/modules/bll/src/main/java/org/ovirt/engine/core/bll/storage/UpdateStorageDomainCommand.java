@@ -6,9 +6,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -42,8 +42,9 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
 
-        // Allow change only to name field
+        // Allow change only to name & description field
         props.remove("storage_name");
+        props.remove("description");
         if (returnValue && props.size() > 0) {
             log.warnFormat("There was an attempt to update the following fields although they are not allowed to be updated: {0}",
                     StringUtils.join(props, ","));

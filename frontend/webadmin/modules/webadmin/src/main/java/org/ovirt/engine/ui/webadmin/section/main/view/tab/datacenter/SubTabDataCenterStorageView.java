@@ -49,6 +49,14 @@ public class SubTabDataCenterStorageView extends AbstractSubTabTableView<storage
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage());
 
+        TextColumnWithTooltip<storage_domains> descriptionColumn = new TextColumnWithTooltip<storage_domains>() {
+            @Override
+            public String getValue(storage_domains object) {
+                return object.getDescription();
+            }
+        };
+        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage());
+
         TextColumnWithTooltip<storage_domains> typeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
             @Override
             public StorageDomainType getRawValue(storage_domains object) {

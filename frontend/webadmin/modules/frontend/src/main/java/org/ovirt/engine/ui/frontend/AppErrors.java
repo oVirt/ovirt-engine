@@ -1623,6 +1623,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Storage Domain name must be formed of \"a-z0-9A-Z\" or \"-_\"")
     String VALIDATION_STORAGE_DOMAIN_NAME_INVALID();
 
+    @DefaultStringValue("Storage Domain name must be formed of \"a-z0-9A-Z\" or \"-_\"")
+    String VALIDATION_STORAGE_DOMAIN_DESCRIPTION_INVALID();
+
+    @DefaultStringValue("Storage Domain description must not exceed 4000 characters")
+    String VALIDATION_STORAGE_DOMAIN_DESCRIPTION_MAX();
+
     @DefaultStringValue("Data Center name must be formed of \"a-z0-9A-Z\" or \"-_\"")
     String VALIDATION_DATA_CENTER_NAME_INVALID();
 

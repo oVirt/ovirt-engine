@@ -17,7 +17,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
 
     public storage_domains(Guid id, String storage, String storage_name, Guid storage_pool_id,
             Integer available_disk_size, Integer used_disk_size, StorageDomainStatus status, String storage_pool_name,
-            int storage_pool_type, int storage_type) {
+            int storage_pool_type, int storage_type, String description) {
         _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
@@ -31,6 +31,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
         this.setstorage_pool_name(storage_pool_name);
         this.setstorage_type(StorageType.forValue(storage_pool_type));
         this.setstorage_domain_type(StorageDomainType.forValue(storage_type));
+        setDescription(description);
     }
 
     //this member is in use only by the Frontend project
@@ -108,6 +109,14 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
 
     public void setstorage_name(String value) {
         getStorageStaticData().setstorage_name(value);
+    }
+
+    public String getDescription() {
+        return getStorageStaticData().getDescription();
+    }
+
+    public void setDescription(String description) {
+        getStorageStaticData().setDescription(description);
     }
 
     public NGuid getstorage_pool_id() {

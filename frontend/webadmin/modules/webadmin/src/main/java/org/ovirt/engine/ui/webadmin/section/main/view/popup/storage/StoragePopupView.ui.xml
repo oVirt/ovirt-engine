@@ -33,13 +33,15 @@
 			line-height: 30px;
 		}
 
-		.nameEditor {
-			width: 400px;
-		}
-
+		.nameEditor,
+		.descriptionEditor,
 		.datacenterListEditor,
 		.hostListEditor {
-			width: 400px;
+			width: 350px;
+		}
+
+		.descriptionEditor {
+			padding-left: 20px;
 		}
 
 		.formatListEditor {
@@ -74,7 +76,10 @@
 	<d:SimpleDialogPanel width="760px" height="625px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
-				<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
+				<g:HorizontalPanel>
+					<e:EntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
+					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
+				</g:HorizontalPanel>
 				<e:ListModelListBoxEditor ui:field="datacenterListEditor" addStyleNames="{style.datacenterListEditor}"/>
 				<g:HorizontalPanel addStyleNames="{style.storageTypePanel}">
 					<e:ListModelListBoxEditor ui:field="storageTypeListEditor" addStyleNames="{style.storageTypeListEditor}"/>

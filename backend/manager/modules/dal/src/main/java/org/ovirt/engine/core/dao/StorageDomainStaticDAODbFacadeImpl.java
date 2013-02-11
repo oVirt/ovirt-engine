@@ -3,11 +3,12 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -85,6 +86,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                 .addValue("id", domain.getId())
                 .addValue("storage", domain.getstorage())
                 .addValue("storage_name", domain.getstorage_name())
+                .addValue("storage_description", domain.getDescription())
                 .addValue("storage_type", domain.getstorage_type())
                 .addValue("storage_domain_type",
                         domain.getstorage_domain_type())
@@ -107,6 +109,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));
+            entity.setDescription(rs.getString("storage_description"));
             entity.setstorage_type(StorageType.forValue(rs
                     .getInt("storage_type")));
             entity.setstorage_domain_type(StorageDomainType.forValue(rs

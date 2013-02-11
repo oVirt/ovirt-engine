@@ -268,6 +268,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Insertstorage_domain_static(v_id UUID,
 	v_storage VARCHAR(250),
 	v_storage_name VARCHAR(250),
+        v_storage_description VARCHAR(4000),
 	v_storage_type INTEGER,
 	v_storage_domain_type INTEGER,
     v_storage_domain_format_type VARCHAR(50),
@@ -275,8 +276,8 @@ Create or replace FUNCTION Insertstorage_domain_static(v_id UUID,
 RETURNS VOID
    AS $procedure$
    BEGIN
-INSERT INTO storage_domain_static(id, storage,storage_name, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master)
-	VALUES(v_id, v_storage, v_storage_name, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master);
+INSERT INTO storage_domain_static(id, storage,storage_name, storage_description, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master)
+	VALUES(v_id, v_storage, v_storage_name, v_storage_description, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -297,6 +298,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Updatestorage_domain_static(v_id UUID,
 	v_storage VARCHAR(250),
 	v_storage_name VARCHAR(250),
+	v_storage_description VARCHAR(4000),
 	v_storage_type INTEGER,
 	v_storage_domain_type INTEGER,
 	v_storage_domain_format_type INTEGER,
@@ -310,7 +312,8 @@ BEGIN
       SET storage = v_storage, storage_name = v_storage_name, storage_type = v_storage_type,
       storage_domain_type = v_storage_domain_type, _update_date = LOCALTIMESTAMP,
       storage_domain_format_type = v_storage_domain_format_type,
-      last_time_used_as_master = v_last_time_used_as_master
+      last_time_used_as_master = v_last_time_used_as_master,
+      storage_description = v_storage_description
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

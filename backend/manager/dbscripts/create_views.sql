@@ -8,6 +8,7 @@ AS
 SELECT     storage_domain_static.id as id,
 			storage_domain_static.storage as storage,
 			storage_domain_static.storage_name as storage_name,
+			storage_domain_static.storage_description as storage_description,
 			storage_pool_iso_map.storage_pool_id as storage_pool_id,
                         storage_pool_iso_map.status as status,
 			storage_domain_static.storage_domain_type as storage_domain_type,
@@ -33,7 +34,7 @@ AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
 SELECT images.image_guid as image_guid,
-    storage_domain_static_view.storage_name as storage_name,
+    storage_domain_static_view.storage_name as storage_name
     storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
 	images.creation_date as creation_date,
@@ -245,6 +246,7 @@ SELECT
 storage_domain_static.id as id,
 		storage_domain_static.storage as storage,
 		storage_domain_static.storage_name as storage_name,
+		storage_domain_static.storage_description as storage_description,
         storage_pool_iso_map.storage_pool_id as storage_pool_id,
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
@@ -269,7 +271,7 @@ LEFT OUTER JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_p
 CREATE OR REPLACE VIEW storage_domains_without_storage_pools
 AS
 SELECT DISTINCT
-storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name,
+storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name, storage_domain_static.storage_description as storage_description,
 		storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
@@ -289,7 +291,7 @@ LEFT OUTER JOIN storage_pool_iso_map ON storage_domain_static.id = storage_pool_
 CREATE OR REPLACE VIEW storage_domains_for_search
 AS
 SELECT
-                storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name,
+                storage_domain_static.id as id, storage_domain_static.storage as storage, storage_domain_static.storage_name as storage_name, storage_domain_static.storage_description as storage_description,
                 storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
                 storage_domain_static.last_time_used_as_master as last_time_used_as_master,
@@ -930,6 +932,7 @@ SELECT
 storage_domain_static.id,
 		storage_domain_static.storage,
 		storage_domain_static.storage_name,
+		storage_domain_static.storage_description as storage_description,
 		storage_domain_dynamic.available_disk_size,
 		storage_domain_dynamic.used_disk_size,
 		fn_get_disk_commited_value_by_storage(storage_domain_static.id) as commited_disk_size,

@@ -55,7 +55,8 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
                         StorageDomainStatus.Active,
                         "StoragePoolName",
                         0,
-                        0);
+                        0,
+                        "First Storage Description");
         storage_domains secondStorageDomain =
                 new storage_domains(Guid.NewGuid(),
                         Guid.NewGuid().toString(),
@@ -66,7 +67,8 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
                         StorageDomainStatus.Active,
                         "StoragePoolName",
                         0,
-                        0);
+                        0,
+                        "Second Storage Description");
         List<storage_domains> expected = new ArrayList<storage_domains>();
         expected.add(firstStorageDomain);
         expected.add(secondStorageDomain);

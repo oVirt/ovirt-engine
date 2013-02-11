@@ -211,6 +211,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String storagePopupNameLabel();
 
+    @DefaultStringValue("Description")
+    String storagePopupDescriptionLabel();
+
     @DefaultStringValue("Data Center")
     String storagePopupDataCenterLabel();
 
@@ -1170,6 +1173,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     // Storage
     @DefaultStringValue("Domain Name")
     String domainNameStorage();
+
+    @DefaultStringValue("Domain Description")
+    String domainDescriptionStorage();
 
     @DefaultStringValue("Domain Type")
     String domainTypeStorage();

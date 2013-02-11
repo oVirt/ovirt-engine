@@ -20,6 +20,13 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_NAME_SIZE)
     private String name = "";
 
+    @ValidName(message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.INVALID", groups = { CreateEntity.class,
+            UpdateEntity.class })
+    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
+            message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.MAX",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    private String description;
+
     private StorageDomainType storageType = StorageDomainType.Master;
 
     private StorageType storagePoolType = StorageType.UNKNOWN;
@@ -37,11 +44,12 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     public StorageDomainStatic() {
     }
 
-    public StorageDomainStatic(Guid id, String storage, int storage_domain_type, String storage_name) {
+    public StorageDomainStatic(Guid id, String storage, int storage_domain_type, String storage_name, String description) {
         this.id = id;
         this.storage = storage;
         this.storageType = StorageDomainType.forValue(storage_domain_type);
         this.name = storage_name;
+        this.description = description;
     }
 
     @Override
@@ -126,6 +134,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         this.lastTimeUsedAsMaster = lastTimeUsedAsMaster;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -138,6 +154,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         result = prime * result + ((storageFormat == null) ? 0 : storageFormat.hashCode());
         result = prime * result + ((storagePoolType == null) ? 0 : storagePoolType.hashCode());
         result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         return result;
     }
 
@@ -177,6 +194,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         if (storagePoolType != other.storagePoolType)
             return false;
         if (storageType != other.storageType)
+            return false;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!description.equals(other.description))
             return false;
         return true;
     }

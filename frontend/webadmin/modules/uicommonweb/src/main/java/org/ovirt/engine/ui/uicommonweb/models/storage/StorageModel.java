@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -35,7 +36,10 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 
 public class StorageModel extends ListModel implements ISupportSystemTreeContext
 {
@@ -93,6 +97,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     private void setName(EntityModel value)
     {
         privateName = value;
+    }
+
+    private EntityModel description;
+
+    public EntityModel getDescription() {
+        return description;
+    }
+
+    public void setDescription(EntityModel description) {
+        this.description = description;
     }
 
     private ListModel privateDataCenter;
@@ -168,6 +182,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList, VdcQueryType.GetExistingStorageDomainList });
 
         setName(new EntityModel());
+        setDescription(new EntityModel());
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         setHost(new ListModel());
@@ -702,8 +717,11 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         getHost().ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
         ValidateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
+        getDescription().ValidateEntity(new IValidation[] {
+                new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
+                new SpecialAsciiI18NOrNoneValidation() });
 
-        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().Validate();
+        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().Validate() && getDescription().getIsValid();
     }
 
     private SystemTreeItemModel privateSystemTreeSelectedItem;

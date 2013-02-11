@@ -14,8 +14,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -23,10 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -102,7 +102,7 @@ public class JsonObjectSerializationEntitiesTest {
                         { new StorageDomainStatic(Guid.NewGuid(),
                                 random.nextString(10),
                                 random.nextInt(StorageDomainType.values().length),
-                                random.nextString(10)) },
+                                random.nextString(10), random.nextString(10)) },
                         { new StorageDomainDynamic(random.nextInt(), Guid.NewGuid(), random.nextInt()) },
                         { new storage_pool(random.nextString(10),
                                 Guid.NewGuid(),

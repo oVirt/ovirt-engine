@@ -7,14 +7,13 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
-
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.api.restapi.model.StorageFormat;
 
 public class StorageDomainMapper {
 
@@ -27,10 +26,9 @@ public class StorageDomainMapper {
         if (model.isSetName()) {
             entity.setstorage_name(model.getName());
         }
-        // REVIST No descriptions for storage domains
-        // if (model.isSetDescription()) {
-        // entity.setdescription(model.getDescription());
-        // }
+        if (model.isSetDescription()) {
+            entity.setDescription(model.getDescription());
+        }
         if (model.isSetType()) {
             StorageDomainType storageDomainType = StorageDomainType.fromValue(model.getType());
             if (storageDomainType != null) {
@@ -113,8 +111,7 @@ public class StorageDomainMapper {
         StorageDomain model = template != null ? template : new StorageDomain();
         model.setId(entity.getId().toString());
         model.setName(entity.getstorage_name());
-        // REVIST No descriptions for storage domains
-        // model.setDescription(entity.getdescription());
+        model.setDescription(entity.getDescription());
         model.setType(map(entity.getstorage_domain_type(), null));
         model.setMaster(entity.getstorage_domain_type() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
         if (entity.getstatus() != null) {

@@ -57,13 +57,23 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<storage_domains> descriptionColumn = new TextColumnWithTooltip<storage_domains>() {
+            @Override
+            public String getValue(storage_domains object) {
+                return object.getDescription();
+            }
+        };
+        getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
+
+        getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<storage_domains> domainTypeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(storage_domains object) {
                 return object.getstorage_domain_type();
             }
         };
-        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "130px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_domains> storageTypeColumn = new EnumColumn<storage_domains, StorageType>() {
             @Override
@@ -79,7 +89,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 return object.getStorageFormat();
             }
         };
-        getTable().addColumn(formatColumn, constants.formatStorage(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(formatColumn, constants.formatStorage(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<storage_domains> crossDataCenterStatusColumn =
                 new TextColumnWithTooltip<storage_domains>() {
@@ -92,7 +102,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                         }
                     }
                 };
-        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "180px"); //$NON-NLS-1$
 
         DiskSizeColumn<storage_domains> freeSpaceColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
             @Override

@@ -17,15 +17,15 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -350,6 +350,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.setStorage(storage);
         model.getName().setEntity(storage.getstorage_name());
+        model.getDescription().setEntity(storage.getDescription());
         model.setOriginalName(storage.getstorage_name());
 
         model.getDataCenter().setIsChangable(false);
@@ -577,6 +578,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setHashName("import_pre-configured_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.getName().setIsAvailable(false);
+        model.getDescription().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
         ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
@@ -1143,6 +1145,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
         storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
@@ -1272,6 +1275,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
 
         storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew)
@@ -1460,6 +1464,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
 
         storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setDescription((String) model.getDescription().getEntity());
 
         if (isNew)
         {
@@ -1604,6 +1609,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 .getSelectedItem() : storageDomain.getStorageFormat());
 
         storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setDescription((String) model.getDescription().getEntity());
 
         if (isNew)
         {
