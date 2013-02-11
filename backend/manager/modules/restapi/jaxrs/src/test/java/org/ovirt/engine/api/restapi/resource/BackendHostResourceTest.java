@@ -53,6 +53,8 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.ver
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.verify;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.interfaces.SearchType;
 
 public class BackendHostResourceTest
         extends AbstractBackendSubResourceTest<Host, VDS, BackendHostResource> {
@@ -182,6 +184,44 @@ public class BackendHostResourceTest
         Host host = getModel(0);
         host.setCluster(cluster);
         verifyModel(resource.update(host), 0);
+    }
+
+    @Test
+    public void testUpdateWithClusterName() throws Exception {
+        String clusterName = "Default";
+        setUpGetEntityExpectations(2);
+        setUpGetEntityExpectations(
+                "Cluster: name=" + clusterName,
+                SearchType.Cluster,
+                getVdsGroup(clusterName, GUIDS[1]));
+        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
+                ChangeVDSClusterParameters.class,
+                new String[] { "ClusterId", "VdsId" },
+                new Object[] { GUIDS[1],  GUIDS[0]},
+                true,
+                true,
+                new VdcReturnValueBase(),
+                false));
+
+        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+                UpdateVdsActionParameters.class,
+                new String[] { "RootPassword" },
+                new Object[] { "" },
+                true,
+                true));
+
+        Cluster cluster = new Cluster();
+        cluster.setName(clusterName);
+        Host host = getModel(0);
+        host.setCluster(cluster);
+        verifyModel(resource.update(host), 0);
+    }
+
+    private VDSGroup getVdsGroup(String name, Guid id) {
+        VDSGroup vdsGroup = control.createMock(VDSGroup.class);
+        expect(vdsGroup.getId()).andReturn(id).anyTimes();
+        expect(vdsGroup.getname()).andReturn(name).anyTimes();
+        return vdsGroup;
     }
 
     @Test

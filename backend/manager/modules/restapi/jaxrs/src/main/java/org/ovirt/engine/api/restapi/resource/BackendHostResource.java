@@ -78,9 +78,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateEnums(Host.class, incoming);
         QueryIdResolver<Guid> hostResolver = new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, GetVdsByVdsIdParameters.class);
         VDS entity = getEntity(hostResolver, true);
-        if (incoming.isSetCluster() && incoming.getCluster().isSetId() && !asGuid(incoming.getCluster().getId()).equals(entity.getvds_group_id())) {
-            performAction(VdcActionType.ChangeVDSCluster,
-                          new ChangeVDSClusterParameters(asGuid(incoming.getCluster().getId()), guid));
+        if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
+            Guid clusterId = lookupClusterId(incoming);
+            if (!clusterId.equals(entity.getvds_group_id())) {
+                performAction(VdcActionType.ChangeVDSCluster,
+                          new ChangeVDSClusterParameters(clusterId, guid));
+            }
         }
         return performUpdate(incoming,
                              entity,
@@ -135,6 +138,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             host.getCluster().setId(lookupClusterByName(cluster.getName()).getId().toString());
         }
         return host;
+    }
+
+    protected Guid lookupClusterId(Host host) {
+        return host.getCluster().isSetId() ? asGuid(host.getCluster().getId())
+                                           :
+                                           lookupClusterByName(host.getCluster().getName()).getId();
     }
 
     protected VDSGroup lookupClusterByName(String name) {
