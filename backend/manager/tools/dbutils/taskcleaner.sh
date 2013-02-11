@@ -19,13 +19,14 @@
 
 pushd $(dirname ${0})>/dev/null
 
-#include db general functions
-source ./dbfunctions.sh
-source ./dbcustomfunctions.sh
-
 #setting defaults
-set_defaults
-
+ME=$(basename $0)
+SERVERNAME="localhost"
+PORT="5432"
+DATABASE="engine"
+USERNAME=""
+VERBOSE=false
+LOGFILE="$ME.log"
 
 usage() {
     printf "Usage: ${ME} [-h] [-s server] [-p PORT]] [-d DATABASE] [-u USERNAME] [-l LOGFILE]  [-t taskId] [-c commandId] [-z] [-R] [-C] [-J] [-q] [-v]\n"
@@ -102,6 +103,10 @@ caution() {
         fi
     fi
 }
+
+# Install taskcleaner procedures
+psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./taskcleaner_sp.sql ${DATABASE} > /dev/null
+
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o  "${CLEAR_ALL}" = "true" -o "${CLEAR_COMPENSATION}" = "true" -o "${CLEAR_JOB_STEPS}" = "true" ]; then #delete operations block
     if [ "${TASK_ID}" != "" ]; then
