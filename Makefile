@@ -243,6 +243,7 @@ create_dirs:
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
 	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
 	@install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
 	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
 	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
@@ -324,6 +325,10 @@ install_setup:
 
 	# Backups folder
 	install -dm 750 $(DESTDIR)$(ENGINE_STATE)/backups
+
+        # Task cleaner
+	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
+	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/taskcleaner
 
 install_aio_plugin:
 	install -m 755 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins

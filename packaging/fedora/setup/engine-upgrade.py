@@ -764,6 +764,7 @@ def zombieTasksFound():
     tasks, rc = utils.execCmd(cmdList=cmd,
                               failOnError=False,
                               msg="Can't get zombie async tasks",
+                              envDict=utils.getPgPassEnv(),
                              )
 
     if rc > 1:
@@ -791,6 +792,7 @@ def clearZombieTasks():
     out, rc = utils.execCmd(cmdList=cmd,
                   failOnError=False,
                   msg="Can't clear zombie tasks",
+                  envDict=utils.getPgPassEnv(),
                  )
 
     if rc > 1:

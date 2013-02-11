@@ -684,6 +684,9 @@ fi
 %{engine_data}/scripts/post_upgrade.py*
 %{engine_data}/scripts/add_fn_db_get_async_tasks_function.sql
 
+# Task Cleaner
+%{engine_data}/scripts/taskcleaner
+
 # Firewalld configuration
 %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
