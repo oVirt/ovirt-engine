@@ -71,4 +71,10 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         return getSucceeded() ? AuditLogType.NETWORK_REMOVE_VM_INTERFACE
                 : AuditLogType.NETWORK_REMOVE_VM_INTERFACE_FAILED;
     }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
+    }
 }

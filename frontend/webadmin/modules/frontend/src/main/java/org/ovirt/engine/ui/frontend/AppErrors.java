@@ -2196,6 +2196,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface does not exist.")
     String VM_INTERFACE_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The VM Network Interface is plugged to a running VM.")
+    String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_DEVICE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Enabling both Virt and Gluster services is not allowed.")
     String VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED();
 
