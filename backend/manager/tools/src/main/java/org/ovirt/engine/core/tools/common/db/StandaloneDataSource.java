@@ -16,7 +16,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.engineencryptutils.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
 
 public class StandaloneDataSource implements DataSource {
     // The log:

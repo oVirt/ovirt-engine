@@ -65,12 +65,6 @@
 
     <dependency>
       <groupId>${engine.groupId}</groupId>
-      <artifactId>engineencryptutils</artifactId>
-      <version>${engine.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${engine.groupId}</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
     </dependency>

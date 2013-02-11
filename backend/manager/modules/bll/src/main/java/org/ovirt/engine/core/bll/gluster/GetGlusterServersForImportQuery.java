@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
 import org.ovirt.engine.core.utils.XmlUtils;
+import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.w3c.dom.Element;

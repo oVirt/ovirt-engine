@@ -130,7 +130,7 @@
    </category>
 
    <!--Encrypt utils-->
-   <category name="org.ovirt.engine.engineencryptutils">
+   <category name="org.ovirt.engine.utils.crypt">
      <priority value="INFO"/>
    </category>
 

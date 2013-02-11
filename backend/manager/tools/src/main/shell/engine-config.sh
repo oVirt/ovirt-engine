@@ -99,8 +99,8 @@ apache-commons-lang \
 apache-commons-logging \
 log4j \
 ovirt-engine/compat \
-ovirt-engine/engineencryptutils \
 ovirt-engine/tools \
+ovirt-engine/utils \
 postgresql-jdbc \
 `
 

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.engineencryptutils;
+package org.ovirt.engine.core.utils.crypt;
 
 import static org.junit.Assert.assertEquals;
 

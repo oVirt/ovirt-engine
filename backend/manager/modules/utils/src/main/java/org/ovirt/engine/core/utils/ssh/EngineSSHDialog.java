@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
-import org.ovirt.engine.core.engineencryptutils.OpenSSHUtils;
+import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /**
  * SSH dialog to be used with engine defaults
