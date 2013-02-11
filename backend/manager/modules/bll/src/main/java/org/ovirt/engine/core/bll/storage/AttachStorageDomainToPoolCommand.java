@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.Arrays;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -106,11 +107,19 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                             return null;
                         }
                     });
+                    attemptToActivateDomain();
                     setSucceeded(true);
                 }
             }
         }
 
+    }
+
+    protected void attemptToActivateDomain() {
+        StorageDomainPoolParametersBase activateParameters = new StorageDomainPoolParametersBase(getStorageDomain().getId(),
+                getStoragePool().getId());
+        Backend.getInstance()
+                .runInternalAction(VdcActionType.ActivateStorageDomain, activateParameters);
     }
 
     @Override
