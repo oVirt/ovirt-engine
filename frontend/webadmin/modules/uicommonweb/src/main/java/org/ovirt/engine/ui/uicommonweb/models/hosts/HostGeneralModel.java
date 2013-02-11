@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.Constants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -243,6 +244,92 @@ public class HostGeneralModel extends EntityModel
     }
 
     // 2nd column in General tab
+
+    private Integer spmPriorityValue;
+    private Integer spmMaxPriorityValue;
+    private Integer spmDefaultPriorityValue;
+    private int spmLowPriorityValue;
+    private int spmHighPriorityValue;
+    private int spmNeverPriorityValue = -1;
+
+    public Integer getSpmPriorityValue() {
+        return spmPriorityValue;
+    }
+
+    public void setSpmPriorityValue(Integer spmPriorityValue) {
+        if (this.spmPriorityValue == null || !this.spmPriorityValue.equals(spmPriorityValue)) {
+            this.spmPriorityValue = spmPriorityValue;
+
+            if (spmMaxPriorityValue == null || spmDefaultPriorityValue == null) {
+                retrieveMaxSpmPriority();
+            }
+            else {
+                updateSpmPriority();
+            }
+        }
+    }
+
+    private void retrieveMaxSpmPriority() {
+        AsyncDataProvider.GetMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                spmMaxPriorityValue = (Integer) returnValue;
+                retrieveDefaultSpmPriority();
+            }
+        }));
+    }
+
+    private void retrieveDefaultSpmPriority() {
+        AsyncDataProvider.GetDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void OnSuccess(Object target, Object returnValue) {
+                spmDefaultPriorityValue = (Integer) returnValue;
+                updateSpmPriorityValues();
+                updateSpmPriority();
+            }
+        }));
+    }
+
+    private void updateSpmPriorityValues() {
+        spmLowPriorityValue = spmDefaultPriorityValue / 2;
+        spmHighPriorityValue = spmDefaultPriorityValue + (spmMaxPriorityValue - spmDefaultPriorityValue) / 2;
+    }
+
+    private void updateSpmPriority() {
+        Constants constants = ConstantsManager.getInstance().getConstants();
+        if (spmPriorityValue == null) {
+            setSpmPriority(null);
+        }
+        else if (spmPriorityValue == spmLowPriorityValue) {
+            setSpmPriority(constants.lowTitle());
+        }
+        else if (spmPriorityValue.equals(spmDefaultPriorityValue)) {
+            setSpmPriority(constants.mediumTitle());
+        }
+        else if (spmPriorityValue == spmHighPriorityValue) {
+            setSpmPriority(constants.highTitle());
+        }
+        else if (spmPriorityValue == spmNeverPriorityValue) {
+            setSpmPriority(constants.neverTitle());
+        }
+        else {
+            setSpmPriority(ConstantsManager.getInstance().getMessages().customSpmPriority(spmPriorityValue));
+        }
+    }
+
+    private String spmPriority;
+
+    public String getSpmPriority() {
+        return spmPriority;
+    }
+
+    public void setSpmPriority(String spmPriority) {
+        if (this.spmPriority == null || !this.spmPriority.equals(spmPriority)) {
+            this.spmPriority = spmPriority;
+            OnPropertyChanged(new PropertyChangedEventArgs("SpmPriority")); //$NON-NLS-1$
+        }
+    }
+
 
     private Integer activeVms;
 
@@ -891,6 +978,7 @@ public class HostGeneralModel extends EntityModel
         setSpiceVersion(vds.getspice_version());
         setIScsiInitiatorName(vds.getIScsiInitiatorName());
 
+        setSpmPriorityValue(vds.getVdsSpmPriority());
         setActiveVms(vds.getvm_active());
         setCpuName(vds.getCpuName() != null ? vds.getCpuName().getCpuName() : null);
         setCpuType(vds.getcpu_model());
