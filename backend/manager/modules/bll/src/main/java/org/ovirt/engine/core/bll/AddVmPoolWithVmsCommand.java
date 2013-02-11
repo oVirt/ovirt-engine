@@ -83,19 +83,14 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
-        VmPool vmPool = getParameters().getVmPool();
-        String vmPoolName;
-        if (vmPool != null) {
-            vmPoolName = vmPool.getVmPoolName();
-        } else {
-            vmPoolName = "";
-        }
+            VmPool vmPool = getParameters().getVmPool();
+            String vmPoolName = vmPool == null ? StringUtils.EMPTY : vmPool.getVmPoolName();
             jobProperties.put(VdcObjectType.VmPool.name().toLowerCase(), vmPoolName);
-        Guid vmTemplateId = getVmTemplateId();
-        String templateName = getVmTemplateName();
-        if (StringUtils.isEmpty(templateName)) {
-            templateName = vmTemplateId == null ? "" : vmTemplateId.toString();
-        }
+            Guid vmTemplateId = getVmTemplateId();
+            String templateName = getVmTemplateName();
+            if (StringUtils.isEmpty(templateName)) {
+                templateName = vmTemplateId == null ? StringUtils.EMPTY : vmTemplateId.toString();
+            }
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(), templateName);
         }
         return jobProperties;
