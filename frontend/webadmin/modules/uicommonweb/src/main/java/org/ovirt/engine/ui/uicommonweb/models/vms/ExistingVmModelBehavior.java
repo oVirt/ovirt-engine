@@ -112,7 +112,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // This method will be called even if a VM created from Blank template.
 
         // Update model state according to VM properties.
-        getModel().getName().setEntity(vm.getVmName());
+        getModel().getName().setEntity(vm.getName());
         getModel().getDescription().setEntity(vm.getVmDescription());
         getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());

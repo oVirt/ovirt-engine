@@ -42,7 +42,7 @@ public class CreateComputerAccountCommand<T extends CreateComputerAccountParamet
         boolean returnValue = true;
         final VmStatic vmStatic = DbFacade.getInstance().getVmStaticDao().get(getParameters().getVmId());
         if (vmStatic != null) {
-            setComputerName(vmStatic.getVmName());
+            setComputerName(vmStatic.getName());
             returnValue =
                     ((Boolean) LdapFactory
                             .getInstance(getParameters().getDomain())

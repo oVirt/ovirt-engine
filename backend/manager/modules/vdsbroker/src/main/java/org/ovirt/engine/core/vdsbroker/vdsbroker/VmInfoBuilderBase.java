@@ -40,7 +40,7 @@ public abstract class VmInfoBuilderBase {
 
     protected void buildVmProperties() {
         createInfo.add(VdsProperties.vm_guid, vm.getId().toString());
-        createInfo.add(VdsProperties.vm_name, vm.getVmName());
+        createInfo.add(VdsProperties.vm_name, vm.getName());
         createInfo.add(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
         createInfo.add(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
         createInfo.add(VdsProperties.num_of_cpus,

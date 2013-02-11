@@ -51,7 +51,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());

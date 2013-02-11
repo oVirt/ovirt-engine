@@ -137,7 +137,7 @@ public class TemplateMapper {
     public static VmStatic map(Template model, VmStatic incoming) {
         VmStatic staticVm = incoming != null ? incoming : new VmStatic();
         if (model.isSetName()) {
-            staticVm.setVmName(model.getName());
+            staticVm.setName(model.getName());
         }
         if (model.isSetId()) {
             staticVm.setId(new Guid(model.getId()));

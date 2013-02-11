@@ -36,7 +36,7 @@ public class VmEventListModel extends SubTabEventListModel
     }
 
     protected void preSearchCalled(VM vm) {
-        setSearchString("events: vm.name=" + vm.getVmName()); //$NON-NLS-1$
+        setSearchString("events: vm.name=" + vm.getName()); //$NON-NLS-1$
     }
 
     @Override

@@ -86,7 +86,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         super(parameters);
         // if we came from EndAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
-        setVmName(parameters.getVm().getVmName());
+        setVmName(parameters.getVm().getName());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
         if (parameters.getVmStaticData() != null) {
@@ -153,7 +153,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean canAddVm(ArrayList<String> reasons, Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getVmName(), getStoragePoolId()
+        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getPriority());
 
         if (returnValue) {
@@ -294,7 +294,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             returnValue = canDoAddVmCommand();
         }
 
-        String vmName = getParameters().getVm().getVmName();
+        String vmName = getParameters().getVm().getName();
         if (vmName == null || vmName.isEmpty()) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
@@ -754,8 +754,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
-            return Collections.singletonMap(getParameters().getVm().getVmName(), LockMessagesMatchUtil.VM_NAME);
+        if (!StringUtils.isBlank(getParameters().getVm().getName())) {
+            return Collections.singletonMap(getParameters().getVm().getName(), LockMessagesMatchUtil.VM_NAME);
         }
         return null;
     }

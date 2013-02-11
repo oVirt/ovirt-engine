@@ -101,7 +101,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    return object.getSecond().getVmName();
+                    return object.getSecond().getName();
                 }
             };
     private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> clusterColumn =

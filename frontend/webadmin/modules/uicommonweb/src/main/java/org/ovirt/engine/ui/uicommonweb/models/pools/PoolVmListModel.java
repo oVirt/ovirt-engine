@@ -100,7 +100,7 @@ public class PoolVmListModel extends VmListModel
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            list.add(a.getVmName());
+            list.add(a.getName());
         }
         Collections.sort(list);
         model.setItems(list);

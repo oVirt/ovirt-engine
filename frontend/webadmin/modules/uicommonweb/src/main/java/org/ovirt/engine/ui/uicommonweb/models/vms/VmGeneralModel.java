@@ -587,7 +587,7 @@ public class VmGeneralModel extends EntityModel
     {
         VM vm = (VM) getEntity();
 
-        setName(vm.getVmName());
+        setName(vm.getName());
         setDescription(vm.getVmDescription());
         setQuotaName(vm.getQuotaName() != null ? vm.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(vm.getQuotaEnforcementType() != null

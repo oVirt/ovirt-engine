@@ -92,7 +92,7 @@ public class VncConsoleModel extends ConsoleModel
     protected void postGetHost(String hostName) {
         VncInfoModel infoModel = new VncInfoModel();
 
-        infoModel.setTitle("VNC - " + getEntity().getVmName()); //$NON-NLS-1$
+        infoModel.setTitle("VNC - " + getEntity().getName()); //$NON-NLS-1$
         infoModel.getVncMessage().setEntity(ConstantsManager.getInstance()
                 .getMessages()
                 .vncInfoMessage(hostName,

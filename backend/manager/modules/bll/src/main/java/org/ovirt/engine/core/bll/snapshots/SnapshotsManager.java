@@ -240,7 +240,7 @@ public class SnapshotsManager {
 
         vm.setAppList(snapshot.getAppList());
         getVmDynamicDao().update(vm.getDynamicData());
-        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getVmName());
+        synchronizeDisksFromSnapshot(vm.getId(), snapshot.getId(), activeSnapshotId, vm.getImages(), vm.getName());
 
         if (vmUpdatedFromConfiguration) {
             getVmStaticDao().update(vm.getStaticData());

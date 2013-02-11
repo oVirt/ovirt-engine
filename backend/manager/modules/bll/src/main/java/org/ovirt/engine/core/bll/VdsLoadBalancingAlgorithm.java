@@ -188,7 +188,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                      */
                     currentList.remove(destinationVdsId);
                     log.infoFormat("VdsLoadBalancer: Desktop {0} migrated from overutilized server {1} to server {2}",
-                            vm.getVmName(), vds.getVdsName(), destinationVds.getVdsName());
+                            vm.getName(), vds.getVdsName(), destinationVds.getVdsName());
 
                 }
             } else {
@@ -259,7 +259,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",
-                                vm.getVmName(), vds.getVdsName(), destinationVds.getVdsName());
+                                vm.getName(), vds.getVdsName(), destinationVds.getVdsName());
                         processed.add(destinationVdsId);
                     }
                 } else {

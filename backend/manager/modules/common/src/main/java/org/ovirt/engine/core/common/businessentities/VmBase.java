@@ -22,8 +22,11 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
+public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1078548170257965614L;
+
+    private String name = "";
+
     private ArrayList<DiskImage> images;
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private List<VmNetworkInterface> interfaces;
@@ -132,7 +135,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     private String quotaName;
 
     /** Transient field for GUI presentation purposes. */
-    private boolean isQuotaDefault;
+    private boolean quotaDefault;
 
     /** Transient field for GUI presentation purposes. */
     private QuotaEnforcementTypeEnum quotaEnforcementType;
@@ -739,11 +742,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public boolean isQuotaDefault() {
-        return isQuotaDefault;
+        return quotaDefault;
     }
 
     public void setQuotaDefault(boolean isQuotaDefault) {
-        this.isQuotaDefault = isQuotaDefault;
+        this.quotaDefault = isQuotaDefault;
     }
 
     public QuotaEnforcementTypeEnum getQuotaEnforcementType() {
@@ -793,4 +796,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid> {
     public void setTunnelMigration(Boolean value) {
         tunnelMigration = value;
     }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String value) {
+        this.name = value;
+    }
+
 }

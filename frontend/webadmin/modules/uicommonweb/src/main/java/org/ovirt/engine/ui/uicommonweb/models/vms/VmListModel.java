@@ -894,7 +894,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             VM vm = (VM) selectedItem;
             EntityModel removeDisksCheckbox = new EntityModel(true);
             removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
-            removeDisksCheckbox.setMessage(vm.getVmName());
+            removeDisksCheckbox.setMessage(vm.getName());
             if (!NGuid.Empty.equals(vm.getVmtGuid())) {
                 updateRemoveDisksCheckBox(removeDisksCheckbox, true, false, ConstantsManager.getInstance()
                         .getConstants()
@@ -1102,7 +1102,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     @Override
     protected String extractNameFromEntity(VM entity) {
-        return entity.getVmName();
+        return entity.getName();
     }
 
     @Override
@@ -1178,7 +1178,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     {
                                         templateDic.put(vm.getVmtName(), new ArrayList<String>());
                                     }
-                                    templateDic.get(vm.getVmtName()).add(vm.getVmName());
+                                    templateDic.get(vm.getVmtName()).add(vm.getName());
                                 }
                             }
 
@@ -2082,7 +2082,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            items.add(a.getVmName());
+            items.add(a.getName());
         }
         model.setItems(items);
 
@@ -2141,7 +2141,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            items.add(a.getVmName());
+            items.add(a.getName());
         }
         model.setItems(items);
 
@@ -2364,7 +2364,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             @Override
             public void OnSuccess(Object target, Object returnValue) {
-                if (!(Boolean) returnValue && name.compareToIgnoreCase(getcurrentVm().getVmName()) != 0) {
+                if (!(Boolean) returnValue && name.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
                     model.getName()
                             .getInvalidityReasons()
                             .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
@@ -2394,7 +2394,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getcurrentVm().setVmType(model.getVmType());
         getcurrentVm().setVmtGuid(template.getId());
-        getcurrentVm().setVmName(name);
+        getcurrentVm().setName(name);
         if (model.getQuota().getSelectedItem() != null) {
             getcurrentVm().setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }

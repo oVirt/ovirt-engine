@@ -197,7 +197,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("os", vm.getOs())
                 .addValue("vds_group_id", vm.getVdsGroupId())
                 .addValue("vm_guid", vm.getId())
-                .addValue("vm_name", vm.getVmName())
+                .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
                 .addValue("num_of_monitors", vm.getNumOfMonitors())
                 .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
@@ -283,7 +283,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
 
             VM entity = new VM();
             entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
-            entity.setVmName(rs.getString("vm_name"));
+            entity.setName(rs.getString("vm_name"));
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));

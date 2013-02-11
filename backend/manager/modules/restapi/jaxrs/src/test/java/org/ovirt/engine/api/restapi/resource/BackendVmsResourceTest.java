@@ -503,7 +503,7 @@ public class BackendVmsResourceTest
         expect(vmConfiguration.getDiskMap()).andReturn(diskImageMap).anyTimes();
         VmStatic vmStatic = new VmStatic();
         vmStatic.setId(GUIDS[0]);
-        vmStatic.setVmName(NAMES[0]);
+        vmStatic.setName(NAMES[0]);
         expect(vmConfiguration.getStaticData()).andReturn(vmStatic).anyTimes();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
@@ -884,7 +884,7 @@ public class BackendVmsResourceTest
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getVmName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getVmDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
         expect(entity.getNumOfSockets()).andReturn(2).anyTimes();

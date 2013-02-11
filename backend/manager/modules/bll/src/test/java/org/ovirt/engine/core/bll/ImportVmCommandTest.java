@@ -87,7 +87,7 @@ public class ImportVmCommandTest {
 
     protected ImportVmParameters createParameters() {
         final VM v = createVM();
-        v.setVmName("testVm");
+        v.setName("testVm");
         return new ImportVmParameters(v, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
     }
 
@@ -154,7 +154,7 @@ public class ImportVmCommandTest {
 
     private void checkVmName(boolean isImportAsNewEntity, String name) {
         ImportVmParameters parameters = createParameters();
-        parameters.getVm().setVmName(name);
+        parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmCommand command = new ImportVmCommand(parameters);
         Set<ConstraintViolation<ImportVmParameters>> validate =

@@ -40,7 +40,7 @@ public class VmPoolMapper {
     @Mapping(from = VmPool.class, to = VM.class)
     public static VM map(VmPool model, VM template) {
         VM entity = template != null ? template : new VM();
-        entity.setVmName(model.getName());
+        entity.setName(model.getName());
         entity.setVmDescription(model.getDescription());
         if (model.isSetTemplate() &&
             model.getTemplate().isSetId()) {

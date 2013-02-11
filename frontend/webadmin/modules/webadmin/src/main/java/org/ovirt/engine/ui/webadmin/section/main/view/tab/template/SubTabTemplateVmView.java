@@ -33,7 +33,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());

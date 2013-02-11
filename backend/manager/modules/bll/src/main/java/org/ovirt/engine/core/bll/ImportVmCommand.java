@@ -110,8 +110,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
-            return Collections.singletonMap(getParameters().getVm().getVmName(), LockMessagesMatchUtil.VM_NAME);
+        if (!StringUtils.isBlank(getParameters().getVm().getName())) {
+            return Collections.singletonMap(getParameters().getVm().getName(), LockMessagesMatchUtil.VM_NAME);
         }
         return null;
     }
@@ -160,7 +160,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         Guid guid = Guid.NewGuid();
         getVm().setId(guid);
         setVmId(guid);
-        getVm().setVmName(getParameters().getVm().getVmName());
+        getVm().setName(getParameters().getVm().getName());
         getVm().setStoragePoolId(getParameters().getStoragePoolId());
         getParameters().setVm(getVm());
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
@@ -371,7 +371,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
         if (duplicateVm != null) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getVmName()));
+            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getName()));
             return false;
         }
         return true;
@@ -513,7 +513,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         // Checking if a desktop with same name already exists
         boolean exists = (Boolean) getBackend()
                 .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                        new IsVmWithSameNameExistParameters(getVm().getVmName())).getReturnValue();
+                        new IsVmWithSameNameExistParameters(getVm().getName())).getReturnValue();
 
         if (exists) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
@@ -905,7 +905,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
-        String vmName = vmStaticFromOvf.getVmName();
+        String vmName = vmStaticFromOvf.getName();
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("FieldName", fieldName);
         logable.addCustomValue("VmName", vmName);
@@ -942,7 +942,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
-        iface.setVmName(getVm().getVmName());
+        iface.setName(getVm().getName());
     }
 
     private void addVmDynamic() {

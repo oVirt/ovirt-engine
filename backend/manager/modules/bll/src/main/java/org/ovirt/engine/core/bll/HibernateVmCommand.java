@@ -310,7 +310,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
                 log.warnFormat(
                         "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'SavingState'/'Up' status, but in '{1}' status - not performing Hibernate.",
-                        getVm().getVmName(),
+                        getVm().getName(),
                         getVm().getStatus());
                 getReturnValue().setEndActionTryAgain(false);
             }
@@ -318,7 +318,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             else if (getVm().getRunOnVds() == null) {
                 log.warnFormat(
                         "HibernateVmCommand::EndSuccessfully: Vm '{0}' doesn't have 'run_on_vds' value - cannot Hibernate.",
-                        getVm().getVmName());
+                        getVm().getName());
                 getReturnValue().setEndActionTryAgain(false);
             }
 
@@ -338,7 +338,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     }
                     setSucceeded(true);
                 } else {
-                    log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getVmName());
+                    log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getName());
                     endWithFailure();
                 }
             }
@@ -372,7 +372,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             else {
                 log.warnFormat(
                         "HibernateVmCommand::endWithFailure: Vm '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
-                        getVm().getVmName());
+                        getVm().getName());
 
                 getReturnValue().setEndActionTryAgain(false);
             }

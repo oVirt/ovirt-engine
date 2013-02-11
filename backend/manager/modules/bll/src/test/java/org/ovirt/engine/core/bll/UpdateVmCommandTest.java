@@ -102,7 +102,7 @@ public class UpdateVmCommandTest {
 
     @Test
     public void testLongName() {
-        vmStatic.setVmName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
+        vmStatic.setName("this_should_be_very_long_vm_name_so_it will_fail_can_do_action_validation");
         assertFalse("canDoAction should fail for too long vm name.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
     }
@@ -126,7 +126,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testNameNotChanged() {
         prepareVmToPassCanDoAction();
-        vm.setVmName("vm1");
+        vm.setName("vm1");
         mockSameNameQuery(true);
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
@@ -216,7 +216,7 @@ public class UpdateVmCommandTest {
     }
 
     private void prepareVmToPassCanDoAction() {
-        vmStatic.setVmName("vm1");
+        vmStatic.setName("vm1");
         vmStatic.setMemSizeMb(256);
         mockVmDaoGetVm();
         mockSameNameQuery(false);

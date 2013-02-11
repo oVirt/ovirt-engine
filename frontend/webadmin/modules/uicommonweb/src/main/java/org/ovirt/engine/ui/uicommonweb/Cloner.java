@@ -182,7 +182,7 @@ public final class Cloner
         vm.setVmIp(instance.getVmIp());
         vm.setLastStartTime(instance.getLastStartTime());
         vm.setVmMemSizeMb(instance.getVmMemSizeMb());
-        vm.setVmName(instance.getVmName());
+        vm.setName(instance.getName());
         vm.setVmOs(instance.getVmOs());
         vm.setVmPid(instance.getVmPid());
         vm.setVmType(instance.getVmType());
@@ -416,7 +416,7 @@ public final class Cloner
         obj.setUsbPolicy(instance.getUsbPolicy());
         obj.setVdsGroupId(instance.getVdsGroupId());
         obj.setId(instance.getId());
-        obj.setVmName(instance.getVmName());
+        obj.setName(instance.getName());
         obj.setVmtGuid(instance.getVmtGuid());
 
         return obj;

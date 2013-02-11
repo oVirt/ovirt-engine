@@ -95,7 +95,7 @@ public class VmBackupModel extends ManageBackupModel {
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
-            items.add(vm.getVmName());
+            items.add(vm.getName());
         }
         model.setItems(items);
 
@@ -281,16 +281,16 @@ public class VmBackupModel extends ManageBackupModel {
     protected void setObjectName(Object object, String name, boolean isSuffix) {
         VM vm = ((ImportVmData) object).getVm();
         if (isSuffix) {
-            vm.setVmName(vm.getVmName() + name);
+            vm.setName(vm.getName() + name);
         } else {
-            vm.setVmName(name);
+            vm.setName(name);
         }
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsToClone) {
             VM vm = ((ImportVmData) object).getVm();
-            if (!validateName(vm.getVmName() + suffix, object, entityModel)) {
+            if (!validateName(vm.getName() + suffix, object, entityModel)) {
                 return false;
             }
         }
@@ -374,7 +374,7 @@ public class VmBackupModel extends ManageBackupModel {
                 }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setVmName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getVmName());
+                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
             }
 
             prms.add(prm);
@@ -406,7 +406,7 @@ public class VmBackupModel extends ManageBackupModel {
                                 VM vm = (VM) item;
                                 if (retVals.get(counter) != null
                                         && retVals.get(counter).getCanDoAction()) {
-                                    importedVms += vm.getVmName() + ", "; //$NON-NLS-1$
+                                    importedVms += vm.getName() + ", "; //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;

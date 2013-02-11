@@ -412,10 +412,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                                     VDSCommandType.DestroyVm,
                                     new DestroyVmVDSCommandParameters(new Guid(vm.getmigrating_to_vds().toString()), vm
                                             .getId(), true, false, 0));
-                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getVmName(), vm.getmigrating_to_vds());
+                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getmigrating_to_vds());
                 }
             } catch (RuntimeException ex) {
-                log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getVmName(),
+                log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vm.getName(),
                         vm.getmigrating_to_vds(), ex.getMessage());
                 // intentionally ignored
             }
@@ -438,7 +438,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 LogSettingVmToDown(getVds().getId(), vm.getId());
             }
             setVmId(vm.getId());
-            setVmName(vm.getVmName());
+            setVmName(vm.getName());
             setVm(vm);
             VmPoolHandler.ProcessVmPoolOnStopVm(vm.getId(),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));

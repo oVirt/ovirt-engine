@@ -479,7 +479,7 @@ public class PoolListModel extends ListWithDetailsModel
 
                         VM desktop = new VM();
                         desktop.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
-                        desktop.setVmName(name);
+                        desktop.setName(name);
                         desktop.setVmOs((VmOsType) model.getOSType().getSelectedItem());
                         desktop.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
                         desktop.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());

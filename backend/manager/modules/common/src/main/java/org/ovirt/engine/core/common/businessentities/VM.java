@@ -91,12 +91,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmStatistics.setId(value);
     }
 
-    public String getVmName() {
-        return this.vmStatic.getVmName();
-    }
-
-    public void setVmName(String value) {
-        this.vmStatic.setVmName(value);
+    public void setName(String value) {
+        this.vmStatic.setName(value);
     }
 
     public int getMemSizeMb() {
@@ -404,7 +400,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
             // If no IP address is available - assure that 'vm_host' is FQN by concatenating
             // vmHost and vmDomain.
             if (StringHelper.isNullOrEmpty(vmHost)) {
-                vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getVmName() : getVmName() + "." + vmDomain;
+                vmHost = StringHelper.isNullOrEmpty(vmDomain) ? getName() : getName() + "." + vmDomain;
                 this.vmDynamic.setvm_host(vmHost);
             } else if (!StringHelper.isNullOrEmpty(vmDomain) && !vmHost.endsWith(vmDomain)) {
                 this.vmDynamic.setvm_host(vmHost + "." + vmDomain);
@@ -1393,7 +1389,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     @Override
     public String getName() {
-        return getVmName();
+        return this.vmStatic.getName();
     }
 
     @Override

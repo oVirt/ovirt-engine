@@ -40,7 +40,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     protected void executeVmCommand() {
         addCustomValue("InterfaceType",
                 (VmInterfaceType.forValue(getInterface().getType()).getDescription()).toString());
-        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getVmName());
+        this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getName());
 
         boolean succeeded = false;
         boolean macAddedToPool = false;

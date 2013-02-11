@@ -74,7 +74,7 @@ public final class Linq
         {
             if (obj instanceof VM)
             {
-                return ((VM) obj).getVmName();
+                return ((VM) obj).getName();
             }
             if (obj instanceof VmPool)
             {

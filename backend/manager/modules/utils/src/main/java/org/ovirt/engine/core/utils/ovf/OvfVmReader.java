@@ -142,8 +142,8 @@ public class OvfVmReader extends OvfReader {
         // General Vm
         XmlNode node = content.SelectSingleNode("Name");
         if (node != null) {
-            _vm.getStaticData().setVmName(node.InnerText);
-            name = _vm.getStaticData().getVmName();
+            _vm.getStaticData().setName(node.InnerText);
+            name = _vm.getStaticData().getName();
         }
         node = content.SelectSingleNode("TemplateId");
         if (node != null) {

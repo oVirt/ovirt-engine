@@ -107,7 +107,7 @@ public class VmMapper {
     public static VmStatic map(VM vm, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
         if (vm.isSetName()) {
-            staticVm.setVmName(vm.getName());
+            staticVm.setName(vm.getName());
         }
         if (vm.isSetId()) {
             staticVm.setId(new Guid(vm.getId()));
@@ -280,7 +280,7 @@ public class VmMapper {
     public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
         VM model = template != null ? template : new VM();
         model.setId(entity.getId().toString());
-        model.setName(entity.getVmName());
+        model.setName(entity.getName());
         model.setDescription(entity.getVmDescription());
         model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
         if (entity.getVmtGuid() != null) {

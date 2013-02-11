@@ -154,7 +154,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             log.info("VdsLoadBalancer: vm selection - no vm without pending found.");
             result = Collections.min(vms, new VmCpuUsageComparator());
         }
-        log.infoFormat("VdsLoadBalancer: vm selection - selected vm: {0}, cpu: {1}.", result.getVmName(),
+        log.infoFormat("VdsLoadBalancer: vm selection - selected vm: {0}, cpu: {1}.", result.getName(),
                 result.getUsageCpuPercent());
         return result;
     }

@@ -34,7 +34,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());

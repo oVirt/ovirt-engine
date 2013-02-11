@@ -154,7 +154,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                     for (VM vm : vms) {
                         if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
-                            nonMigratableVmDescriptionsToFrontEnd.add(vm.getVmName());
+                            nonMigratableVmDescriptionsToFrontEnd.add(vm.getName());
                         }
                     }
 

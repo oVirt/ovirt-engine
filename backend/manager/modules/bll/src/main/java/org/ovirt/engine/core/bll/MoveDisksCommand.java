@@ -109,7 +109,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                         vmsLiveMigrateParametersMap);
             }
             else {
-                addCanDoActionMessage(String.format("$%1$s %2$s", "VmName", vm.getVmName()));
+                addCanDoActionMessage(String.format("$%1$s %2$s", "VmName", vm.getName()));
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
             }
         }

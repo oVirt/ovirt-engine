@@ -56,7 +56,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$

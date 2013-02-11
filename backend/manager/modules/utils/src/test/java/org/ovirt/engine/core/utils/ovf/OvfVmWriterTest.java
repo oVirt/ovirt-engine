@@ -90,7 +90,7 @@ public class OvfVmWriterTest {
 
     private static VM createVM() {
         VM vm = new VM();
-        vm.setVmName("test-vm");
+        vm.setName("test-vm");
         vm.setOrigin(OriginType.OVIRT);
         vm.setId(new Guid());
         vm.setVmDescription("test-description");

@@ -22,19 +22,12 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class VmTemplate extends VmBase implements Nameable {
+public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -522552511046744989L;
 
     private List<VmNetworkInterface> _Interfaces = new ArrayList<VmNetworkInterface>();
 
     private int childCount;
-
-    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
-            message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
-            groups = { Default.class, ImportClonedEntity.class })
-    @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
-            UpdateEntity.class, ImportClonedEntity.class })
-    private String name;
 
     private VmTemplateStatus status = VmTemplateStatus.OK;
 
@@ -101,7 +94,7 @@ public class VmTemplate extends VmBase implements Nameable {
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 
         this.childCount = child_count;
-        this.name = name;
+        setName(name);
         this.setNumOfMonitors(num_of_monitors);
         this.setstatus(VmTemplateStatus.forValue(status));
     }
@@ -116,11 +109,11 @@ public class VmTemplate extends VmBase implements Nameable {
 
     @JsonProperty
     public String getname() {
-        return this.name;
+        return super.getName();
     }
 
     public void setname(String value) {
-        this.name = value;
+        setName(value);
     }
 
     public VmTemplateStatus getstatus() {
@@ -239,8 +232,13 @@ public class VmTemplate extends VmBase implements Nameable {
 
     @JsonIgnore
     @Override
+    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
+            message = "VALIDATION.VM_TEMPLATE.NAME.MAX",
+            groups = { Default.class, ImportClonedEntity.class })
+    @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS", groups = { CreateEntity.class,
+            UpdateEntity.class, ImportClonedEntity.class })
     public String getName() {
-        return getname();
+        return super.getName();
     }
 
     public boolean isDisabled() {

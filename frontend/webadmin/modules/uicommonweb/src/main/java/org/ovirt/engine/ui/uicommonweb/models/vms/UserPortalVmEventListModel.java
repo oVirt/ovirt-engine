@@ -14,7 +14,7 @@ public class UserPortalVmEventListModel extends VmEventListModel {
 
         VM vm = (VM) getEntity();
 
-        super.SyncSearch(VdcQueryType.GetAllAuditLogsByVMName, new GetAllAuditLogsByVMNameParameters(vm.getVmName()));
+        super.SyncSearch(VdcQueryType.GetAllAuditLogsByVMName, new GetAllAuditLogsByVMNameParameters(vm.getName()));
     }
 
     @Override

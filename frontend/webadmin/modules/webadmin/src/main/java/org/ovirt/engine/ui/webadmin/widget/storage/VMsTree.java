@@ -48,7 +48,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getVmName(), ""); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), vm.getName(), ""); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), String.valueOf(vm.getDiskMap().size()), "80px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), vm.getVmtName(), "160px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), vm.getDiskSize(), "110px"); //$NON-NLS-1$

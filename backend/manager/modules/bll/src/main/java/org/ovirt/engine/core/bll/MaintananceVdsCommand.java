@@ -111,8 +111,8 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                                 createMigrateVmContext(parentContext, vm));
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
-                    appendCustomValue("failedVms", vm.getVmName(), ",");
-                    log.errorFormat("ResourceManager::vdsMaintenance - Failed migrating desktop '{0}'", vm.getVmName());
+                    appendCustomValue("failedVms", vm.getName(), ",");
+                    log.errorFormat("ResourceManager::vdsMaintenance - Failed migrating desktop '{0}'", vm.getName());
                 }
             }
         }
@@ -123,7 +123,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
         ExecutionContext ctx = new ExecutionContext();
         try {
             Map<String, String> values = new HashMap<String, String>();
-            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getVmName());
+            values.put(VdcObjectType.VM.name().toLowerCase(), vm.getName());
             values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getRunOnVdsName());
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),
                     parentContext.getJob().getStep(StepEnum.EXECUTING),

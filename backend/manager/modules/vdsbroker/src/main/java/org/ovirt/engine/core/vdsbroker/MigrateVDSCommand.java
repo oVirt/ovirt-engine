@@ -89,7 +89,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                             vds.getVdsName(),
                             vds.getPendingVcpusCount(),
                             vds.getPendingVmemSize(),
-                            vm.getVmName());
+                            vm.getName());
                 }
                 vdsManager.UpdateDynamicData(vds.getDynamicData());
             } catch (RuntimeException ex) {

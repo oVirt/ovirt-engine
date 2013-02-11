@@ -98,7 +98,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         VmTemplateHandler.lockVmTemplateInTransaction(getParameters().getVmStaticData().getVmtGuid(),
                 getCompensationContext());
 
-        String vmName = getParameters().getVmStaticData().getVmName();
+        String vmName = getParameters().getVmStaticData().getName();
         int subsequentFailedAttempts = 0;
         int vmPoolMaxSubsequentFailures = Config.<Integer> GetValue(ConfigValues.VmPoolMaxSubsequentFailures);
         for (int i = 1, number = 1; i <= getParameters().getVmsCount(); i++, number++) {
@@ -113,7 +113,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                             new IsVmWithSameNameExistParameters(currentVmName)).getReturnValue());
 
             VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
-            currVm.setVmName(currentVmName);
+            currVm.setName(currentVmName);
             AddVmAndAttachToPoolParameters addVmAndAttachToPoolParams =
                     new AddVmAndAttachToPoolParameters(currVm, poolId, currentVmName,
                             diskInfoDestinationMap);

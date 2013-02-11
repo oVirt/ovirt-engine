@@ -1355,10 +1355,10 @@ public class VdsUpdateRunTimeInfo {
                                     0));
                     destroyCmd.execute();
                     if (destroyCmd.getVDSReturnValue().getSucceeded()) {
-                        log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getVmName(),
+                        log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getName(),
                                 curVm.getmigrating_to_vds());
                     } else {
-                        log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", curVm.getVmName(),
+                        log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", curVm.getName(),
                                 curVm.getmigrating_to_vds(), destroyCmd.getVDSReturnValue().getExceptionString());
                     }
                 }
@@ -1503,7 +1503,7 @@ public class VdsUpdateRunTimeInfo {
     private static void logVmStatusTransition(VM vmToUpdate, VmDynamic runningVm) {
         if (vmToUpdate.getStatus() != runningVm.getstatus()) {
             log.infoFormat("VM {0} {1} moved from {2} --> {3}",
-                    vmToUpdate.getVmName(),
+                    vmToUpdate.getName(),
                     vmToUpdate.getId(),
                     vmToUpdate.getStatus().name(),
                     runningVm.getstatus().name());
@@ -1523,7 +1523,7 @@ public class VdsUpdateRunTimeInfo {
             if (vmToRemove.getStatus() == VMStatus.MigratingFrom) {
                 isInMigration = true;
                 vmToRemove.setRunOnVds(vmToRemove.getmigrating_to_vds());
-                log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getVmName(), vmToRemove.getId());
+                log.infoFormat("Setting VM {0} {1} to status unknown", vmToRemove.getName(), vmToRemove.getId());
                 ResourceManager.getInstance().InternalSetVmStatus(vmToRemove, VMStatus.Unknown);
                 addVmDynamicToList(vmToRemove.getDynamicData());
                 addVmStatisticsToList(vmToRemove.getStatisticsData());
@@ -1532,10 +1532,10 @@ public class VdsUpdateRunTimeInfo {
                 clearVm(vmToRemove,
                         VmExitStatus.Error,
                         String.format("Could not find VM %s on host, assuming it went down unexpectedly",
-                                vmToRemove.getVmName()));
+                                vmToRemove.getName()));
             }
             log.infoFormat("vm {0} running in db and not running in vds - add to rerun treatment. vds {1}",
-                    vmToRemove.getVmName(), _vds.getVdsName());
+                    vmToRemove.getName(), _vds.getVdsName());
 
             vmGuid = vmToRemove.getId();
             if (!isInMigration && !_vmsToRerun.contains(vmGuid)

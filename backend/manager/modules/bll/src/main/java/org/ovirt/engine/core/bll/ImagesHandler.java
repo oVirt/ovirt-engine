@@ -119,7 +119,7 @@ public final class ImagesHandler {
     }
 
     private static String nullSafeGetVmName(VM vm) {
-        return vm == null ? "" : vm.getVmName();
+        return vm == null ? "" : vm.getName();
     }
 
     private static int nullSafeGetCount(VM vm) {

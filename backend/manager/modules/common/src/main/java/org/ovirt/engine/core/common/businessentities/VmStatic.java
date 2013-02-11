@@ -13,11 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatic extends VmBase {
     private static final long serialVersionUID = -2753306386502558044L;
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_NAME_SIZE, groups = { Default.class, ImportClonedEntity.class })
-    @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
-            groups = { CreateEntity.class, UpdateEntity.class, ImportClonedEntity.class })
-    private String name = "";
-
     private Guid vmtGuid = new Guid();
 
     private boolean initialized;
@@ -86,7 +81,7 @@ public class VmStatic extends VmBase {
                 vmStatic.isDeleteProtected(),
                 vmStatic.getTunnelMigration(),
                 vmStatic.getVncKeyboardLayout());
-        name = vmStatic.getVmName();
+        setName(vmStatic.getName());
         vmtGuid = vmStatic.getVmtGuid();
         setCustomProperties(vmStatic.getCustomProperties());
         setNumOfMonitors(vmStatic.getNumOfMonitors());
@@ -133,12 +128,11 @@ public class VmStatic extends VmBase {
         return !isInitialized();
     }
 
-    public String getVmName() {
-        return this.name;
-    }
-
-    public void setVmName(String value) {
-        this.name = value;
+    @Size(min = 1, max = BusinessEntitiesDefinitions.VM_NAME_SIZE, groups = { Default.class, ImportClonedEntity.class })
+    @ValidI18NName(message = "ACTION_TYPE_FAILED_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
+            groups = { CreateEntity.class, UpdateEntity.class, ImportClonedEntity.class })
+    public String getName() {
+        return super.getName();
     }
 
     public Guid getVmtGuid() {
@@ -188,7 +182,7 @@ public class VmStatic extends VmBase {
         result = prime * result + ((defaultDisplayType == null) ? 0 : defaultDisplayType.hashCode());
         result = prime * result + (initialized ? 1231 : 1237);
         result = prime * result + diskSize;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
@@ -217,11 +211,11 @@ public class VmStatic extends VmBase {
         if (diskSize != other.diskSize) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
+        if (getName() == null) {
+            if (other.getName() != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!getName().equals(other.getName())) {
             return false;
         }
         if (predefinedProperties == null) {

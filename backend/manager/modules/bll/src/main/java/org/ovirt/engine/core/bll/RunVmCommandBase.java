@@ -112,7 +112,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     "High threshold is {4}%. Host is {5}suitable in terms of CPU.",
                     vds.getVdsName(),
                     vds.getUsageCpuPercent(),
-                    vm.getVmName(),
+                    vm.getName(),
                     predictedVmCpu,
                     vds.getHighUtilization(),
                     (result ? "" : "not "));
@@ -396,7 +396,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vcpu count failed, its already 0 or null",
-                        vds.getVdsName(), getVm().getVmName());
+                        vds.getVdsName(), getVm().getName());
             }
             // VMEM
             if (vds.getPendingVmemSize() > 0) {
@@ -416,7 +416,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vmem size failed, its already 0 or null",
-                        vds.getVdsName(), getVm().getVmName());
+                        vds.getVdsName(), getVm().getName());
             }
             if (updateDynamic) {
                 Backend.getInstance()
@@ -425,9 +425,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                                 new UpdateVdsDynamicDataVDSCommandParameters(vds.getDynamicData()));
                 if (log.isDebugEnabled()) {
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, now {1}. Vm: {2}",
-                            vds.getVdsName(), vds.getPendingVcpusCount(), getVm().getVmName());
+                            vds.getVdsName(), vds.getPendingVcpusCount(), getVm().getName());
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, now {1}. Vm: {2}",
-                            vds.getVdsName(), vds.getPendingVmemSize(), getVm().getVmName());
+                            vds.getVdsName(), vds.getPendingVmemSize(), getVm().getName());
                 }
             }
             getDecreseCondition(vdsId).signal();

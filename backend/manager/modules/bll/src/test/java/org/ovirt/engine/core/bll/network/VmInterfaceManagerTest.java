@@ -231,7 +231,7 @@ public class VmInterfaceManagerTest {
     private VM createVM(String vmName, String networkName) {
         VM vm = new VM();
         vm.setId(Guid.NewGuid());
-        vm.setVmName(vmName);
+        vm.setName(vmName);
         VmNetworkInterface vmIface = createNewInterface();
         vmIface.setVmId(vm.getId());
         vmIface.setNetworkName(networkName);

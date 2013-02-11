@@ -209,7 +209,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                         if (vmDiskImage.getImageTemplateId().equals(diskImage.getImageId())) {
                             if (vmDiskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
                                 retValue = false;
-                                problematicVmNames.add(vm.getVmName());
+                                problematicVmNames.add(vm.getName());
                             }
                             break;
                         }

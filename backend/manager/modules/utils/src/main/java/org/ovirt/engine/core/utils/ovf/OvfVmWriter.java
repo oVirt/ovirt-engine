@@ -30,7 +30,7 @@ public class OvfVmWriter extends OvfWriter {
     protected void writeGeneralData() {
         super.writeGeneralData();
         _writer.WriteStartElement("Name");
-        _writer.WriteRaw(_vm.getStaticData().getVmName());
+        _writer.WriteRaw(_vm.getStaticData().getName());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateId");
         _writer.WriteRaw(_vm.getStaticData().getVmtGuid().toString());

@@ -1133,7 +1133,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         confirmModel.setMessage(ConstantsManager.getInstance().getConstants().virtualMachineMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        list.add(vm.getVmName());
+        list.add(vm.getName());
         confirmModel.setItems(list);
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
@@ -1275,7 +1275,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         UserPortalListModel userPortalListModel = (UserPortalListModel) target;
                         boolean isNameUnique = (Boolean) returnValue;
                         String newName = (String) model.getName().getEntity();
-                        String currentName = userPortalListModel.gettempVm().getVmName();
+                        String currentName = userPortalListModel.gettempVm().getName();
                         if (!isNameUnique && newName.compareToIgnoreCase(currentName) != 0)
                         {
                             UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
@@ -1320,7 +1320,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         gettempVm().setVmType(model.getVmType());
         gettempVm().setVmtGuid(template.getId());
-        gettempVm().setVmName(name);
+        gettempVm().setName(name);
         gettempVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
         gettempVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         gettempVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());

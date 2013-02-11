@@ -143,7 +143,7 @@ public class VmItemBehavior extends ItemBehavior
     {
         VM entity = (VM) getItem().getEntity();
 
-        getItem().setName(entity.getVmName());
+        getItem().setName(entity.getName());
         getItem().setDescription(entity.getVmDescription());
         getItem().setStatus(entity.getStatus());
         getItem().setIsPool(false);

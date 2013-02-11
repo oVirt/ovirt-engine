@@ -75,11 +75,11 @@ public class VmHandlerTest {
     @Test
     public void testUpdateFieldsNameInStatusUp() {
         VmStatic src = new VmStatic();
-        src.setVmName(RandomUtils.instance().nextString(10));
+        src.setName(RandomUtils.instance().nextString(10));
         src.setInterfaces(new ArrayList<VmNetworkInterface>(2));
 
         VmStatic dest = new VmStatic();
-        dest.setVmName(RandomUtils.instance().nextString(10));
+        dest.setName(RandomUtils.instance().nextString(10));
 
         System.out.println(VmHandler.isUpdateValid(src, dest, VMStatus.Up));
 

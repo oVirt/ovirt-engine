@@ -157,7 +157,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId())).getReturnValue()).booleanValue();
 
         if (isVmDuringInit) {
-            log.errorFormat("VM {0} must be down for Move VM to be successfully executed", vm.getVmName());
+            log.errorFormat("VM {0} must be down for Move VM to be successfully executed", vm.getName());
             setActionReturnValue(vm.getStatus());
             setSucceeded(false);
             return;

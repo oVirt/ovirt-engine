@@ -113,7 +113,7 @@ public class VmInterfaceManager {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
                 if (vmNic.getNetworkName() != null && networks.contains(vmNic.getNetworkName())) {
-                    vmNames.add(vm.getVmName());
+                    vmNames.add(vm.getName());
                     break;
                 }
             }

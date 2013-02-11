@@ -80,7 +80,7 @@ public class NetworkVmListModel extends SearchableListModel
                         return compareValue;
                     }
 
-                    return paramT1.getSecond().getVmName().compareTo(paramT2.getSecond().getVmName());
+                    return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
                 }
             });
         }

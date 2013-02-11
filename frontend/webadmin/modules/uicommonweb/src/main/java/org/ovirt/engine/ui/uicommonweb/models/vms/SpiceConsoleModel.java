@@ -362,7 +362,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String ctrlAltDelTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltDel);
         String ctrlAltEndTranslated = AsyncDataProvider.GetComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
-        getspice().setTitle(getEntity().getVmName()
+        getspice().setTitle(getEntity().getName()
                 + ":%d" //$NON-NLS-1$
                 + (StringHelper.isNullOrEmpty(releaseCursorKeysTranslated) ? "" : (" - " + //$NON-NLS-1$ //$NON-NLS-2$
                         ConstantsManager.getInstance()
@@ -539,7 +539,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (!getConfigurator().getIsAdmin() && getEntity().getHasAgent()
                 && getEntity().getStatus() == VMStatus.Up) {
             getLogger().Info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
-                    + getEntity().getVmName());
+                    + getEntity().getName());
 
             Frontend.RunAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     new IFrontendActionAsyncCallback() {

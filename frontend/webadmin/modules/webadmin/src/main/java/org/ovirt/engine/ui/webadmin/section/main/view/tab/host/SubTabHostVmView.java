@@ -49,7 +49,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());

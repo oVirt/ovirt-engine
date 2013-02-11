@@ -75,7 +75,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
-                return object.getVmName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameVm());

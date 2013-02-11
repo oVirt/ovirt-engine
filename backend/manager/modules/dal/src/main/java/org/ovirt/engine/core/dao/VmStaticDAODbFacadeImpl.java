@@ -46,7 +46,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("mem_size_mb", vm.getMemSizeMb())
                 .addValue("os", vm.getOs())
                 .addValue("vds_group_id", vm.getVdsGroupId())
-                .addValue("vm_name", vm.getVmName())
+                .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
                 .addValue("domain", vm.getDomain())
                 .addValue("creation_date", vm.getCreationDate())
@@ -183,7 +183,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
 
-            entity.setVmName(rs.getString("vm_name"));
+            entity.setName(rs.getString("vm_name"));
             entity.setVmtGuid(Guid.createGuidFromString(rs.getString("vmt_guid")));
             entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));

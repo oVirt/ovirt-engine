@@ -47,7 +47,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
     @Override
     protected void Perform() {
-        log.infoFormat("VmHandler.cs:ShutdownVmCommand:Perform: entered (Desktop {0}).", getVm().getVmName());
+        log.infoFormat("VmHandler.cs:ShutdownVmCommand:Perform: entered (Desktop {0}).", getVm().getName());
 
         VmHandler.UpdateVmGuestAgentVersion(getVm());
         boolean CanShutDown = (getVm().getStatus() == VMStatus.Up)
@@ -58,7 +58,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         // become 'down':
         {
             log.infoFormat("VmHandler.cs:ShutdownVmCommand:Perform: sending shutdown command for Desktop {0}.", getVm()
-                    .getVmName());
+                    .getName());
 
             int secondsToWait = getParameters().getWaitBeforeShutdown() ? Config
                     .<Integer> GetValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
@@ -78,7 +78,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
             log.infoFormat(
                     "VmHandler.cs:ShutdownVmCommand:Perform: Cannot shutdown Desktop {0}, status is not up. Stopping instead.",
-                    getVm().getVmName());
+                    getVm().getName());
 
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
             // stopVmParams.ParametersCurrentUser = CurrentUser;

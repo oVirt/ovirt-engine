@@ -168,7 +168,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (StringUtils.isEmpty(vmFromParams.getVmName())) {
+        if (StringUtils.isEmpty(vmFromParams.getName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
             return false;
         }
@@ -181,10 +181,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Checking if a desktop with same name already exists
-        if (!StringUtils.equals(vmFromDB.getVmName(), vmFromParams.getVmName())) {
+        if (!StringUtils.equals(vmFromDB.getName(), vmFromParams.getName())) {
             boolean exists = (Boolean) getBackend()
                     .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                            new IsVmWithSameNameExistParameters(vmFromParams.getVmName()))
+                            new IsVmWithSameNameExistParameters(vmFromParams.getName()))
                     .getReturnValue();
             if (exists) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
@@ -342,8 +342,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getVmName())) {
-            return Collections.singletonMap(getParameters().getVm().getVmName(), LockMessagesMatchUtil.VM_NAME);
+        if (!StringUtils.isBlank(getParameters().getVm().getName())) {
+            return Collections.singletonMap(getParameters().getVm().getName(), LockMessagesMatchUtil.VM_NAME);
         }
         return null;
     }
@@ -388,12 +388,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     public String getEntityOldName() {
-        return oldVm.getVmName();
+        return oldVm.getName();
     }
 
     @Override
     public String getEntityNewName() {
-        return getParameters().getVmStaticData().getVmName();
+        return getParameters().getVmStaticData().getName();
     }
 
     @Override

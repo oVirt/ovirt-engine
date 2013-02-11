@@ -554,7 +554,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         getcurrentVm().setVmType(model.getVmType());
         getcurrentVm().setVmtGuid(template.getId());
-        getcurrentVm().setVmName(name);
+        getcurrentVm().setName(name);
         getcurrentVm().setVmOs((VmOsType) model.getOSType().getSelectedItem());
         getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setVmDescription((String) model.getDescription().getEntity());

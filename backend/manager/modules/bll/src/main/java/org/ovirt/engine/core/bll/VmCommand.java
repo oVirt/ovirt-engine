@@ -339,7 +339,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected boolean isVmNameValidLength(VM vm) {
 
         // get VM name
-        String vmName = vm.getVmName();
+        String vmName = vm.getName();
 
         // get the max VM name (configuration parameter)
         int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);

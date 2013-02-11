@@ -354,7 +354,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                         retVal = false;
                         break;
                     }
-                } else if (vm.getVmName().equals(getVm().getVmName())) {
+                } else if (vm.getName().equals(getVm().getName())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_EXIST);
                     retVal = false;
                     break;

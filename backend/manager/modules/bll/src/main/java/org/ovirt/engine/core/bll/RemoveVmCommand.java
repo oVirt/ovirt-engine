@@ -303,7 +303,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 if (diskImage.getImageStatus() != ImageStatus.ILLEGAL) {
                     log.errorFormat("Disk {0} which is part of VM {1} was not at ILLEGAL state.",
                             diskImage.getDiskAlias(),
-                            getVm().getVmName());
+                            getVm().getName());
                     ImagesHandler.updateImageStatus(diskImage.getImage().getId(), ImageStatus.ILLEGAL);
                 }
 

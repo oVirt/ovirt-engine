@@ -54,7 +54,7 @@ public class VmDAOTest extends BaseDAOTestCase {
         newVm.setVmtGuid(vmtemplate.getId());
 
         newVmStatic = new VmStatic();
-        newVmStatic.setVmName("New Virtual Machine");
+        newVmStatic.setName("New Virtual Machine");
         newVmStatic.setVdsGroupId(VDS_GROUP_ID);
         newVmStatic.setVmtGuid(vmtemplate.getId());
     }

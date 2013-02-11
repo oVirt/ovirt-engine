@@ -29,8 +29,8 @@ public class ResourcesModel extends SearchableListModel
 
         @Override
         public int compare(VM o1, VM o2) {
-            String name1 = o1.getVmName() == null ? "" : o1.getVmName(); //$NON-NLS-1$
-            String name2 = o2.getVmName() == null ? "" : o2.getVmName(); //$NON-NLS-1$
+            String name1 = o1.getName() == null ? "" : o1.getName(); //$NON-NLS-1$
+            String name2 = o2.getName() == null ? "" : o2.getName(); //$NON-NLS-1$
             return name1.compareTo(name2);
         }
     }

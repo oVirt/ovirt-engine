@@ -58,7 +58,7 @@ public class BackendStorageDomainVmResource
         if (action.isSetClone()) {
             params.setImportAsNewEntity(action.isClone());
             if(action.isSetVm() && action.getVm().isSetName()) {
-                params.getVm().setVmName(action.getVm().getName());
+                params.getVm().setName(action.getVm().getName());
             }
         }
 

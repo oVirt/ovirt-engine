@@ -44,7 +44,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.NewGuid());
-        newVmStatic.setVmName("New Virtual Machine");
+        newVmStatic.setName("New Virtual Machine");
         newVmStatic.setVdsGroupId(VDS_GROUP_ID);
         newVmStatic.setVmtGuid(vmtemplate.getId());
         newVmStatic.setOrigin(OriginType.OVIRT);
@@ -82,7 +82,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals("rhel5-pool-50", vm.getVmName());
+            assertEquals("rhel5-pool-50", vm.getName());
         }
     }
 
@@ -220,6 +220,6 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(VDS_STATIC_ID);
 
         assertFalse(namesPinnedToHost.isEmpty());
-        assertTrue(namesPinnedToHost.contains(existingVmStatic.getVmName()));
+        assertTrue(namesPinnedToHost.contains(existingVmStatic.getName()));
     }
 }

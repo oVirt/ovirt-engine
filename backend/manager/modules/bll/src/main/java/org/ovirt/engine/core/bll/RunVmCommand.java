@@ -228,7 +228,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 // Try to rerun Vm on different vds
                 // no need to log the command because it is being logged inside
                 // the rerun
-                log.infoFormat("Failed to run desktop {0}, rerun", getVm().getVmName());
+                log.infoFormat("Failed to run desktop {0}, rerun", getVm().getName());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
                 rerun();
@@ -313,11 +313,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (statelessSnapshotExistsForVm()) {
             log.errorFormat(
                     "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
-                    getVm().getVmName());
+                    getVm().getName());
             removeVmStatlessImages();
         } else {
             log.infoFormat("VdcBll.RunVmCommand.RunVmAsStateless - Creating snapshot for stateless vm {0} - {1}",
-                    getVm().getVmName(), getVm().getId());
+                    getVm().getName(), getVm().getId());
             CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters =
                     new CreateAllSnapshotsFromVmParameters(getVm().getId(), "stateless snapshot");
             createAllSnapshotsFromVmParameters.setShouldBeLogged(false);
@@ -357,7 +357,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
-                log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getVmName());
+                log.errorFormat("RunVmAsStateless - {0} - failed to create snapshots", getVm().getName());
             }
         }
     }
@@ -735,7 +735,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (!getSucceeded()) {
                 // could not run the vm don't try to run the end action
                 // again
-                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getVmName());
+                log.warnFormat("Could not run the vm {0} on RunVm.EndSuccessfully", getVm().getName());
                 getReturnValue().setEndActionTryAgain(false);
             }
         }

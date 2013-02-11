@@ -285,7 +285,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return ((ImportVmData) object).getVm().getVmName();
+                return ((ImportVmData) object).getVm().getName();
             }
         };
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$

@@ -344,7 +344,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVmName(null);
         final VM v = new VM();
-        v.setVmName(NAME);
+        v.setName(NAME);
         b.setVm(v);
         final String n = b.getVmName();
         assertEquals(NAME, n);
