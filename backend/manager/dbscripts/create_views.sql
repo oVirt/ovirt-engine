@@ -34,7 +34,7 @@ AS
 
 -- TODO: Change code to treat disks values directly instead of through this view.
 SELECT images.image_guid as image_guid,
-    storage_domain_static_view.storage_name as storage_name
+    storage_domain_static_view.storage_name as storage_name,
     storage_domain_static_view.storage as storage_path,
 	storage_domain_static_view.storage_pool_id as storage_pool_id,
 	images.creation_date as creation_date,
