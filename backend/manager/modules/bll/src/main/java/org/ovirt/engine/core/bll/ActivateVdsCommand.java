@@ -69,10 +69,8 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
                 @Override
                 public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(vds.getDynamicData(), vds.getStatus());
                     runVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
-                    getCompensationContext().stateChanged();
                     return null;
                 }
             });
