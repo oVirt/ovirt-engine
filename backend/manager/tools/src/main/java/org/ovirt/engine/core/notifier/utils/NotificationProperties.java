@@ -46,6 +46,14 @@ public class NotificationProperties {
     public static final String ENGINE_PID = "ENGINE_PID";
     public static final String DEFAULT_ENGINE_PID = "/var/run/ovirt-engine.pid";
 
+    /**
+     * This parameter specifies how many days of old events are processed and
+     * sent when the notifier starts. If set to 2, for example, the notifier
+     * will process and send the events of the last two days, older events will
+     * just be marked as processed and won't be sent.
+     */
+    public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
+
     private static final Log log = LogFactory.getLog(NotificationProperties.class);
 
     /**

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,13 +46,14 @@ public class NotificationService implements Runnable {
     private DataSource ds;
     private Map<String, String> prop = null;
     private NotificationMethodFactoryMapper methodsMapper = null;
-    private boolean shouldDeleteHistory = false;
-    private int daysToKeepHistory;
+    private int daysToKeepHistory = 0;
+    private int daysToSendOnStartup = 0;
 
     public NotificationService(NotificationConfigurator notificationConf) throws NotificationServiceException {
         this.prop = notificationConf.getProperties();
         initConnectivity();
         initConfigurationProperties();
+        initEvents();
     }
 
     /**
@@ -64,27 +66,34 @@ public class NotificationService implements Runnable {
      *             configuration setting error
      */
     private void initConfigurationProperties() throws NotificationServiceException {
-        String daysHistoryStr = prop.get(NotificationProperties.DAYS_TO_KEEP_HISTORY);
-        // verify property of history is well defined
-        if (StringUtils.isNotEmpty(daysHistoryStr)) {
-            try {
-                daysToKeepHistory = Integer.valueOf(daysHistoryStr).intValue();
-                if (daysToKeepHistory < 0) {
-                    throw new NumberFormatException(NotificationProperties.DAYS_TO_KEEP_HISTORY
-                            + " value should be a positive number");
-                }
-                daysToKeepHistory = daysToKeepHistory * -1;
-                shouldDeleteHistory = true;
-            } catch (NumberFormatException e) {
-                String err =
-                        String.format("Invalid format of %s: %s",
-                                NotificationProperties.DAYS_TO_KEEP_HISTORY,
-                                daysHistoryStr);
-                log.error(err, e);
-                throw new NotificationServiceException(err,e);
-            }
-        }
+        daysToKeepHistory = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_KEEP_HISTORY);
+        daysToSendOnStartup = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_SEND_ON_STARTUP);
         initMethodMapper();
+    }
+
+    private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
+         // Get the text of the property:
+         final String text = prop.get(name);
+
+         // Validate it:
+         if (StringUtils.isNotEmpty(text)) {
+             try {
+                 int value = Integer.parseInt(text);
+                 if (value < 0) {
+                     throw new NumberFormatException(name + " value should be a positive number");
+                 }
+                 return value;
+             }
+             catch (NumberFormatException exception) {
+                 String err =
+                         String.format("Invalid format of %s: %s", name, text);
+                 log.error(err, exception);
+                 throw new NotificationServiceException(err, exception);
+             }
+         }
+
+         // If the property can't be found then return 0 as the value:
+         return 0;
     }
 
     /**
@@ -94,7 +103,7 @@ public class NotificationService implements Runnable {
         try {
             log.debug("Start event notification service iteration");
             processEvents();
-            if (shouldDeleteHistory) {
+            if (daysToKeepHistory > 0) {
                 deleteObseleteHistoryData();
             }
             log.debug("Finish event notification service iteration");
@@ -109,8 +118,8 @@ public class NotificationService implements Runnable {
     private void deleteObseleteHistoryData() throws SQLException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-        cal.add(Calendar.DATE, daysToKeepHistory);
-        java.sql.Timestamp startDeleteFrom = new java.sql.Timestamp(cal.getTimeInMillis());
+        cal.add(Calendar.DATE, -daysToKeepHistory);
+        Timestamp startDeleteFrom = new Timestamp(cal.getTimeInMillis());
         Connection connection = null;
         PreparedStatement deleteStmt = null;
         int deletedRecords;
@@ -129,7 +138,35 @@ public class NotificationService implements Runnable {
         }
 
         if (deletedRecords > 0) {
-            log.debug(String.valueOf(deletedRecords) + " records were deleted from event_notification_hist table");
+            log.debug(deletedRecords + " records were deleted from \"event_notification_hist\" table.");
+        }
+    }
+
+    private void markOldEventsAsProcessed() throws SQLException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -daysToSendOnStartup);
+        Timestamp ts = new Timestamp(calendar.getTimeInMillis());
+        Connection connection = null;
+        PreparedStatement statement = null;
+        int updatedRecords;
+        try {
+            connection = ds.getConnection();
+            statement = connection.prepareStatement(
+                "update audit_log set " +
+                    "processed = 'true' " +
+                "where " +
+                    "processed = 'false' " +
+                    "and log_time < ?"
+            );
+            statement.setTimestamp(1, ts);
+            updatedRecords = statement.executeUpdate();
+        }
+        finally {
+            DbUtils.closeQuietly(statement, connection);
+        }
+
+        if (updatedRecords > 0) {
+            log.debug(updatedRecords + " old records were marked as processed in the \"audit_log\" table.");
         }
     }
 
@@ -162,6 +199,17 @@ public class NotificationService implements Runnable {
             ds = new StandaloneDataSource();
         } catch (SQLException e) {
             throw new NotificationServiceException("Failed to obtain database connectivity", e);
+        }
+    }
+
+    private void initEvents() throws NotificationServiceException {
+        // Mark old events as processed so that during startup we don't send
+        // all of them:
+        try {
+            markOldEventsAsProcessed();
+        }
+        catch (SQLException exception) {
+            throw new NotificationServiceException("Failed mark old events as processed.", exception);
         }
     }
 
