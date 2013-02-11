@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -13,7 +12,6 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -55,6 +53,9 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateFrontendAsyncCallback;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateOrUpdateFrontendActionAsyncCallback;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkUpdateFrontendAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewTemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -70,15 +71,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmNetworkCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -698,9 +698,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
-                        VM.class,
-                        VdcActionType.ChangeDisk));
+                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                VM.class,
+                VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
@@ -975,8 +975,25 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     public void postVmNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
+        final VmNetworkCreatingManager defaultNetworkCreatingManager = new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+            @Override
+            public void networkCreated(Guid vmId) {
+                if (getWindow() != null) {
+                    getWindow().stopProgress();
+                }
+                cancel();
+                updateActionAvailability();
+            }
+
+            @Override
+            public void queryFailed() {
+                stopProgress(UserPortalListModel.this);
+                cancel();
+            }
+        });
 
         final UnitVmModel model = (UnitVmModel) getWindow();
+
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
         String name = (String) model.getName().getEntity();
 
@@ -1055,14 +1072,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 Guid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                stopProgress(result.getState());
-                                cancel();
-                            }
-                        }, this);
+                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new NetworkCreateFrontendAsyncCallback(model, defaultNetworkCreatingManager), this);
+
             }
             else
             {
@@ -1077,26 +1088,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         public void onSuccess(Object model, Object result)
                         {
                             UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
-                            UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
+                            final UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
 
                             AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(gettempVm(),
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
-
-                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             param.setSoundDeviceEnabled((Boolean) unitVmModel.getIsSoundcardEnabled().getEntity());
-                            parameters.add(param);
-
-                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
-                                    new IFrontendMultipleActionAsyncCallback() {
-                                        @Override
-                                        public void executed(FrontendMultipleActionAsyncResult a) {
-                                            stopProgress(a.getState());
-                                            cancel();
-                                        }
-                                    },
-                                    this);
+                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
@@ -1106,19 +1105,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
-
-                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                    parameters.add(param);
-                    Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
-                            new IFrontendMultipleActionAsyncCallback() {
-                                @Override
-                                public void executed(FrontendMultipleActionAsyncResult a) {
-                                    stopProgress(a.getState());
-                                    cancel();
-                                }
-                            },
-                            this);
+                    Frontend.RunAction(VdcActionType.AddVm, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
         }
@@ -1134,15 +1122,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             public void executed(FrontendActionAsyncResult result) {
                                 VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                                 param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                                Frontend.RunAction(VdcActionType.UpdateVm, param,
-                                        new IFrontendActionAsyncCallback() {
-                                            @Override
-                                            public void executed(FrontendActionAsyncResult a) {
-                                                stopProgress(a.getState());
-                                                cancel();
-                                            }
-                                        }, this);
 
+                                Frontend.RunAction(VdcActionType.UpdateVm, param, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                             }
                         }, this);
             }
@@ -1150,14 +1131,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                 param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.UpdateVm, param,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult a) {
-                                stopProgress(a.getState());
-                                cancel();
-                            }
-                        }, this);
+                Frontend.RunAction(VdcActionType.UpdateVm, param, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
             }
         }
     }

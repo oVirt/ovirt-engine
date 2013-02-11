@@ -5,7 +5,8 @@
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
              xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
              xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
-             xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
+             xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+             xmlns:n="urn:import:org.ovirt.engine.ui.common.widget.network">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
@@ -292,9 +293,9 @@
 							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionPanel}">
-							
-						</g:FlowPanel>
+						<g:FlowPanel ui:field="logicalNetworksEditorPanel" addStyleNames="{style.sectionPanel}">
+                            <n:LogicalNetworksEditor ui:field="logicalNetworksEditor" />
+                         </g:FlowPanel>
 						<g:Label ui:field="generalWarningMessage" addStyleNames="{style.warningMessageLabel}" />
 					</g:FlowPanel>
 				</t:content>

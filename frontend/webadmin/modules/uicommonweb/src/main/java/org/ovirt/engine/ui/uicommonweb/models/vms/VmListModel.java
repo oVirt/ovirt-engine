@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -93,6 +92,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateFrontendAsyncCallback;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateOrUpdateFrontendActionAsyncCallback;
+import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkUpdateFrontendAsyncCallback;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, UserSelectedDisplayProtocolManager
 {
@@ -1907,6 +1909,22 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void onSave()
     {
+        final VmNetworkCreatingManager defaultNetworkCreatingManager =
+                new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+                    @Override
+                    public void networkCreated(Guid vmId) {
+                        getWindow().stopProgress();
+                        cancel();
+                        updateActionAvailability();
+                    }
+
+                    @Override
+                    public void queryFailed() {
+                        getWindow().stopProgress();
+                        cancel();
+                    }
+                });
+
         final UnitVmModel model = (UnitVmModel) getWindow();
         VM selectedItem = (VM) getSelectedItem();
 
@@ -1985,6 +2003,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
+                VmNetworkCreatingManager addVmFromScratchNetworkManager =
+                        new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+                            @Override
+                            public void networkCreated(Guid vmId) {
+                                getWindow().stopProgress();
+                                cancel();
+                                setGuideContext(vmId);
+                                updateActionAvailability();
+                                getGuideCommand().execute();
+                            }
+
+                            @Override
+                            public void queryFailed() {
+                                getWindow().stopProgress();
+                                cancel();
+                            }
+                        });
+
+
                 model.startProgress(null);
 
                 AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
@@ -1993,24 +2030,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 
                 setVmWatchdogToParams(model, parameters);
-                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
 
-                                VmListModel vmListModel = (VmListModel) result.getState();
-                                vmListModel.getWindow().stopProgress();
-                                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                if (returnValueBase != null && returnValueBase.getSucceeded())
-                                {
-                                    vmListModel.cancel();
-                                    vmListModel.setGuideContext(returnValueBase.getActionReturnValue());
-                                    vmListModel.updateActionAvailability();
-                                    vmListModel.getGuideCommand().execute();
-                                }
-
-                            }
-                        }, this);
+                Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new NetworkCreateFrontendAsyncCallback(model, addVmFromScratchNetworkManager), this);
             }
             else
             {
@@ -2037,19 +2058,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                            parameters.add(param);
-
-                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
-                                    new IFrontendMultipleActionAsyncCallback() {
-                                        @Override
-                                        public void executed(FrontendMultipleActionAsyncResult result) {
-                                            VmListModel vmListModel1 = (VmListModel) result.getState();
-                                            vmListModel1.getWindow().stopProgress();
-                                            vmListModel1.cancel();
-                                        }
-                                    },
-                                    vmListModel);
+                            Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
@@ -2065,22 +2074,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-
-                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                    parameters.add(params);
                     params.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-
                     setVmWatchdogToParams(model, params);
-                    Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
-                            new IFrontendMultipleActionAsyncCallback() {
-                                @Override
-                                public void executed(FrontendMultipleActionAsyncResult result) {
-                                    VmListModel vmListModel1 = (VmListModel) result.getState();
-                                    vmListModel1.getWindow().stopProgress();
-                                    vmListModel1.cancel();
-                                }
-                            },
-                            this);
+
+                    Frontend.RunAction(VdcActionType.AddVm, params, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
         }
@@ -2106,7 +2103,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
 
-                                VmListModel vmListModel = (VmListModel) result.getState();
+                                final VmListModel vmListModel = (VmListModel) result.getState();
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
@@ -2117,21 +2114,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                             .getEntity());
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
-                                            updateVmParams,
-                                            new IFrontendActionAsyncCallback() {
-                                                @Override
-                                                public void executed(FrontendActionAsyncResult result1) {
-
-                                                    VmListModel vmListModel1 = (VmListModel) result1.getState();
-                                                    vmListModel1.getWindow().stopProgress();
-                                                    VdcReturnValueBase retVal = result1.getReturnValue();
-                                                    if (retVal != null && retVal.getSucceeded())
-                                                    {
-                                                        vmListModel1.cancel();
-                                                    }
-                                                }
-                                            },
-                                            vmListModel);
+                                            updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
                                 }
                                 else
                                 {
@@ -2139,7 +2122,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 }
 
                             }
-                        }, this);
+                        },
+                        this);
             }
             else
             {
@@ -2150,23 +2134,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
                 VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
-
                 setVmWatchdogToParams(model, updateVmParams);
                 updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
-                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams,
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-
-                                VmListModel vmListModel = (VmListModel) result.getState();
-                                vmListModel.getWindow().stopProgress();
-                                VdcReturnValueBase returnValueBase = result.getReturnValue();
-                                if (returnValueBase != null && returnValueBase.getSucceeded())
-                                {
-                                    vmListModel.cancel();
-                                }
-                            }
-                        }, this);
+                Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }
     }

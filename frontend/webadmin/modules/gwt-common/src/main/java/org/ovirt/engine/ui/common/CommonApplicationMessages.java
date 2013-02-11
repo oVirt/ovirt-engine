@@ -100,4 +100,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("default: {0}")
     String defaultTimeZoneCaption(String currentDefault);
+
+    @DefaultMessage("VM has {0} Nics. Assign them to the Cluster''s Logical networks.")
+    String assignNicsToNetworks(int numOfNics);
 }

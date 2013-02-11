@@ -1,16 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -29,7 +27,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
+        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel, new EditNetworkBehavior());
         this.nic = nic;
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
         setHashName("edit_network_interface_vms"); //$NON-NLS-1$
@@ -91,29 +89,6 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected String getDefaultMacAddress() {
         return (getNic()).getMacAddress();
-    }
-
-    @Override
-    protected void initSelectedNetwork() {
-        List<Network> networks = (List<Network>) getNetwork().getItems();
-        networks = networks == null ? new ArrayList<Network>() : networks;
-        for (Network a : networks)
-        {
-            String networkName = a == null ? null : a.getName();
-            if (StringHelper.stringsEqual(networkName, getNic().getNetworkName()))
-            {
-                getNetwork().setSelectedItem(a);
-                return;
-            }
-        }
-
-        // In some cases, like importVm the network can be deleted from the nic.
-        // In these cases, the network can be null even if NetworkLinking is not supported.
-        // If the user doesn't set the network, when he'll try to run the VM or update/hotPlug the nic he will get a
-        // canDo.
-        if (getNic().getNetworkName() == null) {
-            getNetwork().setSelectedItem(null);
-        }
     }
 
     @Override

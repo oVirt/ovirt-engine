@@ -33,6 +33,7 @@ public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         return super.createWidgetConfiguration().
+                putOne(logicalNetworksEditorPanel, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(templateEditor, hiddenField()).
                 update(resourceAllocationTab, hiddenField());

@@ -11,8 +11,13 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -20,8 +25,10 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 
-public class NewVmModelBehavior extends VmModelBehaviorBase
-{
+public class NewVmModelBehavior extends VmModelBehaviorBase {
+
+    private final NetworkBehavior networkBehavior = new NewNetworkBehavior();
+
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
@@ -158,6 +165,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                 getModel().getMinAllocatedMemory().setEntity(template.getMinAllocatedMem());
             }
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+
+            updateNetworkInterfacesByTemplate(template);
         }
     }
 
@@ -173,6 +182,28 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateCpuPinningVisibility();
+
+        initNetworkInterfaces(networkBehavior, null);
+    }
+
+    private void updateNetworkInterfacesByTemplate(VmTemplate template) {
+        AsyncQuery query = new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                if (returnValue == null) {
+                    return;
+                }
+
+                List<VmNetworkInterface> nics =
+                        (List<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                initNetworkInterfaces(networkBehavior, nics);
+            }
+        });
+
+        Frontend.RunQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
+                new IdQueryParameters(template.getId()),
+                query);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -25,7 +26,13 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
+    private final NetworkBehavior behavior = new NewNetworkBehavior();
+
+    private EditNetworkBehavior networkBehavior = new EditNetworkBehavior();
+
     protected VM vm;
+
+    private boolean networkInterfacesInited = false;
 
     public ExistingVmModelBehavior(VM vm)
     {
@@ -163,24 +170,25 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
-        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                @SuppressWarnings("unchecked")
-                List<VmWatchdog> watchdogs = (List<VmWatchdog>) ((VdcQueryReturnValue)returnValue).getReturnValue();
-                if(watchdogs.isEmpty()) {
-                    getModel().getWatchdogAction().setSelectedItem(null);
-                    getModel().getWatchdogModel().setSelectedItem(null);
-                } else {
-                    VmWatchdog vmWatchdog = watchdogs.get(0);
-                    getModel().getWatchdogAction().setSelectedItem(vmWatchdog.getAction() == null ? null
-                            : vmWatchdog.getAction().name().toLowerCase());
-                    getModel().getWatchdogModel().setSelectedItem(vmWatchdog.getModel() == null ? ""
-                            : vmWatchdog.getModel().name());
-                }
-            }
-        }));
-
+        Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        @SuppressWarnings("unchecked")
+                        List<VmWatchdog> watchdogs =
+                                (List<VmWatchdog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        if (watchdogs.isEmpty()) {
+                            getModel().getWatchdogAction().setSelectedItem(null);
+                            getModel().getWatchdogModel().setSelectedItem(null);
+                        } else {
+                            VmWatchdog vmWatchdog = watchdogs.get(0);
+                            getModel().getWatchdogAction().setSelectedItem(vmWatchdog.getAction() == null ? null
+                                    : vmWatchdog.getAction().name().toLowerCase());
+                            getModel().getWatchdogModel().setSelectedItem(vmWatchdog.getModel() == null ? ""
+                                    : vmWatchdog.getModel().name());
+                        }
+                    }
+                }));
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 
@@ -228,6 +236,24 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateNumOfSockets();
         updateQuotaByCluster(vm.getQuotaId(), vm.getQuotaName());
         updateCpuPinningVisibility();
+        initNetworkInterfaces();
+    }
+
+    private void initNetworkInterfaces() {
+        if (networkInterfacesInited) {
+            return;
+        }
+
+        AsyncQuery getVmNicsQuery = new AsyncQuery();
+        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                List<VmNetworkInterface> nics = (List<VmNetworkInterface>) result;
+                initNetworkInterfaces(networkBehavior, nics);
+                networkInterfacesInited = true;
+            }
+        };
+        AsyncDataProvider.getVmNicList(getVmNicsQuery, vm.getId());
     }
 
     @Override

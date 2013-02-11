@@ -2,12 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
@@ -22,7 +20,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     public static NewVmInterfaceModel createInstance(VmBase vm,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
-            EntityModel sourceModel){
+            EntityModel sourceModel) {
         NewVmInterfaceModel instance = new NewVmInterfaceModel(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
         instance.init();
         return instance;
@@ -32,7 +30,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
+        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel, new NewNetworkBehavior());
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         setHashName("new_network_interface_vms"); //$NON-NLS-1$
     }
@@ -87,19 +85,6 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected void initSelectedNetwork() {
-        List<Network> networks = (List<Network>) getNetwork().getItems();
-        networks = networks == null ? new ArrayList<Network>() : networks;
-        for (Network network : networks) {
-            if (ENGINE_NETWORK_NAME != null && network != null && ENGINE_NETWORK_NAME.equals(network.getName())) {
-                getNetwork().setSelectedItem(network);
-                return;
-            }
-        }
-        getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
-    }
-
-    @Override
     protected void initSelectedType() {
         getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType());
     }
@@ -134,5 +119,10 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected void setCustomPropertyFromVm() {
         // Do nothing
+    }
+
+    protected VmNetworkInterface getNic() {
+        // no nic for new
+        return null;
     }
 }

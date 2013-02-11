@@ -1050,17 +1050,21 @@ public final class AsyncDataProvider {
     }
 
     public static void getClusterNetworkList(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null)
+        // do not replace a converter = just add if none provided
+        if (aQuery.converterCallback == null) {
+            aQuery.converterCallback = new IAsyncConverter() {
+                @Override
+                public Object Convert(Object source, AsyncQuery _asyncQuery)
                 {
-                    return new ArrayList<Network>();
+                    if (source == null)
+                    {
+                        return new ArrayList<Network>();
+                    }
+                    return source;
                 }
-                return source;
-            }
-        };
+            };
+        }
+
         Frontend.RunQuery(VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(clusterId), aQuery);
     }
 

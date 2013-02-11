@@ -109,7 +109,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                                 .getConstants()
                                 .hotNetworkUpdateNotSupportedWithPortMirroring());
                 getNetwork().setIsChangable(false);
-                initSelectedNetwork();
+                getNetworkBehavior().initSelectedNetwork(getNetwork(), getNic());
                 return;
             }
         } else if (isVmUp() && isPlugged) {
@@ -117,7 +117,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                     .getMessages()
                     .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
             getNetwork().setIsChangable(false);
-            initSelectedNetwork();
+            getNetworkBehavior().initSelectedNetwork(getNetwork(), getNic());
             return;
         }
     }

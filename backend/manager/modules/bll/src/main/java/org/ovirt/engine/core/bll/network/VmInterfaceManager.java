@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;

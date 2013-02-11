@@ -1,17 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -69,13 +65,18 @@ public abstract class VmInterfaceModel extends Model
     private final EntityModel sourceModel;
     private final Version clusterCompatibilityVersion;
 
+
     private KeyValueModel customPropertySheet;
+
+    private NetworkBehavior networkBehavior;
 
     protected VmInterfaceModel(VmBase vm,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
-            EntityModel sourceModel)
+            EntityModel sourceModel,
+            NetworkBehavior networkBehavior)
     {
+        this.networkBehavior = networkBehavior;
         // get management network name
         ENGINE_NETWORK_NAME =
                 (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
@@ -464,42 +465,15 @@ public abstract class VmInterfaceModel extends Model
             @Override
             public void onSuccess(Object model1, Object result1)
             {
-                ArrayList<Network> networks = new ArrayList<Network>();
-                for (Network a : (ArrayList<Network>) result1)
-                {
-                    if (a.isVmNetwork())
-                    {
-                        networks.add(a);
-                    }
-                }
-                if (hotUpdateSupported) {
-                    networks.add(null);
-                }
-
-                Collections.sort(networks, new Comparator<Network>() {
-
-                    private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
-
-                    @Override
-                    public int compare(Network net1, Network net2) {
-                        if (net1 == null) {
-                            return net2 == null ? 0 : 1;
-                        } else if (net2 == null) {
-                            return -1;
-                        }
-                        return lexoNumeric.compare(net1.getName(), net2.getName());
-                    }
-
-                });
-
-                getNetwork().setItems(networks);
-                initSelectedNetwork();
+                getNetwork().setItems((List<Network>) result1);
+                networkBehavior.initSelectedNetwork(getNetwork(), getNic());
 
                 // fetch completed
                 okCommand.setIsExecutionAllowed(true);
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getVm().getVdsGroupId());
+
+        networkBehavior.initNetworks(hotUpdateSupported, getVm().getVdsGroupId(), _asyncQuery);
     }
 
     protected void initCommands() {
@@ -515,7 +489,7 @@ public abstract class VmInterfaceModel extends Model
         getCommands().add(cancelCommand);
     }
 
-    protected abstract void initSelectedNetwork();
+    protected abstract VmNetworkInterface getNic();
 
     protected abstract void initSelectedType();
 
@@ -605,4 +579,8 @@ public abstract class VmInterfaceModel extends Model
     }
 
     protected abstract void setCustomPropertyFromVm();
+
+    public NetworkBehavior getNetworkBehavior() {
+        return networkBehavior;
+    }
 }

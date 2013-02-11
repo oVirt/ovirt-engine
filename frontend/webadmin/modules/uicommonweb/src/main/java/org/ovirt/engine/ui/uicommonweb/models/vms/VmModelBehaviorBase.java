@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -494,7 +496,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 tempVar.setEntity(diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
-                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
                                         : AsyncDataProvider.getVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
@@ -890,7 +892,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateSelectedCdImage(VmBase vmBase) {
         getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
-
         boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
         getModel().getCdImage().setIsChangable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
@@ -908,5 +909,45 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getIsSoundcardEnabled().setEntity(returnValue);
             }
         }), id);
+    }
+
+    protected void initNetworkInterfaces(final NetworkBehavior behavior, final List<VmNetworkInterface> argNics) {
+        boolean hotUpdateSupported =
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
+                        getModel().getSelectedCluster().getcompatibility_version().toString());
+
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<Network> networks = (List<Network>) returnValue;
+
+                List<NicWithLogicalNetworks> nicsWithLogicalNetwork = new ArrayList<NicWithLogicalNetworks>();
+
+                List<VmNetworkInterface> nics = argNics;
+
+                if (argNics == null || argNics.size() == 0) {
+                    // create a default if none provided
+                    VmNetworkInterface networkInterface = new VmNetworkInterface();
+                    networkInterface.setName(AsyncDataProvider.getNewNicName(null));
+                    nics = Arrays.asList(networkInterface);
+                }
+
+                for (VmNetworkInterface nic : nics) {
+                    final NicWithLogicalNetworks nicWithLogicalNetwork = new NicWithLogicalNetworks(nic);
+                    nicWithLogicalNetwork.setItems(networks);
+                    behavior.initSelectedNetwork(nicWithLogicalNetwork,
+                            nicWithLogicalNetwork.getNetworkInterface());
+                    nicsWithLogicalNetwork.add(nicWithLogicalNetwork);
+                }
+
+                getModel().getNicsWithLogicalNetworks().setItems(nicsWithLogicalNetwork);
+                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(nicsWithLogicalNetwork));
+
+            }
+
+        });
+
+        behavior.initNetworks(hotUpdateSupported, getModel().getSelectedCluster().getId(), query);
     }
 }

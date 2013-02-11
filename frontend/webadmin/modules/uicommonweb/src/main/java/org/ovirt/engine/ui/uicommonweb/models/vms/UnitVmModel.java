@@ -103,6 +103,16 @@ public class UnitVmModel extends Model {
         this.dataCenterWithClustersList = dataCenterWithClustersList;
     }
 
+    private ListModel nicsWithLogicalNetworks;
+
+    public ListModel getNicsWithLogicalNetworks() {
+        return nicsWithLogicalNetworks;
+    }
+
+    public void setNicsWithLogicalNetworks(ListModel nicsWithLogicalNetworks) {
+        this.nicsWithLogicalNetworks = nicsWithLogicalNetworks;
+    }
+
     /**
      * Note: We assume that this method is called only once, on the creation stage of the model. if this assumption is
      * changed (i.e the VM can attached/detached from a pool after the model is created), this method should be modified
@@ -1041,6 +1051,7 @@ public class UnitVmModel extends Model {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
+        setNicsWithLogicalNetworks(new ListModel());
         setAdvancedMode(new EntityModel(false));
         setStorageDomain(new NotChangableForVmInPoolListModel());
         setName(new NotChangableForVmInPoolEntityModel());
