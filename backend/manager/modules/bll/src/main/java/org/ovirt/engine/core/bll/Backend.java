@@ -326,33 +326,27 @@ public class Backend implements BackendInternal {
             VdcActionParametersBase parameters,
             boolean runAsInternal,
             CommandContext context) {
-
         VdcReturnValueBase returnValue = null;
-        switch (actionType) {
-        case AutoLogin:
-            return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
 
-        default:
-            // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
-            boolean hasCorrelationId =
-                    parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
-            returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
-            if (returnValue != null) {
-                log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
-                        StringUtils.join(returnValue.getCanDoActionMessages(), ','));
-                return returnValue;
-            }
-
-            CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
-            command.setInternalExecution(runAsInternal);
-            command.setContext(context);
-            ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal, hasCorrelationId);
-
-            returnValue = command.executeAction();
-            returnValue.setCorrelationId(parameters.getCorrelationId());
-            returnValue.setJobId(command.getJobId());
+        // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
+        boolean hasCorrelationId =
+                parameters == null ? false : StringUtils.isNotEmpty(parameters.getCorrelationId());
+        returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
+        if (returnValue != null) {
+            log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
+                    StringUtils.join(returnValue.getCanDoActionMessages(), ','));
             return returnValue;
         }
+
+        CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
+        command.setInternalExecution(runAsInternal);
+        command.setContext(context);
+        ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal, hasCorrelationId);
+
+        returnValue = command.executeAction();
+        returnValue.setCorrelationId(parameters.getCorrelationId());
+        returnValue.setJobId(command.getJobId());
+        return returnValue;
     }
 
     @Override
@@ -500,7 +494,6 @@ public class Backend implements BackendInternal {
     @Override
     public VdcReturnValueBase Login(LoginUserParameters parameters) {
         switch (parameters.getActionType()) {
-        case AutoLogin:
         case LoginUser:
         case LoginAdminUser:
             CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);

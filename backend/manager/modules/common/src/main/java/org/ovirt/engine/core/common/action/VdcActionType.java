@@ -127,7 +127,6 @@ public enum VdcActionType {
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.NONE),
     // UserAndGroupsCommands
     LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
-    AutoLogin(407, false, QuotaDependency.NONE),
     LogoutUser(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
