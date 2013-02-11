@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.tools.common.db;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -11,12 +8,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.Properties;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
+import org.ovirt.engine.core.utils.LocalConfig;
 
 public class StandaloneDataSource implements DataSource {
     // The log:
@@ -41,55 +38,18 @@ public class StandaloneDataSource implements DataSource {
 
     public StandaloneDataSource() throws SQLException {
         // Load the service configuration file:
-        String configPath = System.getenv("ENGINE_VARS");
-        if (configPath == null) {
-            configPath = "/etc/ovirt-engine/engine.conf";
-        }
-        File configFile = new File(configPath);
-        if (!configFile.exists()) {
-            throw new SQLException("Can't find engine configuration file \"" + configFile.getAbsolutePath() + "\".");
-        }
-        Properties config = new Properties();
-        FileReader configReader = null;
-        try {
-            configReader = new FileReader(configFile);
-            config.load(configReader);
-        }
-        catch (IOException exception) {
-            throw new SQLException("Can't load engine configuration file \"" + configFile.getAbsolutePath() + "\".", exception);
-        }
-        finally {
-            if (configReader != null) {
-                try {
-                    configReader.close();
-                } catch (IOException exception) {
-                    log.warn("Strange, failed to close file \"" + configFile.getAbsolutePath() + "\".", exception);
-                }
-            }
-        }
+        LocalConfig config = LocalConfig.getInstance();
 
         // Get the database connection details:
         driver = config.getProperty(ENGINE_DB_DRIVER);
-        if (driver == null) {
-            throw new SQLException("Can't find database driver parameter \"" + ENGINE_DB_DRIVER + "\" in file \"" + configFile.getAbsolutePath() + "\".");
-        }
         url = config.getProperty(ENGINE_DB_URL);
-        if (url == null) {
-            throw new SQLException("Can't find database URL parameter \"" + ENGINE_DB_URL + "\" in file \"" + configFile.getAbsolutePath() + "\".");
-        }
-        user = config.getProperty("ENGINE_DB_USER");
-        if (user == null) {
-            throw new SQLException("Can't find database user name parameter \"" + ENGINE_DB_USER + "\" in file \"" + configFile.getAbsolutePath() + "\".");
-        }
-        password = config.getProperty("ENGINE_DB_PASSWORD");
-        if (password == null) {
-            throw new SQLException("Can't find database password parameter \"" + ENGINE_DB_PASSWORD + "\" in file \"" + configFile.getAbsolutePath() + "\".");
-        }
+        user = config.getProperty(ENGINE_DB_USER);
+        password = config.getProperty(ENGINE_DB_PASSWORD);
 
         // The password is encrypted inside the file, so we need to decrypt it here:
         password = EncryptionUtils.decode(password, "", "");
         if (password == null) {
-            throw new SQLException("Failed to decrypt password from parameter \"" + ENGINE_DB_PASSWORD + "\" in file \"" + configFile.getAbsolutePath() + "\".");
+            throw new SQLException("Failed to decrypt password from parameter \"" + ENGINE_DB_PASSWORD + "\".");
         }
 
         // Load the driver:
