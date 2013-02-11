@@ -886,10 +886,15 @@ public class SyntaxChecker implements ISyntaxChecker {
             String innerQuery =
                     StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
                             wherePhrase);
+            // adding a secondary default sort by entity name
+            StringBuilder sortExpr = new StringBuilder();
+            sortExpr.append(sortByPhrase);
+            sortExpr.append(",");
+            sortExpr.append(mSearchObjectAC.getDefaultSort(searchObjStr));
+
             // only audit log search supports the SearchFrom which enables getting records starting from a certain
             // audit_log_id, this is done to make search queries from the client more efficient and eliminate the client
             // from registering to such queries and comparing last data with previous.
-
             String inQuery =
                     (primeryKey.equals("audit_log_id")
                             ?
@@ -902,7 +907,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                             StringFormat.format("SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)", tableNameWithOutTags,
                                     primeryKey, innerQuery));
             retval =
-                    StringFormat.format(Config.<String> GetValue(ConfigValues.DBSearchTemplate), sortByPhrase, inQuery,
+                    StringFormat.format(Config.<String> GetValue(ConfigValues.DBSearchTemplate),
+                            sortExpr.toString(),
+                            inQuery,
                             pagePhrase);
             // Check for sql injection if query is not safe
             if (!isSafe) {
