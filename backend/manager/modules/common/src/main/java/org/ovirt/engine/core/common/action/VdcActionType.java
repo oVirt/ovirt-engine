@@ -23,7 +23,6 @@ public enum VdcActionType {
     InternalMigrateVm(15, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
-    VmLogoff(19, QuotaDependency.NONE),
     VmLock(20, QuotaDependency.NONE),
     SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false, QuotaDependency.NONE),
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
@@ -118,7 +117,6 @@ public enum VdcActionType {
     RemoveDisk(230, QuotaDependency.STORAGE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
-    UpdateUserVm(303, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.STORAGE),
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
     AddVmAndAttachToPool(306, QuotaDependency.NONE),
@@ -128,12 +126,10 @@ public enum VdcActionType {
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.NONE),
     // UserAndGroupsCommands
-    SetUserRole(405, QuotaDependency.NONE),
     LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AutoLogin(407, false, QuotaDependency.NONE),
     LogoutUser(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
-    SetAdGroupRole(410, QuotaDependency.NONE),
     RemoveAdGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     ChangeUserPassword(416, QuotaDependency.NONE),
     CreateComputerAccount(417, QuotaDependency.NONE),
@@ -228,21 +224,6 @@ public enum VdcActionType {
     // Event Notification
     AddEventSubscription(1100, QuotaDependency.NONE),
     RemoveEventSubscription(1101, QuotaDependency.NONE),
-
-
-    // UI User Tabs
-    DataCenters(1200, QuotaDependency.NONE),
-    Clusters(1201, QuotaDependency.NONE),
-    Hosts(1202, QuotaDependency.NONE),
-    Storage(1203, QuotaDependency.NONE),
-    VirtualMachines(1204, QuotaDependency.NONE),
-    Pools(1205, QuotaDependency.NONE),
-    Templates(1206, QuotaDependency.NONE),
-    Users(1207, QuotaDependency.NONE),
-    Events(1208, QuotaDependency.NONE),
-    Monitor(1209, QuotaDependency.NONE),
-    Quota(1210, QuotaDependency.NONE),
-    Disks(1211, QuotaDependency.NONE),
 
     // Config
     ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
