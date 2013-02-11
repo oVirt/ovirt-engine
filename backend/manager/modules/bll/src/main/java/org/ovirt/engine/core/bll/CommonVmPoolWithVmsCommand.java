@@ -166,7 +166,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         } catch (RuntimeException e) {
             log.errorFormat("Failed to create command context of adding VM {0} to Pool {1}",
                     currentVmName,
-                    getParameters().getVmPool().getVmPoolName(),
+                    getParameters().getVmPool().getName(),
                     e);
         }
         return commandCtx;
@@ -189,7 +189,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getVmPoolName());
+        VmPool pool = getVmPoolDAO().getByName(getParameters().getVmPool().getName());
         if (pool != null
                 && (getActionType() == VdcActionType.AddVmPoolWithVms || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {

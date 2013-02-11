@@ -16,7 +16,7 @@ public class VmPoolMapper {
             entity.setVmPoolId(new Guid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setVmPoolName(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
             entity.setVmPoolDescription(model.getDescription());
@@ -57,7 +57,7 @@ public class VmPoolMapper {
     public static VmPool map(org.ovirt.engine.core.common.businessentities.VmPool entity, VmPool template) {
         VmPool model = template != null ? template : new VmPool();
         model.setId(entity.getVmPoolId().toString());
-        model.setName(entity.getVmPoolName());
+        model.setName(entity.getName());
         model.setDescription(entity.getVmPoolDescription());
         model.setSize(entity.getAssignedVmsCount());
         model.setPrestartedVms(entity.getPrestartedVms());

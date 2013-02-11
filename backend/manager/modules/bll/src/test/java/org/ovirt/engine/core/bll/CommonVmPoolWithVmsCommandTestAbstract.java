@@ -328,7 +328,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
      */
     private VmPool mockVmPools() {
         VmPool pool = new VmPool();
-        pool.setVmPoolName("simplePoolName");
+        pool.setName("simplePoolName");
         pool.setVdsGroupId(vdsGroupId);
         pool.setVmPoolId(vmPoolId);
         return pool;

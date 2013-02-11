@@ -13,7 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-public class VmPool extends IVdcQueryable implements Serializable {
+public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     private static final long serialVersionUID = 4517650877696849024L;
 
@@ -219,11 +219,12 @@ public class VmPool extends IVdcQueryable implements Serializable {
         this.id = value;
     }
 
-    public String getVmPoolName() {
+    @Override
+    public String getName() {
         return this.name;
     }
 
-    public void setVmPoolName(String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

@@ -80,7 +80,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getVmPoolDescription())
                 .addValue("vm_pool_id", pool.getVmPoolId())
-                .addValue("vm_pool_name", pool.getVmPoolName())
+                .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
@@ -94,7 +94,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getVmPoolDescription())
                 .addValue("vm_pool_id", pool.getVmPoolId())
-                .addValue("vm_pool_name", pool.getVmPoolName())
+                .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
                 .addValue("parameters", pool.getParameters())
                 .addValue("prestarted_vms", pool.getPrestartedVms())
@@ -183,7 +183,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                     .getString("vm_pool_description"));
             entity.setVmPoolId(Guid.createGuidFromString(rs
                     .getString("vm_pool_id")));
-            entity.setVmPoolName(rs.getString("vm_pool_name"));
+            entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
@@ -207,7 +207,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                     .getString("vm_pool_description"));
             entity.setVmPoolId(Guid.createGuidFromString(rs
                     .getString("vm_pool_id")));
-            entity.setVmPoolName(rs.getString("vm_pool_name"));
+            entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));

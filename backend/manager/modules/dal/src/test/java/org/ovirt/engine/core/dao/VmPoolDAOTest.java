@@ -40,7 +40,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
         deletableVmPool = dao.get(DELETABLE_VM_POOL_ID);
 
         newVmPool = new VmPool();
-        newVmPool.setVmPoolName("New VM Pool");
+        newVmPool.setName("New VM Pool");
         newVmPool.setVmPoolDescription("This is a new VM pool.");
         newVmPool.setVdsGroupId(VDS_GROUP_ID);
 
@@ -125,7 +125,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        VmPool result = dao.getByName(existingVmPool.getVmPoolName());
+        VmPool result = dao.getByName(existingVmPool.getName());
 
         assertNotNull(result);
         assertEquals(existingVmPool, result);
@@ -172,7 +172,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
     public void testSaveVmPool() {
         dao.save(newVmPool);
 
-        VmPool result = dao.getByName(newVmPool.getVmPoolName());
+        VmPool result = dao.getByName(newVmPool.getName());
 
         assertNotNull(result);
         assertEquals(newVmPool, result);

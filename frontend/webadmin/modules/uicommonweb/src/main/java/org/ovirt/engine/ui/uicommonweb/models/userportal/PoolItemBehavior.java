@@ -106,7 +106,7 @@ public class PoolItemBehavior extends ItemBehavior
     {
         VmPool entity = (VmPool) getItem().getEntity();
 
-        getItem().setName(entity.getVmPoolName());
+        getItem().setName(entity.getName());
         getItem().setDescription(entity.getVmPoolDescription());
         getItem().setIsPool(true);
         getItem().setIsServer(false);

@@ -313,7 +313,7 @@ public final class Cloner
 
         obj.setVmPoolDescription(instance.getVmPoolDescription());
         obj.setVmPoolId(instance.getVmPoolId());
-        obj.setVmPoolName(instance.getVmPoolName());
+        obj.setName(instance.getName());
         obj.setVmPoolType(instance.getVmPoolType());
         obj.setVdsGroupId(instance.getVdsGroupId());
 

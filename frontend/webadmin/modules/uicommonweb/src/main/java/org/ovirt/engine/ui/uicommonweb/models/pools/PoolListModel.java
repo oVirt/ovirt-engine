@@ -322,7 +322,7 @@ public class PoolListModel extends ListWithDetailsModel
                         model.setHashName("edit_pool"); //$NON-NLS-1$
                         model.setVmType(VmType.Desktop);
                         model.Initialize(null);
-                        model.getName().setEntity(pool.getVmPoolName());
+                        model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
                         model.getPrestartedVms().setEntity(pool.getPrestartedVms());
@@ -361,7 +361,7 @@ public class PoolListModel extends ListWithDetailsModel
         ArrayList<String> list = new ArrayList<String>();
         for (VmPool item : Linq.<VmPool> Cast(getSelectedItems()))
         {
-            list.add(item.getVmPoolName());
+            list.add(item.getName());
         }
         model.setItems(list);
 
@@ -438,7 +438,7 @@ public class PoolListModel extends ListWithDetailsModel
                         Boolean isUnique = (Boolean) returnValue;
 
                         if ((model.getIsNew() && !isUnique)
-                                || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getVmPoolName()) != 0)) {
+                                || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getName()) != 0)) {
                             model.getName()
                                     .getInvalidityReasons()
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
@@ -448,7 +448,7 @@ public class PoolListModel extends ListWithDetailsModel
                         }
 
                         // Save changes.
-                        pool.setVmPoolName((String) model.getName().getEntity());
+                        pool.setName((String) model.getName().getEntity());
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
                         pool.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
                         pool.setPrestartedVms(model.getPrestartedVms().AsConvertible().Integer());

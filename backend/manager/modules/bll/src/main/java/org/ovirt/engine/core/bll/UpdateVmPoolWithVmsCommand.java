@@ -71,12 +71,12 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
 
     @Override
     public String getEntityOldName() {
-        return oldPool.getVmPoolName();
+        return oldPool.getName();
     }
 
     @Override
     public String getEntityNewName() {
-        return getParameters().getVmPool().getVmPoolName();
+        return getParameters().getVmPool().getName();
     }
 
     @Override

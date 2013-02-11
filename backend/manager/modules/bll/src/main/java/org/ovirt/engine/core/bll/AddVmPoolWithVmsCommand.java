@@ -84,7 +84,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
             VmPool vmPool = getParameters().getVmPool();
-            String vmPoolName = vmPool == null ? StringUtils.EMPTY : vmPool.getVmPoolName();
+            String vmPoolName = vmPool == null ? StringUtils.EMPTY : vmPool.getName();
             jobProperties.put(VdcObjectType.VmPool.name().toLowerCase(), vmPoolName);
             Guid vmTemplateId = getVmTemplateId();
             String templateName = getVmTemplateName();

@@ -433,7 +433,7 @@ public class PoolGeneralModel extends EntityModel
     {
         VmPool pool = (VmPool) getEntity();
 
-        setName(pool.getVmPoolName());
+        setName(pool.getName());
         setDescription(pool.getVmPoolDescription());
 
         AsyncQuery _asyncQuery = new AsyncQuery();

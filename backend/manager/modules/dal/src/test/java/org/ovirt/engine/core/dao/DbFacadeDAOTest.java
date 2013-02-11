@@ -419,7 +419,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForVmPool() {
         VmPool vmPool = dbFacade.getVmPoolDao().get(VM_POOL_ID);
         assertNotNull(vmPool);
-        String name = vmPool.getVmPoolName();
+        String name = vmPool.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(VM_POOL_ID, VdcObjectType.VmPool)));
     }
 

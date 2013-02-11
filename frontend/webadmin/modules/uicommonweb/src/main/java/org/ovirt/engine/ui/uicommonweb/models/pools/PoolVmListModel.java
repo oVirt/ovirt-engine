@@ -68,7 +68,7 @@ public class PoolVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Vms: pool=" + getEntity().getVmPoolName()); //$NON-NLS-1$
+            setSearchString("Vms: pool=" + getEntity().getName()); //$NON-NLS-1$
             super.Search();
         }
     }

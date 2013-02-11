@@ -36,7 +36,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         TextColumnWithTooltip<VmPool> nameColumn = new TextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
-                return object.getVmPoolName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
