@@ -42,7 +42,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             return;
         }
 
-        Boolean plug = (Boolean) getPlugged().getEntity();
+        Boolean plug = isPluggedBeforeAndAfterEdit();
 
         if (plug) {
             getNicType().getChangeProhibitionReasons()
@@ -71,7 +71,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             return;
         }
 
-        boolean isPlugged = (Boolean) getPlugged().getEntity();
+        boolean isPlugged = isPluggedBeforeAndAfterEdit();
         boolean isPortMirroring = (Boolean) getPortMirroring().getEntity();
 
         if (isVmUp() && hotUpdateSupported) {
@@ -93,7 +93,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             return;
         }
 
-        boolean isPlugged = (Boolean) getPlugged().getEntity();
+        boolean isPlugged = isPluggedBeforeAndAfterEdit();
         boolean isPortMirroring = (Boolean) getPortMirroring().getEntity();
 
         if (isVmUp() && hotUpdateSupported) {
@@ -130,5 +130,9 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                 onPlugChange();
             }
         }
+    }
+
+    private boolean isPluggedBeforeAndAfterEdit() {
+        return getNic().isPlugged() && (Boolean) getPlugged().getEntity();
     }
 }

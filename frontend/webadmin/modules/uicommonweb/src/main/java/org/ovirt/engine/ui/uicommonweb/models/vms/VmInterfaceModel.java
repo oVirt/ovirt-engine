@@ -517,7 +517,6 @@ public abstract class VmInterfaceModel extends Model
     }
 
     protected void updateLinkChangability() {
-        boolean isPlugged = (Boolean) getPlugged().getEntity();
         boolean isNullNetworkSelected = getNetwork().getSelectedItem() == null;
 
         if (isNullNetworkSelected) {
