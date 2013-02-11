@@ -26,16 +26,19 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     private Guid id;
 
+    @EditableField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_NAME_INVALID", groups = {
             CreateEntity.class, UpdateEntity.class })
-    private String name = ""; // GREGM prevents NPE
+    private String name = "";
 
+    @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     @NotNull(groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
     private String managementIp;
 
+    @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.CONSOLE_ADDRESS_SIZE)
@@ -44,17 +47,20 @@ public class VdsStatic implements BusinessEntity<Guid> {
     @Size(max = BusinessEntitiesDefinitions.HOST_UNIQUE_ID_SIZE)
     private String uniqueId;
 
+    @EditableOnVdsStatus
     @HostnameOrIp(message = "VALIDATION.VDS.HOSTNAME.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
 
+    @EditableOnVdsStatus
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.PORT.RANGE")
     private int port;
 
+    @EditableOnVdsStatus
     private Guid vdsGroupId;
 
     private Boolean serverSslEnabled;
@@ -63,51 +69,69 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     private Integer vdsStrength;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
     private String pmType;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
     private String pmUser;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
     private String pmPassword;
 
+    @EditableField
     private Integer pmPort;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String pmOptions;
 
+    @EditableField
     private boolean pmEnabled;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String pmProxyPreferences;
 
+    @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
     private String pmSecondaryIp;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_TYPE_SIZE)
     private String pmSecondaryType;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_USER_SIZE)
     private String pmSecondaryUser;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.HOST_PM_PASSWD_SIZE)
     private String pmSecondaryPassword;
 
+    @EditableField
     private Integer pmSecondaryPort;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String pmSecondaryOptions;
 
+    @EditableField
     private boolean pmSecondaryConcurrent;
 
+    @EditableField
     private ValueObjectMap pmOptionsMap;
 
+    @EditableField
     private ValueObjectMap pmSecondaryOptionsMap;
 
+    @EditableField
     private long otpValidity;
 
+    @EditableField
     @Min(BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY)
     @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
     private int vdsSpmPriority;

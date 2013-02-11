@@ -1,16 +1,21 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
+import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableOnVdsStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -31,38 +36,18 @@ public class VdsHandler extends BaseHandler {
      */
     public static void Init()
     {
+        Class<?>[] inspectedClasses = new Class<?>[] { VDS.class, VdsStatic.class, VdsDynamic.class };
         mUpdateVdsStatic =
-            new ObjectIdentityChecker(
-                    VdsHandler.class,
-                    new java.util.ArrayList<String>(java.util.Arrays.asList(new String[] { "VDS", "VdsStatic",
-                            "VdsDynamic" })),
-                    VDSStatus.class);
-        mUpdateVdsStatic.AddPermittedField("vdsName");
-        mUpdateVdsStatic.AddPermittedField("managmentIp");
-        mUpdateVdsStatic.AddPermittedField("pmType");
-        mUpdateVdsStatic.AddPermittedField("pmUser");
-        mUpdateVdsStatic.AddPermittedField("pmPassword");
-        mUpdateVdsStatic.AddPermittedField("pmPort");
-        mUpdateVdsStatic.AddPermittedField("pmOptions");
-        mUpdateVdsStatic.AddPermittedField("pmEnabled");
-        mUpdateVdsStatic.AddPermittedField("pmProxyPreferences");
-        mUpdateVdsStatic.AddPermittedField("PmOptionsMap");
-        mUpdateVdsStatic.AddPermittedField("managmentIp");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryIp");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryType");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryUser");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryPassword");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryPort");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryOptions");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryOptionsMap");
-        mUpdateVdsStatic.AddPermittedField("pmSecondaryConcurrent");
-        mUpdateVdsStatic.AddPermittedField("vdsSpmPriority");
-        mUpdateVdsStatic.AddPermittedField("otpValidity");
-        mUpdateVdsStatic.AddPermittedField("consoleAddress");
-        mUpdateVdsStatic.AddFields(
-                java.util.Arrays.asList(new Enum<?>[] { VDSStatus.NonResponsive, VDSStatus.Maintenance, VDSStatus.Down,
-                        VDSStatus.Unassigned, VDSStatus.InstallFailed, VDSStatus.PendingApproval }),
-                java.util.Arrays.asList(new String[] { "ip", "vdsUniqueId", "hostName", "port", "vdsGroupId" }));
+                new ObjectIdentityChecker(VdsHandler.class, Arrays.asList(inspectedClasses), VDSStatus.class);
+
+
+        for (Pair<EditableField,String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
+            mUpdateVdsStatic.AddPermittedField(pair.getSecond());
+        }
+
+        for (Pair<EditableOnVdsStatus,String> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {
+            mUpdateVdsStatic.AddField(Arrays.asList(pair.getFirst().statuses()),pair.getSecond());
+        }
     }
 
     public VdsHandler() {

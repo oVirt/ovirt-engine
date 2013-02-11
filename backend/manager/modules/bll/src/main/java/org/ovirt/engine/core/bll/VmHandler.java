@@ -10,9 +10,12 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.EditableField;
+import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -27,6 +30,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.VmValidationUtils;
@@ -49,11 +53,14 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationFailureReason;
 
 public class VmHandler {
+
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
     private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
             new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
     private static ObjectIdentityChecker mUpdateVmsStatic;
+
+    private static final Log log = LogFactory.getLog(VmHandler.class);
 
     static {
         failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.DUPLICATE_KEY,
@@ -75,28 +82,24 @@ public class VmHandler {
      * @see Backend#InitHandlers
      */
     public static void Init() {
-        mUpdateVmsStatic = new ObjectIdentityChecker(VmHandler.class,
-                Arrays.asList(new String[] { "VM", "VmStatic", "VmDynamic" }), VMStatus.class);
+        Class<?>[] inspectedClassNames = new Class<?>[] {
+                VmBase.class,
+                VM.class,
+                VmStatic.class,
+                VmDynamic.class };
 
-        mUpdateVmsStatic.AddPermittedFields(new String[] { "vmName", "description", "domain", "os", "osType",
-                "creationDate", "allowConsoleReconnect", "usbPolicy", "autoSuspend",
-                "autoStartup",
-                "dedicatedVmForVds", "priority", "defaultBootSequence", "initrdUrl",
-                "kernelUrl", "kernelParams", "migrationSupport", "minAllocatedMem", "quotaId", "quotaName",
-                "quotaEnforcementType", "cpuPinning",
-                "vmPayload", "balloonEnabled", "smartcardEnabled","deleteProtected","dbGeneration",
-                "images", // images list is relational entity - ignore value changes
-                "interfaces", // interfaces is relational entity - ignore value changes
-                "useHostCpuFlags",
-                "quotaDefault",
-                "tunnelMigration"
-        });
-        mUpdateVmsStatic.AddFields(
-                Arrays.asList(new Enum<?>[] { VMStatus.Down }),
-                Arrays.asList(new String[] { "vdsGroupId", "timeZone", "stateless", "niceLevel", "memSizeMb",
-                        "numOfSockets", "cpuPerSocket", "isoPath", "userDefinedProperties",
-                        "predefinedProperties", "customProperties", "defaultDisplayType", "numOfMonitors",
-                        "vncKeyboardLayout"  }));
+        mUpdateVmsStatic =
+                new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames), VMStatus.class);
+
+        for (Pair<EditableField,String> pair : BaseHandler.extractAnnotatedFields(EditableField.class, (inspectedClassNames))) {
+            mUpdateVmsStatic.AddPermittedField(pair.getSecond());
+        }
+
+        for (Pair<EditableOnVmStatusField, String> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
+                inspectedClassNames)) {
+            mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
+        }
+
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
@@ -511,6 +514,5 @@ public class VmHandler {
         return (cdList.size() > 1 || floppyList.size() > 1);
     }
 
-    private static final Log log = LogFactory.getLog(VmHandler.class);
-
 }
+

@@ -31,14 +31,14 @@ public class ObjectIdentityChecker {
         identities.put(type, this);
     }
 
-    public ObjectIdentityChecker(Class<?> type, Iterable<String> aliases) {
+    public ObjectIdentityChecker(Class<?> type, Iterable<Class<?>> aliases) {
         this(type);
-        for (String alias : aliases) {
-            ObjectIdentityChecker.aliases.put(alias, type);
+        for (Class<?> alias : aliases) {
+            ObjectIdentityChecker.aliases.put(alias.getSimpleName(), type);
         }
     }
 
-    public ObjectIdentityChecker(Class<?> type, Iterable<String> aliases, Class<?> enumType) {
+    public ObjectIdentityChecker(Class<?> type, Iterable<Class<?>> aliases, Class<?> enumType) {
         this(type, aliases);
         statusTypes.put(type, enumType);
     }
@@ -78,7 +78,7 @@ public class ObjectIdentityChecker {
             if (statusType != null) {
                 Enum<?> currentStatus;
                 try {
-                    currentStatus = (Enum<?>) EnumUtils.valueOf(statusType, status, true);
+                    currentStatus = EnumUtils.valueOf(statusType, status, true);
                 } catch (IllegalArgumentException e) {
                     throw new RuntimeException(String.format("status type %1$s not contain type %2$s", statusType,
                             status));
@@ -92,7 +92,7 @@ public class ObjectIdentityChecker {
         }
     }
 
-    public final void AddField(Enum<?> status, String fieldName) {
+    public final <T extends Enum<T>> void AddField(T status, String fieldName) {
         Set<String> values = dictionary.get(status);
         if (values == null) {
             values = new HashSet<String>();
@@ -101,13 +101,13 @@ public class ObjectIdentityChecker {
         values.add(fieldName);
     }
 
-    public final void AddField(Iterable<Enum<?>> statuses, String fieldName) {
-        for (Enum<?> status : statuses) {
+    public final <T extends Enum<T>> void AddField(Iterable<T> statuses, String fieldName) {
+        for (T status : statuses) {
             AddField(status, fieldName);
         }
     }
 
-    public final void AddFields(Iterable<Enum<?>> statuses, Iterable<String> fields) {
+    public final <T extends Enum<T>> void AddFields(Iterable<T> statuses, String... fields) {
         for (String field : fields) {
             AddField(statuses, field);
         }
@@ -117,7 +117,7 @@ public class ObjectIdentityChecker {
         permitted.add(fieldName);
     }
 
-    public final void AddPermittedFields(String[] fieldNames) {
+    public final void AddPermittedFields(String... fieldNames) {
         for (String fieldName : fieldNames) {
             AddPermittedField(fieldName);
         }

@@ -17,10 +17,12 @@ public class VmStatic extends VmBase {
 
     private boolean initialized;
 
+    @EditableOnVmStatusField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String userDefinedProperties;
 
+    @EditableOnVmStatusField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String predefinedProperties;
@@ -30,14 +32,18 @@ public class VmStatic extends VmBase {
      */
     private int diskSize;
 
-    private int minAllocatedMemField;
+    @EditableField
+    private int minAllocatedMem;
 
+    @EditableOnVmStatusField
     private String customProperties;
 
+    @EditableField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 
+    @EditableField
     private boolean useHostCpuFlags = false;
 
     public VmStatic() {
@@ -152,14 +158,14 @@ public class VmStatic extends VmBase {
     }
 
     public int getMinAllocatedMem() {
-        if (minAllocatedMemField > 0) {
-            return minAllocatedMemField;
+        if (minAllocatedMem > 0) {
+            return minAllocatedMem;
         }
         return getMemSizeMb();
     }
 
     public void setMinAllocatedMem(int value) {
-        minAllocatedMemField = value;
+        minAllocatedMem = value;
     }
 
     @Override

@@ -25,95 +25,126 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1078548170257965614L;
 
+    @EditableField
     private String name = "";
 
+    @EditableField
     private ArrayList<DiskImage> images;
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+
+    @EditableField
     private List<VmNetworkInterface> interfaces;
+
+    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
     private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
 
     private Guid id = new Guid();
 
+    @EditableOnVmStatusField
     private Guid vdsGroupId;
 
-    private VmOsType mOs = VmOsType.Unassigned;
+    @EditableField
+    private VmOsType os = VmOsType.Unassigned;
 
+    @EditableField
     private Date creationDate = new Date(0);
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
     @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
-    private int memSizeMB;
+    @EditableOnVmStatusField
+    private int memSizeMb;
 
+    @EditableOnVmStatusField
     private int numOfSockets = 1;
 
-    private int cpusPerSocket = 1;
+    @EditableOnVmStatusField
+    private int cpuPerSocket = 1;
 
+    @EditableOnVmStatusField
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors, groups = DesktopVM.class,
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
     private String domain;
 
+    @EditableOnVmStatusField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_TIME_ZONE_SIZE)
-    private String timezone;
+    private String timeZone;
 
     private VmType vmType = VmType.Desktop;
 
+    @EditableField
     private UsbPolicy usbPolicy = UsbPolicy.DISABLED;
 
     private boolean failBack;
 
+    @EditableField
     private BootSequence defaultBootSequence = BootSequence.C;
 
+    @EditableOnVmStatusField
     private int niceLevel;
 
-    private boolean autosuspend;
+    @EditableField
+    private boolean autoSuspend;
 
+    @EditableField
     private int priority;
 
+    @EditableField
     private boolean autoStartup;
 
+    @EditableOnVmStatusField
     private boolean stateless;
 
+    @EditableField
     private boolean deleteProtected;
 
+    @EditableField
     private long dbGeneration;
 
+    @EditableField
     private boolean smartcardEnabled;
 
+    @EditableOnVmStatusField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath = "";
 
     private OriginType origin;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String kernelUrl;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String kernelParams;
 
+    @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN,
             message = "ACTION_TYPE_FAILED_LINUX_BOOT_PARAMS_MAY_NOT_CONTAIN_TRIMMING_WHITESPACES", groups = { CreateEntity.class,
                     UpdateEntity.class })
     private String initrdUrl;
 
+    @EditableField
     private boolean allowConsoleReconnect;
 
     /**
      * if this field is null then value should be taken from cluster
      */
+    @EditableField
     private Boolean tunnelMigration;
 
     /**
@@ -129,24 +160,33 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public VmBase() {
     }
 
+    @EditableField
     private Guid quotaId;
 
+
     /** Transient field for GUI presentation purposes. */
+    @EditableField
     private String quotaName;
 
+    @EditableField
     /** Transient field for GUI presentation purposes. */
     private boolean quotaDefault;
 
     /** Transient field for GUI presentation purposes. */
+    @EditableField
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
+    @EditableField
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
 
+    @EditableField
     private NGuid dedicatedVmForVds;
 
+    @EditableOnVmStatusField
     protected DisplayType defaultDisplayType = DisplayType.qxl;
 
+    @EditableOnVmStatusField
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
         groups = { CreateEntity.class, UpdateEntity.class },
         message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
@@ -157,7 +197,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             VmOsType os,
             Date creationDate,
             String description,
-            int memSizeMB,
+            int memSizeMb,
             int numOfSockets,
             int cpusPerSocket,
             int numOfMonitors,
@@ -185,21 +225,21 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
-        this.mOs = os;
+        this.os = os;
         this.creationDate = creationDate;
         this.description = description;
-        this.memSizeMB = memSizeMB;
+        this.memSizeMb = memSizeMb;
         this.numOfSockets = numOfSockets;
-        this.cpusPerSocket = cpusPerSocket;
+        this.cpuPerSocket = cpusPerSocket;
         this.numOfMonitors = numOfMonitors;
         this.domain = domain;
-        this.timezone = timezone;
+        this.timeZone = timezone;
         this.vmType = vmType;
         this.usbPolicy = usbPolicy;
         this.failBack = failBack;
         this.defaultBootSequence = defaultBootSequence;
         this.niceLevel = niceLevel;
-        this.autosuspend = autosuspend;
+        this.autoSuspend = autosuspend;
         this.priority = priority;
         this.autoStartup = autoStartup;
         this.stateless = stateless;
@@ -282,21 +322,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     }
 
     public VmOsType getOs() {
-        return mOs;
+        return os;
     }
 
     public void setOs(VmOsType value) {
-        mOs = value;
-    }
-
-    @Deprecated
-    public VmOsType getOsType() {
-        return getOs();
-    }
-
-    @Deprecated
-    public void setOsType(VmOsType value) {
-        setOs(value);
+        os = value;
     }
 
     public Date getCreationDate() {
@@ -316,11 +346,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     }
 
     public int getMemSizeMb() {
-        return memSizeMB;
+        return memSizeMb;
     }
 
     public void setMemSizeMb(int value) {
-        this.memSizeMB = value;
+        this.memSizeMb = value;
     }
 
     public int getNumOfSockets() {
@@ -332,11 +362,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     }
 
     public int getCpuPerSocket() {
-        return cpusPerSocket;
+        return cpuPerSocket;
     }
 
     public void setCpuPerSocket(int value) {
-        this.cpusPerSocket = value;
+        this.cpuPerSocket = value;
     }
 
     public int getNumOfMonitors() {
@@ -356,11 +386,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     }
 
     public String getTimeZone() {
-        return timezone;
+        return timeZone;
     }
 
     public void setTimeZone(String value) {
-        timezone = value;
+        timeZone = value;
     }
 
     public VmType getVmType() {
@@ -404,11 +434,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     }
 
     public boolean isAutoSuspend() {
-        return autosuspend;
+        return autoSuspend;
     }
 
     public void setAutoSuspend(boolean value) {
-        autosuspend = value;
+        autoSuspend = value;
     }
 
     public int getPriority() {
@@ -520,8 +550,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         final int prime = 31;
         int result = 1;
         result = prime * result + (autoStartup ? 1231 : 1237);
-        result = prime * result + (autosuspend ? 1231 : 1237);
-        result = prime * result + cpusPerSocket;
+        result = prime * result + (autoSuspend ? 1231 : 1237);
+        result = prime * result + cpuPerSocket;
         result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
         result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -532,8 +562,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((isoPath == null) ? 0 : isoPath.hashCode());
         result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
         result = prime * result + ((kernelUrl == null) ? 0 : kernelUrl.hashCode());
-        result = prime * result + ((mOs == null) ? 0 : mOs.hashCode());
-        result = prime * result + memSizeMB;
+        result = prime * result + ((os == null) ? 0 : os.hashCode());
+        result = prime * result + memSizeMb;
         result = prime * result + niceLevel;
         result = prime * result + numOfSockets;
         result = prime * result + numOfMonitors;
@@ -541,7 +571,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + priority;
         result = prime * result + (stateless ? 1231 : 1237);
         result = prime * result + (smartcardEnabled ? 1231 : 1237);
-        result = prime * result + ((timezone == null) ? 0 : timezone.hashCode());
+        result = prime * result + ((timeZone == null) ? 0 : timeZone.hashCode());
         result = prime * result + ((usbPolicy == null) ? 0 : usbPolicy.hashCode());
         result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
         result = prime * result + ((vmType == null) ? 0 : vmType.hashCode());
@@ -570,10 +600,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         if (autoStartup != other.autoStartup) {
             return false;
         }
-        if (autosuspend != other.autosuspend) {
+        if (autoSuspend != other.autoSuspend) {
             return false;
         }
-        if (cpusPerSocket != other.cpusPerSocket) {
+        if (cpuPerSocket != other.cpuPerSocket) {
             return false;
         }
         if (creationDate == null) {
@@ -638,10 +668,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         } else if (!kernelUrl.equals(other.kernelUrl)) {
             return false;
         }
-        if (mOs != other.mOs) {
+        if (os != other.os) {
             return false;
         }
-        if (memSizeMB != other.memSizeMB) {
+        if (memSizeMb != other.memSizeMb) {
             return false;
         }
         if (niceLevel != other.niceLevel) {
@@ -668,11 +698,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         if (deleteProtected != other.deleteProtected) {
             return false;
         }
-        if (timezone == null) {
-            if (other.timezone != null) {
+        if (timeZone == null) {
+            if (other.timeZone != null) {
                 return false;
             }
-        } else if (!timezone.equals(other.timezone)) {
+        } else if (!timeZone.equals(other.timeZone)) {
             return false;
         }
         if (usbPolicy != other.usbPolicy) {

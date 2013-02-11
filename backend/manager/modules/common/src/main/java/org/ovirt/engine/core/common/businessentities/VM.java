@@ -23,7 +23,9 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     private VmDynamic vmDynamic;
     private VmStatistics vmStatistics;
+    @EditableField
     private VmPayload vmPayload;
+    @EditableField
     private boolean balloonEnabled = true;
 
     @Valid

@@ -1,6 +1,12 @@
 package org.ovirt.engine.core.common.backendinterfaces;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
+import org.ovirt.engine.core.common.utils.Pair;
 
 public class BaseHandler implements IObjectDescriptorContainer {
     /**
@@ -24,4 +30,25 @@ public class BaseHandler implements IObjectDescriptorContainer {
         return true;
     }
 
+    /**
+     * scan classes for a given annotated fields. Those fields must comply to a bean property form to be used by the
+     * identityChecker.
+     * @param <A>
+     *            the annotation class to scan for
+     * @param clz
+     *            class array of the scanned types.
+     * @return array of pairs of a the annotation instance -> field name
+     */
+    public static <A extends Annotation> List<Pair<A , String>> extractAnnotatedFields(Class<A> annotation, Class<?>... clz) {
+        List<Pair<A, String>> pairList = new ArrayList<Pair<A, String>>();
+        for (Class<?> clazz : clz) {
+            for (Field field : clazz.getDeclaredFields()) {
+                A fieldAnnotation = field.getAnnotation(annotation);
+                if (fieldAnnotation != null) {
+                    pairList.add(new Pair<A, String>(fieldAnnotation, field.getName()));
+                }
+            }
+        }
+        return pairList;
+    }
 }
