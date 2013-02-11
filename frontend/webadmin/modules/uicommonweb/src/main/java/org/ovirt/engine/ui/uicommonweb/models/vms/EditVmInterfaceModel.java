@@ -53,6 +53,12 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                     .add(ConstantsManager.getInstance()
                             .getConstants()
                             .hotPortMirroringUpdateNotSupported());
+
+            initSelectedType();
+            getEnableMac().setEntity(false);
+            initMAC();
+            initPortMirroring();
+
         }
 
         getNicType().setIsChangable(!plug);
@@ -81,6 +87,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                                 .getConstants()
                                 .hotLinkStateUpdateNotSupportedWithPortMirroring());
                 getLinked().setIsChangable(false);
+                initLinked();
                 return;
             }
         }
@@ -103,6 +110,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                                 .getConstants()
                                 .hotNetworkUpdateNotSupportedWithPortMirroring());
                 getNetwork().setIsChangable(false);
+                initSelectedNetwork();
                 return;
             }
         } else if (isVmUp() && isPlugged) {
@@ -110,6 +118,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                     .getMessages()
                     .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
             getNetwork().setIsChangable(false);
+            initSelectedNetwork();
             return;
         }
     }

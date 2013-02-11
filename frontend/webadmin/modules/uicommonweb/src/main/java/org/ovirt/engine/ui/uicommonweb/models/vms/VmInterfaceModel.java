@@ -455,7 +455,7 @@ public abstract class VmInterfaceModel extends Model
                 }
 
                 getNetwork().setItems(networks);
-                initSelectedNetwork(networks);
+                initSelectedNetwork();
 
                 // fetch completed
                 okCommand.setIsExecutionAllowed(true);
@@ -477,7 +477,9 @@ public abstract class VmInterfaceModel extends Model
         getCommands().add(cancelCommand);
     }
 
-    protected abstract void initSelectedNetwork(ArrayList<Network> networks);
+    protected abstract void initSelectedNetwork();
+
+    protected abstract void initSelectedType();
 
     @Override
     public void ExecuteCommand(UICommand command)
@@ -497,6 +499,8 @@ public abstract class VmInterfaceModel extends Model
     protected abstract void initMAC();
 
     protected abstract void initPortMirroring();
+
+    protected abstract void initLinked();
 
     protected void onSaveMAC(VmNetworkInterface nicToSave) {
         nicToSave.setMacAddress(getMAC().getIsChangable() ? (getMAC().getEntity() == null ? null

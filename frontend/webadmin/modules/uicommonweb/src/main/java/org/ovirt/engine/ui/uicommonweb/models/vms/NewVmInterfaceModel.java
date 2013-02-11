@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -37,7 +38,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     protected void init() {
         String newNicName = AsyncDataProvider.GetNewNicName(getVmNicList());
         getNicType().setItems(AsyncDataProvider.GetNicTypeList(getVm().getOs(), false));
-        getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(getVm().getOs()));
+        initSelectedType();
         getName().setEntity(newNicName);
         initMAC();
 
@@ -49,12 +50,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         getPlugged().setIsChangable(hotPlugSupported);
         getPlugged().setEntity(true);
 
-        if (hotUpdateSupported) {
-            getLinked().setEntity(true);
-        } else {
-            getLinked().setEntity(true);
-            getLinked().setIsAvailable(false);
-        }
+        initLinked();
 
         initPortMirroring();
         initNetworks();
@@ -77,7 +73,9 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected void initSelectedNetwork(ArrayList<Network> networks) {
+    protected void initSelectedNetwork() {
+        List<Network> networks = (List<Network>) getNetwork().getItems();
+        networks = networks == null ? new ArrayList<Network>() : networks;
         for (Network network : networks) {
             if (ENGINE_NETWORK_NAME.equals(network.getName())) {
                 getNetwork().setSelectedItem(network);
@@ -85,6 +83,11 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
             }
         }
         getNetwork().setSelectedItem(networks.size() > 0 ? networks.get(0) : null);
+    }
+
+    @Override
+    protected void initSelectedType() {
+        getNicType().setSelectedItem(AsyncDataProvider.GetDefaultNicType(getVm().getOs()));
     }
 
     @Override
@@ -97,6 +100,16 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     protected void initPortMirroring() {
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         getPortMirroring().setEntity(false);
+    }
+
+    @Override
+    protected void initLinked() {
+        if (hotUpdateSupported) {
+            getLinked().setEntity(true);
+        } else {
+            getLinked().setEntity(true);
+            getLinked().setIsAvailable(false);
+        }
     }
 
     @Override

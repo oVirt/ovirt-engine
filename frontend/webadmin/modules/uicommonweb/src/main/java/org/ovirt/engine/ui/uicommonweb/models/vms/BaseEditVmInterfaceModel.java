@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -43,22 +44,12 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
                         VmInterfaceType.forValue(selectedNicType) == VmInterfaceType.rtl8139_pv);
         getNicType().setItems(nicTypes);
 
-        if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
-        {
-            selectedNicType = AsyncDataProvider.GetDefaultNicType(getVm().getOs()).getValue();
-        }
-
-        getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
+        initSelectedType();
 
         getName().setEntity(getNic().getName());
         initMAC();
 
-        if (hotUpdateSupported) {
-            getLinked().setEntity(getNic().isLinked());
-        } else {
-            getLinked().setEntity(true);
-            getLinked().setIsAvailable(false);
-        }
+        initLinked();
 
         initPortMirroring();
         initNetworks();
@@ -91,7 +82,9 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected void initSelectedNetwork(ArrayList<Network> networks) {
+    protected void initSelectedNetwork() {
+        List<Network> networks = (List<Network>) getNetwork().getItems();
+        networks = networks == null ? new ArrayList<Network>() : networks;
         for (Network a : networks)
         {
             String networkName = a == null ? null : a.getName();
@@ -112,6 +105,20 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
+    protected void initSelectedType() {
+        Integer selectedNicType = getNic().getType();
+        ArrayList<VmInterfaceType> nicTypes = (ArrayList<VmInterfaceType>) getNicType().getItems();
+        nicTypes = nicTypes == null ? new ArrayList<VmInterfaceType>() : nicTypes;
+
+        if (selectedNicType == null || !nicTypes.contains(VmInterfaceType.forValue(selectedNicType)))
+        {
+            selectedNicType = AsyncDataProvider.GetDefaultNicType(getVm().getOs()).getValue();
+        }
+
+        getNicType().setSelectedItem(VmInterfaceType.forValue(selectedNicType));
+    }
+
+    @Override
     protected void initMAC() {
         getMAC().setIsChangable(false);
         getMAC().setEntity(getNic().getMacAddress());
@@ -121,6 +128,16 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     protected void initPortMirroring() {
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         getPortMirroring().setEntity(getNic().isPortMirroring());
+    }
+
+    @Override
+    protected void initLinked() {
+        if (hotUpdateSupported) {
+            getLinked().setEntity(getNic().isLinked());
+        } else {
+            getLinked().setEntity(true);
+            getLinked().setIsAvailable(false);
+        }
     }
 
     @Override
