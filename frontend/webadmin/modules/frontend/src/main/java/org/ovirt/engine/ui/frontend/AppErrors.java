@@ -356,7 +356,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} must be in status Down, Up or Paused.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM is in saving/restoring state.\n-Please wait until the VM's status has changed.")
+    @DefaultStringValue("Cannot ${action} ${type}. VM is in saving/restoring state.\n-Please try again when the VM is either up or down.")
     String ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM is performing an operation on a Snapshot. Please wait for the operation to finish, and try again.")
