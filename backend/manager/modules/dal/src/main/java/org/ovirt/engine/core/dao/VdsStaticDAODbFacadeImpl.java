@@ -95,7 +95,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("pm_proxy_preferences", vds.getPmProxyPreferences())
                 .addValue("pm_secondary_ip", vds.getPmSecondaryIp())
                 .addValue("pm_secondary_type", vds.getPmSecondaryType())
-                .addValue("pm_secondary_user", vds.getPmSecondaryuser())
+                .addValue("pm_secondary_user", vds.getPmSecondaryUser())
                 .addValue("pm_secondary_password", DbFacadeUtils.encryptPassword(vds.getPmSecondaryPassword()))
                 .addValue("pm_secondary_port", vds.getPmSecondaryPort())
                 .addValue("pm_secondary_options", vds.getPmSecondaryOptions())
