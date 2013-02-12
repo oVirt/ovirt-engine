@@ -369,44 +369,6 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         boot_sequence = BootSequence.C;
     }
 
-    public VmDynamic(String app_list, NGuid guest_cur_user_id, String guest_cur_user_name,
-            java.util.Date guest_last_login_time, java.util.Date guest_last_logout_time, String guest_os,
-            NGuid migrating_to_vds, NGuid run_on_vds, int status, Guid vm_guid, String vm_host, String vm_ip,
-            java.util.Date lastStartTime, java.util.Date vm_last_up_time, Integer vm_pid, Integer display,
-            Boolean acpi_enable, String display_ip, Integer display_type, Boolean kvm_enable, Integer session,
-            Integer boot_sequence, Integer display_secure_port, Integer utc_diff, Guid last_vds_run_on,
-            String client_ip, Integer guest_requested_memory) {
-        mExitStatus = VmExitStatus.Normal;
-        mWin2kHackEnable = false;
-
-        this.appList = app_list;
-        this.guest_cur_user_name = guest_cur_user_name;
-        this.guest_last_login_time = guest_last_login_time;
-        this.guest_last_logout_time = guest_last_logout_time;
-        this.guest_os = guest_os;
-        this.migrating_to_vds = migrating_to_vds;
-        this.run_on_vds = run_on_vds;
-        this.status = VMStatus.forValue(status);
-        this.id = vm_guid;
-        this.vm_host = vm_host;
-        this.vm_ip = vm_ip;
-        this.lastStartTime = lastStartTime;
-        this.vm_last_up_time = vm_last_up_time;
-        this.vm_pid = vm_pid;
-        this.display = display;
-        this.acpi_enable = acpi_enable;
-        this.display_ip = display_ip;
-        this.display_type = DisplayType.forValue(display_type);
-        this.kvm_enable = kvm_enable;
-        this.session = SessionState.forValue(session);
-        this.boot_sequence = BootSequence.forValue(boot_sequence);
-        this.display_secure_port = display_secure_port;
-        this.setutc_diff(utc_diff);
-        this.setlast_vds_run_on(last_vds_run_on);
-        this.setclient_ip(client_ip);
-        this.setguest_requested_memory(guest_requested_memory);
-    }
-
     public String getapp_list() {
         return this.appList;
     }
