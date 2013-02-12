@@ -230,10 +230,6 @@ public class VmInterfaceListModel extends SearchableListModel
             return true;
         }
 
-        if (!isHotPlugSupported) {
-            return false;
-        }
-
         ArrayList<VmNetworkInterface> nics =
                 getSelectedItems() != null ? Linq.<VmNetworkInterface> Cast(getSelectedItems())
                         : new ArrayList<VmNetworkInterface>();

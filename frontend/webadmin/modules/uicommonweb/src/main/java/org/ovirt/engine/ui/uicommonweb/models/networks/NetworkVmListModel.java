@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -134,7 +134,17 @@ public class NetworkVmListModel extends SearchableListModel
     }
 
     private void updateActionAvailability() {
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && !getSelectedItems().isEmpty()
+        ArrayList<VM> vms = new ArrayList<VM>();
+        List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
+                getSelectedItems() != null ? getSelectedItems() : new ArrayList();
+        for (PairQueryable<VmNetworkInterface, VM> item : selectedItems)
+        {
+            vms.add(item.getSecond());
+        }
+
+        getRemoveCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(vms,
+                VM.class,
+                VdcActionType.RemoveVmInterface) && getSelectedItems() != null && !getSelectedItems().isEmpty()
                 && canRemoveVnics());
     }
 
@@ -147,14 +157,7 @@ public class NetworkVmListModel extends SearchableListModel
 
         for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems)
         {
-            Boolean isActivateSupported =
-                    (Boolean) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
-                            pair.getSecond().getVdsGroupCompatibilityVersion().toString());
-            isActivateSupported = isActivateSupported != null ? isActivateSupported : false;
-
-            // If the vm is up and the vnic is active- remove enabled just if hotplug is enabled on the cluster's
-            // version
-            if (!isActivateSupported && pair.getFirst().isPlugged()
+            if (pair.getFirst().isPlugged()
                     && !VMStatus.Down.equals(pair.getSecond().getStatus()))
             {
                 return false;
