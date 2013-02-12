@@ -9,39 +9,14 @@
    <!-- ============================== -->
 
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-      <errorHandler class="org.apache.log4j.helpers..OnlyOnceErrorHandler"/>
+      <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
       <param name="Target" value="System.out"/>
-      <param name="Threshold" value="INFO"/>
 
       <layout class="org.apache.log4j.PatternLayout">
          <!-- The default pattern: Date Priority [Category] Message\n -->
          <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
       </layout>
    </appender>
-
-   <!-- ================ -->
-   <!-- Limit categories -->
-   <!-- ================ -->
-
-   <!-- Limit the com.sun category to INFO as its FINE is verbose -->
-   <category name="com.sun">
-      <priority value="INFO"/>
-   </category>
-
-   <!-- Limit the sun category to INFO as its FINE is verbose -->
-   <category name="sun">
-      <priority value="INFO"/>
-   </category>
-
-   <!-- Limit the javax.xml.bind category to INFO as its FINE is verbose -->
-   <category name="javax.xml.bind">
-      <priority value="INFO"/>
-   </category>
-
-   <!-- Limit the org.springframework categories -->
-   <category name="org.springframework">
-      <priority value="WARN"/>
-   </category>
 
    <!-- ======================= -->
    <!-- oVirt categories 	-->
@@ -50,16 +25,19 @@
    <!--TOP configuration for all oVirt categories -->
    <category name="org.ovirt.engine.core" additivity="false">
       <priority value="INFO"/>
+      <appender-ref ref="CONSOLE"/>
    </category>
 
-   <category name="org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy" >
+   <category name="org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy" additivity="false" >
       <priority value="ERROR"/>
-   </category>
+      <appender-ref ref="CONSOLE"/>
+  </category>
 
-   <!--Postgres causes lots of verboe messages in INFO level:
+   <!--Postgres causes lots of verbose messages in INFO level:
         "Added default SqlReturnResultSet parameter named #result-set-1"-->
    <category name="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect$PostgresJdbcTemplate">
-        <priority value="WARN"/>
+      <priority value="WARN"/>
+      <appender-ref ref="CONSOLE"/>
    </category>
 
    <!-- ======================= -->
@@ -73,6 +51,7 @@
          setting a default via ${jboss.server.log.threshold:WARN} will not work.
        -->
       <priority value="WARN"/>
+      <appender-ref ref="CONSOLE"/>
    </root>
 
 
