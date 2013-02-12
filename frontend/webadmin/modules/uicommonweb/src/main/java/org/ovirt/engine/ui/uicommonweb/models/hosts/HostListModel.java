@@ -804,7 +804,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setPmProxyPreferences(model.getPmProxyPreferences());
 
         // Save primary PM parameters.
-        host.setManagmentIp((String) model.getManagementIp().getEntity());
+        host.setManagementIp((String) model.getManagementIp().getEntity());
         host.setPmUser((String) model.getPmUserName().getEntity());
         host.setPmPassword((String) model.getPmPassword().getEntity());
         host.setPmType((String) model.getPmType().getSelectedItem());
@@ -1157,7 +1157,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         }
 
         // Set primary PM parameters.
-        model.getManagementIp().setEntity(vds.getManagmentIp());
+        model.getManagementIp().setEntity(vds.getManagementIp());
         model.getPmUserName().setEntity(vds.getPmUser());
         model.getPmPassword().setEntity(vds.getPmPassword());
         model.getPmType().setSelectedItem(vds.getPmType());

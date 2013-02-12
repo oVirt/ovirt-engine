@@ -185,7 +185,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.vdsGroupDescription = vds_group_description;
         this.setId(vds_id);
         this.setVdsName(vds_name);
-        this.setManagmentIp(ip);
+        this.setManagementIp(ip);
         this.setHostName(host_name);
         this.setPort(port);
         this.setStatus(VDSStatus.forValue(status));
@@ -253,7 +253,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getVdsGroupDescription(),
                         Guid.createGuidFromString(getId().toString()),
                         getName(),
-                        getManagmentIp(),
+                        getManagementIp(),
                         getHostName(),
                         getPort(),
                         getStatus().getValue(),
@@ -410,12 +410,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsStatic.setVdsName(value);
     }
 
-    public String getManagmentIp() {
-        return this.mVdsStatic.getManagmentIp();
+    public String getManagementIp() {
+        return this.mVdsStatic.getManagementIp();
     }
 
-    public void setManagmentIp(String value) {
-        this.mVdsStatic.setManagmentIp(value);
+    public void setManagementIp(String value) {
+        this.mVdsStatic.setManagementIp(value);
     }
 
     public String getUniqueId() {

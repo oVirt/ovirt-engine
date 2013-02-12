@@ -407,7 +407,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                                 "VdcBLL::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = {0}, name = {1}, management IP = {2} , host name = {3})",
                                 vds_byHostName.getId(),
                                 vds_byHostName.getName(),
-                                vds_byHostName.getManagmentIp(),
+                                vds_byHostName.getManagementIp(),
                                 vds_byHostName.getHostName());
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN;
                         returnValue = false;

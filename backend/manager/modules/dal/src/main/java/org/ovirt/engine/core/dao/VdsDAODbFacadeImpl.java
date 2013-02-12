@@ -211,7 +211,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVdsGroupDescription(rs
                     .getString("vds_group_description"));
             entity.setVdsName(rs.getString("vds_name"));
-            entity.setManagmentIp(rs.getString("ip"));
+            entity.setManagementIp(rs.getString("ip"));
             entity.setUniqueId(rs.getString("vds_unique_id"));
             entity.setServerSslEnabled(rs
                     .getBoolean("server_SSL_enabled"));

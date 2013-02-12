@@ -98,7 +98,7 @@ public class HostMapper {
             entity.setPmEnabled(model.isEnabled());
         }
         if (model.isSetAddress()) {
-            entity.setManagmentIp(model.getAddress());
+            entity.setManagementIp(model.getAddress());
         }
         if (model.isSetUsername()) {
             entity.setPmUser(model.getUsername());
@@ -133,7 +133,7 @@ public class HostMapper {
                         entity.setPmType(agent.getType());
                     }
                     if (agent.isSetAddress()) {
-                        entity.setManagmentIp(agent.getAddress());
+                        entity.setManagementIp(agent.getAddress());
                     }
                     if (agent.isSetUsername()) {
                         entity.setPmUser(agent.getUsername());
@@ -348,7 +348,7 @@ public class HostMapper {
         PowerManagement model = template != null ? template : new PowerManagement();
         model.setType(entity.getPmType());
         model.setEnabled(entity.getpm_enabled());
-        model.setAddress(entity.getManagmentIp());
+        model.setAddress(entity.getManagementIp());
         model.setUsername(entity.getPmUser());
         if (entity.getPmOptionsMap() != null) {
             model.setOptions(map(entity.getPmOptionsMap(), null));
@@ -366,9 +366,9 @@ public class HostMapper {
         if (entity.getpm_enabled()) {
             // Set Primary Agent
             Agent agent = new Agent();
-            if (!StringUtils.isEmpty(entity.getManagmentIp())) {
+            if (!StringUtils.isEmpty(entity.getManagementIp())) {
                 agent.setType(entity.getPmType());
-                agent.setAddress(entity.getManagmentIp());
+                agent.setAddress(entity.getManagementIp());
                 agent.setUsername(entity.getPmUser());
                 if (entity.getPmOptionsMap() != null) {
                     agent.setOptions(map(entity.getPmOptionsMap(), null));

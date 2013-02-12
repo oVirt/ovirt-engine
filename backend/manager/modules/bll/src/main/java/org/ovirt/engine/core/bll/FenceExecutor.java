@@ -261,7 +261,7 @@ public class FenceExecutor {
     private String getManagementIp(FenceAgentOrder order) {
         String managementIp = "";
         if (order == FenceAgentOrder.Primary) {
-            managementIp = _vds.getManagmentIp();
+            managementIp = _vds.getManagementIp();
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementIp = _vds.getPmSecondaryIp();

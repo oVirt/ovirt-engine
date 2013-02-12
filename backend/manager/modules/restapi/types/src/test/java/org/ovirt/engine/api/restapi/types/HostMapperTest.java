@@ -156,7 +156,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         VDS vds = new VDS();
         vds.setId(Guid.Empty);
         vds.setpm_enabled(true);
-        vds.setManagmentIp(ip[0]);
+        vds.setManagementIp(ip[0]);
         vds.setPmType("apc");
         vds.setPmUser("user");
         vds.setPmOptions("secure=true");

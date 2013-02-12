@@ -22,8 +22,8 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VdsOperationActionParameters(VdsStatic vdsStatic, String rootPassword) {
         super(vdsStatic.getId());
-        if ("".equals(vdsStatic.getManagmentIp())) {
-            vdsStatic.setManagmentIp(null);
+        if ("".equals(vdsStatic.getManagementIp())) {
+            vdsStatic.setManagementIp(null);
         }
         _vdsStatic = vdsStatic;
         _rootPassword = rootPassword;

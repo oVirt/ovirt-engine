@@ -34,7 +34,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
     @NotNull(groups = PowerManagementCheck.class)
     @Size(max = BusinessEntitiesDefinitions.HOST_IP_SIZE)
-    private String ip;
+    private String managementIp;
 
     @HostnameOrIp(message = "VALIDATION.VDS.CONSOLEADDRESSS.HOSTNAME_OR_IP",
             groups = { CreateEntity.class, UpdateEntity.class })
@@ -138,7 +138,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         serverSslEnabled = false;
         vdsStrength = 100;
         this.hostname = host_name;
-        this.ip = ip;
+        this.managementIp = ip;
         this.uniqueId = uniqueId;
         this.port = port;
         this.vdsGroupId = vds_group_id;
@@ -167,12 +167,12 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.hostname = value;
     }
 
-    public String getManagmentIp() {
-        return this.ip;
+    public String getManagementIp() {
+        return this.managementIp;
     }
 
-    public void setManagmentIp(String value) {
-        this.ip = value;
+    public void setManagementIp(String value) {
+        this.managementIp = value;
     }
 
     public String getUniqueID() {
@@ -453,7 +453,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
         result = prime * result + ((consoleAddress == null) ? 0 : consoleAddress.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((ip == null) ? 0 : ip.hashCode());
+        result = prime * result + ((managementIp == null) ? 0 : managementIp.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
         result = prime * result + (pmEnabled ? 1231 : 1237);
@@ -463,7 +463,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         result = prime * result + ((pmPort == null) ? 0 : pmPort.hashCode());
         result = prime * result + ((pmType == null) ? 0 : pmType.hashCode());
         result = prime * result + ((pmUser == null) ? 0 : pmUser.hashCode());
-        result = prime * result + ((pmSecondaryIp == null) ? 0 : ip.hashCode());
+        result = prime * result + ((pmSecondaryIp == null) ? 0 : managementIp.hashCode());
         result = prime * result + (pmSecondaryConcurrent ? 1231 : 1237);
         result = prime * result + ((pmSecondaryOptions == null) ? 0 : pmOptions.hashCode());
         result = prime * result + ((pmSecondaryOptionsMap == null) ? 0 : pmSecondaryOptionsMap.hashCode());
@@ -504,10 +504,10 @@ public class VdsStatic implements BusinessEntity<Guid> {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (ip == null) {
-            if (other.ip != null)
+        if (managementIp == null) {
+            if (other.managementIp != null)
                 return false;
-        } else if (!ip.equals(other.ip))
+        } else if (!managementIp.equals(other.managementIp))
             return false;
         if (name == null) {
             if (other.name != null)

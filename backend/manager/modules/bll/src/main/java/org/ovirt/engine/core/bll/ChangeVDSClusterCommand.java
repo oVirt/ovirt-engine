@@ -185,7 +185,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean glusterHostRemove(Guid sourceClusterId) {
         String hostName =
-                (getVds().getHostName().isEmpty()) ? getVds().getManagmentIp()
+                (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
                         : getVds().getHostName();
         VDSReturnValue returnValue =
                 runVdsCommand(
@@ -204,7 +204,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     private boolean glusterHostAdd(Guid targetClusterId) {
         String hostName =
-                (getVds().getHostName().isEmpty()) ? getVds().getManagmentIp()
+                (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
                         : getVds().getHostName();
         VDSReturnValue returnValue =
                 runVdsCommand(

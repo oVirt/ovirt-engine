@@ -171,7 +171,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             // Also gluster peer probe is not needed when importing an existing gluster cluster
             if (isGlusterSupportEnabled() && getAllVds(getVdsGroupId()).size() > 1) {
                 String hostName =
-                        (getParameters().getvds().getHostName().isEmpty()) ? getParameters().getvds().getManagmentIp()
+                        (getParameters().getvds().getHostName().isEmpty()) ? getParameters().getvds().getManagementIp()
                                 : getParameters().getvds().getHostName();
                 VDSReturnValue returnValue =
                         runVdsCommand(

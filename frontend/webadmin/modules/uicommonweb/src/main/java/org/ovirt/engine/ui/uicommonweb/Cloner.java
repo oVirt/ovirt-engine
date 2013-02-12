@@ -205,13 +205,13 @@ public final class Cloner
 
         obj.setHostName(instance.getHostName());
 
-        obj.setManagmentIp(instance.getManagmentIp());
+        obj.setManagementIp(instance.getManagementIp());
         obj.setPmUser(instance.getPmUser());
         obj.setPmPassword(instance.getPmPassword());
         obj.setPmType(instance.getPmType());
         obj.setPmOptionsMap(instance.getPmOptionsMap());
 
-        obj.setPmSecondaryIp(instance.getManagmentIp());
+        obj.setPmSecondaryIp(instance.getManagementIp());
         obj.setPmSecondaryUser(instance.getPmUser());
         obj.setPmSecondaryPassword(instance.getPmPassword());
         obj.setPmSecondaryType(instance.getPmType());

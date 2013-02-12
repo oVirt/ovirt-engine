@@ -1607,7 +1607,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save primary PM parameters.
-        host.setManagmentIp((String) model.getManagementIp().getEntity());
+        host.setManagementIp((String) model.getManagementIp().getEntity());
         host.setPmUser((String) model.getPmUserName().getEntity());
         host.setPmPassword((String) model.getPmPassword().getEntity());
         host.setPmType((String) model.getPmType().getSelectedItem());
