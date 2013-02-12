@@ -34,8 +34,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         return validate(networkExists(getRemovedNetwork()))
                 && validate(notManagementNetwork())
                 && validate(networkNotUsedByVms(getRemovedNetwork()))
-                && validate(networkNotUsedByTemplates(getRemovedNetwork()))
-                && validate(networkNotUsedByHosts(getRemovedNetwork()));
+                && validate(networkNotUsedByTemplates(getRemovedNetwork()));
     }
 
     @Override
