@@ -173,6 +173,9 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
     @Override
     protected void endWithFailure() {
+        if (!getParameters().isImportEntity()) {
+            unLockImage();
+        }
         if (getMoveOrCopyImageOperation() == ImageOperation.Copy) {
             if (getParameters().getAddImageDomainMapping()) {
                 // remove image-storage mapping
@@ -181,8 +184,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                                 getParameters().getStorageDomainId()));
             }
             revertTasks();
-        } else {
-            unLockImage();
         }
         setSucceeded(true);
     }
@@ -194,11 +195,14 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
-            removeImageParams.setParentParameters(removeImageParams);
-            removeImageParams.setParentCommand(VdcActionType.RemoveImage);
             if (getParameters().getParentCommand() == VdcActionType.ImportVm) {
+                removeImageParams.setParentParameters(removeImageParams);
+                removeImageParams.setParentCommand(VdcActionType.RemoveImage);
                 removeImageParams.setRemoveDuringExecution(false);
                 removeImageParams.setRemoveFromDB(true);
+            } else {
+                removeImageParams.setParentParameters(getParameters());
+                removeImageParams.setParentCommand(VdcActionType.MoveOrCopyImageGroup);
             }
             removeImageParams.setEntityId(getDestinationImageId());
             // Setting the image as the monitored entity, so there will not be dependency
@@ -209,8 +213,6 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
                 // which adds the taskId on the internal task ID list
                 startPollingAsyncTasks(returnValue.getInternalTaskIdList());
             }
-        } else {
-            unLockImage();
         }
     }
 
