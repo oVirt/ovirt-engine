@@ -48,7 +48,8 @@ public class ManageDomains {
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
-            "The domain %1$s has been added to the engine as an authentication source but no users from that domain have been granted permissions within the oVirt Manager.\nUsers from this domain can be granted permissions from the Web administration interface.";
+            "The domain %1$s has been added to the engine as an authentication source but no users from that domain have been granted permissions within the oVirt Manager.\n"+
+            "Users from this domain can be granted permissions from the Web administration interface or by editing the domain using -action=edit and specifying -addPermissions.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
@@ -546,7 +547,8 @@ public class ManageDomains {
     private void handleAddPermissions(String domainName,DomainsConfigurationEntry adUserNameEntry, DomainsConfigurationEntry adUserIdEntry) {
         if (addPermissions) {
             updatePermissionsTable(adUserNameEntry, adUserIdEntry);
-        } else {
+        } else
+        if (!userHasPermissions(adUserNameEntry, adUserIdEntry)) {
             System.out.println(String.format(INFO_ABOUT_NOT_ADDING_PERMISSIONS, domainName));
         }
     }
@@ -568,6 +570,23 @@ public class ManageDomains {
             return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_APPLYING_CHANGES_IN_DATABASE,
                     e.getMessage());
         }
+    }
+
+    private boolean userHasPermissions(DomainsConfigurationEntry adUserNameEntry,
+        DomainsConfigurationEntry adUseridEntry) {
+        try {
+            Set<Entry<String, String>> userNameValues = adUserNameEntry.getValues();
+            for (Entry<String, String> currUserEntry : userNameValues) {
+                String currDomain = currUserEntry.getKey();
+                String currUser = currUserEntry.getValue();
+                if (daoImpl.getUserHasPermissions(currUser, currDomain)) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            log.error(e);
+        }
+        return false;
     }
 
     public void editDomain(CLIParser parser) throws ManageDomainsResult {

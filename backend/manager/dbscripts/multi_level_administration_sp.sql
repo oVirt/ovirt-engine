@@ -57,6 +57,39 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+
+CREATE OR REPLACE FUNCTION get_user_permissions_for_domain(v_name VARCHAR(255), v_domain VARCHAR(255))
+RETURNS SETOF permissions_view
+   AS $procedure$
+   DECLARE
+   v_user_name VARCHAR(255);
+   v_index  INTEGER;
+BEGIN
+-- find if name already includes domain (@)
+   v_index := POSITION('@' IN v_name);
+
+   if (v_index > 0) then
+      v_user_name := substr(v_name, 0, v_index);
+   else
+      v_user_name := v_name;
+   end if;
+   RETURN QUERY SELECT *
+   FROM permissions_view
+   WHERE permissions_view.ad_element_id in (
+                SELECT users.user_id
+                FROM users
+                WHERE users.domain = v_domain
+                AND (users.name = v_user_name OR
+                     users.name = v_user_name || '@' || upper(v_domain)
+                    ));
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION GetConsumedPermissionsForQuotaId(v_quota_id UUID)
 RETURNS SETOF permissions_view
    AS $procedure$
