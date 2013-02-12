@@ -12,11 +12,11 @@ import org.dbunit.ext.postgresql.InetType;
 import org.dbunit.ext.postgresql.IntervalType;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.ext.postgresql.UuidType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class PostgresDataTypeFactory extends DefaultDataTypeFactory {
-    private static final Logger logger = LoggerFactory.getLogger(PostgresqlDataTypeFactory.class);
+    private static final Log logger = LogFactory.getLog(PostgresqlDataTypeFactory.class);
     private static final Collection<String> DATABASE_PRODUCTS = Arrays.asList(new String[] { "PostgreSQL" });
 
     @Override
@@ -26,7 +26,7 @@ public class PostgresDataTypeFactory extends DefaultDataTypeFactory {
 
     @Override
     public DataType createDataType(int sqlType, String sqlTypeName) throws DataTypeException {
-        logger.debug("createDataType(sqlType={}, sqlTypeName={})",
+        logger.debugFormat("createDataType(sqlType={}, sqlTypeName={})",
                 String.valueOf(sqlType), sqlTypeName);
 
         if (sqlType == Types.OTHER)
@@ -41,9 +41,8 @@ public class PostgresDataTypeFactory extends DefaultDataTypeFactory {
             else {
                 // Finally check whether the user defined a custom datatype
                 if (isEnumType(sqlTypeName)) {
-                    if (logger.isDebugEnabled())
-                        logger.debug("Custom enum type used for sqlTypeName {} (sqlType '{}')",
-                                new Object[] { sqlTypeName, new Integer(sqlType) });
+                    logger.debugFormat("Custom enum type used for sqlTypeName {} (sqlType '{}')",
+                            new Object[] { sqlTypeName, new Integer(sqlType) });
                     return new GenericEnumType(sqlTypeName);
                 }
             }
