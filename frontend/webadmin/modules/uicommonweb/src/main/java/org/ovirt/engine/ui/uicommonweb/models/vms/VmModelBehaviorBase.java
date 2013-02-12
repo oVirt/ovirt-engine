@@ -753,9 +753,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     private boolean isVmMigratable() {
-        if (Boolean.TRUE.equals(getModel().getRunVMOnSpecificHost().getEntity())
-                || Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity())
-                || Boolean.TRUE.equals(getModel().getDontMigrateVM().getEntity())) {
+        if (Boolean.TRUE.equals(getModel().getRunVMOnSpecificHost().getEntity()) ||
+                (Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity())
+                && Boolean.TRUE.equals(getModel().getDontMigrateVM().getEntity())
+                        && Boolean.TRUE.equals(getModel().getHostCpu().getEntity()))) {
             return false;
         }
         return true;

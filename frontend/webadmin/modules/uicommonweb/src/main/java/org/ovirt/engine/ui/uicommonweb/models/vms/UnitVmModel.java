@@ -1315,7 +1315,10 @@ public class UnitVmModel extends Model {
             {
                 IsAutoAssign_EntityChanged(sender, args);
             }
-
+            else if (sender == getHostCpu())
+            {
+                behavior.updateCpuPinningVisibility();
+            }
             else if (sender == getProvisioning())
             {
                 Provisioning_SelectedItemChanged(sender, args);
@@ -1715,6 +1718,7 @@ public class UnitVmModel extends Model {
             clearAndDisable(getHostCpu());
             getRunVMOnSpecificHost().setIsChangable(true);
         }
+        behavior.updateCpuPinningVisibility();
     }
 
     private void IsAutoAssign_EntityChanged(Object sender, EventArgs args)
