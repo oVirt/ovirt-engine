@@ -38,9 +38,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
     private static EntityMultiAsyncTasks GetEntityMultiAsyncTasksByContainerId(Object containerID) {
         EntityMultiAsyncTasks entityInfo = null;
         synchronized (_lockObject) {
-            if (_multiTasksByEntities.containsKey(containerID) && _multiTasksByEntities.get(containerID) != null) {
-                entityInfo = _multiTasksByEntities.get(containerID);
-            }
+            entityInfo = _multiTasksByEntities.get(containerID);
         }
 
         return entityInfo;
@@ -50,13 +48,25 @@ public class EntityAsyncTask extends SPMAsyncTask {
         return GetEntityMultiAsyncTasksByContainerId(getContainerId());
     }
 
-    public EntityAsyncTask(AsyncTaskParameters parameters) {
+    public EntityAsyncTask(AsyncTaskParameters parameters, boolean duringInit) {
         super(parameters);
+        boolean isNewCommandAdded = false;
         synchronized (_lockObject) {
             if (!_multiTasksByEntities.containsKey(getContainerId())) {
                 log.infoFormat("EntityAsyncTask::Adding EntityMultiAsyncTasks object for entity '{0}'",
                         getContainerId());
                 _multiTasksByEntities.put(getContainerId(), new EntityMultiAsyncTasks(getContainerId()));
+                isNewCommandAdded = true;
+            }
+        }
+        if (duringInit && isNewCommandAdded) {
+            CommandBase<?> command =
+                    CommandsFactory.CreateCommand(parameters.getDbAsyncTask().getaction_type(),
+                            parameters.getDbAsyncTask().getActionParameters());
+            if (!command.acquireLockAsyncTask()) {
+                log.warnFormat("Failed to acquire locks for command {0} with parameters {1}",
+                        parameters.getDbAsyncTask().getaction_type(),
+                        parameters.getDbAsyncTask().getActionParameters());
             }
         }
 

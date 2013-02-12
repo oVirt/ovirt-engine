@@ -319,7 +319,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 getReturnValue().setCanDoAction(false);
             }
         } finally {
-            freeLock();
+            freeLockExecute();
         }
         return getReturnValue();
     }
@@ -428,18 +428,33 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         ExecutionHandler.startFinalizingStep(getExecutionContext());
 
         try {
+            initiateLockEndAction();
             setActionState();
             handleTransactivity();
             TransactionSupport.executeInScope(endActionScope, this);
         } catch (TransactionRolledbackLocalException e) {
             log.infoFormat("EndAction: Transaction was aborted in {0}", this.getClass().getName());
         } finally {
+            freeLock();
             if (getCommandShouldBeLogged()) {
                 logCommand();
             }
         }
 
         return getReturnValue();
+    }
+
+    /**
+     * The following method should initiate a lock , in order to release it at endAction()
+     */
+    private void initiateLockEndAction() {
+        if (commandLock == null) {
+            LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
+            if (annotation != null && !annotation.isReleaseAtEndOfExecute()) {
+                commandLock = buildLock();
+            }
+
+        }
     }
 
     private void handleTransactivity() {
@@ -492,6 +507,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             exceptionOccurred = true;
             throw e;
         } finally {
+            freeLock();
             if (TransactionSupport.current() == null) {
 
                 // In the unusual case that we have no current transaction, try to cleanup after yourself and if the
@@ -1150,7 +1166,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             compensate();
         } finally {
             try {
-                freeLock();
                 if (getCommandShouldBeLogged()) {
                     logRenamedEntity();
                     logCommand();
@@ -1431,6 +1446,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
+    private boolean isReleaseExecute = true;
+
     /**
      * Object which is representing a lock that some commands will acquire
      */
@@ -1448,6 +1465,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
         if (annotation != null) {
+            isReleaseExecute = annotation.isReleaseAtEndOfExecute();
             if (!annotation.isWait()) {
                 returnValue = acquireLockInternal();
             } else {
@@ -1457,13 +1475,27 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return returnValue;
     }
 
+    /**
+     * The following method should be called after restart of engine during initialization of asynchronous task
+     * @return
+     */
+    public final boolean acquireLockAsyncTask() {
+        LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
+        boolean returnValue = true;
+        if (annotation != null) {
+            isReleaseExecute = annotation.isReleaseAtEndOfExecute();
+            if (!isReleaseExecute) {
+                returnValue = acquireLockInternal();
+            }
+        }
+        return returnValue;
+    }
+
     protected boolean acquireLockInternal() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
-            Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
-            Map<String, Pair<String, String>> sharedLocks = getSharedLocks();
-            if (exclusiveLocks != null || sharedLocks != null) {
-                EngineLock lock = new EngineLock(exclusiveLocks, sharedLocks);
+            EngineLock lock = buildLock();
+            if (lock != null) {
                 Pair<Boolean, Set<String>> lockAcquireResult = getLockManager().acquireLock(lock);
                 if (lockAcquireResult.getFirst()) {
                     log.infoFormat("Lock Acquired to object {0}", lock);
@@ -1478,6 +1510,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return true;
     }
 
+    private EngineLock buildLock() {
+        EngineLock lock = null;
+        Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
+        Map<String, Pair<String, String>> sharedLocks = getSharedLocks();
+        if (exclusiveLocks != null || sharedLocks != null) {
+            lock = new EngineLock(exclusiveLocks, sharedLocks);
+        }
+        return lock;
+    }
+
     private void acquireLockAndWait() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
         if (commandLock == null) {
@@ -1487,6 +1529,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 getLockManager().acquireLockWait(lock);
                 commandLock = lock;
             }
+        }
+    }
+
+    private void freeLockExecute() {
+        if (isReleaseExecute || !getSucceeded()) {
+            freeLock();
         }
     }
 

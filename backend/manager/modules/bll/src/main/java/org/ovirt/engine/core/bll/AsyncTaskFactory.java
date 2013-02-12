@@ -44,7 +44,7 @@ public final class AsyncTaskFactory {
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return Construct(creationInfo.getTaskType(), asyncTaskParams);
+        return Construct(creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
     /**
@@ -60,13 +60,13 @@ public final class AsyncTaskFactory {
      *            the parameters by which we construct the task.
      * @return
      */
-    public static SPMAsyncTask Construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams) {
+    public static SPMAsyncTask Construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown) {
                 result = new SPMAsyncTask(asyncTaskParams);
             } else {
-                result = new EntityAsyncTask(asyncTaskParams);
+                result = new EntityAsyncTask(asyncTaskParams, duringInit);
             }
             return result;
         }

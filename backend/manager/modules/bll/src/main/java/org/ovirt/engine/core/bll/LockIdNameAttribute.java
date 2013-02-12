@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LockIdNameAttribute {
     boolean isWait() default false;
+
+    boolean isReleaseAtEndOfExecute() default true;
 }

@@ -420,7 +420,7 @@ public final class AsyncTaskManager {
     }
 
     public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.Construct(taskType, taskParameters);
+        return AsyncTaskFactory.Construct(taskType, taskParameters, false);
     }
 
     public synchronized void StartPollingTask(Guid taskID) {
