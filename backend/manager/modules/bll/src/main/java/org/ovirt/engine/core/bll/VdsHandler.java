@@ -42,7 +42,7 @@ public class VdsHandler extends BaseHandler {
 
 
         for (Pair<EditableField,String> pair : extractAnnotatedFields(EditableField.class, inspectedClasses)) {
-            mUpdateVdsStatic.AddPermittedField(pair.getSecond());
+            mUpdateVdsStatic.AddPermittedFields(pair.getSecond());
         }
 
         for (Pair<EditableOnVdsStatus,String> pair : extractAnnotatedFields(EditableOnVdsStatus.class, inspectedClasses)) {

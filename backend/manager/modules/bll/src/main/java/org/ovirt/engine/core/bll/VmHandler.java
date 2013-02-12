@@ -92,7 +92,7 @@ public class VmHandler {
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames), VMStatus.class);
 
         for (Pair<EditableField,String> pair : BaseHandler.extractAnnotatedFields(EditableField.class, (inspectedClassNames))) {
-            mUpdateVmsStatic.AddPermittedField(pair.getSecond());
+            mUpdateVmsStatic.AddPermittedFields(pair.getSecond());
         }
 
         for (Pair<EditableOnVmStatusField, String> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,

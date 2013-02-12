@@ -9,7 +9,7 @@ public class ObjectIdentityCheckerTest extends TestCase {
     public void testIsUpdateable() {
         ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
         assertFalse("Should be false by default", oic.IsFieldUpdatable("name"));
-        oic.AddPermittedField("name");
+        oic.AddPermittedFields("name");
         assertTrue("Should be true now", oic.IsFieldUpdatable("name"));
     }
 

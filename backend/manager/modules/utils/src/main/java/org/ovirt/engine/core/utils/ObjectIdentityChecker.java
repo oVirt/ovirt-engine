@@ -113,13 +113,9 @@ public class ObjectIdentityChecker {
         }
     }
 
-    public final void AddPermittedField(String fieldName) {
-        permitted.add(fieldName);
-    }
-
     public final void AddPermittedFields(String... fieldNames) {
         for (String fieldName : fieldNames) {
-            AddPermittedField(fieldName);
+            permitted.add(fieldName);
         }
     }
 
