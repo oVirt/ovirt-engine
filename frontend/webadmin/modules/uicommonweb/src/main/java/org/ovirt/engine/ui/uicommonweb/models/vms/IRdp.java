@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.ui.uicompat.Event;
 
 public interface IRdp
 {

@@ -2,10 +2,6 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
@@ -14,6 +10,10 @@ import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitH
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

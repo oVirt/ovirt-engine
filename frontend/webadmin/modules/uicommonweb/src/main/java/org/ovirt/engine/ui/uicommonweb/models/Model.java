@@ -3,13 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
-import org.ovirt.engine.core.compat.IProvidePropertyChangedEvent;
-import org.ovirt.engine.core.compat.ObservableCollection;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -17,7 +10,14 @@ import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
 {

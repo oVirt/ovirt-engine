@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.List;
 
-import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.ui.uicompat.Event;
 
 /**
  * Represents an implementor of a Spice. That way we have a bridge between Console model and concrete Spice accessor. In

@@ -10,8 +10,6 @@
 		<include name="compat/Version.java" />
 		<include name="compat/RpmVersion.java" />
 		<!-- Required by common's entities -->
-		<include name="compat/PropertyChangedEventArgs.java" />
-		<include name="compat/EventArgs.java" />
 		<include name="compat/StringHelper.java" />
 		<include name="compat/Guid.java" />
 		<include name="compat/NGuid.java" />
@@ -43,17 +41,6 @@
 		<include name="compat/TransactionScopeOption.java" />
 		<include name="compat/EnumCompat.java" />
 		<!-- <include name="compat/javax/**" /> -->
-		<include name="compat/Event.java" />
-		<include name="compat/EventDefinition.java" />
-		<include name="compat/IEventListener.java" />
-		<include name="compat/ObservableCollection.java" />
-		<include name="compat/NotifyCollectionChangedAction.java" />
-		<include name="compat/NotifyCollectionChangedEventArgs.java" />
-		<include name="compat/IProvideCollectionChangedEvent.java" />
-		<include name="compat/ProvideCollectionChangedEvent.java" />
-		<include name="compat/IProvidePropertyChangedEvent.java" />
-		<include name="compat/ProvidePropertyChangedEvent.java" />
-
 	</source>
 
 	<super-source path="ui/uioverrides" />

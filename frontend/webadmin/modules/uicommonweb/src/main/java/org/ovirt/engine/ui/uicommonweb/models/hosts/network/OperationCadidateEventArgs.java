@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
-import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 /**
  * Arguments for an OperationCadidateEvent, triggered when a new Network Operation Candidate is created

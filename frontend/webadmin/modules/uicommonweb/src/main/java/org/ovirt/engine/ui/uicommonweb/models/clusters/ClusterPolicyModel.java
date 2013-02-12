@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class ClusterPolicyModel extends EntityModel

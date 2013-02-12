@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -17,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskLi
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class UserPortalTemplateListModel extends TemplateListModel
 {

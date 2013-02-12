@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.common.widget.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -14,6 +12,8 @@ import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -172,7 +172,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         // Update button definition whenever list model item selection changes
         final IEventListener itemSelectionChangeHandler = new IEventListener() {
             @Override
-            public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, EventArgs args) {
+            public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
                 // Update action button on item selection change
                 buttonDef.update();
             }

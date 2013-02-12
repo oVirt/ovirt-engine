@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 /**
  * A Map of {@link Event}s - used by the Editor Driver to be updated when a change in the Model occurs

@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 public class AsyncIteratorCallback {
 

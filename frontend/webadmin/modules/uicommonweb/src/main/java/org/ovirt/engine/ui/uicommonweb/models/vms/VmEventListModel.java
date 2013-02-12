@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class VmEventListModel extends SubTabEventListModel
 {

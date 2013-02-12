@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public final class ValueEventArgs<T> extends EventArgs {
 

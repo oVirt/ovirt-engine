@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public final class ErrorCodeEventArgs extends EventArgs
 {

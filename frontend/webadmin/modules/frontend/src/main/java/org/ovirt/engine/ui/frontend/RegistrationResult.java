@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.frontend;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.EventDefinition;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public final class RegistrationResult
 {

@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class UserEventListModel extends SubTabEventListModel
 {

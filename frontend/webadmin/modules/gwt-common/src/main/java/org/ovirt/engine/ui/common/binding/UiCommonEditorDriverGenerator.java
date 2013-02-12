@@ -99,11 +99,11 @@ public class UiCommonEditorDriverGenerator extends
             if (!editorData.isDeclaredPathNested()) {
                 logger.log(Type.DEBUG, "Found top-level Field: " + editorData); //$NON-NLS-1$
 
-                sw.println("listenerMap.addListener(\"%s\", \"PropertyChanged\", new org.ovirt.engine.core.compat.IEventListener() {", //$NON-NLS-1$
+                sw.println("listenerMap.addListener(\"%s\", \"PropertyChanged\", new org.ovirt.engine.ui.uicompat.IEventListener() {", //$NON-NLS-1$
                         path);
                 sw.indent();
                 sw.println("@Override"); //$NON-NLS-1$
-                sw.println("public void eventRaised(org.ovirt.engine.core.compat.Event ev, Object sender, org.ovirt.engine.core.compat.EventArgs args) {"); //$NON-NLS-1$
+                sw.println("public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, org.ovirt.engine.ui.uicompat.EventArgs args) {"); //$NON-NLS-1$
                 sw.indent();
                 sw.println("getEditor().%s.setValue(getObject()%s);", //$NON-NLS-1$
                         editorData.getExpression(),

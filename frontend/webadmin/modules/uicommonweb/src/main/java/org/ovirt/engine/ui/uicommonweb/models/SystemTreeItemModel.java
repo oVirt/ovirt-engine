@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.List;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.ObservableCollection;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class SystemTreeItemModel extends EntityModel

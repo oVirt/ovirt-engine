@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.compat;
+package org.ovirt.engine.ui.uicompat;
 
 public interface IEventListener
 {

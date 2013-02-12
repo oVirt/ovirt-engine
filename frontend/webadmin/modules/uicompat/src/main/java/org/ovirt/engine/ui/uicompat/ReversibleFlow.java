@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.core.compat.IEventListener;
 
 import java.util.ArrayList;
 import java.util.List;

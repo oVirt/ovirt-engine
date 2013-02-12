@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.compat;
+package org.ovirt.engine.ui.uicompat;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 
 public class ObservableCollection<T> extends ArrayList<T> implements IProvideCollectionChangedEvent {
 

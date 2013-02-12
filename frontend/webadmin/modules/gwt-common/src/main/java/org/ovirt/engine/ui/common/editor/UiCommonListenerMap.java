@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.compat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 /**
  * A Map of {@link IEventListener}s - used by the Editor Driver to call the relevant Listener when a change has

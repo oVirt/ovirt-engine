@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.core.compat.Event;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicompat.Event;
 
 import com.google.gwt.core.client.GWT;
 
@@ -172,7 +172,7 @@ public class RdpConnector {
                                  function OnDisconnected(disconnectCode){
                                      var extendedDiscReason = MsRdpClient.ExtendedDisconnectReason;
                                      var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(disconnectCode);
-                                     disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
+                                     disconnectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, errorCodeEventArgs);
                                      $wnd.document.body.removeChild(MsRdpClient);
                                  }
 

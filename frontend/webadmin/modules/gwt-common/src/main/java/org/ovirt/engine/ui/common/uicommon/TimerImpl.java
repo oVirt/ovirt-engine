@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.ui.uicommonweb.ITimer;
 import org.ovirt.engine.ui.uicommonweb.ProvideTickEvent;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 import com.google.gwt.user.client.Timer;
 

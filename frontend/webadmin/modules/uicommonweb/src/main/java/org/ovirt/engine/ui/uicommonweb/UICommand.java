@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.core.compat.ObservableCollection;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ICommand;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import java.util.List;
 

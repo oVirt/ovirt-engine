@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 
 public class PropertyChangeNotifier {
 

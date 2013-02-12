@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class DataCenterEventListModel extends SubTabEventListModel
 {

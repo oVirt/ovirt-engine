@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -46,6 +44,8 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 @SuppressWarnings("unused")
 public class ClusterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext

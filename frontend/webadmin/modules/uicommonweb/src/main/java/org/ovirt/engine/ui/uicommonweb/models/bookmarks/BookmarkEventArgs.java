@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.bookmarks;
 
-import org.ovirt.engine.core.compat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 @SuppressWarnings("unused")
 public final class BookmarkEventArgs extends EventArgs

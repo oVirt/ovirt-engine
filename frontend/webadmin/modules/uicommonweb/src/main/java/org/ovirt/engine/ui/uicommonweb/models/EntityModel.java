@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
-import org.ovirt.engine.core.compat.EventDefinition;
-import org.ovirt.engine.core.compat.IProvidePropertyChangedEvent;
-import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
-import org.ovirt.engine.core.compat.ProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicommonweb.Convertible;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
+import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 @SuppressWarnings("unused")
 public class EntityModel extends Model

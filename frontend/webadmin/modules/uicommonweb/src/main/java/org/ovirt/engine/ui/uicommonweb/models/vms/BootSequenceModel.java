@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.compat.ObservableCollection;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 @SuppressWarnings("unused")
 public class BootSequenceModel extends ListModel

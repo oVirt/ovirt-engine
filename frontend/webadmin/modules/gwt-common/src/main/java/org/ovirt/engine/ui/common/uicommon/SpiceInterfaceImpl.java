@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.compat.Event;
-import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public class SpiceInterfaceImpl implements ISpice {
     private static Logger logger = Logger.getLogger(SpiceInterfaceImpl.class
@@ -584,7 +584,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                }
                                                client.connect();
 
-                                               connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+                                               connectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, null);
 
                                                //since the 'ondisconnected' event doesn't work well in linux, we use polling instead:
                                                var checkConnectStatusIntervalID = setInterval(checkConnectStatus, 2000);
@@ -593,7 +593,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                clearInterval(checkConnectStatusIntervalID);
 
                                                var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(client.ConnectedStatus());
-                                               disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
+                                               disconnectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, errorCodeEventArgs);
 
                                                // Refresh grid on disconnect (to re-enable console button)
                                                // var gridRefreshManager = @org.ovirt.engine.ui.userportal.client.components.GridRefreshManager::getInstance()();
@@ -704,7 +704,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                    client.attachEvent('ondisconnected', onDisconnected);
                                                    client.connect();
 
-                                                   connectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, null);
+                                                   connectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, null);
                                                    } catch (ex) {
                                                    onDisconnected();
                                                    }
@@ -717,7 +717,7 @@ public class SpiceInterfaceImpl implements ISpice {
 
                                                    function onDisconnected(errorCode) {
                                                    var errorCodeEventArgs = @org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs::new(I)(errorCode);
-                                                   disconnectedEvent.@org.ovirt.engine.core.compat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/core/compat/EventArgs;)(model, errorCodeEventArgs);
+                                                   disconnectedEvent.@org.ovirt.engine.ui.uicompat.Event::raise(Ljava/lang/Object;Lorg/ovirt/engine/ui/uicompat/EventArgs;)(model, errorCodeEventArgs);
 
                                                    // Refresh grid on disconnect (to re-enable console button)
                                                    // var gridRefreshManager = @org.ovirt.engine.ui.userportal.client.components.GridRefreshManager::getInstance()();
