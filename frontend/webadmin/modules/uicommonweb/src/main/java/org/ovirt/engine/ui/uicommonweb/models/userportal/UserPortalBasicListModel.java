@@ -325,7 +325,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             // In userportal 'Basic View': Set 'CanConnectAutomatically' to true if there's one and only one VM in
             // status 'UP' and the other VMs aren't up.
             setCanConnectAutomatically(GetStatusUpVms(items).size() == 1 && GetUpVms(items).size() == 1
-                    && GetStatusUpVms(items).get(0).getDefaultConsole().getConnectCommand().getIsExecutionAllowed());
+                    && GetStatusUpVms(items).get(0).getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed());
 
             setItems(items);
 
@@ -339,9 +339,9 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
     @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
-        if (item.getEntity() != null && item.getDefaultConsole() != null) {
+        if (item.getEntity() != null && item.getDefaultConsoleModel() != null) {
             // Adjust item's default console for userportal 'Basic View'
-            item.getDefaultConsole().setForceVmStatusUp(true);
+            item.getDefaultConsoleModel().setForceVmStatusUp(true);
         }
     }
 
@@ -365,4 +365,5 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             setWindow(null);
         }
     }
+
 }

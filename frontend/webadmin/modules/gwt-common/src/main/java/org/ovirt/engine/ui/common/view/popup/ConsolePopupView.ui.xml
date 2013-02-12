@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
-xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+xmlns:g="urn:import:com.google.gwt.user.client.ui"
 xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-xmlns:w="urn:import:org.ovirt.engine.ui.userportal.widget.popup.console">
+xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.userportal.section.main.view.popup.console.ConsolePopupView.Style">
+	<ui:style type="org.ovirt.engine.ui.common.view.popup.ConsolePopupView.Style">
 		.explanationLabel {
 			font-style: italic;
 			margin-left: 40px;
 			margin-bottom: 10px;
 			width: 300px;
 		}
-		
+
 		.fullWidth {
 			width: 100%;
 		}
-		
+
 		.labelStyle {
 			font-size: 11px;
 			font-weight: bold;
 			color: #333333;
 		}
-		
+
 		.ctrlAltDelContentWidget {
 			width: 300px;
 		}

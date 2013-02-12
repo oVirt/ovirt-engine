@@ -1,8 +1,8 @@
-package org.ovirt.engine.ui.userportal.widget.popup.console;
+package org.ovirt.engine.ui.common.widget.uicommon.popup.console;
 
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.BaseEntityModelCheckboxEditor;
-import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 
 public class EntityModelValueCheckBoxEditor<T> extends BaseEntityModelCheckboxEditor<T> {
 

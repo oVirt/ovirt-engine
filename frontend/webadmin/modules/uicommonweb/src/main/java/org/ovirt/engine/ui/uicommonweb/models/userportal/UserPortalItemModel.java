@@ -14,6 +14,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
@@ -22,14 +24,15 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class UserPortalItemModel extends EntityModel
+public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 {
 
-
+    @Override
     public ConsoleProtocol getSelectedProtocol() {
         return userSelectedDisplayProtocolManager.resolveSelectedProtocol(this);
     }
 
+    @Override
     public void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
         userSelectedDisplayProtocolManager.setSelectedProtocol(selectedProtocol, this);
     }
@@ -164,7 +167,8 @@ public class UserPortalItemModel extends EntityModel
 
     private boolean isPool;
 
-    public boolean getIsPool()
+    @Override
+    public boolean isPool()
     {
         return isPool;
     }
@@ -244,7 +248,8 @@ public class UserPortalItemModel extends EntityModel
 
     private ConsoleModel defaultConsole;
 
-    public ConsoleModel getDefaultConsole()
+    @Override
+    public ConsoleModel getDefaultConsoleModel()
     {
         return defaultConsole;
     }
@@ -260,7 +265,8 @@ public class UserPortalItemModel extends EntityModel
 
     private ConsoleModel additionalConsole;
 
-    public ConsoleModel getAdditionalConsole()
+    @Override
+    public ConsoleModel getAdditionalConsoleModel()
     {
         return additionalConsole;
     }
@@ -271,22 +277,6 @@ public class UserPortalItemModel extends EntityModel
         {
             additionalConsole = value;
             OnPropertyChanged(new PropertyChangedEventArgs("AdditionalConsole")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean hasAdditionalConsole;
-
-    public boolean getHasAdditionalConsole()
-    {
-        return hasAdditionalConsole;
-    }
-
-    public void setHasAdditionalConsole(boolean value)
-    {
-        if (hasAdditionalConsole != value)
-        {
-            hasAdditionalConsole = value;
-            OnPropertyChanged(new PropertyChangedEventArgs("HasAdditionalConsole")); //$NON-NLS-1$
         }
     }
 
@@ -338,8 +328,8 @@ public class UserPortalItemModel extends EntityModel
     private ItemBehavior behavior;
     private final UserSelectedDisplayProtocolManager userSelectedDisplayProtocolManager;
 
-    public UserPortalItemModel(IVmPoolResolutionService resolutionService, UserSelectedDisplayProtocolManager userSelectedDisplayManager)
-    {
+    public UserPortalItemModel(IVmPoolResolutionService resolutionService,
+            UserSelectedDisplayProtocolManager userSelectedDisplayManager) {
         this.userSelectedDisplayProtocolManager = userSelectedDisplayManager;
         setResolutionService(resolutionService);
 
@@ -463,4 +453,12 @@ public class UserPortalItemModel extends EntityModel
         return false;
     }
 
+    @Override
+    public VM getVM() {
+        if (getEntity() instanceof VM) {
+            return (VM) getEntity();
+        }
+
+        return null;
+    }
 }

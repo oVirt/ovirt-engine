@@ -9,7 +9,7 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 /**
  * Client-side injector configuration used to bootstrap GIN.
  */
-@GinModules({ SystemModule.class, PresenterModule.class, UiCommonModule.class, PluginModule.class })
+@GinModules({ SystemModule.class, PresenterModule.class, UiCommonModule.class, PluginModule.class, UtilsModule.class })
 public interface ClientGinjector extends BaseClientGinjector, ManagedComponents {
 
     @Override

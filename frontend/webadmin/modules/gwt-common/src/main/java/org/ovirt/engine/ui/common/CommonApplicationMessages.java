@@ -85,4 +85,15 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0} ({1} GB free of {2} GB)")
     String storageDomainFreeSpace(String name, int free, int total);
+
+    // Console
+
+    @DefaultMessage("Error Connecting to {0}. This browser does not support {1} protocol")
+    String errorConnectingToConsole(String name, String protocol);
+
+    @DefaultMessage("Connecting to VM pool is not supported")
+    String connectingToPoolIsNotSupported();
+
+    @DefaultMessage("Select Console for ''{0}''")
+    String selectConsoleFor(String name);
 }

@@ -1,24 +1,22 @@
-package org.ovirt.engine.ui.userportal.section.main.view.popup.console;
+package org.ovirt.engine.ui.common.view.popup;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalConsolePopupModel;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheckBoxEditor;
-import org.ovirt.engine.ui.userportal.widget.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -30,7 +28,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
-public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
+public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ConsolePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -100,15 +98,15 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
 
-    private final ApplicationMessages messages;
+    private final CommonApplicationMessages messages;
 
-    private UserPortalConsolePopupModel model;
+    private ConsolePopupModel model;
 
     @Inject
     public ConsolePopupView(EventBus eventBus,
             CommonApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages) {
+            CommonApplicationConstants constants,
+            CommonApplicationMessages messages) {
         super(eventBus, resources);
         this.messages = messages;
 
@@ -231,11 +229,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
 
     @SuppressWarnings("unchecked")
     @Override
-    public void edit(UserPortalConsolePopupModel model) {
+    public void edit(ConsolePopupModel model) {
         this.model = model;
 
         ConsoleModel defaultConsole =
-                ((UserPortalItemModel) model.getModel().getSelectedItem()).getDefaultConsole();
+                 model.getModel().getDefaultConsoleModel();
         editCheckBoxes(defaultConsole,
                 ctrlAltDel,
                 enableUsbAutoshare,
@@ -244,12 +242,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
                 disableSmartcard);
 
         ConsoleModel additionalConsole =
-                ((UserPortalItemModel) model.getModel().getSelectedItem()).getAdditionalConsole();
+                model.getModel().getAdditionalConsoleModel();
         editCheckBoxes(additionalConsole, useLocalDrives);
     }
 
     @Override
-    public UserPortalConsolePopupModel flush() {
+    public ConsolePopupModel flush() {
         // do nothing, it will be flushed only when the presenter widget
         // decides to
         return null;
@@ -277,7 +275,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<UserPortalCons
     }
 
     private void setSelectedProtocol(ConsoleProtocol selectedProtocol) {
-        ((UserPortalItemModel) model.getModel().getSelectedItem()).setSelectedProtocol(selectedProtocol);
+        model.getModel().setSelectedProtocol(selectedProtocol);
     }
 
     private void flushCheckBoxes(EntityModelValueCheckBoxEditor<ConsoleModel>... checkBoxes) {

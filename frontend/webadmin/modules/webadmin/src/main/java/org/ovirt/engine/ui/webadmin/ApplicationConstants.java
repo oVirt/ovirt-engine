@@ -2573,6 +2573,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String resiliencePolicyCluster();
 
+    @Override
     @DefaultStringValue("High Priority Only")
     String highPriorityOnly();
 

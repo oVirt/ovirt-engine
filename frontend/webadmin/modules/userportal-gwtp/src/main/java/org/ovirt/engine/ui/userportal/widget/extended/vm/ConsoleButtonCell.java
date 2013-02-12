@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;

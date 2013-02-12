@@ -1,9 +1,8 @@
-package org.ovirt.engine.ui.userportal.utils;
+package org.ovirt.engine.ui.common.utils;
 
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 
 import com.google.inject.Inject;
 
@@ -13,10 +12,10 @@ import com.google.inject.Inject;
 public class ConsoleManager {
 
     private final ConsoleUtils consoleUtils;
-    private final ApplicationMessages messages;
+    private final CommonApplicationMessages messages;
 
     @Inject
-    public ConsoleManager(ConsoleUtils consoleUtils, ApplicationMessages messages) {
+    public ConsoleManager(ConsoleUtils consoleUtils, CommonApplicationMessages messages) {
         this.consoleUtils = consoleUtils;
         this.messages = messages;
     }
@@ -25,7 +24,9 @@ public class ConsoleManager {
      * Takes a model a protocol under which to connect. When successful, returns null. When not successful, returns
      * message describing the problem.
      */
-    public String connectToConsole(ConsoleProtocol selectedProtocol, UserPortalItemModel model) {
+    public String connectToConsole(HasConsoleModel model) {
+        ConsoleProtocol selectedProtocol = consoleUtils.determineConnectionProtocol(model);
+
         if (!consoleUtils.canShowConsole(selectedProtocol, model)) {
             return null;
         }
@@ -40,15 +41,15 @@ public class ConsoleManager {
         return null;
     }
 
-    private String showVncConsole(UserPortalItemModel model) {
-        model.getDefaultConsole().getConnectCommand().Execute();
+    private String showVncConsole(HasConsoleModel model) {
+        model.getDefaultConsoleModel().getConnectCommand().Execute();
 
         return null;
     }
 
-    private String showRpdConsole(UserPortalItemModel model) {
+    private String showRpdConsole(HasConsoleModel model) {
         if (consoleUtils.canOpenRDPConsole(model)) {
-            model.getAdditionalConsole().getConnectCommand().Execute();
+            model.getAdditionalConsoleModel().getConnectCommand().Execute();
         } else if (!consoleUtils.isRDPAvailable()) {
             return createErrorMessage(model, "RDP"); //$NON-NLS-1$
         }
@@ -56,9 +57,9 @@ public class ConsoleManager {
         return null;
     }
 
-    private String showSpiceConsole(UserPortalItemModel model) {
+    private String showSpiceConsole(HasConsoleModel model) {
         if (consoleUtils.canOpenSpiceConsole(model)) {
-            model.getDefaultConsole().getConnectCommand().Execute();
+            model.getDefaultConsoleModel().getConnectCommand().Execute();
         } else if (!consoleUtils.isSpiceAvailable()) {
             return createErrorMessage(model, "SPICE"); //$NON-NLS-1$
         }
@@ -66,8 +67,12 @@ public class ConsoleManager {
         return null;
     }
 
-    private String createErrorMessage(UserPortalItemModel model, String protocol) {
-        return messages.errorConnectingToConsole(model.getName(), protocol);
+    private String createErrorMessage(HasConsoleModel model, String protocol) {
+        if (model.isPool()) {
+            return messages.connectingToPoolIsNotSupported();
+        } else {
+            return messages.errorConnectingToConsole(model.getVM().getName(), protocol);
+        }
     }
 
 }

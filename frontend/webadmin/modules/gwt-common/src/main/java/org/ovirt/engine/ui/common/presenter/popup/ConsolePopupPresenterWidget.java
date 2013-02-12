@@ -1,10 +1,12 @@
-package org.ovirt.engine.ui.userportal.section.main.presenter.popup.console;
+package org.ovirt.engine.ui.common.presenter.popup;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalConsolePopupModel;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
@@ -12,8 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -22,14 +22,14 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
-public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<UserPortalConsolePopupModel, ConsolePopupPresenterWidget.ViewDef> {
+public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<ConsolePopupModel, ConsolePopupPresenterWidget.ViewDef> {
 
     @GenEvent
     public class ConsoleModelChanged {
-        UserPortalItemModel itemModel;
+        HasConsoleModel newModel;
     }
 
-    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<UserPortalConsolePopupModel> {
+    public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ConsolePopupModel> {
 
         void setSpiceAvailable(boolean visible);
 
@@ -74,33 +74,35 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private final ConsoleUtils consoleUtils;
     private IEventListener viewUpdatingListener;
     private boolean wanOptionsAvailable = false;
-    private UserPortalConsolePopupModel model;
-    private final ApplicationConstants constants;
+    private ConsolePopupModel model;
+    private final CommonApplicationConstants constants;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
             ConsoleUtils consoleUtils,
-            ApplicationConstants constants) {
+            CommonApplicationConstants constants) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.constants = constants;
     }
 
     @Override
-    public void init(final UserPortalConsolePopupModel model) {
+    public void init(final ConsolePopupModel model) {
+        if (model.getModel().isPool()) {
+            throw new IllegalArgumentException("The console popup can not be used with pool, only with VM"); //$NON-NLS-1$
+        }
 
         this.model = model;
         initView(model);
         initListeners(model);
 
-        String vmName = ((UserPortalItemModel) model.getModel().getSelectedItem()).getName();
+        String vmName = model.getModel().getVM().getName();
         getView().setVmName(vmName);
 
         super.init(model);
-
     }
 
-    private void initListeners(final UserPortalConsolePopupModel model) {
+    private void initListeners(final ConsolePopupModel model) {
         ISpice spice = extractSpice(model);
         if (spice == null) {
             return;
@@ -119,7 +121,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     }
 
-    private void removeListeners(UserPortalConsolePopupModel model) {
+    private void removeListeners(ConsolePopupModel model) {
         if (viewUpdatingListener == null) {
             return;
         }
@@ -134,16 +136,16 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         spice.getWANDisableEffectsChangeEvent().removeListener(viewUpdatingListener);
     }
 
-    private void initView(UserPortalConsolePopupModel model) {
+    private void initView(ConsolePopupModel model) {
 
         listenOnRadioButtons(model);
-        UserPortalItemModel currentItem = (UserPortalItemModel) model.getModel().getSelectedItem();
+        HasConsoleModel currentItem = model.getModel();
 
         boolean spiceAvailable =
-                currentItem.getDefaultConsole() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();
+                currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel && consoleUtils.isSpiceAvailable();
 
         boolean vncAvailable =
-                currentItem.getDefaultConsole() instanceof VncConsoleModel;
+                currentItem.getDefaultConsoleModel() instanceof VncConsoleModel;
 
         boolean rdpAvailable = isAdditionalConsoleAvailable(currentItem) && consoleUtils.isRDPAvailable();
 
@@ -173,8 +175,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             }
         }
 
-        boolean isWindowsVm = asUserPortalItem(model).getOsType().isWindows();
-        boolean spiceGuestAgentInstalled = asUserPortalItem(model).getSpiceDriverVersion() != null;
+        boolean isWindowsVm = model.getModel().getVM().getOs().isWindows();
+        boolean spiceGuestAgentInstalled = model.getModel().getVM().getSpiceDriverVersion() != null;
 
         wanOptionsAvailable = isWindowsVm && spiceAvailable && spiceGuestAgentInstalled;
         if (wanOptionsAvailable) {
@@ -184,7 +186,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         }
 
         getView().setAdditionalConsoleAvailable(rdpAvailable);
-        getView().setSpiceConsoleAvailable(currentItem.getDefaultConsole() instanceof SpiceConsoleModel);
+        getView().setSpiceConsoleAvailable(currentItem.getDefaultConsoleModel() instanceof SpiceConsoleModel);
 
         boolean ctrlAltDelEnabled = consoleUtils.isCtrlAltDelEnabled();
         getView().setCtrlAltDelEnabled(ctrlAltDelEnabled, constants.ctrlAltDeletIsNotSupportedOnWindows());
@@ -201,19 +203,16 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             // now flush the model
             getView().flushToPrivateModel();
-            ConsoleModelChangedEvent.fire(getEventBus(), (UserPortalItemModel) model.getModel().getSelectedItem());
+
+            ConsoleModelChangedEvent.fire(getEventBus(), model.getModel());
         }
     }
 
-    protected UserPortalItemModel asUserPortalItem(UserPortalConsolePopupModel model) {
-        return (UserPortalItemModel) model.getModel().getSelectedItem();
+    protected boolean isAdditionalConsoleAvailable(HasConsoleModel currentItem) {
+        return currentItem.getAdditionalConsoleModel() != null;
     }
 
-    protected boolean isAdditionalConsoleAvailable(UserPortalItemModel currentItem) {
-        return currentItem.getHasAdditionalConsole();
-    }
-
-    protected void listenOnRadioButtons(final UserPortalConsolePopupModel model) {
+    protected void listenOnRadioButtons(final ConsolePopupModel model) {
         registerHandler(getView().getRdpRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
             @Override
@@ -248,8 +247,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         }));
     }
 
-    protected ISpice extractSpice(UserPortalConsolePopupModel model) {
-        ConsoleModel consoleModel = asUserPortalItem(model).getDefaultConsole();
+    protected ISpice extractSpice(ConsolePopupModel model) {
+        ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
         if (!(consoleModel instanceof SpiceConsoleModel)) {
             return null;
         }

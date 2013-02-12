@@ -5,15 +5,18 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ErrorPopupManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.utils.ConsoleManager;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -37,10 +40,23 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final ConsoleManager consoleManager;
+    private final CommonApplicationConstants commonConstants;
+    private final ErrorPopupManager errorPopupManager;
+
     @Inject
     public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+            ApplicationResources resources, ApplicationConstants constants,
+            CommonApplicationConstants commonConstants,
+            ConsoleUtils consoleUtils,
+            ConsoleManager consoleManager,
+            ErrorPopupManager errorPopupManager) {
         super(modelProvider);
+
+        this.consoleManager = consoleManager;
+        this.commonConstants = commonConstants;
+        this.errorPopupManager = errorPopupManager;
+
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(resources, constants);
         initWidget(getTable());
@@ -212,8 +228,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 resources.consoleImage(), resources.consoleDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
-                ConsoleModel defaultConsoleModel = getMainModel().getDefaultConsoleModel();
-                return defaultConsoleModel != null ? defaultConsoleModel.getConnectCommand() : null;
+                return getMainModel().getFireConsoleConnectEventCommand();
+            }
+        });
+        // TODO: separator
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(commonConstants.consoleOptions(),
+                CommandLocation.OnlyFromFromContext) { //$NON-NLS-1$
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getEditConsoleCommand();
             }
         });
         // TODO: separator

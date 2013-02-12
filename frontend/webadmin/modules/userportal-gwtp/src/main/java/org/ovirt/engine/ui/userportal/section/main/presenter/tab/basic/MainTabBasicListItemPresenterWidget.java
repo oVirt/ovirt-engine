@@ -3,21 +3,18 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 import java.util.Arrays;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ConsoleManager;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-import org.ovirt.engine.ui.userportal.utils.ConsoleManager;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -74,8 +71,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     private final ConsoleManager consoleManager;
     private final UserPortalBasicListProvider listModelProvider;
 
-    private ConsoleProtocol selectedProtocol;
-
     private UserPortalItemModel model;
 
     private UserPortalBasicListModel listModel;
@@ -90,17 +85,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         this.consoleUtils = consoleUtils;
         this.consoleManager = consoleManager;
         this.listModelProvider = listModelProvider;
-
-        registerHandler(eventBus.addHandler(ConsoleModelChangedEvent.getType(), new ConsoleModelChangedHandler() {
-            @Override
-            public void onConsoleModelChanged(ConsoleModelChangedEvent event) {
-                // update only when my model has changed
-                if (sameEntity(model, event.getItemModel())) {
-                    setupSelectedProtocol(model);
-                }
-            }
-
-        }));
 
         registerHandler(getEventBus().addHandler(UserPortalModelInitEvent.getType(), new UserPortalModelInitHandler() {
             @Override
@@ -186,7 +170,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     UICommand getRunCommand() {
-        return model.getIsPool() ? model.getTakeVmCommand() : model.getRunCommand();
+        return model.isPool() ? model.getTakeVmCommand() : model.getRunCommand();
     }
 
     UICommand getShutdownCommand() {
@@ -203,10 +187,9 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public void setModel(UserPortalItemModel model) {
         this.model = model;
 
-        setupSelectedProtocol(model);
         setupDefaultVmStyles();
 
-        getView().updateRunButton(getRunCommand(), model.getIsPool());
+        getView().updateRunButton(getRunCommand(), model.isPool());
         getView().updateShutdownButton(getShutdownCommand());
         getView().updateSuspendButton(getSuspendCommand());
 
@@ -217,11 +200,8 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         }
     }
 
-    protected void setupSelectedProtocol(UserPortalItemModel model) {
-        selectedProtocol = consoleUtils.determineConnectionProtocol(model);
-    }
 
-    boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
+    protected boolean sameEntity(UserPortalItemModel prevModel, UserPortalItemModel newModel) {
         if (prevModel == null || newModel == null) {
             return false;
         }
@@ -256,7 +236,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     @Override
     public void onDoubleClick(DoubleClickEvent event) {
-        String res = consoleManager.connectToConsole(selectedProtocol, model);
+        String res = consoleManager.connectToConsole(model);
         if (res != null) {
             getView().showErrorDialog(res);
         }
@@ -275,8 +255,9 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         getView().setSelected();
     }
 
-    boolean canShowConsole() {
-        return consoleUtils.canShowConsole(selectedProtocol, model);
+
+    private boolean canShowConsole() {
+        return consoleUtils.canShowConsole(consoleUtils.determineConnectionProtocol(model), model);
     }
 
     boolean isSelected() {

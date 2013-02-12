@@ -21,7 +21,7 @@ public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, Appli
         if (value == null) {
             return defaultImageName(value);
         }
-        if (value.getIsPool()) {
+        if (value.isPool()) {
             return "poolVmIcon"; //$NON-NLS-1$
         } else if (value.getIsServer()) {
             return "serverVmIcon"; //$NON-NLS-1$

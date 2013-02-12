@@ -1,14 +1,14 @@
-package org.ovirt.engine.ui.userportal.widget.basic;
+package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -20,17 +20,17 @@ public class ConsoleUtils {
     private Boolean spiceAvailable;
     private Boolean rdpAvailable;
 
-    private static final String VNC_NOT_SUPPORTED_MESSAGE =
-            ClientGinjectorProvider.instance().getApplicationConstants().vncNotSupportedMsg();
-
-    private static final String BROWSER_NOT_SUPPORTED_MESSAGE =
-            ClientGinjectorProvider.instance().getApplicationConstants().browserNotSupportedMsg();
+    private final String VNC_NOT_SUPPORTED_MESSAGE;
+    private final String BROWSER_NOT_SUPPORTED_MESSAGE;
 
     private final ClientAgentType clientAgentType;
 
     @Inject
-    public ConsoleUtils(ClientAgentType clientAgentType) {
+    public ConsoleUtils(ClientAgentType clientAgentType, CommonApplicationConstants constants) {
         this.clientAgentType = clientAgentType;
+
+        VNC_NOT_SUPPORTED_MESSAGE = constants.vncNotSupportedMsg();
+        BROWSER_NOT_SUPPORTED_MESSAGE = constants.browserNotSupportedMsg();
     }
 
     public boolean isSpiceAvailable() {
@@ -62,36 +62,36 @@ public class ConsoleUtils {
         return rdpAvailable;
     }
 
-    public boolean canOpenSpiceConsole(UserPortalItemModel item) {
-        if (item.getIsPool() || !isSpiceAvailable())
+    public boolean canOpenSpiceConsole(HasConsoleModel item) {
+        if (item.isPool() || !isSpiceAvailable())
             return false;
 
-        VM vm = ((VM) item.getEntity());
+        VM vm = item.getVM();
 
         if (vm.getDisplayType().equals(DisplayType.qxl) &&
-                item.getDefaultConsole().getConnectCommand().getIsAvailable() &&
-                item.getDefaultConsole().getConnectCommand().getIsExecutionAllowed()) {
+                item.getDefaultConsoleModel().getConnectCommand().getIsAvailable() &&
+                item.getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
             return true;
         }
 
         return false;
     }
 
-    public boolean canOpenRDPConsole(UserPortalItemModel item) {
-        if (item.getIsPool() || !isRDPAvailable())
+    public boolean canOpenRDPConsole(HasConsoleModel item) {
+        if (item.isPool() || !isRDPAvailable())
             return false;
 
-        if (item.getHasAdditionalConsole() &&
-                item.getAdditionalConsole().getConnectCommand().getIsAvailable() &&
-                item.getAdditionalConsole().getConnectCommand().getIsExecutionAllowed()) {
+        if (item.getAdditionalConsoleModel() != null &&
+                item.getAdditionalConsoleModel().getConnectCommand().getIsAvailable() &&
+                item.getAdditionalConsoleModel().getConnectCommand().getIsExecutionAllowed()) {
             return true;
         }
 
         return false;
     }
 
-    public String determineProtocolMessage(UserPortalItemModel item) {
-        if (item.getIsPool()) {
+    public String determineProtocolMessage(HasConsoleModel item) {
+        if (item.isPool()) {
             return ""; //$NON-NLS-1$
         }
 
@@ -99,8 +99,8 @@ public class ConsoleUtils {
             return BROWSER_NOT_SUPPORTED_MESSAGE;
         }
 
-        boolean isSpice = item.getDefaultConsole() instanceof SpiceConsoleModel && isSpiceAvailable();
-        boolean isRdp = item.getHasAdditionalConsole() && isRDPAvailable();
+        boolean isSpice = item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable();
+        boolean isRdp = item.getAdditionalConsoleModel() != null && isRDPAvailable();
 
         if (!isSpice && !isRdp) {
             return VNC_NOT_SUPPORTED_MESSAGE;
@@ -109,26 +109,26 @@ public class ConsoleUtils {
         return ""; //$NON-NLS-1$
     }
 
-    public ConsoleProtocol determineConnectionProtocol(UserPortalItemModel item) {
-        if (item.getIsPool()) {
+    public ConsoleProtocol determineConnectionProtocol(HasConsoleModel item) {
+        if (item.isPool()) {
             return null;
         }
 
         ConsoleProtocol selectedProtocol = item.getSelectedProtocol();
 
-        if (item.getHasAdditionalConsole() && isRDPAvailable() && selectedProtocol.equals(ConsoleProtocol.RDP)) {
+        if (item.getAdditionalConsoleModel() != null && isRDPAvailable() && selectedProtocol.equals(ConsoleProtocol.RDP)) {
             return ConsoleProtocol.RDP;
-        } else if (item.getDefaultConsole() instanceof SpiceConsoleModel && isSpiceAvailable() &&
+        } else if (item.getDefaultConsoleModel() instanceof SpiceConsoleModel && isSpiceAvailable() &&
                 selectedProtocol.equals(ConsoleProtocol.SPICE)) {
             return ConsoleProtocol.SPICE;
-        } else if (item.getDefaultConsole() instanceof VncConsoleModel) {
+        } else if (item.getDefaultConsoleModel() instanceof VncConsoleModel) {
             return ConsoleProtocol.VNC;
         }
 
         return null;
     }
 
-    public boolean canShowConsole(ConsoleProtocol selectedProtocol, UserPortalItemModel item) {
+    public boolean canShowConsole(ConsoleProtocol selectedProtocol, HasConsoleModel item) {
         if (selectedProtocol == null) {
             return false;
         }
@@ -179,8 +179,8 @@ public class ConsoleUtils {
     /**
      * Returns true if the smartcard is enabled for the specific VM entity (edit VM popup)
      */
-    public boolean isSmartcardGloballyEnabled(UserPortalItemModel item) {
-        ConsoleModel consoleModel = item.getDefaultConsole();
+    public boolean isSmartcardGloballyEnabled(HasConsoleModel item) {
+        ConsoleModel consoleModel = item.getDefaultConsoleModel();
         if (consoleModel instanceof SpiceConsoleModel) {
             return consoleModel.getEntity() == null ? false : consoleModel.getEntity().isSmartcardEnabled();
         }
@@ -191,8 +191,8 @@ public class ConsoleUtils {
     /**
      * Returns true if the smartcard is locally disabled from the edit console options popup
      */
-    public boolean isSmartcardEnabledOverriden(UserPortalItemModel item) {
-        ConsoleModel consoleModel = item.getDefaultConsole();
+    public boolean isSmartcardEnabledOverriden(HasConsoleModel item) {
+        ConsoleModel consoleModel = item.getDefaultConsoleModel();
         if (consoleModel instanceof SpiceConsoleModel) {
             return ((SpiceConsoleModel) consoleModel).getspice().isSmartcardEnabledOverridden();
         }

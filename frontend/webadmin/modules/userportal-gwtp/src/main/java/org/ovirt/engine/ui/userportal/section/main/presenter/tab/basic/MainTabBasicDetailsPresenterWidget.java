@@ -2,20 +2,21 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
+import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.ConsoleProtocol;
+import org.ovirt.engine.ui.uicommonweb.models.HasConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -148,7 +149,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
 
-        if (!item.getIsPool()) {
+        if (!item.isPool()) {
             ConsoleProtocol protocol = consoleUtils.determineConnectionProtocol(item);
             if (protocol == null) {
                 getView().setConsoleWarningMessage(consoleUtils.determineProtocolMessage(item));
@@ -160,7 +161,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         }
     }
 
-    private String determineProtocolMessage(ConsoleProtocol protocol, UserPortalItemModel item) {
+    private String determineProtocolMessage(ConsoleProtocol protocol, HasConsoleModel item) {
         if (consoleUtils.isSmartcardGloballyEnabled(item) && !consoleUtils.isSmartcardEnabledOverriden(item)) {
             return messages.consoleWithSmartcard(protocol.displayName);
         }
@@ -169,13 +170,12 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        if (!item.getIsPool() && consoleUtils.determineConnectionProtocol(item) != null
+        if (!item.isPool() && consoleUtils.determineConnectionProtocol(item) != null
                 && item.getStatus().equals(VMStatus.Up)) {
             return true;
         }
 
         return false;
-
     }
 
 }

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -79,6 +80,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<VmRemovePopupPresenterWidget> vmRemoveConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
+            final Provider<ConsolePopupPresenterWidget> consolePopupProvider,
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider) {
         return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
             @Override
@@ -115,6 +117,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                     return guidePopupProvider.get();
                 } else if (windowModel instanceof VncInfoModel) {
                     return vncWindoProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditConsoleCommand()) {
+                    return consolePopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

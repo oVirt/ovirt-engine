@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -152,26 +152,24 @@ public class VmItemBehavior extends ItemBehavior
         getItem().setIsFromPool(entity.getVmPoolId() != null);
         getItem().setSpiceDriverVersion(entity.getSpiceDriverVersion());
 
-        if (getItem().getDefaultConsole() == null)
+        if (getItem().getDefaultConsoleModel() == null)
         {
             getItem().setDefaultConsole(new SpiceConsoleModel());
         }
-        getItem().getDefaultConsole().setEntity(entity);
+        getItem().getDefaultConsoleModel().setEntity(entity);
 
         // Support RDP console for windows VMs.
         if (AsyncDataProvider.IsWindowsOsType(entity.getVmOs()))
         {
-            if (getItem().getAdditionalConsole() == null)
+            if (getItem().getAdditionalConsoleModel() == null)
             {
                 getItem().setAdditionalConsole(new RdpConsoleModel());
             }
-            getItem().getAdditionalConsole().setEntity(entity);
-            getItem().setHasAdditionalConsole(true);
+            getItem().getAdditionalConsoleModel().setEntity(entity);
         }
         else
         {
             getItem().setAdditionalConsole(null);
-            getItem().setHasAdditionalConsole(false);
         }
     }
 

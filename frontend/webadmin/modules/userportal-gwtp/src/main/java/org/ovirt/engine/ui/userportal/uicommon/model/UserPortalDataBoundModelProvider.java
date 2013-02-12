@@ -47,7 +47,7 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     public Object getKey(T item) {
         if (item instanceof UserPortalItemModel) {
             UserPortalItemModel itemModel = (UserPortalItemModel) item;
-            return itemModel.getIsPool() ? ((VmPool) itemModel.getEntity()).getVmPoolId()
+            return itemModel.isPool() ? ((VmPool) itemModel.getEntity()).getVmPoolId()
                     : ((VM) itemModel.getEntity()).getId();
         }
 

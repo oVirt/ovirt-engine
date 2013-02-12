@@ -104,44 +104,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String extendedTemplatePermissionsSubTabLabel();
 
-    // Console popup view
-
-    @DefaultStringValue("Spice")
-    String spice();
-
-    @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
-    String ctrlAltDel();
-
-    @DefaultStringValue("Enable USB Auto-Share")
-    String usbAutoshare();
-
-    @DefaultStringValue("Open in Full Screen")
-    String openInFullScreen();
-
-    @DefaultStringValue("Not supported for this client OS")
-    String ctrlAltDeletIsNotSupportedOnWindows();
-
-    @DefaultStringValue("Enable WAN Options")
-    String enableWanOptions();
-
-    @DefaultStringValue("Disable smartcard")
-    String disableSmartcard();
-
-    @DefaultStringValue("RDP Options")
-    String rdpOptions();
-
-    @DefaultStringValue("Use Local Drives")
-    String useLocalDrives();
-
-    @DefaultStringValue("Remote Desktop")
-    String remoteDesktop();
-
-    @DefaultStringValue("VNC")
-    String vnc();
-
-    @DefaultStringValue("SPICE Options")
-    String spiceOptions();
-
     // VM Monitor sub tab
 
     @DefaultStringValue("CPU Usage")
@@ -225,14 +187,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Snapshots")
     String snapshotsVm();
-
-    @DefaultStringValue("VNC console access is not supported from the user portal.<br/>" +
-            "Please ask the administrator to configure this " +
-            "virtual machine to use SPICE for console access.")
-    String vncNotSupportedMsg();
-
-    @DefaultStringValue("Your browser/platform does not support console opening")
-    String browserNotSupportedMsg();
 
     // Extended resource
     @DefaultStringValue("Virtual Machines")

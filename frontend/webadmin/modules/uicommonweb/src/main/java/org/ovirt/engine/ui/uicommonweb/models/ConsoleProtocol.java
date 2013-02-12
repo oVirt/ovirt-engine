@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.uicommonweb.models.userportal;
+package org.ovirt.engine.ui.uicommonweb.models;
 
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;

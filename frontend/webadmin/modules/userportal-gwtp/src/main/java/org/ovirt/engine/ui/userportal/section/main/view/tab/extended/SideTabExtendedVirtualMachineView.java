@@ -6,7 +6,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ErrorPopupManager;
+import org.ovirt.engine.ui.common.utils.ConsoleManager;
+import org.ovirt.engine.ui.common.utils.ConsoleUtils;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -17,13 +20,10 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.console.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
-import org.ovirt.engine.ui.userportal.utils.ConsoleManager;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
-import org.ovirt.engine.ui.userportal.widget.basic.ConsoleUtils;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
@@ -193,7 +193,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                     @Override
                     public void execute(UserPortalItemModel model) {
                         String message =
-                                consoleManager.connectToConsole(consoleUtils.determineConnectionProtocol(model), model);
+                                consoleManager.connectToConsole(model);
                         if (message != null) {
                             errorPopupManager.show(message);
                         }
@@ -312,12 +312,12 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 applicationResources.playIcon(), applicationResources.playDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
-                return value.getIsPool() ? constants.takeVmLabel() : constants.runVmLabel();
+                return value.isPool() ? constants.takeVmLabel() : constants.runVmLabel();
             }
 
             @Override
             protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.getIsPool() ? value.getTakeVmCommand() : value.getRunCommand();
+                return value.isPool() ? value.getTakeVmCommand() : value.getRunCommand();
             }
         };
         runCell.setElementIdPrefix(elementIdPrefix);
@@ -327,12 +327,12 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 applicationResources.stopIcon(), applicationResources.stopDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
-                return value.getIsPool() ? constants.returnVmLabel() : constants.shutDownVm();
+                return value.isPool() ? constants.returnVmLabel() : constants.shutDownVm();
             }
 
             @Override
             protected UICommand resolveCommand(UserPortalItemModel value) {
-                return value.getIsPool() ? value.getReturnVmCommand() : value.getShutdownCommand();
+                return value.isPool() ? value.getReturnVmCommand() : value.getShutdownCommand();
             }
         };
         shutdownCell.setElementIdPrefix(elementIdPrefix);

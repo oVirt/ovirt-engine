@@ -471,16 +471,16 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         UserPortalItemModel item = (UserPortalItemModel) getSelectedItem();
 
-        vmGeneralModel.setIsAvailable(item != null && !item.getIsPool());
-        vmSnapshotListModel.setIsAvailable(item != null && !item.getIsPool());
-        vmMonitorModel.setIsAvailable(item != null && !item.getIsPool());
-        vmDiskListModel.setIsAvailable(item != null && !item.getIsPool());
-        vmInterfaceListModel.setIsAvailable(item != null && !item.getIsPool());
-        vmEventListModel.setIsAvailable(item != null && !item.getIsPool());
+        vmGeneralModel.setIsAvailable(item != null && !item.isPool());
+        vmSnapshotListModel.setIsAvailable(item != null && !item.isPool());
+        vmMonitorModel.setIsAvailable(item != null && !item.isPool());
+        vmDiskListModel.setIsAvailable(item != null && !item.isPool());
+        vmInterfaceListModel.setIsAvailable(item != null && !item.isPool());
+        vmEventListModel.setIsAvailable(item != null && !item.isPool());
 
-        poolGeneralModel.setIsAvailable(item != null && item.getIsPool());
-        poolDiskListModel.setIsAvailable(item != null && item.getIsPool());
-        poolInterfaceListModel.setIsAvailable(item != null && item.getIsPool());
+        poolGeneralModel.setIsAvailable(item != null && item.isPool());
+        poolDiskListModel.setIsAvailable(item != null && item.isPool());
+        poolInterfaceListModel.setIsAvailable(item != null && item.isPool());
     }
 
     @Override
@@ -1017,28 +1017,28 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
 
-        getEditCommand().setIsExecutionAllowed(selectedItem != null && !selectedItem.getIsPool());
+        getEditCommand().setIsExecutionAllowed(selectedItem != null && !selectedItem.isPool());
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.getIsPool()
+                && !selectedItem.isPool()
                 && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.getIsPool()
+                && !selectedItem.isPool()
                 && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.RunVmOnce));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.getIsPool()
+                && !selectedItem.isPool()
                 && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
-                && !selectedItem.getIsPool()
+                && !selectedItem.isPool()
                 && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
                         VM.class,
                         VdcActionType.AddVmTemplate));
@@ -1791,7 +1791,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
             // In userportal 'Extended View': Set 'CanConnectAutomatically' to true if there's one and only one up VM.
             setCanConnectAutomatically(GetUpVms(items).size() == 1
-                    && GetUpVms(items).get(0).getDefaultConsole().getConnectCommand().getIsExecutionAllowed());
+                    && GetUpVms(items).get(0).getDefaultConsoleModel().getConnectCommand().getIsExecutionAllowed());
 
             setItems(items);
 
@@ -1805,9 +1805,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     @Override
     protected void updateConsoleModel(UserPortalItemModel item) {
         super.updateConsoleModel(item);
-        if (item.getEntity() != null && item.getDefaultConsole() != null) {
+        if (item.getEntity() != null && item.getDefaultConsoleModel() != null) {
             // Adjust item's default console for userportal 'Extended View'
-            item.getDefaultConsole().setForceVmStatusUp(false);
+            item.getDefaultConsoleModel().setForceVmStatusUp(false);
         }
     }
 
