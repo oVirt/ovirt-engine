@@ -38,6 +38,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -48,8 +49,9 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 
 @LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
-        implements QuotaVdsDependent {
+        implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private static final long serialVersionUID = -2444359305003244168L;
+    private VM oldVm;
 
     public UpdateVmCommand(T parameters) {
         super(parameters);
@@ -70,7 +72,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void executeVmCommand() {
-        VM oldVm = getVm();
+        oldVm = getVm();
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         VmStatic newVmStatic = getParameters().getVmStaticData();
         newVmStatic.setCreationDate(oldVm.getStaticData().getCreationDate());
@@ -379,5 +381,23 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         return list;
     }
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.VM.getVdcObjectTranslation();
+    }
 
+    @Override
+    public String getEntityOldName() {
+        return oldVm.getVmName();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getVmStaticData().getVmName();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+       logable.setVmId(oldVm.getId());
+    }
 }

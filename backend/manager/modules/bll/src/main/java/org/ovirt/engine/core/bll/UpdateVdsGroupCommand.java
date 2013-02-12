@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -34,7 +35,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @SuppressWarnings("serial")
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
-        VdsGroupOperationCommandBase<T> {
+        VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
 
     private List<VDS> allForVdsGroup;
     private VDSGroup oldGroup;
@@ -331,5 +332,25 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     @Override
     protected NetworkDao getNetworkDAO() {
         return getDbFacade().getNetworkDao();
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.VdsGroups.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return oldGroup.getname();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getVdsGroup().getname();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+        logable.setVdsGroupId(oldGroup.getId());
     }
 }

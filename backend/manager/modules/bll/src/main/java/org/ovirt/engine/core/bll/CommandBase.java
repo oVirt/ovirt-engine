@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
@@ -72,6 +73,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -539,6 +541,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void endSuccessfully() {
         setSucceeded(true);
+    }
+
+    private void logRenamedEntity() {
+        try {
+            if (this instanceof RenamedEntityInfoProvider) {
+                RenamedEntityInfoProvider renameable = (RenamedEntityInfoProvider) this;
+                String entityType = renameable.getEntityType();
+                String oldEntityName = renameable.getEntityOldName();
+                String newEntityName = renameable.getEntityNewName();
+                if (!StringUtils.equals(oldEntityName,newEntityName)) {
+                    // log entity rename details
+                    AuditLogableBase logable = new AuditLogableBase();
+                    logable.addCustomValue("EntityType", entityType);
+                    logable.addCustomValue("OldEntityName", oldEntityName);
+                    logable.addCustomValue("NewEntityName", newEntityName);
+                    renameable.setEntityId(logable);
+                    AuditLogDirector.log(logable, AuditLogType.ENTITY_RENAMED);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to log entity rename operation.", e);
+        }
     }
 
     private void internalEndWithFailure() {
@@ -1124,6 +1148,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             try {
                 freeLock();
                 if (getCommandShouldBeLogged()) {
+                    logRenamedEntity();
                     logCommand();
                 }
                 if (getSucceeded()) {

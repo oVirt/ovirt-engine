@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -25,11 +26,12 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCommand<T> {
+public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsCommand<T>  implements RenamedEntityInfoProvider{
 
     private VDS _oldVds;
     private static final List<String> UPDATE_FIELDS_VDS_BROKER = Arrays.asList("host_name", "ip", "vds_unique_id", "port", "vds_group_id");
@@ -206,6 +208,26 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters> extends VdsCo
             addValidationGroup(PowerManagementCheck.class);
         }
         return super.getValidationGroups();
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.VDS.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return _oldVds.getVdsName();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getVdsStaticData().getVdsName();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+        logable.setVdsId(_oldVds.getId());
     }
 
 }

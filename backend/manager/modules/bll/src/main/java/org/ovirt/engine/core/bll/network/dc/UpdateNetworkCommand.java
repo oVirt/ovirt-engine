@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -14,9 +16,10 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @SuppressWarnings("serial")
-public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
+public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> implements RenamedEntityInfoProvider{
     private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters) {
@@ -110,5 +113,25 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 !getNetworkName().equals(managementNetwork)
                 ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
                 : ValidationResult.VALID;
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.Network.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return oldNetwork.getName();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getNetwork().getName();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+
     }
 }

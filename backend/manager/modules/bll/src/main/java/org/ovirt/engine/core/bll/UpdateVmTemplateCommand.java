@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -19,10 +20,11 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
-        implements QuotaVdsDependent{
+        implements QuotaVdsDependent, RenamedEntityInfoProvider{
     private VmTemplate mOldTemplate;
 
     public UpdateVmTemplateCommand(T parameters) {
@@ -128,5 +130,26 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
         list.add(new QuotaSanityParameter(getParameters().getVmTemplateData().getQuotaId(), null));
         return list;
+    }
+
+
+    @Override
+     public String getEntityType() {
+        return VdcObjectType.VmTemplate.getVdcObjectTranslation();
+     }
+
+     @Override
+     public String getEntityOldName() {
+         return mOldTemplate.getname();
+     }
+
+     @Override
+     public String getEntityNewName() {
+         return getParameters().getVmTemplateData().getName();
+     }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+        logable.setVmTemplateId(mOldTemplate.getId());
     }
 }

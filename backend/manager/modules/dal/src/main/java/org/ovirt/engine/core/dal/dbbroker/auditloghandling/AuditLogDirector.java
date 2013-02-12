@@ -35,6 +35,7 @@ public final class AuditLogDirector {
     static {
         initMessages();
         initSeverities();
+        checkSeverities();
     }
 
     private static void initSeverities() {
@@ -56,7 +57,7 @@ public final class AuditLogDirector {
         initDwhSeverities();
         initConfigSeverities();
         initUserAccountSeverities();
-        checkSeverities();
+        initCommonSeverities();
     }
 
     private static void initGlusterVolumeSeverities() {
@@ -708,6 +709,9 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_ACCOUNT_PASSWORD_EXPIRED, AuditLogSeverity.ERROR);
     }
 
+    private static void initCommonSeverities() {
+        severities.put(AuditLogType.ENTITY_RENAMED, AuditLogSeverity.NORMAL);
+    }
     private static void initDwhSeverities() {
         severities.put(AuditLogType.DWH_STOPPED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.DWH_STARTED, AuditLogSeverity.NORMAL);

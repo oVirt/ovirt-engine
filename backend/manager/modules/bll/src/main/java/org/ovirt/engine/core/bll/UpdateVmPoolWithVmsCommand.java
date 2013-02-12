@@ -1,15 +1,18 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T> {
+public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>  implements RenamedEntityInfoProvider{
 
+    private VmPool oldPool;
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -32,7 +35,7 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction();
-        VmPool oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
+        oldPool = getVmPoolDAO().get(getVmPool().getVmPoolId());
         if (returnValue && oldPool == null) {
             addCanDoActionMessage(VdcBllMessages.VM_POOL_CANNOT_UPDATE_POOL_NOT_FOUND);
             returnValue = false;
@@ -59,5 +62,24 @@ public class UpdateVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> ex
     protected void executeCommand() {
         super.executeCommand();
         Backend.getInstance().triggerPoolMonitoringJob();
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.VmPool.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return oldPool.getVmPoolName();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getVmPool().getVmPoolName();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
     }
 }

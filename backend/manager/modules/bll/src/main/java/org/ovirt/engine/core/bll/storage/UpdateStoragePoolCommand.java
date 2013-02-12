@@ -6,8 +6,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -26,13 +28,14 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
-        StoragePoolManagementCommandBase<T> {
+        StoragePoolManagementCommandBase<T>  implements RenamedEntityInfoProvider{
     public UpdateStoragePoolCommand(T parameters) {
         super(parameters);
     }
@@ -248,5 +251,25 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      */
     private static void copyUnchangedStoragePoolProperties(storage_pool newStoragePool, storage_pool oldStoragePool) {
         newStoragePool.setStoragePoolFormatType(oldStoragePool.getStoragePoolFormatType());
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.StoragePool.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return _oldStoragePool.getname();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getParameters().getStoragePool().getname();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+        logable.setStoragePoolId(_oldStoragePool.getId());
     }
 }

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -14,23 +16,24 @@ import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCo
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
 public class UpdateStorageDomainCommand<T extends StorageDomainManagementParameter> extends
-        StorageDomainManagementCommandBase<T> {
+        StorageDomainManagementCommandBase<T>  implements RenamedEntityInfoProvider {
     public UpdateStorageDomainCommand(T parameters) {
         super(parameters);
     }
 
     private boolean _storageDomainNameChanged;
+    private StorageDomainStatic oldDomain;
 
     @Override
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         boolean returnValue = super.canDoAction() && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active) && checkStorageDomainNameLengthValid();
-        StorageDomainStatic oldDomain =
-                DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId());
+        oldDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId());
 
         // Only after validating the existing of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
         // storage domain which is about to be updated.
@@ -95,4 +98,23 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         return super.getValidationGroups();
     }
 
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.Storage.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return oldDomain.getstorage_name();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getStorageDomain().getstorage_name();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+        logable.setStorageDomainId(oldDomain.getId());
+    }
 }
