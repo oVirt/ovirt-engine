@@ -58,7 +58,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
             return false;
         }
-        if (!ObjectIdentityChecker.CanUpdateField(vds, "vds_group_id", vds.getStatus())) {
+        if (!ObjectIdentityChecker.CanUpdateField(vds, "vdsGroupId", vds.getStatus())) {
             addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
             return false;
         }
