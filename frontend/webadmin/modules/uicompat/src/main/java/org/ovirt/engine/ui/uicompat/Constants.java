@@ -830,11 +830,20 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Field value should follow: <parameter=value;parameter=value;...>")
     String fieldValueShouldFollowMsg();
 
-    @DefaultStringValue("Note that all snapshots will be collapsed due to different storage types")
-    String noteThatAllSnapshotsCollapsedDueDifferentStorageTypesMsg();
+    @DefaultStringValue("Import of a thin provisioned raw disk from a block device must be with collapse snapshot")
+    String importSparseDiskToBlockDeviceMustCollapseSnapshots();
 
-    @DefaultStringValue("Use a separate import operation for the marked VMs or\nApply \"Collapse Snapshots\" for all VMs")
-    String useSeparateImportOperationForMarkedVMsMsg();
+    @DefaultStringValue("Import of a VM based on template that does not exist in the system must be with collapse snapshot")
+    String importVMWithTemplateNotInSystemMustCollapseSnapshots();
+
+    @DefaultStringValue("Import of a VM that exists in the system has to be imported in clone mode")
+    String importVMThatExistsInSystemMustClone();
+
+    @DefaultStringValue("Import of a Template that exists in the system has to be imported in clone mode")
+    String importTemplateThatExistsInSystemMustClone();
+
+    @DefaultStringValue("Import of a VM with the clone option must be with collapse snapshot")
+    String importCloneVMMustCollapseSnapshots();
 
     @DefaultStringValue("Template Disk(s)")
     String templateDisksMsg();
@@ -1641,7 +1650,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
     String assignQuotaForDisk();
 
     @DefaultStringValue("Some imported VMs depend on one or more templates which are " +
-    "not available in the system. Therefore you must Import VMs with 'collapse snapshots', "+
+            "not available in the system. Therefore you must Import those VMs with 'collapse snapshots', " +
     "another option is to Import missing templates first and then try import the VMs again")
     String importMissingStorages();
 
@@ -1649,7 +1658,7 @@ public interface Constants extends com.google.gwt.i18n.client.Constants {
             "(i.e. some disks will be imported to a different Storage Domain).")
     String importNotApplicableForDefaultStorage();
 
-    @DefaultStringValue("Template cannot be found in the system, VM(s) cannot be imported")
+    @DefaultStringValue("One of the templates cannot be found in the system, VM(s) cannot be imported")
     String errorTemplateCannotBeFoundMessage();
 
     // Import Gluster Cluster

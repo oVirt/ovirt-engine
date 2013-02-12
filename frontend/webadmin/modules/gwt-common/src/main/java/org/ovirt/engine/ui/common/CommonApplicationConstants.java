@@ -1134,4 +1134,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("MAC")
     String macVmGuestAgent();
 
+    @DefaultStringValue("Clone")
+    String cloneVM();
+
+    @DefaultStringValue("Collapse Snapshots")
+    String collapseSnapshots();
+
 }

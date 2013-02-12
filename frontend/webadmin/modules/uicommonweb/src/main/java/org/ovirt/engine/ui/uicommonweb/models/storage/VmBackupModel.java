@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -34,6 +34,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -45,11 +47,11 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-@SuppressWarnings("unused")
+
 public class VmBackupModel extends ManageBackupModel {
 
     private VmAppListModel privateAppListModel;
-    protected Map<Guid, Object> objectsInSetupMap;
+    protected List<Object> objectsToClone;
     protected Map<Guid, Object> cloneObjectMap;
     protected ImportVmModel importModel;
 
@@ -209,10 +211,11 @@ public class VmBackupModel extends ManageBackupModel {
         }
         cloneObjectMap = new HashMap<Guid, Object>();
 
-        objectsInSetupMap = new HashMap<Guid, Object>();
+        objectsToClone = new ArrayList<Object>();
         for (Object object : (ArrayList<Object>) importModel.getItems()) {
-            if (importModel.isObjectInSetup(object) || (Boolean) importModel.getCloneAll().getEntity()) {
-                objectsInSetupMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
+            ImportEntityData item = (ImportEntityData) object;
+            if ((Boolean) item.getClone().getEntity()) {
+                objectsToClone.add(object);
             }
         }
         executeImportClone();
@@ -220,12 +223,12 @@ public class VmBackupModel extends ManageBackupModel {
 
     private void executeImportClone() {
         //TODO: support running numbers (for suffix)
-        if (objectsInSetupMap.size() == 0) {
+        if (objectsToClone.size() == 0) {
             executeImport();
             return;
         }
         ImportCloneModel entity = new ImportCloneModel();
-        Object object = objectsInSetupMap.values().toArray()[0];
+        Object object = objectsToClone.iterator().next();
         entity.setEntity(object);
         entity.setTitle(ConstantsManager.getInstance().getConstants().importConflictTitle());
         entity.setHashName("import_conflict"); //$NON-NLS-1$
@@ -250,12 +253,13 @@ public class VmBackupModel extends ManageBackupModel {
                 if (!validateSuffix(suffix, cloneModel.getSuffix())) {
                     return;
                 }
-                for (Object object : objectsInSetupMap.values()) {
+                for (Object object : objectsToClone) {
                     setObjectName(object, suffix, true);
-                    cloneObjectMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
+                    cloneObjectMap.put((Guid) ((IVdcQueryable) (((ImportEntityData) object).getEntity())).getQueryableId(),
+                            object);
                 }
             }
-            objectsInSetupMap.clear();
+            objectsToClone.clear();
         } else {
             Object object = cloneModel.getEntity();
             if (!(Boolean) cloneModel.getNoClone().getEntity()) {
@@ -264,9 +268,10 @@ public class VmBackupModel extends ManageBackupModel {
                     return;
                 }
                 setObjectName(object, vmName, false);
-                cloneObjectMap.put((Guid) ((IVdcQueryable) object).getQueryableId(), object);
+                cloneObjectMap.put((Guid) ((IVdcQueryable) ((ImportEntityData) object).getEntity()).getQueryableId(),
+                        object);
             }
-            objectsInSetupMap.remove(((IVdcQueryable) object).getQueryableId());
+            objectsToClone.remove(object);
         }
 
         setConfirmWindow(null);
@@ -274,7 +279,7 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     protected void setObjectName(Object object, String name, boolean isSuffix) {
-        VM vm = (VM) object;
+        VM vm = ((ImportVmData) object).getVm();
         if (isSuffix) {
             vm.setVmName(vm.getVmName() + name);
         } else {
@@ -283,9 +288,9 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
-        for (Object object : objectsInSetupMap.values()) {
-            VM vm = (VM) object;
-            if (!validateName(vm.getVmName() + suffix, vm, entityModel)) {
+        for (Object object : objectsToClone) {
+            VM vm = ((ImportVmData) object).getVm();
+            if (!validateName(vm.getVmName() + suffix, object, entityModel)) {
                 return false;
             }
         }
@@ -293,7 +298,7 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     protected boolean validateName(String newVmName, Object object, EntityModel entity) {
-        VM vm = (VM) object;
+        VM vm = ((ImportVmData) object).getVm();
         VmOsType osType = vm.getOs();
         EntityModel temp = new EntityModel();
         temp.setIsValid(true);
@@ -329,10 +334,7 @@ public class VmBackupModel extends ManageBackupModel {
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : importModel.getItems()) {
-            VM vm = (VM) item;
-
-            storage_domains destinationStorage =
-                    ((storage_domains) importModel.getStorage().getSelectedItem());
+            VM vm = ((ImportVmData)item).getVm();
 
             ImportVmParameters prm = new ImportVmParameters(vm, getEntity().getId(),
                     Guid.Empty, importModel.getStoragePool().getId(),
@@ -344,11 +346,10 @@ public class VmBackupModel extends ManageBackupModel {
             }
 
             prm.setForceOverride(true);
-            prm.setCopyCollapse((Boolean) importModel.getCollapseSnapshots().getEntity());
+            prm.setCopyCollapse((Boolean) ((ImportVmData) item).getCollapseSnapshots().getEntity());
 
             Map<Guid, Guid> map = new HashMap<Guid, Guid>();
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
-                Guid key = entry.getKey();
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
                 disk.setvolume_format(
@@ -366,14 +367,14 @@ public class VmBackupModel extends ManageBackupModel {
 
             prm.setImageToDestinationDomainMap(map);
 
-            if (importModel.isObjectInSetup(vm) ||
-                    (Boolean) importModel.getCloneAll().getEntity()) {
+            if (((ImportVmData) item).isExistsInSystem() ||
+                    (Boolean) ((ImportVmData) item).getClone().getEntity()) {
                 if (!cloneObjectMap.containsKey(vm.getId())) {
                     continue;
                 }
                 prm.setImportAsNewEntity(true);
                 prm.setCopyCollapse(true);
-                prm.getVm().setVmName(((VM) cloneObjectMap.get(vm.getId())).getVmName());
+                prm.getVm().setVmName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getVmName());
             }
 
             prms.add(prm);
@@ -471,9 +472,7 @@ public class VmBackupModel extends ManageBackupModel {
                                     Object ReturnValue1) {
                                 VmBackupModel backupModel1 = (VmBackupModel) model1;
 
-                                backupModel1
-                                        .setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue1)
-                                                .getReturnValue());
+                                backupModel1.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue());
                             }
                         };
                         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(

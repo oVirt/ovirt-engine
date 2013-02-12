@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,11 +18,12 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IIsObjectInSetup;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSetup
+public class ImportTemplateModel extends ImportVmModel
 {
 
     private HashMap<Guid, VmTemplate> alreadyInSystem;
@@ -30,7 +32,6 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
     public ImportTemplateModel() {
         super();
         disksToConvert = null;
-        getCollapseSnapshots().setIsAvailable(false);
     }
 
     @Override
@@ -39,7 +40,12 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
         super.InitDetailModels();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new TemplateGeneralModel());
+        list.add(new TemplateGeneralModel() {
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value == null ? null : ((ImportTemplateData) value).getTemplate());
+            }
+        });
         list.add(new TemplateImportInterfaceListModel());
         this.templateImportDiskListModel = new TemplateImportDiskListModel();
         list.add(templateImportDiskListModel);
@@ -74,15 +80,23 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
                         List<VmTemplate> vmtList =
                                 (List<VmTemplate>) ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                        alreadyInSystem = new HashMap<Guid, VmTemplate>();
-                        for (VmTemplate template : vmtList) {
-                            alreadyInSystem.put(template.getId(), template);
+                        List<ImportTemplateData> templateDataList = new ArrayList<ImportTemplateData>();
+                        for (VmTemplate template : (Iterable<VmTemplate>) value) {
+                            ImportTemplateData templateData = new ImportTemplateData(template);
+                            boolean templateExistsInSystem = vmtList.contains(template);
+                            templateData.setExistsInSystem(templateExistsInSystem);
+                            if (templateExistsInSystem) {
+                                templateData.getClone().setEntity(true);
+                                templateData.getClone()
+                                        .getChangeProhibitionReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .importTemplateThatExistsInSystemMustClone());
+                                templateData.getClone().setIsChangable(false);
+                            }
+                            templateDataList.add(templateData);
                         }
-                        if (vmtList.size() == list.size()) {
-                            getCloneAll().setEntity(true);
-                            getCloneAll().setIsChangable(false);
-                        }
-                        ImportTemplateModel.super.setSuperItems(value);
+                        ImportTemplateModel.super.setSuperItems(templateDataList);
                     }
                 }));
 
@@ -95,11 +109,11 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
     @Override
     protected void initDisksStorageDomainsList() {
         for (Object item : getItems()) {
-            VmTemplate template = (VmTemplate) item;
+            VmTemplate template = ((ImportTemplateData) item).getTemplate();
             for (Disk disk : template.getDiskList()) {
                 DiskImage diskImage = (DiskImage) disk;
-                setDiskImportData(diskImage.getId(),
-                        filteredStorageDomains, diskImage.getvolume_type());
+                addDiskImportData(diskImage.getId(),
+                        filteredStorageDomains, diskImage.getvolume_type(), new EntityModel(true));
             }
         }
         postInitDisks();
@@ -113,13 +127,5 @@ public class ImportTemplateModel extends ImportVmModel implements IIsObjectInSet
     @Override
     public SearchableListModel getImportDiskListModel() {
         return templateImportDiskListModel;
-    }
-
-    @Override
-    public boolean isObjectInSetup(Object vmTemplate) {
-        if (alreadyInSystem == null) {
-            return false;
-        }
-        return alreadyInSystem.containsKey(((VmTemplate) vmTemplate).getId());
     }
 }

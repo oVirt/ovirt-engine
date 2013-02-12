@@ -19,9 +19,22 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
             super(true, false);
         }
 
-        public void renderEditable(Context context, Boolean value, boolean canEdit, SafeHtmlBuilder sb) {
+        public void renderEditable(Context context,
+                Boolean value,
+                boolean canEdit,
+                SafeHtmlBuilder sb,
+                String disabledMessage) {
             if (!canEdit) {
-                sb.append(value ? INPUT_CHECKED_DISABLED : INPUT_UNCHECKED_DISABLED);
+                sb.append(INPUT_CHECKBOX_DISABLED_PREFIX);
+                if (value) {
+                    sb.append(CHECKED_ATTR);
+                }
+                if (disabledMessage != null && !disabledMessage.isEmpty()) {
+                    sb.append(TITLE_ATTR_START);
+                    sb.append(SafeHtmlUtils.fromString(disabledMessage));
+                    sb.append(TITLE_ATTR_END);
+                }
+                sb.append(TAG_CLOSE);
             } else {
                 super.render(context, value, sb);
             }
@@ -29,17 +42,12 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     }
 
-    /**
-     * An HTML string representation of a checked input box.
-     */
-    static final SafeHtml INPUT_CHECKED_DISABLED =
-            SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked disabled/>"); //$NON-NLS-1$
-
-    /**
-     * An HTML string representation of an unchecked input box.
-     */
-    static final SafeHtml INPUT_UNCHECKED_DISABLED =
-            SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" disabled/>"); //$NON-NLS-1$
+    private static final SafeHtml INPUT_CHECKBOX_DISABLED_PREFIX =
+            SafeHtmlUtils.fromTrustedString("<input type=\"checkbox\" tabindex=\"-1\" disabled"); //$NON-NLS-1$
+    private static final SafeHtml CHECKED_ATTR = SafeHtmlUtils.fromTrustedString(" checked"); //$NON-NLS-1$
+    private static final SafeHtml TITLE_ATTR_START = SafeHtmlUtils.fromTrustedString(" title=\""); //$NON-NLS-1$
+    private static final SafeHtml TITLE_ATTR_END = SafeHtmlUtils.fromTrustedString("\""); //$NON-NLS-1$
+    private static final SafeHtml TAG_CLOSE = SafeHtmlUtils.fromTrustedString("/>"); //$NON-NLS-1$
 
     public CheckboxColumn() {
         super(new EnabledDisabledCheckboxCell());
@@ -63,7 +71,11 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
                 sb.appendHtmlConstant("<div style='text-align: center'>"); //$NON-NLS-1$
             }
 
-            ((EnabledDisabledCheckboxCell) cell).renderEditable(context, getValue(object), canEdit(object), sb);
+            ((EnabledDisabledCheckboxCell) cell).renderEditable(context,
+                    getValue(object),
+                    canEdit(object),
+                    sb,
+                    getDisabledMessage(object));
 
             if (isCentralized) {
                 sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
@@ -75,4 +87,7 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     protected abstract boolean canEdit(T object);
 
+    protected String getDisabledMessage(T object) {
+        return null;
+    }
 }

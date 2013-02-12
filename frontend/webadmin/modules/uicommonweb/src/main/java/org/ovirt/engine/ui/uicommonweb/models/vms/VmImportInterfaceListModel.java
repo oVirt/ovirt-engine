@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-@SuppressWarnings("unused")
-public class VmImportInterfaceListModel extends VmInterfaceListModel
+public class VmImportInterfaceListModel extends SearchableListModel
 {
     public VmImportInterfaceListModel() {
         setIsTimerDisabled(true);
@@ -12,11 +12,9 @@ public class VmImportInterfaceListModel extends VmInterfaceListModel
     @Override
     protected void OnEntityChanged()
     {
-        super.OnEntityChanged();
-
         if (getEntity() != null)
         {
-            VM vm = (VM) getEntity();
+            VM vm = ((ImportVmData) getEntity()).getVm();
             setItems(vm.getInterfaces());
         }
         else
@@ -26,7 +24,7 @@ public class VmImportInterfaceListModel extends VmInterfaceListModel
     }
 
     @Override
-    protected void SyncSearch() {
-
+    protected String getListName() {
+        return "VmImportInterfaceListModel"; //$NON-NLS-1$
     }
 }

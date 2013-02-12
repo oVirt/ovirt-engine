@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 
 @SuppressWarnings("unused")
-public class TemplateImportInterfaceListModel extends TemplateInterfaceListModel
+public class TemplateImportInterfaceListModel extends SearchableListModel
 {
     public TemplateImportInterfaceListModel() {
         setIsTimerDisabled(true);
@@ -16,7 +18,7 @@ public class TemplateImportInterfaceListModel extends TemplateInterfaceListModel
 
         if (getEntity() != null)
         {
-            VmTemplate template = (VmTemplate) getEntity();
+            VmTemplate template = ((ImportTemplateData) getEntity()).getTemplate();
             setItems(template.getInterfaces());
         }
         else
@@ -27,5 +29,10 @@ public class TemplateImportInterfaceListModel extends TemplateInterfaceListModel
 
     @Override
     protected void SyncSearch() {
+    }
+
+    @Override
+    protected String getListName() {
+        return "TemplateImportInterfaceListModel"; //$NON-NLS-1$
     }
 }

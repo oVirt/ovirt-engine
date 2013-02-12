@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -18,21 +19,22 @@ import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.core.compat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
+import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.IsObjectInSystemColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
@@ -55,10 +57,10 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -94,23 +96,12 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Path(value = "storage.selectedItem")
     ListModelListBoxEditor<Object> destStorageEditor;
 
-    @UiField(provided = true)
-    @Path(value = "collapseSnapshots.entity")
-    EntityModelCheckBoxEditor collapseSnapshotEditor;
-
-    @UiField(provided = true)
-    @Path(value = "cloneAll.entity")
-    EntityModelCheckBoxEditor cloneAllEditor;
-
     @UiField
     SplitLayoutPanel splitLayoutPanel;
 
     @UiField
     @Ignore
     Label message;
-
-    @UiField
-    Image image;
 
     @Ignore
     protected IVdcQueryableCellTable<Object, ImportVmModel> table;
@@ -126,7 +117,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Ignore
     protected TabLayoutPanel subTabLayoutPanel = null;
 
-    protected ImportVmModel object;
+    protected ImportVmModel importModel;
 
     private ImportVmGeneralSubTabView generalView;
 
@@ -142,7 +133,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     private Column<DiskImage, String> quotaColumn;
 
-    protected IsObjectInSystemColumn<Object> isObjectInSystemColumn;
+    protected ImageResourceColumn<Object> isObjectInSystemColumn;
 
     protected final ApplicationConstants constants;
 
@@ -159,19 +150,12 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         this.resources = resources;
 
         initListBoxEditors();
-        initCheckboxes();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         localize(constants);
         Driver.driver.initialize(this);
         initTables();
         initSubTabLayoutPanel();
-        addStyles();
-    }
-
-    private void addStyles() {
-        collapseSnapshotEditor.addContentWidgetStyleName(style.collapseEditor());
-        cloneAllEditor.addContentWidgetStyleName(style.collapseEditor());
     }
 
     private void initSubTabLayoutPanel() {
@@ -200,11 +184,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     protected void subTabLayoutPanelSelectionChanged(Integer selectedItem) {
-        if (object != null) {
-            object.setActiveDetailModel(object.getDetailModels().get(selectedItem));
-            if (selectedItem == 0) {
-                generalView.setMainTabSelectedItem((VM) object.getSelectedItem());
-            }
+        if (importModel != null) {
+            importModel.setActiveDetailModel(importModel.getDetailModels().get(selectedItem));
         }
     }
 
@@ -214,7 +195,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 new DetailModelProvider<VmListModel, VmGeneralModel>() {
                     @Override
                     public VmGeneralModel getModel() {
-                        return (VmGeneralModel) object.getDetailModels().get(0);
+                        return (VmGeneralModel) importModel.getDetailModels().get(0);
                     }
 
                     @Override
@@ -252,10 +233,70 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     protected void initMainTable() {
         this.table = new IVdcQueryableCellTable<Object, ImportVmModel>();
 
+        CheckboxColumn<Object> collapseSnapshotsColumn =
+                new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
+            @Override
+            public void update(int index, Object model, Boolean value) {
+                        ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
+                        customSelectionCellFormatType.setEnabledWithToolTip(value,
+                                constants.importAllocationModifiedCollapse());
+                        diskTable.edit(importModel.getImportDiskListModel());
+                    }
+                }) {
+            @Override
+            public Boolean getValue(Object model) {
+                return (Boolean) ((ImportVmData) model).getCollapseSnapshots().getEntity();
+            }
+
+            @Override
+            protected boolean canEdit(Object model) {
+                return ((ImportVmData) model).getCollapseSnapshots().getIsChangable();
+            }
+
+                    @Override
+                    protected String getDisabledMessage(Object model) {
+                        List<String> reasons =
+                                ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReasons();
+                        if (reasons != null && !reasons.isEmpty()) {
+                            return reasons.get(0);
+                        }
+                        return null;
+                    }
+        };
+        table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "10px"); //$NON-NLS-1$
+
+        CheckboxColumn<Object> cloneVMColumn = new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
+            @Override
+            public void update(int index, Object model, Boolean value) {
+                ((ImportVmData) model).getClone().setEntity(value);
+                table.edit(importModel);
+            }
+        }) {
+            @Override
+            public Boolean getValue(Object model) {
+                return (Boolean) ((ImportVmData) model).getClone().getEntity();
+            }
+
+            @Override
+            protected boolean canEdit(Object model) {
+                return ((ImportVmData) model).getClone().getIsChangable();
+            }
+
+            @Override
+            protected String getDisabledMessage(Object model) {
+                List<String> reasons = ((ImportVmData) model).getClone().getChangeProhibitionReasons();
+                if (reasons != null && !reasons.isEmpty()) {
+                    return reasons.get(0);
+                }
+                return null;
+            }
+        };
+        table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return ((VM) object).getVmName();
+                return ((ImportVmData) object).getVm().getVmName();
             }
         };
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
@@ -263,22 +304,23 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> originColumn = new EnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
-                return ((VM) object).getOrigin();
+                return ((ImportVmData) object).getVm().getOrigin();
             }
         };
         table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
         table.addColumn(
                 new WebAdminImageResourceColumn<Object>() {
+                    @Override
                     public com.google.gwt.resources.client.ImageResource getValue(Object object) {
-                        return new VmTypeColumn().getValue((VM) object);
+                        return new VmTypeColumn().getValue(((ImportVmData) object).getVm());
                     }
                 }, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Object> memoryColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VM) object).getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
+                return String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
@@ -286,7 +328,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> cpuColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VM) object).getNumOfCpus());
+                return String.valueOf(((ImportVmData) object).getVm().getNumOfCpus());
             }
         };
         table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
@@ -294,13 +336,30 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<Object> diskColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return String.valueOf(((VM) object).getDiskMap().size());
+                return String.valueOf(((ImportVmData) object).getVm().getDiskMap().size());
             }
         };
         table.addColumn(diskColumn, constants.disksVm(), "50px"); //$NON-NLS-1$
 
-        isObjectInSystemColumn = new IsObjectInSystemColumn<Object>();
+        isObjectInSystemColumn = new ImageResourceColumn<Object>() {
+            @Override
+            public ImageResource getValue(Object object) {
+                return ((ImportVmData) object).isExistsInSystem() ? getCommonResources().logNormalImage() : null;
+            }
+        };
         table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "60px"); //$NON-NLS-1$
+
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                ImportVmData selectedObject =
+                        ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
+                customSelectionCellFormatType.setEnabledWithToolTip((Boolean) selectedObject.getCollapseSnapshots()
+                        .getEntity(),
+                        constants.importAllocationModifiedCollapse());
+                // diskTable.edit(importVmModel.getImportDiskListModel());
+            }
+        });
 
         ScrollPanel sp = new ScrollPanel();
         sp.add(table);
@@ -350,7 +409,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
-                return object.getDiskAlias(); //$NON-NLS-1$
+                return object.getDiskAlias();
             }
         };
         diskTable.addColumn(nameColumn, constants.nameDisk(), "100px"); //$NON-NLS-1$
@@ -398,8 +457,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 customSelectionCellFormatType) {
             @Override
             public String getValue(DiskImage disk) {
-                ImportData importData =
-                        object.getDiskImportData(disk.getId());
+                ImportDiskData importData =
+                        importModel.getDiskImportData(disk.getId());
                 if (importData == null) {
                     return "";
                 }
@@ -409,7 +468,6 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         };
 
         allocationColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
-
             @Override
             public void update(int index, DiskImage disk, String value) {
                 VolumeType tempVolumeType = VolumeType.Sparse;
@@ -418,8 +476,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 } else if (value.equals(constants.preallocatedAllocation())) {
                     tempVolumeType = VolumeType.Preallocated;
                 }
-                ImportData importData =
-                        object.getDiskImportData(disk.getId());
+                ImportDiskData importData =
+                        importModel.getDiskImportData(disk.getId());
                 if (importData != null) {
                     importData.setSelectedVolumeType(tempVolumeType);
                 }
@@ -436,7 +494,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         storageDomainsColumn = new Column<DiskImage, String>(customSelectionCellStorageDomain) {
             @Override
             public String getValue(DiskImage disk) {
-                ImportData importData = object.getDiskImportData(disk.getId());
+                ImportDiskData importData = importModel.getDiskImportData(disk.getId());
 
                 ArrayList<String> storageDomainsNameList = new ArrayList<String>();
                 storage_domains selectedStorageDomain = null;
@@ -466,8 +524,8 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         storageDomainsColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
             @Override
             public void update(int index, DiskImage disk, String value) {
-                object.getDiskImportData(disk.getId()).setSelectedStorageDomainString(value);
-                diskTable.edit(object.getImportDiskListModel());
+                importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(value);
+                diskTable.edit(importModel.getImportDiskListModel());
             }
         });
 
@@ -476,7 +534,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     private void addStorageQuotaColumn() {
-        if (!object.isQuotaEnabled()) {
+        if (!importModel.isQuotaEnabled()) {
             return;
         }
 
@@ -490,7 +548,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         quotaColumn = new Column<DiskImage, String>(customSelectionCellQuota) {
             @Override
             public String getValue(DiskImage disk) {
-                ImportData importData = object.getDiskImportData(disk.getId());
+                ImportDiskData importData = importModel.getDiskImportData(disk.getId());
 
                 ArrayList<String> storageQuotaList = new ArrayList<String>();
                 Quota selectedQuota = null;
@@ -519,7 +577,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         quotaColumn.setFieldUpdater(new FieldUpdater<DiskImage, String>() {
             @Override
             public void update(int index, DiskImage disk, String value) {
-                object.getDiskImportData(disk.getId()).setSelectedQuotaString(value);
+                importModel.getDiskImportData(disk.getId()).setSelectedQuotaString(value);
             }
         });
         diskTable.addColumn(quotaColumn, constants.quota(), "100px"); //$NON-NLS-1$
@@ -541,27 +599,18 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         destStorageEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
     }
 
-    private void initCheckboxes() {
-        collapseSnapshotEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        cloneAllEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-    }
-
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destClusterQuotaEditor.setLabel(constants.importVm_destClusterQuota());
         destStorageEditor.setLabel(constants.defaultStorage());
-        collapseSnapshotEditor.setLabel(constants.importVm_collapseSnapshots());
-        cloneAllEditor.setLabel(constants.importVm_CloneAll());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void edit(final ImportVmModel object) {
-        this.object = object;
-        isObjectInSystemColumn.setInSetup(object);
+        this.importModel = object;
         table.edit(object);
 
-        image.setVisible(false);
         if (object.getDisksToConvert() != null) {
             table.addColumnAt(new IsProblematicImportVmColumn(object.getDisksToConvert()), "", "30px", 0); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -571,21 +620,13 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         addStorageDomainsColumn();
 
         object.getPropertyChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (args instanceof PropertyChangedEventArgs
                         && ((PropertyChangedEventArgs) args).PropertyName.equals(object.ON_DISK_LOAD)) {
                     addStorageQuotaColumn();
+                    table.redraw();
                     diskTable.edit(object.getImportDiskListModel());
-                    if (customSelectionCellFormatType != null) {
-                        customSelectionCellFormatType.setEnabledWithToolTip(
-                                (Boolean) object.getCollapseSnapshots().getEntity(),
-                                constants.importAllocationModifiedCollapse());
-                    }
-                    if (object.getDisksToConvert() != null && object.getDisksToConvert().size() > 0) {
-                        image.setVisible(true);
-                    }
                 } else if (args instanceof PropertyChangedEventArgs
                         && ((PropertyChangedEventArgs) args).PropertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(object.getMessage());
@@ -601,7 +642,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             public void onSelectionChange(SelectionChangeEvent event) {
                 if (!firstSelection) {
                     object.setActiveDetailModel(object.getDetailModels().get(0));
-                    setGeneralViewSelection(object.getSelectedItem());
+                    setGeneralViewSelection(((ImportEntityData) object.getSelectedItem()).getEntity());
                     firstSelection = true;
                 }
                 splitLayoutPanel.clear();
@@ -610,7 +651,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 sp.add(table);
                 splitLayoutPanel.add(sp);
                 table.getElement().getStyle().setPosition(Position.RELATIVE);
-                subTabLayoutPanel.selectTab(0);
+                // subTabLayoutPanel.selectTab(0);
             }
 
         });

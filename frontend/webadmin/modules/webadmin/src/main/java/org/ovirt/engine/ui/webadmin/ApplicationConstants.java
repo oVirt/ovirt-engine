@@ -761,12 +761,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Quota exceeded")
     String quotaExceeded();
 
-    @DefaultStringValue("Collapse All Snapshots")
-    String importVm_collapseSnapshots();
-
-    @DefaultStringValue("Clone All")
-    String importVm_CloneAll();
-
     @DefaultStringValue("Expand All")
     String treeExpandAll();
 
@@ -827,7 +821,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String importAllocationModifiedSingleVM();
 
-    @DefaultStringValue("Allocation can be modified only when 'Collapse All Snapshots' is checked")
+    @DefaultStringValue("Allocation can be modified only when 'Collapse Snapshots' is checked")
     String importAllocationModifiedCollapse();
 
     @DefaultStringValue("Preallocated")

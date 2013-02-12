@@ -6,10 +6,13 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.compat.Event;
+import org.ovirt.engine.core.compat.EventArgs;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.IEventListener;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-public class ImportData {
+public class ImportDiskData {
     ArrayList<storage_domains> storageDomains;
     storage_domains selectedStorageDomain;
     EntityModel collapseSnapshots;
@@ -97,8 +100,14 @@ public class ImportData {
         volumeType = type;
     }
 
-    public void setCollapseSnapshot(EntityModel collapseSnapshots) {
-        this.collapseSnapshots = collapseSnapshots;
+    public void setCollapseSnapshot(EntityModel collapseSnapshotsModel) {
+        this.collapseSnapshots = collapseSnapshotsModel;
+        collapseSnapshots.getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                setVolumeType(VolumeType.Sparse);
+            }
+        });
     }
 
     public ArrayList<Quota> getQuotaList() {

@@ -50,8 +50,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-@SuppressWarnings("unused")
-public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSetup {
+public class ImportVmModel extends ListWithDetailsModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
     private VmImportDiskListModel importDiskListModel;
@@ -59,20 +58,9 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     private boolean hasQuota;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
     protected ArrayList<storage_domains> filteredStorageDomains;
-    private HashMap<Guid, VM> alreadyInSystemVmMap;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
-    private final Map<Guid, ImportData> diskImportDataMap = new HashMap<Guid, ImportData>();
-
-    private EntityModel cloneAll;
-
-    public EntityModel getCloneAll() {
-        return cloneAll;
-    }
-
-    public void setCloneAll(EntityModel cloneAll) {
-        this.cloneAll = cloneAll;
-    }
+    private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<Guid, ImportDiskData>();
 
     public storage_pool getStoragePool() {
         return storagePool;
@@ -110,16 +98,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
     public void setClusterQuota(ListModel clusterQuota) {
         this.clusterQuota = clusterQuota;
-    }
-
-    private EntityModel collapseSnapshots;
-
-    public EntityModel getCollapseSnapshots() {
-        return collapseSnapshots;
-    }
-
-    public void setCollapseSnapshots(EntityModel value) {
-        this.collapseSnapshots = value;
     }
 
     protected List<VM> disksToConvert = new ArrayList<VM>();
@@ -176,15 +154,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
     }
 
     public ImportVmModel() {
-        setCollapseSnapshots(new EntityModel());
-        getCollapseSnapshots().setEntity(false);
-
         setStorage(new ListModel());
         setCluster(new ListModel());
         setClusterQuota(new ListModel());
         getClusterQuota().setIsAvailable(false);
-        setCloneAll(new EntityModel());
-        getCloneAll().setEntity(false);
     }
 
     public void init(Guid storageDomainId) {
@@ -295,8 +268,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         boolean isDefaultStorageApplicableForAllDisks = true;
         storage_domains defaultStorage = (storage_domains) getStorage().getSelectedItem();
         for (Guid diskGuid : diskImportDataMap.keySet()) {
-            ImportData importData = diskImportDataMap.get(diskGuid);
-            storage_domains selectedStorage = importData.getSelectedStorageDomain();
+            ImportDiskData importData = diskImportDataMap.get(diskGuid);
 
             if (defaultStorage != null && !importData.getStorageDomains().contains(defaultStorage)) {
                 isDefaultStorageApplicableForAllDisks = false;
@@ -314,7 +286,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
     protected void checkDestFormatCompatibility() {
         for (Object item : getItems()) {
-            VM vm = (VM) item;
+            VM vm = ((ImportVmData) item).getVm();
             if (vm.getDiskMap() != null) {
                 for (Map.Entry<Guid, Disk> pair : vm.getDiskMap().entrySet()) {
                     DiskImage disk = (DiskImage) pair.getValue();
@@ -324,75 +296,67 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                             && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
                                     .getstorage_type().isBlockDomain())) {
                         getDisksToConvert().add(vm);
-                        break;
+                        ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
+                        ((ImportVmData) item).getCollapseSnapshots()
+                                .getChangeProhibitionReasons()
+                                .add(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importSparseDiskToBlockDeviceMustCollapseSnapshots());
+                        ((ImportVmData) item).getCollapseSnapshots().setIsChangable(false);
+
+                        OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
                     }
                 }
             }
-        }
-        if (getDisksToConvert().size() > 0) {
-            // Some items are problematic.
-            getCollapseSnapshots().setEntity(true);
-            getCollapseSnapshots().setIsChangable(false);
-            setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .useSeparateImportOperationForMarkedVMsMsg());
-            OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
         }
     }
 
     protected void initDisksStorageDomainsList() {
         for (Object item : getItems()) {
-            VM vm = (VM) item;
+            ImportVmData importVmData = (ImportVmData) item;
+            VM vm = importVmData.getVm();
             if (!NGuid.Empty.equals(vm.getVmtGuid())) {
                 if (!templateDiskMap.containsKey(vm.getVmtGuid())) {
                     templateDiskMap.put(vm.getVmtGuid(), new ArrayList<Disk>());
                 }
                 templateDiskMap.get(vm.getVmtGuid()).addAll(vm.getDiskMap().values());
-            } else {
+            }
                 for (Disk disk : vm.getDiskMap().values()) {
                     DiskImage diskImage = (DiskImage) disk;
-                    setDiskImportData(diskImage.getId(),
-                            filteredStorageDomains, diskImage.getvolume_type());
+                addDiskImportData(diskImage.getId(),
+                        filteredStorageDomains,
+                        diskImage.getvolume_type(),
+                        importVmData.getCollapseSnapshots());
                 }
-            }
         }
         if (!templateDiskMap.isEmpty()) {
             ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-            ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+            final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
             for (Guid templateId : templateDiskMap.keySet()) {
                 queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new GetVmTemplatesDisksParameters(templateId));
             }
             Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
-
                 @Override
                 public void Executed(FrontendMultipleQueryAsyncResult result) {
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
                     Map<Guid, ArrayList<storage_domains>> templateDisksStorageDomains =
                             new HashMap<Guid, ArrayList<storage_domains>>();
-                    for (int i = 0; i < returnValueList.size(); i++) {
-                        Guid templateGuid = ((GetVmTemplatesDisksParameters) result.getParameters().get(i)).getId();
-                        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValueList.get(i).getReturnValue();
-                        for (DiskImage diskImage : disks) {
+                    for (VdcQueryReturnValue returnValue : returnValueList) {
+                        for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                             templateDisksStorageDomains.put(diskImage.getImageId(),
                                     getStorageDomainsByIds(diskImage.getstorage_ids()));
                         }
                     }
+
                     for (Guid templateId : templateDiskMap.keySet()) {
                         for (Disk disk : templateDiskMap.get(templateId)) {
                             DiskImage diskImage = (DiskImage) disk;
-                            if (diskImage.getParentId() == null && NGuid.Empty.equals(diskImage.getParentId())) {
-                                setDiskImportData(disk.getId(),
-                                        filteredStorageDomains, diskImage.getvolume_type());
-                            } else {
+                            if (diskImage.getParentId() != null && !NGuid.Empty.equals(diskImage.getParentId())) {
                                 ArrayList<storage_domains> storageDomains =
                                         templateDisksStorageDomains.get(diskImage.getParentId());
-
                                 if (storageDomains == null) {
-                                    // Missing template disk
                                     missingTemplateDiskMap.put(templateId, templateDiskMap.get(templateId));
-                                } else {
-                                    setDiskImportData(disk.getId(), storageDomains, diskImage.getvolume_type());
                                 }
                             }
                         }
@@ -428,8 +392,10 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                         for (Guid templateId : missingTemplateDiskMap.keySet()) {
                             if (tempMap.containsKey(templateId)) {
                                 for (Disk disk : missingTemplateDiskMap.get(templateId)) {
-                                    setDiskImportData(disk.getId(),
-                                            filteredStorageDomains, ((DiskImage) disk).getvolume_type());
+                                    addDiskImportData(disk.getId(),
+                                            filteredStorageDomains,
+                                            ((DiskImage) disk).getvolume_type(),
+                                            new EntityModel(true));
                                 }
                             } else {
                                 showCloseMessage(ConstantsManager.getInstance()
@@ -441,8 +407,14 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                         ImportVmModel.this.setMessage(ConstantsManager.getInstance()
                                 .getConstants()
                                 .importMissingStorages());
-                        getCollapseSnapshots().setEntity(true);
-                        getCollapseSnapshots().setIsChangable(false);
+
+                        for (ImportVmData vmData : (List<ImportVmData>) getItems()) {
+                            if (!NGuid.Empty.equals(vmData.getVm().getVmtGuid())
+                                    && missingTemplateDiskMap.containsKey(vmData.getVm().getVmtGuid())) {
+                                vmData.setTemplateExistsInSetup(false);
+                            }
+                        }
+
                         postInitDisks();
                     }
                 }));
@@ -458,12 +430,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 onDataLoad();
-            }
-        });
-        getCollapseSnapshots().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
             }
         });
     }
@@ -486,8 +452,8 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         return domains;
     }
 
-    public ImportData getDiskImportData(Guid diskId) {
-        ImportData importData = diskImportDataMap.get(diskId);
+    public ImportDiskData getDiskImportData(Guid diskId) {
+        ImportDiskData importData = diskImportDataMap.get(diskId);
         if (importData != null) {
             if (storage.getSelectedItem() == null) {
                 importData.setSelectedStorageDomain((storage_domains) storage.getSelectedItem());
@@ -496,16 +462,17 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         return importData;
     }
 
-    protected void setDiskImportData(Guid diskId,
+    protected void addDiskImportData(Guid diskId,
             ArrayList<storage_domains> storageDomains,
-            VolumeType volumeType) {
-        ImportData data = new ImportData();
-        diskImportDataMap.put(diskId, data);
+            VolumeType volumeType, EntityModel collapseSnapshots) {
+        ImportDiskData data = new ImportDiskData();
+        data.setCollapseSnapshot(collapseSnapshots);
         data.setAllStorageDomains(filteredStorageDomains);
-        data.setCollapseSnapshot(getCollapseSnapshots());
         data.setStorageDomains(storageDomains);
         data.setVolumeType(volumeType);
         data.setStorageQuotaList(storageQuotaMap);
+        diskImportDataMap.put(diskId, data);
+
     }
 
     @Override
@@ -520,10 +487,20 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         importDiskListModel = new VmImportDiskListModel();
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new VmGeneralModel());
+        list.add(new VmGeneralModel() {
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value == null ? null : ((ImportVmData) value).getVm());
+            }
+        });
         list.add(new VmImportInterfaceListModel());
         list.add(importDiskListModel);
-        list.add(new VmAppListModel());
+        list.add(new VmAppListModel() {
+            @Override
+            public void setEntity(Object value) {
+                super.setEntity(value == null ? null : ((ImportVmData) value).getVm());
+            }
+        });
         setDetailModels(list);
     }
 
@@ -531,7 +508,7 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
         if (QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
             getClusterQuota().ValidateSelectedItem(
                     new IValidation[] { new NotEmptyValidation() });
-            for (ImportData item : diskImportDataMap.values()) {
+            for (ImportDiskData item : diskImportDataMap.values()) {
                 if (item.getSelectedQuota() == null) {
                     setMessage(ConstantsManager.getInstance().getConstants().missingQuotaStorageEnforceMode());
                     return false;
@@ -581,15 +558,25 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
                     public void OnSuccess(Object model, Object returnValue) {
                         List<VM> vmList =
                                 (List<VM>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        alreadyInSystemVmMap = new HashMap<Guid, VM>();
-                        for (VM vm : vmList) {
-                            alreadyInSystemVmMap.put(vm.getId(), vm);
+
+                        List<ImportVmData> vmDataList = new ArrayList<ImportVmData>();
+
+                        for (VM vm : (Iterable<VM>) value) {
+                            ImportVmData vmData = new ImportVmData(vm);
+                            boolean vmExistsInSystem = vmList.contains(vm);
+                            vmData.setExistsInSystem(vmExistsInSystem);
+                            if (vmExistsInSystem) {
+                                vmData.getClone().setEntity(true);
+                                vmData.getClone()
+                                        .getChangeProhibitionReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .importVMThatExistsInSystemMustClone());
+                                vmData.getClone().setIsChangable(false);
+                            }
+                            vmDataList.add(vmData);
                         }
-                        if (vmList.size() == list.size()) {
-                            getCloneAll().setEntity(true);
-                            getCloneAll().setIsChangable(false);
-                        }
-                        ImportVmModel.super.setItems(value);
+                        ImportVmModel.super.setItems(vmDataList);
                     }
                 }));
 
@@ -606,14 +593,6 @@ public class ImportVmModel extends ListWithDetailsModel implements IIsObjectInSe
 
     public SearchableListModel getImportDiskListModel() {
         return importDiskListModel;
-    }
-
-    @Override
-    public boolean isObjectInSetup(Object vm) {
-        if (alreadyInSystemVmMap == null) {
-            return false;
-        }
-        return alreadyInSystemVmMap.containsKey(((VM) vm).getId());
     }
 
     public boolean isQuotaEnabled() {

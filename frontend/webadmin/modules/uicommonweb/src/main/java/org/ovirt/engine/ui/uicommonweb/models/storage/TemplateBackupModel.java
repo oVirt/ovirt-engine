@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -129,7 +130,7 @@ public class TemplateBackupModel extends VmBackupModel
 
     @Override
     protected void setObjectName(Object object, String name, boolean isSuffix) {
-        VmTemplate template = (VmTemplate) object;
+        VmTemplate template = ((ImportTemplateData) object).getTemplate();
         if (isSuffix) {
             template.setname(template.getname() + name);
         } else {
@@ -139,8 +140,8 @@ public class TemplateBackupModel extends VmBackupModel
 
     @Override
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
-        for (Object object : objectsInSetupMap.values()) {
-            VmTemplate template = (VmTemplate) object;
+        for (Object object : objectsToClone) {
+            VmTemplate template = ((ImportTemplateData) object).getTemplate();
             if (!validateName(template.getname() + suffix, template, entityModel)) {
                 return false;
             }
@@ -188,45 +189,42 @@ public class TemplateBackupModel extends VmBackupModel
             return;
         }
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
-        for (Object object : getSelectedItems())
+        for (Object object : importModel.getItems())
         {
-            VmTemplate template = (VmTemplate) object;
+            ImportTemplateData importData = (ImportTemplateData) object;
+            VmTemplate template = importData.getTemplate();
 
-            ImportVmTemplateParameters improtVmTemplateParameters =
+            ImportVmTemplateParameters importVmTemplateParameters =
                     new ImportVmTemplateParameters(model.getStoragePool().getId(),
                             getEntity().getId(), Guid.Empty,
                             ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
                             template);
-
             if (importModel.getClusterQuota().getSelectedItem() != null &&
                     importModel.getClusterQuota().getIsAvailable()) {
-                improtVmTemplateParameters.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
+                importVmTemplateParameters.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
             }
 
             Map<Guid, Guid> map = new HashMap<Guid, Guid>();
             for (DiskImage disk : template.getDiskList()) {
-                Guid key = template.getId();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
 
                 if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
-                    disk.setQuotaId(
-                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                    disk.setQuotaId(importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
                 }
             }
 
-            improtVmTemplateParameters.setImageToDestinationDomainMap(map);
+            importVmTemplateParameters.setImageToDestinationDomainMap(map);
 
-            if (importModel.isObjectInSetup(template) ||
-                    (Boolean) importModel.getCloneAll().getEntity()) {
+            if (importData.isExistsInSystem() || (Boolean) importData.getClone().getEntity()) {
                 if (!cloneObjectMap.containsKey(template.getId())) {
                     continue;
                 }
-                improtVmTemplateParameters.setImportAsNewEntity(true);
-                improtVmTemplateParameters.getVmTemplate()
-                        .setname(((VmTemplate) cloneObjectMap.get(template.getId())).getname());
+                importVmTemplateParameters.setImportAsNewEntity(true);
+                importVmTemplateParameters.getVmTemplate()
+                        .setname(((ImportTemplateData) cloneObjectMap.get(template.getId())).getTemplate().getname());
             }
 
-            prms.add(improtVmTemplateParameters);
+            prms.add(importVmTemplateParameters);
         }
 
         model.StartProgress(null);

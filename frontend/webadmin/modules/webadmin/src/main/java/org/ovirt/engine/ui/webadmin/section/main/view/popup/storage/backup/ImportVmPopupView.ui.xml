@@ -84,16 +84,11 @@
 								<e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" />
 							</g:VerticalPanel>
 						</g:HorizontalPanel>
-						<g:HorizontalPanel>
-							<g:Image ui:field="image" resource='{resources.alertImage}'	addStyleNames="{style.imageStyle}" />
-							<e:EntityModelCheckBoxEditor ui:field="collapseSnapshotEditor" />
-						</g:HorizontalPanel>
-						<e:EntityModelCheckBoxEditor ui:field="cloneAllEditor" />
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
-					height="400px" addStyleNames="{style.splitLayoutPanelStyle}" />
+					height="450px" addStyleNames="{style.splitLayoutPanelStyle}" />
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

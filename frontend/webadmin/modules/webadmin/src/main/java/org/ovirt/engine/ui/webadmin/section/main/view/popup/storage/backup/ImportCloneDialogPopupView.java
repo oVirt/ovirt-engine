@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -9,6 +8,9 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -97,14 +99,14 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
 
     @Override
     public void edit(ImportCloneModel object) {
-        if (object.getEntity() instanceof VM) {
-            dialogLabelEditor.setText(messages.sameVmNameExists(((VM) object.getEntity()).getVmName()));
+        if (((ImportEntityData) object.getEntity()).getEntity() instanceof VM) {
+            dialogLabelEditor.setText(messages.sameVmNameExists(((ImportVmData) object.getEntity()).getVm().getVmName()));
             cloneEditor.asRadioButton().setHTML(templates.twoLinesRadioButtonLabel(
                     constants.cloneImportVm(),constants.cloneImportVmDetails()).asString());
             suffixEditor.setLabel(constants.cloneImportSuffixVm());
         } else {
             dialogLabelEditor.setText(constants.sameTemplateNameExists()
-                    + " (" + ((VmTemplate) object.getEntity()).getname() + ")");//$NON-NLS-1$ //$NON-NLS-2$
+                    + " (" + ((ImportTemplateData) object.getEntity()).getTemplate().getname() + ")");//$NON-NLS-1$ //$NON-NLS-2$
             cloneEditor.setLabel(constants.cloneImportTemplate());
             suffixEditor.setLabel(constants.cloneImportSuffixTemplate());
         }

@@ -8,9 +8,11 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 
 @SuppressWarnings("unused")
-public class TemplateImportDiskListModel extends TemplateDiskListModel
+public class TemplateImportDiskListModel extends SearchableListModel
 {
     private ArrayList<Map.Entry<VmTemplate, DiskImageList>> extendedItems;
 
@@ -25,27 +27,18 @@ public class TemplateImportDiskListModel extends TemplateDiskListModel
 
         if (getEntity() != null)
         {
-            if (super.getEntity() instanceof VmTemplate)
-            {
-                ArrayList<DiskImage> list = new ArrayList<DiskImage>();
-                VmTemplate template = (VmTemplate) getEntity();
-                for (Map.Entry<VmTemplate, DiskImageList> item : extendedItems) {
-                    if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
-                        DiskImageList diskImageList = item.getValue();
-                        for (DiskImage diskImage : diskImageList.getDiskImages()) {
-                            list.add(diskImage);
-                        }
-                        Linq.Sort(list, new DiskByAliasComparer());
-                        setItems(list);
-                        return;
+            ArrayList<DiskImage> list = new ArrayList<DiskImage>();
+            VmTemplate template = ((ImportTemplateData) getEntity()).getTemplate();
+            for (Map.Entry<VmTemplate, DiskImageList> item : extendedItems) {
+                if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
+                    DiskImageList diskImageList = item.getValue();
+                    for (DiskImage diskImage : diskImageList.getDiskImages()) {
+                        list.add(diskImage);
                     }
+                    Linq.Sort(list, new DiskByAliasComparer());
+                    setItems(list);
+                    return;
                 }
-            }
-            else
-            {
-                Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
-                        (Map.Entry<VmTemplate, ArrayList<DiskImage>>) getEntity();
-                setItems(pair.getValue());
             }
         }
         else
@@ -60,5 +53,10 @@ public class TemplateImportDiskListModel extends TemplateDiskListModel
 
     @Override
     protected void SyncSearch() {
+    }
+
+    @Override
+    protected String getListName() {
+        return "TemplateImportDiskListModel"; //$NON-NLS-1$
     }
 }
