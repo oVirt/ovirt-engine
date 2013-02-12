@@ -330,7 +330,7 @@ public class VmMapper {
             pool.setId(entity.getVmPoolId().toString());
             model.setVmPool(pool);
         }
-        if (getIsVmRunning(entity) && entity.getDynamicData() != null) {
+        if (entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
             if (model.getOs() != null && entity.getBootSequence() != null) {
                 for (Boot boot : map(entity.getBootSequence(), null)) {
                     model.getOs().getBoot().add(boot);
@@ -994,15 +994,6 @@ public class VmMapper {
             throw new IllegalArgumentException("Bad format: " + strPin[1]);
         }
         return pin;
-    }
-
-    private static boolean getIsVmRunning(org.ovirt.engine.core.common.businessentities.VM entity) {
-        return entity.getStatus() == VMStatus.Up ||
-                entity.getStatus() == VMStatus.PoweringUp ||
-                entity.getStatus() == VMStatus.WaitForLaunch ||
-                entity.getStatus() == VMStatus.PoweredDown ||
-                entity.getStatus() == VMStatus.RebootInProgress ||
-                entity.getStatus() == VMStatus.RestoringState;
     }
 
     public static UsbPolicy getUsbPolicyOnCreate(Usb usb, VDSGroup vdsGroup) {
