@@ -99,11 +99,15 @@ INFO_CA_SSL_FINGERPRINT=basedefs.APP_NAME + " CA SSL Certificate SHA1 fingerprin
 INFO_CA_SSH_FINGERPRINT="SSH Public key fingerprint: %s"
 
 #conf params
-INFO_CONF_PARAMS_IPTABLES_USAGE="Should the installer configure the local firewall, overriding the current configuration"
+INFO_CONF_PARAMS_IPTABLES_USAGE="Which firewall manager should be used by the \
+installer for configuring the local firewall. Select None for configuring the \
+firewall manually."
 INFO_CONF_PARAMS_IPTABLES_PROMPT="Firewall ports need to be opened.\n\
-The installer can configure firewall automatically overriding the current configuration. The old configuration will be backed up.\n\
-Alternately you can configure the firewall later using an example file. \n\
-Which firewall do you wish to configure?"
+The installer can configure firewall automatically overriding the current \
+configuration. The old configuration will be backed up.\n\
+Alternately you can configure the firewall later using an example file \
+selecting None.\n\
+Which firewall manager do you wish to use?"
 
 
 INFO_CONF_PARAMS_OVERRIDE_HTTPD_CONF_USAGE="Should the installer configure the ports, overriding the current httpd configuration"

@@ -218,7 +218,7 @@ def initConfig():
     """
     conf_params = {
          "IPTABLES" : [
-            {   "CMD_OPTION"      :"override-firewall",
+            {   "CMD_OPTION"      : "firewall-manager",
                 "USAGE"           :output_messages.INFO_CONF_PARAMS_IPTABLES_USAGE,
                 "PROMPT"          :output_messages.INFO_CONF_PARAMS_IPTABLES_PROMPT,
                 "OPTION_LIST"     :getFirewalls(),
@@ -226,7 +226,7 @@ def initConfig():
                 "DEFAULT_VALUE"   :"",
                 "MASK_INPUT"      : False,
                 "LOOSE_VALIDATION": False,
-                "CONF_NAME"       : "OVERRIDE_FIREWALL",
+                "CONF_NAME"       : "FIREWALL_MANAGER",
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False} ]
@@ -947,9 +947,11 @@ def _configFirewall():
     _createFirewalldConfig()
 
     # Configure chosen firewall
-    if utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_FIREWALL"], "firewalld"):
+    if utils.compareStrIgnoreCase(controller.CONF["FIREWALL_MANAGER"],
+                                  "firewalld"):
         _configureFirewalld()
-    elif utils.compareStrIgnoreCase(controller.CONF["OVERRIDE_FIREWALL"], "iptables"):
+    elif utils.compareStrIgnoreCase(controller.CONF["FIREWALL_MANAGER"],
+                                    "iptables"):
         _configureIptables()
     else:
         # Inform user how he can configure firewall
