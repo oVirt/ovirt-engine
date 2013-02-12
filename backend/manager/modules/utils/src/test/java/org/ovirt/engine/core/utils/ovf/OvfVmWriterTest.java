@@ -127,7 +127,7 @@ public class OvfVmWriterTest {
 
     private static VmTemplate createVmTemplate() {
         VmTemplate template = new VmTemplate();
-        template.setname("test-template");
+        template.setName("test-template");
         template.setOrigin(OriginType.OVIRT);
         template.setId(new Guid());
         template.setDescription("test-description");

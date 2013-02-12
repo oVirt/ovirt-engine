@@ -44,7 +44,7 @@ public class TemplateEventListModel extends SubTabEventListModel
     }
 
     protected void preSearchCalled(VmTemplate template) {
-        setSearchString("Events:event_template=" + template.getname()); //$NON-NLS-1$
+        setSearchString("Events:event_template=" + template.getName()); //$NON-NLS-1$
     }
 
     @Override

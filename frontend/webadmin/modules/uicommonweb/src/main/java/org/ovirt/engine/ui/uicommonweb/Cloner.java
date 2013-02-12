@@ -369,7 +369,7 @@ public final class Cloner
         obj.setAutoSuspend(instance.isAutoSuspend());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
-        obj.setname(instance.getname());
+        obj.setName(instance.getName());
         obj.setNiceLevel(instance.getNiceLevel());
         obj.setNumOfMonitors(instance.getNumOfMonitors());
         obj.setAllowConsoleReconnect(instance.isAllowConsoleReconnect());

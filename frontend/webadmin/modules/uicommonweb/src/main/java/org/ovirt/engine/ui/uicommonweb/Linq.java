@@ -109,7 +109,7 @@ public final class Linq
         @Override
         public int compare(VmTemplate x, VmTemplate y)
         {
-            return x.getname().compareTo(y.getname());
+            return x.getName().compareTo(y.getName());
         }
 
     }

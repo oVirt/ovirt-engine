@@ -584,7 +584,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         templateEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VmTemplate) object).getname();
+                return ((VmTemplate) object).getName();
             }
         });
 

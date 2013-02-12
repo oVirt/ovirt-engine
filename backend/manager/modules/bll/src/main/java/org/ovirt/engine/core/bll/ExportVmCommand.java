@@ -252,7 +252,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (StringUtils.isEmpty(vm.getVmtName())) {
             VmTemplate t = DbFacade.getInstance().getVmTemplateDao()
                         .get(vm.getVmtGuid());
-            vm.setVmtName(t.getname());
+            vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages);

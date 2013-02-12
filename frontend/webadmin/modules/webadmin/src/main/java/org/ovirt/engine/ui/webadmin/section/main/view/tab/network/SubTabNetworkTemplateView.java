@@ -40,7 +40,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> nameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
-                return object.getSecond().getname();
+                return object.getSecond().getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameTemplate());

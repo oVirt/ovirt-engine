@@ -76,7 +76,7 @@ public class TemplateBackupModel extends VmBackupModel
         for (Object a : getSelectedItems())
         {
             VmTemplate template = (VmTemplate) a;
-            items.add(template.getname());
+            items.add(template.getName());
         }
         model.setItems(items);
 
@@ -132,9 +132,9 @@ public class TemplateBackupModel extends VmBackupModel
     protected void setObjectName(Object object, String name, boolean isSuffix) {
         VmTemplate template = ((ImportTemplateData) object).getTemplate();
         if (isSuffix) {
-            template.setname(template.getname() + name);
+            template.setName(template.getName() + name);
         } else {
-            template.setname(name);
+            template.setName(name);
         }
     }
 
@@ -142,7 +142,7 @@ public class TemplateBackupModel extends VmBackupModel
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsToClone) {
             VmTemplate template = ((ImportTemplateData) object).getTemplate();
-            if (!validateName(template.getname() + suffix, template, entityModel)) {
+            if (!validateName(template.getName() + suffix, template, entityModel)) {
                 return false;
             }
         }
@@ -221,7 +221,7 @@ public class TemplateBackupModel extends VmBackupModel
                 }
                 importVmTemplateParameters.setImportAsNewEntity(true);
                 importVmTemplateParameters.getVmTemplate()
-                        .setname(((ImportTemplateData) cloneObjectMap.get(template.getId())).getTemplate().getname());
+                        .setName(((ImportTemplateData) cloneObjectMap.get(template.getId())).getTemplate().getName());
             }
 
             prms.add(importVmTemplateParameters);
@@ -249,7 +249,7 @@ public class TemplateBackupModel extends VmBackupModel
                             {
                                 VmTemplate template = (VmTemplate) a;
                                 if (retVals.get(counter) != null && retVals.get(counter).getCanDoAction()) {
-                                    importedTemplates += template.getname() + ", "; //$NON-NLS-1$
+                                    importedTemplates += template.getName() + ", "; //$NON-NLS-1$
                                     toShowConfirmWindow = true;
                                 }
                                 counter++;

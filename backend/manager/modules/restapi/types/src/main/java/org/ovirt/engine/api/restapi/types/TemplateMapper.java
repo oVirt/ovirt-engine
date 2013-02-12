@@ -32,7 +32,7 @@ public class TemplateMapper {
     public static VmTemplate map(Template model, VmTemplate incoming) {
         VmTemplate entity = incoming != null ? incoming : new VmTemplate();
         if (model.isSetName()) {
-            entity.setname(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetId()) {
             entity.setId(new Guid(model.getId()));
@@ -242,7 +242,7 @@ public class TemplateMapper {
     public static Template map(VmTemplate entity, Template incoming) {
         Template model = incoming != null ? incoming : new Template();
         model.setId(entity.getId().toString());
-        model.setName(entity.getname());
+        model.setName(entity.getName());
         model.setDescription(entity.getDescription());
         model.setMemory((long)entity.getMemSizeMb() * BYTES_PER_MB);
         model.setHighAvailability(new HighAvailability());

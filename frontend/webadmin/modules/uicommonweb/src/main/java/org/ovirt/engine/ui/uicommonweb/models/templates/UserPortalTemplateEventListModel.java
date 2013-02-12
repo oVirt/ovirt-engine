@@ -13,7 +13,7 @@ public class UserPortalTemplateEventListModel extends TemplateEventListModel {
         }
 
         super.SyncSearch(VdcQueryType.GetAllAuditLogsByVMTemplateName,
-                new GetAllAuditLogsByVMTemplateNameParameters(getEntity().getname()));
+                new GetAllAuditLogsByVMTemplateNameParameters(getEntity().getName()));
 
     }
 

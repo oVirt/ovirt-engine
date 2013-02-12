@@ -75,7 +75,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
             public void render(Context context, VmTemplate template, SafeHtmlBuilder sb) {
                 sb.append(templates.vmNameCellItem(
                         ElementIdUtils.createTableCellElementId(elementIdPrefix, "name", context), //$NON-NLS-1$
-                        template.getname()));
+                        template.getName()));
 
                 String description = template.getDescription();
                 if (description != null && !description.isEmpty()) {

@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -105,15 +104,6 @@ public class VmTemplate extends VmBase {
 
     public void setchild_count(int value) {
         this.childCount = value;
-    }
-
-    @JsonProperty
-    public String getname() {
-        return super.getName();
-    }
-
-    public void setname(String value) {
-        setName(value);
     }
 
     public VmTemplateStatus getstatus() {
@@ -230,7 +220,6 @@ public class VmTemplate extends VmBase {
         return getId().hashCode();
     }
 
-    @JsonIgnore
     @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.VM_TEMPLATE_NAME_SIZE,
             message = "VALIDATION.VM_TEMPLATE.NAME.MAX",

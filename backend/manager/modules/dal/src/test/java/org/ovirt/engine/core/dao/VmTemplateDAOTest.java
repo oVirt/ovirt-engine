@@ -42,7 +42,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
 
         newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.NewGuid());
-        newVmTemplate.setname("NewVmTemplate");
+        newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
     }
 

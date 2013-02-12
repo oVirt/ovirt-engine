@@ -902,7 +902,7 @@ public class BackendVmsResourceTest
             org.ovirt.engine.core.common.businessentities.VmTemplate entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
         expect(entity.getNumOfSockets()).andReturn(2).anyTimes();

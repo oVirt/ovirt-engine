@@ -39,7 +39,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return object.getname();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$

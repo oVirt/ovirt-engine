@@ -156,7 +156,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getVmTemplateName() {
         if (mVmTemplateName == null && getVmTemplate() != null) {
-            mVmTemplateName = getVmTemplate().getname();
+            mVmTemplateName = getVmTemplate().getName();
         }
         return mVmTemplateName;
     }

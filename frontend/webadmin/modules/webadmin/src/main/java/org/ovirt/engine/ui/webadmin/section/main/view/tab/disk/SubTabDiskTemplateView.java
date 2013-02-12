@@ -38,7 +38,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return object.getname();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameTemplate());

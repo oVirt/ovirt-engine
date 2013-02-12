@@ -50,7 +50,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             if (mOldTemplate.getstatus() == VmTemplateStatus.Locked) {
                 return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
             }
-            if (!StringUtils.equals(mOldTemplate.getname(), getVmTemplate().getname())
+            if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
                     && isVmTemlateWithSameNameExist(getVmTemplateName())) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_CREATE_DUPLICATE_NAME);
             } else {
@@ -140,7 +140,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
      @Override
      public String getEntityOldName() {
-         return mOldTemplate.getname();
+        return mOldTemplate.getName();
      }
 
      @Override

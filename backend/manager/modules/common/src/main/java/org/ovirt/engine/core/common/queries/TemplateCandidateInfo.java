@@ -22,7 +22,7 @@ public class TemplateCandidateInfo extends ImportCandidateInfoBase {
 
     @Override
     public String getCandidateDisplayName() {
-        return getVmTemplateData().getname();
+        return getVmTemplateData().getName();
     }
 
     public TemplateCandidateInfo() {

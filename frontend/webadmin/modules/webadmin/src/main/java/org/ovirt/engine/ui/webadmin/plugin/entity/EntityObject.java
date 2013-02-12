@@ -71,7 +71,7 @@ public final class EntityObject extends JavaScriptObject {
 
         // Template
         else if (businessEntity instanceof VmTemplate) {
-            obj.setProperty("name", ((VmTemplate) businessEntity).getname()); //$NON-NLS-1$
+            obj.setProperty("name", ((VmTemplate) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // VirtualMachine

@@ -153,7 +153,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             if (duplicateTemplate != null) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_EXISTS);
                 getReturnValue().getCanDoActionMessages().add(
-                        String.format("$TemplateName %1$s", duplicateTemplate.getname()));
+                        String.format("$TemplateName %1$s", duplicateTemplate.getName()));
                 retVal = false;
             } else if (isVmTemplateWithSameNameExist()) {
                 addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_TEMPLATE_NAME_EXISTS);
@@ -190,7 +190,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected boolean isVmTemplateWithSameNameExist() {
-        return VmTemplateCommand.isVmTemlateWithSameNameExist(getParameters().getVmTemplate().getname());
+        return VmTemplateCommand.isVmTemlateWithSameNameExist(getParameters().getVmTemplate().getName());
     }
 
     private void initImportClonedTemplate() {

@@ -37,7 +37,7 @@ public class TemplateVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Vms: template.name=" + getEntity().getname()); //$NON-NLS-1$
+            setSearchString("Vms: template.name=" + getEntity().getName()); //$NON-NLS-1$
             super.Search();
         }
     }

@@ -88,7 +88,7 @@ public class NetworkTemplateListModel extends SearchableListModel
                         return compareValue;
                     }
 
-                    return paramT1.getSecond().getname().compareTo(paramT2.getSecond().getname());
+                    return paramT1.getSecond().getName().compareTo(paramT2.getSecond().getName());
                 }
             });
         }

@@ -19,10 +19,10 @@ public class VmTemplateHandlerTest {
     @Test
     public void testUpdateFieldsName() {
         VmTemplate src = new VmTemplate();
-        src.setname(RandomUtils.instance().nextString(10));
+        src.setName(RandomUtils.instance().nextString(10));
 
         VmTemplate dest = new VmTemplate();
-        dest.setname(RandomUtils.instance().nextString(10));
+        dest.setName(RandomUtils.instance().nextString(10));
 
         assertTrue("Update should be valid for different names",
                 VmTemplateHandler.isUpdateValid(src, dest));

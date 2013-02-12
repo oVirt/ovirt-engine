@@ -448,7 +448,7 @@ public class TemplateGeneralModel extends EntityModel
     {
         VmTemplate template = getEntity();
 
-        setName(template.getname());
+        setName(template.getName());
         setDescription(template.getDescription());
         setQuotaName(template.getQuotaName() != null ? template.getQuotaName() : ""); //$NON-NLS-1$
         setQuotaAvailable(template.getQuotaEnforcementType() != null

@@ -221,7 +221,7 @@ public class ImportVmTemplateCommandTest {
 
     protected ImportVmTemplateParameters createParameters() {
         VmTemplate t = new VmTemplate();
-        t.setname("testTemplate");
+        t.setName("testTemplate");
         final ImportVmTemplateParameters p =
                 new ImportVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
         return p;
@@ -260,7 +260,7 @@ public class ImportVmTemplateCommandTest {
 
     private void checkTemplateName(boolean isImportAsNewEntity, String name) {
         ImportVmTemplateParameters parameters = createParameters();
-        parameters.getVmTemplate().setname(name);
+        parameters.getVmTemplate().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(parameters));

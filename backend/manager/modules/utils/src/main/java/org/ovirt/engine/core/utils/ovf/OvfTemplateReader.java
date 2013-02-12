@@ -148,8 +148,8 @@ public class OvfTemplateReader extends OvfReader {
         // General Vm
         XmlNode node = content.SelectSingleNode("Name");
         if (node != null) {
-            _vmTemplate.setname(node.InnerText);
-            name = _vmTemplate.getname();
+            _vmTemplate.setName(node.InnerText);
+            name = _vmTemplate.getName();
         }
         node = content.SelectSingleNode("TemplateId");
         if (node != null) {

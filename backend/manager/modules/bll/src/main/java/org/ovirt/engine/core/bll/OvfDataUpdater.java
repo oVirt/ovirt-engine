@@ -304,7 +304,7 @@ public class OvfDataUpdater {
         if (StringUtils.isEmpty(vm.getVmtName())) {
             if (!Guid.Empty.equals(vm.getVmtGuid())) {
                 VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
-                vm.setVmtName(t.getname());
+                vm.setVmtName(t.getName());
             } else {
                 vm.setVmtName(VmTemplateHandler.BlankVmTemplateName);
             }

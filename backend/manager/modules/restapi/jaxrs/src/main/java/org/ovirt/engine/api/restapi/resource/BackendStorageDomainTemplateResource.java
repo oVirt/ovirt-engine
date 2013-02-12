@@ -54,7 +54,7 @@ public class BackendStorageDomainTemplateResource
         if (action.isSetClone()){
             params.setImportAsNewEntity(action.isClone());
             if(action.isSetTemplate() && action.getTemplate().isSetName()) {
-                params.getVmTemplate().setname(action.getTemplate().getName());
+                params.getVmTemplate().setName(action.getTemplate().getName());
             }
         }
 

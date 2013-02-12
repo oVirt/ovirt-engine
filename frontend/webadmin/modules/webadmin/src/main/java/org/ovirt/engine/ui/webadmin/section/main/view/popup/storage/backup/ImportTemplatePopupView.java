@@ -62,7 +62,7 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
         TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
-                return ((ImportTemplateData) object).getTemplate().getname();
+                return ((ImportTemplateData) object).getTemplate().getName();
             }
         };
         table.addColumn(nameColumn, constants.nameTemplate(), "150px"); //$NON-NLS-1$

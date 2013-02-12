@@ -173,7 +173,7 @@ public class SnapshotsManager {
 
         if (StringUtils.isEmpty(vm.getVmtName())) {
             VmTemplate t = getVmTemplateDao().get(vm.getVmtGuid());
-            vm.setVmtName(t.getname());
+            vm.setVmtName(t.getName());
         }
 
         VmDeviceUtils.setVmDevices(vm.getStaticData());

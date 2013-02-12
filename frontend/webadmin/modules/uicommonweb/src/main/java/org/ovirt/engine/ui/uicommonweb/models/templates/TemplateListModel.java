@@ -403,7 +403,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         {
             if (!template.getId().equals(NGuid.Empty))
             {
-                items.add(template.getname());
+                items.add(template.getName());
             }
         }
 
@@ -489,7 +489,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         String name = (String) model.getName().getEntity();
 
         // Check name unicitate.
-        if (!isNameUnique && name.compareToIgnoreCase(template.getname()) != 0)
+        if (!isNameUnique && name.compareToIgnoreCase(template.getName()) != 0)
         {
             model.getName()
                     .getInvalidityReasons()
@@ -501,7 +501,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         // Save changes.
         template.setVmType(model.getVmType());
-        template.setname(name);
+        template.setName(name);
         template.setOs((VmOsType) model.getOSType().getSelectedItem());
         template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
@@ -758,7 +758,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     @Override
     protected String extractNameFromEntity(VmTemplate entity) {
-        return entity.getname();
+        return entity.getName();
     }
 
     @Override

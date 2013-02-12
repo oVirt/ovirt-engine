@@ -22,7 +22,7 @@ public class OvfTemplateWriter extends OvfWriter {
     protected void writeGeneralData() {
         super.writeGeneralData();
         _writer.WriteStartElement("Name");
-        _writer.WriteRaw(_vmTemplate.getname());
+        _writer.WriteRaw(_vmTemplate.getName());
         _writer.WriteEndElement();
         _writer.WriteStartElement("TemplateId");
         _writer.WriteRaw(_vmTemplate.getId().toString());

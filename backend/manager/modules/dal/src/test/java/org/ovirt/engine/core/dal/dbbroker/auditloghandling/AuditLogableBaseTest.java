@@ -1060,7 +1060,7 @@ public class AuditLogableBaseTest {
             final VmTemplateDAO vt = mock(VmTemplateDAO.class);
             final VmTemplate t = new VmTemplate();
             t.setId(GUID);
-            t.setname(NAME);
+            t.setName(NAME);
             when(vt.get(Guid.Empty)).thenReturn(t);
             when(vt.get(GUID)).thenReturn(new VmTemplate());
             return vt;
