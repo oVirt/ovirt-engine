@@ -251,7 +251,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         hostListEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
-                return object == null ? "" : ((VDS) object).getVdsName(); //$NON-NLS-1$
+                return object == null ? "" : ((VDS) object).getName(); //$NON-NLS-1$
             }
         });
 

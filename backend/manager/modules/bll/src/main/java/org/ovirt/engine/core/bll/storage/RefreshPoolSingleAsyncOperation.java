@@ -43,7 +43,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                                             masterDomainIdFromDb, getStoragePool().getmaster_domain_version()));
                 } catch (java.lang.Exception e) {
                     log.errorFormat("Could not connect vds {0} to pool {1} - moving host to non-operational", getVdss()
-                            .get(iterationId).getVdsName(), getStoragePool().getname());
+                            .get(iterationId).getName(), getStoragePool().getname());
                     synchronized (_vdsIdsToSetNonOperational) {
                         _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
                     }
@@ -56,13 +56,13 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                                 new RefreshStoragePoolVDSCommandParameters(getVdss().get(iterationId).getId(),
                                         getStoragePool().getId(), masterDomainIdFromDb, getStoragePool()
                                                 .getmaster_domain_version()));
-                log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getVdsName(),
+                log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getName(),
                         getStoragePool().getname());
             }
 
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect/refresh storagePool. Host {0} to storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getVdsName(), getStoragePool().getname(), e);
+                    getVdss().get(iterationId).getName(), getStoragePool().getname(), e);
         }
     }
 

@@ -34,7 +34,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getVdsName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameClusterHost());

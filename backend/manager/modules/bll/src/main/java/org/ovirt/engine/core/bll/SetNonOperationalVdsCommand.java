@@ -62,7 +62,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE) {
             log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
-                    getVds().getVdsName(), getParameters().getCustomLogValues().get("Networks"));
+                    getVds().getName(), getParameters().getCustomLogValues().get("Networks"));
         }
 
         setSucceeded(true);

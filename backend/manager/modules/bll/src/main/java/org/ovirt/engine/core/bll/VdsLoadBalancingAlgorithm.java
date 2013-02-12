@@ -140,7 +140,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 });
         for (Guid vdsId : overUtilizedServersIds) {
             VDS vds = getOverUtilizedServers().get(vdsId);
-            log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getVdsName());
+            log.infoFormat("VdsLoadBalancer: Server {0} decided as overutilized", vds.getName());
             java.util.List<VM> vms = getMigrableVmsRunningOnVds(vdsId);
             if (vms.size() != 0) {
 
@@ -172,7 +172,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                 if (destinationVds == null) {
                     log.infoFormat(
                             "VdsLoadBalancer: Server {0} detected as overutilized. Failed to found another server to migrate its vms",
-                            vds.getVdsName());
+                            vds.getName());
                 } else {
                     Guid destinationVdsId = destinationVds.getId();
                     /**
@@ -188,7 +188,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                      */
                     currentList.remove(destinationVdsId);
                     log.infoFormat("VdsLoadBalancer: Desktop {0} migrated from overutilized server {1} to server {2}",
-                            vm.getName(), vds.getVdsName(), destinationVds.getVdsName());
+                            vm.getName(), vds.getName(), destinationVds.getName());
 
                 }
             } else {
@@ -248,7 +248,7 @@ public abstract class VdsLoadBalancingAlgorithm {
                     if (destinationVds == null) {
                         log.infoFormat(
                                 "Server {0} detected as underutilized. Failed to found another server to migrate its vms",
-                                vds.getVdsName());
+                                vds.getName());
                     } else {
                         Guid destinationVdsId = destinationVds.getId();
                         MigrateVmToServerParameters parameters =
@@ -259,11 +259,11 @@ public abstract class VdsLoadBalancingAlgorithm {
                         currentList.remove(destinationVdsId);
                         log.infoFormat(
                                 "VdsLoadBalancer: Desktop {0} migrated from underutilized server {1} to server {2}",
-                                vm.getName(), vds.getVdsName(), destinationVds.getVdsName());
+                                vm.getName(), vds.getName(), destinationVds.getName());
                         processed.add(destinationVdsId);
                     }
                 } else {
-                    log.infoFormat("VdsLoadBalancer: No vms found to migrate on this server {0}", vds.getVdsName());
+                    log.infoFormat("VdsLoadBalancer: No vms found to migrate on this server {0}", vds.getName());
                 }
                 getUnderUtilizedServers().remove(vdsId); // remove the smallest
                                                          // underutilized vds

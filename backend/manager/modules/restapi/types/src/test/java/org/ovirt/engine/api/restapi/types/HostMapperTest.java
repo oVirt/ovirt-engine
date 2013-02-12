@@ -29,7 +29,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     protected VDS getInverse(VdsStatic to) {
         VDS inverse = new VDS();
         inverse.setId(to.getId());
-        inverse.setVdsName(to.getVdsName());
+        inverse.setVdsName(to.getName());
         inverse.setHostName(to.getHostName());
         inverse.setVdsGroupId(to.getVdsGroupId());
         inverse.setPort(to.getPort());

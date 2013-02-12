@@ -18,7 +18,7 @@ public class DetachVdsFromTagCommand<T extends AttachVdsToTagParameters> extends
             if (getTagId() != null && DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) != null) {
                 VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
                 if (vds != null) {
-                    appendCustomValue("VdsNames", vds.getVdsName(), ", ");
+                    appendCustomValue("VdsNames", vds.getName(), ", ");
                 }
                 DbFacade.getInstance().getTagDao().detachVdsFromTag(getTagId(), vdsId);
                 setSucceeded(true);

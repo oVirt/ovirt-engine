@@ -108,7 +108,7 @@ public class AutoRecoveryManager {
 
     private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {
         if (entity instanceof VDS) {
-            return ", name : "+((VDS) entity).getVdsName();
+            return ", name : "+((VDS) entity).getName();
         }
         return "";
     }

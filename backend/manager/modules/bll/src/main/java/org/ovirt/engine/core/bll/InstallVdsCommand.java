@@ -89,13 +89,13 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.infoFormat(
                     "Execute upgrade host {0}, {1}",
                     getVds().getId(),
-                    getVds().getVdsName()
+                    getVds().getName()
                 );
                 upgrade.execute();
                 log.infoFormat(
                     "After upgrade host {0}, {1}: success",
                     getVds().getId(),
-                    getVds().getVdsName()
+                    getVds().getName()
                 );
                 setSucceeded(true);
                 if (getVds().getStatus() == VDSStatus.Reboot) {
@@ -106,7 +106,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.errorFormat(
                     "Host installation failed for host {0}, {1}.",
                     getVds().getId(),
-                    getVds().getVdsName(),
+                    getVds().getName(),
                     e
                 );
                 setSucceeded(false);
@@ -127,7 +127,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.infoFormat(
                     "Before Installation host {0}, {1}",
                     getVds().getId(),
-                    getVds().getVdsName()
+                    getVds().getName()
                 );
 
                 T parameters = getParameters();
@@ -145,7 +145,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     if (parameters.getOverrideFirewall()) {
                         log.warnFormat(
                             "Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
-                            getVds().getVdsName(),
+                            getVds().getName(),
                             getVds().getVdsType().name()
                         );
                     }
@@ -166,7 +166,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 }
                 log.infoFormat(
                     "After Installation host {0}, {1}",
-                    getVds().getVdsName(),
+                    getVds().getName(),
                     getVds().getVdsType().name()
                 );
                 setSucceeded(true);
@@ -175,7 +175,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 log.errorFormat(
                     "Host installation failed for host {0}, {1}.",
                     getVds().getId(),
-                    getVds().getVdsName(),
+                    getVds().getName(),
                     e
                 );
                 setSucceeded(false);

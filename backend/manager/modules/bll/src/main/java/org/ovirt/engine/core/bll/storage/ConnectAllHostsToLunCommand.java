@@ -123,7 +123,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
                 if (!connectStorageToLunByVdsId(vds, lun)) {
-                    log.errorFormat("Could not connect host {0} to lun {1}", vds.getVdsName(), lun.getLUN_id());
+                    log.errorFormat("Could not connect host {0} to lun {1}", vds.getName(), lun.getLUN_id());
                     setVds(vds);
                     final ConnectAllHostsToLunCommandReturnValue result = getResult();
                     result.setFailedVds(vds);

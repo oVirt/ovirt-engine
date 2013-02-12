@@ -21,14 +21,14 @@ public class AttachVdsToTagCommand<T extends AttachVdsToTagParameters> extends V
                 VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
                 if (DbFacade.getInstance().getTagDao().getTagVdsByTagIdAndByVdsId(getTagId(), vdsId) == null) {
                     if (vds != null) {
-                        appendCustomValue("VdsNames", vds.getVdsName(), ", ");
+                        appendCustomValue("VdsNames", vds.getName(), ", ");
                     }
                     map = new TagsVdsMap(getTagId(), vdsId);
                     DbFacade.getInstance().getTagDao().attachVdsToTag(map);
                     noActionDone = false;
                 } else {
                     if (vds != null) {
-                        appendCustomValue("VdsNamesExists", vds.getVdsName(), ", ");
+                        appendCustomValue("VdsNamesExists", vds.getName(), ", ");
                     }
                 }
             }

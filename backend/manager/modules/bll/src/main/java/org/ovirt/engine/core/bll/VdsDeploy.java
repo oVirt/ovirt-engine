@@ -129,7 +129,7 @@ public class VdsDeploy implements SSHDialog.Sink {
                 if (hosts.length() > 0) {
                     hosts.append(", ");
                 }
-                hosts.append(v.getVdsName());
+                hosts.append(v.getName());
             }
 
             log.errorFormat(

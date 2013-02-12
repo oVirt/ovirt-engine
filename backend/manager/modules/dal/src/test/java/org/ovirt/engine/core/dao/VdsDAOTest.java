@@ -114,12 +114,12 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllWithName() {
-        List<VDS> result = dao.getAllWithName(existingVds.getVdsName());
+        List<VDS> result = dao.getAllWithName(existingVds.getName());
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VDS vds : result) {
-            assertEquals(existingVds.getVdsName(), vds.getVdsName());
+            assertEquals(existingVds.getName(), vds.getName());
         }
     }
 

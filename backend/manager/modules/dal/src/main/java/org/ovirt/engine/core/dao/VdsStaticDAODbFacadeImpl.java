@@ -82,7 +82,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("port", vds.getPort())
                 .addValue("vds_group_id", vds.getVdsGroupId())
                 .addValue("vds_id", vds.getId())
-                .addValue("vds_name", vds.getVdsName())
+                .addValue("vds_name", vds.getName())
                 .addValue("server_SSL_enabled", vds.isServerSslEnabled())
                 .addValue("vds_type", vds.getVdsType())
                 .addValue("vds_strength", vds.getVdsStrength())

@@ -216,7 +216,7 @@ public class AboutModel extends Model
                     for (VDS a : (List<VDS>) returnValue) {
 
                         HostInfo item = new HostInfo();
-                        item.setHostName(a.getVdsName() + ":"); //$NON-NLS-1$
+                        item.setHostName(a.getName() + ":"); //$NON-NLS-1$
 
                         if (!StringHelper.isNullOrEmpty(a.getHostOs())) {
                             item.setOSVersion(ConstantsManager.getInstance().getConstants().osVersionAbout()

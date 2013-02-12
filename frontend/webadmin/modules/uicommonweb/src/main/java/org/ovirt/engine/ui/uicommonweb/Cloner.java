@@ -224,7 +224,7 @@ public final class Cloner
         obj.setServerSslEnabled(instance.isServerSslEnabled());
         obj.setVdsGroupId(instance.getVdsGroupId());
         obj.setId(instance.getId());
-        obj.setVdsName(instance.getVdsName());
+        obj.setVdsName(instance.getName());
         obj.setVdsStrength(instance.getVdsStrength());
         obj.setVdsType(instance.getVdsType());
         obj.setUniqueId(instance.getUniqueId());

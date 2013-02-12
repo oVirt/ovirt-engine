@@ -100,7 +100,7 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
                 VDS vds = (VDS) object.getItems().iterator().next();
 
                 // Message
-                messageLabel.setText(applicationMessages.manaulFencePopupMessageLabel(vds.getVdsName()));
+                messageLabel.setText(applicationMessages.manaulFencePopupMessageLabel(vds.getName()));
 
                 // Spm warning
                 VdsSpmStatus spmStatus = vds.getSpmStatus();

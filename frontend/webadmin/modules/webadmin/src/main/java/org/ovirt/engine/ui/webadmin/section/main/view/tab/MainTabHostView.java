@@ -93,7 +93,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
-                return object.getVdsName();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$

@@ -951,7 +951,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         ArrayList<String> list = new ArrayList<String>();
         for (VDS item : Linq.<VDS> Cast(getSelectedItems()))
         {
-            list.add(item.getVdsName());
+            list.add(item.getName());
             clusters.add(item.getVdsGroupId());
         }
         model.setItems(list);
@@ -1052,7 +1052,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            vdss.add(vds.getVdsName());
+            vdss.add(vds.getName());
         }
         model.setItems(vdss);
 
@@ -1141,8 +1141,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getRootPassword().setIsAvailable(false);
         model.getOverrideIpTables().setIsAvailable(false);
         model.setSpmPriorityValue(vds.getVdsSpmPriority());
-        model.setOriginalName(vds.getVdsName());
-        model.getName().setEntity(vds.getVdsName());
+        model.setOriginalName(vds.getName());
+        model.getName().setEntity(vds.getName());
         model.getHost().setEntity(vds.getHostName());
         model.getPort().setEntity(vds.getPort());
 
@@ -1263,7 +1263,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            items.add(vds.getVdsName());
+            items.add(vds.getName());
         }
         model.setItems(items);
 
@@ -1338,7 +1338,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            items.add(vds.getVdsName());
+            items.add(vds.getName());
         }
         model.setItems(items);
 

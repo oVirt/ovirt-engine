@@ -28,7 +28,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
             } else if (!legalStatusForStartingVds(vdsStatus)) {
                 addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_START);
                 retValue = false;
-                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getId(), vds.getVdsName(), vdsStatus);
+                log.errorFormat("VDS status for vds {0}:{1} is {2}", vds.getId(), vds.getName(), vdsStatus);
             }
         }
         return retValue;

@@ -209,7 +209,7 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    public String getVdsName() {
+    public String getName() {
         return this.name;
     }
 

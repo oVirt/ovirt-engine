@@ -222,7 +222,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getVdsName() {
         if (mVdsName == null && getVds() != null) {
-            mVdsName = getVds().getVdsName();
+            mVdsName = getVds().getName();
         }
         return mVdsName;
     }

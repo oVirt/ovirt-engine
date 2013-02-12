@@ -91,7 +91,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     @Override
     protected void executeCommand() {
         boolean result = true;
-        setVdsName(_problematicVds.getVdsName());
+        setVdsName(_problematicVds.getName());
         if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
             result = ActivateDataCenter();
         }
@@ -173,8 +173,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                                         new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
                                 .getReturnValue();
                         log.infoFormat("Trying to fence spm {0} via vds {1}",
-                                _problematicVds.getVdsName(),
-                                vds.getVdsName());
+                                _problematicVds.getName(),
+                                vds.getName());
                         if (Backend
                                 .getInstance()
                                 .getResourceManager()
@@ -191,7 +191,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                             break;
                         }
                     } catch (java.lang.Exception e) {
-                        log.warnFormat("Could not fence spm on vds {0}", vds.getVdsName());
+                        log.warnFormat("Could not fence spm on vds {0}", vds.getName());
                     }
                 }
             } else {

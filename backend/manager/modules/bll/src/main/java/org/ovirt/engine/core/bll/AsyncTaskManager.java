@@ -367,7 +367,7 @@ public final class AsyncTaskManager {
                 if (vds != null && vds.getStatus() == VDSStatus.NonOperational) {
                     log.infoFormat(
                             "Vds {0} is spm and non-operational, calling SetNonOperationalVds",
-                            vds.getVdsName());
+                            vds.getName());
                     SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(vds.getId(),
                             NonOperationalReason.GENERAL);
                     tempVar.setSaveToDb(true);

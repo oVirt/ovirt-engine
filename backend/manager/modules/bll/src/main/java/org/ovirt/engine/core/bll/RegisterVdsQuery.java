@@ -389,11 +389,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
                         if (ret == null || !ret.getSucceeded()) {
                             error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST;
-                            logable.addCustomValue("VdsName2", vds_byHostName.getStaticData().getVdsName());
-
+                            logable.addCustomValue("VdsName2", vds_byHostName.getStaticData().getName());
                             log.errorFormat(
                                     "RegisterVdsQuery::HandleOldVdssWithSameHostName - could not update VDS {0}",
-                                    vds_byHostName.getStaticData().getVdsName());
+                                    vds_byHostName.getStaticData().getName());
                             CaptureCommandErrorsToLogger(ret,
                                     "RegisterVdsQuery::HandleOldVdssWithSameHostName");
                             return false;
@@ -407,7 +406,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         log.errorFormat(
                                 "VdcBLL::HandleOldVdssWithSameHostName - Could not change the IP for an existing VDS. All available hostnames are taken (ID = {0}, name = {1}, management IP = {2} , host name = {3})",
                                 vds_byHostName.getId(),
-                                vds_byHostName.getVdsName(),
+                                vds_byHostName.getName(),
                                 vds_byHostName.getManagmentIp(),
                                 vds_byHostName.getHostName());
                         error = AuditLogType.VDS_REGISTER_ERROR_UPDATING_HOST_ALL_TAKEN;
@@ -451,10 +450,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             for (VDS storedHost : hosts) {
                 // check different uniqueIds but same name
                 if (!uniqueIdToRegister.equals(storedHost.getUniqueId())
-                        && nameToRegister.equals(storedHost.getVdsName())) {
+                        && nameToRegister.equals(storedHost.getName())) {
                     if (hostExistInDB) {
                         // update the registered host if exist in db
-                        allHostNames.remove(hostToRegister.getVdsName());
+                        allHostNames.remove(hostToRegister.getName());
                         newName = generateUniqueName(nameToRegister, allHostNames);
                         hostToRegister.setVdsName(newName);
                         UpdateVdsActionParameters parameters =
@@ -488,7 +487,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     private List<String> getAllHostNames(List<VDS> allHosts) {
         List<String> allHostNames = new ArrayList<String>(allHosts.size());
         for (VDS vds : allHosts) {
-            allHostNames.add(vds.getVdsName());
+            allHostNames.add(vds.getName());
         }
         return allHostNames;
     }

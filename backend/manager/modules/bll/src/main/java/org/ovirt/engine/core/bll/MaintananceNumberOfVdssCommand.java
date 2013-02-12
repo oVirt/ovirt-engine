@@ -159,7 +159,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                     }
 
                     if (nonMigratableVmDescriptionsToFrontEnd.size() > 0) {
-                        hostsWithNonMigratableVms.add(vds.getVdsName());
+                        hostsWithNonMigratableVms.add(vds.getName());
                         nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
 
                         // The non migratable VM names will be comma separated
@@ -174,7 +174,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                         result = false;
                     } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getVmCount() > 0) {
                         result = false;
-                        hostNotRespondingList.add(vds.getVdsName());
+                        hostNotRespondingList.add(vds.getName());
                     } else if (vds.getStatus() == VDSStatus.NonResponsive && vds.getSpmStatus() != VdsSpmStatus.None) {
                         result = false;
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_AND_IS_SPM);
@@ -240,7 +240,7 @@ public class MaintananceNumberOfVdssCommand<T extends MaintananceNumberOfVdssPar
                         List<String> candidateHostsWithRunningVms = new ArrayList<String>();
                         for (VDS vdsInCluster : vdsList) {
                             if (vdsWithRunningVMs.contains(vdsInCluster.getId())) {
-                                candidateHostsWithRunningVms.add(vdsInCluster.getVdsName());
+                                candidateHostsWithRunningVms.add(vdsInCluster.getName());
                             }
                         }
                         // Passed on all vds in cluster - if map is not empty (host found with VMs) -

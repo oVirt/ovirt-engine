@@ -131,7 +131,7 @@ public class VdsHandler extends BaseHandler {
         } catch (RuntimeException e) {
             log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
                     vds.getId(),
-                    vds.getVdsName(),
+                    vds.getName(),
                     vds.getHostOs(),
                     ExceptionUtils.getMessage(e));
         }

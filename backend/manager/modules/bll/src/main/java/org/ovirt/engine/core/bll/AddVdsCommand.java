@@ -146,7 +146,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
-            values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getVdsName());
+            values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
             Step installStep = ExecutionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
                     StepEnum.INSTALLING_HOST,
@@ -209,9 +209,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return false;
         }
 
-        String vdsName = getParameters().getVdsStaticData().getVdsName();
+        String vdsName = getParameters().getVdsStaticData().getName();
         log.infoFormat("Host {0}, id {1} of type {2} is being re-registered as Host {3}",
-                vds.getVdsName(),
+                vds.getName(),
                 vds.getId(),
                 vds.getVdsType().name(),
                 vdsName);
@@ -229,13 +229,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     result.getCanDoAction() ? result.getFault().getError().name()
                             : StringUtils.join(result.getCanDoActionMessages(), ",");
             log.warnFormat("Failed to remove Host {0}, id {1}, re-registering it as Host {2} fails with errors {3}",
-                    vds.getVdsName(),
+                    vds.getName(),
                     vds.getId(),
                     vdsName,
                     errors);
         } else {
             log.infoFormat("Host {0} is now known as Host {2}",
-                    vds.getVdsName(),
+                    vds.getName(),
                     vdsName);
         }
 
@@ -288,7 +288,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             returnValue = false;
         } else {
             VDS vds = getParameters().getvds();
-            String vdsName = vds.getVdsName();
+            String vdsName = vds.getName();
             String hostName = vds.getHostName();
             int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
             // check that vds name is not null or empty
@@ -365,7 +365,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } catch (AuthenticationException e) {
                 log.errorFormat(
                         "Failed to authenticate session with host {0}",
-                        vds.getVdsName(),
+                        vds.getName(),
                         e
                         );
 
@@ -374,7 +374,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } catch (Exception e) {
                 log.errorFormat(
                         "Failed to establish session with host {0}",
-                        vds.getVdsName(),
+                        vds.getName(),
                         e
                         );
 
@@ -428,7 +428,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             jobProperties = super.getJobMessageProperties();
             VDS vds = getParameters().getvds();
 
-            String vdsName = (vds != null && vds.getVdsName() != null) ? vds.getVdsName() : "";
+            String vdsName = (vds != null && vds.getName() != null) ? vds.getName() : "";
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), vdsName);
         }
         return jobProperties;

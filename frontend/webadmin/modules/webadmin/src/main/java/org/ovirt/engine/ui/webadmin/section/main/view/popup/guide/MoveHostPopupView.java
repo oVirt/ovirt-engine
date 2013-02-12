@@ -80,7 +80,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getVdsName();
+                return ((VDS) object.getEntity()).getName();
             }
         };
         table.addColumn(nameColumn, constants.nameHost());

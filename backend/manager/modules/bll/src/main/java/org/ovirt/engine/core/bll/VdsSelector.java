@@ -134,7 +134,7 @@ public class VdsSelector {
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getVdsName(), target_vds.getHostName());
+                    getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
             VmHandler.UpdateVmGuestAgentVersion(getVm());
             if (target_vds.getVdsType() == VDSType.PowerClient
                     && !Config.<Boolean> GetValue(ConfigValues.PowerClientAllowRunningGuestsWithoutTools)
@@ -160,7 +160,7 @@ public class VdsSelector {
         if (getDestinationVdsId() != null) {
             VDS target_vds = DbFacade.getInstance().getVdsDao().get(getDestinationVdsId());
             log.infoFormat("Checking for a specific VDS only - id:{0}, name:{1}, host_name(ip):{2}",
-                    getDestinationVdsId(), target_vds.getVdsName(), target_vds.getHostName());
+                    getDestinationVdsId(), target_vds.getName(), target_vds.getHostName());
             returnValue = canFindVdsToRun(messages, isMigrate,
                     new ArrayList<VDS>(Arrays.asList(target_vds)));
         }
@@ -346,7 +346,7 @@ public class VdsSelector {
 
     private ValidationResult validateHostIsReadyToRun(final VDS vds, StringBuilder sb, boolean isMigrate) {
         // buffer the mismatches as we go
-        sb.append(" VDS ").append(vds.getVdsName()).append(" ").append(vds.getId()).append(" ");
+        sb.append(" VDS ").append(vds.getName()).append(" ").append(vds.getId()).append(" ");
 
         for(HostValidator validator : this.hostValidators) {
             VdcBllMessages result = validator.validate(vds, sb, isMigrate);

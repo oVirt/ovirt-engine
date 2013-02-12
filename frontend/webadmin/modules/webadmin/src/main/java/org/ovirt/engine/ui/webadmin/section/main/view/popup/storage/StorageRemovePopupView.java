@@ -70,7 +70,7 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         hostListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VDS) object).getVdsName();
+                return ((VDS) object).getName();
             }
         });
     }

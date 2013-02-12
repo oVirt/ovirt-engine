@@ -33,7 +33,7 @@ public class RunVmOnDedicatedVdsCommand<T extends RunVmParams> extends RunVmComm
                 if (powerclient != null && powerclient.getVdsType() == VDSType.PowerClient) {
                     if (powerClientLogDetection) {
                         log.infoFormat("VdcBLL::RunVmCommand - Powerclient id= {0}, name = {1} evaluated",
-                                powerclient.getId(), powerclient.getVdsName());
+                                powerclient.getId(), powerclient.getName());
                     }
                     _destinationVds = powerclient;
                 } else {

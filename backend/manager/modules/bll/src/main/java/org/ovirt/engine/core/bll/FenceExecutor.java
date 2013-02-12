@@ -85,7 +85,7 @@ public class FenceExecutor {
                 }
                 if (proxyHost != null) {
                     proxyHostId = proxyHost.getId();
-                    proxyHostName = proxyHost.getVdsName();
+                    proxyHostName = proxyHost.getName();
                     proxyFound=true;
                 }
             } else {
@@ -98,7 +98,7 @@ public class FenceExecutor {
                     }
                     if (proxyHost != null) {
                         proxyHostId = proxyHost.getId();
-                        proxyHostName = proxyHost.getVdsName();
+                        proxyHostName = proxyHost.getName();
                         proxyFound=true;
                         break;
                     }
@@ -120,14 +120,14 @@ public class FenceExecutor {
         }
         if (NO_VDS.equals(proxyHostId)) {
             log.errorFormat("Failed to run Power Management command on Host {0}, no running proxy Host was found.",
-                    _vds.getVdsName());
+                    _vds.getName());
         }
         else {
             log.infoFormat("Using Host {0} from {1} as proxy to execute {2} command on Host {3}" ,
-                    proxyHost.getVdsName(),
+                    proxyHost.getName(),
                     proxyOption.name(),
                     _action.name(),
-                    _vds.getVdsName());
+                    _vds.getName());
         }
         return !NO_VDS.equals(proxyHostId);
     }
@@ -186,7 +186,7 @@ public class FenceExecutor {
 
         log.infoFormat("Executing <{0}> Power Management command, Proxy Host:{1}, "
                 + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}", actionType, proxyHostName,
-                managementAgent, _vds.getVdsName(), managementIp, managementUser, managementOptions);
+                managementAgent, _vds.getName(), managementIp, managementUser, managementOptions);
         return Backend
                     .getInstance()
                     .getResourceManager()

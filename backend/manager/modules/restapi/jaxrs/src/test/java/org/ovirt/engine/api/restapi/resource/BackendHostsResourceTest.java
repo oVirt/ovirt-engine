@@ -306,7 +306,7 @@ public class BackendHostsResourceTest
 
     static VDS setUpEntityExpectations(VDS entity, VdsStatistics statistics, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVdsName()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getHostName()).andReturn(ADDRESSES[index]).anyTimes();
         expect(entity.getStatus()).andReturn(VDS_STATUS[index]).anyTimes();
         if (statistics != null) {

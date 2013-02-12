@@ -252,7 +252,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getVdsGroupName(),
                         getVdsGroupDescription(),
                         Guid.createGuidFromString(getId().toString()),
-                        getVdsName(),
+                        getName(),
                         getManagmentIp(),
                         getHostName(),
                         getPort(),
@@ -401,8 +401,9 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsStatistics.setId(value);
     }
 
-    public String getVdsName() {
-        return this.mVdsStatic.getVdsName();
+    @Override
+    public String getName() {
+        return this.mVdsStatic.getName();
     }
 
     public void setVdsName(String value) {
@@ -1340,14 +1341,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return maxSchedulingMemory;
     }
 
-    @Override
-    public String getName() {
-        return getVdsName();
-    }
-
     public String toString() {
         // note that mVdsStatic may be null, so the getName with no null protection
         // is not enough, remove this once mVdsStatic can not be null
-        return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getVdsName()) + "]";
+        return "Host[" + (mVdsStatic == null ? "null" : mVdsStatic.getName()) + "]";
     }
+
 }

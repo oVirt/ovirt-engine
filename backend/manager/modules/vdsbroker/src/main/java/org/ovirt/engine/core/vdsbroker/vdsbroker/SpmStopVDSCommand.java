@@ -33,10 +33,10 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
                 } catch (java.lang.Exception e2) {
                     log.infoFormat("SpmStopVDSCommand::Could not get tasks on vds {0} stopping SPM",
-                            getVds().getVdsName());
+                            getVds().getName());
                 }
                 if (performSpmStop) {
-                    log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getVdsName(),
+                    log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getName(),
                             getParameters().getStoragePoolId());
                     status = getBroker().spmStop(getParameters().getStoragePoolId().toString());
                     ProceedProxyReturnValue();
@@ -48,12 +48,12 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                 } else if (getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
                     log.infoFormat(
                             "SpmStopVDSCommand::Could not get tasks on vds {0} - network exception, not stopping spm! pool id {1}",
-                            getVds().getVdsName(),
+                            getVds().getName(),
                             getParameters().getStoragePoolId());
                 }
             } else {
                 log.infoFormat("SpmStopVDSCommand:: vds {0} is in {1} status - not performing spm stop, pool id {2}",
-                        getVds().getVdsName(), getVds().getStatus(), getParameters().getStoragePoolId());
+                        getVds().getName(), getVds().getStatus(), getParameters().getStoragePoolId());
                 getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR,
                         "Vds is in incorrect status"));
                 getVDSReturnValue().setSucceeded(false);

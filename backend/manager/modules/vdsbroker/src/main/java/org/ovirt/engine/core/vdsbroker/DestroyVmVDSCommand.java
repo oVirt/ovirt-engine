@@ -76,7 +76,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 log.errorFormat("VDS::destroy Failed destroying vm '{0}' in vds = {1} : {2}, error = {3}",
                         parameters.getVmId(),
                         getVds().getId(),
-                        getVds().getVdsName(),
+                        getVds().getName(),
                         vdsBrokerCommand
                                 .getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setSucceeded(false);

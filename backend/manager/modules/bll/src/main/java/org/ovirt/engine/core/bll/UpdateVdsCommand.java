@@ -50,10 +50,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
             if (VdsHandler.IsUpdateValid(getParameters().getVdsStaticData(), _oldVds.getStaticData(),
                     _oldVds.getStatus())) {
-                if ("".equals(getParameters().getVdsStaticData().getVdsName())) {
+                if ("".equals(getParameters().getVdsStaticData().getName())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
                 }
-                String vdsName = getParameters().getvds().getVdsName();
+                String vdsName = getParameters().getvds().getName();
                 String hostName = getParameters().getvds().getHostName();
                 int maxVdsNameLength = Config.<Integer> GetValue(ConfigValues.MaxVdsNameLength);
                 // check that VDS name is not null or empty
@@ -69,9 +69,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     returnValue = false;
                 }
                 // check if a name is updated to an existing vds name
-                else if (!StringUtils.equals(_oldVds.getVdsName().toLowerCase(), getParameters().getVdsStaticData()
-                        .getVdsName().toLowerCase())
-                        && VdsHandler.isVdsWithSameNameExistStatic(getParameters().getVdsStaticData().getVdsName())) {
+                else if (!StringUtils.equals(_oldVds.getName().toLowerCase(), getParameters().getVdsStaticData()
+                        .getName().toLowerCase())
+                        && VdsHandler.isVdsWithSameNameExistStatic(getParameters().getVdsStaticData().getName())) {
                     addCanDoActionMessage(VdcBllMessages.VDS_TRY_CREATE_WITH_EXISTING_PARAMS);
                 } else if (!StringUtils.equals(_oldVds.getHostName().toLowerCase(), getParameters().getVdsStaticData()
                         .getHostName().toLowerCase())
@@ -217,12 +217,12 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
 
     @Override
     public String getEntityOldName() {
-        return _oldVds.getVdsName();
+        return _oldVds.getName();
     }
 
     @Override
     public String getEntityNewName() {
-        return getParameters().getVdsStaticData().getVdsName();
+        return getParameters().getVdsStaticData().getName();
     }
 
     @Override

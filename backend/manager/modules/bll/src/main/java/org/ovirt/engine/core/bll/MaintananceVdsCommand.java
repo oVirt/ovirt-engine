@@ -217,7 +217,7 @@ public class MaintananceVdsCommand<T extends MaintananceVdsParameters> extends V
                 new Callable<EventResult>() {
                     @Override
                     public EventResult call() {
-                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getVdsName());
+                        IrsBrokerCommand.clearVdsFromCache(vds.getStoragePoolId(), vds.getId(), vds.getName());
                         return new EventResult(true, EventType.VDSCLEARCACHE);
                     }
                 });

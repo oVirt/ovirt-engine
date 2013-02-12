@@ -55,7 +55,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     _hasFlags = false;
                 }
                 log.errorFormat("Could not find server cpu for server {0}:{1}, flags: {2}", getVdsId(), getVds()
-                        .getVdsName(), getVds().getCpuFlags());
+                        .getName(), getVds().getCpuFlags());
             } else {
                 // update group with the cpu name
                 VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());

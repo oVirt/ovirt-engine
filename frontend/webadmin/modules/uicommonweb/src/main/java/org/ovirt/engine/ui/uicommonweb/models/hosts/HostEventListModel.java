@@ -38,7 +38,7 @@ public class HostEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("events: host.name=" + getEntity().getVdsName()); //$NON-NLS-1$
+            setSearchString("events: host.name=" + getEntity().getName()); //$NON-NLS-1$
             super.Search();
         }
     }

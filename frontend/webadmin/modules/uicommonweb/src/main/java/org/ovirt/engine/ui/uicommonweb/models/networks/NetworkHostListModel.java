@@ -108,7 +108,7 @@ public class NetworkHostListModel extends SearchableListModel
                             return compareValue;
                         }
 
-                        return arg0.getSecond().getVdsName().compareTo(arg1.getSecond().getVdsName());
+                        return arg0.getSecond().getName().compareTo(arg1.getSecond().getName());
                     }
                 });
         super.setItems(value);

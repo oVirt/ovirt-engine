@@ -67,7 +67,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
-            return object.getSecond().getVdsName();
+            return object.getSecond().getName();
         }
     };
 

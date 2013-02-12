@@ -86,7 +86,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                 if (log.isDebugEnabled()) {
                     log.debugFormat(
                             "IncreasePendingVms::MigrateVm Increasing vds {0} pending vcpu count, now {1}, and pending vmem size, now {2}. Vm: {3}",
-                            vds.getVdsName(),
+                            vds.getName(),
                             vds.getPendingVcpusCount(),
                             vds.getPendingVmemSize(),
                             vm.getName());
@@ -103,7 +103,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
                     log.fatalFormat(
                             "VDS::migrate:: Could not update destination vds commited memory to db. vds {0} : {1}, error: {2}, {3}",
                             vds.getId(),
-                            vds.getVdsName(),
+                            vds.getName(),
                             ex.toString(),
                             ex.getStackTrace()[0]);
                 }

@@ -233,7 +233,7 @@ public class GlusterManager {
         for (VDS server : existingServers) {
             if (isRemovableStatus(server.getStatus()) && serverDetached(server, fetchedServers)) {
                 log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
-                        server.getVdsName());
+                        server.getName());
                 logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
 
                 try {
@@ -241,7 +241,7 @@ public class GlusterManager {
                     // remove the server from resource manager
                     runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
                 } catch (Exception e) {
-                    log.errorFormat("Error while removing server {0} from database!", server.getVdsName(), e);
+                    log.errorFormat("Error while removing server {0} from database!", server.getName(), e);
                 }
             }
         }

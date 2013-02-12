@@ -110,7 +110,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (log.isDebugEnabled()) {
             log.debugFormat("Host {0} has {1}% CPU load; VM {2} is predicted to have {3}% CPU load; " +
                     "High threshold is {4}%. Host is {5}suitable in terms of CPU.",
-                    vds.getVdsName(),
+                    vds.getName(),
                     vds.getUsageCpuPercent(),
                     vm.getName(),
                     predictedVmCpu,
@@ -130,7 +130,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             double vdsMemLimit = curVds.getMaxVdsMemoryOverCommit() * curVds.getPhysicalMemMb() / 100.0;
             if (log.isDebugEnabled()) {
                 log.debugFormat("hasMemoryToRunVM: host {0} pending vmem size is : {1} MB",
-                        curVds.getVdsName(),
+                        curVds.getName(),
                         curVds.getPendingVmemSize());
                 log.debugFormat("Host Mem Conmmitted: {0}, Host Reserved Mem: {1}, Host Guest Overhead {2}, VM Min Allocated Mem {3}",
                         curVds.getMemCommited(),
@@ -150,7 +150,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             log.infoFormat(
                     "Checking capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
                     curVds.getId(),
-                    curVds.getVdsName(),
+                    curVds.getName(),
                     curVds.getHostName(),
                     curVds.getVmCount(),
                     Config.<Integer> GetValue(ConfigValues.PowerClientMaxNumberOfConcurrentVMs));
@@ -166,7 +166,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 log.infoFormat(
                         "No capacity for a power client - id:{0}, name:{1}, host_name(ip):{2}, vds.vm_count:{3}, PowerClientMaxNumberOfConcurrentVMs:{4}",
                         curVds.getId(),
-                        curVds.getVdsName(),
+                        curVds.getName(),
                         curVds.getHostName(),
                         curVds.getVmCount(),
                         powerClientMaxNumberOfConcurrentVMs);
@@ -396,7 +396,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vcpu count failed, its already 0 or null",
-                        vds.getVdsName(), getVm().getName());
+                        vds.getName(), getVm().getName());
             }
             // VMEM
             if (vds.getPendingVmemSize() > 0) {
@@ -407,7 +407,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 } else {
                     if (log.isDebugEnabled()) {
                         log.debugFormat("Pending host {0} vmem {1} is smaller than VM min allocated memory {2},Setting pending host vmem to 0.",
-                                vds.getVdsName(),
+                                vds.getName(),
                                 vds.getPendingVmemSize(),
                                 getVm().getMinAllocatedMem());
                     }
@@ -416,7 +416,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             } else if (log.isDebugEnabled()) {
                 log.debugFormat(
                         "DecreasePendingVms::Decreasing vds {0} pending vmem size failed, its already 0 or null",
-                        vds.getVdsName(), getVm().getName());
+                        vds.getName(), getVm().getName());
             }
             if (updateDynamic) {
                 Backend.getInstance()
@@ -425,9 +425,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                                 new UpdateVdsDynamicDataVDSCommandParameters(vds.getDynamicData()));
                 if (log.isDebugEnabled()) {
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vcpu count, now {1}. Vm: {2}",
-                            vds.getVdsName(), vds.getPendingVcpusCount(), getVm().getName());
+                            vds.getName(), vds.getPendingVcpusCount(), getVm().getName());
                     log.debugFormat("DecreasePendingVms::Decreasing vds {0} pending vmem size, now {1}. Vm: {2}",
-                            vds.getVdsName(), vds.getPendingVmemSize(), getVm().getName());
+                            vds.getName(), vds.getPendingVmemSize(), getVm().getName());
                 }
             }
             getDecreseCondition(vdsId).signal();

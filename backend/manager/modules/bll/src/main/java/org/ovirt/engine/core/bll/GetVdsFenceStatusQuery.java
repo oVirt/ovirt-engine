@@ -22,7 +22,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
         String msg = "";
         VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         setVdsId(vds.getId());
-        setVdsName(vds.getVdsName());
+        setVdsName(vds.getName());
         FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         VDSReturnValue returnValue = null;
         if (executor.FindVdsToFence()) {
@@ -50,7 +50,7 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
         } else {
             msg = String.format(
                     "Failed to run Power Management command on Host %1$s, no running proxy Host was found.",
-                    vds.getVdsName());
+                    vds.getName());
             getQueryReturnValue().setReturnValue(new FenceStatusReturnValue("unknown", msg));
             AlertPowerManagementStatusFailed(AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
         }

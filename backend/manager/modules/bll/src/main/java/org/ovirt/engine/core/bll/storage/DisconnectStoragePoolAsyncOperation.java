@@ -19,7 +19,7 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
         try {
             if (getVdss().get(iterationId).getSpmStatus() == VdsSpmStatus.None) {
                 log.infoFormat("Disconnect storage pool treatment vds: {0},pool {1}", getVdss().get(iterationId)
-                        .getVdsName(), getStoragePool().getname());
+                        .getName(), getStoragePool().getname());
                 Backend.getInstance()
                         .getResourceManager()
                         .RunVdsCommand(
@@ -30,7 +30,7 @@ public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingl
         } catch (RuntimeException e) {
             log.errorFormat(
                     "Failed to DisconnectStoragePool storagePool. Host {0} from storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getVdsName(), getStoragePool().getname(), e);
+                    getVdss().get(iterationId).getName(), getStoragePool().getname(), e);
         }
     }
 

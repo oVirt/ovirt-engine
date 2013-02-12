@@ -190,12 +190,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                                 masterDomainIdFromDb, vds.getId(), true)).getSucceeded();
                 result = new EventResult(returnValue, EventType.RECONSTRUCT);
             } else {
-                log.errorFormat("Could not connect host {0} to pool {1}", vds.getVdsName(), storagePool
+                log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
                         .getname());
                 result.setSuccess(false);
             }
         } catch (RuntimeException exp) {
-            log.errorFormat("Could not connect host {0} to pool {1}", vds.getVdsName(), storagePool
+            log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
                     .getname());
             result.setSuccess(false);
         }
@@ -215,14 +215,14 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
             if (IrsBrokerCommand.isDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains())) {
                 log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
-                        getVds().getVdsName(),
+                        getVds().getName(),
                         getStoragePool()
                                 .getname());
                 returnValue = false;
             }
         } catch (VdcBLLException e) {
             log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
-                    getVds().getVdsName(),
+                    getVds().getName(),
                     e);
             returnValue = false;
         }

@@ -112,7 +112,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         getVds().setPendingVmemSize(
                 getVds().getPendingVmemSize() + getParameters().getVm().getMinAllocatedMem());
         log.infoFormat("IncreasePendingVms::CreateVmIncreasing vds {0} pending vcpu count, now {1}. Vm: {2}", getVds()
-                .getVdsName(), getVds().getPendingVcpusCount(), getParameters().getVm().getName());
+                .getName(), getVds().getPendingVcpusCount(), getParameters().getVm().getName());
         _vdsManager.UpdateDynamicData(getVds().getDynamicData());
     }
 
@@ -152,7 +152,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
                 log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getName(), getVds().getId(), getVds().getVdsName(),
+                        getParameters().getVm().getName(), getVds().getId(), getVds().getName(),
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);

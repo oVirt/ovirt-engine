@@ -34,12 +34,12 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
                                 .getmaster_domain_version()));
             } else {
                 log.errorFormat("Failed to connect host {0} to domain {1}",
-                        vds.getVdsName(),
+                        vds.getName(),
                         getStorageDomain().getStorageName());
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}",
-                    vds.getVdsName(),
+                    vds.getName(),
                     getStoragePool().getname(),
                     e);
         }

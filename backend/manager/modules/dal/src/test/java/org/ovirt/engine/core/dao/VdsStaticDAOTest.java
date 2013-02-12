@@ -73,10 +73,10 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        VdsStatic result = dao.get(existingVds.getVdsName());
+        VdsStatic result = dao.get(existingVds.getName());
 
         assertNotNull(result);
-        assertEquals(existingVds.getVdsName(), result.getVdsName());
+        assertEquals(existingVds.getName(), result.getName());
     }
 
 

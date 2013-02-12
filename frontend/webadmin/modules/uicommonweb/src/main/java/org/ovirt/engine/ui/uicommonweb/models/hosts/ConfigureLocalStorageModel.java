@@ -221,7 +221,7 @@ public class ConfigureLocalStorageModel extends Model {
         ArrayList<storage_pool> dataCenters = context.dataCenterList;
         ArrayList<VDSGroup> clusters = context.clusterList;
 
-        setCommonName(host.getVdsName().replace('.', '-') + "-Local"); //$NON-NLS-1$
+        setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         storage_pool candidate = null;
 
@@ -568,7 +568,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         context.host = host;
 
-        setCommonName(host.getVdsName().replace('.', '-') + "-Local"); //$NON-NLS-1$
+        setCommonName(host.getName().replace('.', '-') + "-Local"); //$NON-NLS-1$
 
         SetDefaultNames1();
 

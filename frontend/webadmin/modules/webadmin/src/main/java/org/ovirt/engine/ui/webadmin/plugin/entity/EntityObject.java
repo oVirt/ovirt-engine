@@ -60,7 +60,7 @@ public final class EntityObject extends JavaScriptObject {
 
         // Host
         else if (businessEntity instanceof VDS) {
-            obj.setProperty("name", ((VDS) businessEntity).getVdsName()); //$NON-NLS-1$
+            obj.setProperty("name", ((VDS) businessEntity).getName()); //$NON-NLS-1$
             obj.setProperty("hostname", ((VDS) businessEntity).getHostName()); //$NON-NLS-1$
         }
 

@@ -31,7 +31,7 @@ public class HostVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Vms: host.name=" + getEntity().getVdsName()); //$NON-NLS-1$
+            setSearchString("Vms: host.name=" + getEntity().getName()); //$NON-NLS-1$
             super.Search();
         }
     }
