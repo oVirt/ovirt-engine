@@ -191,8 +191,6 @@ public class DbFacade {
             dbFacadeDAO.setTemplate(jdbcTemplate);
             dbFacadeDAO.setDialect(dbEngineDialect);
             dbFacadeDAO.setDbFacade(this);
-        } else {
-            //Set here session factory after merge
         }
         return dao;
     }
