@@ -4,8 +4,6 @@ import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
 
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
@@ -96,57 +94,6 @@ public class VmStatic extends VmBase {
         setDedicatedVmForVds(vmStatic.getDedicatedVmForVds());
         setMigrationSupport(vmStatic.getMigrationSupport());
         setMinAllocatedMem(vmStatic.getMinAllocatedMem());
-    }
-
-    public VmStatic(String description, int mem_size_mb, VmOsType os, Guid vds_group_id, Guid vm_guid, String vm_name,
-            Guid vmt_guid, String domain, java.util.Date creation_date, int num_of_monitors, boolean is_initialized,
-            boolean is_auto_suspend,
-            Guid dedicated_vm_for_vds,
-            int num_of_sockets,
-            int cpu_per_socket,
-            int numOfMonitors,
-            UsbPolicy usb_policy, String time_zone, boolean auto_startup, boolean is_stateless, boolean fail_back,
-            BootSequence default_boot_sequence, VmType vm_type,
-            int minAllocatedMem, Guid quotaGuid, boolean smartcardEnabled, boolean deleteProtected, boolean useHostCpuFlags,
-            Boolean tunnelMigration) {
-        super(vm_guid,
-                vds_group_id,
-                os,
-                creation_date,
-                description,
-                mem_size_mb,
-                num_of_sockets,
-                cpu_per_socket,
-                numOfMonitors,
-                domain,
-                time_zone,
-                vm_type,
-                usb_policy,
-                fail_back,
-                default_boot_sequence,
-                0,
-                is_auto_suspend,
-                0,
-                auto_startup,
-                is_stateless,
-                null,
-                OriginType.valueOf(Config.<String> GetValue(ConfigValues.OriginType)),
-                null,
-                null,
-                null,
-                quotaGuid,
-                smartcardEnabled,
-                deleteProtected,
-                tunnelMigration);
-
-        this.name = vm_name;
-        this.vmtGuid = vmt_guid;
-        this.setNumOfMonitors(num_of_monitors);
-        this.setInitialized(is_initialized);
-        this.setUsbPolicy(usb_policy);
-        this.setDedicatedVmForVds(dedicated_vm_for_vds);
-        this.setMinAllocatedMem(minAllocatedMem);
-        this.useHostCpuFlags = useHostCpuFlags;
     }
 
     public String getCustomProperties() {
