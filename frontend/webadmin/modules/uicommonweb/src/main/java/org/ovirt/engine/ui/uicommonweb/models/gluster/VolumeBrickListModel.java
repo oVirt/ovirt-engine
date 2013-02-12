@@ -316,8 +316,10 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void onAddBricksInternal() {
-        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
 
+        cancelConfirmation();
+
+        VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
