@@ -21,6 +21,13 @@ die_no_propset() {
     die "Error: $1 if defined can not be empty, please check for this in configuration file $CONF_FILE\n" 6
 }
 
+check_email_format() {
+    #exit with a message if the property is not in user@domain format
+    if [[ ${!1} != *?@?* ]] ;  then
+        die "Error: $1 must be of the form user@domain"
+    fi
+}
+
 if [ "$1" == "--help" -o "$1" == "-h" ]; then
     usage
     exit 0
@@ -91,6 +98,7 @@ if [ "${MAIL_USER+x}" ]; then
     if [ -z "$MAIL_USER" ]; then
         die_no_propset \$MAIL_USER
     fi
+    check_email_format "MAIL_USER"
 fi
 
 # MAIL_PASSWORD if defined can not be empty
@@ -128,6 +136,7 @@ if [ "${MAIL_FROM+x}" ]; then
     if [ -z "$MAIL_FROM" ]; then
         die_no_propset \$MAIL_FROM
     fi
+    check_email_format "MAIL_FROM"
 fi
 
 # MAIL_REPLY_TO if defined can not be empty
