@@ -351,8 +351,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void setImageStatus(ImageStatus imageStatus) {
         DiskImage diskImage = getRelevantDiskImage();
-        diskImage.setImageStatus(imageStatus);
-        ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
+        if (diskImage != null) {
+            diskImage.setImageStatus(imageStatus);
+            ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
+        }
     }
 
     protected DiskImage getRelevantDiskImage() {
@@ -385,10 +387,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             getImageDao().update(getDestinationDiskImage().getImage());
         }
 
-        if (getRelevantDiskImage() != null) {
-            unLockImage();
-        }
-
+        unLockImage();
         setSucceeded(true);
     }
 
@@ -404,9 +403,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
             removeSnapshot(getDestinationDiskImage());
         }
 
-        if (getRelevantDiskImage() != null) {
-            unLockImage();
-        }
+        unLockImage();
     }
 
     /**
