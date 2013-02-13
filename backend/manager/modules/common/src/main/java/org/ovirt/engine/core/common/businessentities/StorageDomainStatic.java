@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -20,7 +21,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_NAME_SIZE)
     private String name = "";
 
-    @ValidName(message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.INVALID", groups = { CreateEntity.class,
+    @ValidDescription(message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE,
             message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.MAX",
