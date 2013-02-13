@@ -467,24 +467,25 @@ public class VolumeModel extends Model {
         if (getCluster().getSelectedItem() != null)
         {
             final VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
-            AsyncDataProvider.GetHostListByCluster(new AsyncQuery(this, new INewAsyncCallback() {
+
+            AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void OnSuccess(Object model, Object returnValue) {
+
                     // In case the result of previous call is returned after selecting some other cluster
                     if (!((VDSGroup) getCluster().getSelectedItem()).getId().equals(cluster.getId())) {
                         return;
                     }
 
-                    List<VDS> hostList = (List<VDS>) returnValue;
-                    for (VDS host : hostList) {
-                        if (host.getStatus() == VDSStatus.Up) {
-                            getAddBricksCommand().setIsExecutionAllowed(true);
-                            setMessage(null);
-                            return;
-                        }
+                    if ((Boolean) returnValue) {
+                        getAddBricksCommand().setIsExecutionAllowed(true);
+                        setMessage(null);
                     }
-                    getAddBricksCommand().setIsExecutionAllowed(false);
-                    setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
+                    else {
+                        getAddBricksCommand().setIsExecutionAllowed(false);
+                        setMessage(ConstantsManager.getInstance().getConstants().volumeEmptyClusterValidationMsg());
+                    }
+
                 }
             }), cluster.getname());
         }

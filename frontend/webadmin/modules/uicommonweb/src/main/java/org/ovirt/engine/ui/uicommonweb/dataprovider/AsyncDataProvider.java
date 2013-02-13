@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -45,7 +46,6 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -56,13 +56,12 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
-import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetAllVdsByStoragePoolParameters;
+import org.ovirt.engine.core.common.queries.GetAllVmSnapshotsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetAvailableClusterVersionsByStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
@@ -85,6 +84,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IsVmPoolWithSameNameExistsParameters;
 import org.ovirt.engine.core.common.queries.IsVmTemlateWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
@@ -1128,6 +1128,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void isAnyHostUpInCluster(AsyncQuery aQuery, String clusterName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null && ((List) source).size() > 0) {
+                    return true;
+                }
+                return false;
+            }
+        };
+        GetUpHostListByCluster(aQuery, clusterName, 1);
+    }
+
     public static void GetRpmVersionViaPublic(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1849,9 +1863,16 @@ public final class AsyncDataProvider {
                 return new ArrayList<VDS>();
             }
         };
+        GetUpHostListByCluster(aQuery, clusterName, null);
+    }
 
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + clusterName //$NON-NLS-1$
-                + " and status = up", SearchType.VDS), aQuery); //$NON-NLS-1$
+    public static void GetUpHostListByCluster(AsyncQuery aQuery, String clusterName, Integer maxCount) {
+        SearchParameters searchParameters =
+                new SearchParameters("Host: cluster = " + clusterName + " and status = up", SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
+        if (maxCount != null) {
+            searchParameters.setMaxCount(maxCount);
+        }
+        Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
     }
 
     public static void GetClusterListByStorageDomain(AsyncQuery _AsyncQuery,
