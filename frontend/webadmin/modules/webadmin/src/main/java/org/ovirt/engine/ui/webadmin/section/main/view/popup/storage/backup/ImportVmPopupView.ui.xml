@@ -69,7 +69,7 @@
 			visibility: hidden;
 		}
 	</ui:style>
-	<d:SimpleDialogPanel height="650px" width="1000px">
+	<d:SimpleDialogPanel height="575px" width="1000px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
@@ -88,7 +88,7 @@
 				</g:HorizontalPanel>
 				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
 				<g:SplitLayoutPanel ui:field="splitLayoutPanel"
-					height="450px" addStyleNames="{style.splitLayoutPanelStyle}" />
+					height="375px" addStyleNames="{style.splitLayoutPanelStyle}" />
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
