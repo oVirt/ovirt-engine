@@ -851,15 +851,15 @@ public class CommonModel extends ListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(SelectedItemsChangedEventDefinition) && sender == getTagList())
+        if (ev.matchesDefinition(SelectedItemsChangedEventDefinition) && sender == getTagList())
         {
             TagListModel_SelectedItemsChanged(sender, args);
         }
-        else if (ev.equals(BookmarkListModel.NavigatedEventDefinition) && sender == getBookmarkList())
+        else if (ev.matchesDefinition(BookmarkListModel.NavigatedEventDefinition) && sender == getBookmarkList())
         {
             BookmarkListModel_Navigated(sender, (BookmarkEventArgs) args);
         }
-        else if (ev.equals(SelectedItemChangedEventDefinition) && sender == getSystemTree())
+        else if (ev.matchesDefinition(SelectedItemChangedEventDefinition) && sender == getSystemTree())
         {
             SystemTree_ItemChanged(sender, args);
         }

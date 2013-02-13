@@ -878,7 +878,7 @@ public class ClusterModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -889,7 +889,7 @@ public class ClusterModel extends EntityModel
                 Version_SelectedItemChanged(args);
             }
         }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             EntityModel senderEntityModel = (EntityModel) sender;
             if ((Boolean) senderEntityModel.getEntity())

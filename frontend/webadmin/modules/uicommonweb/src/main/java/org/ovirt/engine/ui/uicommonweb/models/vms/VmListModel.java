@@ -2854,7 +2854,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ChangeCDModel.ExecutedEventDefinition))
+        if (ev.matchesDefinition(ChangeCDModel.ExecutedEventDefinition))
         {
             changeCD(sender, args);
         }

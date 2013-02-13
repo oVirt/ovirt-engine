@@ -94,12 +94,12 @@ public abstract class StorageModelBehavior extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(Frontend.QueryStartedEventDefinition)
+        if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             getModel().Frontend_QueryStarted();
         }
-        else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             getModel().Frontend_QueryComplete();

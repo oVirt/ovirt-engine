@@ -101,19 +101,41 @@ public class Event {
         }
     }
 
-    public boolean equals(Event other) {
-        if(other == null){
-            return false;
-        }
-        return StringHelper.stringsEqual(getName(), other.getName())
-        && getOwnerType() == other.getOwnerType();
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((privateName == null) ? 0 : privateName.hashCode());
+        result = prime * result + ((privateOwnerType == null) ? 0 : privateOwnerType.hashCode());
+        return result;
     }
 
-    public boolean equals(EventDefinition other) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Event other = (Event) obj;
+        if (privateName == null) {
+            if (other.privateName != null)
+                return false;
+        } else if (!privateName.equals(other.privateName))
+            return false;
+        if (privateOwnerType == null) {
+            if (other.privateOwnerType != null)
+                return false;
+        } else if (!privateOwnerType.equals(other.privateOwnerType))
+            return false;
+        return true;
+    }
+    public boolean matchesDefinition(EventDefinition other) {
         if(other == null){
             return false;
         }
-        return StringHelper.stringsEqual(getName(), other.getName())
+        return getName().equals(other.getName())
         && getOwnerType() == other.getOwnerType();
     }
 

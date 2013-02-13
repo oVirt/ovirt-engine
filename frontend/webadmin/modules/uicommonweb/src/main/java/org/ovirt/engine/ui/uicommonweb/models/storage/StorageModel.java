@@ -218,7 +218,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(SelectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -237,16 +237,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 }
             }
         }
-        else if (ev.equals(NfsStorageModel.PathChangedEventDefinition))
+        else if (ev.matchesDefinition(NfsStorageModel.PathChangedEventDefinition))
         {
             NfsStorageModel_PathChanged(sender, args);
         }
-        else if (ev.equals(Frontend.QueryStartedEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryStarted();
         }
-        else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryComplete();

@@ -295,20 +295,20 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(SanTargetModel.LoggedInEventDefinition))
+        if (ev.matchesDefinition(SanTargetModel.LoggedInEventDefinition))
         {
             SanTargetModel_LoggedIn(sender, args);
         }
-        else if (ev.equals(EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityChangedEventDefinition))
         {
             UseUserAuth_EntityChanged(sender, args);
         }
-        else if (ev.equals(Frontend.QueryStartedEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryStarted();
         }
-        else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryComplete();

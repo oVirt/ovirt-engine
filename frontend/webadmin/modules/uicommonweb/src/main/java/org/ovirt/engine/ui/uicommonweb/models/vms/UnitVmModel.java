@@ -1219,17 +1219,17 @@ public class UnitVmModel extends Model {
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(Frontend.QueryStartedEventDefinition)
+        if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryStarted();
         }
-        else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             Frontend_QueryComplete();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition))
+        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
         {
             if (sender == getDataCenter())
             {
@@ -1275,7 +1275,7 @@ public class UnitVmModel extends Model {
                 CoresPerSocket_EntityChanged(sender, args);
             }
         }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             if (sender == getMemSize())
             {

@@ -472,7 +472,7 @@ public class RunOnceModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition))
         {
             if (sender == getFloppyImage())
             {
@@ -483,7 +483,7 @@ public class RunOnceModel extends Model
                 SysPrepDomainName_SelectedItemChanged();
             }
         }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             if (sender == getAttachFloppy())
             {

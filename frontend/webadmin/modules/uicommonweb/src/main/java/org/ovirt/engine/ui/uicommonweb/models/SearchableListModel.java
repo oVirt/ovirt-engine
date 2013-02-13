@@ -511,11 +511,11 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(RegistrationResult.RetrievedEventDefinition))
+        if (ev.matchesDefinition(RegistrationResult.RetrievedEventDefinition))
         {
             AsyncResult_Retrieved();
         }
-        if (ev.equals(ProvideTickEvent.Definition))
+        if (ev.matchesDefinition(ProvideTickEvent.Definition))
         {
             SyncSearch();
         }

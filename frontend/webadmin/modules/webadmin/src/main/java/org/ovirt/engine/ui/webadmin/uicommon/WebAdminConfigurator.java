@@ -51,10 +51,10 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args) {
-        if (ev.equals(spiceVersionFileFetchedEvent_Definition)) {
+        if (ev.matchesDefinition(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
-        } else if (ev.equals(documentationFileFetchedEvent_Definition)) {
+        } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
             String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
             DocumentationPathTranslator.init(documentationPathFileContent);
         }

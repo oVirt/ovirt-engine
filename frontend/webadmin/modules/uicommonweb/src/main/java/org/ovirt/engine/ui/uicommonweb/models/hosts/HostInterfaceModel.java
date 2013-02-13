@@ -275,7 +275,7 @@ public class HostInterfaceModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getNetwork())
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getNetwork())
         {
             Network_SelectedItemChanged(null);
         }

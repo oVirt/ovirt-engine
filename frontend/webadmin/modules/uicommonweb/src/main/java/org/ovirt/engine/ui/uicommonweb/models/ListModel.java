@@ -189,7 +189,7 @@ public class ListModel extends EntityModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ProvidePropertyChangedEvent.Definition))
+        if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
         {
             if (getNotifyPropertyChangeForAnyItem())
             {
@@ -223,7 +223,7 @@ public class ListModel extends EntityModel
                 SelectedItemPropertyChanged(sender, (PropertyChangedEventArgs) args);
             }
         }
-        else if (ev.equals(ProvideCollectionChangedEvent.Definition))
+        else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition))
         {
             ItemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs) args);
         }

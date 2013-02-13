@@ -179,7 +179,7 @@ public class DataCenterModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getStorageTypeList())
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getStorageTypeList())
         {
             StorageType_SelectedItemChanged();
         }

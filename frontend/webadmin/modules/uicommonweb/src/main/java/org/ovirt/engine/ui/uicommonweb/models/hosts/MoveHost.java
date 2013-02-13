@@ -117,7 +117,7 @@ public class MoveHost extends ListModel
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(SelectedItemChangedEventDefinition) && sender == getCluster())
+        if (ev.matchesDefinition(SelectedItemChangedEventDefinition) && sender == getCluster())
         {
             Cluster_SelectedItemChanged();
         }

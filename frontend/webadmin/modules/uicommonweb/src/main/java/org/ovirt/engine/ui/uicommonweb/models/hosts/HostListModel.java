@@ -1536,11 +1536,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(HostGeneralModel.RequestEditEventDefinition))
+        if (ev.matchesDefinition(HostGeneralModel.RequestEditEventDefinition))
         {
             getEditWithPMemphasisCommand().Execute();
         }
-        if (ev.equals(HostGeneralModel.RequestGOToEventsTabEventDefinition))
+        if (ev.matchesDefinition(HostGeneralModel.RequestGOToEventsTabEventDefinition))
         {
             GoToEventsTab();
         }

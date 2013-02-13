@@ -831,11 +831,11 @@ public class HostModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
         {
             DataCenter_SelectedItemChanged();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getCluster())
+        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getCluster())
         {
             Cluster_SelectedItemChanged();
         } else if (sender == getConsoleAddressEnabled()) {

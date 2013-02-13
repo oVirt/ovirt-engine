@@ -111,11 +111,11 @@ public class EntityModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(EntityChangedEventDefinition))
+        if (ev.matchesDefinition(EntityChangedEventDefinition))
         {
             OnEntityChanged();
         }
-        else if (ev.equals(ProvidePropertyChangedEvent.Definition))
+        else if (ev.matchesDefinition(ProvidePropertyChangedEvent.Definition))
         {
             EntityPropertyChanged(sender, (PropertyChangedEventArgs) args);
         }

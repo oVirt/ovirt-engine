@@ -1720,27 +1720,27 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         super.eventRaised(ev, sender, args);
 
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (ev.equals(ItemsChangedEventDefinition) && sender == model.getDataCenter())
+        if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDataCenter())
         {
             VmModel_DataCenter_ItemsChanged();
         }
-        else if (ev.equals(ItemsChangedEventDefinition) && sender == model.getCluster())
+        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getCluster())
         {
             VmModel_Cluster_ItemsChanged();
         }
-        else if (ev.equals(ItemsChangedEventDefinition) && sender == model.getDefaultHost())
+        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDefaultHost())
         {
             VmModel_DefaultHost_ItemsChanged();
         }
-        else if (ev.equals(ItemsChangedEventDefinition) && sender == model.getDisplayProtocol())
+        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getDisplayProtocol())
         {
             VmModel_DisplayProtocol_ItemsChanged();
         }
-        else if (ev.equals(ItemsChangedEventDefinition) && sender == model.getPriority())
+        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getPriority())
         {
             VmModel_Priority_ItemsChanged();
         }
-        else if (ev.equals(ItemsChangedEventDefinition) && sender == model.getTimeZone())
+        else if (ev.matchesDefinition(ItemsChangedEventDefinition) && sender == model.getTimeZone())
         {
             VmModel_TimeZone_ItemsChanged();
         }

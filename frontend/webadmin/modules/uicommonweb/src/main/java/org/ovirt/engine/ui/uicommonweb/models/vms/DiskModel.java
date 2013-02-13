@@ -942,27 +942,27 @@ public class DiskModel extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getWipeAfterDelete())
+        if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getWipeAfterDelete())
         {
             WipeAfterDelete_EntityChanged(args);
         }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition) && sender == getAttachDisk())
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition) && sender == getAttachDisk())
         {
             AttachDisk_EntityChanged(args);
         }
-        else if (ev.equals(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
+        else if (ev.matchesDefinition(ListModel.EntityChangedEventDefinition) && sender == getIsInternal())
         {
             IsInternal_EntityChanged();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
+        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getPreset())
         {
             Preset_SelectedItemChanged();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getVolumeType())
+        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getVolumeType())
         {
             VolumeType_SelectedItemChanged();
         }
-        else if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
+        else if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter())
         {
             Datacenter_SelectedItemChanged();
         }

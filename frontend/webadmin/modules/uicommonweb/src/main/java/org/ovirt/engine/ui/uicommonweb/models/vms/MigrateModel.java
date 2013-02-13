@@ -184,7 +184,7 @@ public class MigrateModel extends Model
             }
             setIsSameVdsMessageVisible(gethasSameVdsMessage());
         }
-        else if (ev.equals(EntityModel.EntityChangedEventDefinition))
+        else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
         {
             if (sender == getSelectHostAutomatically_IsSelected())
             {

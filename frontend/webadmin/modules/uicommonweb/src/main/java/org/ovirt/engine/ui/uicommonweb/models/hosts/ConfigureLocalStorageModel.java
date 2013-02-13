@@ -165,12 +165,12 @@ public class ConfigureLocalStorageModel extends Model {
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.equals(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
+        if (ev.matchesDefinition(ListModel.SelectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             DataCenterVersion_SelectedItemChanged();
-        } else if (ev.equals(Frontend.QueryStartedEventDefinition)
+        } else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
             Frontend_QueryStarted();
-        } else if (ev.equals(Frontend.QueryCompleteEventDefinition)
+        } else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
             Frontend_QueryComplete();
         }
