@@ -122,11 +122,11 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return getParameters().getInterface();
     }
 
-    protected String getInterfaceName() {
+    public String getInterfaceName() {
         return getInterface().getName();
     }
 
-    protected String getNetworkName() {
+    public String getNetworkName() {
         return getInterface().getNetworkName();
     }
 }
