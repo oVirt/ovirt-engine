@@ -6,17 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
@@ -41,6 +37,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private Guid clusterId;
     private Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
     private static Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
+    private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
 
     @SuppressWarnings("unchecked")
     public GlusterVolumesListReturnForXmlRpc(Guid clusterId, Map<String, Object> innerMap) {
@@ -150,7 +147,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      */
     private GlusterBrickEntity getBrick(Guid clusterId, Guid volumeId, String brickInfo, int brickOrder) {
         String[] brickParts = brickInfo.split(":", -1);
-        if(brickParts.length != 2) {
+        if (brickParts.length != 2) {
             throw new RuntimeException("Invalid brick representation [" + brickInfo + "]");
         }
 
@@ -162,63 +159,14 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         brick.setBrickOrder(brickOrder);
         brick.setBrickDirectory(brickDir);
 
-        VdsStatic server = getServer(clusterId, hostnameOrIp);
-        if(server == null) {
+        VdsStatic server = dbUtils.getServer(clusterId, hostnameOrIp);
+        if (server == null) {
             log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, clusterId);
         } else {
             brick.setServerId(server.getId());
             brick.setServerName(server.getHostName());
         }
         return brick;
-    }
-
-    private VdsStaticDAO getVdsStaticDao() {
-        return DbFacade.getInstance().getVdsStaticDao();
-    }
-
-    private InterfaceDao getInterfaceDao() {
-        return DbFacade.getInstance().getInterfaceDao();
-    }
-
-    /**
-     * Returns a server from the given cluster, having give host name or IP address
-     * @param clusterId
-     * @param hostnameOrIp
-     * @return
-     */
-    private VdsStatic getServer(Guid clusterId, String hostnameOrIp) {
-        VdsStatic server = getVdsStaticDao().getByHostName(hostnameOrIp);
-        if(server != null) {
-            return server.getVdsGroupId().equals(clusterId) ? server : null;
-        }
-
-        List<VdsNetworkInterface> ifaces = getInterfaceDao().getAllInterfacesWithIpAddress(clusterId, hostnameOrIp);
-        if(ifaces.size() == 1) {
-            for(VdsNetworkInterface iface : ifaces) {
-                server = getVdsStaticDao().get(iface.getVdsId().getValue());
-                if(server.getVdsGroupId().equals(clusterId)) {
-                    return server;
-                }
-            }
-        } else if(ifaces.size() > 1) {
-            // There are multiple servers in the DB having this ip address. Throw an exception so that the gluster
-            // manager doesn't try to update/add bricks belonging to such servers
-            throw new RuntimeException(String.format("There are multiple servers in DB having same IP address %1$s! " +
-                    "Cannot arrive at correct server id for bricks related to this ip address in cluster %2$s",
-                    hostnameOrIp,
-                    clusterId));
-        }
-
-        return null;
-    }
-
-    private VDS getServerOfCluster(Guid clusterId, List<VDS> servers) {
-        for(VDS server : servers) {
-            if(server.getVdsGroupId().equals(clusterId)) {
-                return server;
-            }
-        }
-        return null;
     }
 
     public Map<Guid, GlusterVolumeEntity> getVolumes() {

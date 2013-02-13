@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -55,6 +54,7 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -768,7 +768,7 @@ public class GlusterManager {
 
         if (existingVolume.getStatus() != fetchedVolume.getStatus()) {
             existingVolume.setStatus(fetchedVolume.getStatus());
-            GlusterUtils.getInstance().updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
+            GlusterDBUtils.getInstance().updateVolumeStatus(existingVolume.getId(), fetchedVolume.getStatus());
             logUtil.logVolumeMessage(existingVolume,
                     fetchedVolume.getStatus() == GlusterStatus.UP ? AuditLogType.GLUSTER_VOLUME_STARTED_FROM_CLI
                             : AuditLogType.GLUSTER_VOLUME_STOPPED_FROM_CLI);

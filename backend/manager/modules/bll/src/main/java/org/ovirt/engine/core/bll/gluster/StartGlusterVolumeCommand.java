@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -11,6 +10,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 
 /**
  * BLL command to start a Gluster volume
@@ -55,7 +55,7 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
                                                 getGlusterVolumeName(), getParameters().isForceAction()));
         setSucceeded(returnValue.getSucceeded());
         if(getSucceeded()) {
-            GlusterUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
+            GlusterDBUtils.getInstance().updateVolumeStatus(getParameters().getVolumeId(), GlusterStatus.UP);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_START_FAILED, returnValue.getVdsError().getMessage());
             return;

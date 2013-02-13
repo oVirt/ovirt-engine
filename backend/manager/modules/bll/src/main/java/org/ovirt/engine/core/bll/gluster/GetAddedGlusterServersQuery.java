@@ -16,13 +16,13 @@ import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to get Added Gluster Servers with/without server ssh key fingerprint
  */
 public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters> extends QueriesCommandBase<P> {
-
     public GetAddedGlusterServersQuery(P params) {
         super(params);
     }
@@ -47,10 +47,9 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     private Map<String, String> getAddedGlusterServers(List<GlusterServerInfo> glusterServers) {
         Map<String, String> serversAndFingerprint = new HashMap<String, String>();
-        List<VDS> serversList = getClusterUtils().getVdsDao().getAllForVdsGroup(getParameters().getClusterId());
 
         for (GlusterServerInfo server : glusterServers) {
-            if (server.getStatus() == PeerStatus.CONNECTED && (!serverExists(serversList, server))) {
+            if (server.getStatus() == PeerStatus.CONNECTED && (!serverExists(server))) {
                 String fingerprint = null;
                 if (getParameters().isServerKeyFingerprintRequired()) {
                     fingerprint = getServerFingerprint(server.getHostnameOrIp());
@@ -64,15 +63,12 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return serversAndFingerprint;
     }
 
-    private boolean serverExists(List<VDS> serversList, GlusterServerInfo glusterServer) {
-        for (VDS server : serversList) {
-            String serverHostnameOrIp =
-                    server.getHostName().isEmpty() ? server.getManagementIp() : server.getHostName();
-            if (serverHostnameOrIp.equalsIgnoreCase(glusterServer.getHostnameOrIp())) {
-                return true;
-            }
-        }
-        return false;
+    protected GlusterDBUtils getDbUtils() {
+        return GlusterDBUtils.getInstance();
+    }
+
+    private boolean serverExists(GlusterServerInfo glusterServer) {
+        return getDbUtils().serverExists(getParameters().getClusterId(), glusterServer.getHostnameOrIp());
     }
 
     public String getServerFingerprint(String serverName) {

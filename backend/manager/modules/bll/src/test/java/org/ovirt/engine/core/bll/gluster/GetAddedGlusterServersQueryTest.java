@@ -30,23 +30,28 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlusterServersParameters, GetAddedGlusterServersQuery<AddedGlusterServersParameters>> {
+    private List<VDS> serversList;
+    private List<GlusterServerInfo> expectedServers;
+    private AddedGlusterServersParameters params;
+    private VDSBrokerFrontend vdsBrokerFrontend;
+    private VdsDAO vdsDaoMock;
+    private GlusterDBUtils dbUtils;
+    private EngineSSHDialog mockEngineSSHDialog;
+    private ClusterUtils clusterUtils;
 
-    List<VDS> serversList;
-    List<GlusterServerInfo> expectedServers;
-    AddedGlusterServersParameters params;
-    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    private Guid server_id1 = new Guid("85c42b0d-c2b7-424a-ae72-5174c25da40b");
-    private Guid server_id2 = new Guid("6a697a38-cc82-4399-a6fb-0ec79c0ff1d5");
-    private Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
-    private String serverKeyFingerprint = "b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31";
-    VDSBrokerFrontend vdsBrokerFrontend;
-    VdsDAO vdsDaoMock;
-    EngineSSHDialog mockEngineSSHDialog;
-
-    ClusterUtils clusterUtils;
+    private static final String CLUSTER_NAME = "default";
+    private static final String TEST_SERVER1 = "test_server1";
+    private static final String TEST_SERVER2 = "test_server2";
+    private static final String TEST_SERVER3 = "test_server3";
+    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private static final Guid server_id1 = new Guid("85c42b0d-c2b7-424a-ae72-5174c25da40b");
+    private static final Guid server_id2 = new Guid("6a697a38-cc82-4399-a6fb-0ec79c0ff1d5");
+    private static final Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
+    private static final String serverKeyFingerprint = "b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31";
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
@@ -65,18 +70,18 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         serversList = new ArrayList<VDS>();
         VDS server = new VDS();
         server.setVdsGroupId(CLUSTER_ID);
-        server.setVdsGroupName("default");
+        server.setVdsGroupName(CLUSTER_NAME);
         server.setId(server_id1);
-        server.setVdsName("test_server1");
-        server.setHostName("test_server1");
+        server.setVdsName(TEST_SERVER1);
+        server.setHostName(TEST_SERVER1);
         serversList.add(server);
 
         server = new VDS();
         server.setVdsGroupId(CLUSTER_ID);
-        server.setVdsGroupName("default");
+        server.setVdsGroupName(CLUSTER_NAME);
         server.setId(server_id2);
-        server.setVdsName("test_server2");
-        server.setHostName("test_server2");
+        server.setVdsName(TEST_SERVER2);
+        server.setHostName(TEST_SERVER2);
         serversList.add(server);
     }
 
@@ -84,12 +89,12 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         expectedServers = new ArrayList<GlusterServerInfo>();
         GlusterServerInfo server = new GlusterServerInfo();
         server.setUuid(server_id1);
-        server.setHostnameOrIp("test_server1");
+        server.setHostnameOrIp(TEST_SERVER1);
         server.setStatus(PeerStatus.CONNECTED);
         expectedServers.add(server);
         server = new GlusterServerInfo();
         server.setUuid(server_id3);
-        server.setHostnameOrIp("test_server3");
+        server.setHostnameOrIp(TEST_SERVER3);
         server.setStatus(PeerStatus.CONNECTED);
         expectedServers.add(server);
     }
@@ -98,9 +103,11 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         vdsBrokerFrontend = mock(VDSBrokerFrontend.class);
         clusterUtils = mock(ClusterUtils.class);
         vdsDaoMock = mock(VdsDAO.class);
+        dbUtils = mock(GlusterDBUtils.class);
 
         doReturn(vdsBrokerFrontend).when(getQuery()).getBackendInstance();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
+        doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
 
         VDSReturnValue returnValue = getVDSReturnValue();
@@ -111,6 +118,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
         doReturn(vdsDaoMock).when(clusterUtils).getVdsDao();
         doReturn(serversList).when(vdsDaoMock).getAllForVdsGroup(CLUSTER_ID);
+        doReturn(true).when(dbUtils).serverExists(any(Guid.class), eq(TEST_SERVER1));
+        doReturn(false).when(dbUtils).serverExists(any(Guid.class), eq(TEST_SERVER3));
 
         mockEngineSSHDialog = mock(EngineSSHDialog.class);
         doNothing().when(mockEngineSSHDialog).connect();
@@ -127,7 +136,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
 
     private Map<String, String> getAddedServers() {
         Map<String, String> servers = new HashMap<String, String>();
-        servers.put("test_server3", serverKeyFingerprint);
+        servers.put(TEST_SERVER3, serverKeyFingerprint);
         return servers;
     }
 

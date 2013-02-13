@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.GlusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,6 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -223,8 +223,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return ClusterUtils.getInstance();
     }
 
-    private GlusterUtils getGlusterUtils() {
-        return GlusterUtils.getInstance();
+    private GlusterDBUtils getGlusterUtils() {
+        return GlusterDBUtils.getInstance();
     }
 
     private VDSGroup getSourceCluster() {
