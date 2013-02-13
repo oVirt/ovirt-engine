@@ -148,21 +148,26 @@ public class VdsEventListener implements IVdsEventListener {
                         // is on
                         List<VmStatic> vmsToMigrate =
                                 DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
-                        java.util.ArrayList<VdcActionParametersBase> vmToServerParametersList = Helper.ToList(LinqUtils
-                                .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
-                                    @Override
-                                    public VdcActionParametersBase eval(VmStatic vm) {
-                                        MigrateVmToServerParameters parameters =
-                                            new MigrateVmToServerParameters(false, vm.getId(), vds.getId());
-                                        parameters.setShouldBeLogged(false);
-                                        return parameters;
-                                    }
-                                }));
-                        ExecutionContext executionContext = new ExecutionContext();
-                        executionContext.setMonitored(true);
-                        Backend.getInstance().runInternalMultipleActions(VdcActionType.MigrateVmToServer,
-                                vmToServerParametersList,
-                                executionContext);
+                        if (vmsToMigrate.size() > 0) {
+                            java.util.ArrayList<VdcActionParametersBase> vmToServerParametersList =
+                                    Helper.ToList(LinqUtils
+                                            .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
+                                                @Override
+                                                public VdcActionParametersBase eval(VmStatic vm) {
+                                                    MigrateVmToServerParameters parameters =
+                                                            new MigrateVmToServerParameters(false,
+                                                                    vm.getId(),
+                                                                    vds.getId());
+                                                    parameters.setShouldBeLogged(false);
+                                                    return parameters;
+                                                }
+                                            }));
+                            ExecutionContext executionContext = new ExecutionContext();
+                            executionContext.setMonitored(true);
+                            Backend.getInstance().runInternalMultipleActions(VdcActionType.MigrateVmToServer,
+                                    vmToServerParametersList,
+                                    executionContext);
+                        }
 
                         // run dedicated vm logic
                         // not passing clientinfo will cause to launch on a VDS
