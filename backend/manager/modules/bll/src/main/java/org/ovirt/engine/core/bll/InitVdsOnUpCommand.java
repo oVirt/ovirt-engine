@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
@@ -58,15 +57,16 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
  */
 @SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
-public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
+public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean _fenceSucceeded = true;
     private boolean _vdsProxyFound;
     private boolean _connectStorageSucceeded, _connectPoolSucceeded;
     private boolean _glusterPeerListSucceeded, _glusterPeerProbeSucceeded;
     private FenceStatusReturnValue _fenceStatusReturnValue;
 
-    public InitVdsOnUpCommand(T parameters) {
+    public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
+        setVds(parameters.getVds());
     }
 
     @Override
@@ -126,7 +126,6 @@ public class InitVdsOnUpCommand<T extends StoragePoolParametersBase> extends Sto
 
     private boolean InitializeStorage() {
         boolean returnValue = false;
-        setStoragePoolId(getVds().getStoragePoolId());
 
         // if no pool or pool is uninitialized or in maintenance mode no need to
         // connect any storage

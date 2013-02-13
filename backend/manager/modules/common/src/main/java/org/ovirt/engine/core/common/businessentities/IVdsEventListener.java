@@ -30,7 +30,7 @@ public interface IVdsEventListener {
      */
     void processOnVmStop(Guid vmId);
 
-    boolean vdsUpEvent(Guid vdsId);
+    boolean vdsUpEvent(VDS vds);
 
     void processOnClientIpChange(VDS vds, Guid vmId);
 

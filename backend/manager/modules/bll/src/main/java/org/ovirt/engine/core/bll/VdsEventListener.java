@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
+import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.PowerClientMigrateOnConnectCheckParameters;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -136,10 +136,9 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public boolean vdsUpEvent(final Guid vdsId) {
-        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(Guid.Empty);
-        tempVar.setVdsId(vdsId);
-        boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.InitVdsOnUp, tempVar).getSucceeded();
+    public boolean vdsUpEvent(final VDS vds) {
+        HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(vds);
+        boolean isSucceeded = Backend.getInstance().runInternalAction(VdcActionType.InitVdsOnUp, params).getSucceeded();
         if (isSucceeded) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
@@ -148,13 +147,13 @@ public class VdsEventListener implements IVdsEventListener {
                         // migrate vms that its their default vds and failback
                         // is on
                         List<VmStatic> vmsToMigrate =
-                                DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vdsId);
+                                DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
                         java.util.ArrayList<VdcActionParametersBase> vmToServerParametersList = Helper.ToList(LinqUtils
                                 .foreach(vmsToMigrate, new Function<VmStatic, VdcActionParametersBase>() {
                                     @Override
                                     public VdcActionParametersBase eval(VmStatic vm) {
                                         MigrateVmToServerParameters parameters =
-                                            new MigrateVmToServerParameters(false, vm.getId(), vdsId);
+                                            new MigrateVmToServerParameters(false, vm.getId(), vds.getId());
                                         parameters.setShouldBeLogged(false);
                                         return parameters;
                                     }
@@ -170,17 +169,17 @@ public class VdsEventListener implements IVdsEventListener {
                         // instead of power client. this is a possible use case
                         // to fasten the inital boot, then live migrate to power
                         // client on spice connect.
-                        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForDedicatedPowerClientByVds(vdsId);
+                        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForDedicatedPowerClientByVds(vds.getId());
                         if (vms.size() != 0) {
                             if (Config
                                     .<Boolean> GetValue(ConfigValues.PowerClientDedicatedVmLaunchOnVdsWhilePowerClientStarts)) {
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnDedicatedVds,
-                                        new RunVmParams(vms.get(0).getId(), vdsId),
+                                        new RunVmParams(vms.get(0).getId(), vds.getId()),
                                         ExecutionHandler.createInternalJobContext());
                             } else {
                                 ThreadUtils.sleep(10000);
                                 Backend.getInstance().runInternalAction(VdcActionType.RunVmOnPowerClient,
-                                        new RunVmParams(vms.get(0).getId(), vdsId),
+                                        new RunVmParams(vms.get(0).getId(), vds.getId()),
                                         ExecutionHandler.createInternalJobContext());
                             }
                         }

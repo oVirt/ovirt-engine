@@ -386,7 +386,7 @@ public class VdsUpdateRunTimeInfo {
                     }
                     _vdsManager.setIsSetNonOperationalExecuted(!ResourceManager.getInstance()
                             .getEventListener()
-                            .vdsUpEvent(_vds.getId()));
+                            .vdsUpEvent(_vds));
 
                     // Check hardware capabilities in case VDS moved to up
                     processHardwareCapsNeeded = true;
