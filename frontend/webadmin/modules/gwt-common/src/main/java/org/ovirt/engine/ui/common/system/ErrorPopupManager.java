@@ -16,17 +16,10 @@ public class ErrorPopupManager implements HasHandlers {
     private final EventBus eventBus;
     private final ErrorPopupPresenterWidget errorPopup;
 
-    private boolean showPopups;
-
     @Inject
     public ErrorPopupManager(EventBus eventBus, ErrorPopupPresenterWidget errorPopup) {
         this.eventBus = eventBus;
         this.errorPopup = errorPopup;
-        this.showPopups = true;
-    }
-
-    public void setShowPopups(boolean showPopups) {
-        this.showPopups = showPopups;
     }
 
     @Override
@@ -35,13 +28,11 @@ public class ErrorPopupManager implements HasHandlers {
     }
 
     public void show(String errorMessage) {
-        if (showPopups) {
-            errorPopup.prepare(errorMessage);
-            RevealRootPopupContentEvent.fire(this, errorPopup);
-        }
+        errorPopup.prepare(errorMessage);
+        RevealRootPopupContentEvent.fire(this, errorPopup);
     }
 
-    public void hide(){
+    public void hide() {
         errorPopup.hide();
     }
 
