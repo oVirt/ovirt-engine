@@ -298,8 +298,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                         getDisksToConvert().add(vm);
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
                         ((ImportVmData) item).getCollapseSnapshots()
-                                .getChangeProhibitionReasons()
-                                .add(ConstantsManager.getInstance()
+                                .setChangeProhibitionReason(ConstantsManager.getInstance()
                                         .getConstants()
                                         .importSparseDiskToBlockDeviceMustCollapseSnapshots());
                         ((ImportVmData) item).getCollapseSnapshots().setIsChangable(false);
@@ -567,11 +566,9 @@ public class ImportVmModel extends ListWithDetailsModel {
                             vmData.setExistsInSystem(vmExistsInSystem);
                             if (vmExistsInSystem) {
                                 vmData.getClone().setEntity(true);
-                                vmData.getClone()
-                                        .getChangeProhibitionReasons()
-                                        .add(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .importVMThatExistsInSystemMustClone());
+                                vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importVMThatExistsInSystemMustClone());
                                 vmData.getClone().setIsChangable(false);
                             }
                             vmDataList.add(vmData);

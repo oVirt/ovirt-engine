@@ -22,7 +22,7 @@ public class ImportVmData extends ImportEntityData {
                 if (templateExistsInSetup) {
                     if ((Boolean) ((EntityModel) sender).getEntity()) {
                         getCollapseSnapshots().setEntity(true);
-                        getCollapseSnapshots().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+                        getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .importCloneVMMustCollapseSnapshots());
                         getCollapseSnapshots().setIsChangable(false);
@@ -42,7 +42,7 @@ public class ImportVmData extends ImportEntityData {
     public void setTemplateExistsInSetup(boolean templateExistsInSetup) {
         if (!templateExistsInSetup) {
             getCollapseSnapshots().setEntity(true);
-            getCollapseSnapshots().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+            getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants().importVMWithTemplateNotInSystemMustCollapseSnapshots());
             getCollapseSnapshots().setIsChangable(false);
         }

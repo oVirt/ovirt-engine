@@ -249,8 +249,8 @@ public class VmGuideModel extends GuideModel
         model.getIsBootable().setEntity(!hasBootableDisk);
         if (hasBootableDisk)
         {
+            model.getIsBootable().setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
             model.getIsBootable().setIsChangable(false);
-            model.getIsBootable().getChangeProhibitionReasons().add("There can be only one bootable disk defined."); //$NON-NLS-1$
         }
 
         AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this,

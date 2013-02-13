@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget;
 
-import java.util.List;
-
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
@@ -195,17 +193,13 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     }
 
     @Override
-    public void disable(List<String> disabilityHints) {
+    public void disable(String disabilityHint) {
         setEnabled(false);
-        updateWidgetTitle(getDisabilityTitle(disabilityHints));
+        updateWidgetTitle(disabilityHint);
     }
 
     private void updateWidgetTitle(String title) {
         contentWidget.asWidget().setTitle(title);
-    }
-
-    private String getDisabilityTitle(List<String> disabilityHints) {
-        return disabilityHints != null && disabilityHints.size() > 0 ? disabilityHints.get(0) : null;
     }
 
     public void addContentWidgetStyleName(String styleName) {

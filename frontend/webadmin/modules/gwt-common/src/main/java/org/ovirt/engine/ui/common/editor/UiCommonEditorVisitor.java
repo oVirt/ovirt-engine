@@ -205,7 +205,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         if (model.getIsChangable()) {
             editor.setEnabled(true);
         } else {
-            editor.disable(model.getChangeProhibitionReasons());
+            editor.disable(model.getChangeProhibitionReason());
         }
     }
 

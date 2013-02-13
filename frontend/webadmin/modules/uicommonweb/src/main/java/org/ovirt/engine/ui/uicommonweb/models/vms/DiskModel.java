@@ -38,8 +38,8 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -743,9 +743,10 @@ public class DiskModel extends Model
                 DiskModel diskModel = (DiskModel) target;
                 boolean isShareableDiskEnabled = (Boolean) returnValue;
 
+                diskModel.getIsShareable().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .shareableDiskNotSupported());
                 diskModel.getIsShareable().setIsChangable(isShareableDiskEnabled);
-                diskModel.getIsShareable().getChangeProhibitionReasons().add(
-                        ConstantsManager.getInstance().getConstants().shareableDiskNotSupported());
             }
         }), datacenter.getcompatibility_version().getValue());
     }
@@ -792,9 +793,10 @@ public class DiskModel extends Model
 
     private void updateShareable(VolumeType volumeType, StorageType storageType) {
         getIsShareable().setEntity(false);
+        getIsShareable().setChangeProhibitionReason(ConstantsManager.getInstance()
+                .getConstants()
+                .shareableDiskNotSupportedByConfiguration());
         getIsShareable().setIsChangable(!(storageType.isBlockDomain() && volumeType == VolumeType.Sparse));
-        getIsShareable().getChangeProhibitionReasons().add(
-                ConstantsManager.getInstance().getConstants().shareableDiskNotSupportedByConfiguration());
     }
 
     private boolean isDatacenterAvailable(storage_pool dataCenter)

@@ -1,21 +1,19 @@
 package org.ovirt.engine.ui.common.widget;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.HasEnabled;
 
 /**
- * Extends the {@link HasEnabled} interface, allowing widgets to be disabled while providing hints describing reasons
+ * Extends the {@link HasEnabled} interface, allowing widgets to be disabled while providing hint describing the reason
  * for disabling them.
  */
 public interface HasEnabledWithHints extends HasEnabled {
 
     /**
-     * Disables this widget, providing an optional list of disability hints.
+     * Disables this widget, providing an disability hint.
      *
-     * @param disabilityHints
-     *            Disability hints describing reasons why this widget is disabled (can be empty or {@code null}).
+     * @param disabilityHint
+     *            Disability hint describing reason why this widget is disabled (can be {@code null}).
      */
-    void disable(List<String> disabilityHints);
+    void disable(String disabilityHint);
 
 }

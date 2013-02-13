@@ -45,14 +45,15 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         Boolean plug = isPluggedBeforeAndAfterEdit();
 
         if (plug) {
-            getNicType().getChangeProhibitionReasons()
-                    .add(ConstantsManager.getInstance().getConstants().hotTypeUpdateNotPossible());
-            getEnableMac().getChangeProhibitionReasons()
-                    .add(ConstantsManager.getInstance().getConstants().hotMacUpdateNotPossible());
-            getPortMirroring().getChangeProhibitionReasons()
-                    .add(ConstantsManager.getInstance()
-                            .getConstants()
-                            .hotPortMirroringUpdateNotSupported());
+            getNicType().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .hotTypeUpdateNotPossible());
+            getEnableMac().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .hotMacUpdateNotPossible());
+            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .hotPortMirroringUpdateNotSupported());
 
             initSelectedType();
             getEnableMac().setEntity(false);
@@ -82,10 +83,9 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         if (isVmUp() && hotUpdateSupported) {
             if (isPlugged && isPortMirroring) {
-                getLinked().getChangeProhibitionReasons()
-                        .add(ConstantsManager.getInstance()
-                                .getConstants()
-                                .hotLinkStateUpdateNotSupportedWithPortMirroring());
+                getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .hotLinkStateUpdateNotSupportedWithPortMirroring());
                 getLinked().setIsChangable(false);
                 initLinked();
                 return;
@@ -105,8 +105,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         if (isVmUp() && hotUpdateSupported) {
             if (isPlugged && isPortMirroring) {
-                getNetwork().getChangeProhibitionReasons()
-                        .add(ConstantsManager.getInstance()
+                getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .hotNetworkUpdateNotSupportedWithPortMirroring());
                 getNetwork().setIsChangable(false);
@@ -114,7 +113,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
                 return;
             }
         } else if (isVmUp() && isPlugged) {
-            getNetwork().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+            getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
                     .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
             getNetwork().setIsChangable(false);

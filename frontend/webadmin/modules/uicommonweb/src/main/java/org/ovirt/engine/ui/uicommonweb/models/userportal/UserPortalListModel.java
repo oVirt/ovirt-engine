@@ -28,12 +28,12 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -815,8 +815,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
                     bootSequenceModel.getNetworkOption().setIsChangable(false);
                     bootSequenceModel.getNetworkOption()
-                            .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
+                            .setChangeProhibitionReason("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
                 }
             }
         };
@@ -849,8 +848,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
-                            .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
+                            .setChangeProhibitionReason("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
                 }
             }
         };

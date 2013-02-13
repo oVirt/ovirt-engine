@@ -334,10 +334,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         diskModel.getIsBootable().setEntity(!hasBootableDisk);
         if (hasBootableDisk)
         {
+            diskModel.getIsBootable().setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
             diskModel.getIsBootable().setIsChangable(false);
-            diskModel.getIsBootable()
-                    .getChangeProhibitionReasons()
-                    .add("There can be only one bootable disk defined."); //$NON-NLS-1$
         }
 
         ArrayList<UICommand> commands = new ArrayList<UICommand>();
@@ -503,10 +501,9 @@ public class VmDiskListModel extends VmDiskListModelBase
                 }
                 if (bootableDisk != null && !bootableDisk.getId().equals(disk.getId()))
                 {
-                    diskModel.getIsBootable().setIsChangable(false);
                     diskModel.getIsBootable()
-                            .getChangeProhibitionReasons()
-                            .add("There can be only one bootable disk defined."); //$NON-NLS-1$
+                            .setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
+                    diskModel.getIsBootable().setIsChangable(false);
                 }
                 diskModel.getIsBootable().setEntity(disk.isBoot());
                 diskModel.getIsShareable().setEntity(disk.isShareable());

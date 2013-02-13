@@ -1212,14 +1212,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (vds.getStatus() != VDSStatus.Maintenance && vds.getStatus() != VDSStatus.PendingApproval)
         {
-            model.getDataCenter().setIsChangable(false);
             model.getDataCenter()
-                    .getChangeProhibitionReasons()
-                    .add("Data Center can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
-            model.getCluster().setIsChangable(false);
+                    .setChangeProhibitionReason("Data Center can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
+            model.getDataCenter().setIsChangable(false);
             model.getCluster()
-                    .getChangeProhibitionReasons()
-                    .add("Cluster can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
+                    .setChangeProhibitionReason("Cluster can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
+            model.getCluster().setIsChangable(false);
         }
         else if (getSystemTreeSelectedItem() != null)
         {

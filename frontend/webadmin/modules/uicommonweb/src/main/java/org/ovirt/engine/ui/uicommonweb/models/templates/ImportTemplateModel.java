@@ -87,11 +87,9 @@ public class ImportTemplateModel extends ImportVmModel
                             templateData.setExistsInSystem(templateExistsInSystem);
                             if (templateExistsInSystem) {
                                 templateData.getClone().setEntity(true);
-                                templateData.getClone()
-                                        .getChangeProhibitionReasons()
-                                        .add(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .importTemplateThatExistsInSystemMustClone());
+                                templateData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importTemplateThatExistsInSystemMustClone());
                                 templateData.getClone().setIsChangable(false);
                             }
                             templateDataList.add(templateData);

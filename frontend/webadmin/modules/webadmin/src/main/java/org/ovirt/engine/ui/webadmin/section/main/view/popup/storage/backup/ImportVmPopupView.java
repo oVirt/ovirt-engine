@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -252,15 +251,9 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             protected boolean canEdit(Object model) {
                 return ((ImportVmData) model).getCollapseSnapshots().getIsChangable();
             }
-
                     @Override
                     protected String getDisabledMessage(Object model) {
-                        List<String> reasons =
-                                ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReasons();
-                        if (reasons != null && !reasons.isEmpty()) {
-                            return reasons.get(0);
-                        }
-                        return null;
+                        return ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReason();
                     }
         };
         table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "10px"); //$NON-NLS-1$
@@ -284,11 +277,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
             @Override
             protected String getDisabledMessage(Object model) {
-                List<String> reasons = ((ImportVmData) model).getClone().getChangeProhibitionReasons();
-                if (reasons != null && !reasons.isEmpty()) {
-                    return reasons.get(0);
-                }
-                return null;
+                return ((ImportVmData) model).getClone().getChangeProhibitionReason();
             }
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$

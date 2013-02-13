@@ -72,8 +72,8 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
     }
 
     @Override
-    public void disable(List<String> disabilityHints) {
-        widgetWithLabel.disable(disabilityHints);
+    public void disable(String disabilityHint) {
+        widgetWithLabel.disable(disabilityHint);
     }
 
     @Override

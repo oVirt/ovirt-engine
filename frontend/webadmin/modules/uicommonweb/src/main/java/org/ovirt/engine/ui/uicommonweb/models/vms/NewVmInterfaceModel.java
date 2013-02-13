@@ -43,7 +43,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         initMAC();
 
         if (!hotPlugSupported) {
-            getPlugged().getChangeProhibitionReasons().add(ConstantsManager.getInstance()
+            getPlugged().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getMessages()
                     .hotPlugNotSupported(getClusterCompatibilityVersion().toString()));
         }

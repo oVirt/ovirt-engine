@@ -183,10 +183,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         disk.getStorageDomain().setIsChangable(!noTargets);
         disk.getSourceStorageDomain().setIsChangable(!noSources);
         disk.getSourceStorageDomainName().setIsChangable(!noSources);
-        disk.getStorageDomain().getChangeProhibitionReasons().add(isDiskBasedOnTemplate ?
+        disk.getStorageDomain().setChangeProhibitionReason(isDiskBasedOnTemplate ?
                 constants.noActiveStorageDomainWithTemplateMsg() : getNoActiveTargetDomainMessage());
-        disk.getSourceStorageDomain().getChangeProhibitionReasons().add(getNoActiveSourceDomainMessage());
-        disk.getSourceStorageDomainName().getChangeProhibitionReasons().add(getNoActiveSourceDomainMessage());
+        disk.getSourceStorageDomain().setChangeProhibitionReason(getNoActiveSourceDomainMessage());
+        disk.getSourceStorageDomainName().setChangeProhibitionReason(getNoActiveSourceDomainMessage());
     }
 
     private void addSourceStorageDomainName(DiskModel disk, ArrayList<StorageDomain> sourceStorageDomains) {

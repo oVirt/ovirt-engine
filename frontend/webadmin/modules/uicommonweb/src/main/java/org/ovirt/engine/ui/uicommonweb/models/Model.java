@@ -163,7 +163,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     }
 
     /**
-     * Gets or sets the title of this model. There is no specific purpose for this property, use it on your convinience.
+     * Gets or sets the title of this model. There is no specific purpose for this property, use it on your convenience.
      */
     private String title;
 
@@ -269,21 +269,21 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
             if (isChangable)
             {
-                getChangeProhibitionReasons().clear();
+                privateChangeProhibitionReason = null;
             }
         }
     }
 
-    private List<String> privateChangeProhibitionReasons;
+    private String privateChangeProhibitionReason;
 
-    public List<String> getChangeProhibitionReasons()
+    public String getChangeProhibitionReason()
     {
-        return privateChangeProhibitionReasons;
+        return privateChangeProhibitionReason;
     }
 
-    private void setChangeProhibitionReasons(List<String> value)
+    public void setChangeProhibitionReason(String value)
     {
-        privateChangeProhibitionReasons = value;
+        privateChangeProhibitionReason = value;
     }
 
     private boolean isSelected;
@@ -416,7 +416,6 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         setInvalidityReasons(new ObservableCollection<String>());
         setIsValid(true);
 
-        setChangeProhibitionReasons(new ObservableCollection<String>());
         setIsChangable(true);
         setAvailableInModes(ApplicationMode.AllModes);
         setIsAvailable(true);

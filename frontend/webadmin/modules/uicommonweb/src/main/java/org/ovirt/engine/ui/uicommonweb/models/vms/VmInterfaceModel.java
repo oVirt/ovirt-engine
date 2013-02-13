@@ -283,11 +283,10 @@ public abstract class VmInterfaceModel extends Model
 
                 boolean isPlugChangeable = getPlugged().getIsChangable();
 
-                getPlugged_IsSelected().getChangeProhibitionReasons().addAll(getLinked().getChangeProhibitionReasons());
+                getPlugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getPlugged_IsSelected().setIsChangable(isPlugChangeable);
 
-                getUnplugged_IsSelected().getChangeProhibitionReasons()
-                        .addAll(getLinked().getChangeProhibitionReasons());
+                getUnplugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnplugged_IsSelected().setIsChangable(isPlugChangeable);
             } else if (propArgs.PropertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isPlugAvailable = getPlugged().getIsAvailable();
@@ -318,11 +317,10 @@ public abstract class VmInterfaceModel extends Model
             } else if (propArgs.PropertyName.equals("IsChangable")) { //$NON-NLS-1$
                 boolean isLinkedChangeable = getLinked().getIsChangable();
 
-                getLinked_IsSelected().getChangeProhibitionReasons().addAll(getLinked().getChangeProhibitionReasons());
+                getLinked_IsSelected().setChangeProhibitionReason(getChangeProhibitionReason());
                 getLinked_IsSelected().setIsChangable(isLinkedChangeable);
 
-                getUnlinked_IsSelected().getChangeProhibitionReasons()
-                        .addAll(getLinked().getChangeProhibitionReasons());
+                getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnlinked_IsSelected().setIsChangable(isLinkedChangeable);
             } else if (propArgs.PropertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isLinkedAvailable = getLinked().getIsAvailable();

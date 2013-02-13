@@ -922,7 +922,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.setEntity(deleteDisks);
         if (!isChangable && changeProhibitionReason != null) {
-            model.getChangeProhibitionReasons().add(changeProhibitionReason);
+            model.setChangeProhibitionReason(changeProhibitionReason);
         }
         model.setIsChangable(isChangable);
     }
@@ -1354,7 +1354,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery((ExportVmModel) getWindow(),
+        AsyncDataProvider.GetVmDiskList(new AsyncQuery(getWindow(),
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
@@ -1472,10 +1472,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 if (!hasNics)
                 {
                     BootSequenceModel bootSequenceModel = runOnceModel.getBootSequence();
-                    bootSequenceModel.getNetworkOption().setIsChangable(false);
                     bootSequenceModel.getNetworkOption()
-                            .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
+                            .setChangeProhibitionReason("Virtual Machine must have at least one network interface defined to boot from network."); //$NON-NLS-1$
+                    bootSequenceModel.getNetworkOption().setIsChangable(false);
                 }
             }
         };
@@ -1510,8 +1509,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             ((RunOnceModel) userPortalListModel.getWindow()).getBootSequence();
                     bootSequenceModel.getHardDiskOption().setIsChangable(false);
                     bootSequenceModel.getHardDiskOption()
-                            .getChangeProhibitionReasons()
-                            .add("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
+                            .setChangeProhibitionReason("Virtual Machine must have at least one bootable disk defined to boot from hard disk."); //$NON-NLS-1$
                 }
             }
         };

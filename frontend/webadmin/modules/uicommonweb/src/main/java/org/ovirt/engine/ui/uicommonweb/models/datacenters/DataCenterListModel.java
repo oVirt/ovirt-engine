@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.RecoveryStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -47,10 +51,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class DataCenterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -325,10 +325,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
 
                         if (storageDomainList.size() != 0) {
-                            model.getStorageTypeList().setIsChangable(false);
                             model.getStorageTypeList()
-                                    .getChangeProhibitionReasons()
-                                    .add("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
+                                    .setChangeProhibitionReason("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
+                            model.getStorageTypeList().setIsChangable(false);
                         }
 
                     }
