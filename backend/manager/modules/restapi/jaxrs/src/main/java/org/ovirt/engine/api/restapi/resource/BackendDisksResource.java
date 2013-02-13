@@ -63,7 +63,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
                                         localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
                                         Response.Status.BAD_REQUEST);
         } else {
-            validateParameters(disk, 3, "provisionedSize|size"); // Non lun disks require size
+            validateParameters(disk, 2, "provisionedSize|size"); // Non lun disks require size
         }
         validateEnums(Disk.class, disk);
     }
