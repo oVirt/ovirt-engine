@@ -422,6 +422,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setVmId(getVmIdFromImageParameters());
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            p.setTaskGroupSuccess(false);
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
         }
 

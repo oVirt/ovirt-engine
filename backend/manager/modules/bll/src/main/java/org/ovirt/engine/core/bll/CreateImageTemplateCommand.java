@@ -6,7 +6,9 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
+import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -116,13 +118,23 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setVmTemplate(DbFacade.getInstance().getVmTemplateDao()
                 .get(getVmTemplateId()));
         if (getDestinationDiskImage() != null) {
-            getBaseDiskDao().remove(getDestinationDiskImage().getId());
-            if (DbFacade.getInstance().getDiskImageDynamicDao().get(getDestinationDiskImage().getImageId()) != null) {
-                DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
-            }
-            getImageDao().remove(getDestinationImageId());
+            revertTasks();
         }
         setSucceeded(true);
     }
 
+    @Override
+    protected void revertTasks() {
+        Guid destImageId = getDestinationDiskImage().getImageId();
+        RemoveImageParameters p =
+                new RemoveImageParameters(destImageId);
+        p.setEntityId(destImageId);
+        p.setParentParameters(p);
+        p.setParentCommand(VdcActionType.RemoveImage);
+        VdcReturnValueBase returnValue =
+                checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, p);
+        if (returnValue.getSucceeded()) {
+            startPollingAsyncTasks(returnValue.getInternalTaskIdList());
+        }
+    }
 }
