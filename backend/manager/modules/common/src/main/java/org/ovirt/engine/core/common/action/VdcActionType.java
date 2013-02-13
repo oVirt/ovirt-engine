@@ -7,9 +7,9 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 public enum VdcActionType {
     Unknown(0, QuotaDependency.NONE),
     // Vm Commands
-    AddVm(1, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
-    AddVmFromTemplate(2, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
-    AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.NONE),
+    AddVm(1, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
+    AddVmFromTemplate(2, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
+    AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
     UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
     StopVm(7, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.BOTH),
@@ -53,7 +53,7 @@ public enum VdcActionType {
     // powerclient 4.2
     PowerClientMigrateOnConnectCheck(50, QuotaDependency.NONE),
     SetDedicatedVm(51, QuotaDependency.NONE),
-    AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.STORAGE),
+    AddVmFromSnapshot(52, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     // VdsCommands
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
@@ -88,7 +88,7 @@ public enum VdcActionType {
     CommitNetworkChanges(157, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     SetupNetworks(158, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     // VmTemplatesCommand
-    AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.STORAGE),
+    AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
     UpdateVmTemplate(202, ActionGroup.EDIT_TEMPLATE_PROPERTIES, QuotaDependency.VDS_GROUP),
     RemoveVmTemplate(203, ActionGroup.DELETE_TEMPLATE, QuotaDependency.STORAGE),
     MoveOrCopyTemplate(226, ActionGroup.COPY_TEMPLATE, QuotaDependency.STORAGE),
@@ -117,7 +117,8 @@ public enum VdcActionType {
     RemoveDisk(230, QuotaDependency.STORAGE),
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
-    AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.STORAGE),
+    AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
+    UpdateUserVm(303, QuotaDependency.NONE),
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
     AddVmAndAttachToPool(306, QuotaDependency.NONE),
     RemoveVmPool(307, ActionGroup.DELETE_VM_POOL, QuotaDependency.NONE),

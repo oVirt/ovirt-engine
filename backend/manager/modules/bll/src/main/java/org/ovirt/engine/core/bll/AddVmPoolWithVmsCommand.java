@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -17,7 +20,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T> {
+public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends CommonVmPoolWithVmsCommand<T>
+        implements QuotaVdsDependent {
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -95,4 +99,16 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         }
         return jobProperties;
     }
+
+    private Guid getQuotaId() {
+        return getParameters().getVmStaticData().getQuotaId();
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        list.add(new QuotaSanityParameter(getQuotaId(), null));
+        return list;
+    }
+
 }

@@ -11,8 +11,10 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -50,7 +52,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
-        implements QuotaStorageDependent {
+        implements QuotaStorageDependent, QuotaVdsDependent {
 
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
     private List<PermissionSubject> permissionCheckSubject;
@@ -501,6 +503,17 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     disk.getStorageIds().get(0),
                     (double)disk.getSizeInGigabytes()));
         }
+        return list;
+    }
+
+    private Guid getQuotaId() {
+        return getParameters().getMasterVm().getQuotaId();
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
     }
 }

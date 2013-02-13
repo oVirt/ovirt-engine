@@ -13,8 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
+import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -70,7 +72,7 @@ import org.ovirt.engine.core.utils.vmproperties.VmPropertiesUtils.ValidationErro
 @DisableInPrepareMode
 @LockIdNameAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
-        implements QuotaStorageDependent {
+        implements QuotaStorageDependent, QuotaVdsDependent {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
@@ -793,6 +795,13 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     disk.getStorageIds().get(0),
                     (double)disk.getSizeInGigabytes()));
         }
+        return list;
+    }
+
+    @Override
+    public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
+        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
     }
 }
