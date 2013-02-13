@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class UserPortalLoginModel extends LoginModel
 {
 
+    private static final ActionGroup ConsumeQuotaActionGroup = ActionGroup.CONSUME_QUOTA; // 901
     private UICommand privateChangePasswordCommand;
 
     public UICommand getChangePasswordCommand()
@@ -288,6 +289,10 @@ public class UserPortalLoginModel extends LoginModel
 
                         UserPortalLoginModel loginModel = (UserPortalLoginModel) target;
                         loginModel.setENGINEUserActionGroupList((ArrayList<ActionGroup>) returnValue);
+                        // a user 'stays' a user if he has consume quota action group.
+                        // so we need to apply the same logic to this ActionGroup as for
+                        // engine user role's action group.
+                        loginModel.getENGINEUserActionGroupList().add(ConsumeQuotaActionGroup);
                         loginModel.GetUserRoles(loginModel);
 
                     }
