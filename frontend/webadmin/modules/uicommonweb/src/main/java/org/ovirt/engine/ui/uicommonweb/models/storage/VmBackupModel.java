@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
@@ -19,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -42,16 +44,20 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotInCollectionValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-
 public class VmBackupModel extends ManageBackupModel {
 
     private VmAppListModel privateAppListModel;
     protected List<Object> objectsToClone;
+    /** used to save the names that were assigned for VMs which are going
+     *  to be created using import in case of choosing multiple VM imports */
+    protected Set<String> assignedVmNames = new HashSet<String>();
     protected Map<Guid, Object> cloneObjectMap;
     protected ImportVmModel importModel;
 
@@ -222,8 +228,9 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     private void executeImportClone() {
-        //TODO: support running numbers (for suffix)
+        // TODO: support running numbers (for suffix)
         if (objectsToClone.size() == 0) {
+            clearCachedAssignedVmNames();
             executeImport();
             return;
         }
@@ -242,7 +249,6 @@ public class VmBackupModel extends ManageBackupModel {
         entity.getCommands().add(command);
 
         setConfirmWindow(entity);
-
     }
 
     private void onClone() {
@@ -264,7 +270,7 @@ public class VmBackupModel extends ManageBackupModel {
             Object object = cloneModel.getEntity();
             if (!(Boolean) cloneModel.getNoClone().getEntity()) {
                 String vmName = (String) cloneModel.getName().getEntity();
-                if (!validateName(vmName, object, cloneModel.getName())) {
+                if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators(object))) {
                     return;
                 }
                 setObjectName(object, vmName, false);
@@ -278,46 +284,87 @@ public class VmBackupModel extends ManageBackupModel {
         executeImportClone();
     }
 
-    protected void setObjectName(Object object, String name, boolean isSuffix) {
-        VM vm = ((ImportVmData) object).getVm();
-        if (isSuffix) {
-            vm.setName(vm.getName() + name);
-        } else {
-            vm.setName(name);
-        }
+    private void setObjectName(Object object, String input, boolean isSuffix) {
+        String nameForTheClonedVm = isSuffix ? getObjectName(object) + input : input;
+        setObjectName(object, nameForTheClonedVm);
+        assignedVmNames.add(nameForTheClonedVm);
+    }
+
+    protected String getObjectName(Object object) {
+        return ((ImportVmData) object).getVm().getName();
+    }
+
+    protected void setObjectName(Object object, String name) {
+        ((ImportVmData) object).getVm().setName(name);
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsToClone) {
             VM vm = ((ImportVmData) object).getVm();
-            if (!validateName(vm.getName() + suffix, object, entityModel)) {
+            if (!validateName(vm.getName() + suffix, entityModel, getClonedAppendedNameValidators(object))) {
                 return false;
             }
         }
         return true;
     }
 
-    protected boolean validateName(String newVmName, Object object, EntityModel entity) {
+    protected IValidation[] getClonedNameValidators(Object object) {
+        final int maxClonedNameLength = getMaxClonedNameLength(object);
+        return new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(maxClonedNameLength),
+                new I18NNameValidation() {
+                    @Override
+                    protected String composeMessage() {
+                        return ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength);
+                    };
+                },
+                new UniqueClonedNameValidator(assignedVmNames)
+        };
+    }
+
+    protected IValidation[] getClonedAppendedNameValidators(Object object) {
+        final int maxClonedNameLength = getMaxClonedNameLength(object);
+        return new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(maxClonedNameLength),
+                new I18NNameValidation() {
+                    @Override
+                    protected String composeMessage() {
+                        return ConstantsManager.getInstance()
+                                .getMessages()
+                                .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength);
+                    };
+                },
+                new UniqueClonedAppendedNameValidator(assignedVmNames)
+        };
+    }
+
+    protected String getAlreadyAssignedClonedNameMessage() {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .alreadyAssignedClonedVmName();
+    }
+
+    protected String getSuffixCauseToClonedNameCollisionMessage(String existingName) {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .suffixCauseToClonedVmNameCollision(existingName);
+    }
+
+    protected int getMaxClonedNameLength(Object object) {
         VM vm = ((ImportVmData) object).getVm();
-        VmOsType osType = vm.getOs();
+        return AsyncDataProvider.IsWindowsOsType(vm.getOs()) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
+                : UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
+    }
+
+    protected boolean validateName(String newVmName, EntityModel entity, IValidation[] validators) {
         EntityModel temp = new EntityModel();
         temp.setIsValid(true);
         temp.setEntity(newVmName);
-        final int length = AsyncDataProvider.IsWindowsOsType(osType) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
-                : UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
-        temp.ValidateEntity(
-                new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(length),
-                        new I18NNameValidation() {
-                            @Override
-                            protected String composeMessage() {
-                                return ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .newNameWithSuffixCannotContainBlankOrSpecialChars(length);
-                            };
-                        }
-                });
+        temp.ValidateEntity(validators);
         if (!temp.getIsValid()) {
             entity.setInvalidityReasons(temp.getInvalidityReasons());
             entity.setIsValid(false);
@@ -328,13 +375,14 @@ public class VmBackupModel extends ManageBackupModel {
 
     private void closeClone() {
         setConfirmWindow(null);
+        clearCachedAssignedVmNames();
     }
 
     protected void executeImport() {
         ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
 
         for (Object item : importModel.getItems()) {
-            VM vm = ((ImportVmData)item).getVm();
+            VM vm = ((ImportVmData) item).getVm();
 
             ImportVmParameters prm = new ImportVmParameters(vm, getEntity().getId(),
                     Guid.Empty, importModel.getStoragePool().getId(),
@@ -421,7 +469,9 @@ public class VmBackupModel extends ManageBackupModel {
                                         .importVirtualMachinesTitle());
                                 confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
                                 importedVms = StringHelper.trimEnd(importedVms.trim(), ',');
-                                confirmModel.setMessage(ConstantsManager.getInstance().getMessages().importProcessHasBegunForVms(importedVms));
+                                confirmModel.setMessage(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .importProcessHasBegunForVms(importedVms));
                                 UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
                                         vmBackupModel);
                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -510,8 +560,49 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     @Override
+    protected final void Cancel() {
+        super.Cancel();
+        clearCachedAssignedVmNames();
+    }
+
+    @Override
     protected String getListName() {
         return "VmBackupModel"; //$NON-NLS-1$
     }
 
+    private void clearCachedAssignedVmNames() {
+        assignedVmNames.clear();
+    }
+
+    private class UniqueClonedNameValidator extends NotInCollectionValidation {
+
+        public UniqueClonedNameValidator(Collection<?> collection) {
+            super(collection);
+        }
+
+        @Override
+        public ValidationResult Validate(Object value) {
+            ValidationResult result = super.Validate(value);
+            if (!result.getSuccess()) {
+                result.getReasons().add(getAlreadyAssignedClonedNameMessage());
+            }
+            return result;
+        }
+    }
+
+    private class UniqueClonedAppendedNameValidator extends NotInCollectionValidation {
+
+        public UniqueClonedAppendedNameValidator(Collection<?> collection) {
+            super(collection);
+        }
+
+        @Override
+        public ValidationResult Validate(Object value) {
+            ValidationResult result = super.Validate(value);
+            if (!result.getSuccess()) {
+                result.getReasons().add(getSuffixCauseToClonedNameCollisionMessage((String) value));
+            }
+            return result;
+        }
+    }
 }

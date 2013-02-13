@@ -36,10 +36,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -129,20 +125,20 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected void setObjectName(Object object, String name, boolean isSuffix) {
-        VmTemplate template = ((ImportTemplateData) object).getTemplate();
-        if (isSuffix) {
-            template.setName(template.getName() + name);
-        } else {
-            template.setName(name);
-        }
+    protected String getObjectName(Object object) {
+        return ((ImportTemplateData) object).getTemplate().getName();
+    }
+
+    @Override
+    protected void setObjectName(Object object, String name) {
+        ((ImportTemplateData) object).getTemplate().setName(name);
     }
 
     @Override
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
         for (Object object : objectsToClone) {
             VmTemplate template = ((ImportTemplateData) object).getTemplate();
-            if (!validateName(template.getName() + suffix, template, entityModel)) {
+            if (!validateName(template.getName() + suffix, entityModel, getClonedAppendedNameValidators(null))) {
                 return false;
             }
         }
@@ -150,29 +146,22 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected boolean validateName(String newVmName, Object object, EntityModel entity) {
-        EntityModel temp = new EntityModel();
-        temp.setIsValid(true);
-        temp.setEntity(newVmName);
-        temp.ValidateEntity(
-                new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT),
-                        new I18NNameValidation() {
-                            @Override
-                            protected String composeMessage() {
-                                return ConstantsManager.getInstance()
-                                        .getMessages()
-                                        .newNameWithSuffixCannotContainBlankOrSpecialChars(UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT);
-                            };
-                        }
-                });
-        if (!temp.getIsValid()) {
-            entity.setInvalidityReasons(temp.getInvalidityReasons());
-            entity.setIsValid(false);
-        }
+    protected int getMaxClonedNameLength(Object object) {
+        return UnitVmModel.VM_TEMPLATE_NAME_MAX_LIMIT;
+    }
 
-        return temp.getIsValid();
+    @Override
+    protected String getAlreadyAssignedClonedNameMessage() {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .alreadyAssignedClonedTemplateName();
+    }
+
+    @Override
+    protected String getSuffixCauseToClonedNameCollisionMessage(String existingName) {
+        return ConstantsManager.getInstance()
+                .getMessages()
+                .suffixCauseToClonedTemplateNameCollision(existingName);
     }
 
     @Override

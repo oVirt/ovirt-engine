@@ -48,6 +48,18 @@ public interface Messages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("No Storage Domain is active.")
     String noActiveStorageDomain();
 
+    @DefaultMessage("This name was already assigned to another cloned Virtual Machine.")
+    String alreadyAssignedClonedVmName();
+
+    @DefaultMessage("This suffix will cause a name collision with another cloned Virtual Machine: {0}.")
+    String suffixCauseToClonedVmNameCollision(String vmName);
+
+    @DefaultMessage("This name was already assigned to another cloned Template.")
+    String alreadyAssignedClonedTemplateName();
+
+    @DefaultMessage("This suffix will cause a name collision with another cloned Template: {0}.")
+    String suffixCauseToClonedTemplateNameCollision(String templateName);
+
     @DefaultMessage("When {0} {1} {2} is used, kernel path must be non-empty")
     String invalidPath(String kernel, String or, String inetd);
 
