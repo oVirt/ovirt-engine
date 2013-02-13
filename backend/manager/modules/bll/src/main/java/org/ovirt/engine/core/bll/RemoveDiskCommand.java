@@ -335,7 +335,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? AuditLogType.USER_REMOVE_DISK : AuditLogType.USER_FAILED_REMOVE_DISK;
+            if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+                return getSucceeded() ? AuditLogType.USER_REMOVE_DISK : AuditLogType.USER_FAILED_REMOVE_DISK;
+            } else {
+                return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
+                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
+            }
         case END_SUCCESS:
             return AuditLogType.USER_FINISHED_REMOVE_DISK;
         default:

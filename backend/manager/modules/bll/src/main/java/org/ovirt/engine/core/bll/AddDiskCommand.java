@@ -438,8 +438,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getExecuteAuditLogTypeValue(getSucceeded());
-
+            if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+                return getExecuteAuditLogTypeValue(getSucceeded());
+            } else {
+                return getEndSuccessAuditLogTypeValue(getSucceeded());
+            }
         case END_SUCCESS:
             return getEndSuccessAuditLogTypeValue(getSucceeded());
 
@@ -508,6 +511,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return Collections.singletonMap(getParameters().getVmId().toString(), LockMessagesMatchUtil.VM);
         }
         return null;
+    }
+
+    @Override
+    protected void setLoggingForCommand() {
+        setCommandShouldBeLogged(true);
     }
 
     private Guid getQuotaId() {

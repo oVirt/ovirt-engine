@@ -207,9 +207,13 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 VmHandler.unlockVm(getVm(), getCompensationContext());
             }
         } else {
-            setCommandShouldBeLogged(false);
+            setLoggingForCommand();
             log.warn("VmCommand::EndVmCommand: Vm is null - not performing EndAction on Vm");
         }
+    }
+
+    protected void setLoggingForCommand() {
+        setCommandShouldBeLogged(false);
     }
 
     /**
