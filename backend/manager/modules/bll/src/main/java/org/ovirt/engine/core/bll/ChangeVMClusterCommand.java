@@ -59,7 +59,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
                 Version clusterCompatibilityVersion = targetCluster.getcompatibility_version();
                 if (!validateDestinationClusterContainsNetworks(interfaces)
-                        || !validateNicsLinkedCorrectly(interfaces, clusterCompatibilityVersion)) {
+                        || !validateNics(interfaces, clusterCompatibilityVersion)) {
                     return false;
                 }
 
@@ -86,20 +86,21 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     }
 
     /**
-     * Checks that when unlinking is not supported in the destination cluster and a NIC has unlinked network, it's not
-     * valid.
+     * Checks that when unlinking/null network is not supported in the destination cluster and a NIC has unlinked/null
+     * network, it's not valid.
      *
      * @param interfaces
      *            The NICs to check.
      * @param clusterCompatibilityVersion
      *            The destination cluster's compatibility version.
-     * @return Whether the NICs are linked correctly (with regards to the destination cluster).
+     * @return Whether the NICs are linked correctly and network name is valid (with regards to the destination
+     *         cluster).
      */
-    private boolean validateNicsLinkedCorrectly(List<VmNetworkInterface> interfaces,
+    private boolean validateNics(List<VmNetworkInterface> interfaces,
             Version clusterCompatibilityVersion) {
         for (VmNetworkInterface iface : interfaces) {
             VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
-            if (!validate(nicValidator.linkedCorrectly())) {
+            if (!validate(nicValidator.networkNameValid()) || !validate(nicValidator.linkedCorrectly())) {
                 return false;
             }
         }

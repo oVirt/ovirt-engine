@@ -1971,7 +1971,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String UNLINKING_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. You must select a network for clusters of version ${clusterVersion}.")
+    @DefaultStringValue("Cannot ${action} ${type}. There is no network on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String NULL_NETWORK_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
