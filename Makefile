@@ -420,10 +420,9 @@ install_misc:
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
 
-	# PostgreSQL driver:
-	install -dm 755 $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main
-	install -m 644 deployment/modules/org/postgresql/main/module.xml $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main/.
-	ln -s $(JAVA_DIR)/postgresql-jdbc.jar $(DESTDIR)$(PKG_JBOSS_MODULES)/org/postgresql/main/.
+	# Uncompress and install the contents of the modules archive to
+	# the directory containing engine modules:
+	X=`find "$(MAVEN_OUTPUT_DIR)" -name "dependencies-$(APP_VERSION)*-modules.zip"` && unzip "$$X" -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
 
 install_service:
 	@echo "*** Deploying service"

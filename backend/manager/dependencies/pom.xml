@@ -1,0 +1,55 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core</groupId>
+    <artifactId>manager</artifactId>
+    <version>3.3.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>dependencies</artifactId>
+  <packaging>jar</packaging>
+
+  <name>oVirt Engine dependencies</name>
+
+  <!-- We need to put here all the dependencies corresponding to the
+       .jar files that will be added to the modules archive: -->
+
+  <dependencies>
+
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgres.jdbc.version}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+        <!-- Create the JBoss modules: -->
+        <plugin>
+          <groupId>org.ovirt.engine</groupId>
+          <artifactId>jboss-modules-maven-plugin</artifactId>
+          <configuration>
+            <modules>
+              <module>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <moduleName>org.postgresql</moduleName>
+              </module>
+            </modules>
+          </configuration>
+        </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
