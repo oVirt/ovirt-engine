@@ -10,19 +10,6 @@
   <packaging>war</packaging>
   <name>UserPortal</name>
   <description>oVirt Engine User Portal GUI</description>
-  <properties>
-    <!-- Activate load time weaving of the aspects -->
-    <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
-    <!-- Regular expression that matches the types that the GWT compiler shouldn't prune -->
-    <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
-    <!-- This can be overidded by setting this property in your personal settings.xml -->
-    <gwt-plugin.extraJvmArgs>${aspectj.agent} -Xms1024M -Xmx2048M -XX:PermSize=256M -XX:MaxPermSize=256M ${gwt.dontPrune}</gwt-plugin.extraJvmArgs>
-    <!-- Set gwt.userAgent property via the resource plugin during the resource phase,
-			By default, all browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
-    <gwt.userAgent>ie6,ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
-    <gwt.locale>default</gwt.locale>
-  </properties>
-  <!-- TODO: Define SCM -->
   <dependencies>
     <!-- Google Web Toolkit dependencies -->
     <dependency>
@@ -126,7 +113,6 @@
   <build>
     <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes
 		</outputDirectory>
-    <!-- Currently maven resource sttructure contains all static content. -->
     <resources>
       <resource>
         <targetPath>${project.build.directory}/generated-sources/gwt</targetPath>
@@ -196,22 +182,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>gwt-maven-plugin</artifactId>
-				<executions> <execution> <goals> <goal>compile</goal> <goal>test</goal> </goals>
-				</execution> </executions> <configuration> <runTarget>webadmin/Application.html</runTarget>
-				<extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs> <debugSuspend>false</debugSuspend>
-				</configuration> </plugin> -->
-      <!-- ====================================================================== -->
-      <!-- It's possible to use the target/web.xml file mergewebxml produces,
-				by -->
-      <!-- making the war plugin to use it. It's possible to exclude what -->
-      <!-- neccessary from the final artifact here. -->
-      <!-- ====================================================================== -->
-      <!-- <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
-				<webXml>target/web.xml</webXml> <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
-				</configuration> </plugin> <plugin> <artifactId>maven-compiler-plugin</artifactId>
-				<configuration> <source>${maven.compiler.source}</source> <target>${maven.compiler.target}</target>
-				</configuration> </plugin> -->
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
@@ -228,47 +198,8 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
-            <dependencies>
-              <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-user</artifactId>
-                <version>${gwt.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-dev</artifactId>
-                <version>${gwt.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>com.google.gwt</groupId>
-                <artifactId>gwt-servlet</artifactId>
-                <version>${gwt.version}</version>
-              </dependency>
-              <!-- Add gwt-extension aspjects to the GWT compiler classpath -->
-              <dependency>
-                <groupId>${engine.groupId}</groupId>
-                <artifactId>gwt-extension</artifactId>
-                <version>${engine.version}</version>
-              </dependency>
-            </dependencies>
             <configuration>
-              <logLevel>INFO</logLevel>
-              <style>OBF</style>
               <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
-              <port>8700</port>
-              <noServer>true</noServer>
-              <bindAddress>0.0.0.0</bindAddress>
-              <gen>${gwtGenDirectory}</gen>
-              <extraJvmArgs>${gwt-plugin.extraJvmArgs}</extraJvmArgs>
-              <copyWebapp>true</copyWebapp>
-              <compileSourcesArtifacts>
-                <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
-                <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>
-              </compileSourcesArtifacts>
-              <!--Why asm is excluded? -->
-              <runClasspathExcludes>
-                <runClasspathExclude>asm-3.3.jar</runClasspathExclude>
-              </runClasspathExcludes>
             </configuration>
             <executions>
               <execution>
@@ -287,6 +218,14 @@
       <id>gwtdev</id>
       <build>
         <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>gwt-maven-plugin</artifactId>
+            <configuration>
+              <style>DETAILED</style>
+              <draftCompile>true</draftCompile>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
@@ -330,12 +269,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-    <profile>
-      <id>all-langs</id>
-      <properties>
-        <gwt.locale>default,es,fr,ja,pt_BR,zh_CN</gwt.locale>
-      </properties>
     </profile>
   </profiles>
 </project>
