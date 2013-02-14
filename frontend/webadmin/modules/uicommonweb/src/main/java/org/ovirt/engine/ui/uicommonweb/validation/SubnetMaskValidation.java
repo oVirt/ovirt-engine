@@ -29,8 +29,8 @@ public class SubnetMaskValidation implements IValidation
     }
 
     @Override
-    public ValidationResult Validate(Object value) {
-        ValidationResult ipValidation = IP_VALIDATOR.Validate(value);
+    public ValidationResult validate(Object value) {
+        ValidationResult ipValidation = IP_VALIDATOR.validate(value);
         if (!ipValidation.getSuccess()) {
             return ipValidation;
         }

@@ -21,7 +21,7 @@ public class PoolNameLengthValidation implements IValidation {
     }
 
     @Override
-    public ValidationResult Validate(Object value) {
+    public ValidationResult validate(Object value) {
         int numOfVmsInPoolLengt = getNumOfVmsInPoolLength();
 
         // the +1 is the '-' sign between the name of pool and the ID of the VM

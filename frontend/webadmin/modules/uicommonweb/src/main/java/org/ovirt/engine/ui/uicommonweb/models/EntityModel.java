@@ -132,7 +132,7 @@ public class EntityModel extends Model
 
         for (IValidation validation : validations)
         {
-            ValidationResult result = validation.Validate(getEntity());
+            ValidationResult result = validation.validate(getEntity());
             if (!result.getSuccess())
             {
                 for (String reason : result.getReasons())

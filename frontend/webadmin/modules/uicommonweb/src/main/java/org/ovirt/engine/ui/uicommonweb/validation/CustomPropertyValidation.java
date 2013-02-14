@@ -38,7 +38,7 @@ public class CustomPropertyValidation implements IValidation
     }
 
     @Override
-    public ValidationResult Validate(Object value)
+    public ValidationResult validate(Object value)
     {
         // check regex first
         RegexValidation tempVar = new RegexValidation();
@@ -46,7 +46,7 @@ public class CustomPropertyValidation implements IValidation
         tempVar.setMessage(ConstantsManager.getInstance().getConstants().fieldValueShouldFollowMsg());
         RegexValidation regexValidation = tempVar;
 
-        ValidationResult validationResult = regexValidation.Validate(value);
+        ValidationResult validationResult = regexValidation.validate(value);
         if (validationResult.getSuccess() == false)
         {
             return validationResult;
@@ -124,7 +124,7 @@ public class CustomPropertyValidation implements IValidation
                     RegexValidation tempVar3 = new RegexValidation();
                     tempVar3.setExpression(validKey.substring(validKey.indexOf('=') + 1));
                     RegexValidation testValue = tempVar3;
-                    if (testValue.Validate(line.substring(line.indexOf('=') + 1)).getSuccess() == false)
+                    if (testValue.validate(line.substring(line.indexOf('=') + 1)).getSuccess() == false)
                     {
                         falseProperty = validKey;
                         continue;

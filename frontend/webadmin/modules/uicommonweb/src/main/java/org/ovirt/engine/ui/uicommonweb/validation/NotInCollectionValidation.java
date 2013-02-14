@@ -18,7 +18,7 @@ public abstract class NotInCollectionValidation implements IValidation {
     }
 
     @Override
-    public ValidationResult Validate(Object value) {
+    public ValidationResult validate(Object value) {
         ValidationResult result = new ValidationResult();
         result.setSuccess(!collection.contains(value));
         return result;

@@ -5,5 +5,5 @@ package org.ovirt.engine.ui.uicommonweb.validation;
  */
 public interface IValidation
 {
-    ValidationResult Validate(Object value);
+    ValidationResult validate(Object value);
 }

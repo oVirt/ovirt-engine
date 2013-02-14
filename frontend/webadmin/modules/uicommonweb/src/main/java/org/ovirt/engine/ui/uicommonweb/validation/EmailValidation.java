@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicompat.MailAddress;
 public class EmailValidation implements IValidation
 {
     @Override
-    public ValidationResult Validate(Object value)
+    public ValidationResult validate(Object value)
     {
         ValidationResult result = new ValidationResult();
 

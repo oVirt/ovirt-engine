@@ -581,8 +581,8 @@ public class VmBackupModel extends ManageBackupModel {
         }
 
         @Override
-        public ValidationResult Validate(Object value) {
-            ValidationResult result = super.Validate(value);
+        public ValidationResult validate(Object value) {
+            ValidationResult result = super.validate(value);
             if (!result.getSuccess()) {
                 result.getReasons().add(getAlreadyAssignedClonedNameMessage());
             }
@@ -597,8 +597,8 @@ public class VmBackupModel extends ManageBackupModel {
         }
 
         @Override
-        public ValidationResult Validate(Object value) {
-            ValidationResult result = super.Validate(value);
+        public ValidationResult validate(Object value) {
+            ValidationResult result = super.validate(value);
             if (!result.getSuccess()) {
                 result.getReasons().add(getSuffixCauseToClonedNameCollisionMessage((String) value));
             }

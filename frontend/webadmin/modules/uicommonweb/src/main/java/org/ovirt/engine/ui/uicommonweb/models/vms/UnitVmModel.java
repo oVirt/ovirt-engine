@@ -2105,7 +2105,7 @@ public class UnitVmModel extends Model {
     class TotalCpuCoresComposableValidation implements IValidation {
 
         @Override
-        public ValidationResult Validate(Object value) {
+        public ValidationResult validate(Object value) {
             boolean isOk = behavior.isNumOfSocketsCorrect(Integer.parseInt(getTotalCPUCores().getEntity().toString()));
             ValidationResult res = new ValidationResult();
             res.setSuccess(isOk);

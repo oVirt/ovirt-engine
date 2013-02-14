@@ -300,7 +300,7 @@ public class ListModel extends EntityModel
 
         for (IValidation validation : validations)
         {
-            ValidationResult result = validation.Validate(getSelectedItem());
+            ValidationResult result = validation.validate(getSelectedItem());
             if (!result.getSuccess())
             {
                 for (String reason : result.getReasons())

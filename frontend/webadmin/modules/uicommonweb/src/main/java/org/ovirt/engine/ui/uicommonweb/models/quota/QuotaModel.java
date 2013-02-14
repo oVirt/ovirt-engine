@@ -397,7 +397,7 @@ public class QuotaModel extends EntityModel {
     static final IValidation quotaEmptyValidation = new IValidation() {
 
         @Override
-        public ValidationResult Validate(Object value) {
+        public ValidationResult validate(Object value) {
             ValidationResult result = new ValidationResult();
             result.setSuccess(false);
             result.getReasons().clear();

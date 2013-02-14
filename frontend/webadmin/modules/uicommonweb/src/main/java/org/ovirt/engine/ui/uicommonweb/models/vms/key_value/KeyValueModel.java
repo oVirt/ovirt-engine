@@ -151,7 +151,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             splitLine = line.split("="); //$NON-NLS-1$
             String key = splitLine[0];
             allKeyValueMap.put(key, splitLine[1]);
-            ValidationResult valid = regexValidation.Validate(allKeyValueMap.get(key));
+            ValidationResult valid = regexValidation.validate(allKeyValueMap.get(key));
             if (valid.getSuccess()) {
                 String[] values = allKeyValueMap.get(key)
                         .substring(2, allKeyValueMap.get(key).length() - 2)

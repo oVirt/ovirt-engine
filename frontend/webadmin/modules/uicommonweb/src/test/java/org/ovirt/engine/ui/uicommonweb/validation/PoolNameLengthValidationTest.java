@@ -36,8 +36,8 @@ public class PoolNameLengthValidationTest {
     private void assertValidationWorks(int nameLength, int numOfVms, boolean expected) {
         // enough to test for windows, the logic is the same
         PoolNameLengthValidation validation =
-                new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, VmOsType.Windows2003); //$NON-NLS-1$
-        assertThat(validation.Validate(null).getSuccess(), is(equalTo(expected)));
+                new PoolNameLengthValidation(nameOfLength(nameLength), numOfVms, VmOsType.Windows2003);
+        assertThat(validation.validate(null).getSuccess(), is(equalTo(expected)));
     }
 
     private String nameOfLength(int nameLength) {
