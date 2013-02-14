@@ -12,6 +12,7 @@
   <description>parent POM for all oVirt Manager</description>
   <modules>
     <module>dbscripts</module>
+    <module>dependencies</module>
     <module>modules</module>
     <module>tools</module>
   </modules>

@@ -484,12 +484,6 @@ done <<'.'
 snakeyaml snakeyaml
 .
 
-# Copy the module definitions:
-install -dm 755 %{buildroot}%{engine_jboss_modules}
-cp -r deployment/modules/* %{buildroot}%{engine_jboss_modules}
-find %{buildroot}%{engine_jboss_modules} -type d -exec chmod 755 {} \;
-find %{buildroot}%{engine_jboss_modules} -type f -exec chmod 644 {} \;
-
 # Install the systemd files:
 install -dm 755 %{buildroot}%{_unitdir}
 install -m 644 packaging/fedora/engine-service.systemd %{buildroot}%{_unitdir}/%{engine_name}.service

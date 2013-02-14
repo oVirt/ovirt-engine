@@ -401,44 +401,27 @@
                   <goal>run</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>copy-module-changes</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <configuration>
-                  <tasks>
-                    <echo>*** Copying ${basedir}/../deployment/modules to ${jbossHome}/modules</echo>
-                    <copy todir="${jbossHome}/modules" verbose="true" overwrite="true">
-                      <fileset dir="${basedir}/../deployment/modules">
-                        <include name="org/postgresql/**"/>
-                      </fileset>
-                    </copy>
-                  </tasks>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
           <plugin>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
-                <id>copy-postgresql-jdbc-jar</id>
+                <id>copy-dependencies</id>
                 <phase>install</phase>
                 <goals>
-                  <goal>copy</goal>
+                  <goal>unpack</goal>
                 </goals>
                 <configuration>
                   <artifactItems>
                     <artifactItem>
-                      <groupId>postgresql</groupId>
-                      <artifactId>postgresql</artifactId>
-                      <version>${postgres.jdbc.version}</version>
-                      <type>jar</type>
+                      <groupId>org.ovirt.engine.core</groupId>
+                      <artifactId>dependencies</artifactId>
+                      <version>${engine.version}</version>
+                      <classifier>modules</classifier>
+                      <type>zip</type>
                       <overWrite>true</overWrite>
-                      <outputDirectory>${jbossHome}/modules/org/postgresql/main</outputDirectory>
-                      <destFileName>postgresql-jdbc.jar</destFileName>
+                      <outputDirectory>${jbossHome}/modules</outputDirectory>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
