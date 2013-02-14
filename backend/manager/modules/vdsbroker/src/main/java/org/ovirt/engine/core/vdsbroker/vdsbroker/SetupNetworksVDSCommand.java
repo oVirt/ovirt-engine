@@ -37,9 +37,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             VdsNetworkInterface iface =
                     findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
             String ifaceNameWithoutVlan = NetworkUtils.StripVlan(iface.getName());
-            Boolean bonded = isVlan(network)
-                    ? findInterfaceByName(ifaceNameWithoutVlan).getBonded()
-                    : iface.getBonded();
+            Boolean bonded = findInterfaceByName(ifaceNameWithoutVlan).getBonded();
             String type = (bonded != null && bonded) ? "bonding" : "nic";
             opts.put(type, ifaceNameWithoutVlan);
             if (isVlan(network)) {
