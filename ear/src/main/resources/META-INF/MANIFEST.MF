@@ -1,5 +1,13 @@
 Manifest-Version: 1.0
-Dependencies: org.apache.log4j,
+Dependencies: asm.asm,
+ javax.validation.api,
+ org.apache.commons.beanutils,
+ org.apache.commons.codec,
+ org.apache.commons.collections,
+ org.apache.commons.lang,
+ org.apache.log4j,
  org.codehaus.jackson.jackson-core-asl,
- org.codehaus.jackson.jackson-mapper-asl
-
+ org.codehaus.jackson.jackson-mapper-asl,
+ org.dom4j,
+ org.hibernate.validator,
+ org.ovirt.engine.core.dependencies

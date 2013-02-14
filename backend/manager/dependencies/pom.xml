@@ -22,6 +22,132 @@
   <dependencies>
 
     <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+      <version>${mina-core.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-core</artifactId>
+      <version>${sshd-core.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.ws.commons.util</groupId>
+      <artifactId>ws-commons-util</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-client</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+   <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-common</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.otopi</groupId>
+      <artifactId>otopi</artifactId>
+      <version>${otopi.version}</version>
+   </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.ovirt-host-deploy</groupId>
+      <artifactId>ovirt-host-deploy</artifactId>
+      <version>${ovirt-host-deploy.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-jdk14.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.ldap</groupId>
+      <artifactId>spring-ldap-core</artifactId>
+      <version>${spring.ldap.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-asm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-instrument</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgres.jdbc.version}</version>
@@ -33,17 +159,144 @@
 
     <plugins>
 
-        <!-- Create the JBoss modules: -->
         <plugin>
           <groupId>org.ovirt.engine</groupId>
           <artifactId>jboss-modules-maven-plugin</artifactId>
           <configuration>
             <modules>
+
+              <module>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.mina</groupId>
+                <artifactId>mina-core</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.ws.commons.util</groupId>
+                <artifactId>ws-commons-util</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-client</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-common</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.otopi</groupId>
+                <artifactId>otopi</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.ovirt-host-deploy</groupId>
+                <artifactId>ovirt-host-deploy</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-asm</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-instrument</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <moduleName>org.ovirt.engine.core.dependencies</moduleName>
+              </module>
+
               <module>
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <moduleName>org.postgresql</moduleName>
               </module>
+
             </modules>
           </configuration>
         </plugin>

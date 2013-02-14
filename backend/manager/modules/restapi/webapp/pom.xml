@@ -33,16 +33,17 @@
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <ejbVersion>2.1.1</ejbVersion>
-          <generateClient>true</generateClient>
-          <archive>
-            <manifest>
-              <addClasspath>false</addClasspath>
-            </manifest>
-            <manifestEntries>
-              <Dependencies>org.apache.log4j, org.jboss.resteasy.resteasy-jaxb-provider, org.jboss.resteasy.resteasy-jaxrs, org.jboss.resteasy.resteasy-jackson-provider, org.codehaus.jackson.jackson-mapper-asl, deployment.engine.ear.engine-bll.jar</Dependencies>
-            </manifestEntries>
-          </archive>
+
+          <!-- Don't include any of the external dependencies, as they are
+               already included as references in the manifest (note that the
+               web.xml file is included regardless of this configuration): -->
+          <packagingIncludes>
+            WEB-INF/lib/interface-common-jaxrs-*.jar,
+            WEB-INF/lib/restapi-definition-*.jar,
+            WEB-INF/lib/restapi-jaxrs-*.jar,
+            WEB-INF/lib/restapi-types-*.jar,
+          </packagingIncludes>
+
         </configuration>
       </plugin>
     </plugins>
