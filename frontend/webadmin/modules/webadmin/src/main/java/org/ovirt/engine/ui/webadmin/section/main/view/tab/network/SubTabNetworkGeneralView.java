@@ -10,18 +10,19 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
 import org.ovirt.engine.ui.common.widget.label.GuidLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
-import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView, NetworkListModel, NetworkGeneralModel> implements SubTabNetworkGeneralPresenter.ViewDef, Editor<NetworkGeneralModel> {
@@ -40,8 +41,8 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     GuidLabel id = new GuidLabel();
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel role = new TextBoxLabel();
-    NullableNumberLabel<Integer> vlan = new  NullableNumberLabel<Integer>(constants.noneVlan());
-    NullableNumberLabel<Integer> mtu = new  NullableNumberLabel<Integer>(constants.defaultMtu());
+    ValueLabel<Integer> vlan = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
+    ValueLabel<Integer> mtu = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.defaultMtu()));
 
     @UiField(provided = true)
     GeneralFormPanel formPanel;
