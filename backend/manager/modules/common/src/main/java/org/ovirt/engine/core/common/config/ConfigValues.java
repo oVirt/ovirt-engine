@@ -1374,6 +1374,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr")
     VncKeyboardLayoutValidValues(419),
 
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    SpiceProxyDefault(420),
+
     Invalid(65535);
 
     private int intValue;
