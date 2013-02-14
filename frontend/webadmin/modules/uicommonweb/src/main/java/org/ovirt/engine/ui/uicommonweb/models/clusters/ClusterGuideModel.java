@@ -66,6 +66,7 @@ public class ClusterGuideModel extends GuideModel
 
     private ArrayList<VDS> hosts;
     private ArrayList<VDS> allHosts;
+    private Boolean isAnyHostUpInCluster;
     private VDS localStorageHost;
     private storage_pool dataCenter;
 
@@ -93,6 +94,17 @@ public class ClusterGuideModel extends GuideModel
                         clusterGuideModel.UpdateOptionsNonLocalFS();
                     }
                 }));
+        if (getEntity().supportsGlusterService()) {
+            AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void OnSuccess(Object target, Object returnValue) {
+                            ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                            isAnyHostUpInCluster = (Boolean) returnValue;
+                            clusterGuideModel.UpdateOptionsNonLocalFS();
+                        }
+                    }), getEntity().getname());
+        }
     }
 
     private void UpdateOptionsLocalFSData() {
@@ -110,7 +122,7 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void UpdateOptionsNonLocalFS() {
-        if (hosts == null || allHosts == null) {
+        if (hosts == null || allHosts == null || !isUpHostCheckCompleted()) {
             return;
         }
         if (getEntity() == null) {
@@ -131,11 +143,12 @@ public class ClusterGuideModel extends GuideModel
             addHostAction.setTitle(ClusterConfigureHostsAction);
             getCompulsoryActions().add(addHostAction);
         }
-        else
+        else if (isAnyUpHostInCluster())
         {
             addHostAction.setTitle(ClusterAddAnotherHostAction);
             getOptionalActions().add(addHostAction);
         }
+
         if (getEntity().getStoragePoolId() == null)
         {
             addHostAction.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
@@ -165,7 +178,7 @@ public class ClusterGuideModel extends GuideModel
                 selectHostAction.setTitle(SelectHostsAction);
                 getCompulsoryActions().add(selectHostAction);
             }
-            else
+            else if (isAnyUpHostInCluster())
             {
                 selectHostAction.setTitle(SelectHostsAction);
                 getOptionalActions().add(selectHostAction);
@@ -231,11 +244,26 @@ public class ClusterGuideModel extends GuideModel
         }
     }
 
+    private boolean isUpHostCheckCompleted() {
+        if (!getEntity().supportsGlusterService()) {
+            return true;
+        }
+        return isAnyHostUpInCluster != null;
+    }
+
+    private boolean isAnyUpHostInCluster() {
+        if (!getEntity().supportsGlusterService()) {
+            return true;
+        }
+        return isAnyHostUpInCluster;
+    }
+
     private void ResetData() {
         hosts = null;
         allHosts = null;
         localStorageHost = null;
         dataCenter = null;
+        isAnyHostUpInCluster = null;
     }
 
     public void SelectHost()
