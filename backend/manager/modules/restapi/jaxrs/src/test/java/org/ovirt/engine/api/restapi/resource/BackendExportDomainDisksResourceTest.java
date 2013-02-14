@@ -88,7 +88,7 @@ public class BackendExportDomainDisksResourceTest
         entity.setId(GUIDS[index]);
         entity.setvolume_format(VolumeFormat.RAW);
         entity.setDiskInterface(DiskInterface.VirtIO);
-        entity.setimageStatus(ImageStatus.OK);
+        entity.setImageStatus(ImageStatus.OK);
         entity.setvolume_type(VolumeType.Sparse);
         entity.setBoot(false);
         entity.setShareable(false);
