@@ -357,9 +357,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getFormat().setIsChangable(false);
 
         boolean isStorageActive = model.isStorageActive();
-        boolean isNew = storage == null;
 
-        model.getHost().setIsChangable(isNew);
+        model.getHost().setIsChangable(false);
         model.getName().setIsChangable(isStorageActive);
         model.getAvailableStorageItems().setIsChangable(isStorageActive);
         model.setIsChangable(isStorageActive);
