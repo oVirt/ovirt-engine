@@ -22,7 +22,7 @@
 
   <properties>
     <earDirectory>${project.build.directory}/${project.build.finalName}</earDirectory>
-    <backendConfFiles>${project.parent.basedir}/backend/manager/conf</backendConfFiles>
+    <backendConfFiles>${basedir}/../backend/manager/conf</backendConfFiles>
   </properties>
 
   <dependencies>
@@ -430,9 +430,9 @@
                 </goals>
                 <configuration>
                   <tasks>
-                    <echo>*** Copying ${project.parent.basedir}/deployment/modules to ${jbossHome}/modules</echo>
+                    <echo>*** Copying ${basedir}/../deployment/modules to ${jbossHome}/modules</echo>
                     <copy todir="${jbossHome}/modules" verbose="true" overwrite="true">
-                      <fileset dir="${project.parent.basedir}/deployment/modules">
+                      <fileset dir="${basedir}/../deployment/modules">
                         <include name="org/postgresql/**"/>
                       </fileset>
                     </copy>
