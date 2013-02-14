@@ -95,12 +95,22 @@ DECLARE
  END; $procedure$
  LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION CreateMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                  v_min_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+ BEGIN
+     PERFORM CreateMaterializedView(v_matview, v_view_name, v_refresh_rate_in_sec, false,  v_min_refresh_rate_in_sec);
+     RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION CreateCustomMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER,
                                                         v_min_refresh_rate_in_sec INTEGER)
  RETURNS VOID
 AS $procedure$
  BEGIN
-     PERFORM CreateMaterializedView(v_matview, v_view_name, true, v_min_refresh_rate_in_sec);
+     PERFORM CreateMaterializedView(v_matview, v_view_name, v_refresh_rate_in_sec, true,  v_min_refresh_rate_in_sec);
      RETURN;
  END; $procedure$
  LANGUAGE plpgsql;
@@ -110,6 +120,14 @@ CREATE OR REPLACE FUNCTION CreateMaterializedView(v_matview NAME, v_view_name NA
 AS $procedure$
 BEGIN
      PERFORM  CreateMaterializedView(v_matview, v_view_name, v_refresh_rate_in_sec, false, 0);
+END; $procedure$
+ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CreateCustomMaterializedView(v_matview NAME, v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+BEGIN
+     PERFORM  CreateMaterializedView(v_matview, v_view_name, v_refresh_rate_in_sec, true, 0);
 END; $procedure$
  LANGUAGE plpgsql;
 
@@ -139,16 +157,25 @@ DECLARE
  END; $procedure$
  LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION CreateCustomMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER,
-                                                          v_custom BOOLEAN, v_min_refesh_rate_in_sec INTEGER)
+CREATE OR REPLACE FUNCTION CreateMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                    v_min_refesh_rate_in_sec INTEGER)
  RETURNS VOID
 AS $procedure$
  BEGIN
-     PERFORM CreateMaterializedViewAs(v_view_name, v_renamed_view, v_refresh_rate_in_sec, true, v_min_refesh_rate_in_sec);
+     PERFORM CreateMaterializedViewAs(v_view_name, v_refresh_rate_in_sec, false, v_min_refesh_rate_in_sec);
      RETURN;
  END; $procedure$
  LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION CreateCustomMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER,
+                                                          v_min_refesh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+ BEGIN
+     PERFORM CreateMaterializedViewAs(v_view_name, v_refresh_rate_in_sec, true, v_min_refesh_rate_in_sec);
+     RETURN;
+ END; $procedure$
+ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION CreateMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER)
@@ -158,6 +185,15 @@ BEGIN
     PERFORM  CreateMaterializedViewAs(v_view_name, v_refresh_rate_in_sec, false, 0);
 END; $procedure$
  LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CreateCustomMaterializedViewAs(v_view_name NAME, v_refresh_rate_in_sec INTEGER)
+ RETURNS VOID
+AS $procedure$
+BEGIN
+    PERFORM  CreateMaterializedViewAs(v_view_name, v_refresh_rate_in_sec, true, 0);
+END; $procedure$
+ LANGUAGE plpgsql;
+
 
 -- Drops a Materialized View
 CREATE OR REPLACE FUNCTION DropMaterializedView(v_matview NAME)
