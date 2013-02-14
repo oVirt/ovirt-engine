@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.VdcBllMessages;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -215,8 +216,19 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.NETWORK_UPDATE_VM_INTERFACE
-                : AuditLogType.NETWORK_UPDATE_VM_INTERFACE_FAILED;
+        if (getSucceeded()) {
+            if (oldIface.isLinked() != getInterface().isLinked()) {
+                AuditLogType customValue =
+                        getInterface().isLinked() ? AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_UP
+                                : AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_DOWN;
+                addCustomValue("LinkState", AuditLogDirector.getMessage(customValue));
+            } else {
+                addCustomValue("LinkState", " ");
+            }
+            return AuditLogType.NETWORK_UPDATE_VM_INTERFACE;
+        }
+
+        return AuditLogType.NETWORK_UPDATE_VM_INTERFACE_FAILED;
     }
 
     @Override
