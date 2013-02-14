@@ -32,45 +32,34 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     private XmlRpcStruct generateNetworks() {
         XmlRpcStruct networks = new XmlRpcStruct();
-
-        for (Network net : getParameters().getNetworks()) {
+        for (Network network : getParameters().getNetworks()) {
             Map<String, String> opts = new HashMap<String, String>();
-            VdsNetworkInterface i = findNetworkInterface(net.getName(), getParameters().getInterfaces(),
-                    getParameters().getBonds());
-
-            Boolean bonded = isVlan(net)
-                    ? findInterfaceByName(NetworkUtils.StripVlan(i.getName())).getBonded()
-                    : i.getBonded();
+            VdsNetworkInterface iface =
+                    findNetworkInterface(network.getName(), getParameters().getInterfaces(), getParameters().getBonds());
+            String ifaceNameWithoutVlan = NetworkUtils.StripVlan(iface.getName());
+            Boolean bonded = isVlan(network)
+                    ? findInterfaceByName(ifaceNameWithoutVlan).getBonded()
+                    : iface.getBonded();
             String type = (bonded != null && bonded) ? "bonding" : "nic";
-            opts.put(type, NetworkUtils.StripVlan(i.getName()));
-            if (isVlan(net)) {
-                opts.put("vlan", net.getVlanId().toString());
+            opts.put(type, ifaceNameWithoutVlan);
+            if (isVlan(network)) {
+                opts.put("vlan", network.getVlanId().toString());
             }
 
-            // TODO: add bootproto to network object
-            if (i.getBootProtocol() != null) {
-                switch (i.getBootProtocol()) {
-                case DHCP:
-                    opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
-                    break;
-                case STATIC_IP:
-                    putIfNotEmpty(opts, "ipaddr", i.getAddress());
-                    putIfNotEmpty(opts, "netmask", i.getSubnet());
-                    putIfNotEmpty(opts, "gateway", i.getGateway());
-                    break;
-                }
+            if (iface.getBootProtocol() != null) {
+                addBootProtocol(opts, iface);
             }
 
-            if (net.getMtu() != 0) {
-                opts.put("mtu", String.valueOf(net.getMtu()));
+            if (network.getMtu() != 0) {
+                opts.put("mtu", String.valueOf(network.getMtu()));
             }
 
-            opts.put("bridged", Boolean.toString(net.isVmNetwork()));
-            if (net.isVmNetwork()) {
-                opts.put(VdsProperties.STP, net.getStp() ? "yes" : "no");
+            opts.put("bridged", Boolean.toString(network.isVmNetwork()));
+            if (network.isVmNetwork()) {
+                opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            networks.add(net.getName(), opts);
+            networks.add(network.getName(), opts);
         }
 
         for (String net : getParameters().getRemovedNetworks()) {
@@ -78,6 +67,21 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
         }
 
         return networks;
+    }
+
+    private void addBootProtocol(Map<String, String> opts, VdsNetworkInterface iface) {
+        switch (iface.getBootProtocol()) {
+        case DHCP:
+            opts.put(BOOT_PROTOCOL, DHCP_BOOT_PROTOCOL);
+            break;
+        case STATIC_IP:
+            putIfNotEmpty(opts, "ipaddr", iface.getAddress());
+            putIfNotEmpty(opts, "netmask", iface.getSubnet());
+            putIfNotEmpty(opts, "gateway", iface.getGateway());
+            break;
+        default:
+            break;
+        }
     }
 
     private static boolean isVlan(Network net) {
