@@ -273,71 +273,100 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VDSGroup other = (VDSGroup) obj;
         if (compatVersion == null) {
-            if (other.compatVersion != null)
+            if (other.compatVersion != null) {
                 return false;
-        } else if (!compatVersion.equals(other.compatVersion))
+            }
+        } else if (!compatVersion.equals(other.compatVersion)) {
             return false;
+        }
         if (compatibility_version == null) {
-            if (other.compatibility_version != null)
+            if (other.compatibility_version != null) {
                 return false;
-        } else if (!compatibility_version.equals(other.compatibility_version))
+            }
+        } else if (!compatibility_version.equals(other.compatibility_version)) {
             return false;
+        }
         if (cpu_name == null) {
-            if (other.cpu_name != null)
+            if (other.cpu_name != null) {
                 return false;
-        } else if (!cpu_name.equals(other.cpu_name))
+            }
+        } else if (!cpu_name.equals(other.cpu_name)) {
             return false;
-        if (cpu_over_commit_duration_minutes != other.cpu_over_commit_duration_minutes)
+        }
+        if (cpu_over_commit_duration_minutes != other.cpu_over_commit_duration_minutes) {
             return false;
+        }
         if (description == null) {
-            if (other.description != null)
+            if (other.description != null) {
                 return false;
-        } else if (!description.equals(other.description))
-        if (high_utilization != other.high_utilization)
+            }
+        } else if (!description.equals(other.description)) {
             return false;
+        }
+        if (high_utilization != other.high_utilization) {
+            return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
-        if (low_utilization != other.low_utilization)
+        }
+        if (low_utilization != other.low_utilization) {
             return false;
-        if (max_vds_memory_over_commit != other.max_vds_memory_over_commit)
+        }
+        if (max_vds_memory_over_commit != other.max_vds_memory_over_commit) {
             return false;
-        if (countThreadsAsCores != other.countThreadsAsCores)
+        }
+        if (countThreadsAsCores != other.countThreadsAsCores) {
             return false;
-        if (migrateOnError != other.migrateOnError)
+        }
+        if (migrateOnError != other.migrateOnError) {
             return false;
+        }
         if (name == null) {
-            if (other.name != null)
+            if (other.name != null) {
                 return false;
-        } else if (!name.equals(other.name))
+            }
+        } else if (!name.equals(other.name)) {
             return false;
+        }
         if (selection_algorithm == null) {
-            if (other.selection_algorithm != null)
+            if (other.selection_algorithm != null) {
                 return false;
-        } else if (!selection_algorithm.equals(other.selection_algorithm))
+            }
+        } else if (!selection_algorithm.equals(other.selection_algorithm)) {
             return false;
+        }
         if (storagePoolId == null) {
-            if (other.storagePoolId != null)
+            if (other.storagePoolId != null) {
                 return false;
-        } else if (!storagePoolId.equals(other.storagePoolId))
+            }
+        } else if (!storagePoolId.equals(other.storagePoolId)) {
             return false;
+        }
         if (storagePoolName == null) {
-            if (other.storagePoolName != null)
+            if (other.storagePoolName != null) {
                 return false;
-        } else if (!storagePoolName.equals(other.storagePoolName))
+            }
+        } else if (!storagePoolName.equals(other.storagePoolName)) {
             return false;
-        if (transparentHugepages != other.transparentHugepages)
+        }
+        if (transparentHugepages != other.transparentHugepages) {
             return false;
+        }
         if (virtService != other.virtService) {
             return false;
         }
