@@ -61,6 +61,7 @@ public class SpiceInterfaceImpl implements ISpice {
     ClientAgentType cat = new ClientAgentType();
     private String spiceBaseURL;
     private boolean smartcardEnabled = false;
+    private String spiceProxy = null;
 
     // the user can choose to disable the smartcard even when it is enabled, but can not choose to enable it, when it is disabled
     private boolean smartcardEnabledOverridden = false;
@@ -548,6 +549,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                var smartcardEnabled =  !!this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::passSmartcardOption()();
                                                var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::colorDepthAsInt()();
                                                var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::disbaleEffectsAsString()();
+                                               var spiceProxy = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getSpiceProxy()();
                                                var model = this;
 
                                                //alert("Smartcard ["+smartcardEnabled+"] disableEffects ["+disableEffects+"], wanOptionsEnabled ["+wanOptionsEnabled+"], colorDepth ["+colorDepth+"], Host IP ["+hostIp+"], port ["+port+"], fullScreen ["+fullScreen+"], password ["+password+"], numberOfMonitors ["+numberOfMonitors+"], Usb Listen Port ["+usbListenPort+"], Admin Console ["+adminConsole+"], Guest HostName ["+guestHostName+"], Secure Port ["+securePort+"], Ssl Chanels ["+sslChanels+"], cipherSuite ["+cipherSuite+"], Host Subject ["+hostSubject+"], Title [" + title+"], Hot Key ["+hotKey+"], Menu ["+menu+"], GuestID [" + guestID+"], version ["+version+"]");
@@ -581,6 +583,10 @@ public class SpiceInterfaceImpl implements ISpice {
                                                if (wanOptionsEnabled) {
                                                   client.DisableEffects = disableEffects;
                                                   client.ColorDepth = colorDepth;
+                                               }
+                                               // set it only if the proxy is defined in VDC_OPTIONS
+                                               if (spiceProxy != null) {
+                                                   client.Proxy = spiceProxy
                                                }
                                                client.connect();
 
@@ -655,6 +661,7 @@ public class SpiceInterfaceImpl implements ISpice {
                                                    var wanOptionsEnabled = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getIsWanOptionsEnabled()();
                                                    var colorDepth = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::colorDepthAsInt()();
                                                    var disableEffects = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::disbaleEffectsAsString()();
+                                                   var spiceProxy = this.@org.ovirt.engine.ui.common.uicommon.SpiceInterfaceImpl::getSpiceProxy()();
                                                    var codebase = spiceCabURL + "#version=" + version;
                                                    var model = this;
                                                    var id = "SpiceX_" + guestHostName;
@@ -699,6 +706,11 @@ public class SpiceInterfaceImpl implements ISpice {
                                                    if (wanOptionsEnabled) {
                                                        client.DisableEffects = disableEffects;
                                                        client.ColorDepth = colorDepth;
+                                                   }
+
+                                                    // only if the proxy is defined in VDC_OPTIONS
+                                                   if (spiceProxy != null) {
+                                                       client.Proxy = spiceProxy
                                                    }
 
                                                    client.attachEvent('ondisconnected', onDisconnected);
@@ -808,4 +820,11 @@ public class SpiceInterfaceImpl implements ISpice {
         return this.smartcardEnabledOverridden;
     }
 
+    public String getSpiceProxy() {
+        return spiceProxy;
+    }
+
+    public void setSpiceProxy(String spiceProxy) {
+        this.spiceProxy = spiceProxy;
+    }
 }

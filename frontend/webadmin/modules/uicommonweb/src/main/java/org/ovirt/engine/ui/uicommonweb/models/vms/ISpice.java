@@ -145,9 +145,11 @@ public interface ISpice
 
     public void setSmartcardEnabled(boolean enabled);
 
-    public boolean isSmartcardEnabled();
+    boolean isSmartcardEnabled();
 
-    public void setOverrideEnabledSmartcard(boolean enabled);
+    void setOverrideEnabledSmartcard(boolean enabled);
 
-    public boolean isSmartcardEnabledOverridden();
+    boolean isSmartcardEnabledOverridden();
+
+    void setSpiceProxy(String spiceProxy);
 }

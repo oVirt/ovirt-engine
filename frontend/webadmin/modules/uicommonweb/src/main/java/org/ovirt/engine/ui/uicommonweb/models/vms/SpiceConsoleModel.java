@@ -369,6 +369,12 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                                 .getMessages()
                                 .pressKeyToReleaseCursor(releaseCursorKeysTranslated))));
 
+
+        // setup spice proxy - for now always the default
+        String spiceProxy = (String) AsyncDataProvider.GetConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        spiceProxy = "".equals(spiceProxy) ? null : spiceProxy; //$NON-NLS-1$
+        getspice().setSpiceProxy(spiceProxy);
+
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
         getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
