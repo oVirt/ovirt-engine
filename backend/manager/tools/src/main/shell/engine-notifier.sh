@@ -85,12 +85,6 @@ IFS=$old_IFS
 # Do basic checking of properties in configuration file to ensure
 # a) properties are defined
 # b) when properties are defined and reference a file system resource, that the resource exists.
-if [ -z "$engineLib" ]; then
-    die "Error: \$engineLib is not defined, please check for this in configuration file $CONF_FILE\n"
-fi
-if [ ! -d $engineLib ]; then
-    die "Error: the oVirt Engine library is missing or not accessible.\n" 5
-fi
 
 # MAIL_SERVER is required!
 if [ -z "$MAIL_SERVER" ]; then
@@ -219,14 +213,10 @@ CP="${ENGINE_ETC}/notifier"
 
 # Add the required jar files from the system wide jars directory:
 jar_names='
-    antlr
     commons-codec
     commons-collections
-    commons-configuration
-    commons-jxpath
     commons-lang
     commons-logging
-    dom4j
     javamail
     log4j
     ovirt-engine/common
@@ -234,8 +224,6 @@ jar_names='
     ovirt-engine/tools
     ovirt-engine/utils
     postgresql-jdbc
-    slf4j/api
-    glassfish-jaxb/jaxb-impl
 '
 for jar_name in ${jar_names}
 do
@@ -243,24 +231,6 @@ do
     if [ ! -s "${jar_file}" ]
     then
         die "Error: can't run without missing JAR file: ${jar_file}\n" 5
-    fi
-    CP=${CP}:${jar_file}
-done
-
-# Add all the needed jar files from the oVirt Engine EAR to the classpath, but
-# try to locate them using the name and not the version. This is important
-# in order to make the script less dependent on the version of oVirt Engine
-# installed:
-jar_names='
-    hibernate-validator
-    validation-api
-'
-for jar_name in ${jar_names}
-do
-    jar_file=$(find ${engineLib} -regex ".*/${jar_name}.*\.jar")
-    if [ -z "${jar_file}" -o ! -s "${jar_file}" ]
-    then
-        die "Error: can't run without missing JAR file: ${engineLib}/${jar_name}*.jar\n" 5
     fi
     CP=${CP}:${jar_file}
 done
