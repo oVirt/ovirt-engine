@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -27,7 +27,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         ProceedProxyReturnValue();
-        storage_domains domain = BuildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
+        StorageDomain domain = BuildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);
         domain.setId(getParameters().getStorageDomainId());
         setReturnValue(domain);
     }
@@ -37,9 +37,9 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
         return _result.mStatus;
     }
 
-    public static storage_domains BuildStorageDynamicFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
+    public static StorageDomain BuildStorageDynamicFromXmlRpcStruct(XmlRpcStruct xmlRpcStruct) {
         try {
-            storage_domains domain = new storage_domains();
+            StorageDomain domain = new StorageDomain();
             if (xmlRpcStruct.contains("status")) {
                 if ("Attached".equals(xmlRpcStruct.getItem("status").toString())) {
                     domain.setstatus(StorageDomainStatus.InActive);

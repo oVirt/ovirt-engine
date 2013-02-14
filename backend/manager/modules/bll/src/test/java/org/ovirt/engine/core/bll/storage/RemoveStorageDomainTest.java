@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -128,7 +128,7 @@ public class RemoveStorageDomainTest {
     public void doTestRemove(StorageDomainType type, StorageType storageType, boolean format, boolean failure) {
         RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd = createCommand(format);
         expectGetStoragePool(STORAGE_POOL_ID);
-        storage_domains dom = expectGetStorageDomain(STORAGE_DOMAIN_ID, STORAGE_POOL_ID, type, storageType);
+        StorageDomain dom = expectGetStorageDomain(STORAGE_DOMAIN_ID, STORAGE_POOL_ID, type, storageType);
         expectGetVds(VDS_ID);
 
         if (storageType == StorageType.LOCALFS) {
@@ -162,7 +162,7 @@ public class RemoveStorageDomainTest {
     }
 
     protected void setUpStorageHelper(RemoveStorageDomainCommand<RemoveStorageDomainParameters> cmd,
-            storage_domains dom,
+            StorageDomain dom,
             boolean connect,
             boolean failure) {
         IStorageHelper helper = mock(IStorageHelper.class);
@@ -184,14 +184,14 @@ public class RemoveStorageDomainTest {
         return params;
     }
 
-    protected storage_domains expectGetStorageDomain(
+    protected StorageDomain expectGetStorageDomain(
             Guid domId,
             Guid poolId,
             StorageDomainType type,
             StorageType storageType) {
         StorageDomainDAO dao = mock(StorageDomainDAO.class);
         when(db.getStorageDomainDao()).thenReturn(dao);
-        storage_domains dom = getStorageDomain(domId, poolId, type, storageType);
+        StorageDomain dom = getStorageDomain(domId, poolId, type, storageType);
         when(dao.getForStoragePool(domId, poolId)).thenReturn(dom);
         return dom;
     }
@@ -262,11 +262,11 @@ public class RemoveStorageDomainTest {
         expectRemoveStaticFromDb();
     }
 
-    protected storage_domains getStorageDomain(Guid id,
+    protected StorageDomain getStorageDomain(Guid id,
             Guid poolId,
             StorageDomainType type,
             StorageType storageType) {
-        storage_domains dom = new storage_domains();
+        StorageDomain dom = new StorageDomain();
         dom.setId(id);
         dom.setstorage_pool_id(poolId);
         dom.setstorage_domain_type(type);

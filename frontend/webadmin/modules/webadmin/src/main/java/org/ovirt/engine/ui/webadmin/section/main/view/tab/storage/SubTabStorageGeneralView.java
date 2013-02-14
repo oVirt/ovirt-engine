@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 
-public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_domains, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
+public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDomain, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<StorageGeneralModel, SubTabStorageGeneralView> {
         Driver driver = GWT.create(Driver.class);
@@ -82,7 +82,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
             @Override
             public boolean isVisible() {
                 StorageDomainType storageDomainType =
-                        ((storage_domains) getDetailModel().getEntity()).getstorage_domain_type();
+                        ((StorageDomain) getDetailModel().getEntity()).getstorage_domain_type();
                 return !storageDomainType.equals(StorageDomainType.ISO)
                         && !storageDomainType.equals(StorageDomainType.ImportExport);
             }
@@ -103,12 +103,12 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<storage_dom
     }
 
     @Override
-    public void setMainTabSelectedItem(storage_domains selectedItem) {
+    public void setMainTabSelectedItem(StorageDomain selectedItem) {
         Driver.driver.edit(getDetailModel());
 
         // TODO required because of editor driver errors
         // Possible reasons: lowercase getters, StorageGeneralModel.getEntity() returns Object
-        storage_domains entity = (storage_domains) getDetailModel().getEntity();
+        StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
 
         if (entity == null)
             return;

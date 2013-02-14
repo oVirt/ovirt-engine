@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -156,7 +156,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             ArrayList<Object> items = new ArrayList<Object>();
             for (Object item : getSelectedItems())
             {
-                storage_domains i = (storage_domains) item;
+                StorageDomain i = (StorageDomain) item;
                 items.add(i.getId());
             }
             return items.toArray(new Object[] {});
@@ -336,7 +336,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void Edit()
     {
-        storage_domains storage = (storage_domains) getSelectedItem();
+        StorageDomain storage = (StorageDomain) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -423,7 +423,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
     }
 
-    private IStorageModel PrepareNfsStorageForEdit(storage_domains storage)
+    private IStorageModel PrepareNfsStorageForEdit(StorageDomain storage)
     {
         final NfsStorageModel model = new NfsStorageModel();
         model.setRole(storage.getstorage_domain_type());
@@ -463,7 +463,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PrepareLocalStorageForEdit(storage_domains storage)
+    private IStorageModel PrepareLocalStorageForEdit(StorageDomain storage)
     {
         LocalStorageModel model = new LocalStorageModel();
         model.setRole(storage.getstorage_domain_type());
@@ -483,7 +483,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PreparePosixStorageForEdit(storage_domains storage) {
+    private IStorageModel PreparePosixStorageForEdit(StorageDomain storage) {
 
         final PosixStorageModel model = new PosixStorageModel();
         model.setRole(storage.getstorage_domain_type());
@@ -506,7 +506,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PrepareIscsiStorageForEdit(storage_domains storage)
+    private IStorageModel PrepareIscsiStorageForEdit(StorageDomain storage)
     {
         IscsiStorageModel model = new IscsiStorageModel();
         model.setRole(storage.getstorage_domain_type());
@@ -516,7 +516,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         return model;
     }
 
-    private IStorageModel PrepareFcpStorageForEdit(storage_domains storage)
+    private IStorageModel PrepareFcpStorageForEdit(StorageDomain storage)
     {
         FcpStorageModel model = new FcpStorageModel();
         model.setRole(storage.getstorage_domain_type());
@@ -529,7 +529,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void PrepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        storage_domains storage = (storage_domains) getSelectedItem();
+        StorageDomain storage = (StorageDomain) getSelectedItem();
         boolean isStorageActive = storageModel.isStorageActive();
 
         if (isStorageActive) {
@@ -548,7 +548,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void PostPrepareSanStorageForEdit(SanStorageModel model, boolean isStorageActive)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        storage_domains storage = (storage_domains) getSelectedItem();
+        StorageDomain storage = (StorageDomain) getSelectedItem();
         model.setStorageDomain(storage);
 
         VDS host = (VDS) storageModel.getHost().getSelectedItem();
@@ -726,7 +726,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 Object[] array = (Object[]) target;
                 StorageListModel storageListModel = (StorageListModel) array[0];
                 RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
-                storage_domains storage = (storage_domains) storageListModel.getSelectedItem();
+                StorageDomain storage = (StorageDomain) storageListModel.getSelectedItem();
                 ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.FirstOrDefault(hosts));
@@ -763,7 +763,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         if (getSelectedItem() != null)
         {
-            storage_domains storage = (storage_domains) getSelectedItem();
+            StorageDomain storage = (StorageDomain) getSelectedItem();
             RemoveStorageModel model = (RemoveStorageModel) getWindow();
 
             if (!model.Validate())
@@ -791,7 +791,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
-        items.add(((storage_domains) getSelectedItem()).getstorage_name());
+        items.add(((StorageDomain) getSelectedItem()).getstorage_name());
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
@@ -824,7 +824,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             return;
         }
 
-        storage_domains storageDomain = (storage_domains) getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) getSelectedItem();
 
         model.StartProgress(null);
 
@@ -989,9 +989,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         // Try to select an item corresponding to the system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            storage_domains storage = (storage_domains) getSystemTreeSelectedItem().getEntity();
+            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            setSelectedItem(Linq.FirstOrDefault(Linq.<storage_domains> Cast(getItems()),
+            setSelectedItem(Linq.FirstOrDefault(Linq.<StorageDomain> Cast(getItems()),
                     new Linq.StoragePredicate(storage.getId())));
         }
     }
@@ -1001,7 +1001,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         if (getSelectedItem() != null)
         {
-            storage_domains storage = (storage_domains) getSelectedItem();
+            StorageDomain storage = (StorageDomain) getSelectedItem();
             boolean isBackupStorage = storage.getstorage_domain_type() == StorageDomainType.ImportExport;
             boolean isDataStorage =
                     storage.getstorage_domain_type() == StorageDomainType.Data
@@ -1039,11 +1039,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private void UpdateActionAvailability()
     {
-        ArrayList<storage_domains> items =
-                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items =
+                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                        : new ArrayList<StorageDomain>();
 
-        storage_domains item = (storage_domains) getSelectedItem();
+        StorageDomain item = (StorageDomain) getSelectedItem();
 
         getNewDomainCommand().setIsAvailable(true);
 
@@ -1062,7 +1062,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getRemoveCommand().setIsAvailable(isAvailable);
     }
 
-    private boolean isEditAvailable(storage_domains storageDomain) {
+    private boolean isEditAvailable(StorageDomain storageDomain) {
         if (storageDomain == null) {
             return false;
         }
@@ -1133,7 +1133,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         this.context = context;
 
-        storage_domains selectedItem = (storage_domains) getSelectedItem();
+        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
@@ -1153,7 +1153,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 public void OnSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<storage_domains> storages = (ArrayList<storage_domains>) returnValue;
+                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
                         String storageName = storages.get(0).getstorage_name();
@@ -1258,7 +1258,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         this.context = context;
 
-        storage_domains selectedItem = (storage_domains) getSelectedItem();
+        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
@@ -1284,7 +1284,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 public void OnSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<storage_domains> storages = (ArrayList<storage_domains>) returnValue;
+                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
                         String storageName = storages.get(0).getstorage_name();
@@ -1446,7 +1446,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         this.context = context;
 
-        storage_domains selectedItem = (storage_domains) getSelectedItem();
+        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         VDS host = (VDS) model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
@@ -1472,7 +1472,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 public void OnSuccess(Object target, Object returnValue) {
 
                     StorageListModel storageListModel = (StorageListModel) target;
-                    ArrayList<storage_domains> storages = (ArrayList<storage_domains>) returnValue;
+                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
                         String storageName = storages.get(0).getstorage_name();
 
@@ -1590,7 +1590,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
-        storage_domains storage = (storage_domains) getSelectedItem();
+        StorageDomain storage = (StorageDomain) getSelectedItem();
         VDS host = (VDS) model.getHost().getSelectedItem();
 
         boolean isNew = model.getStorage() == null;
@@ -1624,7 +1624,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageModel storageModel = (StorageModel) getWindow();
                     SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
                     boolean force = sanStorageModel.isForce();
-                    storage_domains storageDomain1 = (storage_domains) storageListModel.getSelectedItem();
+                    StorageDomain storageDomain1 = (StorageDomain) storageListModel.getSelectedItem();
                     ArrayList<String> lunIds = new ArrayList<String>();
 
                     for (LunModel lun : sanStorageModel.getAddedLuns()) {
@@ -1700,7 +1700,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             public void OnSuccess(Object target, Object returnValue) {
 
                 StorageListModel storageListModel = (StorageListModel) target;
-                ArrayList<storage_domains> storages = (ArrayList<storage_domains>) returnValue;
+                ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                 if (storages != null && storages.size() > 0) {
 
@@ -1746,7 +1746,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                         public void OnSuccess(Object target, Object returnValue) {
 
                                             StorageListModel storageListModel1 = (StorageListModel) target;
-                                            ArrayList<storage_domains> domains = (ArrayList<storage_domains>) returnValue;
+                                            ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
                                             if (domains != null)
                                             {
                                                 if (domains.isEmpty())
@@ -1794,9 +1794,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 this);
     }
 
-    public void ImportNfsStorageAddDomain(ArrayList<storage_domains> domains)
+    public void ImportNfsStorageAddDomain(ArrayList<StorageDomain> domains)
     {
-        storage_domains sdToAdd = Linq.FirstOrDefault(domains);
+        StorageDomain sdToAdd = Linq.FirstOrDefault(domains);
         StorageDomainStatic sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
@@ -1807,7 +1807,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 Object[] array = (Object[]) result.getState();
                 StorageListModel storageListModel = (StorageListModel) array[0];
-                storage_domains sdToAdd1 = (storage_domains) array[1];
+                StorageDomain sdToAdd1 = (StorageDomain) array[1];
                 VdcReturnValueBase returnVal = result.getReturnValue();
 
                 boolean success = returnVal != null && returnVal.getSucceeded();
@@ -1859,17 +1859,17 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageModel storageModel = (StorageModel) getWindow();
         ImportSanStorageModel sanStorageModel = (ImportSanStorageModel) storageModel.getSelectedItem();
         Guid hostId = (Guid) data.get(1);
-        storage_domains storage;
+        StorageDomain storage;
 
         if (sanStorageModel.getSelectedItem() != null)
         {
-            storage = (storage_domains) sanStorageModel.getSelectedItem();
+            storage = (StorageDomain) sanStorageModel.getSelectedItem();
         }
         else
         {
             ListModel candidates = sanStorageModel.getCandidatesList();
             EntityModel selectedItem = (EntityModel) candidates.getSelectedItem();
-            storage = (storage_domains) selectedItem.getEntity();
+            storage = (StorageDomain) selectedItem.getEntity();
         }
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storage == null ? null : storage.getStorageStaticData());
@@ -1881,7 +1881,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 Object[] array = (Object[]) result.getState();
                 StorageListModel storageListModel = (StorageListModel) array[0];
-                storage_domains sdToAdd1 = (storage_domains) array[1];
+                StorageDomain sdToAdd1 = (StorageDomain) array[1];
                 VdcReturnValueBase returnVal = result.getReturnValue();
 
                 boolean success = returnVal != null && returnVal.getSucceeded();
@@ -1978,10 +1978,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         final ReportModel reportModel = super.createReportModel();
 
-        List<storage_domains> items =
+        List<StorageDomain> items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
-                        : new ArrayList<storage_domains>();
-        storage_domains storage = items.iterator().next();
+                        : new ArrayList<StorageDomain>();
+        StorageDomain storage = items.iterator().next();
 
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -2003,12 +2003,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     @Override
     protected void setReportModelResourceId(ReportModel reportModel, String idParamName, boolean isMultiple) {
-        ArrayList<storage_domains> items =
-                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items =
+                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                        : new ArrayList<StorageDomain>();
 
         if (idParamName != null) {
-            for (storage_domains item : items) {
+            for (StorageDomain item : items) {
                 if (isMultiple) {
                     reportModel.addResourceId(idParamName, item.getId().toString());
                 } else {

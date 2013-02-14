@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -138,7 +138,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         vds.setVdsGroupCompatibilityVersion(Version.v3_1);
         when(vdsDAOMock.get(getQueryParameters().getVdsId())).thenReturn(vds);
 
-        List<storage_domains> domainsList = Collections.emptyList();
+        List<StorageDomain> domainsList = Collections.emptyList();
         when(storageDomainDAOMock.getAll()).thenReturn(domainsList);
     }
 

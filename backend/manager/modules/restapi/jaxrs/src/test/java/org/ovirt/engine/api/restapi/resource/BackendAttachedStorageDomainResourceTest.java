@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -29,7 +29,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendAttachedStorageDomain
 
 public class BackendAttachedStorageDomainResourceTest
     extends AbstractBackendSubResourceTest<StorageDomain,
-                                           storage_domains,
+                                           org.ovirt.engine.core.common.businessentities.StorageDomain,
                                            BackendAttachedStorageDomainResource> {
 
     private static final Guid STORAGE_DOMAIN_ID = GUIDS[0];
@@ -162,8 +162,8 @@ public class BackendAttachedStorageDomainResourceTest
     }
 
     @Override
-    protected storage_domains getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_domains.class), index, StorageType.NFS);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index, StorageType.NFS);
     }
 
     static StorageServerConnections setUpStorageServerConnection() {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.storage.VMsTree;
 
 import com.google.inject.Inject;
 
-public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageVmListModel>, storage_domains, VM, StorageListModel, StorageVmListModel>
+public class SubTabStorageVmView extends AbstractSubTabTreeView<VMsTree<StorageVmListModel>, StorageDomain, VM, StorageListModel, StorageVmListModel>
         implements SubTabStorageVmPresenter.ViewDef {
 
     @Inject

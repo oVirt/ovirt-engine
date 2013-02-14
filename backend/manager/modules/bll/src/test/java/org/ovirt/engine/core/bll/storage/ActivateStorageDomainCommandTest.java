@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -113,7 +113,7 @@ public class ActivateStorageDomainCommandTest {
     }
 
     private void createStorageDomain(StorageDomainStatus status) {
-        storage_domains domain = new storage_domains();
+        StorageDomain domain = new StorageDomain();
         domain.setstatus(status);
         domain.setId(Guid.NewGuid());
         when(storageDomainDAO.get(any(Guid.class))).thenReturn(domain);

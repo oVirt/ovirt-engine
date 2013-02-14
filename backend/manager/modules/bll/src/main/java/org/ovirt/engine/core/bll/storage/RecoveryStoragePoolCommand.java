@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -65,7 +65,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                         VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
             } else {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().get(
+                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(
                         _newMasterStorageDomainId);
                 if (domain.getstorage_domain_shared_status() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);

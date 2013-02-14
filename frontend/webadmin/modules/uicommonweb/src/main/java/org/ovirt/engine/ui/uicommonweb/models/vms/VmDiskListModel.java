@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -316,7 +316,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         DiskModel diskModel = (DiskModel) getWindow();
-        storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
+        StorageDomain storage = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
         ArrayList<Disk> disks =
                 getItems() != null ? Linq.<Disk> Cast(getItems()) : new ArrayList<Disk>();
         boolean hasDisks = disks.size() > 0;
@@ -448,7 +448,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
                 DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
                 VM vm = vmDiskListModel.getEntity();
-                storage_domains storageDomain = (storage_domains) result;
+                StorageDomain storageDomain = (StorageDomain) result;
                 Disk disk = (Disk) vmDiskListModel.getSelectedItem();
 
                 diskModel.getStorageDomain().setSelectedItem(storageDomain);
@@ -475,7 +475,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 // Allow interface type to be edited only if the disk is not sharable
                 diskModel.getInterface().setIsChangable(!disk.isShareable());
 
-                storage_domains storage = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
+                StorageDomain storage = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
 
                 if (diskModel.getStorageDomain() != null && diskModel.getStorageDomain().getSelectedItem() != null)
                 {
@@ -641,7 +641,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             return;
         }
 
-        storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) model.getStorageDomain().getSelectedItem();
         Disk disk = (Disk) getSelectedItem();
         boolean isInternal = (Boolean) model.getIsInternal().getEntity();
 

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -43,7 +43,7 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
 
     @Override
     public StorageDomainDAO getStorageDomainDAO() {
-        final storage_domains destination = new storage_domains();
+        final StorageDomain destination = new StorageDomain();
         destination.setstorage_domain_type(StorageDomainType.Data);
         destination.setstatus(StorageDomainStatus.Active);
 
@@ -82,8 +82,8 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     }
 
     @Override
-    protected storage_domains getSourceDomain() {
-        storage_domains source = new storage_domains();
+    protected StorageDomain getSourceDomain() {
+        StorageDomain source = new StorageDomain();
         source.setstorage_domain_type(StorageDomainType.ImportExport);
         source.setstatus(StorageDomainStatus.Active);
         return source;

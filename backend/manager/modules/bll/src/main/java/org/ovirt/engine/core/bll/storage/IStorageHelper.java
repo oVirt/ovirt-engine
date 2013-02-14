@@ -5,19 +5,19 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
 
-    boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId);
+    boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId);
 
-    boolean disconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId);
+    boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId);
 
-    boolean connectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId);
+    boolean connectStorageToLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId);
 
-    boolean disconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun);
+    boolean disconnectStorageFromLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun);
 
     boolean storageDomainRemoved(StorageDomainStatic storageDomain);
 

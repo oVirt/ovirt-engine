@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.vdscommands.*;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
@@ -21,7 +21,7 @@ public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSComma
 
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
-        storage_domains domainFromDb = DbFacade.getInstance().getStorageDomainDao().get(getParameters().getStorageDomainId());
+        StorageDomain domainFromDb = DbFacade.getInstance().getStorageDomainDao().get(getParameters().getStorageDomainId());
         if (domainFromDb == null || domainFromDb.getstorage_domain_type() == StorageDomainType.ImportExport) {
             return new IrsOperationFailedNoFailoverException(errorMessage);
         }

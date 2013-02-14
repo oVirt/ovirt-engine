@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -22,7 +22,7 @@ public class GetStorageDomainsByConnectionQuery<P extends GetStorageDomainsByCon
     protected void executeQueryCommand() {
         Guid storagePoolId = getParameters().getStoragePoolId();
         String connection = getParameters().getConnection();
-        List<storage_domains> domainsList;
+        List<StorageDomain> domainsList;
 
         if (storagePoolId != null) {
             domainsList =

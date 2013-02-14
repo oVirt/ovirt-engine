@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -15,7 +15,7 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
 
     private static Log log = LogFactory.getLog(ConntectVDSToPoolAndDomains.class);
 
-    public ConntectVDSToPoolAndDomains(ArrayList<VDS> vdss, storage_domains domain, storage_pool storagePool) {
+    public ConntectVDSToPoolAndDomains(ArrayList<VDS> vdss, StorageDomain domain, storage_pool storagePool) {
         super(vdss, domain, storagePool);
     }
 

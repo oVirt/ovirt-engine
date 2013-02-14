@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -53,12 +53,12 @@ public class StorageDiskListModel extends SearchableListModel
     }
 
     @Override
-    public storage_domains getEntity()
+    public StorageDomain getEntity()
     {
-        return (storage_domains) super.getEntity();
+        return (StorageDomain) super.getEntity();
     }
 
-    public void setEntity(storage_domains value)
+    public void setEntity(StorageDomain value)
     {
         super.setEntity(value);
     }

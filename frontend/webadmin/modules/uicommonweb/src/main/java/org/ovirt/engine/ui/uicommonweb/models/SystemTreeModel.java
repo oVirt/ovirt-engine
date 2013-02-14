@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -386,7 +386,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     @Override
     public void Executed(FrontendMultipleQueryAsyncResult result)
     {
-        ArrayList<storage_domains> storages = null;
+        ArrayList<StorageDomain> storages = null;
         int count = -1;
 
         // Build tree items.
@@ -402,7 +402,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             {
                 continue;
             }
-            storages = (ArrayList<storage_domains>) returnValue.getReturnValue();
+            storages = (ArrayList<StorageDomain>) returnValue.getReturnValue();
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
@@ -421,7 +421,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
 
             if (storages != null && storages.size() > 0)
             {
-                for (storage_domains storage : storages)
+                for (StorageDomain storage : storages)
                 {
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
                     storageItem.setType(SystemTreeItemType.Storage);

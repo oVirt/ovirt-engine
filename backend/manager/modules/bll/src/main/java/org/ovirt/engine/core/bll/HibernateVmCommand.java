@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
@@ -266,7 +266,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                     }
 
                     // Check storage before trying to create Images for hibernation.
-                    storage_domains domain =
+                    StorageDomain domain =
                             DbFacade.getInstance().getStorageDomainDao().get(getStorageDomainId().getValue());
                     if (retValue
                             && !doesStorageDomainhaveSpaceForRequest(domain, (getImageSizeInBytes()
@@ -279,7 +279,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         return retValue;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long sizeRequested) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
     }
 

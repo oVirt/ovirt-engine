@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -123,9 +123,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private StorageDomainType domainType = StorageDomainType.values()[0];
     private boolean removeConnection;
     private ArrayList<VDSGroup> clusters;
-    private ArrayList<storage_domains> allStorageDomains;
-    private ArrayList<storage_domains> attachedStorageDomains;
-    private ArrayList<storage_domains> isoStorageDomains;
+    private ArrayList<StorageDomain> allStorageDomains;
+    private ArrayList<StorageDomain> attachedStorageDomains;
+    private ArrayList<StorageDomain> isoStorageDomains;
     private ArrayList<VDS> allHosts;
     private VDS localStorageHost;
 
@@ -167,8 +167,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storageDomains =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storageDomains =
+                                (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.allStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -179,8 +179,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storageDomains =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storageDomains =
+                                (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.attachedStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -191,8 +191,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storageDomains =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storageDomains =
+                                (ArrayList<StorageDomain>) returnValue;
                         dataCenterGuideModel.isoStorageDomains = storageDomains;
                         dataCenterGuideModel.UpdateOptionsNonLocalFS();
                     }
@@ -320,10 +320,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         }
 
 
-        ArrayList<storage_domains> unattachedStorage = new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> unattachedStorage = new ArrayList<StorageDomain>();
         boolean addToList;
         Version version3_0 = new Version(3, 0);
-        for (storage_domains item : allStorageDomains)
+        for (StorageDomain item : allStorageDomains)
         {
             addToList = false;
             if (item.getstorage_domain_type() == StorageDomainType.Data
@@ -352,8 +352,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         }
 
-        ArrayList<storage_domains> attachedDataStorages = new ArrayList<storage_domains>();
-        for (storage_domains a : attachedStorageDomains)
+        ArrayList<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
+        for (StorageDomain a : attachedStorageDomains)
         {
             if (a.getstorage_domain_type() == StorageDomainType.Data
                     || a.getstorage_domain_type() == StorageDomainType.Master)
@@ -410,8 +410,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Allow to attach ISO domain only when there are Data storages attached
         // and there ISO storages to attach and ther are no ISO storages actually
         // attached.
-        ArrayList<storage_domains> attachedIsoStorages = new ArrayList<storage_domains>();
-        for (storage_domains sd : attachedStorageDomains)
+        ArrayList<StorageDomain> attachedIsoStorages = new ArrayList<StorageDomain>();
+        for (StorageDomain sd : attachedStorageDomains)
         {
             if (sd.getstorage_domain_type() == StorageDomainType.ISO)
             {
@@ -773,8 +773,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storages =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storages =
+                                (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -920,8 +920,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storages =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storages =
+                                (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -1057,8 +1057,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     public void OnSuccess(Object target, Object returnValue) {
 
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storages =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storages =
+                                (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
                             String storageName = storages.get(0).getstorage_name();
@@ -1171,14 +1171,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getCommands().add(command);
     }
 
-    private void AttachStorageInternal(List<storage_domains> storages, String title)
+    private void AttachStorageInternal(List<StorageDomain> storages, String title)
     {
         ListModel model = new ListModel();
         model.setTitle(title);
         setWindow(model);
 
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
-        for (storage_domains sd : storages)
+        for (StorageDomain sd : storages)
         {
             EntityModel tempVar = new EntityModel();
             tempVar.setEntity(sd);
@@ -1209,18 +1209,18 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         ListModel model = (ListModel) getWindow();
 
-        ArrayList<storage_domains> items = new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
-                items.add((storage_domains) a.getEntity());
+                items.add((StorageDomain) a.getEntity());
             }
         }
 
         if (items.size() > 0)
         {
-            for (storage_domains sd : items)
+            for (StorageDomain sd : items)
             {
                 AttachStorageToDataCenter(sd.getId(), getEntity().getId());
             }
@@ -1237,8 +1237,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> attachedStorage =
-                                new ArrayList<storage_domains>();
+                        ArrayList<StorageDomain> attachedStorage =
+                                new ArrayList<StorageDomain>();
 
                         AsyncDataProvider.GetISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
                                 attachedStorage },
@@ -1247,17 +1247,17 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                     public void OnSuccess(Object target, Object returnValue) {
                                         Object[] array = (Object[]) target;
                                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
-                                        ArrayList<storage_domains> attachedStorage =
-                                                (ArrayList<storage_domains>) array[1];
-                                        ArrayList<storage_domains> isoStorageDomains =
-                                                (ArrayList<storage_domains>) returnValue;
-                                        ArrayList<storage_domains> sdl =
-                                                new ArrayList<storage_domains>();
+                                        ArrayList<StorageDomain> attachedStorage =
+                                                (ArrayList<StorageDomain>) array[1];
+                                        ArrayList<StorageDomain> isoStorageDomains =
+                                                (ArrayList<StorageDomain>) returnValue;
+                                        ArrayList<StorageDomain> sdl =
+                                                new ArrayList<StorageDomain>();
 
-                                        for (storage_domains a : isoStorageDomains)
+                                        for (StorageDomain a : isoStorageDomains)
                                         {
                                             boolean isContains = false;
-                                            for (storage_domains b : attachedStorage)
+                                            for (StorageDomain b : attachedStorage)
                                             {
                                                 if (b.getId().equals(a.getId()))
                                                 {
@@ -1287,14 +1287,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<storage_domains> storageDomains =
-                                (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storageDomains =
+                                (ArrayList<StorageDomain>) returnValue;
 
-                        ArrayList<storage_domains> unattachedStorage =
-                                new ArrayList<storage_domains>();
+                        ArrayList<StorageDomain> unattachedStorage =
+                                new ArrayList<StorageDomain>();
                         boolean addToList;
                         Version version3_0 = new Version(3, 0);
-                        for (storage_domains item : storageDomains)
+                        for (StorageDomain item : storageDomains)
                         {
                             addToList = false;
                             if (item.getstorage_domain_type() == StorageDomainType.Data

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -13,10 +13,10 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class ImportDiskData {
-    ArrayList<storage_domains> storageDomains;
-    storage_domains selectedStorageDomain;
+    ArrayList<StorageDomain> storageDomains;
+    StorageDomain selectedStorageDomain;
     EntityModel collapseSnapshots;
-    private ArrayList<storage_domains> allStorageDomains;
+    private ArrayList<StorageDomain> allStorageDomains;
     VolumeType volumeType = VolumeType.Sparse;
     VolumeType selectedVolumeType;
     Map<Guid, ArrayList<Quota>> storageQuotaList;
@@ -56,18 +56,18 @@ public class ImportDiskData {
         this.selectedVolumeType = selectedVolumeType;
     }
 
-    public ArrayList<storage_domains> getStorageDomains() {
+    public ArrayList<StorageDomain> getStorageDomains() {
         if ((Boolean) collapseSnapshots.getEntity() && storageDomains != null && !storageDomains.isEmpty()) {
             return allStorageDomains;
         }
         return storageDomains;
     }
 
-    public void setStorageDomains(ArrayList<storage_domains> storageDomains) {
+    public void setStorageDomains(ArrayList<StorageDomain> storageDomains) {
         this.storageDomains = storageDomains;
     }
 
-    public storage_domains getSelectedStorageDomain() {
+    public StorageDomain getSelectedStorageDomain() {
         if (selectedStorageDomain == null && !storageDomains.isEmpty()) {
             selectedStorageDomain = storageDomains.get(0);
         }
@@ -75,12 +75,12 @@ public class ImportDiskData {
         return selectedStorageDomain;
     }
 
-    public void setSelectedStorageDomain(storage_domains selectedStorageDomain) {
+    public void setSelectedStorageDomain(StorageDomain selectedStorageDomain) {
         this.selectedStorageDomain = selectedStorageDomain;
     }
 
     public void setSelectedStorageDomainString(String value) {
-        for (storage_domains storageDomain : getStorageDomains()) {
+        for (StorageDomain storageDomain : getStorageDomains()) {
             if (storageDomain.getstorage_name().equals(value)) {
                 setSelectedStorageDomain(storageDomain);
                 break;
@@ -88,7 +88,7 @@ public class ImportDiskData {
         }
     }
 
-    public void setAllStorageDomains(ArrayList<storage_domains> filteredStorageDomain) {
+    public void setAllStorageDomains(ArrayList<StorageDomain> filteredStorageDomain) {
         allStorageDomains = filteredStorageDomain;
     }
 

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -69,7 +69,7 @@ public class DeactivateStorageDomainCommandTest {
         DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
                 spy(new DeactivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
 
-        doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(storage_domains.class));
+        doReturn(mock(IStorageHelper.class)).when(cmd).getStorageHelper(any(StorageDomain.class));
         doReturn(dbFacade).when(cmd).getDbFacade();
 
         when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
@@ -79,7 +79,7 @@ public class DeactivateStorageDomainCommandTest {
         when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDAO);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(new storage_pool());
         when(isoMapDAO.get(any(StoragePoolIsoMapId.class))).thenReturn(map);
-        when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new storage_domains());
+        when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
 
         doReturn(backendInternal).when(cmd).getBackend();
         when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());

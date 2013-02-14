@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -27,9 +27,9 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    protected abstract boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type);
+    protected abstract boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type);
 
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain,
+    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain,
             Guid vdsId,
             int type,
             LUNs lun,
@@ -38,18 +38,18 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VdcActionType.ConnectStorageToVds.getValue());
     }
 
     @Override
-    public boolean disconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId,
                 VdcActionType.DisconnectStorageServerConnection.getValue());
     }
 
     @Override
-    public boolean connectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
+    public boolean connectStorageToLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
         return runConnectionStorageToDomain(storageDomain,
                 vdsId,
                 VdcActionType.ConnectStorageToVds.getValue(),
@@ -58,7 +58,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     @Override
-    public boolean disconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
+    public boolean disconnectStorageFromLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun) {
         return runConnectionStorageToDomain(storageDomain, vdsId,
                 VdcActionType.DisconnectStorageServerConnection.getValue(), lun, Guid.Empty);
     }

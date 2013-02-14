@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -89,12 +89,12 @@ public class StorageDataCenterListModel extends SearchableListModel
     }
 
     @Override
-    public storage_domains getEntity()
+    public StorageDomain getEntity()
     {
-        return (storage_domains) super.getEntity();
+        return (StorageDomain) super.getEntity();
     }
 
-    public void setEntity(storage_domains value)
+    public void setEntity(StorageDomain value)
     {
         super.setEntity(value);
     }
@@ -210,9 +210,9 @@ public class StorageDataCenterListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                ArrayList<storage_domains> domains =
-                        (ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                for (storage_domains domain : domains) {
+                ArrayList<StorageDomain> domains =
+                        (ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                for (StorageDomain domain : domains) {
                     String guid =
                             domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
                                     : Guid.Empty.toString();
@@ -445,7 +445,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         ArrayList<String> items = new ArrayList<String>();
         for (Object item : getSelectedItems())
         {
-            storage_domains a = (storage_domains) item;
+            StorageDomain a = (StorageDomain) item;
             items.add(a.getstorage_pool_name());
         }
         model.setItems(items);
@@ -471,7 +471,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     private String GetLocalStoragesFormattedString()
     {
         String localStorages = ""; //$NON-NLS-1$
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             if (a.getstorage_type() == StorageType.LOCALFS)
             {
@@ -483,7 +483,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private boolean ContainsLocalStorage(ConfirmationModel model)
     {
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             if (a.getstorage_type() == StorageType.LOCALFS)
             {
@@ -507,7 +507,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
         for (Object item : getSelectedItems())
         {
-            storage_domains storageDomain = (storage_domains) item;
+            StorageDomain storageDomain = (StorageDomain) item;
             if (storageDomain.getstorage_type() != StorageType.LOCALFS)
             {
                 DetachStorageDomainFromPoolParameters param = new DetachStorageDomainFromPoolParameters();
@@ -528,7 +528,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
                                 Object[] array = (Object[]) target;
                                 StorageDataCenterListModel listModel = (StorageDataCenterListModel) array[0];
-                                storage_domains storage = (storage_domains) array[1];
+                                StorageDomain storage = (StorageDomain) array[1];
                                 VDS locaVds = (VDS) returnValue;
                                 RemoveStorageDomainParameters tempVar =
                                         new RemoveStorageDomainParameters(storage.getId());
@@ -562,7 +562,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
-            storage_domains a = (storage_domains) item;
+            StorageDomain a = (StorageDomain) item;
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
@@ -588,7 +588,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems())
         {
-            storage_domains a = (storage_domains) item;
+            StorageDomain a = (StorageDomain) item;
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
@@ -641,21 +641,21 @@ public class StorageDataCenterListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        ArrayList<storage_domains> items =
-                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items =
+                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                        : new ArrayList<StorageDomain>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, storage_domains.class, VdcActionType.ActivateStorageDomain));
+                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, storage_domains.class, VdcActionType.DeactivateStorageDomain));
+                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomain));
 
         getAttachCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached || getEntity().getstorage_domain_type() == StorageDomainType.ISO));
 
         getDetachCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, storage_domains.class, VdcActionType.DetachStorageDomainFromPool));
+                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DetachStorageDomainFromPool));
     }
 
     @Override

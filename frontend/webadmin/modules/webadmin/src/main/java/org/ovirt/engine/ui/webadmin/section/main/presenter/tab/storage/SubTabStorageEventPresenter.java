@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -24,14 +24,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<storage_domains, StorageListModel, StorageEventListModel, SubTabStorageEventPresenter.ViewDef, SubTabStorageEventPresenter.ProxyDef> {
+public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageEventListModel, SubTabStorageEventPresenter.ViewDef, SubTabStorageEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.storageEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageEventPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<storage_domains> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StorageDomain> {
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)

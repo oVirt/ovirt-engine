@@ -12,7 +12,7 @@ import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
@@ -20,13 +20,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainsResource
-    extends AbstractBackendCollectionResource<StorageDomain, storage_domains>
+    extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements AttachedStorageDomainsResource {
 
     protected Guid dataCenterId;
 
     public BackendAttachedStorageDomainsResource(String dataCenterId) {
-        super(StorageDomain.class, storage_domains.class);
+        super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         this.dataCenterId = asGuid(dataCenterId);
     }
 
@@ -34,7 +34,7 @@ public class BackendAttachedStorageDomainsResource
     public StorageDomains list() {
         StorageDomains storageDomains = new StorageDomains();
 
-        for (storage_domains entity : getBackendCollection(storage_domains.class,
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                                            VdcQueryType.GetStorageDomainsByStoragePoolId,
                                                            new StoragePoolQueryParametersBase(dataCenterId))) {
             storageDomains.getStorageDomains().add(addLinks(map(entity)));
@@ -86,13 +86,13 @@ public class BackendAttachedStorageDomainsResource
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
-        return getEntity(storage_domains.class,
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                          SearchType.StorageDomain,
                          "Storage: name=" + name).getId();
     }
 
-    protected storage_domains  lookupStorageDomainById(Guid storageDomainId) {
-        return getEntity(storage_domains.class,
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain  lookupStorageDomainById(Guid storageDomainId) {
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                          VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
                          new StorageDomainAndPoolQueryParameters(storageDomainId, dataCenterId),
                          storageDomainId.toString());
@@ -107,21 +107,21 @@ public class BackendAttachedStorageDomainsResource
         }
 
         @Override
-        public storage_domains lookupEntity(Guid nullId) {
+        public org.ovirt.engine.core.common.businessentities.StorageDomain lookupEntity(Guid nullId) {
             assert(nullId == null); // attach action return nothing, lookup original id instead
             return lookupStorageDomainById(storageDomainId);
         }
     }
 
     @Override
-    protected StorageDomain map(storage_domains entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         BackendStorageDomainsResource resource = new BackendStorageDomainsResource();
         inject(resource);
         return resource.map(entity, template);
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 }

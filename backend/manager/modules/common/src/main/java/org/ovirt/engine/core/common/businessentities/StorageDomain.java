@@ -6,16 +6,16 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
-public class storage_domains extends IVdcQueryable implements BusinessEntity<Guid> {
+public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -6162192446628804305L;
 
-    public storage_domains() {
+    public StorageDomain() {
         _staticData = new StorageDomainStatic();
         _dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
     }
 
-    public storage_domains(Guid id, String storage, String storage_name, Guid storage_pool_id,
+    public StorageDomain(Guid id, String storage, String storage_name, Guid storage_pool_id,
             Integer available_disk_size, Integer used_disk_size, StorageDomainStatus status, String storage_pool_name,
             int storage_pool_type, int storage_type, String description) {
         _staticData = new StorageDomainStatic();
@@ -324,7 +324,7 @@ public class storage_domains extends IVdcQueryable implements BusinessEntity<Gui
             return false;
         if (getClass() != obj.getClass())
             return false;
-        storage_domains other = (storage_domains) obj;
+        StorageDomain other = (StorageDomain) obj;
         if (_committedDiskSize != other._committedDiskSize)
             return false;
         if (_storageDomainSharedStatus != other._storageDomainSharedStatus)

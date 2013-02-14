@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
@@ -48,7 +48,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     protected Map<Guid, DiskImage> imageFromSourceDomainMap;
     private List<PermissionSubject> permissionCheckSubject;
     private List<DiskImage> _templateDisks;
-    private storage_domains sourceDomain;
+    private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
     private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNetworkInterface.VALID_MAC_ADDRESS_FORMAT);
 
@@ -69,7 +69,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         imageFromSourceDomainMap = new HashMap<Guid, DiskImage>();
     }
 
-    protected storage_domains getSourceDomain() {
+    protected StorageDomain getSourceDomain() {
         if (sourceDomain == null && !Guid.Empty.equals(sourceDomainId)) {
             sourceDomain = getStorageDomainDAO().getForStoragePool(sourceDomainId, getStoragePool().getId());
         }
@@ -144,7 +144,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
 
-    private boolean checkFreeSpaceOnDestinationDomain(storage_domains domain, int requestedSizeGB) {
+    private boolean checkFreeSpaceOnDestinationDomain(StorageDomain domain, int requestedSizeGB) {
         return validate(new StorageDomainValidator(domain).isDomainHasSpaceForRequest(requestedSizeGB));
     }
 
@@ -276,14 +276,14 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return VdcActionType.MoveOrCopyImageGroup;
     }
 
-    protected storage_domains getStorageDomain(Guid domainId) {
+    protected StorageDomain getStorageDomain(Guid domainId) {
         return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
     }
 
-    protected Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
-        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage, storage_domains>();
+    protected Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
+        Map<DiskImage, StorageDomain> spaceMap = new HashMap<DiskImage, StorageDomain>();
         for (DiskImage image : images) {
-            storage_domains domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
+            StorageDomain domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
             spaceMap.put(image, domain);
         }
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);

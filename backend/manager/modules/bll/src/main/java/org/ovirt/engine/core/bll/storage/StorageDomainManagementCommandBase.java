@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -22,9 +22,9 @@ public abstract class StorageDomainManagementCommandBase<T extends StorageDomain
     }
 
     @Override
-    public storage_domains getStorageDomain() {
+    public StorageDomain getStorageDomain() {
         if (super.getStorageDomain() == null) {
-            super.setStorageDomain(new storage_domains());
+            super.setStorageDomain(new StorageDomain());
         }
         super.getStorageDomain().setStorageStaticData(getParameters().getStorageDomain());
         return super.getStorageDomain();

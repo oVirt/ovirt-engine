@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.GetVmTemplatesDisksQuery;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -29,7 +29,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
                 DbFacade.getInstance()
                         .getVmTemplateDao()
                         .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
-        ArrayList<storage_domains> result = new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> result = new ArrayList<StorageDomain>();
 
         if (vmTemplate != null && vmTemplate.getstorage_pool_id() != null) {
             List<Disk> templateDisks = getTemplateDisks();
@@ -42,7 +42,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
                 }
 
                 for (Guid domainId : domains) {
-                    storage_domains domain = getStorageDomain(domainId);
+                    StorageDomain domain = getStorageDomain(domainId);
                     if (domain != null) {
                         result.add(domain);
                     }
@@ -52,7 +52,7 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends GetStorageDomainsByV
         getQueryReturnValue().setReturnValue(result);
     }
 
-    protected storage_domains getStorageDomain(Guid domainId) {
+    protected StorageDomain getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
                 .getStorageDomainDao()
                 .getForStoragePool(domainId, vmTemplate.getstorage_pool_id().getValue());

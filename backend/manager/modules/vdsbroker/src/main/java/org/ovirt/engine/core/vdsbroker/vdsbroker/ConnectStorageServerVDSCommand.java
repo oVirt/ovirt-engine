@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
@@ -83,10 +83,10 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
         String namesSeparator = ",";
         for (Entry<String, String> result : returnValue.entrySet()) {
             if (!"0".equals(result.getValue())) {
-                List<storage_domains> domains =
+                List<StorageDomain> domains =
                         DbFacade.getInstance().getStorageDomainDao().getAllByConnectionId(new Guid(result.getKey()));
                 if (!domains.isEmpty()) {
-                    for (storage_domains domain : domains) {
+                    for (StorageDomain domain : domains) {
                         if (failedDomainNames.length() > 0) {
                             failedDomainNames.append(namesSeparator);
                         }

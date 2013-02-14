@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -246,14 +246,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         privatetempVm = value;
     }
 
-    private storage_domains privatestorageDomain;
+    private StorageDomain privatestorageDomain;
 
-    public storage_domains getstorageDomain()
+    public StorageDomain getstorageDomain()
     {
         return privatestorageDomain;
     }
 
-    public void setstorageDomain(storage_domains value)
+    public void setstorageDomain(StorageDomain value)
     {
         privatestorageDomain = value;
     }
@@ -1411,7 +1411,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
             else
             {
-                setstorageDomain((storage_domains) model.getStorageDomain().getSelectedItem());
+                setstorageDomain((StorageDomain) model.getStorageDomain().getSelectedItem());
 
                 if ((Boolean) model.getProvisioning().getEntity())
                 {

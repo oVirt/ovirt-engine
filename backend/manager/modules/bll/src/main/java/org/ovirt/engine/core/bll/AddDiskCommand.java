@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -221,18 +221,18 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId()) || super.isVmExist();
     }
 
-    private boolean hasFreeSpace(storage_domains storageDomain) {
+    private boolean hasFreeSpace(StorageDomain storageDomain) {
         if (getDiskImageInfo().getvolume_type() == VolumeType.Preallocated) {
             return doesStorageDomainhaveSpaceForRequest(storageDomain);
         }
         return isStorageDomainWithinThresholds(storageDomain);
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(getDiskImageInfo().getSizeInGigabytes()));
     }
 
-    protected boolean isStorageDomainWithinThresholds(storage_domains storageDomain) {
+    protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
     }
 

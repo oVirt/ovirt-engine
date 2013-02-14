@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -156,13 +156,13 @@ public class ImportVmTemplateCommandTest {
         final ImportVmTemplateParameters parameters = command.getParameters();
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
 
-        final storage_domains srcDomain = new storage_domains();
+        final StorageDomain srcDomain = new StorageDomain();
         srcDomain.setstorage_domain_type(StorageDomainType.ImportExport);
         srcDomain.setstatus(StorageDomainStatus.Active);
         when(dao.getForStoragePool(parameters.getSourceDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(srcDomain);
 
-        final storage_domains destDomain = new storage_domains();
+        final StorageDomain destDomain = new StorageDomain();
         destDomain.setstorage_domain_type(StorageDomainType.Data);
         destDomain.setused_disk_size(0);
         destDomain.setavailable_disk_size(1000);

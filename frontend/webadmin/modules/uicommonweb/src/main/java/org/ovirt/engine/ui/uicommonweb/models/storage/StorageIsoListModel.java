@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -142,7 +142,7 @@ public class StorageIsoListModel extends SearchableListModel implements IFronten
             return;
         }
 
-        storage_domains storageDomain = (storage_domains) getEntity();
+        StorageDomain storageDomain = (StorageDomain) getEntity();
 
         GetAllIsoImagesListParameters tempVar = new GetAllIsoImagesListParameters();
         tempVar.setStorageDomainId(storageDomain.getId());

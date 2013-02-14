@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<storage_domains, VmTemplate, StorageListModel, TemplateBackupModel>
+public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<StorageDomain, VmTemplate, StorageListModel, TemplateBackupModel>
         implements SubTabStorageTemplateBackupPresenter.ViewDef {
 
     private static final Constants messageConstants = GWT.create(Constants.class);

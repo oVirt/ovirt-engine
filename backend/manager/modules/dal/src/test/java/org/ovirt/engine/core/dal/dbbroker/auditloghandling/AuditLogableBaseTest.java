@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -452,7 +452,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storageDomainDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_domains s = b.getStorageDomain();
+        final StorageDomain s = b.getStorageDomain();
         assertNull(s);
     }
 
@@ -460,16 +460,16 @@ public class AuditLogableBaseTest {
     public void storageDomainNull() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomain(null);
-        final storage_domains s = b.getStorageDomain();
+        final StorageDomain s = b.getStorageDomain();
         assertNull(s);
     }
 
     @Test
     public void storageDomain() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_domains s = new storage_domains();
+        final StorageDomain s = new StorageDomain();
         b.setStorageDomain(s);
-        final storage_domains st = b.getStorageDomain();
+        final StorageDomain st = b.getStorageDomain();
         assertEquals(s, st);
     }
 
@@ -478,7 +478,7 @@ public class AuditLogableBaseTest {
         final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID);
         b.setStoragePoolId(GUID);
-        final storage_domains s = b.getStorageDomain();
+        final StorageDomain s = b.getStorageDomain();
         assertEquals(b.STORAGE_DOMAIN, s);
     }
 
@@ -487,7 +487,7 @@ public class AuditLogableBaseTest {
         final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID);
         b.setStoragePoolId(GUID2);
-        final storage_domains s = b.getStorageDomain();
+        final StorageDomain s = b.getStorageDomain();
         assertNull(s);
     }
 
@@ -495,7 +495,7 @@ public class AuditLogableBaseTest {
     public void storageDomainWithNullId() {
         final TestAuditLogableBase b = new TestAuditLogableBase();
         b.setStorageDomainId(GUID2);
-        final storage_domains s = b.getStorageDomain();
+        final StorageDomain s = b.getStorageDomain();
         assertEquals(b.STORAGE_DOMAIN, s);
     }
 
@@ -525,7 +525,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storageDomainIdWithStorageDomain() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_domains s = new storage_domains();
+        final StorageDomain s = new StorageDomain();
         s.setId(GUID);
         b.setStorageDomain(s);
         final NGuid g = b.getStorageDomainId();
@@ -542,7 +542,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storageDomainName() {
         final AuditLogableBase b = new AuditLogableBase();
-        final storage_domains s = new storage_domains();
+        final StorageDomain s = new StorageDomain();
         s.setstorage_name(NAME);
         b.setStorageDomain(s);
         final String n = b.getStorageDomainName();
@@ -612,7 +612,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
         b.setStoragePool(null);
-        final storage_domains s = new storage_domains();
+        final StorageDomain s = new StorageDomain();
         s.setstorage_pool_id(GUID);
         b.setStorageDomain(s);
         final NGuid n = b.getStoragePoolId();
@@ -1053,7 +1053,7 @@ public class AuditLogableBaseTest {
     }
 
     private class TestAuditLogableBase extends AuditLogableBase {
-        public final storage_domains STORAGE_DOMAIN = new storage_domains();
+        public final StorageDomain STORAGE_DOMAIN = new StorageDomain();
 
         @Override
         public VmTemplateDAO getVmTemplateDAO() {
@@ -1114,12 +1114,12 @@ public class AuditLogableBaseTest {
             return v;
         }
 
-        private List<storage_domains> getStorageDomainList() {
-            final List<storage_domains> l = new ArrayList<storage_domains>();
-            final storage_domains s = new storage_domains();
+        private List<StorageDomain> getStorageDomainList() {
+            final List<StorageDomain> l = new ArrayList<StorageDomain>();
+            final StorageDomain s = new StorageDomain();
             s.setstatus(StorageDomainStatus.InActive);
             l.add(s);
-            final storage_domains s2 = new storage_domains();
+            final StorageDomain s2 = new StorageDomain();
             s2.setstatus(null);
             l.add(s2);
             STORAGE_DOMAIN.setstatus(StorageDomainStatus.Active);

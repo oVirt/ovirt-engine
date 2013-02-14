@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -199,7 +199,7 @@ public class VmRunHandler {
      */
     public boolean hasSpaceForSnapshots(VM vm, ArrayList<String> message) {
         Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
-        for (Entry<storage_domains, Integer> e : mapStorageDomainsToNumOfDisks(vm).entrySet()) {
+        for (Entry<StorageDomain, Integer> e : mapStorageDomainsToNumOfDisks(vm).entrySet()) {
             if (!destinationHasSpace(e.getKey(), minSnapshotSize * e.getValue(), message)) {
                 return false;
             }
@@ -207,7 +207,7 @@ public class VmRunHandler {
         return true;
     }
 
-    private boolean destinationHasSpace(storage_domains storageDomain, long sizeRequested, ArrayList<String> message) {
+    private boolean destinationHasSpace(StorageDomain storageDomain, long sizeRequested, ArrayList<String> message) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested), message);
     }
 
@@ -229,11 +229,11 @@ public class VmRunHandler {
      * @param vm
      * @return
      */
-    public Map<storage_domains, Integer> mapStorageDomainsToNumOfDisks(VM vm) {
-        Map<storage_domains, Integer> map = new HashMap<storage_domains, Integer>();
+    public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm) {
+        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
         for (Disk disk : getPluggedDisks(vm)) {
             if (disk.isAllowSnapshot()) {
-                for (storage_domains domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
+                for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
                     map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
                 }
             }
@@ -288,11 +288,11 @@ public class VmRunHandler {
      */
     public Guid findActiveISODomain(Guid storagePoolId) {
         Guid isoGuid = null;
-        List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(
+        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
                 storagePoolId);
-        for (storage_domains domain : domains) {
+        for (StorageDomain domain : domains) {
             if (domain.getstorage_domain_type() == StorageDomainType.ISO) {
-                storage_domains sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
+                StorageDomain sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
                         storagePoolId);
                 if (sd != null && sd.getstatus() == StorageDomainStatus.Active) {
                     isoGuid = sd.getId();

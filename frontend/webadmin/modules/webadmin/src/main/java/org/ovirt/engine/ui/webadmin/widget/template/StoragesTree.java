@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
@@ -49,7 +49,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$
 
-        storage_domains storage = storageDomainModel.getStorageDomain();
+        StorageDomain storage = storageDomainModel.getStorageDomain();
 
         addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), ""); //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
     protected Object getEntityId(Object entity) {
         DiskModel diskModel = (DiskModel) entity;
-        storage_domains storageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
         return ((DiskImage) diskModel.getDisk()).getImageId().toString() + storageDomain.getId().toString();
     }
 

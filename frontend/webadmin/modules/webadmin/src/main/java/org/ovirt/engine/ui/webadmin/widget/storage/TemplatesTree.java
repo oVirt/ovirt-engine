@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
@@ -84,6 +84,6 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
         if (listModel.getEntity() instanceof Quota) {
             return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
         }
-        return disk.getstorage_ids().contains(((storage_domains) listModel.getEntity()).getId());
+        return disk.getstorage_ids().contains(((StorageDomain) listModel.getEntity()).getId());
     }
 }

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -123,11 +123,11 @@ public class TemplateStorageListModel extends SearchableListModel
                             TemplateStorageListModel templateStorageListModel = (TemplateStorageListModel) target;
                             ArrayList<DiskImage> diskImages = (ArrayList<DiskImage>) returnValue;
 
-                            ArrayList<storage_domains> storageDomains =
-                                    Linq.<storage_domains> Cast(templateStorageListModel.value);
+                            ArrayList<StorageDomain> storageDomains =
+                                    Linq.<StorageDomain> Cast(templateStorageListModel.value);
                             ArrayList<StorageDomainModel> storageDomainModels = new ArrayList<StorageDomainModel>();
 
-                            for (storage_domains storageDomain : storageDomains) {
+                            for (StorageDomain storageDomain : storageDomains) {
                                 StorageDomainModel storageDomainModel = new StorageDomainModel();
                                 storageDomainModel.setStorageDomain(storageDomain);
 
@@ -173,7 +173,7 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
-                    ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
+                    ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
         }
         model.setItems(items);
 
@@ -198,7 +198,7 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             RemoveDiskParameters params =
                     new RemoveDiskParameters(diskModel.getDisk().getId(),
-                            ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId());
+                            ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getId());
             parameters.add(params);
         }
 

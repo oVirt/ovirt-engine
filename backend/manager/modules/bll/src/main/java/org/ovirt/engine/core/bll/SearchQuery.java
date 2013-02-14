@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -248,7 +248,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getStoragePoolDao(), true, null);
     }
 
-    private List<storage_domains> searchStorageDomain() {
+    private List<StorageDomain> searchStorageDomain() {
         return genericSearch(getDbFacade().getStorageDomainDao(), true, null);
     }
 

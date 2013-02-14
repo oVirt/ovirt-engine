@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.StoragePoolQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -206,7 +206,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             public void OnSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<storage_domains>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                searchableListModel.setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
@@ -233,7 +233,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .ToList()
         // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -249,7 +249,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .ToList()
         // );
         ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -299,14 +299,14 @@ public class DataCenterStorageListModel extends SearchableListModel
                 @Override
                 public void OnSuccess(Object model, Object result)
                 {
-                    ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
+                    ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
                     ArrayList<EntityModel> models;
                     models = new ArrayList<EntityModel>();
-                    ArrayList<storage_domains> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
-                                    : new ArrayList<storage_domains>();
-                    for (storage_domains a : list)
+                    ArrayList<StorageDomain> items =
+                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> Cast(dcStorageModel.getItems()))
+                                    : new ArrayList<StorageDomain>();
+                    for (StorageDomain a : list)
                     {
                         // if (Linq.All<storage_domains>(items, delegate(storage_domains b) { return b.id != a.id; }))
                         if (!Linq.IsSDItemExistInList(items, a.getId()))
@@ -332,13 +332,13 @@ public class DataCenterStorageListModel extends SearchableListModel
                 public void OnSuccess(Object model, Object result)
                 {
                     DataCenterStorageListModel dcStorageModel = (DataCenterStorageListModel) model;
-                    ArrayList<storage_domains> list = (ArrayList<storage_domains>) result;
+                    ArrayList<StorageDomain> list = (ArrayList<StorageDomain>) result;
                     ArrayList<EntityModel> models = new ArrayList<EntityModel>();
                     boolean addToList;
-                    ArrayList<storage_domains> items =
-                            dcStorageModel.getItems() != null ? new ArrayList<storage_domains>(Linq.<storage_domains> Cast(dcStorageModel.getItems()))
-                                    : new ArrayList<storage_domains>();
-                    for (storage_domains a : list)
+                    ArrayList<StorageDomain> items =
+                            dcStorageModel.getItems() != null ? new ArrayList<StorageDomain>(Linq.<StorageDomain> Cast(dcStorageModel.getItems()))
+                                    : new ArrayList<StorageDomain>();
+                    for (StorageDomain a : list)
                     {
                         addToList = false;
 
@@ -450,12 +450,12 @@ public class DataCenterStorageListModel extends SearchableListModel
         // .Where(Selector.GetIsSelected)
         // .Select(a => (storage_domains)a.Entity)
         // .ToList();
-        ArrayList<storage_domains> items = new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
         for (EntityModel a : Linq.<EntityModel> Cast(model.getItems()))
         {
             if (a.getIsSelected())
             {
-                items.add((storage_domains) a.getEntity());
+                items.add((StorageDomain) a.getEntity());
             }
         }
 
@@ -467,7 +467,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             // .ToList()
             // );
             ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-            for (storage_domains a : items)
+            for (StorageDomain a : items)
             {
                 pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
             }
@@ -492,7 +492,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (storage_domains item : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain item : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             list.add(item.getstorage_name());
         }
@@ -519,7 +519,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     private String GetLocalStoragesFormattedString()
     {
         String localStorages = ""; //$NON-NLS-1$
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             if (a.getstorage_type() == StorageType.LOCALFS)
             {
@@ -531,7 +531,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     private boolean ContainsLocalStorage(ConfirmationModel model)
     {
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             if (a.getstorage_type() == StorageType.LOCALFS)
             {
@@ -560,7 +560,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         // A list of 'remove' action parameters
         setpb_remove(new ArrayList<VdcActionParametersBase>());
         String localStorgaeDC = null;
-        for (storage_domains a : Linq.<storage_domains> Cast(getSelectedItems()))
+        for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             // For local storage - remove; otherwise - detach
             if (a.getstorage_type() == StorageType.LOCALFS)
@@ -693,12 +693,12 @@ public class DataCenterStorageListModel extends SearchableListModel
 
     private void UpdateActionAvailability()
     {
-        ArrayList<storage_domains> items =
-                getItems() != null ? Linq.<storage_domains> Cast(getItems())
-                        : new ArrayList<storage_domains>();
-        ArrayList<storage_domains> selectedItems =
-                getSelectedItems() != null ? Linq.<storage_domains> Cast(getSelectedItems())
-                        : new ArrayList<storage_domains>();
+        ArrayList<StorageDomain> items =
+                getItems() != null ? Linq.<StorageDomain> Cast(getItems())
+                        : new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> selectedItems =
+                getSelectedItems() != null ? Linq.<StorageDomain> Cast(getSelectedItems())
+                        : new ArrayList<StorageDomain>();
 
         if (getEntity() != null)
         {
@@ -706,7 +706,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
 
         boolean isMasterPresents = false;
-        for (storage_domains a : items)
+        for (StorageDomain a : items)
         {
             if (a.getstorage_domain_type() == StorageDomainType.Master && a.getstatus() != null
                     && a.getstatus() == StorageDomainStatus.Active)
@@ -717,7 +717,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
 
         boolean isISOPresents = false;
-        for (storage_domains a : items)
+        for (StorageDomain a : items)
         {
             if (a.getstorage_domain_type() == StorageDomainType.ISO)
             {
@@ -729,7 +729,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         getAttachISOCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresents && !isISOPresents);
 
         boolean isBackupPresents = false;
-        for (storage_domains a : items)
+        for (StorageDomain a : items)
         {
             if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
             {
@@ -741,15 +741,15 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         getDetachCommand().setIsExecutionAllowed(selectedItems.size() > 0
                 && VdcActionUtils.CanExecute(selectedItems,
-                        storage_domains.class,
+                        StorageDomain.class,
                         VdcActionType.DetachStorageDomainFromPool));
 
         getActivateCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.CanExecute(selectedItems, storage_domains.class, VdcActionType.ActivateStorageDomain));
+                && VdcActionUtils.CanExecute(selectedItems, StorageDomain.class, VdcActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(selectedItems.size() == 1
                 && VdcActionUtils.CanExecute(selectedItems,
-                        storage_domains.class,
+                        StorageDomain.class,
                         VdcActionType.DeactivateStorageDomain));
     }
 

@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -139,8 +139,8 @@ public class BackendStorageDomainTemplatesResourceTest
         return ret;
     }
 
-    public static storage_domains setUpStorageDomain(StorageDomainType domainType) {
-        storage_domains entity = new storage_domains();
+    public static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomain(StorageDomainType domainType) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setId(STORAGE_DOMAIN_ID);
         entity.setstorage_domain_type(domainType);
         return entity;

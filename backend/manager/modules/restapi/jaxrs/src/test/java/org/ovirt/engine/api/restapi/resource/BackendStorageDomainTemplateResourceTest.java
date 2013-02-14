@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -331,8 +331,8 @@ public class BackendStorageDomainTemplateResourceTest
         verifyModelSpecific(model, index);
     }
 
-    protected storage_domains getStorageDomain(int idx) {
-        storage_domains dom = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
         return dom;
     }

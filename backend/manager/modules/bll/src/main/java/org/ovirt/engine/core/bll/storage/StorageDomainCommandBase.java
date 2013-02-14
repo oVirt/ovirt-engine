@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -87,12 +87,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         } else if (!isRemoveLast
                 && isMaster()) {
 
-            storage_domains storage_domains =
+            StorageDomain storage_domains =
                     LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool
                             (getStorageDomain().getstorage_pool_id().getValue()),
-                            new Predicate<storage_domains>() {
+                            new Predicate<StorageDomain>() {
                                 @Override
-                                public boolean eval(storage_domains a) {
+                                public boolean eval(StorageDomain a) {
                                     return a.getId().equals(getStorageDomain().getId())
                                             && a.getstatus() == StorageDomainStatus.Active;
                                 }
@@ -105,7 +105,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long sizeRequested) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
     }
 
@@ -210,10 +210,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkMasterDomainIsUp() {
         boolean returnValue = true;
-        List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
-        storageDomains = LinqUtils.filter(storageDomains, new Predicate<storage_domains>() {
+        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        storageDomains = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains a) {
+            public boolean eval(StorageDomain a) {
                 return a.getstorage_domain_type() == StorageDomainType.Master
                         && a.getstatus() == StorageDomainStatus.Active;
             }
@@ -287,14 +287,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      * will be returned
      * @return an elected master domain or null
      */
-    protected storage_domains electNewMaster(boolean duringReconstruct) {
-        storage_domains newMaster = null;
+    protected StorageDomain electNewMaster(boolean duringReconstruct) {
+        StorageDomain newMaster = null;
         if (getStoragePool() != null) {
-            List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+            List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
             Collections.sort(storageDomains, LastTimeUsedAsMasterComp.instance);
             if (storageDomains.size() > 0) {
-                storage_domains storageDomain = getStorageDomain();
-                for (storage_domains dbStorageDomain : storageDomains) {
+                StorageDomain storageDomain = getStorageDomain();
+                for (StorageDomain dbStorageDomain : storageDomains) {
                     if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
                             .equals(storageDomain.getId())))
                             && (dbStorageDomain.getstatus() == StorageDomainStatus.Active || dbStorageDomain.getstatus() == StorageDomainStatus.Unknown)
@@ -379,7 +379,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return getDbFacade().getStorageServerConnectionDao();
     }
 
-    protected IStorageHelper getStorageHelper(storage_domains storageDomain) {
+    protected IStorageHelper getStorageHelper(StorageDomain storageDomain) {
         return StorageHelperDirector.getInstance().getItem(storageDomain.getstorage_type());
     }
 
@@ -387,11 +387,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         TransactionSupport.executeInNewTransaction(method);
     }
 
-    private static final class LastTimeUsedAsMasterComp implements Comparator<storage_domains> {
+    private static final class LastTimeUsedAsMasterComp implements Comparator<StorageDomain> {
         public static final LastTimeUsedAsMasterComp instance = new LastTimeUsedAsMasterComp();
 
         @Override
-        public int compare(storage_domains o1, storage_domains o2) {
+        public int compare(StorageDomain o1, StorageDomain o2) {
             // TODO: When moving to JDK7 - this can be replaced with
             // Long.compare(o1.getLastTimeUsedAsMaster(),o2.getLastTimeUsedAsMaster());
             return (o1.getLastTimeUsedAsMaster() < o2.getLastTimeUsedAsMaster()) ? -1

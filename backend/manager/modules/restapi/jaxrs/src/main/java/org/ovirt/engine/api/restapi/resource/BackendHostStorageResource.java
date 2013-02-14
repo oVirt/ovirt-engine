@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.StorageResource;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -43,7 +43,7 @@ public class BackendHostStorageResource
             ret.getStorage().add(addLinks(storage));
         }
 
-        for (storage_domains vg : getVolumeGroups()) {
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain vg : getVolumeGroups()) {
             ret.getStorage().add(addLinks(map(vg)));
         }
 
@@ -60,7 +60,7 @@ public class BackendHostStorageResource
                 return addLinks(map(lun));
             }
         }
-        for (storage_domains vg : getVolumeGroups()) {
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain vg : getVolumeGroups()) {
             if (vg.getstorage().equals(id)) {
                 return addLinks(map(vg));
             }
@@ -73,14 +73,14 @@ public class BackendHostStorageResource
                                     new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN));
     }
 
-    protected List<storage_domains> getVolumeGroups() {
-        return getBackendCollection(storage_domains.class,
+    protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getVolumeGroups() {
+        return getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                     VdcQueryType.GetVgList,
                                     new VdsIdParametersBase(asGuid(hostId)));
     }
 
-    protected Storage map(storage_domains entity) {
-        return getMapper(storage_domains.class, Storage.class).map(entity, null);
+    protected Storage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
+        return getMapper(org.ovirt.engine.core.common.businessentities.StorageDomain.class, Storage.class).map(entity, null);
     }
 
     @Override

@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -26,7 +26,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourc
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResourceTest.verifyModelSpecific;
 
 public class BackendStorageDomainResourceTest
-        extends AbstractBackendSubResourceTest<StorageDomain, storage_domains, BackendStorageDomainResource> {
+        extends AbstractBackendSubResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainResource> {
 
     public BackendStorageDomainResourceTest() {
         super(new BackendStorageDomainResource(GUIDS[0].toString(), new BackendStorageDomainsResource()));
@@ -101,8 +101,8 @@ public class BackendStorageDomainResourceTest
         return luns;
     }
 
-    private storage_domains getFcpEntity() {
-        storage_domains entity = control.createMock(storage_domains.class);
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getFcpEntity() {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
@@ -185,11 +185,11 @@ public class BackendStorageDomainResourceTest
         }
     }
 
-    protected void setUpGetEntityExpectations(int times, storage_domains entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         setUpGetEntityExpectations(times, false, entity);
     }
 
-    protected void setUpGetEntityExpectations(int times, boolean notFound, storage_domains entity) throws Exception {
+    protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
                                        StorageDomainQueryParametersBase.class,
@@ -210,8 +210,8 @@ public class BackendStorageDomainResourceTest
     }
 
     @Override
-    protected storage_domains getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_domains.class), index);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
     }
 
     protected void verifyModel(StorageDomain model, int index) {

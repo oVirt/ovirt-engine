@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabStorageEventView extends AbstractSubTabEventView<storage_domains, StorageListModel, StorageEventListModel>
+public class SubTabStorageEventView extends AbstractSubTabEventView<StorageDomain, StorageListModel, StorageEventListModel>
         implements SubTabStorageEventPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabStorageEventView> {

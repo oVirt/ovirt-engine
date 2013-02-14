@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class SubTabStorageDiskView extends AbstractSubTabTableView<storage_domains, Disk, StorageListModel, StorageDiskListModel>
+public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain, Disk, StorageListModel, StorageDiskListModel>
         implements SubTabStorageDiskPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabStorageDiskView> {

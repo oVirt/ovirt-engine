@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
@@ -12,14 +12,14 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class StorageDomainModel extends EntityModel
 {
 
-    private storage_domains privateStorageDomain;
+    private StorageDomain privateStorageDomain;
 
-    public storage_domains getStorageDomain()
+    public StorageDomain getStorageDomain()
     {
         return privateStorageDomain;
     }
 
-    public void setStorageDomain(storage_domains value)
+    public void setStorageDomain(StorageDomain value)
     {
         privateStorageDomain = value;
     }

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -41,7 +41,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+        StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         if (storage == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);

@@ -4,11 +4,11 @@ import org.ovirt.engine.core.common.businessentities.*;
 import org.ovirt.engine.core.utils.*;
 
 public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleAsyncOperation {
-    private storage_domains _domain;
+    private StorageDomain _domain;
     private storage_pool _pool;
     private java.util.ArrayList<VDS> _vdss;
 
-    public ActivateDeactivateSingleAsyncOperation(java.util.ArrayList<VDS> vdss, storage_domains domain,
+    public ActivateDeactivateSingleAsyncOperation(java.util.ArrayList<VDS> vdss, StorageDomain domain,
             storage_pool storagePool) {
         _vdss = vdss;
         _domain = domain;
@@ -17,7 +17,7 @@ public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleA
 
     public abstract void execute(int iterationId);
 
-    protected storage_domains getStorageDomain() {
+    protected StorageDomain getStorageDomain() {
         return _domain;
     }
 

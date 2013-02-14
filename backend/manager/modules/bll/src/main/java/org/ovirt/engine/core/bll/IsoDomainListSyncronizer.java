@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -203,7 +203,7 @@ public class IsoDomainListSyncronizer {
                 handleErrorLog(tempProblematicRepoFileList);
 
                 // If refresh succeeded print an audit log Indicating that.
-                storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
+                StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 addToAuditLogSuccessMessage(storageDomain.getstorage_name(), fileTypeExtension.name());
             } else {
                 // Print log Indicating the problematic pools.
@@ -497,7 +497,7 @@ public class IsoDomainListSyncronizer {
     private static String buildDetailedAuditLogMessage(RepoFileMetaData repoFileMetaData) {
         String storageDomainName = "Repository not found";
         if (repoFileMetaData != null && repoFileMetaData.getRepoDomainId() != null) {
-            storage_domains storageDomain =
+            StorageDomain storageDomain =
                     DbFacade.getInstance().getStorageDomainDao().get(repoFileMetaData.getRepoDomainId());
             if (storageDomain != null) {
                 storageDomainName =

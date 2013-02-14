@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,9 +65,9 @@ public class AutoRecoveryManager {
         }, "hosts");
         check(dbFacade.getStorageDomainDao(),
                 VdcActionType.ConnectDomainToStorage,
-                new DoWithClosure<storage_domains, VdcActionParametersBase>() {
+                new DoWithClosure<StorageDomain, VdcActionParametersBase>() {
             @Override
-            public VdcActionParametersBase doWith(final storage_domains arg) {
+            public VdcActionParametersBase doWith(final StorageDomain arg) {
                 final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(
                         arg.getId(), new Guid(arg.getstorage_pool_id().getUuid()));
                 params.setRunSilent(true);

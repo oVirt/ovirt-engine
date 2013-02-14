@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -62,11 +62,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         /**
          * Detach master storage domain last.
          */
-        List<storage_domains> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
+        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                     getStoragePool().getId());
-        Collections.sort(storageDomains, new Comparator<storage_domains>() {
+        Collections.sort(storageDomains, new Comparator<StorageDomain>() {
             @Override
-            public int compare(storage_domains o1, storage_domains o2) {
+            public int compare(StorageDomain o1, StorageDomain o2) {
                 return o1.getstorage_domain_type().compareTo(o2.getstorage_domain_type());
             }
         });
@@ -105,9 +105,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         });
     }
 
-    private void forceRemoveStorageDomains(List<storage_domains> storageDomains) {
-        storage_domains masterDomain = null;
-        for (storage_domains storageDomain : storageDomains) {
+    private void forceRemoveStorageDomains(List<StorageDomain> storageDomains) {
+        StorageDomain masterDomain = null;
+        for (StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
                 if (storageDomain.getstorage_domain_type() != StorageDomainType.ISO) {
                     removeDomainFromDb(storageDomain);
@@ -121,15 +121,15 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
     }
 
-    private boolean regularRemoveStorageDomains(List<storage_domains> storageDomains) {
+    private boolean regularRemoveStorageDomains(List<StorageDomain> storageDomains) {
         boolean retVal = true;
-        List<storage_domains> temp = LinqUtils.filter(storageDomains, new Predicate<storage_domains>() {
+        List<StorageDomain> temp = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains storage_domain) {
+            public boolean eval(StorageDomain storage_domain) {
                 return storage_domain.getstorage_domain_type() == StorageDomainType.Master;
             }
         });
-        final storage_domains masterDomain = LinqUtils.first(temp);
+        final StorageDomain masterDomain = LinqUtils.first(temp);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -152,7 +152,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         connectAllHostToPoolAndDomain(masterDomain);
 
         List<VDS> vdss = getAllRunningVdssInPool();
-        for (storage_domains storageDomain : storageDomains) {
+        for (StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
                 if (!removeDomainFromPool(storageDomain, vdss.get(0))) {
                     log.errorFormat("Unable to detach storage domain {0} {1}",
@@ -239,7 +239,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
     }
 
-    private void removeDomainFromDb(final storage_domains domain) {
+    private void removeDomainFromDb(final StorageDomain domain) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -256,7 +256,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     }
 
-    protected boolean removeDomainFromPool(storage_domains storageDomain, VDS vds) {
+    protected boolean removeDomainFromPool(StorageDomain storageDomain, VDS vds) {
         if (storageDomain.getstorage_type() != StorageType.LOCALFS) {
             DetachStorageDomainFromPoolParameters tempVar = new DetachStorageDomainFromPoolParameters(
                     storageDomain.getId(), getStoragePool().getId());
@@ -299,9 +299,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
 
-        final List<storage_domains> poolDomains =
+        final List<StorageDomain> poolDomains =
                 getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
-        final List<storage_domains> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
+        final List<StorageDomain> activeOrLockedDomains = getActiveOrLockedDomainList(poolDomains);
 
         if (!activeOrLockedDomains.isEmpty()) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_POOL_WITH_ACTIVE_DOMAINS);
@@ -310,7 +310,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             if(poolDomains.size() > 1) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
-            for (storage_domains domain : poolDomains) {
+            for (StorageDomain domain : poolDomains) {
                 // check that there are no images on data domains
                 if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
                         && DbFacade.getInstance()
@@ -350,10 +350,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
     }
 
-    protected List<storage_domains> getActiveOrLockedDomainList(List<storage_domains> domainsList) {
-        domainsList = LinqUtils.filter(domainsList, new Predicate<storage_domains>() {
+    protected List<StorageDomain> getActiveOrLockedDomainList(List<StorageDomain> domainsList) {
+        domainsList = LinqUtils.filter(domainsList, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains dom) {
+            public boolean eval(StorageDomain dom) {
                 return (dom.getstatus() == StorageDomainStatus.Active || dom.getstatus() == StorageDomainStatus.Locked);
             }
         });
@@ -369,7 +369,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
      * @param masterDomain
      *            Connect all hosts to the pool and to the domains
      */
-    protected void connectAllHostToPoolAndDomain(final storage_domains masterDomain) {
+    protected void connectAllHostToPoolAndDomain(final StorageDomain masterDomain) {
         final List<VDS> vdsList = getAllRunningVdssInPool();
         final storage_pool storagePool = getStoragePool();
         SyncronizeNumberOfAsyncOperations sync = new SyncronizeNumberOfAsyncOperations(vdsList.size(),

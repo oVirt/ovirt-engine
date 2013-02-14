@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
@@ -277,7 +277,7 @@ public final class VdcActionUtils {
         storageDomainMatrix.put(
                 StorageDomainStatus.Maintenance,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.DeactivateStorageDomain)));
-        _matrix.put(storage_domains.class, storageDomainMatrix);
+        _matrix.put(StorageDomain.class, storageDomainMatrix);
     }
 
     public static boolean CanExecute(List<?> entities, Class<?> type, VdcActionType action) {
@@ -310,8 +310,8 @@ public final class VdcActionUtils {
                     ((VmTemplate) entity).getstatus() :
                     null);
 
-        } else if (entity instanceof storage_domains) {
-            StorageDomainStatus status = ((storage_domains) entity).getstatus();
+        } else if (entity instanceof StorageDomain) {
+            StorageDomainStatus status = ((StorageDomain) entity).getstatus();
             return status != null ? status : StorageDomainStatus.Uninitialized;
         }
 

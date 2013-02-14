@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -23,14 +23,14 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public abstract class ImportSanStorageModel extends SanStorageModelBase
 {
 
-    private List<storage_domains> candidates;
+    private List<StorageDomain> candidates;
 
-    public List<storage_domains> getCandidates()
+    public List<StorageDomain> getCandidates()
     {
         return candidates;
     }
 
-    public void setCandidates(List<storage_domains> value)
+    public void setCandidates(List<StorageDomain> value)
     {
         if (candidates != value)
         {
@@ -117,7 +117,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 if (result != null)
                 {
-                    model.setCandidates((ArrayList<storage_domains>) result);
+                    model.setCandidates((ArrayList<StorageDomain>) result);
                 }
                 else
                 {
@@ -176,7 +176,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase
         return super.Validate() && getIsValid();
     }
 
-    private Iterable ToEntityModelList(List<storage_domains> list)
+    private Iterable ToEntityModelList(List<StorageDomain> list)
     {
         ArrayList<EntityModel> entityModelList = new ArrayList<EntityModel>();
         for (Object storage : list)

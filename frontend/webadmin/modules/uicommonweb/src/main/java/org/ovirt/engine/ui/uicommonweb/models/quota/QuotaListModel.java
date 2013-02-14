@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -212,7 +212,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                     @Override
                     public void OnSuccess(Object model, Object returnValue) {
-                        ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
+                        ArrayList<StorageDomain> storageList = (ArrayList<StorageDomain>) returnValue;
                         if (storageList == null || storageList.size() == 0) {
                             qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
                             qModel.StopProgress();
@@ -220,7 +220,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         }
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                         QuotaStorage quotaStorage;
-                        for (storage_domains storage : storageList) {
+                        for (StorageDomain storage : storageList) {
                             if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
                                     && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
                                 continue;
@@ -445,7 +445,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                             @Override
                             public void OnSuccess(Object model, Object returnValue) {
-                                ArrayList<storage_domains> storageList = (ArrayList<storage_domains>) returnValue;
+                                ArrayList<StorageDomain> storageList = (ArrayList<StorageDomain>) returnValue;
 
                                 if (storageList == null || storageList.size() == 0) {
                                     qModel.getAllDataCenterStorages().setItems(new ArrayList<QuotaStorage>());
@@ -457,7 +457,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 }
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                                 QuotaStorage quotaStorage;
-                                for (storage_domains storage : storageList) {
+                                for (StorageDomain storage : storageList) {
                                     if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
                                             && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
                                         continue;

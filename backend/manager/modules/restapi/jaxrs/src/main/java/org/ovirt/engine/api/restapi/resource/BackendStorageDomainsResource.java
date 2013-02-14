@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -46,7 +46,7 @@ import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
 
 public class BackendStorageDomainsResource
-    extends AbstractBackendCollectionResource<StorageDomain, storage_domains>
+    extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements StorageDomainsResource {
 
     static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms"};
@@ -57,7 +57,7 @@ public class BackendStorageDomainsResource
         new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
 
     public BackendStorageDomainsResource() {
-        super(StorageDomain.class, storage_domains.class, SUB_COLLECTIONS);
+        super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, SUB_COLLECTIONS);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class BackendStorageDomainsResource
         entity.setstorage(addStorageServerConnection(cnx, hostId));
 
         if (action == VdcActionType.AddNFSStorageDomain) {
-            storage_domains existing =
+            org.ovirt.engine.core.common.businessentities.StorageDomain existing =
                 getExistingStorageDomain(hostId,
                                          entity.getstorage_type(),
                                          entity.getstorage_domain_type(),
@@ -212,7 +212,7 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected StorageDomain map(storage_domains entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         StorageDomain model = super.map(entity, template);
 
         // Mapping the connection properties only in case it is a non-filtered session
@@ -235,7 +235,7 @@ public class BackendStorageDomainsResource
         return model;
     }
 
-    protected void mapNfsOrLocalOrPosix(StorageDomain model, storage_domains entity) {
+    protected void mapNfsOrLocalOrPosix(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final Storage storage = model.getStorage();
         StorageServerConnections cnx = getStorageServerConnection(entity.getstorage());
         if (cnx.getconnection().contains(":")) {
@@ -258,7 +258,7 @@ public class BackendStorageDomainsResource
         }
     }
 
-    protected void mapVolumeGroupIscsi(StorageDomain model, storage_domains entity) {
+    protected void mapVolumeGroupIscsi(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             List<StorageServerConnections> lunConnections = lun.getLunConnections();
@@ -272,7 +272,7 @@ public class BackendStorageDomainsResource
         }
     }
 
-    protected void mapVolumeGroupFcp(StorageDomain model, storage_domains entity) {
+    protected void mapVolumeGroupFcp(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         VolumeGroup vg = model.getStorage().getVolumeGroup();
         for (LUNs lun : getLunsByVgId(vg.getId())) {
             LogicalUnit unit = map(lun);
@@ -296,9 +296,9 @@ public class BackendStorageDomainsResource
         return getMapper(StorageType.class, org.ovirt.engine.api.model.StorageType.class).map(type, null);
     }
 
-    private StorageDomains mapCollection(List<storage_domains> entities) {
+    private StorageDomains mapCollection(List<org.ovirt.engine.core.common.businessentities.StorageDomain> entities) {
         StorageDomains collection = new StorageDomains();
-        for (storage_domains entity : entities) {
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : entities) {
             StorageDomain storageDomain = map(entity);
             //status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
             if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
@@ -348,12 +348,12 @@ public class BackendStorageDomainsResource
                                       "LUNs for volume group: id=" + vgId));
     }
 
-    private storage_domains getExistingStorageDomain(Guid hostId,
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getExistingStorageDomain(Guid hostId,
                                                            StorageType storageType,
                                                            StorageDomainType domainType,
                                                            StorageServerConnections cnx) {
-        List<storage_domains> existing =
-            asCollection(storage_domains.class,
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> existing =
+            asCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                          getEntity(ArrayList.class,
                                    VdcQueryType.GetExistingStorageDomainList,
                                    new GetExistingStorageDomainListParameters(hostId,
@@ -398,7 +398,7 @@ public class BackendStorageDomainsResource
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 }

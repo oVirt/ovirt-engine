@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -21,7 +21,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<Storage
     public void testExecuteQuery() {
         // Create a storage domain for the test
         Guid storageDomainId = Guid.NewGuid();
-        storage_domains expected = new storage_domains();
+        StorageDomain expected = new StorageDomain();
         expected.setId(storageDomainId);
 
         when(getQueryParameters().getStorageDomainId()).thenReturn(storageDomainId);
@@ -34,7 +34,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<Storage
         getQuery().executeQueryCommand();
 
         // Assert we got the correct storage domain back
-        storage_domains actual = (storage_domains) getQuery().getQueryReturnValue().getReturnValue();
+        StorageDomain actual = (StorageDomain) getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong storage domain returned", expected, actual);
     }

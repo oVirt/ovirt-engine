@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.queries.GetVdsByNameParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -245,14 +245,14 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
 
     protected Guid lookupStorageDomainIdByName(String name) {
         if (!isFiltered()) {
-            return getEntity(storage_domains.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
+            return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, SearchType.StorageDomain, "Storage: name=" + name).getId();
         }
         else {
-            List<storage_domains> storageDomains =
-                    getBackendCollection(storage_domains.class,
+            List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
+                    getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                             VdcQueryType.GetAllStorageDomains,
                             new VdcQueryParametersBase());
-            for (storage_domains storageDomain : storageDomains) {
+            for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
                 if (storageDomain.getstorage_name().equals(name)) {
                     return storageDomain.getId();
                 }

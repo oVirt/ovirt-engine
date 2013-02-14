@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
@@ -313,8 +313,8 @@ public class BackendVmDiskResourceTest
         expect(httpHeaders.getRequestHeader(USER_FILTER_HEADER)).andReturn(filterValue);
     }
 
-    protected storage_domains getStorageDomain(int idx) {
-        storage_domains dom = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
         dom.setstorage_name(NAMES[idx]);
         return dom;
@@ -336,12 +336,12 @@ public class BackendVmDiskResourceTest
         verifyActionResponse(r, "vms/" + PARENT_ID + "/disks/" + PARENT_ID, false);
     }
 
-    protected storage_domains getStorageDomainEntity(int index) {
-        storage_domains entity = control.createMock(storage_domains.class);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
     }
 
-    static storage_domains setUpStorageDomainEntityExpectations(storage_domains entity,
+    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity,
             int index,
             StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();

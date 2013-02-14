@@ -1,33 +1,32 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.HashMap;
-
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+
+import java.util.HashMap;
+
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Disk;
-
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExportDomainDiskResourceTest
    extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendExportDomainDiskResource> {
@@ -55,7 +54,7 @@ public class BackendExportDomainDiskResourceTest
     }
 
     private void initParentResource() {
-        AbstractBackendResource parent = ((BackendExportDomainDisksResource)resource.getParent()).getParent().getParent();
+        AbstractBackendResource parent = resource.getParent().getParent().getParent();
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setValidatorLocator(validatorLocator);
@@ -68,7 +67,7 @@ public class BackendExportDomainDiskResourceTest
     protected void setUriInfo(UriInfo uriInfo) {
         super.setUriInfo(uriInfo);
         resource.setUriInfo(uriInfo);
-        ((BackendExportDomainDisksResource)resource.getParent()).getParent().getParent().setUriInfo(uriInfo);
+        resource.getParent().getParent().getParent().setUriInfo(uriInfo);
     }
 
     @Test
@@ -188,8 +187,8 @@ public class BackendExportDomainDiskResourceTest
         super.verifyModel(model, index);
     }
 
-    protected storage_domains getStorageDomain(int idx) {
-        storage_domains dom = new storage_domains();
+    protected StorageDomain getStorageDomain(int idx) {
+        StorageDomain dom = new StorageDomain();
         dom.setId(GUIDS[idx]);
         return dom;
     }

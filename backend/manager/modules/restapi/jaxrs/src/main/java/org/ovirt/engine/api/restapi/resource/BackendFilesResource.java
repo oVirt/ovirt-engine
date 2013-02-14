@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -31,7 +31,7 @@ public class BackendFilesResource
 
     @Override
     public Files list() {
-        if (isIsoDomain(getEntity(storage_domains.class,
+        if (isIsoDomain(getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                                   VdcQueryType.GetStorageDomainById,
                                   new StorageDomainQueryParametersBase(asGuid(storageDomainId)),
                                   "storage_domain"))) {

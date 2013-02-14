@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
@@ -564,8 +564,8 @@ public class PoolGeneralModel extends EntityModel
                         public void OnSuccess(Object model1, Object ReturnValue1)
                         {
                             PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
-                            storage_domains storage =
-                                    (storage_domains) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                            StorageDomain storage =
+                                    (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                             poolGeneralModel1.setStorageDomain(storage.getstorage_name());
 
                             poolGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);

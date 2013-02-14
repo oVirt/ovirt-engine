@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -322,7 +322,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 new INewAsyncCallback() {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
-                        List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
+                        List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
 
                         if (storageDomainList.size() != 0) {
                             model.getStorageTypeList().setIsChangable(false);
@@ -420,9 +420,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             @Override
             public void OnSuccess(Object model, Object returnValue) {
                 windowModel.StopProgress();
-                List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
+                List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 List<EntityModel> models = new ArrayList<EntityModel>();
-                for (storage_domains a : storageDomainList) {
+                for (StorageDomain a : storageDomainList) {
                     if (a.getstorage_domain_type() == StorageDomainType.Data
                             && a.getstorage_type() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
                             && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)) {
@@ -477,9 +477,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         AsyncDataProvider.GetStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void OnSuccess(Object model, Object returnValue) {
-                storage_domains master = null;
-                List<storage_domains> storageDomainList = (List<storage_domains>) returnValue;
-                for (storage_domains a : storageDomainList)
+                StorageDomain master = null;
+                List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
+                for (StorageDomain a : storageDomainList)
                 {
                     if (a.getstorage_domain_type() == StorageDomainType.Master)
                     {
@@ -487,12 +487,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         break;
                     }
                 }
-                List<storage_domains> items = new ArrayList<storage_domains>();
+                List<StorageDomain> items = new ArrayList<StorageDomain>();
                 for (EntityModel a : Linq.<EntityModel> Cast(windowModel.getItems()))
                 {
                     if (a.getIsSelected())
                     {
-                        items.add((storage_domains) a.getEntity());
+                        items.add((StorageDomain) a.getEntity());
                     }
                 }
                 if (items.size() > 0)
@@ -503,7 +503,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     }
                     ArrayList<VdcActionParametersBase> parameters =
                             new ArrayList<VdcActionParametersBase>();
-                    for (storage_domains a : items)
+                    for (StorageDomain a : items)
                     {
                         parameters.add(new RecoveryStoragePoolParameters(((storage_pool) getSelectedItem()).getId(),
                                 a.getId()));

@@ -3,16 +3,16 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 
 /**
- * <code>StorageDomainDAO</code> defines a type for performing CRUD operations on instances of {@link storage_domains}.
+ * <code>StorageDomainDAO</code> defines a type for performing CRUD operations on instances of {@link StorageDomain}.
  *
  *
  */
-public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoRecoverDAO<storage_domains> {
+public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRecoverDAO<StorageDomain> {
     /**
      * Retrieves the master storage domain for the specified pool.
      *
@@ -38,7 +38,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            the storage domain id
      * @return the storage domain
      */
-    storage_domains get(Guid id);
+    StorageDomain get(Guid id);
 
     /**
      * Retrieves the storage domain with specified id, with optional permissions filtering.
@@ -51,7 +51,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            Whether the results should be filtered according to the user's permissions
      * @return the storage domain
      */
-    storage_domains get(Guid id, Guid userID, boolean isFiltered);
+    StorageDomain get(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves the storage domain for the given pool with the specified id.
@@ -62,7 +62,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            the storage pool
      * @return the storage domain
      */
-    storage_domains getForStoragePool(Guid id, NGuid storagepool);
+    StorageDomain getForStoragePool(Guid id, NGuid storagepool);
 
     /**
      * Retrieves all storage domains for the specified connection.
@@ -71,7 +71,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            The connection
      * @return the list of storage domains (empty if no storage is using this connection)
      */
-    List<storage_domains> getAllForConnection(String connection);
+    List<StorageDomain> getAllForConnection(String connection);
 
     /**
      * Retrieves all storage domains for the specified connection id.
@@ -80,7 +80,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            The connection id
      * @return the list of storage domains (empty if no storage is using this connection id)
      */
-    List<storage_domains> getAllByConnectionId(Guid connectionId);
+    List<StorageDomain> getAllByConnectionId(Guid connectionId);
 
     /**
      * Retrieves all storage domains for the specified storage pool.
@@ -89,7 +89,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            the storage pool
      * @return the list of storage domains
      */
-    List<storage_domains> getAllForStoragePool(Guid pool);
+    List<StorageDomain> getAllForStoragePool(Guid pool);
 
     /**
      * Retrieves all storage domains for the specified storage pool, with optional filtering.
@@ -102,7 +102,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of storage domains
      */
-    List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered);
+    List<StorageDomain> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all storage domains for the specified storage domain id.
@@ -111,14 +111,14 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            the storage domain id
      * @return the list of storage domains
      */
-    List<storage_domains> getAllForStorageDomain(Guid id);
+    List<StorageDomain> getAllForStorageDomain(Guid id);
 
     /**
      * Retrieves all storage domains.
      *
      * @return the list of storage domains
      */
-    List<storage_domains> getAll();
+    List<StorageDomain> getAll();
 
     /**
      * Retrieves all storage domains with optional permission filtering.
@@ -130,7 +130,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *
      * @return the list of storage domains
      */
-    List<storage_domains> getAll(Guid userID, boolean isFiltered);
+    List<StorageDomain> getAll(Guid userID, boolean isFiltered);
 
     /**
      * Retrieves all domain which contains image id
@@ -138,7 +138,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      * @param imageId
      * @return List of storage domains.
      */
-    List<storage_domains> getAllStorageDomainsByImageId(Guid imageId);
+    List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId);
 
     /**
      * Removes the specified storage domain.
@@ -156,7 +156,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            The connection
      * @return the list of storage domains (empty if no storage is using this connection)
      */
-    List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection);
+    List<StorageDomain> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection);
 
     /**
      * Retrieves all storage domains of a given storage pool having a user permissions for a specific action.
@@ -169,7 +169,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            The storage pool ID
      * @return the list of storage domains (empty if no storage matches the criteria)
      */
-    List<storage_domains> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId);
+    List<StorageDomain> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId);
 
     /**
      * Retrieves storage domain of a given storage ID having a user permissions for a specific action.
@@ -182,6 +182,6 @@ public interface StorageDomainDAO extends DAO, SearchDAO<storage_domains>, AutoR
      *            The storage domain ID
      * @return the storage domain (null if storage doesn't match the criteria)
      */
-    storage_domains getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId);
+    StorageDomain getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId);
 
 }

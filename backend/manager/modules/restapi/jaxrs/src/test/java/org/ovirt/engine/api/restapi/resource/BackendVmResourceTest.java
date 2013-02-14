@@ -51,7 +51,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -812,8 +812,8 @@ public class BackendVmResourceTest
         assertEquals(model.getDisplay().getCertificate().getSubject(), CERTIFICATE);
     }
 
-    protected storage_domains getStorageDomain(int idx) {
-        storage_domains dom = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
         dom.setstorage_name(NAMES[idx]);
         return dom;

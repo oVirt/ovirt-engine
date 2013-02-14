@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.NGuid;
 
@@ -65,8 +65,8 @@ public final class EntityObject extends JavaScriptObject {
         }
 
         // Storage
-        else if (businessEntity instanceof storage_domains) {
-            obj.setProperty("name", ((storage_domains) businessEntity).getstorage_name()); //$NON-NLS-1$
+        else if (businessEntity instanceof StorageDomain) {
+            obj.setProperty("name", ((StorageDomain) businessEntity).getstorage_name()); //$NON-NLS-1$
         }
 
         // Template

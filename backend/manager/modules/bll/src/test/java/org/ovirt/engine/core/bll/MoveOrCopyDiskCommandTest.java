@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -189,14 +189,14 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     private void initSrcStorageDomain() {
-        storage_domains stDomain = new storage_domains();
+        StorageDomain stDomain = new StorageDomain();
         stDomain.setstatus(StorageDomainStatus.Active);
         doReturn(storageDomainDao).when(command).getStorageDomainDAO();
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(stDomain);
     }
 
     private void initDestStorageDomain() {
-        storage_domains destDomain = new storage_domains();
+        StorageDomain destDomain = new StorageDomain();
         destDomain.setstatus(StorageDomainStatus.Active);
         destDomain.setstorage_type(StorageType.NFS);
         doReturn(destDomain).when(command).getStorageDomain();

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabStorageVmBackupPresenter extends AbstractSubTabPresenter<storage_domains, StorageListModel, VmBackupModel, SubTabStorageVmBackupPresenter.ViewDef, SubTabStorageVmBackupPresenter.ProxyDef> {
+public class SubTabStorageVmBackupPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, VmBackupModel, SubTabStorageVmBackupPresenter.ViewDef, SubTabStorageVmBackupPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.storageVmBackupSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageVmBackupPresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<storage_domains> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StorageDomain> {
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)

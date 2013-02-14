@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -49,12 +49,12 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         VmBaseListModel vmListModel = (VmBaseListModel) target;
-                        List<storage_domains> storageDomains =
-                                (List<storage_domains>) returnValue;
+                        List<StorageDomain> storageDomains =
+                                (List<StorageDomain>) returnValue;
 
-                        List<storage_domains> filteredStorageDomains =
-                                new ArrayList<storage_domains>();
-                        for (storage_domains a : storageDomains)
+                        List<StorageDomain> filteredStorageDomains =
+                                new ArrayList<StorageDomain>();
+                        for (StorageDomain a : storageDomains)
                         {
                             if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
                             {
@@ -70,14 +70,14 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         sendWarningForNonExportableDisks(selectedEntity);
     }
 
-    private void PostExportGetStorageDomainList(List<storage_domains> storageDomains)
+    private void PostExportGetStorageDomainList(List<StorageDomain> storageDomains)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
         model.getStorage().setItems(storageDomains);
         model.getStorage().setSelectedItem(Linq.FirstOrDefault(storageDomains));
 
         boolean noActiveStorage = true;
-        for (storage_domains a : storageDomains) {
+        for (StorageDomain a : storageDomains) {
             if (a.getstatus() == StorageDomainStatus.Active) {
                 noActiveStorage = false;
                 break;
@@ -140,7 +140,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
     }
 
     protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
@@ -192,7 +192,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                 }
             };
 
-            Guid storageDomainId = ((storage_domains) exportModel.getStorage().getSelectedItem()).getId();
+            Guid storageDomainId = ((StorageDomain) exportModel.getStorage().getSelectedItem()).getId();
             GetAllFromExportDomainQueryParameters tempVar =
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
             Frontend.RunQuery(getVmOrTemplateQuery, tempVar, _asyncQuery);

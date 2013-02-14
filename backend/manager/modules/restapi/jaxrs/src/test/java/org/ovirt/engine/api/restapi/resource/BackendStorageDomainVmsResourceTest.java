@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
@@ -146,8 +146,8 @@ public class BackendStorageDomainVmsResourceTest
         return ret;
     }
 
-    public static storage_domains setUpStorageDomain(StorageDomainType domainType) {
-        storage_domains entity = new storage_domains();
+    public static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomain(StorageDomainType domainType) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setId(STORAGE_DOMAIN_ID);
         entity.setstorage_domain_type(domainType);
         return entity;

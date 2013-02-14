@@ -15,7 +15,7 @@ import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -69,11 +69,11 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     private Guid getStorageDomainId(String storageDomainName) {
-        List<storage_domains> storageDomains =
-                getBackendCollection(storage_domains.class,
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
+                getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                         VdcQueryType.GetAllStorageDomains,
                         new VdcQueryParametersBase());
-        for (storage_domains storageDomain : storageDomains) {
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getstorage_name().equals(storageDomainName)) {
                 return storageDomain.getId();
             }

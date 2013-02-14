@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -29,14 +29,14 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatu
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<storage_domains, StorageListModel> implements MainTabStoragePresenter.ViewDef {
+public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<StorageDomain, StorageListModel> implements MainTabStoragePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @Inject
-    public MainTabStorageView(MainModelProvider<storage_domains, StorageListModel> modelProvider,
+    public MainTabStorageView(MainModelProvider<StorageDomain, StorageListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -49,17 +49,17 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> nameColumn = new TextColumnWithTooltip<storage_domains>() {
+        TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
-            public String getValue(storage_domains object) {
+            public String getValue(StorageDomain object) {
                 return object.getstorage_name();
             }
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> descriptionColumn = new TextColumnWithTooltip<storage_domains>() {
+        TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
-            public String getValue(storage_domains object) {
+            public String getValue(StorageDomain object) {
                 return object.getDescription();
             }
         };
@@ -67,34 +67,34 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
 
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> domainTypeColumn = new EnumColumn<storage_domains, StorageDomainType>() {
+        TextColumnWithTooltip<StorageDomain> domainTypeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
-            protected StorageDomainType getRawValue(storage_domains object) {
+            protected StorageDomainType getRawValue(StorageDomain object) {
                 return object.getstorage_domain_type();
             }
         };
         getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "130px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> storageTypeColumn = new EnumColumn<storage_domains, StorageType>() {
+        TextColumnWithTooltip<StorageDomain> storageTypeColumn = new EnumColumn<StorageDomain, StorageType>() {
             @Override
-            protected StorageType getRawValue(storage_domains object) {
+            protected StorageType getRawValue(StorageDomain object) {
                 return object.getstorage_type();
             }
         };
         getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> formatColumn = new EnumColumn<storage_domains, StorageFormatType>() {
+        TextColumnWithTooltip<StorageDomain> formatColumn = new EnumColumn<StorageDomain, StorageFormatType>() {
             @Override
-            protected StorageFormatType getRawValue(storage_domains object) {
+            protected StorageFormatType getRawValue(StorageDomain object) {
                 return object.getStorageFormat();
             }
         };
         getTable().addColumn(formatColumn, constants.formatStorage(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> crossDataCenterStatusColumn =
-                new TextColumnWithTooltip<storage_domains>() {
+        TextColumnWithTooltip<StorageDomain> crossDataCenterStatusColumn =
+                new TextColumnWithTooltip<StorageDomain>() {
                     @Override
-                    public String getValue(storage_domains object) {
+                    public String getValue(StorageDomain object) {
                         if (object.getstorage_domain_type() == StorageDomainType.ISO) {
                             return EnumTranslator.createAndTranslate(object.getstorage_domain_shared_status());
                         } else {
@@ -104,40 +104,40 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
                 };
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "180px"); //$NON-NLS-1$
 
-        DiskSizeColumn<storage_domains> freeSpaceColumn = new DiskSizeColumn<storage_domains>(DiskSizeUnit.GIGABYTE) {
+        DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
-            public Long getRawValue(storage_domains object) {
+            public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
                 return (long) availableDiskSize;
             }
         };
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.newDomainStorage()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewDomainCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.importDomainStorage()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.importDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getImportDomainCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.editStorage()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.editStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.removeStorage()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.removeStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.destroyStorage(),
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.destroyStorage(),
                 CommandLocation.OnlyFromFromContext) {
             @Override
             protected UICommand resolveCommand() {
@@ -145,10 +145,10 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<stor
             }
         });
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<storage_domains>> resourceSubActions =
+            List<ActionButtonDefinition<StorageDomain>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Storage", getModelProvider()); //$NON-NLS-1$
             if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<storage_domains>(constants.showReportStorage(),
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<StorageDomain>(constants.showReportStorage(),
                         resourceSubActions));
             }
         }

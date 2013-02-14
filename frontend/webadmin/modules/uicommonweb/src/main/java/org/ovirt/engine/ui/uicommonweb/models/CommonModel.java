@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
@@ -556,7 +556,7 @@ public class CommonModel extends ListModel
         boolean isDataStorage = false;
         if (model.getType() == SystemTreeItemType.Storage)
         {
-            storage_domains storage = (storage_domains) model.getEntity();
+            StorageDomain storage = (StorageDomain) model.getEntity();
             isDataStorage =
                     storage.getstorage_domain_type() == StorageDomainType.Data
                             || storage.getstorage_domain_type() == StorageDomainType.Master;

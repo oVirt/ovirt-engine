@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
@@ -32,17 +32,17 @@ public class SanImportStorageView extends AbstractSanStorageView {
     protected void initLists(SanStorageModelBase object) {
         table = new EntityModelCellTable<ListModel>(false, (Resources) GWT.create(LunTableResources.class));
 
-        table.addColumn(new EntityModelTextColumn<storage_domains>() {
+        table.addColumn(new EntityModelTextColumn<StorageDomain>() {
             @Override
-            public String getText(storage_domains storage) {
+            public String getText(StorageDomain storage) {
                 return storage.getstorage_name();
             }
         }, constants.nameSanImStorage());
 
-        table.addColumn(new EntityModelEnumColumn<storage_domains, StorageFormatType>() {
+        table.addColumn(new EntityModelEnumColumn<StorageDomain, StorageFormatType>() {
 
             @Override
-            protected StorageFormatType getEnum(storage_domains storage) {
+            protected StorageFormatType getEnum(StorageDomain storage) {
                 return
                 storage.getStorageStaticData().getStorageFormat();
             }

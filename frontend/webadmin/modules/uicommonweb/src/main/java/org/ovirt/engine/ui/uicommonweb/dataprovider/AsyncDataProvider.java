@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -196,8 +196,8 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
-                    for (storage_domains domain : storageDomains)
+                    ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
+                    for (StorageDomain domain : storageDomains)
                     {
                         if (domain.getstorage_domain_type() == StorageDomainType.ISO)
                         {
@@ -219,8 +219,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
-                for (storage_domains domain : storageDomains)
+                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
+                for (StorageDomain domain : storageDomains)
                 {
                     if (domain.getstorage_domain_type() == StorageDomainType.ImportExport)
                     {
@@ -695,7 +695,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<storage_domains>();
+                    return new ArrayList<StorageDomain>();
                 }
                 return source;
             }
@@ -712,7 +712,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<storage_domains>();
+                    return new ArrayList<StorageDomain>();
                 }
                 return source;
             }
@@ -914,7 +914,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (storage_domains) source : null;
+                return source != null ? (StorageDomain) source : null;
             }
         };
         Frontend.RunQuery(VdcQueryType.GetStorageDomainById,
@@ -1490,10 +1490,10 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<storage_domains> allStorageDomains =
-                            (ArrayList<storage_domains>) source;
-                    ArrayList<storage_domains> isoStorageDomains = new ArrayList<storage_domains>();
-                    for (storage_domains storageDomain : allStorageDomains)
+                    ArrayList<StorageDomain> allStorageDomains =
+                            (ArrayList<StorageDomain>) source;
+                    ArrayList<StorageDomain> isoStorageDomains = new ArrayList<StorageDomain>();
+                    for (StorageDomain storageDomain : allStorageDomains)
                     {
                         if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO)
                         {
@@ -1502,7 +1502,7 @@ public final class AsyncDataProvider {
                     }
                     return isoStorageDomains;
                 }
-                return new ArrayList<storage_domains>();
+                return new ArrayList<StorageDomain>();
             }
         };
 
@@ -1517,8 +1517,8 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<storage_domains>) source
-                        : new ArrayList<storage_domains>();
+                return source != null ? (ArrayList<StorageDomain>) source
+                        : new ArrayList<StorageDomain>();
             }
         };
 
@@ -1552,7 +1552,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<storage_domains>) source : null;
+                return source != null ? (ArrayList<StorageDomain>) source : null;
             }
         };
 
@@ -1573,7 +1573,7 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<storage_domains>) source : null;
+                return source != null ? (ArrayList<StorageDomain>) source : null;
             }
         };
 
@@ -1618,7 +1618,7 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) source;
+                    ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     return storageDomains.isEmpty();
                 }
 
@@ -2129,7 +2129,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new java.util.ArrayList<storage_domains>();
+                    return new java.util.ArrayList<StorageDomain>();
                 }
                 return source;
             }
@@ -2746,9 +2746,9 @@ public final class AsyncDataProvider {
         {
             return ((VDS) entity).getId();
         }
-        else if (entity instanceof storage_domains)
+        else if (entity instanceof StorageDomain)
         {
-            return ((storage_domains) entity).getId();
+            return ((StorageDomain) entity).getId();
         }
         else if (entity instanceof VmTemplate)
         {

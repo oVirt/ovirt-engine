@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetImageByImageIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,7 +49,7 @@ public class DiskStorageListModel extends SearchableListModel
             public void OnSuccess(Object model, Object returnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<storage_domains>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                searchableListModel.setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) returnValue).getReturnValue());
             }
         };
 

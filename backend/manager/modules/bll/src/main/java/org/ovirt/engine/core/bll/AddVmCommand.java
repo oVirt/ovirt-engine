@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -73,7 +73,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         implements QuotaStorageDependent {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
-    protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
+    protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected String newMac = "";
 
@@ -151,7 +151,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmDisks;
     }
 
-    protected boolean canAddVm(ArrayList<String> reasons, Collection<storage_domains> destStorages) {
+    protected boolean canAddVm(ArrayList<String> reasons, Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
         boolean returnValue = canAddVm(reasons, vmStaticFromParams.getVmName(), getStoragePoolId()
                 .getValue(), vmStaticFromParams.getPriority());
@@ -171,7 +171,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH.toString());
                 returnValue = false;
             } else {
-                for (storage_domains domain : destStorages) {
+                for (StorageDomain domain : destStorages) {
                     StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
                     if (!validate(storageDomainValidator.isDomainWithinThresholds())
                             || !validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())))) {
@@ -375,7 +375,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
             Guid storageDomainId = diskImage.getstorage_ids().get(0);
             if (destStorages.get(storageDomainId) == null) {
-                storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+                StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         storageDomainId, getStoragePoolId());
                 StorageDomainValidator validator =
                         new StorageDomainValidator(storage);
@@ -452,7 +452,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue = verifyAddVM(reasons, vmPriority);
 
         if (returnValue && !getParameters().getDontCheckTemplateImages()) {
-            for (storage_domains storage : destStorages.values()) {
+            for (StorageDomain storage : destStorages.values()) {
                 if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
                         reasons, false, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {
                     return false;

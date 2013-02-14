@@ -8,13 +8,13 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 
 public class StorageDomainMapperTest extends
-        AbstractInvertibleMappingTest<StorageDomain, StorageDomainStatic, storage_domains> {
+        AbstractInvertibleMappingTest<StorageDomain, StorageDomainStatic, org.ovirt.engine.core.common.businessentities.StorageDomain> {
 
     public StorageDomainMapperTest() {
-        super(StorageDomain.class, StorageDomainStatic.class, storage_domains.class);
+        super(StorageDomain.class, StorageDomainStatic.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
     }
 
     @Override
@@ -26,8 +26,8 @@ public class StorageDomainMapperTest extends
     }
 
     @Override
-    protected storage_domains getInverse(StorageDomainStatic to) {
-        storage_domains inverse = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getInverse(StorageDomainStatic to) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain inverse = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         inverse.setId(to.getId());
         inverse.setstorage_name(to.getstorage_name());
         inverse.setstorage_domain_type(to.getstorage_domain_type());
@@ -51,7 +51,7 @@ public class StorageDomainMapperTest extends
 
     @Test
     public void testMemory() {
-        storage_domains entity = new storage_domains();
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setavailable_disk_size(3);
         entity.setused_disk_size(4);
         entity.setcommitted_disk_size(5);

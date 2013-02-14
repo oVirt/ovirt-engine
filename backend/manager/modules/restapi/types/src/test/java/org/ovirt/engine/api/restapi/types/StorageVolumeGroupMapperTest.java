@@ -3,12 +3,12 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 
-public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<Storage, storage_domains, storage_domains> {
+
+public class StorageVolumeGroupMapperTest extends AbstractInvertibleMappingTest<Storage, org.ovirt.engine.core.common.businessentities.StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
 
     public StorageVolumeGroupMapperTest() {
-        super(Storage.class, storage_domains.class, storage_domains.class);
+        super(Storage.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -22,12 +22,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter<storage_domains, StorageListModel, MainTabStoragePresenter.ViewDef, MainTabStoragePresenter.ProxyDef> {
+public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter<StorageDomain, StorageListModel, MainTabStoragePresenter.ViewDef, MainTabStoragePresenter.ProxyDef> {
 
     @GenEvent
     public static class StorageSelectionChange {
 
-        List<storage_domains> selectedItems;
+        List<StorageDomain> selectedItems;
 
     }
 
@@ -36,7 +36,7 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
     public interface ProxyDef extends TabContentProxyPlace<MainTabStoragePresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<storage_domains> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<StorageDomain> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -47,7 +47,7 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
 
     @Inject
     public MainTabStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<storage_domains, StorageListModel> dataProvider) {
+            PlaceManager placeManager, MainModelProvider<StorageDomain, StorageListModel> dataProvider) {
         super(eventBus, view, proxy, placeManager, dataProvider);
     }
 

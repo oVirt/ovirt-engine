@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -276,10 +276,10 @@ public class DbFacade {
     }
 
     public boolean isStoragePoolMasterUp(Guid storagePoolId) {
-        List<storage_domains> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
-        storage_domains master = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
+        List<StorageDomain> domains = getStorageDomainDao().getAllForStoragePool(storagePoolId);
+        StorageDomain master = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains storage_domains) {
+            public boolean eval(StorageDomain storage_domains) {
                 return storage_domains.getstorage_domain_type() == StorageDomainType.Master;
             }
         });

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -62,14 +62,14 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     /**
      * Gets or sets the storage being edited. Null if it's a new one.
      */
-    private storage_domains privateStorage;
+    private StorageDomain privateStorage;
 
-    public storage_domains getStorage()
+    public StorageDomain getStorage()
     {
         return privateStorage;
     }
 
-    public void setStorage(storage_domains value)
+    public void setStorage(StorageDomain value)
     {
         privateStorage = value;
     }

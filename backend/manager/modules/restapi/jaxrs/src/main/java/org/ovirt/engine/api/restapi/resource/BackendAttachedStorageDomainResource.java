@@ -8,20 +8,20 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainResource
-    extends AbstractBackendActionableResource<StorageDomain, storage_domains>
+    extends AbstractBackendActionableResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements AttachedStorageDomainResource {
 
     protected Guid dataCenterId;
 
     public BackendAttachedStorageDomainResource(String id, Guid dataCenterId) {
-        super(id, StorageDomain.class, storage_domains.class);
+        super(id, StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         this.dataCenterId = dataCenterId;
     }
 
@@ -58,14 +58,14 @@ public class BackendAttachedStorageDomainResource
     }
 
     @Override
-    protected StorageDomain map(storage_domains entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         BackendStorageDomainsResource resource = new BackendStorageDomainsResource();
         inject(resource);
         return resource.map(entity, template);
     }
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 }

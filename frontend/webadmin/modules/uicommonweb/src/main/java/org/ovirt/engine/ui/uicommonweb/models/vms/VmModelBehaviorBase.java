@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
@@ -587,7 +587,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         else
         {
-            getModel().getStorageDomain().setItems(new ArrayList<storage_domains>());
+            getModel().getStorageDomain().setItems(new ArrayList<StorageDomain>());
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangable(false);
         }
@@ -603,8 +603,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-                ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
+                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+                ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
                 DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
@@ -613,12 +613,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
 
                 for (DiskModel diskModel : disks) {
-                    ArrayList<storage_domains> availableDiskStorageDomains = new ArrayList<storage_domains>();
+                    ArrayList<StorageDomain> availableDiskStorageDomains = new ArrayList<StorageDomain>();
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
                     ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getstorage_ids();
 
                     // Active storage domains that the disk resides on
-                    ArrayList<storage_domains> activeDiskStorageDomains =
+                    ArrayList<StorageDomain> activeDiskStorageDomains =
                             Linq.getStorageDomainsByIds(storageIds, activeStorageDomains);
 
                     if (provisioning) {
@@ -633,12 +633,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
                 }
 
-                ArrayList<storage_domains> storageDomainsDisjoint =
+                ArrayList<StorageDomain> storageDomainsDisjoint =
                         Linq.getStorageDomainsDisjoint(disks, activeStorageDomains);
 
                 Linq.Sort(storageDomainsDisjoint, new Linq.StorageDomainByNameComparer());
 
-                ArrayList<storage_domains> singleDestDomains =
+                ArrayList<StorageDomain> singleDestDomains =
                         provisioning ? activeStorageDomains : storageDomainsDisjoint;
                 getModel().getStorageDomain().setItems(singleDestDomains);
                 getModel().getStorageDomain().setSelectedItem(Linq.FirstOrDefault(singleDestDomains));
@@ -646,11 +646,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }, getModel().getHash()), dataCenter.getId(), ActionGroup.CREATE_VM);
     }
 
-    public ArrayList<storage_domains> FilterStorageDomains(ArrayList<storage_domains> storageDomains)
+    public ArrayList<StorageDomain> FilterStorageDomains(ArrayList<StorageDomain> storageDomains)
     {
         // filter only the Active storage domains (Active regarding the relevant storage pool).
-        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
-        for (storage_domains a : storageDomains)
+        ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
+        for (StorageDomain a : storageDomains)
         {
             if (Linq.IsDataActiveStorageDomain(a))
             {
@@ -661,9 +661,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            storage_domains selectStorage = (storage_domains) getSystemTreeSelectedItem().getEntity();
-            storage_domains sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
-            list = new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { sd }));
+            StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
+            StorageDomain sd = Linq.FirstOrDefault(list, new Linq.StoragePredicate(selectStorage.getId()));
+            list = new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { sd }));
         }
 
         return list;

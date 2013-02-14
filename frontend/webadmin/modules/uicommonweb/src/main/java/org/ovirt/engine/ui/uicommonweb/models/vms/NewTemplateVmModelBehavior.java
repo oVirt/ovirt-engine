@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -263,10 +263,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
                         NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
-                        ArrayList<storage_domains> activeStorageDomainList =
-                                new ArrayList<storage_domains>();
+                        ArrayList<StorageDomain> activeStorageDomainList =
+                                new ArrayList<StorageDomain>();
 
-                        for (storage_domains storageDomain : (ArrayList<storage_domains>) returnValue)
+                        for (StorageDomain storageDomain : (ArrayList<StorageDomain>) returnValue)
                         {
                             if (storageDomain.getstatus() == StorageDomainStatus.Active
                                     && (storageDomain.getstorage_domain_type() == StorageDomainType.Data || storageDomain.getstorage_domain_type() == StorageDomainType.Master))
@@ -278,7 +278,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         for (DiskModel diskModel : getModel().getDisks()) {
                             if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
                                 DiskImage diskImage = (DiskImage) diskModel.getDisk();
-                                ArrayList<storage_domains> activeDiskStorages =
+                                ArrayList<StorageDomain> activeDiskStorages =
                                         Linq.getStorageDomainsByIds(diskImage.getstorage_ids(), activeStorageDomainList);
 
                                 if (activeDiskStorages.isEmpty()) {
@@ -297,13 +297,13 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             if (getSystemTreeSelectedItem() != null
                                     && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
                             {
-                                storage_domains selectStorage =
-                                        (storage_domains) getSystemTreeSelectedItem().getEntity();
-                                storage_domains s =
+                                StorageDomain selectStorage =
+                                        (StorageDomain) getSystemTreeSelectedItem().getEntity();
+                                StorageDomain s =
                                         Linq.FirstOrDefault(activeStorageDomainList,
                                                 new Linq.StoragePredicate(selectStorage.getId()));
                                 activeStorageDomainList =
-                                        new ArrayList<storage_domains>(Arrays.asList(new storage_domains[] { s }));
+                                        new ArrayList<StorageDomain>(Arrays.asList(new StorageDomain[] { s }));
 
                                 behavior.getModel().getStorageDomain().setItems(activeStorageDomainList);
                                 behavior.getModel().getStorageDomain().setIsChangable(false);

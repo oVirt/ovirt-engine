@@ -26,7 +26,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,7 +48,7 @@ public class AutoRecoveryManagerTest {
 
     // Entities needing recovery
     private List<VDS> vdss = new ArrayList<VDS>();
-    private List<storage_domains> storageDomains = new ArrayList<storage_domains>();
+    private List<StorageDomain> storageDomains = new ArrayList<StorageDomain>();
 
     @Before
     public void setup() {
@@ -63,7 +63,7 @@ public class AutoRecoveryManagerTest {
         when(vdsDaoMock.listFailedAutorecoverables()).thenReturn(vdss);
         when(dbFacadeMock.getVdsDao()).thenReturn(vdsDaoMock);
 
-        storage_domains domain = new storage_domains();
+        StorageDomain domain = new StorageDomain();
         domain.setstorage_pool_id(Guid.NewGuid());
         storageDomains.add(domain);
         final StorageDomainDAO storageDomainDaoMock = mock(StorageDomainDAO.class);

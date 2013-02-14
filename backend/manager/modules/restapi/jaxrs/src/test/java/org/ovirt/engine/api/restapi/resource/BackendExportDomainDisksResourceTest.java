@@ -1,17 +1,17 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
+import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
+import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
+import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.ovirt.engine.api.restapi.test.util.TestHelper.eqQueryParams;
 import javax.ws.rs.core.UriInfo;
-
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStorageDomain;
-import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainTemplatesResourceTest.setUpStoragePool;
-import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -61,7 +60,7 @@ public class BackendExportDomainDisksResourceTest
     }
 
     private void initParentResource() {
-        AbstractBackendResource parent = ((AbstractBackendStorageDomainContentResource)collection.getParent()).getParent();
+        AbstractBackendResource parent = collection.getParent().getParent();
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setValidatorLocator(validatorLocator);
@@ -74,7 +73,7 @@ public class BackendExportDomainDisksResourceTest
     protected void setUriInfo(UriInfo uriInfo) {
         super.setUriInfo(uriInfo);
         collection.setUriInfo(uriInfo);
-        ((AbstractBackendStorageDomainContentResource)collection.getParent()).getParent().setUriInfo(uriInfo);
+        collection.getParent().getParent().setUriInfo(uriInfo);
     }
 
     @Override
@@ -105,8 +104,10 @@ public class BackendExportDomainDisksResourceTest
     }
 
     private Object getStorageDomains() {
-        List<storage_domains> sds = new LinkedList<storage_domains>();
-        storage_domains sd = new storage_domains();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds =
+                new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        org.ovirt.engine.core.common.businessentities.StorageDomain sd =
+                new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setstorage_name("Storage_Domain_1");
         sd.setId(GUIDS[2]);
         sds.add(sd);
@@ -258,8 +259,9 @@ public class BackendExportDomainDisksResourceTest
         return vm;
     }
 
-    protected storage_domains getStorageDomain(int idx) {
-        storage_domains dom = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain dom =
+                new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
         return dom;
     }

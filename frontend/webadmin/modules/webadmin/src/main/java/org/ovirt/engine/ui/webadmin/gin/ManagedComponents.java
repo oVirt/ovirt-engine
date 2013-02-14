@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -290,7 +290,7 @@ public interface ManagedComponents {
 
     AsyncProvider<MainTabStoragePresenter> getMainTabStoragePresenter();
 
-    MainModelProvider<storage_domains, StorageListModel> getMainTabStorageModelProvider();
+    MainModelProvider<StorageDomain, StorageListModel> getMainTabStorageModelProvider();
 
     AsyncProvider<MainTabVirtualMachinePresenter> getMainTabVirtualMachinePresenter();
 
@@ -332,7 +332,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabDataCenterStoragePresenter> getSubTabDataCenterStoragePresenter();
 
-    SearchableDetailModelProvider<storage_domains, DataCenterListModel, DataCenterStorageListModel> getSubTabDataCenterStorageModelProvider();
+    SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> getSubTabDataCenterStorageModelProvider();
 
     AsyncProvider<SubTabDataCenterNetworkPresenter> getSubTabDataCenterNetworkPresenter();
 
@@ -364,7 +364,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabStorageDataCenterPresenter> getSubTabStorageDataCenterPresenter();
 
-    SearchableDetailModelProvider<storage_domains, StorageListModel, StorageDataCenterListModel> getSubTabStorageDataCenterModelProvider();
+    SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> getSubTabStorageDataCenterModelProvider();
 
     AsyncProvider<SubTabStorageVmBackupPresenter> getSubTabStorageVmBackupPresenter();
 
@@ -532,7 +532,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabTemplateStoragePresenter> getSubTabTemplateStoragePresenter();
 
-    SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> getSubTabTemplateStorageModelProvider();
+    SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getSubTabTemplateStorageModelProvider();
 
     AsyncProvider<SubTabTemplatePermissionPresenter> getSubTabTemplatePermissionPresenter();
 
@@ -653,7 +653,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabDiskStoragePresenter> getSubTabDiskStoragePresenter();
 
-    SearchableDetailModelProvider<storage_domains, DiskListModel, DiskStorageListModel> getSubTabDiskStorageModelProvider();
+    SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> getSubTabDiskStorageModelProvider();
 
     AsyncProvider<SubTabDiskPermissionPresenter> getSubTabDiskPermissionPresenter();
 

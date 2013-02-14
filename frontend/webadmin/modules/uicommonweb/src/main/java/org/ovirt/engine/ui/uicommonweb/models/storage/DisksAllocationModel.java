@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -77,14 +77,14 @@ public class DisksAllocationModel extends EntityModel
         this.imageToDestinationDomainMap = imageToDestinationDomainMap;
     }
 
-    private ArrayList<storage_domains> activeStorageDomains;
+    private ArrayList<StorageDomain> activeStorageDomains;
 
-    public ArrayList<storage_domains> getActiveStorageDomains()
+    public ArrayList<StorageDomain> getActiveStorageDomains()
     {
         return activeStorageDomains;
     }
 
-    public void setActiveStorageDomains(ArrayList<storage_domains> activeStorageDomains)
+    public void setActiveStorageDomains(ArrayList<StorageDomain> activeStorageDomains)
     {
         this.activeStorageDomains = activeStorageDomains;
     }
@@ -194,7 +194,7 @@ public class DisksAllocationModel extends EntityModel
         for (DiskModel diskModel : disks) {
             Guid diskId = ((DiskImage) diskModel.getDisk()).getId();
             Guid storageId = null;
-            storageId = ((storage_domains) diskModel.getStorageDomain().getSelectedItem()).getId();
+            storageId = ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getId();
 
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
             ArrayList<Guid> storageIdList = new ArrayList<Guid>();
@@ -218,7 +218,7 @@ public class DisksAllocationModel extends EntityModel
     }
 
     private void updateDisksQuota(Object sender) {
-        storage_domains storageDomain = (storage_domains) ((ListModel) sender).getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) ((ListModel) sender).getSelectedItem();
         if (storageDomain != null) {
             for (DiskModel innerDisk : disks) {
                 if (innerDisk.getStorageDomain().equals(sender)) {

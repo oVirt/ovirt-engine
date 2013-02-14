@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -534,7 +534,7 @@ public class DiskModel extends Model
     }
 
     public void quota_storageSelectedItemChanged(final Guid defaultQuotaId) {
-        storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
         if (storageDomain != null) {
             getStorageQuota(defaultQuotaId);
         }
@@ -548,7 +548,7 @@ public class DiskModel extends Model
     }
 
     private void getStorageQuota(final Guid defaultQuota) {
-        storage_domains storageDomain = (storage_domains) getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) getStorageDomain().getSelectedItem();
         if (storageDomain != null) {
             Frontend.RunQuery(VdcQueryType.GetAllRelevantQuotasForStorage,
                     new GetAllRelevantQuotasForStorageParameters(storageDomain.getId()),
@@ -613,10 +613,10 @@ public class DiskModel extends Model
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 DiskModel diskModel = (DiskModel) target;
-                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
-                ArrayList<storage_domains> filteredStorageDomains = new ArrayList<storage_domains>();
-                for (storage_domains a : storageDomains)
+                ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<StorageDomain>();
+                for (StorageDomain a : storageDomains)
                 {
                     if (a.getstorage_domain_type() != StorageDomainType.ISO
                             && a.getstorage_domain_type() != StorageDomainType.ImportExport
@@ -627,7 +627,7 @@ public class DiskModel extends Model
                 }
 
                 Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
-                storage_domains storage = Linq.FirstOrDefault(filteredStorageDomains);
+                StorageDomain storage = Linq.FirstOrDefault(filteredStorageDomains);
                 StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getstorage_type();
                 boolean isInternal = (Boolean) getIsInternal().getEntity();
 
@@ -864,7 +864,7 @@ public class DiskModel extends Model
 
         StorageType storageType =
                 getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                        : ((storage_domains) getStorageDomain().getSelectedItem()).getstorage_type();
+                        : ((StorageDomain) getStorageDomain().getSelectedItem()).getstorage_type();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -981,7 +981,7 @@ public class DiskModel extends Model
         }
 
         StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                : ((storage_domains) getStorageDomain().getSelectedItem()).getstorage_type();
+                : ((StorageDomain) getStorageDomain().getSelectedItem()).getstorage_type();
 
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);

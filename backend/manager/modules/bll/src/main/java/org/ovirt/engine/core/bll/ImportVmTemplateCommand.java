@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -118,7 +118,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
                 Map<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
                 for (DiskImage image : list) {
-                    storage_domains storageDomain =
+                    StorageDomain storageDomain =
                             getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
                     StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                     retVal = validate(validator.isDomainExistAndActive()) &&
@@ -162,7 +162,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (retVal && getParameters().getImages() != null && !getParameters().getImages().isEmpty()) {
-            Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(
+            Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(
                     new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
             if (domainMap.isEmpty()) {
                 int sz = 0;
@@ -173,7 +173,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 }
                 domainMap.put(getStorageDomain(), sz);
             }
-            for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
                 if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
                     return false;
                 }

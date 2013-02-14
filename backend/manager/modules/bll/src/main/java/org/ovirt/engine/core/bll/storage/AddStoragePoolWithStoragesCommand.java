@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -53,7 +53,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         super(commandId);
     }
 
-    private storage_domains masterStorageDomain = null;
+    private StorageDomain masterStorageDomain = null;
     VDSReturnValue retVal;
 
     @Override
@@ -83,7 +83,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 for (Guid storageDomainId : getParameters().getStorages()) {
                     // now the domain should have the mapping
                     // with the pool in db
-                    storage_domains storageDomain =
+                    StorageDomain storageDomain =
                             DbFacade.getInstance()
                                     .getStorageDomainDao()
                                     .getForStoragePool(storageDomainId,
@@ -140,7 +140,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             @Override
             public Boolean runInTransaction() {
                 for (Guid storageDomainId : getParameters().getStorages()) {
-                    storage_domains storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
+                    StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(
                                 storageDomainId);
                     if (storageDomain != null) {
                         StoragePoolIsoMap mapFromDB =
@@ -248,7 +248,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             boolean _hasData = false;
             StorageFormatType storageFormat = null;
             for (Guid storageDomainId : getParameters().getStorages()) {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
+                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 if (isStorageDomainNotNull(domain) && checkDomainCanBeAttached(domain)) {
                     if (domain.getstorage_domain_type() == StorageDomainType.Data) {
                         _hasData = true;

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -180,7 +180,7 @@ public class RestoreAllSnapshotCommandTest {
     }
 
     private void mockStorageDomainDao() {
-        storage_domains storageDomains = new storage_domains();
+        StorageDomain storageDomains = new StorageDomain();
         storageDomains.setstatus(StorageDomainStatus.Active);
 
         // Variables only for passing the available size check.

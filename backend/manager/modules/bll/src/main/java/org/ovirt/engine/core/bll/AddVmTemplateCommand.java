@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -220,11 +220,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             checkIsValid = false;
         }
 
-        Map<Guid, storage_domains> storageDomains = new HashMap<Guid, storage_domains>();
+        Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();
         Set<Guid> destImageDomains = getStorageGuidSet();
         destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
         for (Guid destImageDomain : destImageDomains) {
-            storage_domains storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+            StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                     destImageDomain, getVm().getStoragePoolId());
             if (storage == null) {
                 // if storage is null then we need to check if it doesn't exist or
@@ -252,12 +252,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
 
-        Map<storage_domains, Integer> domainMap =
+        Map<StorageDomain, Integer> domainMap =
                 StorageDomainValidator.getSpaceRequirementsForStorageDomains(
                         ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false),
                         storageDomains,
                         diskInfoDestinationMap);
-        for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+        for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
             if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
                 return false;
             }
@@ -267,7 +267,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long spaceForRequest) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long spaceForRequest) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(spaceForRequest));
     }
 

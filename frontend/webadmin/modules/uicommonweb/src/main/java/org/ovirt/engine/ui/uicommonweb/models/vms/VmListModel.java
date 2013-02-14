@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -1125,7 +1125,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void GetTemplatesNotPresentOnExportDomain()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
         AsyncDataProvider.GetDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -1144,7 +1144,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void PostGetTemplatesNotPresentOnExportDomain(storage_pool storagePool)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
         if (storagePool != null)
         {
@@ -1209,7 +1209,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void PostExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms)
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         model.StopProgress();
@@ -1303,7 +1303,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public void OnExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
         if (!model.Validate())
         {
             return;
@@ -1317,7 +1317,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void OnExportNoTemplates()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
-        Guid storageDomainId = ((storage_domains) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
         if (model.getProgress() != null)
         {
@@ -2524,7 +2524,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap();
 
-                            ArrayList<storage_domains> activeStorageDomains =
+                            ArrayList<StorageDomain> activeStorageDomains =
                                     unitVmModel.getDisksAllocationModel().getActiveStorageDomains();
 
                             HashMap<Guid, DiskImage> dict =
@@ -2541,7 +2541,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     }
                                 }
 
-                                storage_domains storageDomain =
+                                StorageDomain storageDomain =
                                         Linq.getStorageById(
                                                 imageToDestinationDomainMap.get(templateDisk.getId())
                                                         .getstorage_ids()

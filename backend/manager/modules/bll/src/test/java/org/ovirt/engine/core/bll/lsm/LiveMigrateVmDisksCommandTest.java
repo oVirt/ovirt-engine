@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -139,7 +139,7 @@ public class LiveMigrateVmDisksCommandTest {
     public void canDoActionInvalidSourceDomain() {
         createParameters();
 
-        storage_domains storageDomain = initStorageDomain(srcStorageId);
+        StorageDomain storageDomain = initStorageDomain(srcStorageId);
         storageDomain.setstatus(StorageDomainStatus.Locked);
 
         initDiskImage(diskImageId);
@@ -155,10 +155,10 @@ public class LiveMigrateVmDisksCommandTest {
     public void canDoActionInvalidDestinationDomain() {
         createParameters();
 
-        storage_domains srcStorageDomain = initStorageDomain(srcStorageId);
+        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
         srcStorageDomain.setstatus(StorageDomainStatus.Active);
 
-        storage_domains dstStorageDomain = initStorageDomain(dstStorageId);
+        StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
         dstStorageDomain.setstatus(StorageDomainStatus.Active);
         dstStorageDomain.setstorage_domain_type(StorageDomainType.ISO);
 
@@ -194,8 +194,8 @@ public class LiveMigrateVmDisksCommandTest {
         return diskImage;
     }
 
-    private storage_domains initStorageDomain(Guid storageDomainId) {
-        storage_domains storageDomain = new storage_domains();
+    private StorageDomain initStorageDomain(Guid storageDomainId) {
+        StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(storageDomainId);
         storageDomain.setstorage_pool_id(storagePoolId);
 

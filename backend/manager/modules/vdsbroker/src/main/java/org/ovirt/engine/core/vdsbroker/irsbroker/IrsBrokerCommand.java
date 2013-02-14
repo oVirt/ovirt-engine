@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
@@ -272,19 +272,19 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             VDSReturnValue storagePoolInfoResult = ResourceManager.getInstance().runVdsCommand(
                     VDSCommandType.GetStoragePoolInfo, tempVar);
             if (storagePoolInfoResult.getSucceeded()) {
-                KeyValuePairCompat<storage_pool, java.util.List<storage_domains>> data =
-                        (KeyValuePairCompat<storage_pool, java.util.List<storage_domains>>) storagePoolInfoResult
+                KeyValuePairCompat<storage_pool, java.util.List<StorageDomain>> data =
+                        (KeyValuePairCompat<storage_pool, java.util.List<StorageDomain>>) storagePoolInfoResult
                                 .getReturnValue();
                 int masterVersion = data.getKey().getmaster_domain_version();
                 java.util.HashSet<Guid> domainsInVds = new java.util.HashSet<Guid>();
-                for (storage_domains domainData : data.getValue()) {
+                for (StorageDomain domainData : data.getValue()) {
                     domainsInVds.add(domainData.getId());
                     proceedStorageDomain(domainData, masterVersion, storagePool);
                 }
-                List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
+                List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao()
                         .getAllForStoragePool(_storagePoolId);
 
-                for (final storage_domains domainInDb : domainsInDb) {
+                for (final StorageDomain domainInDb : domainsInDb) {
                     if (domainInDb.getstorage_domain_type() != StorageDomainType.Master
                             && domainInDb.getstatus() != StorageDomainStatus.Locked
                             && !domainsInVds.contains(domainInDb.getId())) {
@@ -298,8 +298,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             }
         }
 
-        private void proceedStorageDomain(storage_domains data, int dataMasterVersion, storage_pool storagePool) {
-            storage_domains storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
+        private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, storage_pool storagePool) {
+            StorageDomain storage_domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(data.getId(), _storagePoolId);
             StorageDomainStatic domainFromDb = null;
             StoragePoolIsoMap domainPoolMap = null;
 

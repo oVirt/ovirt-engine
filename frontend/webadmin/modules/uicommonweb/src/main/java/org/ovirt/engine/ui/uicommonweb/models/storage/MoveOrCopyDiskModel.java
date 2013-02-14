@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -90,7 +90,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     public MoveOrCopyDiskModel() {
         setAllDisks(new ArrayList<DiskModel>());
-        setActiveStorageDomains(new ArrayList<storage_domains>());
+        setActiveStorageDomains(new ArrayList<StorageDomain>());
     }
 
     protected void onInitDisks() {
@@ -113,8 +113,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
     }
 
-    protected void onInitStorageDomains(ArrayList<storage_domains> storages) {
-        for (storage_domains storage : storages) {
+    protected void onInitStorageDomains(ArrayList<StorageDomain> storages) {
+        for (StorageDomain storage : storages) {
             if (Linq.IsDataActiveStorageDomain(storage)) {
                 getActiveStorageDomains().add(storage);
             }
@@ -146,11 +146,11 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Source storage domains
             ArrayList<Guid> diskStorageIds = diskImage.getstorage_ids();
-            ArrayList<storage_domains> sourceStorageDomains =
+            ArrayList<StorageDomain> sourceStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 
             // Destination storage domains
-            ArrayList<storage_domains> destStorageDomains =
+            ArrayList<StorageDomain> destStorageDomains =
                     Linq.Except(getActiveStorageDomains(), sourceStorageDomains);
             destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getstorage_pool_id());
 
@@ -189,7 +189,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         disk.getSourceStorageDomainName().getChangeProhibitionReasons().add(getNoActiveSourceDomainMessage());
     }
 
-    private void addSourceStorageDomainName(DiskModel disk, ArrayList<storage_domains> sourceStorageDomains) {
+    private void addSourceStorageDomainName(DiskModel disk, ArrayList<StorageDomain> sourceStorageDomains) {
         String sourceStorageName = sourceStorageDomains.isEmpty() ?
                 constants.notAvailableLabel() : sourceStorageDomains.get(0).getstorage_name();
         disk.getSourceStorageDomainName().setEntity(sourceStorageName);
@@ -226,11 +226,11 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         StopProgress();
     }
 
-    protected ArrayList<storage_domains> filterStoragesByDatacenterId(ArrayList<storage_domains> storageDomains,
+    protected ArrayList<StorageDomain> filterStoragesByDatacenterId(ArrayList<StorageDomain> storageDomains,
             NGuid diskDatacenterId) {
 
-        ArrayList<storage_domains> storages = new ArrayList<storage_domains>();
-        for (storage_domains storage : storageDomains) {
+        ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
+        for (StorageDomain storage : storageDomains) {
             if (storage.getstorage_pool_id().equals(diskDatacenterId)) {
                 storages.add(storage);
             }
@@ -239,12 +239,12 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return storages;
     }
 
-    protected ArrayList<storage_domains> getMissingStorages(ArrayList<storage_domains> storageDomains, DiskModel vmdisk) {
-        ArrayList<storage_domains> missingStorageDomains = new ArrayList<storage_domains>();
+    protected ArrayList<StorageDomain> getMissingStorages(ArrayList<StorageDomain> storageDomains, DiskModel vmdisk) {
+        ArrayList<StorageDomain> missingStorageDomains = new ArrayList<StorageDomain>();
         DiskModel templateDisk = getTemplateDiskByVmDisk(vmdisk);
 
         if (templateDisk != null) {
-            for (storage_domains storageDomain : storageDomains) {
+            for (StorageDomain storageDomain : storageDomains) {
                 if (!((DiskImage) templateDisk.getDisk()).getstorage_ids().contains(storageDomain.getId())) {
                     missingStorageDomains.add(storageDomain);
                 }
@@ -281,9 +281,9 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DiskModel diskModel : getDisks())
         {
-            storage_domains destStorageDomain = (storage_domains) diskModel.getStorageDomain().getSelectedItem();
-            storage_domains sourceStorageDomain =
-                    (storage_domains) diskModel.getSourceStorageDomain().getSelectedItem();
+            StorageDomain destStorageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
+            StorageDomain sourceStorageDomain =
+                    (StorageDomain) diskModel.getSourceStorageDomain().getSelectedItem();
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
             DiskImage disk = (DiskImage) diskModel.getDisk();

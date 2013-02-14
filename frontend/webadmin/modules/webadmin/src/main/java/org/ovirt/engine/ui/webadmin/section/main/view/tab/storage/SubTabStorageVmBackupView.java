@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
@@ -36,7 +36,7 @@ import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.inject.Inject;
 
-public class SubTabStorageVmBackupView extends AbstractSubTabTableView<storage_domains, VM, StorageListModel, VmBackupModel>
+public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDomain, VM, StorageListModel, VmBackupModel>
         implements SubTabStorageVmBackupPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageVmBackupView> {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColum
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage_domains, storage_domains, StorageListModel, StorageDataCenterListModel>
+public class SubTabStorageDataCenterView extends AbstractSubTabTableView<StorageDomain, StorageDomain, StorageListModel, StorageDataCenterListModel>
         implements SubTabStorageDataCenterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabStorageDataCenterView> {
@@ -26,7 +26,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
     }
 
     @Inject
-    public SubTabStorageDataCenterView(SearchableDetailModelProvider<storage_domains, StorageListModel, StorageDataCenterListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabStorageDataCenterView(SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
@@ -36,42 +36,42 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<storage
     void initTable(ApplicationConstants constants) {
         getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<storage_domains> nameColumn = new TextColumnWithTooltip<storage_domains>() {
+        TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
-            public String getValue(storage_domains object) {
+            public String getValue(StorageDomain object) {
                 return object.getstorage_pool_name();
             }
         };
         getTable().addColumn(nameColumn, constants.nameDc());
 
-        TextColumnWithTooltip<storage_domains> domainStatusColumn =
-                new EnumColumn<storage_domains, StorageDomainStatus>() {
+        TextColumnWithTooltip<StorageDomain> domainStatusColumn =
+                new EnumColumn<StorageDomain, StorageDomainStatus>() {
                     @Override
-                    protected StorageDomainStatus getRawValue(storage_domains object) {
+                    protected StorageDomainStatus getRawValue(StorageDomain object) {
                         return object.getstatus();
                     }
                 };
         getTable().addColumn(domainStatusColumn, constants.domainStatusInDcStorageDc(), "300px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.attachStorageDc()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getAttachCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.detachStorageDc()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.detachStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDetachCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.activateStorageDc()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.activateStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getActivateCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<storage_domains>(constants.maintenanceStorageDc()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.maintenanceStorageDc()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getMaintenanceCommand();

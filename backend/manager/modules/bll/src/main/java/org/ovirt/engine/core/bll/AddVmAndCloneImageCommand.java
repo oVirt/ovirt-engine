@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -190,12 +190,12 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     @Override
     protected boolean buildAndCheckDestStorageDomains() {
         if (diskInfoDestinationMap.isEmpty()) {
-            List<storage_domains> domains =
+            List<StorageDomain> domains =
                     DbFacade.getInstance()
                             .getStorageDomainDao()
                             .getAllForStoragePool(getStoragePoolId().getValue());
-            Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
-            for (storage_domains storageDomain : domains) {
+            Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
+            for (StorageDomain storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                 if (validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination())) {
                     storageDomainsMap.put(storageDomain.getId(), storageDomain);

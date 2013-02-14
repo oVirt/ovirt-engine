@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -479,7 +479,7 @@ public class RunVmCommandTest {
 
         final StorageDomainDAO storageDomainDAO = mock(StorageDomainDAO.class);
         when(storageDomainDAO.getAllForStoragePool(Guid.Empty))
-                .thenReturn(new ArrayList<storage_domains>());
+                .thenReturn(new ArrayList<StorageDomain>());
         doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
         doReturn(storageDomainDAO).when(vmRunHandler).getStorageDomainDAO();
 

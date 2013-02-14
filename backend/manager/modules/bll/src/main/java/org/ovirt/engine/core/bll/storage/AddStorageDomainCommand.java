@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -81,8 +81,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected void UpdateStorageDomainDynamicFromIrs() {
-        final storage_domains sd =
-                (storage_domains) Backend
+        final StorageDomain sd =
+                (StorageDomain) Backend
                         .getInstance()
                         .getResourceManager()
                         .RunVdsCommand(VDSCommandType.GetStorageDomainStats,

@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetImageByImageIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -26,7 +26,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
         when(params.getImageId()).thenReturn(imageId);
 
         // Set up the DAOs
-        List<storage_domains> expected = Collections.singletonList(new storage_domains());
+        List<StorageDomain> expected = Collections.singletonList(new StorageDomain());
         StorageDomainDAO storageDomainDAOMock = mock(StorageDomainDAO.class);
         when(getDbFacadeMockInstance().getStorageDomainDao()).thenReturn(storageDomainDAOMock);
         when(storageDomainDAOMock.getAllStorageDomainsByImageId(imageId)).thenReturn(expected);
@@ -45,8 +45,8 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
         Guid imageId = Guid.NewGuid();
         when(params.getImageId()).thenReturn(imageId);
 
-        storage_domains firstStorageDomain =
-                new storage_domains(Guid.NewGuid(),
+        StorageDomain firstStorageDomain =
+                new StorageDomain(Guid.NewGuid(),
                         Guid.NewGuid().toString(),
                         "FirstStorage",
                         Guid.NewGuid(),
@@ -57,8 +57,8 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
                         0,
                         0,
                         "First Storage Description");
-        storage_domains secondStorageDomain =
-                new storage_domains(Guid.NewGuid(),
+        StorageDomain secondStorageDomain =
+                new StorageDomain(Guid.NewGuid(),
                         Guid.NewGuid().toString(),
                         "SecondStorage",
                         Guid.NewGuid(),
@@ -69,7 +69,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<GetIm
                         0,
                         0,
                         "Second Storage Description");
-        List<storage_domains> expected = new ArrayList<storage_domains>();
+        List<StorageDomain> expected = new ArrayList<StorageDomain>();
         expected.add(firstStorageDomain);
         expected.add(secondStorageDomain);
 

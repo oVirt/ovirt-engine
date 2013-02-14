@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn<storage_domains> {
+public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn<StorageDomain> {
 
     @Override
-    public ImageResource getValue(storage_domains sp) {
+    public ImageResource getValue(StorageDomain sp) {
         setEnumTitle(sp.getstorage_domain_shared_status());
         switch (sp.getstorage_domain_shared_status()) {
         case Unattached:

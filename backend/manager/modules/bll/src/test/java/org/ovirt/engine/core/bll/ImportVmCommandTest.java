@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -117,15 +117,15 @@ public class ImportVmCommandTest {
         return v;
     }
 
-    protected storage_domains createSourceDomain() {
-        storage_domains sd = new storage_domains();
+    protected StorageDomain createSourceDomain() {
+        StorageDomain sd = new StorageDomain();
         sd.setstorage_domain_type(StorageDomainType.ImportExport);
         sd.setstatus(StorageDomainStatus.Active);
         return sd;
     }
 
-    protected storage_domains createStorageDomain() {
-        storage_domains sd = new storage_domains();
+    protected StorageDomain createStorageDomain() {
+        StorageDomain sd = new StorageDomain();
         sd.setstorage_domain_type(StorageDomainType.Data);
         sd.setstatus(StorageDomainStatus.Active);
         sd.setavailable_disk_size(2);

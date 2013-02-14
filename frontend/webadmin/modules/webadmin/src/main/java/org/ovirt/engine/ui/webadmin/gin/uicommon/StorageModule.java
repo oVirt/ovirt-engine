@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -57,13 +57,13 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<storage_domains, StorageListModel> getStorageListProvider(ClientGinjector ginjector,
+    public MainModelProvider<StorageDomain, StorageListModel> getStorageListProvider(ClientGinjector ginjector,
             final Provider<StoragePopupPresenterWidget> popupProvider,
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
             final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider) {
-        return new MainTabModelProvider<storage_domains, StorageListModel>(ginjector, StorageListModel.class) {
+        return new MainTabModelProvider<StorageDomain, StorageListModel>(ginjector, StorageListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -145,11 +145,11 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<storage_domains, StorageListModel, StorageDataCenterListModel> getStorageDataCenterListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> getStorageDataCenterListProvider(ClientGinjector ginjector,
             final Provider<FindSingleDcPopupPresenterWidget> singlePopupProvider,
             final Provider<FindMultiDcPopupPresenterWidget> multiPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<storage_domains, StorageListModel, StorageDataCenterListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel>(ginjector,
                 StorageListModel.class,
                 StorageDataCenterListModel.class) {
             @Override

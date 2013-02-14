@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -196,7 +196,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
      * @return
      */
     private boolean connectVdsToNewMaster(VDS vds) {
-        storage_domains masterDomain = getNewMaster(false);
+        StorageDomain masterDomain = getNewMaster(false);
         if (vds.getId().equals(getVds().getId())
                 || StorageHelperDirector.getInstance().getItem(masterDomain.getstorage_type())
                         .connectStorageToDomainByVdsId(masterDomain, vds.getId())) {

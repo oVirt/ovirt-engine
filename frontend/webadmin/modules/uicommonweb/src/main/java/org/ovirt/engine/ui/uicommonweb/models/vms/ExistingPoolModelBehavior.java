@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -81,8 +81,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
 
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
-                ArrayList<storage_domains> activeStorageDomains = FilterStorageDomains(storageDomains);
+                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+                ArrayList<StorageDomain> activeStorageDomains = FilterStorageDomains(storageDomains);
 
                 DisksAllocationModel disksAllocationModel = behavior.getModel().getDisksAllocationModel();
                 disksAllocationModel.setActiveStorageDomains(activeStorageDomains);
@@ -100,8 +100,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
                     }
 
                     Guid storageId = storageIds.get(0);
-                    storage_domains storageDomain = Linq.getStorageById(storageId, activeStorageDomains);
-                    List<storage_domains> diskStorageDomains = new ArrayList<storage_domains>();
+                    StorageDomain storageDomain = Linq.getStorageById(storageId, activeStorageDomains);
+                    List<StorageDomain> diskStorageDomains = new ArrayList<StorageDomain>();
                     diskStorageDomains.add(storageDomain);
                     diskModel.getStorageDomain().setItems(diskStorageDomains);
                     diskModel.getStorageDomain().setIsChangable(false);

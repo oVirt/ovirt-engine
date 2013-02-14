@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -302,7 +302,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+        StorageDomain storageDomain = (StorageDomain) model.getStorageDomain().getSelectedItem();
         Disk disk;
         boolean isInternal = (Boolean) model.getIsInternal().getEntity();
 

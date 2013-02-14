@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -147,11 +147,11 @@ public final class Linq
 
     }
 
-    public static class StorageDomainByNameComparer implements Comparator<storage_domains>
+    public static class StorageDomainByNameComparer implements Comparator<StorageDomain>
     {
 
         @Override
-        public int compare(storage_domains x, storage_domains y)
+        public int compare(StorageDomain x, StorageDomain y)
         {
             return x.getstorage_name().compareTo(y.getstorage_name());
         }
@@ -314,9 +314,9 @@ public final class Linq
      * @param sdl
      * @return
      */
-    public static boolean IsAnyStorageDomainIsMatserAndActive(List<storage_domains> sdl)
+    public static boolean IsAnyStorageDomainIsMatserAndActive(List<StorageDomain> sdl)
     {
-        for (storage_domains a : sdl)
+        for (StorageDomain a : sdl)
         {
             if (a.getstorage_domain_type() == StorageDomainType.Master && a.getstatus() != null
                     && a.getstatus() == StorageDomainStatus.Active)
@@ -327,7 +327,7 @@ public final class Linq
         return false;
     }
 
-    public static boolean IsDataActiveStorageDomain(storage_domains storageDomain)
+    public static boolean IsDataActiveStorageDomain(StorageDomain storageDomain)
     {
         boolean isData = storageDomain.getstorage_domain_type() == StorageDomainType.Data ||
                 storageDomain.getstorage_domain_type() == StorageDomainType.Master;
@@ -337,7 +337,7 @@ public final class Linq
         return isData && isActive;
     }
 
-    public static boolean IsActiveStorageDomain(storage_domains storageDomain)
+    public static boolean IsActiveStorageDomain(StorageDomain storageDomain)
     {
         boolean isActive = storageDomain.getstatus() != null &&
                 storageDomain.getstatus() == StorageDomainStatus.Active;
@@ -376,9 +376,9 @@ public final class Linq
      * @param id
      * @return
      */
-    public static boolean IsSDItemExistInList(ArrayList<storage_domains> items, Guid id)
+    public static boolean IsSDItemExistInList(ArrayList<StorageDomain> items, Guid id)
     {
-        for (storage_domains b : items)
+        for (StorageDomain b : items)
         {
             if (b.getId().equals(id))
             {
@@ -553,11 +553,11 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<storage_domains> FindAllStorageDomainsBySharedStatus(ArrayList<storage_domains> items,
+    public static ArrayList<StorageDomain> FindAllStorageDomainsBySharedStatus(ArrayList<StorageDomain> items,
             StorageDomainSharedStatus status)
     {
-        ArrayList<storage_domains> ret = new ArrayList<storage_domains>();
-        for (storage_domains i : items)
+        ArrayList<StorageDomain> ret = new ArrayList<StorageDomain>();
+        for (StorageDomain i : items)
         {
             if (i.getstorage_domain_shared_status() == status)
             {
@@ -933,8 +933,8 @@ public final class Linq
         return result;
     }
 
-    public static storage_domains getStorageById(Guid storageId, ArrayList<storage_domains> storageDomains) {
-        for (storage_domains storage : storageDomains) {
+    public static StorageDomain getStorageById(Guid storageId, ArrayList<StorageDomain> storageDomains) {
+        for (StorageDomain storage : storageDomains) {
             if (storage.getId().equals(storageId)) {
                 return storage;
             }
@@ -942,11 +942,11 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<storage_domains> getStorageDomainsByIds(ArrayList<Guid> storageIds,
-            ArrayList<storage_domains> storageDomains) {
-        ArrayList<storage_domains> list = new ArrayList<storage_domains>();
+    public static ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> storageIds,
+            ArrayList<StorageDomain> storageDomains) {
+        ArrayList<StorageDomain> list = new ArrayList<StorageDomain>();
         for (Guid storageId : storageIds) {
-            storage_domains storageDomain = getStorageById(storageId, storageDomains);
+            StorageDomain storageDomain = getStorageById(storageId, storageDomains);
             if (storageDomain != null) {
                 list.add(getStorageById(storageId, storageDomains));
             }
@@ -954,11 +954,11 @@ public final class Linq
         return list;
     }
 
-    public static ArrayList<storage_domains> getStorageDomainsDisjoint(ArrayList<DiskModel> disks,
-            ArrayList<storage_domains> storageDomains) {
-        ArrayList<ArrayList<storage_domains>> storageDomainslists = new ArrayList<ArrayList<storage_domains>>();
+    public static ArrayList<StorageDomain> getStorageDomainsDisjoint(ArrayList<DiskModel> disks,
+            ArrayList<StorageDomain> storageDomains) {
+        ArrayList<ArrayList<StorageDomain>> storageDomainslists = new ArrayList<ArrayList<StorageDomain>>();
         for (DiskModel diskModel : disks) {
-            ArrayList<storage_domains> list =
+            ArrayList<StorageDomain> list =
                     getStorageDomainsByIds(((DiskImage) diskModel.getDisk()).getstorage_ids(), storageDomains);
 
             storageDomainslists.add(list);
@@ -1203,7 +1203,7 @@ public final class Linq
         }
     }
 
-    public final static class StoragePredicate implements IPredicate<storage_domains>
+    public final static class StoragePredicate implements IPredicate<StorageDomain>
     {
         private Guid id = new Guid();
 
@@ -1213,13 +1213,13 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(storage_domains source)
+        public boolean Match(StorageDomain source)
         {
             return id.equals(source.getId());
         }
     }
 
-    public final static class StorageNamePredicate implements IPredicate<storage_domains> {
+    public final static class StorageNamePredicate implements IPredicate<StorageDomain> {
 
         private String name;
 
@@ -1228,7 +1228,7 @@ public final class Linq
         }
 
         @Override
-        public boolean Match(storage_domains source) {
+        public boolean Match(StorageDomain source) {
             return name.equals(source.getstorage_name());
         }
     }

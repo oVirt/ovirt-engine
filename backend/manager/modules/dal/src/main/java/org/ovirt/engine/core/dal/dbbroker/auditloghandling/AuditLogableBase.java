@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
@@ -231,20 +231,20 @@ public class AuditLogableBase extends TimeoutBase {
         mVdsName = value;
     }
 
-    private storage_domains _storageDomain;
+    private StorageDomain _storageDomain;
 
-    public storage_domains getStorageDomain() {
+    public StorageDomain getStorageDomain() {
         if (_storageDomain == null && getStorageDomainId() != null) {
             if (_storagePoolId != null && getStoragePool() != null) {
                 _storageDomain = getStorageDomainDAO().getForStoragePool(
                         getStorageDomainId().getValue(), getStoragePool().getId());
             }
             if (_storageDomain == null) {
-                final List<storage_domains> storageDomainList =
+                final List<StorageDomain> storageDomainList =
                         getStorageDomainDAO().getAllForStorageDomain(getStorageDomainId().getValue());
                 if (storageDomainList.size() != 0) {
                     _storageDomain = storageDomainList.get(0);
-                    for (final storage_domains storageDomainFromList : storageDomainList) {
+                    for (final StorageDomain storageDomainFromList : storageDomainList) {
                         if (storageDomainFromList.getstatus() == StorageDomainStatus.Active) {
                             _storageDomain = storageDomainFromList;
                             break;
@@ -256,7 +256,7 @@ public class AuditLogableBase extends TimeoutBase {
         return _storageDomain;
     }
 
-    public void setStorageDomain(final storage_domains value) {
+    public void setStorageDomain(final StorageDomain value) {
         _storageDomain = value;
     }
 

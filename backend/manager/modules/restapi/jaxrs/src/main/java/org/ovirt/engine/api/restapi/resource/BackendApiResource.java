@@ -416,8 +416,8 @@ public class BackendApiResource
             summary.getUsers().setActive(get(stats, "active_users"));
 
             summary.setStorageDomains(new StorageDomains());
-            summary.getStorageDomains().setTotal(get(stats, "total_storage_domains"));
-            summary.getStorageDomains().setActive(get(stats, "active_storage_domains"));
+            summary.getStorageDomains().setTotal(get(stats, "total_org.ovirt.engine.core.common.businessentities.StorageDomain"));
+            summary.getStorageDomains().setActive(get(stats, "active_org.ovirt.engine.core.common.businessentities.StorageDomain"));
 
             api.setSummary(summary);
         }

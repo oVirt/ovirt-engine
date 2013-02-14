@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -41,12 +41,12 @@ import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainsResource.SUB_COLLECTIONS;
 
 public class BackendStorageDomainResource extends
-        AbstractBackendSubResource<StorageDomain, storage_domains> implements StorageDomainResource {
+        AbstractBackendSubResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
 
     private BackendStorageDomainsResource parent;
 
     public BackendStorageDomainResource(String id, BackendStorageDomainsResource parent) {
-        super(id, StorageDomain.class, storage_domains.class, SUB_COLLECTIONS);
+        super(id, StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class, SUB_COLLECTIONS);
         this.parent = parent;
     }
 
@@ -64,7 +64,7 @@ public class BackendStorageDomainResource extends
     public StorageDomain update(StorageDomain incoming) {
         validateEnums(StorageDomain.class, incoming);
         QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
-        storage_domains entity = getEntity(storageDomainResolver, true);
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getstorage_type();
         if (storageType != null) {
@@ -97,7 +97,7 @@ public class BackendStorageDomainResource extends
         return type != null && type == StorageDomainType.ISO ? true : false;
     }
 
-    public static synchronized boolean isIsoDomain(storage_domains storageDomain) {
+    public static synchronized boolean isIsoDomain(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
         org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getstorage_domain_type() ;
         return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true : false;
     }
@@ -167,18 +167,18 @@ public class BackendStorageDomainResource extends
     }
 
     @Override
-    protected StorageDomain map(storage_domains entity, StorageDomain template) {
+    protected StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         return parent.map(entity, template);
     }
 
 
     @Override
-    protected StorageDomain doPopulate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain doPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
 
     @Override
-    protected StorageDomain deprecatedPopulate(StorageDomain model, storage_domains entity) {
+    protected StorageDomain deprecatedPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
             model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
         } else {
@@ -237,9 +237,9 @@ public class BackendStorageDomainResource extends
     }
 
     protected class UpdateParametersProvider implements
-            ParametersProvider<StorageDomain, storage_domains> {
+            ParametersProvider<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
         @Override
-        public VdcActionParametersBase getParameters(StorageDomain incoming, storage_domains entity) {
+        public VdcActionParametersBase getParameters(StorageDomain incoming, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
             //save SD type before mapping
             org.ovirt.engine.core.common.businessentities.StorageDomainType currentType = entity.getStorageStaticData()==null ? null : entity.getStorageStaticData().getstorage_domain_type();
             StorageDomainStatic updated = getMapper(modelType, StorageDomainStatic.class).map(

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -66,10 +66,10 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
     }
 
     protected void InitConnectionList() {
-        List<storage_domains> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
+        List<StorageDomain> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                 getStoragePool().getId());
-        List<storage_domains> isoDomains = getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ISO);
-        List<storage_domains> exportDomains =
+        List<StorageDomain> isoDomains = getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ISO);
+        List<StorageDomain> exportDomains =
                 getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ImportExport);
 
         Set<StorageServerConnections> connections = new HashSet<StorageServerConnections>(
@@ -105,9 +105,9 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         _connections = new ArrayList<StorageServerConnections>(connections);
     }
 
-    protected List<storage_domains> getStorageDomainsByStoragePoolId(List<storage_domains> allDomains, StorageDomainType type) {
-        List<storage_domains> domains = new ArrayList<storage_domains>();
-        for (storage_domains s : allDomains) {
+    protected List<StorageDomain> getStorageDomainsByStoragePoolId(List<StorageDomain> allDomains, StorageDomainType type) {
+        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+        for (StorageDomain s : allDomains) {
             StorageDomainStatus status = s.getstatus();
             if (s.getstorage_domain_type() == type
                     && (StorageDomainStatus.Active == status || StorageDomainStatus.Unknown == status)) {

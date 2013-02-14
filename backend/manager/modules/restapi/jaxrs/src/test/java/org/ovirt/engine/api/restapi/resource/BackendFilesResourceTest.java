@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.GetAllIsoImagesListParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -173,8 +173,8 @@ public class BackendFilesResourceTest
                                      getStorageDomain(GUIDS[0], type));
     }
 
-    private storage_domains getStorageDomain(Guid id, StorageDomainType type) {
-        storage_domains sd =  new storage_domains();
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(Guid id, StorageDomainType type) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain sd =  new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setId(id);
         sd.setstorage_domain_type(type);
         return sd;

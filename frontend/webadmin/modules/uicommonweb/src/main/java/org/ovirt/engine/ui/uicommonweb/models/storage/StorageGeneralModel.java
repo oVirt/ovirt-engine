@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -92,7 +92,7 @@ public class StorageGeneralModel extends EntityModel
 
         if (getEntity() != null)
         {
-            storage_domains storageDomain = (storage_domains) getEntity();
+            StorageDomain storageDomain = (StorageDomain) getEntity();
 
             setIsNfs(storageDomain.getstorage_type() == StorageType.NFS);
             setIsLocalS(storageDomain.getstorage_type() == StorageType.LOCALFS);

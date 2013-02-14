@@ -17,7 +17,7 @@ import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByVmTemplateIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -138,12 +138,12 @@ public class BackendTemplateDisksResourceTest
         return times;
     }
 
-    protected List<storage_domains> getStorageDomains() {
-        List<storage_domains> storageDomains = new ArrayList<storage_domains>();
-        storage_domains storageDomain = new storage_domains();
+    protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getStorageDomains() {
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         storageDomain.setId(GUIDS[2]);
         storageDomains.add(storageDomain);
-        storageDomain = new storage_domains();
+        storageDomain = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         storageDomain.setId(GUIDS[3]);
         storageDomains.add(storageDomain);
         return storageDomains;

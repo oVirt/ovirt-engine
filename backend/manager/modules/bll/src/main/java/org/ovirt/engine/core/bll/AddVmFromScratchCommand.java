@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -40,12 +40,12 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     public NGuid getStorageDomainId() {
         NGuid storageDomainId = super.getStorageDomainId();
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
-            List<storage_domains> storagesInPool =
+            List<StorageDomain> storagesInPool =
                     LinqUtils.filter(DbFacade.getInstance()
                             .getStorageDomainDao().getAllForStoragePool(getStoragePoolId().getValue()),
-                            new Predicate<storage_domains>() {
+                            new Predicate<StorageDomain>() {
                                 @Override
-                                public boolean eval(storage_domains a) {
+                                public boolean eval(StorageDomain a) {
                                     return (a.getstorage_domain_type() != StorageDomainType.ISO && a.getstorage_domain_type() != StorageDomainType.ImportExport)
                                             && (a.getstatus() != null) && (a.getstatus() == StorageDomainStatus.Active);
                                 }

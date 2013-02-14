@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -32,7 +32,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     @Override
     protected void executeCommand() {
-        final storage_domains dom = getStorageDomain();
+        final StorageDomain dom = getStorageDomain();
         VDS vds = getVds();
         boolean format = getParameters().getDoFormat();
 
@@ -87,7 +87,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
-        storage_domains dom = getStorageDomain();
+        StorageDomain dom = getStorageDomain();
         if (dom == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             return false;
@@ -142,31 +142,31 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return getBackend().getResourceManager();
     }
 
-    protected boolean isFCP(storage_domains dom) {
+    protected boolean isFCP(StorageDomain dom) {
         return dom.getstorage_type() == StorageType.FCP;
     }
 
-    protected boolean isISCSI(storage_domains dom) {
+    protected boolean isISCSI(StorageDomain dom) {
         return dom.getstorage_type() == StorageType.ISCSI;
     }
 
-    protected boolean isLocalFs(storage_domains dom) {
+    protected boolean isLocalFs(StorageDomain dom) {
         return dom.getstorage_type() == StorageType.LOCALFS;
     }
 
-    protected boolean isDataDomain(storage_domains dom) {
+    protected boolean isDataDomain(StorageDomain dom) {
         return dom.getstorage_domain_type() == StorageDomainType.Data;
     }
 
-    protected boolean isISO(storage_domains dom) {
+    protected boolean isISO(StorageDomain dom) {
         return dom.getstorage_domain_type() == StorageDomainType.ISO;
     }
 
-    protected boolean isExport(storage_domains dom) {
+    protected boolean isExport(StorageDomain dom) {
         return dom.getstorage_domain_type() == StorageDomainType.ImportExport;
     }
 
-    protected boolean isDomainAttached(storage_domains storageDomain) {
+    protected boolean isDomainAttached(StorageDomain storageDomain) {
         if (storageDomain.getstorage_pool_id() == null) {
             return false;
         }
@@ -178,7 +178,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                 .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
     }
 
-    protected boolean detachStorage(storage_domains dom) {
+    protected boolean detachStorage(StorageDomain dom) {
         Guid domId = dom.getId();
         Guid poolId = dom.getstorage_pool_id().getValue();
         DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(domId, poolId);
@@ -189,7 +189,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                         params).getSucceeded();
     }
 
-    protected boolean formatStorage(storage_domains dom, VDS vds) {
+    protected boolean formatStorage(StorageDomain dom, VDS vds) {
         return getVdsBroker()
                 .RunVdsCommand(VDSCommandType.FormatStorageDomain,
                         new FormatStorageDomainVDSCommandParameters(vds.getId(), dom.getId())).getSucceeded();

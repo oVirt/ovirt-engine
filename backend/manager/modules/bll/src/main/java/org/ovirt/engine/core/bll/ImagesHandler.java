@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -62,8 +62,8 @@ public final class ImagesHandler {
      */
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             Map<Guid, DiskImage> diskInfoDestinationMap,
-            Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
-        List<storage_domains> domains =
+            Map<Guid, StorageDomain> destStorages, boolean notCheckSize) {
+        List<StorageDomain> domains =
                 DbFacade.getInstance()
                         .getStorageDomainDao()
                         .getAllForStoragePool(template.getstorage_pool_id().getValue());
@@ -71,11 +71,11 @@ public final class ImagesHandler {
     }
 
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
-            List<storage_domains> domains,
+            List<StorageDomain> domains,
             Map<Guid, DiskImage> diskInfoDestinationMap,
-            Map<Guid, storage_domains> destStorages, boolean notCheckSize) {
-        Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
-        for (storage_domains storageDomain : domains) {
+            Map<Guid, StorageDomain> destStorages, boolean notCheckSize) {
+        Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
+        for (StorageDomain storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
                     && (notCheckSize || isStorageDomainWithinThresholds(storageDomain, null, false))) {
@@ -525,7 +525,7 @@ public final class ImagesHandler {
                 }
             }
             for (Guid domainId : domainsIds) {
-                storage_domains domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         domainId, storagePoolId);
                 if (checkStorageDomain) {
                     StorageDomainValidator storageDomainValidator =
@@ -566,7 +566,7 @@ public final class ImagesHandler {
      *            - Indicate whether to add a CDA message for failure
      * @return <code>boolean</code> value which indicates if the storage domain has enough free space.
      */
-    private static boolean isStorageDomainWithinThresholds(storage_domains storageDomain,
+    private static boolean isStorageDomainWithinThresholds(StorageDomain storageDomain,
             List<String> messages,
             boolean addCanDoMessage) {
         ValidationResult validationResult = new StorageDomainValidator(storageDomain).isDomainWithinThresholds();

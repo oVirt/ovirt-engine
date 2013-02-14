@@ -9,14 +9,14 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /** A test case for the {@link StorageDomainValidator} class. */
 public class StorageDomainValidatorTest {
-    private storage_domains domain;
+    private StorageDomain domain;
     private StorageDomainValidator validator;
     private final static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
 
@@ -27,7 +27,7 @@ public class StorageDomainValidatorTest {
 
     @Before
     public void setUp() {
-        domain = new storage_domains();
+        domain = new StorageDomain();
         validator = new StorageDomainValidator(domain);
     }
 
@@ -81,8 +81,8 @@ public class StorageDomainValidatorTest {
         assertTrue("Domain should have more space then threshold", validator.isDomainWithinThresholds().isValid());
     }
 
-    private static storage_domains mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {
-        storage_domains sd = new storage_domains();
+    private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {
+        StorageDomain sd = new StorageDomain();
         sd.setavailable_disk_size(availableSize);
         sd.setused_disk_size(usedSize);
         sd.setstatus(StorageDomainStatus.Active);

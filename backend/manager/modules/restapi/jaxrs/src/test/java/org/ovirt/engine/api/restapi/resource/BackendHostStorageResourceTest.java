@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
@@ -101,8 +101,8 @@ public class BackendHostStorageResourceTest
         return luns;
     }
 
-    private List<storage_domains> setUpVgs() {
-        List<storage_domains> vgs = new ArrayList<storage_domains>();
+    private List<org.ovirt.engine.core.common.businessentities.StorageDomain> setUpVgs() {
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> vgs = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
         for (int i = 0; i < NAMES.length; i++) {
             vgs.add(getVgEntity(i));
         }
@@ -116,8 +116,8 @@ public class BackendHostStorageResourceTest
         return entity;
     }
 
-    protected storage_domains getVgEntity(int index) {
-        storage_domains entity = new storage_domains();
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getVgEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setstorage(VG_ID_PREFIX + GUIDS[index].toString());
         entity.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
         return entity;

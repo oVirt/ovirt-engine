@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -702,8 +702,8 @@ public class VmGeneralModel extends EntityModel
                         public void OnSuccess(Object model1, Object ReturnValue1)
                         {
                             VmGeneralModel vmGeneralModel1 = (VmGeneralModel) model1;
-                            storage_domains storage =
-                                    (storage_domains) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                            StorageDomain storage =
+                                    (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                             vmGeneralModel1.setStorageDomain(storage.getstorage_name());
 
                             vmGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);

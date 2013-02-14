@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -27,7 +27,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
 
     @Override
     protected void executeQueryCommand() {
-        java.util.ArrayList<storage_domains> returnValue = new java.util.ArrayList<storage_domains>();
+        java.util.ArrayList<StorageDomain> returnValue = new java.util.ArrayList<StorageDomain>();
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -41,8 +41,8 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
             java.util.ArrayList<Guid> guidsFromIrs = (java.util.ArrayList<Guid>) vdsReturnValue.getReturnValue();
             java.util.HashSet<Guid> guidsFromDb = new java.util.HashSet<Guid>();
             if (guidsFromIrs.size() > 0) {
-                List<storage_domains> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
-                for (storage_domains domain : domainsInDb) {
+                List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
+                for (StorageDomain domain : domainsInDb) {
                     guidsFromDb.add(domain.getId());
                 }
                 for (Guid domainId : guidsFromIrs) {
@@ -56,7 +56,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                                                 new HSMGetStorageDomainInfoVDSCommandParameters(
                                                         getParameters().getVdsId(), domainId))
                                         .getReturnValue();
-                        storage_domains domain = new storage_domains();
+                        StorageDomain domain = new StorageDomain();
                         domain.setStorageStaticData(domainFromIrs.getFirst());
                         if (getParameters().getStorageFormatType() == null
                                 || getParameters().getStorageFormatType() == domain.getStorageFormat()) {

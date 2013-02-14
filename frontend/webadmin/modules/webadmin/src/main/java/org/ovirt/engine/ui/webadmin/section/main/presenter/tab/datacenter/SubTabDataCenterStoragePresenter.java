@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -44,7 +44,7 @@ public class SubTabDataCenterStoragePresenter extends AbstractSubTabPresenter<st
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<storage_domains, DataCenterListModel, DataCenterStorageListModel> modelProvider) {
+            SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

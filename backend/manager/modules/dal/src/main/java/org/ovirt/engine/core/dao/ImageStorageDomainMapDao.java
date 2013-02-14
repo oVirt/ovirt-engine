@@ -20,10 +20,10 @@ public interface ImageStorageDomainMapDao extends GenericDao<image_storage_domai
     void remove(Guid imageId);
 
     /**
-     * Gets a list of {@link image_storage_domain_map} entries that have the given id of {@link storage_domains}
+     * Gets a list of {@link image_storage_domain_map} entries that have the given id of {@link StorageDomain}
      *
      * @param storageDomainId
-     *            ID of {@link storage_domains} entity that the returned entities are associated with
+     *            ID of {@link StorageDomain} entity that the returned entities are associated with
      * @return list of entities
      */
     List<image_storage_domain_map> getAllByStorageDomainId(Guid storageDomainId);

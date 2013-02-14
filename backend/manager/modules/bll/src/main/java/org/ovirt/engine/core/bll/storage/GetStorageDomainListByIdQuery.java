@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -15,10 +15,10 @@ public class GetStorageDomainListByIdQuery<P extends StorageDomainQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        List<storage_domains> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
+        List<StorageDomain> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
                 getParameters().getStorageDomainId());
-        java.util.ArrayList<storage_domains> temp = new java.util.ArrayList<storage_domains>(result);
-        for (storage_domains domain : temp) {
+        java.util.ArrayList<StorageDomain> temp = new java.util.ArrayList<StorageDomain>(result);
+        for (StorageDomain domain : temp) {
             if (domain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached) {
                 result.remove(domain);
             }

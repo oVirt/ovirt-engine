@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -174,7 +174,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return true;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long sizeRequested) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
     }
 

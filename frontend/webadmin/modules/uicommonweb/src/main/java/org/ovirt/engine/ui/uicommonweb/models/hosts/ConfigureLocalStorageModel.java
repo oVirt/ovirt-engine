@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -391,10 +391,10 @@ public class ConfigureLocalStorageModel extends Model {
         }
 
         // Always choose a available storage name.
-        ArrayList<storage_domains> storages = context.storageList;
+        ArrayList<StorageDomain> storages = context.storageList;
         names = new ArrayList<String>();
 
-        for (storage_domains storageDomain : storages) {
+        for (StorageDomain storageDomain : storages) {
             names.add(storageDomain.getstorage_name());
         }
         getFormattedStorageName().setEntity(AvailableName(names));
@@ -408,7 +408,7 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void OnSuccess(Object target, Object returnValue) {
 
-                        context.storageList = (ArrayList<storage_domains>) returnValue;
+                        context.storageList = (ArrayList<StorageDomain>) returnValue;
                         SetDefaultNames8();
                     }
                 },
@@ -822,7 +822,7 @@ public class ConfigureLocalStorageModel extends Model {
         public storage_pool candidate;
         public ArrayList<storage_pool> dataCenterList;
         public ArrayList<VDSGroup> clusterList;
-        public ArrayList<storage_domains> storageList;
+        public ArrayList<StorageDomain> storageList;
         public HashMap<storage_pool, VDS> localStorageHostByDataCenterMap;
         public HashMap<storage_pool, ArrayList<VDSGroup>> clusterListByDataCenterMap;
     }

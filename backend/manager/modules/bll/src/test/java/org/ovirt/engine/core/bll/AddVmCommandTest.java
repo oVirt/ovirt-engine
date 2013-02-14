@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -361,11 +361,11 @@ public class AddVmCommandTest {
     }
 
     private void mockStorageDomainDAOGet(final int domainSpaceGB) {
-        doAnswer(new Answer<storage_domains>() {
+        doAnswer(new Answer<StorageDomain>() {
 
             @Override
-            public storage_domains answer(InvocationOnMock invocation) throws Throwable {
-                storage_domains result = createStorageDomain(domainSpaceGB);
+            public StorageDomain answer(InvocationOnMock invocation) throws Throwable {
+                StorageDomain result = createStorageDomain(domainSpaceGB);
                 result.setId((Guid) invocation.getArguments()[0]);
                 return result;
             }
@@ -430,8 +430,8 @@ public class AddVmCommandTest {
                 Matchers.<VDSParametersBase> any(VDSParametersBase.class))).thenReturn(returnValue);
     }
 
-    protected storage_domains createStorageDomain(int availableSpace) {
-        storage_domains sd = new storage_domains();
+    protected StorageDomain createStorageDomain(int availableSpace) {
+        StorageDomain sd = new StorageDomain();
         sd.setstorage_domain_type(StorageDomainType.Master);
         sd.setstatus(StorageDomainStatus.Active);
         sd.setavailable_disk_size(availableSpace);

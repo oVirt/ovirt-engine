@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 
 public class StorageDomainCommandBaseTest {
@@ -114,7 +114,7 @@ public class StorageDomainCommandBaseTest {
     }
 
     private void setStorageDomainStatus(StorageDomainStatus status) {
-        storage_domains domain = new storage_domains();
+        StorageDomain domain = new StorageDomain();
         domain.setstatus(status);
         when(cmd.getStorageDomain()).thenReturn(domain);
     }

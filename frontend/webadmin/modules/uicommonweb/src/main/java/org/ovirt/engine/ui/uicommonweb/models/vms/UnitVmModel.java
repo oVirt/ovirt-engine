@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1847,7 +1847,7 @@ public class UnitVmModel extends Model {
                 }
                 break;
             case Storage:
-                storage_domains storage = (storage_domains) model.getBehavior().getSystemTreeSelectedItem().getEntity();
+                StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 for (storage_pool dc : list)
                 {
                     if (dc.getId().equals(storage.getstorage_pool_id()))

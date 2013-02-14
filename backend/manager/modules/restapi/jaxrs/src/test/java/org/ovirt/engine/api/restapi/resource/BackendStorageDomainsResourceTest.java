@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParamete
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainsResourceTest
-        extends AbstractBackendCollectionResourceTest<StorageDomain, storage_domains, BackendStorageDomainsResource> {
+        extends AbstractBackendCollectionResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainsResource> {
 
     protected static final StorageDomainType[] TYPES = { StorageDomainType.DATA,
             StorageDomainType.ISO, StorageDomainType.EXPORT };
@@ -115,7 +115,7 @@ public class BackendStorageDomainsResourceTest
                 StorageDomainQueryParametersBase.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
-                new storage_domains());
+                new org.ovirt.engine.core.common.businessentities.StorageDomain());
     }
 
     @Test
@@ -639,11 +639,11 @@ public class BackendStorageDomainsResourceTest
     }
 
     @Override
-    protected storage_domains getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(storage_domains.class), index);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getEntity(int index) {
+        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class), index);
     }
 
-    static storage_domains setUpEntityExpectations(storage_domains entity, int index) {
+    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index) {
         expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
         expect(entity.getstorage_name()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
         // REVIST No descriptions for storage domains
@@ -674,8 +674,8 @@ public class BackendStorageDomainsResourceTest
         return luns;
     }
 
-    protected storage_domains getIscsiEntity() {
-        storage_domains entity = control.createMock(storage_domains.class);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getstorage_domain_type()).andReturn(TYPES_MAPPED[0]).anyTimes();
@@ -698,10 +698,10 @@ public class BackendStorageDomainsResourceTest
         return model;
     }
 
-    protected List<storage_domains> getExistingStorageDomains(boolean existing) {
-        List<storage_domains> ret = new ArrayList<storage_domains>();
+    protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getExistingStorageDomains(boolean existing) {
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> ret = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
         if (existing) {
-            ret.add(new storage_domains());
+            ret.add(new org.ovirt.engine.core.common.businessentities.StorageDomain());
         }
         return ret;
     }

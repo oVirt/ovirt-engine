@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
@@ -38,11 +38,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
     protected Guid _newMasterStorageDomainId = Guid.Empty;
-    private storage_domains _newMaster;
+    private StorageDomain _newMaster;
     protected boolean _isLastMaster;
     private VDS spm;
 
-    protected storage_domains getNewMaster(boolean duringReconstruct) {
+    protected StorageDomain getNewMaster(boolean duringReconstruct) {
         if (_newMaster == null && Guid.Empty.equals(_newMasterStorageDomainId)) {
             _newMaster = electNewMaster(duringReconstruct);
         } else if (_newMaster == null) {
@@ -51,7 +51,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         return _newMaster;
     }
 
-    protected void setNewMaster(storage_domains value) {
+    protected void setNewMaster(StorageDomain value) {
         _newMaster = value;
     }
 
@@ -83,14 +83,14 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
         if (!getParameters().getIsInternal()
                 && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-            List<storage_domains> domains =
+            List<StorageDomain> domains =
                     getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue());
 
-            List<storage_domains> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
+            List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
-            List<storage_domains> dataDomains = LinqUtils.filter(activeDomains, new Predicate<storage_domains>() {
+            List<StorageDomain> dataDomains = LinqUtils.filter(activeDomains, new Predicate<StorageDomain>() {
                 @Override
-                public boolean eval(storage_domains a) {
+                public boolean eval(StorageDomain a) {
                     return a.getstorage_domain_type() == StorageDomainType.Data;
                 }
             });
@@ -138,11 +138,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      *            The status to filter by.
      * @return Just the domains that match the given status, excluding the current domain of the command.
      */
-    private List<storage_domains> filterDomainsByStatus(List<storage_domains> domains,
+    private List<StorageDomain> filterDomainsByStatus(List<StorageDomain> domains,
             final StorageDomainStatus domainStatus) {
-        List<storage_domains> activeDomains = LinqUtils.filter(domains, new Predicate<storage_domains>() {
+        List<StorageDomain> activeDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains a) {
+            public boolean eval(StorageDomain a) {
                 return a.getstatus() == domainStatus && !a.getId().equals(getStorageDomain().getId());
             }
         });
@@ -259,7 +259,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      */
     protected void ProceedStorageDomainTreatmentByDomainType(final boolean duringReconstruct) {
         if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
-            final storage_domains newMaster = getNewMaster(duringReconstruct);
+            final StorageDomain newMaster = getNewMaster(duringReconstruct);
             if (newMaster != null) {
                 // increase master domain version
                 executeInNewTransaction(new TransactionMethod<Object>() {
@@ -309,7 +309,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        storage_domains storageDomain = getStorageDomain();
+        StorageDomain storageDomain = getStorageDomain();
         if (storageDomain != null) {
             Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
             locks.put(storageDomain.getId().toString(), LockMessagesMatchUtil.STORAGE);
@@ -323,7 +323,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        storage_domains storageDomain = getStorageDomain();
+        StorageDomain storageDomain = getStorageDomain();
         if (storageDomain != null && storageDomain.getstorage_domain_type() == StorageDomainType.Data
                 && storageDomain.getstorage_domain_type() != StorageDomainType.Master
                 && storageDomain.getstorage_pool_id() != null) {

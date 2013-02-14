@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.storage.GetStorageDomainsByVmTemplateIdQuery;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByTemplateIdParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -14,7 +14,7 @@ public class GetPermittedStorageDomainsByTemplateIdQuery<P extends GetPermittedS
     }
 
     @Override
-    protected storage_domains getStorageDomain(Guid domainId) {
+    protected StorageDomain getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
                 .getStorageDomainDao()
                 .getPermittedStorageDomainsById(getUserID(), getParameters().getActionGroup(), domainId);

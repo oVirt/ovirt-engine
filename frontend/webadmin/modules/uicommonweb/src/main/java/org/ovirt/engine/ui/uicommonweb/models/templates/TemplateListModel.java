@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -286,7 +286,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             }
             MoveOrCopyParameters tempVar =
                     new MoveOrCopyParameters(a.getId(),
-                            ((storage_domains) model.getStorage().getSelectedItem()).getId());
+                            ((StorageDomain) model.getStorage().getSelectedItem()).getId());
             tempVar.setForceOverride((Boolean) model.getForceOverride().getEntity());
             list.add(tempVar);
         }

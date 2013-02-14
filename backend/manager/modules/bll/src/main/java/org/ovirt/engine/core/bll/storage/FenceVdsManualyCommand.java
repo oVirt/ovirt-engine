@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FenceSpmStorageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
@@ -148,11 +148,11 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         boolean result = false;
         _fenceSpmCalled = false;
 
-        storage_domains masterDomain = LinqUtils.firstOrNull(
+        StorageDomain masterDomain = LinqUtils.firstOrNull(
                 DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(getStoragePool().getId()),
-                new Predicate<storage_domains>() {
+                new Predicate<StorageDomain>() {
                     @Override
-                    public boolean eval(storage_domains a) {
+                    public boolean eval(StorageDomain a) {
                         return a.getstorage_domain_type() == StorageDomainType.Master;
                     }
                 });

@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAllImagesListByStoragePoolIdParameters;
@@ -238,9 +238,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 SpiceConsoleModel thisSpiceConsoleModel = (SpiceConsoleModel) model0;
                 VM thisVm = thisSpiceConsoleModel.getEntity();
 
-                storage_domains isoDomain = null;
+                StorageDomain isoDomain = null;
                 if (result0 != null) {
-                    isoDomain = (storage_domains) result0;
+                    isoDomain = (StorageDomain) result0;
                 }
 
                 ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();

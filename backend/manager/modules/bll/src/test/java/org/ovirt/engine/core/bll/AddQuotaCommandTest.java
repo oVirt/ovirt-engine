@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDAO;
@@ -30,8 +30,8 @@ public class AddQuotaCommandTest {
     private AddQuotaCommand command;
 
     storage_pool storagePool = new storage_pool();
-    storage_domains firstStorageDomains = new storage_domains();
-    storage_domains secondStorageDomains = new storage_domains();
+    StorageDomain firstStorageDomains = new StorageDomain();
+    StorageDomain secondStorageDomains = new StorageDomain();
 
     @Before
     public void testSetup() {

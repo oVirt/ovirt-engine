@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,10 +27,10 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
         return _result.mStatus;
     }
 
-    protected java.util.ArrayList<storage_domains> ParseVGList(XmlRpcStruct[] vgList) {
-        java.util.ArrayList<storage_domains> result = new java.util.ArrayList<storage_domains>(vgList.length);
+    protected java.util.ArrayList<StorageDomain> ParseVGList(XmlRpcStruct[] vgList) {
+        java.util.ArrayList<StorageDomain> result = new java.util.ArrayList<StorageDomain>(vgList.length);
         for (XmlRpcStruct vg : vgList) {
-            storage_domains sDomain = new storage_domains();
+            StorageDomain sDomain = new StorageDomain();
             if (vg.contains("name")) {
                 try {
                     sDomain.setId(new Guid(vg.getItem("name").toString()));

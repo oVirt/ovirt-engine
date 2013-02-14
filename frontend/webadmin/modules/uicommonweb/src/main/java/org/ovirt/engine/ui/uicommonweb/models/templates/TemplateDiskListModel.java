@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -79,13 +79,13 @@ public class TemplateDiskListModel extends SearchableListModel
 
     protected boolean ignoreStorageDomains;
 
-    ArrayList<storage_domains> storageDomains;
+    ArrayList<StorageDomain> storageDomains;
 
-    public ArrayList<storage_domains> getStorageDomains() {
+    public ArrayList<StorageDomain> getStorageDomains() {
         return storageDomains;
     }
 
-    public void setStorageDomains(ArrayList<storage_domains> storageDomains) {
+    public void setStorageDomains(ArrayList<StorageDomain> storageDomains) {
         this.storageDomains = storageDomains;
     }
 
@@ -102,7 +102,7 @@ public class TemplateDiskListModel extends SearchableListModel
 
         UpdateActionAvailability();
 
-        setStorageDomains(new ArrayList<storage_domains>());
+        setStorageDomains(new ArrayList<StorageDomain>());
     }
 
     @Override
@@ -168,7 +168,7 @@ public class TemplateDiskListModel extends SearchableListModel
                         @Override
                         public void OnSuccess(Object target, Object returnValue) {
                             TemplateDiskListModel model = (TemplateDiskListModel) target;
-                            ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                            ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
                             Linq.Sort(storageDomains, new StorageDomainByNameComparer());
                             setStorageDomains(storageDomains);

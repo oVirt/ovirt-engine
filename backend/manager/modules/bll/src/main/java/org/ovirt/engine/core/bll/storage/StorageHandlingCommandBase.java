@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -139,7 +139,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean isStorageDomainTypeCorrect(storage_domains storageDomain) {
+    protected boolean isStorageDomainTypeCorrect(StorageDomain storageDomain) {
         if (storageDomain.getstorage_domain_type() != StorageDomainType.ISO
                 && storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
                 && getStoragePool().getstorage_pool_type() != storageDomain.getstorage_type()) {
@@ -149,7 +149,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return true;
     }
 
-    protected boolean isStorageDomainNotInPool(storage_domains storageDomain) {
+    protected boolean isStorageDomainNotInPool(StorageDomain storageDomain) {
         boolean returnValue = false;
         if (storageDomain != null) {
             // check if there is no pool-domain map
@@ -161,7 +161,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean checkDomainCanBeAttached(storage_domains storageDomain) {
+    protected boolean checkDomainCanBeAttached(StorageDomain storageDomain) {
         return checkStorageDomainType(storageDomain)
                 && isStorageDomainFormatCorrectForPool(storageDomain, getStoragePool())
                 && checkStorageDomainSharedStatusNotLocked(storageDomain)
@@ -174,7 +174,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      * Check that we are not trying to attach more than one ISO or export
      * domain to the same data center.
      */
-    protected boolean checkStorageDomainType(final storage_domains storageDomain) {
+    protected boolean checkStorageDomainType(final StorageDomain storageDomain) {
         // Nothing to check if the storage domain is not an ISO or export:
         final StorageDomainType type = storageDomain.getstorage_domain_type();
         if (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport) {
@@ -185,9 +185,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // to the pool:
         int count = LinqUtils.filter(
                 getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId()),
-                new Predicate<storage_domains>() {
+                new Predicate<StorageDomain>() {
                     @Override
-                    public boolean eval(storage_domains a) {
+                    public boolean eval(StorageDomain a) {
                         return a.getstorage_domain_type() == type;
                     }
                 }
@@ -209,7 +209,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return false;
     }
 
-    protected boolean checkStorageDomainSharedStatusNotLocked(storage_domains storageDomain) {
+    protected boolean checkStorageDomainSharedStatusNotLocked(StorageDomain storageDomain) {
         boolean returnValue = storageDomain != null
                 && storageDomain.getstorage_domain_shared_status() != StorageDomainSharedStatus.Locked;
         if (!returnValue) {
@@ -218,7 +218,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean isStorageDomainNotNull(storage_domains domain) {
+    protected boolean isStorageDomainNotNull(StorageDomain domain) {
         if (domain == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
             return false;
@@ -228,12 +228,12 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void calcStoragePoolStatusByDomainsStatus() {
-        List<storage_domains> domains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
+        List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
 
         // set masterDomain to the first element of domains with type=master, or null if non have this type.
-        storage_domains masterDomain = LinqUtils.firstOrNull(domains, new Predicate<storage_domains>() {
+        StorageDomain masterDomain = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
             @Override
-            public boolean eval(storage_domains a) {
+            public boolean eval(StorageDomain a) {
                 return a.getstorage_domain_type() == StorageDomainType.Master;
             }
         });
@@ -288,7 +288,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      *            - the pool object
      * @return
      */
-    protected boolean isStorageDomainFormatCorrectForPool(storage_domains storageDomain, storage_pool storagePool) {
+    protected boolean isStorageDomainFormatCorrectForPool(StorageDomain storageDomain, storage_pool storagePool) {
         if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO
                 || storageDomain.getstorage_domain_type() == StorageDomainType.ImportExport) {
             return true;

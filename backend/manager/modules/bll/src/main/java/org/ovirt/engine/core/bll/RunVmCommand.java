@@ -42,7 +42,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.job.Job;
@@ -570,13 +570,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
         VmHandler.UpdateVmGuestAgentVersion(getVm());
-        storage_domains isoDomain = null;
+        StorageDomain isoDomain = null;
         if (getVm().getVmOs().isWindows()
                 && (null != (isoDomain =
                         LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId()),
-                                new Predicate<storage_domains>() {
+                                new Predicate<StorageDomain>() {
                                     @Override
-                                    public boolean eval(storage_domains domain) {
+                                    public boolean eval(StorageDomain domain) {
                                         return domain.getstorage_domain_type() == StorageDomainType.ISO;
                                     }
                                 }))

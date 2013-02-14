@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -22,10 +22,10 @@ import org.ovirt.engine.ui.webadmin.widget.template.StoragesTree;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTree, VmTemplate, storage_domains, TemplateListModel, TemplateStorageListModel> implements SubTabTemplateStoragePresenter.ViewDef {
+public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTree, VmTemplate, StorageDomain, TemplateListModel, TemplateStorageListModel> implements SubTabTemplateStoragePresenter.ViewDef {
 
     @Inject
-    public SubTabTemplateStorageView(final SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> modelProvider,
+    public SubTabTemplateStorageView(final SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> modelProvider,
             EventBus eventBus, ApplicationConstants constant, ApplicationTemplates templates, ApplicationResources resources) {
         super(modelProvider, constant, templates, resources);
 

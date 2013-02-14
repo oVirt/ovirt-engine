@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -226,7 +226,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            storage_domains storage = (storage_domains) getSystemTreeSelectedItem().getEntity();
+            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
             AsyncDataProvider.GetTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
                     new INewAsyncCallback() {
@@ -235,7 +235,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
                             Object[] array1 = (Object[]) target1;
                             NewVmModelBehavior behavior1 = (NewVmModelBehavior) array1[0];
-                            storage_domains storage1 = (storage_domains) array1[1];
+                            StorageDomain storage1 = (StorageDomain) array1[1];
                             AsyncDataProvider.GetTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
                                     returnValue1 },
                                     new INewAsyncCallback() {

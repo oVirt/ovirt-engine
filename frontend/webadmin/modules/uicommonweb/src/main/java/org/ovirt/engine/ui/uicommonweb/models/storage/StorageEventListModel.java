@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -9,12 +9,12 @@ public class StorageEventListModel extends SubTabEventListModel
 
     // get { return base.Entity as storage_domains; }
     @Override
-    public storage_domains getEntity()
+    public StorageDomain getEntity()
     {
-        return (storage_domains) super.getEntity();
+        return (StorageDomain) super.getEntity();
     }
 
-    public void setEntity(storage_domains value)
+    public void setEntity(StorageDomain value)
     {
         super.setEntity(value);
     }

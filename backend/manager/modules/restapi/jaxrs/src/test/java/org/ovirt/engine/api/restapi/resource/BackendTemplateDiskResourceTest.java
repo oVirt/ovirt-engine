@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesDisksParameters;
@@ -159,12 +159,12 @@ public class BackendTemplateDiskResourceTest
         verifyActionResponse(resource.copy(setUpCopyParams(true)));
     }
 
-    protected storage_domains getStorageDomainEntity(int index) {
-        storage_domains entity = control.createMock(storage_domains.class);
+    protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         return setUpStorageDomainEntityExpectations(entity, index, StorageType.NFS);
     }
 
-    static storage_domains setUpStorageDomainEntityExpectations(storage_domains entity, int index, StorageType storageType) {
+    static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomainEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index, StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
         expect(entity.getstorage_name()).andReturn(NAMES[2]).anyTimes();
         expect(entity.getstatus()).andReturn(StorageDomainStatus.Active).anyTimes();

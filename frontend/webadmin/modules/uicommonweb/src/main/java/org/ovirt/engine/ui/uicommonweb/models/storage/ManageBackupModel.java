@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -37,12 +37,12 @@ public abstract class ManageBackupModel extends SearchableListModel
     }
 
     @Override
-    public storage_domains getEntity()
+    public StorageDomain getEntity()
     {
-        return (storage_domains) super.getEntity();
+        return (StorageDomain) super.getEntity();
     }
 
-    public void setEntity(storage_domains value)
+    public void setEntity(StorageDomain value)
     {
         super.setEntity(value);
     }

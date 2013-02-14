@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -416,7 +416,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public Map<String, String> getJobMessageProperties() {
-        List<storage_domains> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId().getValue());
+        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId().getValue());
         String sourceSDName = StringUtils.EMPTY;
 
         if (storageDomains.size() > 0) {

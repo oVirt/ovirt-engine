@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -178,9 +178,9 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(ClientGinjector ginjector,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<storage_domains, TemplateListModel, TemplateStorageListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel>(ginjector,
                 TemplateListModel.class,
                 TemplateStorageListModel.class) {
             @Override

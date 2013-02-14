@@ -6,7 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -158,7 +158,7 @@ public class ReportsListModel extends SearchableListModel {
                 break;
             }
             case Storage: {
-                storage_domains storage = (storage_domains) treeItemModel.getEntity();
+                StorageDomain storage = (StorageDomain) treeItemModel.getEntity();
                 setDataCenterID(storage.getstorage_pool_id().toString());
                 setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString()); //$NON-NLS-1$
                 break;

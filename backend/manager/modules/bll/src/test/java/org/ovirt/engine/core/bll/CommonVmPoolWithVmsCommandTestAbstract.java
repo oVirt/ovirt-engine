@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -75,7 +75,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     protected static int DISK_SIZE = 100000;
     protected VmTemplate vmTemplate;
     protected storage_pool storage_pool;
-    protected List<storage_domains> storageDomainsList;
+    protected List<StorageDomain> storageDomainsList;
 
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
@@ -191,9 +191,9 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         when(diskImageDAO.getSnapshotById(Matchers.<Guid> any(Guid.class))).thenReturn(getDiskImageList().get(0));
     }
 
-    private void mockStorageDomainDAO(List<storage_domains> storageDomains) {
+    private void mockStorageDomainDAO(List<StorageDomain> storageDomains) {
         doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
-        for (storage_domains storageDomain : storageDomains) {
+        for (StorageDomain storageDomain : storageDomains) {
             when(storageDomainDAO.getForStoragePool(storageDomain.getId(), storagePoolId)).thenReturn(storageDomain);
         }
     }
@@ -209,8 +209,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return vm;
     }
 
-    private storage_domains mockFirstStorageDomain(int availabeDiskSize) {
-        storage_domains storageDomain = new storage_domains();
+    private StorageDomain mockFirstStorageDomain(int availabeDiskSize) {
+        StorageDomain storageDomain = new StorageDomain();
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
         storageDomain.setId(firstStorageDomainId);
@@ -218,8 +218,8 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return storageDomain;
     }
 
-    private storage_domains mockSecondStorageDomain(int availabeDiskSize) {
-        storage_domains storageDomain = new storage_domains();
+    private StorageDomain mockSecondStorageDomain(int availabeDiskSize) {
+        StorageDomain storageDomain = new StorageDomain();
         storageDomain.setavailable_disk_size(availabeDiskSize);
         storageDomain.setstatus(StorageDomainStatus.Active);
         storageDomain.setId(secondStorageDomainId);
@@ -227,17 +227,17 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         return storageDomain;
     }
 
-    private static List<Guid> mockStorageGuidList(List<storage_domains> storageDomains) {
+    private static List<Guid> mockStorageGuidList(List<StorageDomain> storageDomains) {
         List<Guid> storageGuidList = new ArrayList<Guid>();
-        for (storage_domains storageDomain : storageDomains) {
+        for (StorageDomain storageDomain : storageDomains) {
             storageGuidList.add(storageDomain.getId());
         }
         return storageGuidList;
     }
 
-    protected List<storage_domains> getStorageDomainList(int availableDiskSizeFirstDomain,
+    protected List<StorageDomain> getStorageDomainList(int availableDiskSizeFirstDomain,
             int availableDiskSizeSecondDomain) {
-        List<storage_domains> storageDomainList = new ArrayList<storage_domains>();
+        List<StorageDomain> storageDomainList = new ArrayList<StorageDomain>();
         storageDomainList.add(mockFirstStorageDomain(availableDiskSizeFirstDomain));
         storageDomainList.add(mockSecondStorageDomain(availableDiskSizeSecondDomain));
         return storageDomainList;

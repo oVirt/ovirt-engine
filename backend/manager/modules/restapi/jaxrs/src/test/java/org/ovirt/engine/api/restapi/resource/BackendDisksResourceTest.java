@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDiskByDiskIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -129,8 +129,8 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     }
 
     private Object getStorageDomains() {
-        List<storage_domains> sds = new LinkedList<storage_domains>();
-        storage_domains sd = new storage_domains();
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+        org.ovirt.engine.core.common.businessentities.StorageDomain sd = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setstorage_name("Storage_Domain_1");
         sd.setId(GUIDS[2]);
         sds.add(sd);

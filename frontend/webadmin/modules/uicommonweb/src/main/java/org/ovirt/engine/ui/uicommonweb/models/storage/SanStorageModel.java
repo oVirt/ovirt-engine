@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -66,13 +66,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    private storage_domains storageDomain;
+    private StorageDomain storageDomain;
 
-    public storage_domains getStorageDomain() {
+    public StorageDomain getStorageDomain() {
         return storageDomain;
     }
 
-    public void setStorageDomain(storage_domains storageDomain) {
+    public void setStorageDomain(StorageDomain storageDomain) {
         this.storageDomain = storageDomain;
     }
 

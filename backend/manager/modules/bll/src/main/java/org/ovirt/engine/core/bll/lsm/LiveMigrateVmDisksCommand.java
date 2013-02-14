@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -46,7 +46,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private static final long serialVersionUID = -6216729539906812205L;
 
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<Guid, DiskImage>();
-    private Map<Guid, storage_domains> storageDomainsMap = new HashMap<Guid, storage_domains>();
+    private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
 
     public LiveMigrateVmDisksCommand(T parameters) {
         super(parameters);
@@ -141,12 +141,12 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return diskImage;
     }
 
-    private storage_domains getStorageDomainById(Guid storageDomainId, Guid storagePoolId) {
+    private StorageDomain getStorageDomainById(Guid storageDomainId, Guid storagePoolId) {
         if (storageDomainsMap.containsKey(storageDomainId)) {
             return storageDomainsMap.get(storageDomainId);
         }
 
-        storage_domains storageDomain = getStorageDomainDao().getForStoragePool(storageDomainId, storagePoolId);
+        StorageDomain storageDomain = getStorageDomainDao().getForStoragePool(storageDomainId, storagePoolId);
         storageDomainsMap.put(storageDomainId, storageDomain);
 
         return storageDomain;
@@ -288,7 +288,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             Guid destDomainId = entry.getKey();
             List<DiskImage> disksList = entry.getValue();
             Guid storagePoolId = disksList.get(0).getstorage_pool_id().getValue();
-            storage_domains destDomain = getStorageDomainById(destDomainId, storagePoolId);
+            StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
             if (!isStorageDomainWithinThresholds(destDomain)) {
                 return false;
@@ -312,11 +312,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    protected boolean isStorageDomainWithinThresholds(storage_domains storageDomain) {
+    protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long totalImagesSize) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long totalImagesSize) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(totalImagesSize));
     }
 }

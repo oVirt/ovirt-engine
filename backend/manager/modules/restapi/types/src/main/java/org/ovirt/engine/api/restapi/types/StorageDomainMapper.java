@@ -12,7 +12,6 @@ import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainMapper {
@@ -106,8 +105,8 @@ public class StorageDomainMapper {
         return entity;
     }
 
-    @Mapping(from = storage_domains.class, to = StorageDomain.class)
-    public static StorageDomain map(storage_domains entity, StorageDomain template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomain.class, to = StorageDomain.class)
+    public static StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         StorageDomain model = template != null ? template : new StorageDomain();
         model.setId(entity.getId().toString());
         model.setName(entity.getstorage_name());

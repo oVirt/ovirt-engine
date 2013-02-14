@@ -1,23 +1,23 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FCPStorageHelper extends StorageHelperBase {
 
     @Override
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
+    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         return true;
     }
 
     @Override
-    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return true;
     }
 
     @Override
-    public boolean disconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return true;
     }
 

@@ -3,12 +3,12 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.VolumeGroup;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+
 
 public class StorageVolumeGroupMapper {
 
-    @Mapping(from = storage_domains.class, to = Storage.class)
-    public static Storage map(storage_domains entity, Storage template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomain.class, to = Storage.class)
+    public static Storage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, Storage template) {
         Storage model = template != null ? template : new Storage();
         model.setId(entity.getstorage());
         model.setType(StorageDomainMapper.map(entity.getstorage_type(), null));
@@ -17,9 +17,9 @@ public class StorageVolumeGroupMapper {
         return model;
     }
 
-    @Mapping(from = Storage.class, to = storage_domains.class)
-    public static storage_domains map(Storage model, storage_domains template) {
-        storage_domains entity = template != null ? template : new storage_domains();
+    @Mapping(from = Storage.class, to = org.ovirt.engine.core.common.businessentities.StorageDomain.class)
+    public static org.ovirt.engine.core.common.businessentities.StorageDomain map(Storage model, org.ovirt.engine.core.common.businessentities.StorageDomain template) {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity = template != null ? template : new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setstorage(model.getId());
         if (model.isSetType()) {
             StorageType storageType = StorageType.fromValue(model.getType());

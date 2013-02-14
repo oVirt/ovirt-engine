@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -24,13 +24,13 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain, Guid vdsId, int type) {
+    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean runConnectionStorageToDomain(storage_domains storageDomain,
+    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain,
             Guid vdsId,
             int type,
             LUNs lun,
@@ -181,17 +181,17 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean connectStorageToDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
     }
 
     @Override
-    public boolean disconnectStorageFromDomainByVdsId(storage_domains storageDomain, Guid vdsId) {
+    public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue());
     }
 
     @Override
-    public boolean connectStorageToLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
+    public boolean connectStorageToLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun, Guid storagePoolId) {
         return runConnectionStorageToDomain(storageDomain,
                 vdsId,
                 VDSCommandType.ConnectStorageServer.getValue(),
@@ -200,7 +200,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public boolean disconnectStorageFromLunByVdsId(storage_domains storageDomain, Guid vdsId, LUNs lun) {
+    public boolean disconnectStorageFromLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue(),
                 lun, Guid.Empty);
     }

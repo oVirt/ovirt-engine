@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
 
-public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskImage, storage_domains> {
+public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskImage, StorageDomain> {
 
     ApplicationResources resources;
     ApplicationConstants constants;
@@ -62,7 +62,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     }
 
     @Override
-    protected TreeItem getNodeItem(storage_domains storage) {
+    protected TreeItem getNodeItem(StorageDomain storage) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$
@@ -96,7 +96,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     }
 
     @Override
-    protected ArrayList<storage_domains> getNodeObjects(DiskImage disk) {
+    protected ArrayList<StorageDomain> getNodeObjects(DiskImage disk) {
         return Linq.getStorageDomainsByIds(disk.getstorage_ids(), listModel.getStorageDomains());
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.inject.Inject;
 
-public class SubTabStorageIsoView extends AbstractSubTabTableView<storage_domains, EntityModel, StorageListModel, StorageIsoListModel>
+public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain, EntityModel, StorageListModel, StorageIsoListModel>
         implements SubTabStorageIsoPresenter.ViewDef {
 
     @Inject

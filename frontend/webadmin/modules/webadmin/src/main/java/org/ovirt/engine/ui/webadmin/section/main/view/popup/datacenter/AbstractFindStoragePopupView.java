@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -35,25 +35,25 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new EntityModelTextColumn<storage_domains>() {
+        table.addEntityModelColumn(new EntityModelTextColumn<StorageDomain>() {
             @Override
-            public String getText(storage_domains storage) {
+            public String getText(StorageDomain storage) {
                 return storage.getstorage_name();
             }
         }, constants.nameStorage());
 
-        table.addEntityModelColumn(new EntityModelEnumColumn<storage_domains, StorageDomainType>() {
+        table.addEntityModelColumn(new EntityModelEnumColumn<StorageDomain, StorageDomainType>() {
 
             @Override
-            protected StorageDomainType getEnum(storage_domains storage) {
+            protected StorageDomainType getEnum(StorageDomain storage) {
                 return storage.getstorage_domain_type();
             }
         }, constants.typeStorage());
 
-        table.addEntityModelColumn(new EntityModelTextColumn<storage_domains>() {
+        table.addEntityModelColumn(new EntityModelTextColumn<StorageDomain>() {
 
             @Override
-            public String getText(storage_domains storage) {
+            public String getText(StorageDomain storage) {
                 if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
                     return "< 1 GB"; //$NON-NLS-1$
                 }

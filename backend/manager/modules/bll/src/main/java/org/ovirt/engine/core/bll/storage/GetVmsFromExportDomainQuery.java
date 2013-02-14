@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
@@ -62,7 +62,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     }
 
     protected boolean isValidExportDomain() {
-        storage_domains domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
+        StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         if (domain != null && domain.getstorage_domain_type() == StorageDomainType.ImportExport) {

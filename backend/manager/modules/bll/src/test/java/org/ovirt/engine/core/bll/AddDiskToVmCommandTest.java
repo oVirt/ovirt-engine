@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -161,7 +161,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
+        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertTrue(command.canDoAction());
@@ -175,7 +175,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
+        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertFalse(command.canDoAction());
@@ -192,7 +192,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
+        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         assertTrue(command.canDoAction());
     }
@@ -205,7 +205,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        storage_domains domains = mockStorageDomain(sdid, availableSize, usedSize);
+        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertFalse(command.canDoAction());
@@ -389,33 +389,33 @@ public class AddDiskToVmCommandTest {
     }
 
     /**
-     * Mock a {@link storage_domains}.
+     * Mock a {@link StorageDomain}.
      *
      * @param storageId
      *            Id of the domain.
      */
-    private storage_domains mockStorageDomain(Guid storageId) {
+    private StorageDomain mockStorageDomain(Guid storageId) {
         return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, new Version());
     }
 
-    private storage_domains mockStorageDomain(Guid storageId, StorageType storageType) {
+    private StorageDomain mockStorageDomain(Guid storageId, StorageType storageType) {
         return mockStorageDomain(storageId, 6, 4, storageType, new Version());
     }
 
-    private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
+    private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize) {
         return mockStorageDomain(storageId, availableSize, usedSize, StorageType.UNKNOWN, new Version());
     }
 
-    private storage_domains mockStorageDomain(Guid storageId, Version version) {
+    private StorageDomain mockStorageDomain(Guid storageId, Version version) {
         return mockStorageDomain(storageId, 6, 4, StorageType.UNKNOWN, version);
     }
 
-    private storage_domains mockStorageDomain(Guid storageId, int availableSize, int usedSize,
+    private StorageDomain mockStorageDomain(Guid storageId, int availableSize, int usedSize,
             StorageType storageType, Version version) {
         storage_pool storagePool = mockStoragePool(version);
         Guid storagePoolId = storagePool.getId();
 
-        storage_domains sd = new storage_domains();
+        StorageDomain sd = new StorageDomain();
         sd.setavailable_disk_size(availableSize);
         sd.setused_disk_size(usedSize);
         sd.setstorage_pool_id(storagePoolId);

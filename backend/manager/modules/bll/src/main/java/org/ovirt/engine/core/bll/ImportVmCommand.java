@@ -48,7 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -137,7 +137,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected boolean canDoAction() {
-        Map<Guid, storage_domains> domainsMap = new HashMap<Guid, storage_domains>();
+        Map<Guid, StorageDomain> domainsMap = new HashMap<Guid, StorageDomain>();
 
         if (!canDoActionBeforeCloneVm(domainsMap)) {
             return false;
@@ -168,7 +168,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
-    private boolean canDoActionBeforeCloneVm(Map<Guid, storage_domains> domainsMap) {
+    private boolean canDoActionBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
         List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
 
         if (getVm() != null) {
@@ -181,7 +181,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         Set<Guid> destGuids = new HashSet<Guid>(imageToDestinationDomainMap.values());
         for (Guid destGuid : destGuids) {
-            storage_domains storageDomain = getStorageDomain(destGuid);
+            StorageDomain storageDomain = getStorageDomain(destGuid);
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
                 return false;
@@ -283,7 +283,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private boolean validateImageConfig(List<String> canDoActionMessages,
-            Map<Guid, storage_domains> domainsMap,
+            Map<Guid, StorageDomain> domainsMap,
             DiskImage image) {
         return ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
                         .getStorageStaticData(),
@@ -291,7 +291,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         canDoActionMessages);
     }
 
-    private boolean canDoActionAfterCloneVm(Map<Guid, storage_domains> domainsMap) {
+    private boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
         VM vm = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
@@ -344,9 +344,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             return false;
         }
 
-        Map<storage_domains, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
+        Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
 
-        for (Map.Entry<storage_domains, Integer> entry : domainMap.entrySet()) {
+        for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
             if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
                 return false;
             }
@@ -458,13 +458,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
-            List<storage_domains> domains = (List<storage_domains>) Backend
+            List<StorageDomain> domains = (List<StorageDomain>) Backend
                     .getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                             new GetStorageDomainsByVmTemplateIdQueryParameters(getVm().getVmtGuid())).getReturnValue();
-            List<Guid> domainsId = LinqUtils.foreach(domains, new Function<storage_domains, Guid>() {
+            List<Guid> domainsId = LinqUtils.foreach(domains, new Function<StorageDomain, Guid>() {
                 @Override
-                public Guid eval(storage_domains storageDomainStatic) {
+                public Guid eval(StorageDomain storageDomainStatic) {
                     return storageDomainStatic.getId();
                 }
             });

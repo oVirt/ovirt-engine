@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -125,9 +125,9 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     }
 
     private void initTable() {
-        EntityModelTextColumn<storage_domains> nameColumn = new EntityModelTextColumn<storage_domains>() {
+        EntityModelTextColumn<StorageDomain> nameColumn = new EntityModelTextColumn<StorageDomain>() {
             @Override
-            public String getText(storage_domains storage) {
+            public String getText(StorageDomain storage) {
                 return storage.getstorage_name();
             }
         };
@@ -135,9 +135,9 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
         storageDomainItems.addEntityModelColumn(nameColumn, applicationConstants.nameStorage());
 
-        EntityModelTextColumn<storage_domains> freeSpaceColumn = new EntityModelTextColumn<storage_domains>() {
+        EntityModelTextColumn<StorageDomain> freeSpaceColumn = new EntityModelTextColumn<StorageDomain>() {
             @Override
-            public String getText(storage_domains storage) {
+            public String getText(StorageDomain storage) {
                 if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
                     return "< 1 GB"; //$NON-NLS-1$
                 }

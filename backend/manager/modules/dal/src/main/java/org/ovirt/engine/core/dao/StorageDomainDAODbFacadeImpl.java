@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -34,12 +34,12 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public storage_domains get(Guid id) {
+    public StorageDomain get(Guid id) {
         return get(id, null, false);
     }
 
     @Override
-    public storage_domains get(Guid id, Guid userID, boolean isFiltered) {
+    public StorageDomain get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("Getstorage_domains_By_id",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -49,7 +49,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public storage_domains getForStoragePool(Guid id, NGuid storagepool) {
+    public StorageDomain getForStoragePool(Guid id, NGuid storagepool) {
         return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -57,14 +57,14 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> getAllForConnection(String connection) {
+    public List<StorageDomain> getAllForConnection(String connection) {
         return getCallsHandler().executeReadList("Getstorage_domains_By_connection", StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("connection", connection));
     }
 
     @Override
-    public List<storage_domains> getAllByConnectionId(Guid connectionId) {
+    public List<StorageDomain> getAllByConnectionId(Guid connectionId) {
         return getCallsHandler().executeReadList("GetAllFromStorageDomainsByConnectionId",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -72,12 +72,12 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> getAllForStoragePool(Guid pool) {
+    public List<StorageDomain> getAllForStoragePool(Guid pool) {
         return getAllForStoragePool(pool, null, false);
     }
 
     @Override
-    public List<storage_domains> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered) {
+    public List<StorageDomain> getAllForStoragePool(Guid pool, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("Getstorage_domains_By_storagePoolId",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -87,24 +87,24 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> getAllForStorageDomain(Guid id) {
+    public List<StorageDomain> getAllForStorageDomain(Guid id) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_storageDomainId",
                 StorageDomainRowMapper.instance, getCustomMapSqlParameterSource()
                         .addValue("storage_domain_id", id));
     }
 
     @Override
-    public List<storage_domains> getAllWithQuery(String query) {
+    public List<StorageDomain> getAllWithQuery(String query) {
         return new SimpleJdbcTemplate(jdbcTemplate).query(query, StorageDomainRowMapper.instance);
     }
 
     @Override
-    public List<storage_domains> getAll() {
+    public List<StorageDomain> getAll() {
         return getAll(null, false);
     }
 
     @Override
-    public List<storage_domains> getAll(Guid userID, boolean isFiltered) {
+    public List<StorageDomain> getAll(Guid userID, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetAllFromstorage_domains",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
@@ -117,23 +117,23 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> getAllStorageDomainsByImageId(Guid imageId) {
+    public List<StorageDomain> getAllStorageDomainsByImageId(Guid imageId) {
         return getCallsHandler().executeReadList("Getstorage_domains_List_By_ImageId",
                 StorageDomainRowMapper.instance,getCustomMapSqlParameterSource()
                 .addValue("image_id", imageId));
     }
 
     /**
-     * Row mapper to map a returned row to a {@link storage_domains} object.
+     * Row mapper to map a returned row to a {@link StorageDomain} object.
      */
-    private static final class StorageDomainRowMapper implements ParameterizedRowMapper<storage_domains> {
+    private static final class StorageDomainRowMapper implements ParameterizedRowMapper<StorageDomain> {
         // single instance
         public static final StorageDomainRowMapper instance = new StorageDomainRowMapper();
 
         @Override
-        public storage_domains mapRow(final ResultSet rs, final int rowNum)
+        public StorageDomain mapRow(final ResultSet rs, final int rowNum)
                 throws SQLException {
-            final storage_domains entity = new storage_domains();
+            final StorageDomain entity = new StorageDomain();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setstorage(rs.getString("storage"));
             entity.setstorage_name(rs.getString("storage_name"));
@@ -156,7 +156,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
+    public List<StorageDomain> getAllByStoragePoolAndConnection(Guid storagePoolId, String connection) {
         return getCallsHandler().executeReadList("Getstorage_domains_By_storage_pool_id_and_connection",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -165,12 +165,12 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public List<storage_domains> listFailedAutorecoverables() {
+    public List<StorageDomain> listFailedAutorecoverables() {
         return getCallsHandler().executeReadList("GetFailingStorage_domains", StorageDomainRowMapper.instance, null);
     }
 
     @Override
-    public List<storage_domains> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId) {
+    public List<StorageDomain> getPermittedStorageDomainsByStoragePool(Guid userId, ActionGroup actionGroup, Guid storagePoolId) {
         return getCallsHandler().executeReadList("Getstorage_domains_by_storage_pool_id_with_permitted_action",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -180,7 +180,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public storage_domains getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId) {
+    public StorageDomain getPermittedStorageDomainsById(Guid userId, ActionGroup actionGroup, Guid storageDomainId) {
         return getCallsHandler().executeRead("Getstorage_domain_by_id_with_permitted_action",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -198,8 +198,8 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
      */
     private Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
         Guid returnValue = Guid.Empty;
-        List<storage_domains> domains = getAllForStoragePool(pool);
-        for (storage_domains domain : domains) {
+        List<StorageDomain> domains = getAllForStoragePool(pool);
+        for (StorageDomain domain : domains) {
             if (domain.getstorage_domain_type() == type) {
                 returnValue = domain.getId();
                 break;

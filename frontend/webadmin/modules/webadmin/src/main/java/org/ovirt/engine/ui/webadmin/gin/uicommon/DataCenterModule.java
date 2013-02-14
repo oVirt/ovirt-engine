@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -143,11 +143,11 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<storage_domains, DataCenterListModel, DataCenterStorageListModel> getDataCenterStorageListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> getDataCenterStorageListProvider(ClientGinjector ginjector,
             final Provider<FindSingleStoragePopupPresenterWidget> singlePopupProvider,
             final Provider<FindMultiStoragePopupPresenterWidget> multiPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<storage_domains, DataCenterListModel, DataCenterStorageListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel>(ginjector,
                 DataCenterListModel.class,
                 DataCenterStorageListModel.class) {
             @Override

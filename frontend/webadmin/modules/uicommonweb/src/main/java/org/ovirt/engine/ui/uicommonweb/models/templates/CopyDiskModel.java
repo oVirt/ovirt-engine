@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -54,7 +54,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             @Override
             public void OnSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
-                ArrayList<storage_domains> storageDomains = (ArrayList<storage_domains>) returnValue;
+                ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
                 copyDiskModel.onInitStorageDomains(storageDomains);
             }

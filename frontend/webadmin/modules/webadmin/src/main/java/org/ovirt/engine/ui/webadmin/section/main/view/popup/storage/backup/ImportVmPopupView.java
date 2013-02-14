@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -497,11 +497,11 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 ImportDiskData importData = importModel.getDiskImportData(disk.getId());
 
                 ArrayList<String> storageDomainsNameList = new ArrayList<String>();
-                storage_domains selectedStorageDomain = null;
+                StorageDomain selectedStorageDomain = null;
                 if (importData != null && importData.getStorageDomains() != null) {
-                    for (storage_domains storageDomain : importData.getStorageDomains()) {
+                    for (StorageDomain storageDomain : importData.getStorageDomains()) {
                         storageDomainsNameList.add(
-                                new StorageDomainFreeSpaceRenderer<storage_domains>().render(storageDomain));
+                                new StorageDomainFreeSpaceRenderer<StorageDomain>().render(storageDomain));
                         if (importData.getSelectedStorageDomain() != null) {
                             if (storageDomain.getId().equals(importData.getSelectedStorageDomain().getId())) {
                                 selectedStorageDomain = storageDomain;
@@ -512,7 +512,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                 ((CustomSelectionCell) getCell()).setOptions(storageDomainsNameList);
                 if (!storageDomainsNameList.isEmpty()) {
                     if (selectedStorageDomain != null) {
-                        return new StorageDomainFreeSpaceRenderer<storage_domains>().render(selectedStorageDomain);
+                        return new StorageDomainFreeSpaceRenderer<StorageDomain>().render(selectedStorageDomain);
                     } else {
                         return storageDomainsNameList.get(0);
                     }

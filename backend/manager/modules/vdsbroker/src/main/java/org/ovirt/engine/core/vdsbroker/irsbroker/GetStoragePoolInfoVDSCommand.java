@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.vdscommands.GetStoragePoolInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,20 +35,20 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
             masterId = new Guid(_result.mStoragePoolInfo.getItem("master_uuid").toString());
         }
         sp.setId(getParameters().getStoragePoolId());
-        ArrayList<storage_domains> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
+        ArrayList<StorageDomain> domList = ParseStorageDomainList(_result.mDomainsList, masterId);
 
-        KeyValuePairCompat<storage_pool, List<storage_domains>> list =
-                new KeyValuePairCompat<storage_pool, List<storage_domains>>(
+        KeyValuePairCompat<storage_pool, List<StorageDomain>> list =
+                new KeyValuePairCompat<storage_pool, List<StorageDomain>>(
                         sp, domList);
         setReturnValue(list);
     }
 
-    private java.util.ArrayList<storage_domains> ParseStorageDomainList(XmlRpcStruct xmlRpcStruct, Guid masterId) {
-        java.util.ArrayList<storage_domains> domainsList = new java.util.ArrayList<storage_domains>(
+    private java.util.ArrayList<StorageDomain> ParseStorageDomainList(XmlRpcStruct xmlRpcStruct, Guid masterId) {
+        java.util.ArrayList<StorageDomain> domainsList = new java.util.ArrayList<StorageDomain>(
                 xmlRpcStruct.getCount());
         for (String domain : xmlRpcStruct.getKeys()) {
             XmlRpcStruct domainAsStruct = new XmlRpcStruct((java.util.Map) xmlRpcStruct.getItem(domain));
-            storage_domains sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
+            StorageDomain sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
             sd.setstorage_pool_id(getParameters().getStoragePoolId());
             sd.setId(new Guid(domain));
             if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getId())) {

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -52,7 +52,7 @@ public class VmGuideModel extends GuideModel
 
     private ArrayList<VmNetworkInterface> nics;
     private ArrayList<Disk> disks;
-    private storage_domains storage;
+    private StorageDomain storage;
     private VDSGroup cluster;
 
     @Override
@@ -311,7 +311,7 @@ public class VmGuideModel extends GuideModel
             }
 
             // Save changes.
-            storage_domains storageDomain = (storage_domains) model.getStorageDomain().getSelectedItem();
+            StorageDomain storageDomain = (StorageDomain) model.getStorageDomain().getSelectedItem();
 
             Disk disk;
             if ((Boolean) model.getIsInternal().getEntity()) {

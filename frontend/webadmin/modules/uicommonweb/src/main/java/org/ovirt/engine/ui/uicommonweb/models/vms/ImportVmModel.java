@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -57,7 +57,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     private storage_pool storagePool;
     private boolean hasQuota;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
-    protected ArrayList<storage_domains> filteredStorageDomains;
+    protected ArrayList<StorageDomain> filteredStorageDomains;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
     private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<Guid, ImportDiskData>();
@@ -196,12 +196,12 @@ public class ImportVmModel extends ListWithDetailsModel {
 
                                     @Override
                                     public void OnSuccess(Object model, Object returnValue) {
-                                        ArrayList<storage_domains> storageDomains =
-                                                (ArrayList<storage_domains>) returnValue;
+                                        ArrayList<StorageDomain> storageDomains =
+                                                (ArrayList<StorageDomain>) returnValue;
                                         // filter storage domains
                                         filteredStorageDomains =
-                                                new ArrayList<storage_domains>();
-                                        for (storage_domains domain : storageDomains) {
+                                                new ArrayList<StorageDomain>();
+                                        for (StorageDomain domain : storageDomains) {
                                             if (Linq.IsDataActiveStorageDomain(domain)) {
                                                 filteredStorageDomains.add(domain);
                                             }
@@ -229,7 +229,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
         ArrayList<VdcQueryParametersBase> queryParamsList =
                 new ArrayList<VdcQueryParametersBase>();
-        for (storage_domains storage : filteredStorageDomains) {
+        for (StorageDomain storage : filteredStorageDomains) {
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
             queryParamsList.add(new GetAllRelevantQuotasForStorageParameters(storage.getId()));
         }
@@ -266,7 +266,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     private void checkIfDefaultStorageApplicableForAllDisks() {
         boolean isDefaultStorageApplicableForAllDisks = true;
-        storage_domains defaultStorage = (storage_domains) getStorage().getSelectedItem();
+        StorageDomain defaultStorage = (StorageDomain) getStorage().getSelectedItem();
         for (Guid diskGuid : diskImportDataMap.keySet()) {
             ImportDiskData importData = diskImportDataMap.get(diskGuid);
 
@@ -340,8 +340,8 @@ public class ImportVmModel extends ListWithDetailsModel {
                 @Override
                 public void Executed(FrontendMultipleQueryAsyncResult result) {
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-                    Map<Guid, ArrayList<storage_domains>> templateDisksStorageDomains =
-                            new HashMap<Guid, ArrayList<storage_domains>>();
+                    Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
+                            new HashMap<Guid, ArrayList<StorageDomain>>();
                     for (VdcQueryReturnValue returnValue : returnValueList) {
                         for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                             templateDisksStorageDomains.put(diskImage.getImageId(),
@@ -353,7 +353,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                         for (Disk disk : templateDiskMap.get(templateId)) {
                             DiskImage diskImage = (DiskImage) disk;
                             if (diskImage.getParentId() != null && !NGuid.Empty.equals(diskImage.getParentId())) {
-                                ArrayList<storage_domains> storageDomains =
+                                ArrayList<StorageDomain> storageDomains =
                                         templateDisksStorageDomains.get(diskImage.getParentId());
                                 if (storageDomains == null) {
                                     missingTemplateDiskMap.put(templateId, templateDiskMap.get(templateId));
@@ -376,7 +376,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     protected void getTemplatesFromExportDomain() {
         GetAllFromExportDomainQueryParameters tempVar =
-                new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((storage_domains) getEntity())
+                new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((StorageDomain) getEntity())
                         .getId());
         Frontend.RunQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
                 new INewAsyncCallback() {
@@ -439,10 +439,10 @@ public class ImportVmModel extends ListWithDetailsModel {
         OnPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
     }
 
-    private ArrayList<storage_domains> getStorageDomainsByIds(ArrayList<Guid> getstorage_ids) {
-        ArrayList<storage_domains> domains = new ArrayList<storage_domains>();
+    private ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> getstorage_ids) {
+        ArrayList<StorageDomain> domains = new ArrayList<StorageDomain>();
         for (Guid storageDomainId : getstorage_ids) {
-            for (storage_domains storageDomain : filteredStorageDomains) {
+            for (StorageDomain storageDomain : filteredStorageDomains) {
                 if (storageDomainId.equals(storageDomain.getId())) {
                     domains.add(storageDomain);
                     break;
@@ -456,14 +456,14 @@ public class ImportVmModel extends ListWithDetailsModel {
         ImportDiskData importData = diskImportDataMap.get(diskId);
         if (importData != null) {
             if (storage.getSelectedItem() == null) {
-                importData.setSelectedStorageDomain((storage_domains) storage.getSelectedItem());
+                importData.setSelectedStorageDomain((StorageDomain) storage.getSelectedItem());
             }
         }
         return importData;
     }
 
     protected void addDiskImportData(Guid diskId,
-            ArrayList<storage_domains> storageDomains,
+            ArrayList<StorageDomain> storageDomains,
             VolumeType volumeType, EntityModel collapseSnapshots) {
         ImportDiskData data = new ImportDiskData();
         data.setCollapseSnapshot(collapseSnapshots);

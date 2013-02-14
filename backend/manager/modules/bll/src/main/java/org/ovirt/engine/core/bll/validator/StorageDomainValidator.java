@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,9 +18,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
 
-    private storage_domains storageDomain;
+    private StorageDomain storageDomain;
 
-    public StorageDomainValidator(storage_domains domain) {
+    public StorageDomainValidator(StorageDomain domain) {
         storageDomain = domain;
     }
 
@@ -68,12 +68,12 @@ public class StorageDomainValidator {
         return Config.<Integer> GetValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }
 
-    public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
-            Map<Guid, storage_domains> storageDomains, Map<Guid, DiskImage> imageToDestinationDomainMap) {
-        Map<DiskImage, storage_domains> spaceMap = new HashMap<DiskImage, storage_domains>();
+    public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
+            Map<Guid, StorageDomain> storageDomains, Map<Guid, DiskImage> imageToDestinationDomainMap) {
+        Map<DiskImage, StorageDomain> spaceMap = new HashMap<DiskImage, StorageDomain>();
         for (DiskImage image : images) {
             Guid storageId = imageToDestinationDomainMap.get(image.getId()).getstorage_ids().get(0);
-            storage_domains domain = storageDomains.get(storageId);
+            StorageDomain domain = storageDomains.get(storageId);
             if (domain == null) {
                 domain = DbFacade.getInstance().getStorageDomainDao().get(storageId);
             }
@@ -82,11 +82,11 @@ public class StorageDomainValidator {
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
     }
 
-    public static Map<storage_domains, Integer> getSpaceRequirementsForStorageDomains(Map<DiskImage, storage_domains> imageToDomainMap) {
-        Map<storage_domains, Integer> map = new HashMap<storage_domains, Integer>();
+    public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Map<DiskImage, StorageDomain> imageToDomainMap) {
+        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
         if (!imageToDomainMap.isEmpty()) {
-            for (Map.Entry<DiskImage, storage_domains> entry : imageToDomainMap.entrySet()) {
-                storage_domains domain = entry.getValue();
+            for (Map.Entry<DiskImage, StorageDomain> entry : imageToDomainMap.entrySet()) {
+                StorageDomain domain = entry.getValue();
                 int size = (int) entry.getKey().getActualSize();
                 if (map.containsKey(domain)) {
                     map.put(domain, map.get(domain) + size);

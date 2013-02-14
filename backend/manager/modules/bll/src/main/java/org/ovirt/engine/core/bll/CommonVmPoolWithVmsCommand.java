@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.storage_domains;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -57,7 +57,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
-    protected Map<Guid, storage_domains> destStorages = new HashMap<Guid, storage_domains>();
+    protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     private boolean _addVmsSucceded = true;
 
     /**
@@ -300,7 +300,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             if (validDomains.contains(domainId)) {
                 continue;
             }
-            storage_domains domain = destStorages.get(domainId);
+            StorageDomain domain = destStorages.get(domainId);
             if (domain == null) {
                 domain = getStorageDomainDAO().getForStoragePool(domainId, getVmTemplate().getstorage_pool_id());
             }
@@ -324,7 +324,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return retValue;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(storage_domains storageDomain, long sizeRequested) {
+    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
     }
 
