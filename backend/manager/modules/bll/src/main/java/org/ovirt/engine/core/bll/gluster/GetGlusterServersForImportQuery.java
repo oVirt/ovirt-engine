@@ -53,7 +53,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
     @Override
     protected void executeQueryCommand() {
         // Check whether the given server is already part of the cluster
-        if (getVdsStaticDao().getAllForHost(getParameters().getServerName()).size() > 0
+        if (getVdsStaticDao().getByHostName(getParameters().getServerName()) != null
                 || getVdsStaticDao().getAllWithIpAddress(getParameters().getServerName()).size() > 0) {
             setReturnMessage(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
             return;
@@ -96,7 +96,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
      */
     private boolean validateServers(Set<String> serverNames) {
         for (String serverName : serverNames) {
-            if (getVdsStaticDao().getAllForHost(serverName).size() > 0
+            if (getVdsStaticDao().getByHostName(serverName) != null
                     || getVdsStaticDao().getAllWithIpAddress(serverName).size() > 0) {
                 return false;
             }

@@ -62,8 +62,8 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      * Ensures null is returned when the name is invalid.
      */
     @Test
-    public void testGetByNameWithInvalidName() {
-        VdsStatic result = dao.get("farkle");
+    public void testGetByVdsNameWithInvalidName() {
+        VdsStatic result = dao.getByVdsName("farkle");
 
         assertNull(result);
     }
@@ -72,8 +72,8 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      * Ensures that retrieving by name works.
      */
     @Test
-    public void testGetByName() {
-        VdsStatic result = dao.get(existingVds.getName());
+    public void testGetByVdsName() {
+        VdsStatic result = dao.getByVdsName(existingVds.getName());
 
         assertNotNull(result);
         assertEquals(existingVds.getName(), result.getName());
@@ -84,15 +84,12 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      * Ensures all the right VdsStatic instances are returned.
      */
     @Test
-    public void testGetAllForHost() {
-        List<VdsStatic> result = dao.getAllForHost(existingVds
+    public void testGetByHostName() {
+        VdsStatic vds = dao.getByHostName(existingVds
                 .getHostName());
 
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        for (VdsStatic vds : result) {
-            assertEquals(existingVds.getHostName(), vds.getHostName());
-        }
+        assertNotNull(vds);
+        assertEquals(existingVds.getHostName(), vds.getHostName());
     }
 
     /**

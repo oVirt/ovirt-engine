@@ -57,7 +57,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private void setupMock() {
         vdsStaticDaoMock = mock(VdsStaticDAO.class);
         doReturn(vdsStaticDaoMock).when(getQuery()).getVdsStaticDao();
-        doReturn(getVdsStatic()).when(vdsStaticDaoMock).getAllForHost(NEW_SERVER);
+        doReturn(getVdsStatic().get(0)).when(vdsStaticDaoMock).getByHostName(NEW_SERVER);
         doReturn(getVdsStatic()).when(vdsStaticDaoMock).getAllWithIpAddress(NEW_SERVER);
 
         clientMock = mock(SSHClient.class);

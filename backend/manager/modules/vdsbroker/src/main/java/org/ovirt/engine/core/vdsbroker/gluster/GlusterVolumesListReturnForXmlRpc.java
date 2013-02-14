@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -161,7 +162,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         brick.setBrickOrder(brickOrder);
         brick.setBrickDirectory(brickDir);
 
-        VDS server = getServer(clusterId, hostnameOrIp);
+        VdsStatic server = getServer(clusterId, hostnameOrIp);
         if(server == null) {
             log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, clusterId);
         } else {
@@ -171,8 +172,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         return brick;
     }
 
-    private VdsDAO getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
+    private VdsStaticDAO getVdsStaticDao() {
+        return DbFacade.getInstance().getVdsStaticDao();
     }
 
     private InterfaceDao getInterfaceDao() {
@@ -185,16 +186,16 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
      * @param hostnameOrIp
      * @return
      */
-    private VDS getServer(Guid clusterId, String hostnameOrIp) {
-        List<VDS> servers = getVdsDao().getAllForHostname(hostnameOrIp);
-        if(servers.size() > 0) {
-            return getServerOfCluster(clusterId, servers);
+    private VdsStatic getServer(Guid clusterId, String hostnameOrIp) {
+        VdsStatic server = getVdsStaticDao().getByHostName(hostnameOrIp);
+        if(server != null) {
+            return server.getVdsGroupId().equals(clusterId) ? server : null;
         }
 
         List<VdsNetworkInterface> ifaces = getInterfaceDao().getAllInterfacesWithIpAddress(clusterId, hostnameOrIp);
         if(ifaces.size() == 1) {
             for(VdsNetworkInterface iface : ifaces) {
-                VDS server = getVdsDao().get(iface.getVdsId());
+                server = getVdsStaticDao().get(iface.getVdsId().getValue());
                 if(server.getVdsGroupId().equals(clusterId)) {
                     return server;
                 }

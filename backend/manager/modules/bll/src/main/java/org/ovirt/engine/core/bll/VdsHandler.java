@@ -80,13 +80,11 @@ public class VdsHandler extends BaseHandler {
     }
 
     public static boolean isVdsWithSameNameExistStatic(String vdsName) {
-        VdsStatic vds = DbFacade.getInstance().getVdsStaticDao().get(vdsName);
-        return (vds != null);
+        return DbFacade.getInstance().getVdsStaticDao().getByVdsName(vdsName) != null;
     }
 
     public static boolean isVdsWithSameHostExistStatic(String hostName) {
-        List<VdsStatic> vds = DbFacade.getInstance().getVdsStaticDao().getAllForHost(hostName);
-        return (vds.size() != 0);
+        return DbFacade.getInstance().getVdsStaticDao().getByHostName(hostName) != null;
     }
 
     public static boolean isVdsWithSameIpExistsStatic(String ipAddress) {
