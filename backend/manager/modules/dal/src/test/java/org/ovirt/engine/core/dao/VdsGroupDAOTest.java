@@ -209,6 +209,19 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that the storage pool name is returned properly.
+     */
+    @Test
+    public void testVdsGroupCorrectStoragePoolName() {
+        List<VDSGroup> result = dao.getAllForStoragePool(storagePool.getId());
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        for (VDSGroup group : result) {
+            assertEquals(storagePool.getname(), group.getStoragePoolName());
+        }
+    }
+
+    /**
      * Asserts the result of a invalid call to {@link VdsGroupDAO#getAllForStoragePool(Guid, Guid, boolean)}
      *
      * @param result
