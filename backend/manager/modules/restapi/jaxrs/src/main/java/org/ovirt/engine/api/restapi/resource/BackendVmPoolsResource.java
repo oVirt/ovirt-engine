@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllVmPoolsAttachedToUserParameters;
 import org.ovirt.engine.core.common.queries.GetVmPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmdataByPoolIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 
@@ -84,11 +85,21 @@ public class BackendVmPoolsResource
     @Override
     public VmPool populate(VmPool pool, vm_pools entity) {
         if (pool.isSetSize() && pool.getSize() > 0) {
-            VM vm = getEntity(VM.class, SearchType.VM, "Vms: pool=" + pool.getName());
+            VM vm = getVM(pool);
             pool.setTemplate(new Template());
             pool.getTemplate().setId(vm.getvmt_guid().toString());
         }
         return pool;
+    }
+
+   private VM getVM(VmPool pool) {
+        if (isFiltered()) {
+            return getEntity(VM.class,
+                         VdcQueryType.GetVmDataByPoolId,
+                         new GetVmdataByPoolIdParameters(asGuid(pool.getId())),
+                         pool.getId());
+        }
+        return getEntity(VM.class, SearchType.VM, "Vms: pool=" + pool.getName());
     }
 
     protected VM mapToVM(VmPool model, VmTemplate template) {
