@@ -1015,7 +1015,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         if (diskSize == 0) {
             for (Disk disk : getDiskMap().values()) {
                 if (DiskStorageType.IMAGE == disk.getDiskStorageType()) {
-                    diskSize += ((DiskImage) disk).getsize() / Double.valueOf(1024 * 1024 * 1024);
+                    diskSize += ((DiskImage) disk).getSize() / Double.valueOf(1024 * 1024 * 1024);
                 }
             }
         }

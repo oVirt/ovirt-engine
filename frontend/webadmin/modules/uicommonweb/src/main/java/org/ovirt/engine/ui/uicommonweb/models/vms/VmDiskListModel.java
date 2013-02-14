@@ -387,8 +387,8 @@ public class VmDiskListModel extends VmDiskListModelBase
             VdcActionParametersBase parameters =
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
-                            disk.getstorage_ids().get(0),
-                            disk.getstorage_pool_id().getValue());
+                            disk.getStorageIds().get(0),
+                            disk.getStoragePoolId().getValue());
             paramerterList.add(parameters);
         }
 
@@ -433,7 +433,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                         ((LunDisk) disk).getLun().getDeviceSize());
 
         Guid storageDomainId = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                ((DiskImage) disk).getstorage_ids().get(0) : Guid.Empty;
+                ((DiskImage) disk).getStorageIds().get(0) : Guid.Empty;
 
         model.StartProgress(null);
 
@@ -456,10 +456,10 @@ public class VmDiskListModel extends VmDiskListModelBase
                 diskModel.getPreset().setIsChangable(false);
 
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    diskModel.getVolumeType().setSelectedItem(((DiskImage) disk).getvolume_type());
+                    diskModel.getVolumeType().setSelectedItem(((DiskImage) disk).getVolumeType());
                     diskModel.getVolumeType().setIsChangable(false);
 
-                    diskModel.setVolumeFormat(((DiskImage) disk).getvolume_format());
+                    diskModel.setVolumeFormat(((DiskImage) disk).getVolumeFormat());
                 }
 
                 ArrayList<DiskInterface> interfaces =
@@ -649,8 +649,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (isInternal) {
             DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
             diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
-            diskImage.setvolume_format(model.getVolumeFormat());
+            diskImage.setVolumeType((VolumeType) model.getVolumeType().getSelectedItem());
+            diskImage.setvolumeFormat(model.getVolumeFormat());
             if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
                 diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
             }

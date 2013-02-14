@@ -176,7 +176,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     p.setParentCommand(getActionType());
                     p.setEntityId(getParameters().getEntityId());
                     p.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                     p.setParentParameters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                             VdcActionType.MoveOrCopyImageGroup,

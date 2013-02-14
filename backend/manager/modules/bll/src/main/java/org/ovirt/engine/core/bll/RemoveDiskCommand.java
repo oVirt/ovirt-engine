@@ -117,13 +117,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         DiskImage diskImage = getDiskImage();
         if (diskImage.getVmEntityType() == VmEntityType.TEMPLATE) {
             // Temporary fix until re factoring vm_images_view and image_storage_domain_view
-            diskImage.setstorage_ids(getDiskImageDao().get(diskImage.getImageId()).getstorage_ids());
+            diskImage.setStorageIds(getDiskImageDao().get(diskImage.getImageId()).getStorageIds());
         } else if ((getParameters().getStorageDomainId() == null) || (Guid.Empty.equals(getParameters().getStorageDomainId()))) {
-            getParameters().setStorageDomainId(diskImage.getstorage_ids().get(0));
-            setStorageDomainId(diskImage.getstorage_ids().get(0));
+            getParameters().setStorageDomainId(diskImage.getStorageIds().get(0));
+            setStorageDomainId(diskImage.getStorageIds().get(0));
         }
 
-        if (!diskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+        if (!diskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG);
         }
@@ -194,7 +194,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
-        if (retValue && diskImage.getstorage_ids().size() == 1) {
+        if (retValue && diskImage.getStorageIds().size() == 1) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
@@ -206,8 +206,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 for (Disk vmDisk : vmDisks) {
                     if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
                         DiskImage vmDiskImage = (DiskImage) vmDisk;
-                        if (vmDiskImage.getit_guid().equals(diskImage.getImageId())) {
-                            if (vmDiskImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+                        if (vmDiskImage.getImageTemplateId().equals(diskImage.getImageId())) {
+                            if (vmDiskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
                                 retValue = false;
                                 problematicVmNames.add(vm.getVmName());
                             }
@@ -283,7 +283,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             p.setParentParameters(getParameters());
             p.setStorageDomainId(getParameters().getStorageDomainId());
             p.setForceDelete(getParameters().getForceDelete());
-            if (diskImage.getstorage_ids().size() == 1) {
+            if (diskImage.getStorageIds().size() == 1) {
                 p.setRemoveFromDB(true);
             }
             VdcReturnValueBase vdcReturnValue =

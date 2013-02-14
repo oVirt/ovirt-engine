@@ -23,10 +23,10 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
     @Override
     protected void executeCommand() {
-        Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
+        Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
                 .getValue() : Guid.Empty;
         Guid storageDomainId =
-                getDiskImage().getstorage_ids() != null && getDiskImage().getstorage_ids().size() > 0 ? getDiskImage().getstorage_ids()
+                getDiskImage().getStorageIds() != null && getDiskImage().getStorageIds().size() > 0 ? getDiskImage().getStorageIds()
                         .get(0)
                         : Guid.Empty;
         Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id().getValue()
@@ -77,8 +77,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                 curr = getDiskImageDao().getSnapshotById(curr.getParentId());
                 getImageDao().remove(curr.getImageId());
             }
-            getDestinationDiskImage().setvolume_format(curr.getvolume_format());
-            getDestinationDiskImage().setvolume_type(curr.getvolume_type());
+            getDestinationDiskImage().setvolumeFormat(curr.getVolumeFormat());
+            getDestinationDiskImage().setVolumeType(curr.getVolumeType());
             getDestinationDiskImage().setParentId(getDiskImage().getParentId());
             getBaseDiskDao().update(curr);
             getImageDao().update(getDestinationDiskImage().getImage());

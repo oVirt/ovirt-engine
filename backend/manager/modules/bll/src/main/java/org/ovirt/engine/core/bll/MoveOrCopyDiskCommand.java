@@ -166,7 +166,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected List<DiskImage> getAllImageSnapshots() {
-        return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getit_guid());
+        return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getImageTemplateId());
     }
 
     protected boolean doesStorageDomainHaveSpaceForRequest(long size) {
@@ -175,7 +175,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean checkIfNeedToBeOverride() {
         if (getParameters().getOperation() == ImageOperation.Copy && !getParameters().getForceOverride()
-                && getImage().getstorage_ids().contains(getStorageDomain().getId())) {
+                && getImage().getStorageIds().contains(getStorageDomain().getId())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
             return false;
         }
@@ -189,12 +189,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean validateSourceStorageDomain() {
         NGuid sourceDomainId = getParameters().getSourceDomainId();
         if (sourceDomainId == null || Guid.Empty.equals(sourceDomainId)) {
-            sourceDomainId = getImage().getstorage_ids().get(0);
+            sourceDomainId = getImage().getStorageIds().get(0);
             getParameters().setSourceDomainId(sourceDomainId);
         }
         StorageDomainValidator validator =
                 new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId.getValue(),
-                        getImage().getstorage_pool_id()));
+                        getImage().getStoragePoolId()));
         return validate(validator.isDomainExistAndActive());
     }
 
@@ -246,9 +246,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkTemplateInDestStorageDomain() {
         boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Move
-                && !Guid.Empty.equals(getImage().getit_guid())) {
-            DiskImage templateImage = getDiskImageDao().get(getImage().getit_guid());
-            if (!templateImage.getstorage_ids().contains(getParameters().getStorageDomainId())) {
+                && !Guid.Empty.equals(getImage().getImageTemplateId())) {
+            DiskImage templateImage = getDiskImageDao().get(getImage().getImageTemplateId());
+            if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
@@ -327,8 +327,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         getParameters().setDestinationImageId(getImageId());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setDestImageGroupId(getImageGroupId());
-        getParameters().setVolumeFormat(getDiskImage().getvolume_format());
-        getParameters().setVolumeType(getDiskImage().getvolume_type());
+        getParameters().setVolumeFormat(getDiskImage().getVolumeFormat());
+        getParameters().setVolumeType(getDiskImage().getVolumeType());
         getParameters().setCopyVolumeType(CopyVolumeType.SharedVol);
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());

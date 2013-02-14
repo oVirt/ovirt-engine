@@ -51,11 +51,11 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), disk.getactual_size(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), disk.getActualSizeFromDiskImage(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getImageStatus(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getvolume_type(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskInterface(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DateLabel(), disk.getcreation_date(), "90px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "90px"); //$NON-NLS-1$
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(disk.getId());
         return treeItem;
@@ -97,6 +97,6 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
 
     @Override
     protected ArrayList<StorageDomain> getNodeObjects(DiskImage disk) {
-        return Linq.getStorageDomainsByIds(disk.getstorage_ids(), listModel.getStorageDomains());
+        return Linq.getStorageDomainsByIds(disk.getStorageIds(), listModel.getStorageDomains());
     }
 }

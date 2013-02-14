@@ -62,7 +62,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     protected Guid getDestinationStorageDomainId() {
-        return mNewCreatedDiskImage.getstorage_ids() != null ? mNewCreatedDiskImage.getstorage_ids().get(0).getValue()
+        return mNewCreatedDiskImage.getStorageIds() != null ? mNewCreatedDiskImage.getStorageIds().get(0).getValue()
                 : Guid.Empty;
     }
 
@@ -70,15 +70,15 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
-        setStoragePoolId(mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage.getstorage_pool_id()
+        mNewCreatedDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        setStoragePoolId(mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage.getStoragePoolId()
                 .getValue() : Guid.Empty);
         getParameters().setStoragePoolId(getStoragePoolId().getValue());
 
         // override volume type and volume format to sparse and cow according to
         // storage team request
-        mNewCreatedDiskImage.setvolume_type(VolumeType.Sparse);
-        mNewCreatedDiskImage.setvolume_format(VolumeFormat.COW);
+        mNewCreatedDiskImage.setVolumeType(VolumeType.Sparse);
+        mNewCreatedDiskImage.setvolumeFormat(VolumeFormat.COW);
         VDSReturnValue vdsReturnValue = null;
 
         try {
@@ -92,9 +92,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             getDestinationStorageDomainId(),
                                             getImageGroupId(),
                                             getImage().getImageId(),
-                                            getDiskImage().getsize(),
-                                            mNewCreatedDiskImage.getvolume_type(),
-                                            mNewCreatedDiskImage.getvolume_format(),
+                                            getDiskImage().getSize(),
+                                            mNewCreatedDiskImage.getVolumeType(),
+                                            mNewCreatedDiskImage.getVolumeFormat(),
                                             getDiskImage().getimage_group_id().getValue(),
                                             getDestinationImageId(),
                                             "",
@@ -134,9 +134,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
      * By default old image must be replaced by new one
      */
     protected void processOldImageFromDb() {
-        getParameters().setOldLastModifiedValue(getDiskImage().getlastModified());
-        getDiskImage().setlastModified(new Date());
-        getDiskImage().setactive(false);
+        getParameters().setOldLastModifiedValue(getDiskImage().getLastModified());
+        getDiskImage().setLastModified(new Date());
+        getDiskImage().setActive(false);
         getImageDao().update(getDiskImage().getImage());
     }
 
@@ -148,14 +148,14 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 && !DbFacade.getInstance().getVmDao().getVmsListForDisk(getDestinationDiskImage().getId()).isEmpty()) {
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
-                if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getit_guid())) {
+                if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId())) {
                     DiskImage previousSnapshot = getDiskImageDao().getSnapshotById(
                             getDestinationDiskImage().getParentId());
-                    previousSnapshot.setactive(true);
+                    previousSnapshot.setActive(true);
 
                     // If the old description of the snapshot got overriden, we should restore the previous description
                     if (getParameters().getOldLastModifiedValue() != null) {
-                        previousSnapshot.setlastModified(getParameters().getOldLastModifiedValue());
+                        previousSnapshot.setLastModified(getParameters().getOldLastModifiedValue());
                     }
 
                     getImageDao().update(previousSnapshot.getImage());

@@ -369,11 +369,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     private boolean validateProvidedDestinations() {
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            if (diskImage.getstorage_ids() == null || diskImage.getstorage_ids().isEmpty()) {
-                diskImage.setstorage_ids(new ArrayList<Guid>());
-                diskImage.getstorage_ids().add(getParameters().getStorageDomainId());
+            if (diskImage.getStorageIds() == null || diskImage.getStorageIds().isEmpty()) {
+                diskImage.setStorageIds(new ArrayList<Guid>());
+                diskImage.getStorageIds().add(getParameters().getStorageDomainId());
             }
-            Guid storageDomainId = diskImage.getstorage_ids().get(0);
+            Guid storageDomainId = diskImage.getStorageIds().get(0);
             if (destStorages.get(storageDomainId) == null) {
                 StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         storageDomainId, getStoragePoolId());
@@ -410,7 +410,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean validateIsImagesOnDomains() {
         for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
-            if (!image.getstorage_ids().containsAll(diskInfoDestinationMap.get(image.getId()).getstorage_ids())) {
+            if (!image.getStorageIds().containsAll(diskInfoDestinationMap.get(image.getId()).getStorageIds())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
                 return false;
             }
@@ -422,11 +422,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         DiskImage newImage = new DiskImage();
         newImage.setImageId(image.getImageId());
         newImage.setDiskAlias(image.getDiskAlias());
-        newImage.setvolume_format(image.getvolume_format());
-        newImage.setvolume_type(image.getvolume_type());
+        newImage.setvolumeFormat(image.getVolumeFormat());
+        newImage.setVolumeType(image.getVolumeType());
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
         storageIds.add(storageId);
-        newImage.setstorage_ids(storageIds);
+        newImage.setStorageIds(storageIds);
         newImage.setQuotaId(image.getQuotaId());
         return newImage;
     }
@@ -636,9 +636,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
                 CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
                         dit.getImageId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0));
+                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0));
                 tempVar.setDiskAlias(diskInfoDestinationMap.get(dit.getId()).getDiskAlias());
-                tempVar.setStorageDomainId(dit.getstorage_ids().get(0));
+                tempVar.setStorageDomainId(dit.getStorageIds().get(0));
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVm);
                 tempVar.setEntityId(getParameters().getEntityId());
@@ -792,7 +792,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     disk.getQuotaId(),
                     null,
                     QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getstorage_ids().get(0),
+                    disk.getStorageIds().get(0),
                     (double)disk.getSizeInGigabytes()));
         }
         return list;

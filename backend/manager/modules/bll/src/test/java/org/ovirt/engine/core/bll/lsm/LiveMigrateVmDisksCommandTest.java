@@ -124,7 +124,7 @@ public class LiveMigrateVmDisksCommandTest {
         createParameters();
 
         DiskImage diskImage = initDiskImage(diskImageId);
-        diskImage.setit_guid(templateDiskId);
+        diskImage.setImageTemplateId(templateDiskId);
 
         initDiskImage(templateDiskId);
         initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
@@ -185,8 +185,8 @@ public class LiveMigrateVmDisksCommandTest {
     private DiskImage initDiskImage(Guid diskImageId) {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(diskImageId);
-        diskImage.setstorage_pool_id(storagePoolId);
-        diskImage.setstorage_ids(new ArrayList<Guid>());
+        diskImage.setStoragePoolId(storagePoolId);
+        diskImage.setStorageIds(new ArrayList<Guid>());
 
         when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);

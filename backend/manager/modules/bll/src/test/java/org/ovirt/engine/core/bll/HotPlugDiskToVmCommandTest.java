@@ -238,7 +238,7 @@ public class HotPlugDiskToVmCommandTest {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageGuid);
         disk.setDiskInterface(DiskInterface.IDE);
-        disk.setactive(true);
+        disk.setActive(true);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
@@ -252,7 +252,7 @@ public class HotPlugDiskToVmCommandTest {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageGuid);
         disk.setDiskInterface(DiskInterface.VirtIO);
-        disk.setactive(true);
+        disk.setActive(true);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         mockVmDevice(false);

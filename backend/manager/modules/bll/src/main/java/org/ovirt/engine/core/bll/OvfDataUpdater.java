@@ -313,7 +313,7 @@ public class OvfDataUpdater {
 
     protected ArrayList<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
         return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                diskImage.getit_guid());
+                diskImage.getImageTemplateId());
     }
 
     protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {

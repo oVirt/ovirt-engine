@@ -90,7 +90,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             if (listModel.getEntity() instanceof Quota) {
                 return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
             } else {
-                return ((DiskImage) disk).getstorage_ids()
+                return ((DiskImage) disk).getStorageIds()
                         .get(0)
                         .equals(((BusinessEntity) listModel.getEntity()).getId());
             }
@@ -112,7 +112,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             HorizontalPanel panel = new HorizontalPanel();
 
             ImageResource image = resources.snapshotImage();
-            String name = disk.getdescription();
+            String name = disk.getDescription();
 
             addItemToPanel(panel, new Image(image), "25px"); //$NON-NLS-1$
             addTextBoxToPanel(panel, new TextBoxLabel(), name, ""); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             addTextBoxToPanel(panel, new TextBoxLabel(), "", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.GIGABYTE), disk.getActualSize(), "110px"); //$NON-NLS-1$
-            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getcreation_date(), "140px"); //$NON-NLS-1$
+            addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getCreationDate(), "140px"); //$NON-NLS-1$
 
             panel.setSpacing(1);
             panel.setWidth("100%"); //$NON-NLS-1$
@@ -156,13 +156,13 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
             Double actualSize =
                     isDiskImage ? ((DiskImage) disk).getActualDiskWithSnapshotsSize()
                             : (long) (((LunDisk) disk).getLun().getDeviceSize());
-            Long virtualSize = isDiskImage ? ((DiskImage) disk).getsize() :
+            Long virtualSize = isDiskImage ? ((DiskImage) disk).getSize() :
                     (long) (((LunDisk) disk).getLun().getDeviceSize() * Math.pow(1024, 3));
 
             addValueLabelToPanel(panel, new DiskSizeLabel<Long>(DiskSizeUnit.BYTE), virtualSize, "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new DiskSizeLabel<Double>(DiskSizeUnit.GIGABYTE), actualSize, "110px"); //$NON-NLS-1$
             addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) disk).getcreation_date() : null, "140px"); //$NON-NLS-1$
+                    ((DiskImage) disk).getCreationDate() : null, "140px"); //$NON-NLS-1$
 
             panel.setSpacing(1);
             panel.setWidth("100%"); //$NON-NLS-1$

@@ -42,7 +42,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                             false);
         }
         for (DiskImage image : images) {
-            if (Boolean.TRUE.equals(image.getactive())) {
+            if (Boolean.TRUE.equals(image.getActive())) {
                 mImagesToBeRemoved.add(image.getImageId());
             }
         }
@@ -103,7 +103,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         List<DiskImage> snapshotDisks =
                 getDbFacade().getDiskImageDao().getAllSnapshotsForImageGroup(diskImage.getId());
         for (DiskImage diskSnapshot : snapshotDisks) {
-            diskSnapshot.setvm_snapshot_id(null);
+            diskSnapshot.setVmSnapshotId(null);
             diskSnapshot.setImageStatus(ImageStatus.ILLEGAL);
             getDbFacade().getImageDao().update(diskSnapshot.getImage());
         }

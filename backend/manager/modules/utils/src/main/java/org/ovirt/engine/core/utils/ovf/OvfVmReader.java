@@ -77,32 +77,32 @@ public class OvfVmReader extends OvfReader {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));
                 }
                 if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
-                    image.setit_guid(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
+                    image.setImageTemplateId(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
                 }
-                image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
+                image.setAppList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
 
                 XmlNode storageNode = node.SelectSingleNode("rasd:StorageId", _xmlNS);
                 if (storageNode != null &&
                         StringUtils.isNotEmpty(storageNode.InnerText)) {
-                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.InnerText))));
+                    image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(storageNode.InnerText))));
                 }
                 if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
-                    image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
+                    image.setStoragePoolId(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
                 final Date creationDate = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText);
                 if (creationDate == null) {
-                    image.setcreation_date(creationDate);
+                    image.setCreationDate(creationDate);
                 }
                 final Date lastModified = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText);
                 if (lastModified != null) {
-                    image.setlastModified(lastModified);
+                    image.setLastModified(lastModified);
                 }
                 final Date last_modified_date = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:last_modified_date", _xmlNS).InnerText);
                 if (last_modified_date != null) {
-                    image.setlast_modified_date(last_modified_date);
+                    image.setLastModifiedDate(last_modified_date);
                 }
                 readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
             } else if (OvfHardware.Network.equals(resourceType)) {
@@ -200,11 +200,11 @@ public class OvfVmReader extends OvfReader {
                 for(int i=0; i<_images.size(); i++) {
                     int x = GetNextImage(_images, _images.get(i));
                     if (x == -1) {
-                        _vm.setAppList(_images.get(i).getappList());
+                        _vm.setAppList(_images.get(i).getAppList());
                     }
                 }
             } else {
-                _vm.setAppList(_images.get(0).getappList());
+                _vm.setAppList(_images.get(0).getAppList());
             }
         }
 

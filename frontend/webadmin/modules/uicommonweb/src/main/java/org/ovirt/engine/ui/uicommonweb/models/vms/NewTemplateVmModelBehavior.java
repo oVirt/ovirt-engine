@@ -169,9 +169,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 size.setEntity(diskImage.getSizeInGigabytes());
                 diskModel.setSize(size);
                 ListModel volumes = new ListModel();
-                volumes.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                volumes.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                         : AsyncDataProvider.GetVolumeTypeList()));
-                volumes.setSelectedItem(diskImage.getvolume_type());
+                volumes.setSelectedItem(diskImage.getVolumeType());
                 diskModel.setVolumeType(volumes);
                 diskModel.getAlias().setEntity(diskImage.getDiskAlias());
             }
@@ -279,7 +279,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
                                 DiskImage diskImage = (DiskImage) diskModel.getDisk();
                                 ArrayList<StorageDomain> activeDiskStorages =
-                                        Linq.getStorageDomainsByIds(diskImage.getstorage_ids(), activeStorageDomainList);
+                                        Linq.getStorageDomainsByIds(diskImage.getStorageIds(), activeStorageDomainList);
 
                                 if (activeDiskStorages.isEmpty()) {
                                     behavior.DisableNewTemplateModel(

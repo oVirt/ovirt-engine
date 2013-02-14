@@ -38,8 +38,8 @@ public class DiskStatisticalQueryTest {
 
     private DiskImage getDisk() {
         DiskImage disk = new DiskImage();
-        disk.setread_rate(READ_RATE);
-        disk.setwrite_rate(WRITE_RATE);
+        disk.setReadRate(READ_RATE);
+        disk.setWriteRate(WRITE_RATE);
         disk.setReadLatency(READ_LATENCY);
         disk.setWriteLatency(WRITE_LATENCY);
         disk.setFlushLatency(FLUSH_LATENCY);

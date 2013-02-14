@@ -260,11 +260,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 addAddress(vmDevice, struct);
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
-                    struct.add(VdsProperties.PoolId, diskImage.getstorage_pool_id().toString());
-                    struct.add(VdsProperties.DomainId, diskImage.getstorage_ids().get(0).toString());
+                    struct.add(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
+                    struct.add(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
                     struct.add(VdsProperties.ImageId, diskImage.getId().toString());
                     struct.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
-                    struct.add(VdsProperties.Format, diskImage.getvolume_format().toString()
+                    struct.add(VdsProperties.Format, diskImage.getVolumeFormat().toString()
                             .toLowerCase());
                     struct.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                             .toLowerCase());

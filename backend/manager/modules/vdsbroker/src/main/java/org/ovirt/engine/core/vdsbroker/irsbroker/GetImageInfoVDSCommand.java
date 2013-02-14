@@ -80,31 +80,31 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
             newImage.setImageId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.uuid)));
 
             newImage.setParentId(new Guid((String) xmlRpcStruct.getItem(IrsProperties.parent)));
-            newImage.setdescription((String) xmlRpcStruct.getItem(IrsProperties.description));
+            newImage.setDescription((String) xmlRpcStruct.getItem(IrsProperties.description));
             newImage.setImageStatus(EnumUtils.valueOf(ImageStatus.class,
                     (String) xmlRpcStruct.getItem(IrsProperties.ImageStatus), true));
             if (xmlRpcStruct.contains(IrsProperties.size)) {
-                newImage.setsize(Long.parseLong(xmlRpcStruct.getItem(IrsProperties.size).toString()) * 512);
+                newImage.setSize(Long.parseLong(xmlRpcStruct.getItem(IrsProperties.size).toString()) * 512);
             }
             if (xmlRpcStruct.contains("apparentsize")) {
-                newImage.setactual_size(Long.parseLong(xmlRpcStruct.getItem("apparentsize").toString()) * 512);
+                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.getItem("apparentsize").toString()) * 512);
             }
             if (xmlRpcStruct.contains("capacity")) {
-                newImage.setsize(Long.parseLong(xmlRpcStruct.getItem("capacity").toString()));
+                newImage.setSize(Long.parseLong(xmlRpcStruct.getItem("capacity").toString()));
             }
             if (xmlRpcStruct.contains("truesize")) {
-                newImage.setactual_size(Long.parseLong(xmlRpcStruct.getItem("truesize").toString()));
+                newImage.setActualSizeFromDiskImage(Long.parseLong(xmlRpcStruct.getItem("truesize").toString()));
             }
             if (xmlRpcStruct.contains("ctime")) {
                 long secsSinceEpoch = Long.parseLong(xmlRpcStruct.getItem("ctime").toString());
-                newImage.setcreation_date(MakeDTFromCTime(secsSinceEpoch));
+                newImage.setCreationDate(MakeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.contains("mtime")) {
                 long secsSinceEpoch = Long.parseLong(xmlRpcStruct.getItem("mtime").toString());
-                newImage.setlast_modified_date(MakeDTFromCTime(secsSinceEpoch));
+                newImage.setLastModifiedDate(MakeDTFromCTime(secsSinceEpoch));
             }
             if (xmlRpcStruct.contains("domain")) {
-                newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.getItem("domain").toString()))));
+                newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(xmlRpcStruct.getItem("domain").toString()))));
             }
             if (xmlRpcStruct.contains("image")) {
                 newImage.setimage_group_id(new Guid(xmlRpcStruct.getItem("image").toString()));

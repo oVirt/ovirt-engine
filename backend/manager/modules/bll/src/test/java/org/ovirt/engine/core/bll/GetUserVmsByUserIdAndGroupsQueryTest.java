@@ -144,7 +144,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
         Guid itGuid = Guid.NewGuid();
         final DiskImage expectedDisk = new DiskImage();
         expectedDisk.setImageId(diskGuid);
-        expectedDisk.setit_guid(itGuid);
+        expectedDisk.setImageTemplateId(itGuid);
 
         return expectedDisk;
     }

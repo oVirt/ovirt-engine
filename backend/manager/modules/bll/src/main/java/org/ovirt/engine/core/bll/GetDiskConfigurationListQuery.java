@@ -34,8 +34,8 @@ public class GetDiskConfigurationListQuery<P extends VdcQueryParametersBase> ext
             if (configs.length == DISK_CONFIGURATION_ELEMENTS_NUM) {
                 try {
                     DiskImageBase tempVar = new DiskImageBase();
-                    tempVar.setvolume_type(EnumUtils.valueOf(VolumeType.class, configs[1], true));
-                    tempVar.setvolume_format(EnumUtils.valueOf(VolumeFormat.class, configs[2], true));
+                    tempVar.setVolumeType(EnumUtils.valueOf(VolumeType.class, configs[1], true));
+                    tempVar.setvolumeFormat(EnumUtils.valueOf(VolumeFormat.class, configs[2], true));
                     tempVar.setWipeAfterDelete(Boolean.parseBoolean(configs[3]));
                     DiskImageBase dib = tempVar;
                     result.add(dib);

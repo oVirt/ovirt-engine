@@ -44,17 +44,17 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
         mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
         mNewCreatedDiskImage.setId(getImageGroupId());
-        mNewCreatedDiskImage.setstorage_pool_id(getParameters().getStoragePoolId());
-        mNewCreatedDiskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
-        mNewCreatedDiskImage.setsize(getParameters().getDiskInfo().getsize());
-        mNewCreatedDiskImage.setvolume_type(getParameters().getDiskInfo().getvolume_type());
-        mNewCreatedDiskImage.setvolume_format(getParameters().getDiskInfo().getvolume_format());
-        mNewCreatedDiskImage.setdescription("");
-        mNewCreatedDiskImage.setcreation_date(new Date());
-        mNewCreatedDiskImage.setlastModified(new Date());
-        mNewCreatedDiskImage.setactive(true);
+        mNewCreatedDiskImage.setStoragePoolId(getParameters().getStoragePoolId());
+        mNewCreatedDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
+        mNewCreatedDiskImage.setSize(getParameters().getDiskInfo().getSize());
+        mNewCreatedDiskImage.setVolumeType(getParameters().getDiskInfo().getVolumeType());
+        mNewCreatedDiskImage.setvolumeFormat(getParameters().getDiskInfo().getVolumeFormat());
+        mNewCreatedDiskImage.setDescription("");
+        mNewCreatedDiskImage.setCreationDate(new Date());
+        mNewCreatedDiskImage.setLastModified(new Date());
+        mNewCreatedDiskImage.setActive(true);
         mNewCreatedDiskImage.setImageStatus(ImageStatus.LOCKED);
-        mNewCreatedDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+        mNewCreatedDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -74,9 +74,9 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
-                                .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getsize(),
-                                getParameters().getDiskInfo().getvolume_type(), getParameters().getDiskInfo()
-                                        .getvolume_format(), getDestinationImageId(), "", getStoragePool()
+                                .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
+                                getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
+                                        .getVolumeFormat(), getDestinationImageId(), "", getStoragePool()
                                         .getcompatibility_version().toString()));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setTaskIds(new ArrayList<Guid>());

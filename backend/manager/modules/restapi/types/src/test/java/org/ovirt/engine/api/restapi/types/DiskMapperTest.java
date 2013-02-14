@@ -64,14 +64,14 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         //only <size>
         model.setSize((long) 576576);
         org.ovirt.engine.core.common.businessentities.Disk entity = DiskMapper.map(model, null);
-        assertEquals(entity.getsize(), 576576);
+        assertEquals(entity.getSize(), 576576);
         //<size> and <provisioned_size> - the latter should be dominant
         model.setProvisionedSize((long) 888888);
         entity = DiskMapper.map(model, null);
-        assertEquals(entity.getsize(), 888888);
+        assertEquals(entity.getSize(), 888888);
         //only <provisioned_size>
         model.setSize(null);
         entity = DiskMapper.map(model, null);
-        assertEquals(entity.getsize(), 888888);
+        assertEquals(entity.getSize(), 888888);
     }
 }

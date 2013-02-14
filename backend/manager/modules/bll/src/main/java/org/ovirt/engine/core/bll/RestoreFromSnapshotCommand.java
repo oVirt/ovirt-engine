@@ -33,7 +33,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         super.executeCommand();
         if (removeImages()) {
             if (getParameters().getSnapshot().getType() != SnapshotType.REGULAR) {
-                getImage().setactive(true);
+                getImage().setActive(true);
                 getImageDao().update(getImage().getImage());
             }
 
@@ -97,10 +97,10 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
     protected VDSReturnValue performImageVdsmOperation() {
         VDSReturnValue vdsReturnValue = null;
         try {
-            Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
+            Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
                     .getValue() : Guid.Empty;
             Guid storageDomainId =
-                    getDiskImage().getstorage_ids() != null && !getDiskImage().getstorage_ids().isEmpty() ? getDiskImage().getstorage_ids()
+                    getDiskImage().getStorageIds() != null && !getDiskImage().getStorageIds().isEmpty() ? getDiskImage().getStorageIds()
                             .get(0)
                             : Guid.Empty;
             Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()

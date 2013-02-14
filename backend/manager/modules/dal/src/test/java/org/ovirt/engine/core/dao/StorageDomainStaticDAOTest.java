@@ -221,7 +221,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         List<DiskImage> imagesToRemove = diskImageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
         Set<Guid> itGuids = new HashSet<Guid>();
         for (DiskImage image : imagesToRemove) {
-            itGuids.add(image.getit_guid());
+            itGuids.add(image.getImageTemplateId());
         }
         // First remove images that are not image templates
         for (DiskImage image : imagesToRemove) {

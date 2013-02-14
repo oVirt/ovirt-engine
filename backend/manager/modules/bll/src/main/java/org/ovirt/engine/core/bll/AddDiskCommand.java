@@ -158,7 +158,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             if (!Config.<Boolean> GetValue(ConfigValues.ShareableDiskEnabled,
                     getStoragePool().getcompatibility_version().getValue())) {
                 return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-            } else if (!isVolumeFormatSupportedForShareable(((DiskImage) getParameters().getDiskInfo()).getvolume_format())) {
+            } else if (!isVolumeFormatSupportedForShareable(((DiskImage) getParameters().getDiskInfo()).getVolumeFormat())) {
                 return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
         }
@@ -222,7 +222,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private boolean hasFreeSpace(StorageDomain storageDomain) {
-        if (getDiskImageInfo().getvolume_type() == VolumeType.Preallocated) {
+        if (getDiskImageInfo().getVolumeType() == VolumeType.Preallocated) {
             return doesStorageDomainhaveSpaceForRequest(storageDomain);
         }
         return isStorageDomainWithinThresholds(storageDomain);
@@ -276,7 +276,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private Guid getDisksStorageDomainId() {
         for (Disk disk : getVm().getDiskMap().values()) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                return ((DiskImage) disk).getstorage_ids().get(0);
+                return ((DiskImage) disk).getStorageIds().get(0);
             }
         }
         return Guid.Empty;

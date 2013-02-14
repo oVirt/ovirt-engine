@@ -84,11 +84,11 @@ public class OvfVmWriter extends OvfWriter {
     @Override
     protected void WriteAppList() {
         if (_images.size() > 0) {
-            if (StringUtils.isBlank(_images.get(0).getappList())) {
+            if (StringUtils.isBlank(_images.get(0).getAppList())) {
                 return;
             }
 
-            String[] apps = _images.get(0).getappList().split("[,]", -1);
+            String[] apps = _images.get(0).getAppList().split("[,]", -1);
             for (String app : apps) {
                 String product = app;
                 String version = "";
@@ -210,29 +210,29 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteRaw(image.getParentId().toString());
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "Template");
-            _writer.WriteRaw(image.getit_guid().toString());
+            _writer.WriteRaw(image.getImageTemplateId().toString());
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "ApplicationList");
-            _writer.WriteRaw(image.getappList());
+            _writer.WriteRaw(image.getAppList());
             _writer.WriteEndElement();
-            if (image.getstorage_ids() != null && image.getstorage_ids().size() > 0) {
+            if (image.getStorageIds() != null && image.getStorageIds().size() > 0) {
                 _writer.WriteStartElement(RASD_URI, "StorageId");
-                _writer.WriteRaw(image.getstorage_ids().get(0).toString());
+                _writer.WriteRaw(image.getStorageIds().get(0).toString());
                 _writer.WriteEndElement();
             }
-            if (image.getstorage_pool_id() != null) {
+            if (image.getStoragePoolId() != null) {
                 _writer.WriteStartElement(RASD_URI, "StoragePoolId");
-                _writer.WriteRaw(image.getstorage_pool_id().getValue().toString());
+                _writer.WriteRaw(image.getStoragePoolId().getValue().toString());
                 _writer.WriteEndElement();
             }
             _writer.WriteStartElement(RASD_URI, "CreationDate");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getcreation_date()));
+            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getCreationDate()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "LastModified");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getlastModified()));
+            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getLastModified()));
             _writer.WriteEndElement();
             _writer.WriteStartElement(RASD_URI, "last_modified_date");
-            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getlast_modified_date()));
+            _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(image.getLastModifiedDate()));
             _writer.WriteEndElement();
             writeManagedDeviceInfo(vmBase, _writer, image.getId());
             _writer.WriteEndElement(); // item

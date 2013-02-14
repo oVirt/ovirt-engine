@@ -100,7 +100,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
             // Update image's actual size in DB
             if (imageFromIRS != null && diskImageDynamic != null) {
-                diskImageDynamic.setactual_size(imageFromIRS.getactual_size());
+                diskImageDynamic.setactual_size(imageFromIRS.getActualSizeFromDiskImage());
                 getDiskImageDynamicDao().update(diskImageDynamic);
             }
         }

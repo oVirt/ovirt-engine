@@ -941,10 +941,10 @@ public final class AsyncDataProvider {
                         hasBootDisk = true;
                     }
 
-                    disk.setvolume_type(storageType == StorageType.ISCSI || storageType == StorageType.FCP ?
+                    disk.setVolumeType(storageType == StorageType.ISCSI || storageType == StorageType.FCP ?
                             VolumeType.Preallocated : VolumeType.Sparse);
 
-                    disk.setvolume_format(GetDiskVolumeFormat(disk.getvolume_type(), storageType));
+                    disk.setvolumeFormat(GetDiskVolumeFormat(disk.getVolumeType(), storageType));
 
                     list.add(disk);
                 }

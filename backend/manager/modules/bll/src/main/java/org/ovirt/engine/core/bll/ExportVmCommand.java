@@ -131,8 +131,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 if (images.containsKey(img.getId())) {
                     // check that no RAW format exists (we are in collapse
                     // mode)
-                    if (((DiskImage) images.get(img.getId())).getvolume_format() == VolumeFormat.RAW
-                            && img.getvolume_format() != VolumeFormat.RAW) {
+                    if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
+                            && img.getVolumeFormat() != VolumeFormat.RAW) {
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
                         return false;
                     }
@@ -230,11 +230,11 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             if (DiskStorageType.IMAGE == disk.getDiskStorageType() && !disk.isShareable()) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.setParentId(VmTemplateHandler.BlankVmTemplateId);
-                diskImage.setit_guid(VmTemplateHandler.BlankVmTemplateId);
-                diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+                diskImage.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
+                diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
-                diskImage.setvolume_format(diskForVolumeInfo.getvolume_format());
-                diskImage.setvolume_type(diskForVolumeInfo.getvolume_type());
+                diskImage.setvolumeFormat(diskForVolumeInfo.getVolumeFormat());
+                diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
                 VDSReturnValue vdsReturnValue = Backend
                             .getInstance()
                             .getResourceManager()
@@ -244,7 +244,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                                             .getId(), diskImage.getImageId()));
                 if (vdsReturnValue != null && vdsReturnValue.getSucceeded()) {
                     DiskImage fromVdsm = (DiskImage) vdsReturnValue.getReturnValue();
-                    diskImage.setactual_size(fromVdsm.getactual_size());
+                    diskImage.setActualSizeFromDiskImage(fromVdsm.getActualSizeFromDiskImage());
                 }
                 AllVmImages.add(diskImage);
             }
@@ -292,8 +292,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             tempVar.setEntityId(getParameters().getEntityId());
             tempVar.setUseCopyCollapse(getParameters().getCopyCollapse());
             DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
-            tempVar.setVolumeFormat(diskForVolumeInfo.getvolume_format());
-            tempVar.setVolumeType(diskForVolumeInfo.getvolume_type());
+            tempVar.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
+            tempVar.setVolumeType(diskForVolumeInfo.getVolumeType());
             tempVar.setCopyVolumeType(CopyVolumeType.LeafVol);
             tempVar.setForceOverride(getParameters().getForceOverride());
             MoveOrCopyImageGroupParameters p = tempVar;

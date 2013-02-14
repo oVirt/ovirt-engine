@@ -62,11 +62,11 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
             VmDevice vmDevice = findVmDeviceForDisk(disk.getId(), vmDiskDevices);
             if (vmDevice == null || vmDevice.getIsPlugged()) {
                 Map<String, String> drive = new HashMap<String, String>();
-                drive.put("domainID", disk.getstorage_ids().get(0).toString());
-                drive.put("poolID", disk.getstorage_pool_id().toString());
+                drive.put("domainID", disk.getStorageIds().get(0).toString());
+                drive.put("poolID", disk.getStoragePoolId().toString());
                 drive.put("volumeID", disk.getImageId().toString());
                 drive.put("imageID", disk.getId().toString());
-                drive.put("format", disk.getvolume_format().toString()
+                drive.put("format", disk.getVolumeFormat().toString()
                         .toLowerCase());
                 drive.put("propagateErrors", disk.getPropagateErrors().toString()
                         .toLowerCase());

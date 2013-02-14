@@ -144,7 +144,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         diskSizeLabel.asValueBox().setValue((new DiskSizeRenderer<Long>(DiskSizeUnit.GIGABYTE).render(
                 (Long) object.getSize().getEntity())));
 
-        object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getvolume_type());
+        object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
 
         sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
                 getStyle().setBorderColor("transparent"); //$NON-NLS-1$

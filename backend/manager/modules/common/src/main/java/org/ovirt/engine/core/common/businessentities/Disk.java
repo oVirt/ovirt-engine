@@ -78,7 +78,7 @@ public abstract class Disk extends BaseDisk {
         this.plugged = plugged;
     }
 
-    public abstract long getsize();
+    public abstract long getSize();
 
     @Override
     public int hashCode() {

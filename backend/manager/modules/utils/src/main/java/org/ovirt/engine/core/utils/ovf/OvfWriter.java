@@ -64,8 +64,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteStartElement("File");
             _writer.WriteAttributeString(OVF_URI, "href", OvfParser.CreateImageFile(image));
             _writer.WriteAttributeString(OVF_URI, "id", image.getImageId().toString());
-            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(image.getsize()));
-            _writer.WriteAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getdescription()));
+            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(image.getSize()));
+            _writer.WriteAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
             _writer.WriteEndElement();
 
         }
@@ -100,12 +100,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (DiskImage image : _images) {
             _writer.WriteStartElement("Disk");
             _writer.WriteAttributeString(OVF_URI, "diskId", image.getImageId().toString());
-            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getsize())));
+            _writer.WriteAttributeString(OVF_URI, "size", String.valueOf(BytesToGigabyte(image.getSize())));
             _writer.WriteAttributeString(OVF_URI,
                     "actual_size",
-                    String.valueOf(BytesToGigabyte(image.getactual_size())));
-            _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getvm_snapshot_id() != null) ? image
-                    .getvm_snapshot_id().getValue().toString() : "");
+                    String.valueOf(BytesToGigabyte(image.getActualSizeFromDiskImage())));
+            _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
+                    .getVmSnapshotId().getValue().toString() : "");
 
             if (image.getParentId().equals(Guid.Empty)) {
                 _writer.WriteAttributeString(OVF_URI, "parentRef", "");
@@ -125,7 +125,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteAttributeString(OVF_URI, "fileRef", OvfParser.CreateImageFile(image));
 
             String format = "";
-            switch (image.getvolume_format()) {
+            switch (image.getVolumeFormat()) {
             case RAW:
                 format = "http://www.vmware.com/specifications/vmdk.html#sparse";
                 break;
@@ -138,8 +138,8 @@ public abstract class OvfWriter implements IOvfBuilder {
                 break;
             }
             _writer.WriteAttributeString(OVF_URI, "format", format);
-            _writer.WriteAttributeString(OVF_URI, "volume-format", image.getvolume_format().toString());
-            _writer.WriteAttributeString(OVF_URI, "volume-type", image.getvolume_type().toString());
+            _writer.WriteAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
+            _writer.WriteAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
             _writer.WriteAttributeString(OVF_URI, "disk-interface", image.getDiskInterface().toString());
             _writer.WriteAttributeString(OVF_URI, "boot", String.valueOf(image.isBoot()));
             if (image.getDiskAlias() != null) {

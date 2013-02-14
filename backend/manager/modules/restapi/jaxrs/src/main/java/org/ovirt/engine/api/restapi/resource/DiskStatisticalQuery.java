@@ -31,8 +31,8 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
     public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.Disk i) {
         if (i.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage disk = (DiskImage) i;
-            return asList(setDatum(clone(DATA_READ), disk.getread_rate()),
-                      setDatum(clone(DATA_WRITE), disk.getwrite_rate()),
+            return asList(setDatum(clone(DATA_READ), disk.getReadRate()),
+                      setDatum(clone(DATA_WRITE), disk.getWriteRate()),
                       setDatum(clone(READ_LATENCY), disk.getReadLatency()==null ? 0.0 : disk.getReadLatency()),
                       setDatum(clone(WRITE_LATENCY), disk.getWriteLatency()==null ? 0.0 : disk.getWriteLatency()),
                       setDatum(clone(FLUSH_LATENCY), disk.getFlushLatency()==null ? 0.0 : disk.getFlushLatency()));

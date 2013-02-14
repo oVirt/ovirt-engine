@@ -290,11 +290,11 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         List<DiskImage> diskList = new ArrayList<DiskImage>();
         DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.NewGuid());
-        diskImage.setstorage_ids(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<Guid>());
         diskList.add(diskImage);
         diskImage = new DiskImage();
         diskImage.setId(Guid.NewGuid());
-        diskImage.setstorage_ids(new ArrayList<Guid>());
+        diskImage.setStorageIds(new ArrayList<Guid>());
         diskList.add(diskImage);
         return diskList;
     }
@@ -304,12 +304,12 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         DiskImage diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
         diskImageTemplate.setImageId(Guid.NewGuid());
-        diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
+        diskImageTemplate.setStorageIds(new ArrayList<Guid>());
         diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         diskImageTemplate = new DiskImage();
         diskImageTemplate.setId(Guid.NewGuid());
         diskImageTemplate.setImageId(Guid.NewGuid());
-        diskImageTemplate.setstorage_ids(new ArrayList<Guid>());
+        diskImageTemplate.setStorageIds(new ArrayList<Guid>());
         diskTemplateList.put(diskImageTemplate.getId(), diskImageTemplate);
         return diskTemplateList;
     }

@@ -30,7 +30,7 @@ public class ChangeQuotaModel extends ListModel {
             }
             storageDomainIdMap.put(diskImage.getId(), new ArrayList<Quota>());
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
-            queryParamsList.add(new GetAllRelevantQuotasForStorageParameters(diskImage.getstorage_ids().get(0)));
+            queryParamsList.add(new GetAllRelevantQuotasForStorageParameters(diskImage.getStorageIds().get(0)));
         }
 
         Frontend.RunMultipleQueries(queryTypeList, queryParamsList, new IFrontendMultipleQueryAsyncCallback() {
@@ -50,7 +50,7 @@ public class ChangeQuotaModel extends ListModel {
                     itemModel.setEntity(diskImage);
                     itemModel.getObject().setEntity(diskImage.getDiskAlias());
                     itemModel.getCurrentQuota().setEntity(diskImage.getQuotaName());
-                    itemModel.getQuota().setItems(storageDomainIdMap.get(diskImage.getstorage_ids().get(0)));
+                    itemModel.getQuota().setItems(storageDomainIdMap.get(diskImage.getStorageIds().get(0)));
                     for (Quota quota : (ArrayList<Quota>) itemModel.getQuota().getItems()) {
                         if (!quota.getId().equals(diskImage.getQuotaId())) {
                             itemModel.getQuota().setSelectedItem(quota);

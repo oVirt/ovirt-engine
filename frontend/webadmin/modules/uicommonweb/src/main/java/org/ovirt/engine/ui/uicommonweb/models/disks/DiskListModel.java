@@ -309,8 +309,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         if (isInternal) {
             DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
             diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
-            diskImage.setvolume_format(model.getVolumeFormat());
+            diskImage.setVolumeType((VolumeType) model.getVolumeType().getSelectedItem());
+            diskImage.setvolumeFormat(model.getVolumeFormat());
             if (model.getQuota().getIsAvailable()) {
                 diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
             }
@@ -510,8 +510,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             VdcActionParametersBase parameters =
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
-                            disk.getstorage_ids().get(0),
-                            disk.getstorage_pool_id().getValue());
+                            disk.getStorageIds().get(0),
+                            disk.getStoragePoolId().getValue());
             paramerterList.add(parameters);
         }
 
@@ -659,7 +659,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             return false;
         }
 
-        NGuid datacenterId = ((DiskImage) firstDisk).getstorage_pool_id();
+        NGuid datacenterId = ((DiskImage) firstDisk).getStoragePoolId();
 
         for (Disk disk : disks)
         {
@@ -671,7 +671,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             if (disk.getDiskStorageType() != DiskStorageType.IMAGE ||
                     diskImage.getImageStatus() != ImageStatus.OK ||
                     disk.getVmEntityType() == VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(diskImage.getstorage_pool_id()))
+                    !datacenterId.equals(diskImage.getStoragePoolId()))
             {
                 return false;
             }
@@ -689,13 +689,13 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             return false;
         }
 
-        NGuid datacenterId = ((DiskImage) firstDisk).getstorage_pool_id();
+        NGuid datacenterId = ((DiskImage) firstDisk).getStoragePoolId();
 
         for (Disk disk : disks)
         {
             DiskImage diskImage = (DiskImage) disk;
             if (diskImage.getImageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(diskImage.getstorage_pool_id()))
+                    !datacenterId.equals(diskImage.getStoragePoolId()))
             {
                 return false;
             }

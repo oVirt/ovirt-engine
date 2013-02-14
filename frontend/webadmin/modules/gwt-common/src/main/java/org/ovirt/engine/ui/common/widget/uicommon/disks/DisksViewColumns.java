@@ -116,7 +116,7 @@ public class DisksViewColumns {
         @Override
         protected Long getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getsize() :
+                    ((DiskImage) object).getSize() :
                     (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
         }
     };
@@ -134,7 +134,7 @@ public class DisksViewColumns {
         @Override
         protected VolumeType getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getvolume_type() : null;
+                    ((DiskImage) object).getVolumeType() : null;
         }
     };
 
@@ -149,7 +149,7 @@ public class DisksViewColumns {
         @Override
         protected Date getRawValue(Disk object) {
             return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getcreation_date() : null;
+                    ((DiskImage) object).getCreationDate() : null;
         }
     };
 

@@ -72,7 +72,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends GetVmConfigurationBySna
         // OvfReader sets disks as active during import which is required by VmHandler.updateDisksForVm to prepare the
         // VM disks.
         for (DiskImage currDisk : disks) {
-            currDisk.setactive(true);
+            currDisk.setActive(true);
         }
 
         return vm;

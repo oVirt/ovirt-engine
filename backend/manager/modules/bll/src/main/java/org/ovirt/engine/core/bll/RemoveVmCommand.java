@@ -327,7 +327,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                         disk.getQuotaId(),
                         null,
                         QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                        disk.getstorage_ids().get(0),
+                        disk.getStorageIds().get(0),
                         (double)disk.getSizeInGigabytes()));
             }
         }

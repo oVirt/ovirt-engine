@@ -115,7 +115,7 @@ public class UpdateVmDiskCommandTest {
         parameters.setDiskInfo(createShareableDisk(VolumeFormat.RAW));
 
         DiskImage oldDisk = createDiskImage();
-        oldDisk.setvm_snapshot_id(Guid.NewGuid());
+        oldDisk.setVmSnapshotId(Guid.NewGuid());
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
         initializeCommand(parameters);
@@ -123,7 +123,7 @@ public class UpdateVmDiskCommandTest {
         mockVmStatusDown();
 
         assertTrue(command.canDoAction());
-        assertTrue(oldDisk.getvm_snapshot_id() == null);
+        assertTrue(oldDisk.getVmSnapshotId() == null);
     }
 
     private void initializeCommand() {
@@ -242,7 +242,7 @@ public class UpdateVmDiskCommandTest {
      */
     private DiskImage createShareableDisk(VolumeFormat volumeFormat) {
         DiskImage disk = createDiskImage();
-        disk.setvolume_format(volumeFormat);
+        disk.setvolumeFormat(volumeFormat);
         disk.setShareable(true);
         return disk;
     }
@@ -256,7 +256,7 @@ public class UpdateVmDiskCommandTest {
         disk.setImageId(diskImageGuid);
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setPlugged(false);
-        disk.setactive(true);
+        disk.setActive(true);
         disk.setId(diskImageGuid);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;

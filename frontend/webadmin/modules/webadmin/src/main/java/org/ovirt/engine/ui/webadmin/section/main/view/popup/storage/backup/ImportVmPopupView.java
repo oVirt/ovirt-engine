@@ -406,7 +406,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getsize();
+                return object.getSize();
             }
         };
         diskTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "100px"); //$NON-NLS-1$
@@ -414,7 +414,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getactual_size();
+                return object.getActualSizeFromDiskImage();
             }
         };
         diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "100px"); //$NON-NLS-1$
@@ -422,7 +422,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
-                return object.getcreation_date();
+                return object.getCreationDate();
             }
         };
         diskTable.addColumn(dateCreatedColumn, constants.dateCreatedInterface(), "100px"); //$NON-NLS-1$

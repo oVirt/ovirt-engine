@@ -193,7 +193,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             return failVmFree(messages, spUpResult.getMessage().name());
         }
 
-        Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
+        Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getStorageIds().get(0) : Guid.Empty;
         if (!Guid.Empty.equals(storageDomainId)) {
             StorageDomainValidator storageDomainValidator =
                     new StorageDomainValidator(DbFacade.getInstance()

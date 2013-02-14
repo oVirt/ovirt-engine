@@ -105,8 +105,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             for (DiskImage image : images) {
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(getParameters().getStorageDomainId());
-                image.setstorage_ids(storageIds);
-                image.setstorage_pool_id(getParameters().getStoragePoolId());
+                image.setStorageIds(storageIds);
+                image.setStoragePoolId(getParameters().getStoragePoolId());
             }
             RemoveAllVmImagesParameters tempVar2 = new RemoveAllVmImagesParameters(getVmId(), images);
             tempVar2.setParentCommand(getActionType());

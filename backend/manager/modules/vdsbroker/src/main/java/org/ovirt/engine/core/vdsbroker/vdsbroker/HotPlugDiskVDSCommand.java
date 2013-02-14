@@ -47,9 +47,9 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            drive.add(VdsProperties.Format, diskImage.getvolume_format().toString().toLowerCase());
-            drive.add(VdsProperties.DomainId, diskImage.getstorage_ids().get(0).toString());
-            drive.add(VdsProperties.PoolId, diskImage.getstorage_pool_id().toString());
+            drive.add(VdsProperties.Format, diskImage.getVolumeFormat().toString().toLowerCase());
+            drive.add(VdsProperties.DomainId, diskImage.getStorageIds().get(0).toString());
+            drive.add(VdsProperties.PoolId, diskImage.getStoragePoolId().toString());
             drive.add(VdsProperties.VolumeId, diskImage.getImageId().toString());
             drive.add(VdsProperties.ImageId, diskImage.getId().toString());
             drive.add(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());

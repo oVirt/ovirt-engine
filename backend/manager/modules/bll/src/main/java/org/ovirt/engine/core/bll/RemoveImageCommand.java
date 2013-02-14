@@ -58,15 +58,15 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
 
     protected void initStoragePoolId() {
         if (getStoragePoolId() == null || Guid.Empty.equals(getStoragePoolId())) {
-            setStoragePoolId(getDiskImage() != null && getDiskImage().getstorage_pool_id() != null ? getDiskImage()
-                    .getstorage_pool_id().getValue() : Guid.Empty);
+            setStoragePoolId(getDiskImage() != null && getDiskImage().getStoragePoolId() != null ? getDiskImage()
+                    .getStoragePoolId().getValue() : Guid.Empty);
         }
     }
 
     protected void initStorageDomainId() {
         if ((getParameters().getStorageDomainId() == null || Guid.Empty.equals(getParameters().getStorageDomainId()))
                 && getDiskImage() != null) {
-            setStorageDomainId(getDiskImage().getstorage_ids().get(0));
+            setStorageDomainId(getDiskImage().getStorageIds().get(0));
         }
     }
 
@@ -116,7 +116,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         @Override
                         public Object runInTransaction() {
                             getDiskImageDynamicDAO().remove(diskImage.getImageId());
-                            Guid imageTemplate = diskImage.getit_guid();
+                            Guid imageTemplate = diskImage.getImageTemplateId();
                             Guid currentGuid = diskImage.getImageId();
                             // next 'while' statement removes snapshots from DB only (the
                             // 'DeleteImageGroup'
@@ -205,7 +205,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         List<Snapshot> result = new LinkedList<Snapshot>();
         List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
-            NGuid vmSnapshotId = snapshotDisk.getvm_snapshot_id();
+            NGuid vmSnapshotId = snapshotDisk.getVmSnapshotId();
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId.getValue())) {
                 Snapshot updated =
                         prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId.getValue(),
@@ -297,7 +297,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         // status was already changed to lock.
         freeLock();
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id().getValue(),
+                new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId().getValue(),
                         getStorageDomainId().getValue(), getDiskImage().getId()
                                 .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
                                 .getForceDelete(), getStoragePool().getcompatibility_version().toString()));

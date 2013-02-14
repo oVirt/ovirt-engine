@@ -365,7 +365,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     disk.getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getstorage_ids().get(0),
+                    disk.getStorageIds().get(0),
                     disk.getActualSize()));
         }
 

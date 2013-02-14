@@ -35,7 +35,7 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     @Override
     protected DiskImage cloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.cloneDiskImage(newImageGuid);
-        returnValue.setit_guid(getImage().getImageId());
+        returnValue.setImageTemplateId(getImage().getImageId());
         return returnValue;
     }
 

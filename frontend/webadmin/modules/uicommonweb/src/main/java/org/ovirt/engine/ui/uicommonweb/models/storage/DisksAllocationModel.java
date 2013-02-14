@@ -199,7 +199,7 @@ public class DisksAllocationModel extends EntityModel
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
             ArrayList<Guid> storageIdList = new ArrayList<Guid>();
             storageIdList.add(storageId);
-            diskImage.setstorage_ids(storageIdList);
+            diskImage.setStorageIds(storageIdList);
             diskImage.setDiskAlias((String) diskModel.getAlias().getEntity());
 
             if (diskModel.getQuota().getSelectedItem() != null) {

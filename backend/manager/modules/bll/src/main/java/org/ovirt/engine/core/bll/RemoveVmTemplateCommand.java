@@ -169,9 +169,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         Set<Guid> domainsList = new HashSet<Guid>();
         if (disks != null) {
             for (DiskImage disk : disks) {
-                domainsList.addAll(disk.getstorage_ids());
+                domainsList.addAll(disk.getStorageIds());
                 if (isFillStorageTodDiskMap) {
-                    for (Guid storageDomainId : disk.getstorage_ids()) {
+                    for (Guid storageDomainId : disk.getStorageIds()) {
                         MultiValueMapUtils.addToMap(storageDomainId, disk, storageToDisksMap);
                     }
                 }
@@ -282,7 +282,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                             disk.getQuotaId(),
                             null,
                             QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                            disk.getstorage_ids().get(0),
+                            disk.getStorageIds().get(0),
                             (double) disk.getSizeInGigabytes()));
                 }
             }

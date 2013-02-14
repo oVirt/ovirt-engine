@@ -52,8 +52,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
         super.setVmId(parameters.getContainerId());
-        if (getDiskImage() != null && getDiskImage().getstorage_pool_id() != null) {
-            setStoragePoolId(getDiskImage().getstorage_pool_id().getValue());
+        if (getDiskImage() != null && getDiskImage().getStoragePoolId() != null) {
+            setStoragePoolId(getDiskImage().getStoragePoolId().getValue());
         }
     }
 
@@ -156,12 +156,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void checkImageValidity() {
         try {
             DiskImage diskImage = getImage();
-            Guid storagePoolId = diskImage.getstorage_pool_id() != null ? diskImage.getstorage_pool_id().getValue()
+            Guid storagePoolId = diskImage.getStoragePoolId() != null ? diskImage.getStoragePoolId().getValue()
                     : Guid.Empty;
             Guid storageDomainId =
                     getStorageDomainId() != null && !getStorageDomainId().getValue().equals(Guid.Empty) ? getStorageDomainId()
                             .getValue()
-                            : diskImage.getstorage_ids() != null && diskImage.getstorage_ids().size() > 0 ? diskImage.getstorage_ids()
+                            : diskImage.getStorageIds() != null && diskImage.getStorageIds().size() > 0 ? diskImage.getStorageIds()
                                     .get(0)
                                     : Guid.Empty;
             Guid imageGroupId = diskImage.getId() != null ? diskImage.getId().getValue()
@@ -178,7 +178,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
 
-            diskImage.setlastModified(image.getlast_modified_date());
+            diskImage.setLastModified(image.getLastModifiedDate());
         } catch (RuntimeException ex) {
             if (ex instanceof VdcBLLException) {
                 throw ex;
@@ -257,9 +257,9 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
         retDiskImage.setImageId(newImageGuid);
         retDiskImage.setParentId(getDiskImage().getImageId());
-        retDiskImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+        retDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         retDiskImage.setId(getImageGroupId());
-        retDiskImage.setlast_modified_date(new Date());
+        retDiskImage.setLastModifiedDate(new Date());
         retDiskImage.setQuotaId(getParameters().getQuotaId());
         retDiskImage.setDiskAlias(getParameters().getDiskAlias());
         return retDiskImage;
@@ -272,12 +272,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
       *            the IRS disk image.
       */
     protected void completeImageData(DiskImage fromIRS) {
-        getDestinationDiskImage().setcreation_date(fromIRS.getcreation_date());
-        getDestinationDiskImage().setlast_modified_date(fromIRS.getlast_modified_date());
-        getDestinationDiskImage().setlastModified(getDestinationDiskImage().getlast_modified_date());
+        getDestinationDiskImage().setCreationDate(fromIRS.getCreationDate());
+        getDestinationDiskImage().setLastModifiedDate(fromIRS.getLastModifiedDate());
+        getDestinationDiskImage().setLastModified(getDestinationDiskImage().getLastModifiedDate());
         DiskImageDynamic destinationDiskDynamic = getDiskImageDynamicDAO().get(getDestinationDiskImage().getImageId());
         if (destinationDiskDynamic != null) {
-            destinationDiskDynamic.setactual_size(fromIRS.getactual_size());
+            destinationDiskDynamic.setactual_size(fromIRS.getActualSizeFromDiskImage());
             getDiskImageDynamicDAO().update(destinationDiskDynamic);
         }
     }
@@ -290,14 +290,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
-        image.setactive(true);
+        image.setActive(true);
         getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
-        diskDynamic.setactual_size(image.getactual_size());
+        diskDynamic.setactual_size(image.getActualSizeFromDiskImage());
         getDiskImageDynamicDAO().save(diskDynamic);
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
-                image.getstorage_ids().get(0));
+                image.getStorageIds().get(0));
         getImageStorageDomainMapDao().save(image_storage_domain_map);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
@@ -364,13 +364,13 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     @Override
     protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
-            Guid storagePoolId = getDestinationDiskImage().getstorage_pool_id() != null ? getDestinationDiskImage()
-                    .getstorage_pool_id().getValue() : Guid.Empty;
+            Guid storagePoolId = getDestinationDiskImage().getStoragePoolId() != null ? getDestinationDiskImage()
+                    .getStoragePoolId().getValue() : Guid.Empty;
 
             Guid newImageGroupId = getDestinationDiskImage().getId() != null ? getDestinationDiskImage()
                     .getId().getValue() : Guid.Empty;
             Guid newImageId = getDestinationDiskImage().getImageId();
-            Guid newStorageDomainID = getDestinationDiskImage().getstorage_ids().get(0);
+            Guid newStorageDomainID = getDestinationDiskImage().getStorageIds().get(0);
 
             // complete IRS data to DB disk image:
             DiskImage newImageIRS = (DiskImage) runVdsCommand(
@@ -428,7 +428,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     static public image_storage_domain_map saveImage(DiskImage diskImage) {
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
         image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(diskImage.getImageId(),
-                diskImage.getstorage_ids()
+                diskImage.getStorageIds()
                         .get(0));
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()

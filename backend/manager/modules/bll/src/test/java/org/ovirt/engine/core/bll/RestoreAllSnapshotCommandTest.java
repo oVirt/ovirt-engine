@@ -128,7 +128,7 @@ public class RestoreAllSnapshotCommandTest {
     private List<DiskImage> createDiskImageList() {
         DiskImage disk = new DiskImage();
         disk.setImageId(diskImageId);
-        disk.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+        disk.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
         List<DiskImage> diskImageList = new ArrayList<DiskImage>();
         diskImageList.add(disk);
         return diskImageList;
@@ -173,7 +173,7 @@ public class RestoreAllSnapshotCommandTest {
     private void mockDiskImageDao() {
         List<Disk> diskImageList = new ArrayList<Disk>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
         diskImageList.add(diskImage);
         doReturn(diskDao).when(spyCommand).getDiskDao();
         when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);

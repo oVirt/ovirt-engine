@@ -129,7 +129,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getsize();
+                return object.getSize();
             }
         };
         disksTable.addColumn(sizeColumn, constants.provisionedSizeDisk());
@@ -137,7 +137,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
-                return object.getactual_size();
+                return object.getActualSizeFromDiskImage();
             }
         };
         disksTable.addColumn(actualSizeColumn, constants.sizeDisk());
@@ -145,7 +145,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
-                return VolumeType.forValue(object.getvolume_type().getValue());
+                return VolumeType.forValue(object.getVolumeType().getValue());
             }
         };
         disksTable.addColumn(allocationColumn, constants.allocationDisk(), "60px"); //$NON-NLS-1$
@@ -169,7 +169,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
-                return object.getcreation_date();
+                return object.getCreationDate();
             }
         };
         disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "80px"); //$NON-NLS-1$

@@ -352,12 +352,12 @@ public class VmBackupModel extends ManageBackupModel {
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
-                disk.setvolume_format(
+                disk.setvolumeFormat(
                         AsyncDataProvider.GetDiskVolumeFormat(
                                 importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 importModel.getDiskImportData(
                                         disk.getId()).getSelectedStorageDomain().getStorageType()));
-                disk.setvolume_type(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
+                disk.setVolumeType(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
 
                 if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
                     disk.setQuotaId(

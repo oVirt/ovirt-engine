@@ -58,7 +58,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
 
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
                 .getValue()
-                : getDiskImage().getstorage_ids().get(0);
+                : getDiskImage().getStorageIds().get(0);
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
@@ -86,7 +86,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         } else {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.MoveImageGroup,
-                    new MoveImageGroupVDSCommandParameters(getDiskImage().getstorage_pool_id()
+                    new MoveImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId()
                             .getValue(),
                             sourceDomainId,
                             getDiskImage()
@@ -157,7 +157,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
             setSnapshotForShareableDisk(snapshots);
             for (DiskImage snapshot : snapshots) {
                 getImageStorageDomainMapDao().remove
-                        (new ImageStorageDomainMapId(snapshot.getImageId(), snapshot.getstorage_ids().get(0)));
+                        (new ImageStorageDomainMapId(snapshot.getImageId(), snapshot.getStorageIds().get(0)));
                 getImageStorageDomainMapDao().save
                         (new image_storage_domain_map(snapshot.getImageId(), getParameters().getStorageDomainId()));
             }

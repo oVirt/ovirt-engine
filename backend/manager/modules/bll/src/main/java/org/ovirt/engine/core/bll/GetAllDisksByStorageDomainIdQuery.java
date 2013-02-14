@@ -24,7 +24,7 @@ public class GetAllDisksByStorageDomainIdQuery<P extends StorageDomainQueryParam
 
         // Get active diskImages
         for (DiskImage diskImage : diskImages) {
-            if (diskImage.getactive()) {
+            if (diskImage.getActive()) {
                 diskImage.getSnapshots().add(diskImage);
                 diskImagesMap.put(diskImage.getId(), diskImage);
             }
@@ -32,7 +32,7 @@ public class GetAllDisksByStorageDomainIdQuery<P extends StorageDomainQueryParam
 
         // Update diskImages' snapshots
         for (DiskImage diskImage : diskImages) {
-            if (!diskImage.getactive()) {
+            if (!diskImage.getActive()) {
                 DiskImage activeImage = diskImagesMap.get(diskImage.getId());
                 if (activeImage != null) {
                     activeImage.getSnapshots().add(diskImage);

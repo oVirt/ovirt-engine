@@ -47,8 +47,8 @@ public class GetDiskConfigurationListQueryTest extends AbstractUserQueryTest<Vdc
             DiskImageBase expectedDisk = expectedDisks[i];
             disksConfigurtaion.add(
                     StringUtils.join(Arrays.asList("label" + i,
-                            expectedDisk.getvolume_type(),
-                            expectedDisk.getvolume_format(),
+                            expectedDisk.getVolumeType(),
+                            expectedDisk.getVolumeFormat(),
                             expectedDisk.isWipeAfterDelete()),
                             ',')
                     );
@@ -67,8 +67,8 @@ public class GetDiskConfigurationListQueryTest extends AbstractUserQueryTest<Vdc
             DiskImageBase expectedDisk = expectedDisks[i];
             DiskImageBase actualDisk = result.get(i);
 
-            assertEquals("Wrong volume type", expectedDisk.getvolume_type(), actualDisk.getvolume_type());
-            assertEquals("Wrong volume format", expectedDisk.getvolume_format(), actualDisk.getvolume_format());
+            assertEquals("Wrong volume type", expectedDisk.getVolumeType(), actualDisk.getVolumeType());
+            assertEquals("Wrong volume format", expectedDisk.getVolumeFormat(), actualDisk.getVolumeFormat());
             assertEquals("Wrong wipe after delete flag",
                     expectedDisk.isWipeAfterDelete(),
                     actualDisk.isWipeAfterDelete());
@@ -78,8 +78,8 @@ public class GetDiskConfigurationListQueryTest extends AbstractUserQueryTest<Vdc
     /** @return A randomly generate {@link DiskImageBase} */
     private static DiskImageBase nextDiskImageBase() {
         DiskImageBase disk = new DiskImageBase();
-        disk.setvolume_type(RandomUtils.instance().nextEnum(VolumeType.class));
-        disk.setvolume_format(RandomUtils.instance().nextEnum(VolumeFormat.class));
+        disk.setVolumeType(RandomUtils.instance().nextEnum(VolumeType.class));
+        disk.setvolumeFormat(RandomUtils.instance().nextEnum(VolumeFormat.class));
         disk.setWipeAfterDelete(RandomUtils.instance().nextBoolean());
         return disk;
     }

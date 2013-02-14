@@ -95,10 +95,10 @@ public class BackendTemplatesResource
                         && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
                     DiskImage diskImage = new DiskImage();
                     diskImage.setId(asGuid(disk.getId()));
-                    diskImage.setstorage_ids(new ArrayList<Guid>());
+                    diskImage.setStorageIds(new ArrayList<Guid>());
                     Guid newStorageDomainId = isDomainSet ? storageDomainId : asGuid(disk.getStorageDomains()
                             .getStorageDomains().get(0).getId());
-                    diskImage.getstorage_ids().add(newStorageDomainId);
+                    diskImage.getStorageIds().add(newStorageDomainId);
                     diskToDestinationMap.put(diskImage.getId(), diskImage);
                 }
             }

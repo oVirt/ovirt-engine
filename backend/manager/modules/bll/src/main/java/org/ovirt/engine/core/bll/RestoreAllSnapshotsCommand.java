@@ -246,13 +246,13 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         for (DiskImage image : images) {
             DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
-            NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
+            NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
                 snapshotsToRemove.add(snapshotToRemove.getValue());
 
                 parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
-                snapshotToRemove = (parentImage == null) ? null : parentImage.getvm_snapshot_id();
+                snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
             }
         }
     }
@@ -358,14 +358,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         if (disks != null && !disks.isEmpty()) {
             // TODO: need to be fixed. sp id should be available
-            setStoragePoolId(disks.get(0).getstorage_pool_id());
+            setStoragePoolId(disks.get(0).getStoragePoolId());
 
             for (DiskImage image : disks) {
                 if (!image.getImage().isActive() && image.getQuotaId() != null
                         && !Guid.Empty.equals(image.getQuotaId())) {
                     list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
                             QuotaConsumptionParameter.QuotaAction.RELEASE,
-                            image.getstorage_ids().get(0),
+                            image.getStorageIds().get(0),
                             image.getActualSize()));
                 }
             }

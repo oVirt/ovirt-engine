@@ -336,8 +336,8 @@ public class TemplateDiskListModel extends SearchableListModel
             VdcActionParametersBase parameters =
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
-                            disk.getstorage_ids().get(0),
-                            disk.getstorage_pool_id().getValue());
+                            disk.getStorageIds().get(0),
+                            disk.getStoragePoolId().getValue());
             paramerterList.add(parameters);
         }
 

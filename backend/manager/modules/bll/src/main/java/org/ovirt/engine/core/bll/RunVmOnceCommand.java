@@ -87,7 +87,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
             for (DiskImage image : getVm().getDiskList()) {
                 list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
                         QuotaConsumptionParameter.QuotaAction.CONSUME,
-                        image.getstorage_ids().get(0), image.getActualSize()));
+                        image.getStorageIds().get(0), image.getActualSize()));
             }
         }
         return list;

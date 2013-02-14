@@ -68,7 +68,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         if (storageDomainId == null) {
             // This is needed for logging the command using CommandBase.logCommand
             List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(sourceSnapshotId);
-            storageDomainId = (!images.isEmpty()) ? images.get(0).getstorage_ids().get(0) : Guid.Empty;
+            storageDomainId = (!images.isEmpty()) ? images.get(0).getStorageIds().get(0) : Guid.Empty;
         }
         return storageDomainId;
     }
@@ -129,8 +129,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                         }
                     } else {// Only legal images can be copied
                         copyDiskImage(diskImage,
-                                diskImage.getstorage_ids().get(0),
-                                diskInfoDestinationMap.get(diskImage.getId()).getstorage_ids().get(0),
+                                diskImage.getStorageIds().get(0),
+                                diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
                                 VdcActionType.AddVmFromSnapshot);
                         numberOfStartedCopyTasks++;
                     }
@@ -174,12 +174,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     private boolean volumeInfoChanged(DiskImage diskImageFromClient, DiskImage srcDiskImage) {
-        return (diskImageFromClient.getvolume_format() != srcDiskImage.getvolume_format() || diskImageFromClient.getvolume_type() != srcDiskImage.getvolume_type());
+        return (diskImageFromClient.getVolumeFormat() != srcDiskImage.getVolumeFormat() || diskImageFromClient.getVolumeType() != srcDiskImage.getVolumeType());
     }
 
     protected void changeVolumeInfo(DiskImage clonedDiskImage, DiskImage diskImageFromClient) {
-        clonedDiskImage.setvolume_format(diskImageFromClient.getvolume_format());
-        clonedDiskImage.setvolume_type(diskImageFromClient.getvolume_type());
+        clonedDiskImage.setvolumeFormat(diskImageFromClient.getVolumeFormat());
+        clonedDiskImage.setVolumeType(diskImageFromClient.getVolumeType());
     }
 
     protected Collection<DiskImage> getDiskImagesFromConfiguration() {
@@ -213,7 +213,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 diskImage.setImageId(Guid.NewGuid());
                 diskImage.setId(Guid.NewGuid());
                 diskImage.setParentId(Guid.Empty);
-                diskImage.setit_guid(Guid.Empty);
+                diskImage.setImageTemplateId(Guid.Empty);
                 ImagesHandler.setDiskAlias(diskImage, getVm());
                 ImagesHandler.addDiskImage(diskImage, getVmId());
                 return null;
@@ -316,7 +316,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         int result = 0;
         for (DiskImage img : getDiskImagesFromConfiguration()) {
             if (img.getImageStatus() != ImageStatus.ILLEGAL) {
-                if (img.getstorage_ids().get(0).getValue().equals(storageDomainId)) {
+                if (img.getStorageIds().get(0).getValue().equals(storageDomainId)) {
                     result = result + (int) Math.ceil(img.getActualSize());
                 }
             }
@@ -348,7 +348,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
         return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
-                .getstorage_ids()
+                .getStorageIds()
                 .get(0))
                 .getStorageStaticData(),
                 diskImage,

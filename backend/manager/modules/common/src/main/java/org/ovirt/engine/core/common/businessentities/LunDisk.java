@@ -59,7 +59,7 @@ public class LunDisk extends Disk {
     }
 
     @Override
-    public long getsize() {
+    public long getSize() {
         return lun.getDeviceSize();
     }
 

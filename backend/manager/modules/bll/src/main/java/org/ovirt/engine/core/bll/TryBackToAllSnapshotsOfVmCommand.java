@@ -234,7 +234,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         List<Guid> snapshotIds = LinqUtils.foreach(diskImages, new Function<DiskImage, Guid>() {
             @Override
             public Guid eval(DiskImage disk) {
-                return disk.getvm_snapshot_id().getValue();
+                return disk.getVmSnapshotId().getValue();
             }
         });
         if (snapshotIds.contains(getParameters().getDstSnapshotId())) {

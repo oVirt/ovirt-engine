@@ -96,11 +96,11 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
 
     static org.ovirt.engine.core.common.businessentities.Disk setUpEntityExpectations(DiskImage entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getvm_snapshot_id()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getvolume_format()).andReturn(VolumeFormat.RAW).anyTimes();
+        expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
+        expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
         expect(entity.getDiskInterface()).andReturn(DiskInterface.VirtIO).anyTimes();
         expect(entity.getImageStatus()).andReturn(ImageStatus.OK).anyTimes();
-        expect(entity.getvolume_type()).andReturn(VolumeType.Sparse).anyTimes();
+        expect(entity.getVolumeType()).andReturn(VolumeType.Sparse).anyTimes();
         expect(entity.isBoot()).andReturn(false).anyTimes();
         expect(entity.isShareable()).andReturn(false).anyTimes();
         expect(entity.getPropagateErrors()).andReturn(PropagateErrors.On).anyTimes();
@@ -110,8 +110,8 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     }
 
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        expect(entity.getread_rate()).andReturn(1).anyTimes();
-        expect(entity.getwrite_rate()).andReturn(2).anyTimes();
+        expect(entity.getReadRate()).andReturn(1).anyTimes();
+        expect(entity.getWriteRate()).andReturn(2).anyTimes();
         expect(entity.getReadLatency()).andReturn(3.0).anyTimes();
         expect(entity.getWriteLatency()).andReturn(4.0).anyTimes();
         expect(entity.getFlushLatency()).andReturn(5.0).anyTimes();

@@ -213,7 +213,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 diskInfoDestinationMap);
         List<Guid> storageIds = new ArrayList<Guid>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            Guid storageId = diskImage.getstorage_ids().get(0);
+            Guid storageId = diskImage.getStorageIds().get(0);
             if (!storageIds.contains(storageId) && !areTemplateImagesInStorageReady(storageId)) {
                 return false;
             }
@@ -274,7 +274,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(storageId);
                 for (DiskImage image : getVmTemplate().getDiskMap().values()) {
-                    image.setstorage_ids(storageIds);
+                    image.setStorageIds(storageIds);
                     diskInfoDestinationMap.put(image.getId(), image);
                 }
             } else {
@@ -296,7 +296,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         boolean retValue = true;
         List<Guid> validDomains = new ArrayList<Guid>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            Guid domainId = diskImage.getstorage_ids().get(0);
+            Guid domainId = diskImage.getStorageIds().get(0);
             if (validDomains.contains(domainId)) {
                 continue;
             }
@@ -378,7 +378,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     disk.getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    disk.getstorage_ids().get(0),
+                    disk.getStorageIds().get(0),
                     (double)(disk.getSizeInGigabytes() * getParameters().getVmsCount()
                             * getBlockSparseInitSizeInGB())));
         }

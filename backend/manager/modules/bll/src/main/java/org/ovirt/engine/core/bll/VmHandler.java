@@ -254,7 +254,7 @@ public class VmHandler {
         for (Disk disk : diskList) {
             if (disk.isAllowSnapshot()) {
                 DiskImage image = (DiskImage) disk;
-                if (image.getactive() != null && image.getactive()) {
+                if (image.getActive() != null && image.getActive()) {
                     vm.getDiskMap().put(image.getId(), image);
                     vm.getDiskList().add(image);
                 }

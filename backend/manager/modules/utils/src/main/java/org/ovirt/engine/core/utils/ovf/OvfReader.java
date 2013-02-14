@@ -107,34 +107,34 @@ public abstract class OvfReader implements IOvfBuilder {
             });
 
             if (node.Attributes.get("ovf:vm_snapshot_id") != null) {
-                image.setvm_snapshot_id(new Guid(node.Attributes.get("ovf:vm_snapshot_id").getValue()));
+                image.setVmSnapshotId(new Guid(node.Attributes.get("ovf:vm_snapshot_id").getValue()));
             }
 
             if (!StringUtils.isEmpty(node.Attributes.get("ovf:size").getValue())) {
-                image.setsize(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
+                image.setSize(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:size").getValue())));
             }
             if (!StringUtils.isEmpty(node.Attributes.get("ovf:actual_size").getValue())) {
-                image.setactual_size(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
+                image.setActualSizeFromDiskImage(convertGigabyteToBytes(Long.parseLong(node.Attributes.get("ovf:actual_size").getValue())));
             }
             if (node.Attributes.get("ovf:volume-format") != null) {
                 if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-format").getValue())) {
-                    image.setvolume_format(VolumeFormat.valueOf(node.Attributes.get("ovf:volume-format").getValue()));
+                    image.setvolumeFormat(VolumeFormat.valueOf(node.Attributes.get("ovf:volume-format").getValue()));
                 } else {
-                    image.setvolume_format(VolumeFormat.Unassigned);
+                    image.setvolumeFormat(VolumeFormat.Unassigned);
                 }
             }
             else {
-                image.setvolume_format(VolumeFormat.Unassigned);
+                image.setvolumeFormat(VolumeFormat.Unassigned);
             }
             if (node.Attributes.get("ovf:volume-type") != null) {
                 if (!StringUtils.isEmpty(node.Attributes.get("ovf:volume-type").getValue())) {
-                    image.setvolume_type(VolumeType.valueOf(node.Attributes.get("ovf:volume-type").getValue()));
+                    image.setVolumeType(VolumeType.valueOf(node.Attributes.get("ovf:volume-type").getValue()));
                 } else {
-                    image.setvolume_type(VolumeType.Unassigned);
+                    image.setVolumeType(VolumeType.Unassigned);
                 }
             }
             else {
-                image.setvolume_type(VolumeType.Unassigned);
+                image.setVolumeType(VolumeType.Unassigned);
             }
             if (node.Attributes.get("ovf:disk-interface") != null) {
                 if (!StringUtils.isEmpty(node.Attributes.get("ovf:disk-interface").getValue())) {
@@ -494,9 +494,9 @@ public abstract class OvfReader implements IOvfBuilder {
             image.setImageId(new Guid(node.Attributes.get("ovf:id").getValue()));
             image.setId(OvfParser.GetImageGrupIdFromImageFile(node.Attributes.get("ovf:href").getValue()));
             // Default values:
-            image.setactive(true);
+            image.setActive(true);
             image.setImageStatus(ImageStatus.OK);
-            image.setdescription(node.Attributes.get("ovf:description").getValue());
+            image.setDescription(node.Attributes.get("ovf:description").getValue());
             _images.add(image);
         }
     }

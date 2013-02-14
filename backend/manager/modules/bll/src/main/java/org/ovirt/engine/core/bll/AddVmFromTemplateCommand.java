@@ -72,8 +72,8 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                 DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
                 CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(disk.getImageId(),
                         getParameters().getVmStaticData().getId(), diskInfo);
-                p.setStorageDomainId(disk.getstorage_ids().get(0));
-                p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getstorage_ids().get(0));
+                p.setStorageDomainId(disk.getStorageIds().get(0));
+                p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getStorageIds().get(0));
                 p.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
                 p.setVmSnapshotId(getVmSnapshotId());
                 p.setParentCommand(VdcActionType.AddVmFromTemplate);
@@ -108,7 +108,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (retValue) {
             for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
                 retValue =
-                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getstorage_ids().get(0))
+                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
                                 .getStorageStaticData(),
                                 diskInfoDestinationMap.get(dit.getId()),
                                 getReturnValue().getCanDoActionMessages());

@@ -77,25 +77,25 @@ public class OvfTemplateReader extends OvfReader {
                     image.setParentId(new Guid(node.SelectSingleNode("rasd:Parent", _xmlNS).InnerText));
                 }
                 if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText)) {
-                    image.setit_guid(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
+                    image.setImageTemplateId(new Guid(node.SelectSingleNode("rasd:Template", _xmlNS).InnerText));
                 }
-                image.setappList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
+                image.setAppList(node.SelectSingleNode("rasd:ApplicationList", _xmlNS).InnerText);
                 if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StorageId", _xmlNS).InnerText)) {
-                    image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId",
+                    image.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid(node.SelectSingleNode("rasd:StorageId",
                             _xmlNS).InnerText))));
                 }
                 if (StringUtils.isNotEmpty(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText)) {
-                    image.setstorage_pool_id(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
+                    image.setStoragePoolId(new Guid(node.SelectSingleNode("rasd:StoragePoolId", _xmlNS).InnerText));
                 }
                 final Date creationDate = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText);
                 if (creationDate != null) {
-                    image.setcreation_date(creationDate);
+                    image.setCreationDate(creationDate);
                 }
                 final Date lastModified = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:LastModified", _xmlNS).InnerText);
                 if (lastModified != null) {
-                    image.setlastModified(lastModified);
+                    image.setLastModified(lastModified);
                 }
                 readVmDevice(node, _vmTemplate, image.getId(), Boolean.TRUE);
                 break;

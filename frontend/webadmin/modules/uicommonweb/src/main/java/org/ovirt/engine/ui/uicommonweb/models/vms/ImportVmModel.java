@@ -290,8 +290,8 @@ public class ImportVmModel extends ListWithDetailsModel {
             if (vm.getDiskMap() != null) {
                 for (Map.Entry<Guid, Disk> pair : vm.getDiskMap().entrySet()) {
                     DiskImage disk = (DiskImage) pair.getValue();
-                    if (disk.getvolume_type() == VolumeType.Sparse
-                            && disk.getvolume_format() == VolumeFormat.RAW
+                    if (disk.getVolumeType() == VolumeType.Sparse
+                            && disk.getVolumeFormat() == VolumeFormat.RAW
                             && getDiskImportData(disk.getId()) != null
                             && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
                                     .getStorageType().isBlockDomain())) {
@@ -324,7 +324,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                     DiskImage diskImage = (DiskImage) disk;
                 addDiskImportData(diskImage.getId(),
                         filteredStorageDomains,
-                        diskImage.getvolume_type(),
+                        diskImage.getVolumeType(),
                         importVmData.getCollapseSnapshots());
                 }
         }
@@ -344,7 +344,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                     for (VdcQueryReturnValue returnValue : returnValueList) {
                         for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                             templateDisksStorageDomains.put(diskImage.getImageId(),
-                                    getStorageDomainsByIds(diskImage.getstorage_ids()));
+                                    getStorageDomainsByIds(diskImage.getStorageIds()));
                         }
                     }
 
@@ -393,7 +393,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 for (Disk disk : missingTemplateDiskMap.get(templateId)) {
                                     addDiskImportData(disk.getId(),
                                             filteredStorageDomains,
-                                            ((DiskImage) disk).getvolume_type(),
+                                            ((DiskImage) disk).getVolumeType(),
                                             new EntityModel(true));
                                 }
                             } else {

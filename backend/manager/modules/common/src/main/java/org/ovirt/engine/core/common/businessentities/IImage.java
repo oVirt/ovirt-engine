@@ -1,36 +1,31 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.compat.*;
+import org.ovirt.engine.core.compat.Guid;
 
 //using VdcDAL.AdBroker;
 
 public interface IImage extends BusinessEntity<Guid>{
-    java.util.Date getcreation_date();
+    java.util.Date getCreationDate();
 
-    void setcreation_date(java.util.Date value);
+    void setCreationDate(java.util.Date creationDate);
 
-    // DateTime lastmodified_date
-    // {
-    // get;
-    // set;
-    // }
-    long getsize();
+    long getSize();
 
-    void setsize(long value);
+    void setSize(long value);
 
-    String getdescription();
+    String getDescription();
 
-    void setdescription(String value);
+    void setDescription(String description);
 
-    Guid getit_guid();
+    Guid getImageTemplateId();
 
-    void setit_guid(Guid value);
+    void setImageTemplateId(Guid value);
 
-    int getread_rate_kb_per_sec();
+    int getReadRateKbPerSec();
 
-    void setread_rate_kb_per_sec(int value);
+    void setReadRateKbPerSec(int readRate);
 
-    int getwrite_rate_kb_per_sec();
+    int getWriteRateKbPerSec();
 
-    void setwrite_rate_kb_per_sec(int value);
+    void setWriteRateKbPerSec(int writeRate);
 }

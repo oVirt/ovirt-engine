@@ -317,8 +317,8 @@ public class VmGuideModel extends GuideModel
             if ((Boolean) model.getIsInternal().getEntity()) {
                 DiskImage diskImage = new DiskImage();
                 diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-                diskImage.setvolume_type((VolumeType) model.getVolumeType().getSelectedItem());
-                diskImage.setvolume_format(model.getVolumeFormat());
+                diskImage.setVolumeType((VolumeType) model.getVolumeType().getSelectedItem());
+                diskImage.setvolumeFormat(model.getVolumeFormat());
                 if (model.getQuota().getSelectedItem() != null && model.getQuota().getIsAvailable()) {
                     diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
                 }

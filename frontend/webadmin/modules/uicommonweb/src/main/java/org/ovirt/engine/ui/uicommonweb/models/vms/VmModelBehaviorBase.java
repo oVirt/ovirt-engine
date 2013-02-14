@@ -549,9 +549,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 tempVar.setEntity(diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
-                                tempVar2.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
+                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                                         : AsyncDataProvider.GetVolumeTypeList()));
-                                tempVar2.setSelectedItem(diskImage.getvolume_type());
+                                tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
                                 diskModel.getVolumeType().setIsAvailable(false);
                             }
@@ -615,7 +615,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 for (DiskModel diskModel : disks) {
                     ArrayList<StorageDomain> availableDiskStorageDomains = new ArrayList<StorageDomain>();
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
-                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getstorage_ids();
+                    ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 
                     // Active storage domains that the disk resides on
                     ArrayList<StorageDomain> activeDiskStorageDomains =

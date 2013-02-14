@@ -145,14 +145,14 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskImage diskImage = ((DiskImage) disk.getDisk());
 
             // Source storage domains
-            ArrayList<Guid> diskStorageIds = diskImage.getstorage_ids();
+            ArrayList<Guid> diskStorageIds = diskImage.getStorageIds();
             ArrayList<StorageDomain> sourceStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 
             // Destination storage domains
             ArrayList<StorageDomain> destStorageDomains =
                     Linq.Except(getActiveStorageDomains(), sourceStorageDomains);
-            destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getstorage_pool_id());
+            destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
 
             // Filter storage domains with missing template disk
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(NGuid.Empty);
@@ -245,7 +245,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         if (templateDisk != null) {
             for (StorageDomain storageDomain : storageDomains) {
-                if (!((DiskImage) templateDisk.getDisk()).getstorage_ids().contains(storageDomain.getId())) {
+                if (!((DiskImage) templateDisk.getDisk()).getStorageIds().contains(storageDomain.getId())) {
                     missingStorageDomains.add(storageDomain);
                 }
             }

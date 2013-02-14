@@ -81,8 +81,8 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         List<DiskImage> images =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false);
         for (DiskImage image : images) {
-            image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
-            image.setstorage_pool_id(getParameters().getStoragePoolId());
+            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
+            image.setStoragePoolId(getParameters().getStoragePoolId());
         }
         removeVmImages(images);
 

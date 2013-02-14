@@ -89,28 +89,28 @@ public class DiskMapper {
         //then the value in <provision_size> will be dominant, since it is mapped second
         //and overrides the value in <size>
         if (disk.isSetSize()) {
-            diskImage.setsize(disk.getSize());
+            diskImage.setSize(disk.getSize());
         }
         if (disk.isSetProvisionedSize()) {
-            diskImage.setsize(disk.getProvisionedSize());
+            diskImage.setSize(disk.getProvisionedSize());
         }
         if (disk.isSetFormat()) {
             DiskFormat diskFormat = DiskFormat.fromValue(disk.getFormat());
             if (diskFormat != null) {
-                diskImage.setvolume_format(map(diskFormat, null));
+                diskImage.setvolumeFormat(map(diskFormat, null));
             }
         }
         if (disk.isSetStatus()) {
             diskImage.setImageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
         }
         if (disk.isSetSparse()) {
-            diskImage.setvolume_type(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
+            diskImage.setVolumeType(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
-            diskImage.setstorage_ids(new ArrayList<Guid>());
-            diskImage.getstorage_ids().add(Guid.createGuidFromString(storageDomain.getId()));
+            diskImage.setStorageIds(new ArrayList<Guid>());
+            diskImage.getStorageIds().add(Guid.createGuidFromString(storageDomain.getId()));
         }
         if (disk.isSetQuota() && disk.getQuota().isSetId()) {
             diskImage.setQuotaId(new Guid(disk.getQuota().getId()));
@@ -146,22 +146,22 @@ public class DiskMapper {
         if (entity.getImageId() != null) {
             model.setImageId(entity.getImageId().toString());
         }
-        model.setSize(entity.getsize());
-        model.setProvisionedSize(entity.getsize());
-        model.setActualSize(entity.getactual_size());
-        if (entity.getvolume_format() != null) {
-            model.setFormat(map(entity.getvolume_format(), null));
+        model.setSize(entity.getSize());
+        model.setProvisionedSize(entity.getSize());
+        model.setActualSize(entity.getActualSizeFromDiskImage());
+        if (entity.getVolumeFormat() != null) {
+            model.setFormat(map(entity.getVolumeFormat(), null));
         }
         if (entity.getImageStatus() != null) {
             DiskStatus status = map(entity.getImageStatus());
             model.setStatus(StatusUtils.create(status == null ? null : status.value()));
         }
-        model.setSparse(VolumeType.Sparse == entity.getvolume_type());
-        if (entity.getstorage_ids() != null && entity.getstorage_ids().size() > 0) {
+        model.setSparse(VolumeType.Sparse == entity.getVolumeType());
+        if (entity.getStorageIds() != null && entity.getStorageIds().size() > 0) {
             if (!model.isSetStorageDomains()) {
                 model.setStorageDomains(new StorageDomains());
             }
-            for (Guid id : entity.getstorage_ids()){
+            for (Guid id : entity.getStorageIds()){
                 StorageDomain storageDomain = new StorageDomain();
                 storageDomain.setId(id.toString());
                 model.getStorageDomains().getStorageDomains().add(storageDomain);

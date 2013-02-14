@@ -100,15 +100,15 @@ public class ImportVmCommandTest {
         baseImage.setId(imageGroupId);
         baseImage.setImageId(Guid.NewGuid());
         baseImage.setSizeInGigabytes(1);
-        baseImage.setvm_snapshot_id(Guid.NewGuid());
-        baseImage.setactive(false);
+        baseImage.setVmSnapshotId(Guid.NewGuid());
+        baseImage.setActive(false);
 
         DiskImage activeImage = new DiskImage();
         activeImage.setId(imageGroupId);
         activeImage.setImageId(Guid.NewGuid());
         activeImage.setSizeInGigabytes(1);
-        activeImage.setvm_snapshot_id(Guid.NewGuid());
-        activeImage.setactive(true);
+        activeImage.setVmSnapshotId(Guid.NewGuid());
+        activeImage.setActive(true);
         activeImage.setParentId(baseImage.getImageId());
 
         v.setDiskMap(Collections.<Guid, Disk> singletonMap(activeImage.getId(), activeImage));

@@ -854,8 +854,8 @@ public class DiskModel extends Model
         DiskImageBase preset = (DiskImageBase) getPreset().getSelectedItem() != null ?
                 (DiskImageBase) getPreset().getSelectedItem()
                 : (DiskImageBase) Linq.<DiskImageBase> FirstOrDefault(getPreset().getItems());
-        setVolumeFormat(preset.getvolume_format());
-        getVolumeType().setSelectedItem(preset.getvolume_type());
+        setVolumeFormat(preset.getVolumeFormat());
+        getVolumeType().setSelectedItem(preset.getVolumeType());
     }
 
     private void VolumeType_SelectedItemChanged()

@@ -56,7 +56,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
-                return VolumeType.forValue(object.getvolume_type().getValue());
+                return VolumeType.forValue(object.getVolumeType().getValue());
             }
         };
         getTable().addColumn(allocationColumn, constants.allocationDisk());
@@ -72,7 +72,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
-                return object.getcreation_date();
+                return object.getCreationDate();
             }
         };
 

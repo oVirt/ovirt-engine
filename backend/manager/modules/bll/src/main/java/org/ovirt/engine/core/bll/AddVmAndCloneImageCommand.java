@@ -98,12 +98,12 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                         srcImageId,
                         diskImage.getId(),
                         diskImage.getImageId(),
-                        diskImage.getstorage_ids().get(0),
+                        diskImage.getStorageIds().get(0),
                         ImageOperation.Copy);
         params.setAddImageDomainMapping(false);
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
-        params.setVolumeFormat(diskImage.getvolume_format());
-        params.setVolumeType(diskImage.getvolume_type());
+        params.setVolumeFormat(diskImage.getVolumeFormat());
+        params.setVolumeType(diskImage.getVolumeType());
         params.setUseCopyCollapse(true);
         params.setSourceDomainId(srcStorageDomainId);
         params.setWipeAfterDelete(diskImage.isWipeAfterDelete());
@@ -137,15 +137,15 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
         DiskImage retDiskImage = DiskImage.copyOf(srcDiskImage);
         retDiskImage.setImageId(newImageGuid);
         retDiskImage.setParentId(Guid.Empty);
-        retDiskImage.setit_guid(Guid.Empty);
-        retDiskImage.setvm_snapshot_id(getVmSnapshotId());
+        retDiskImage.setImageTemplateId(Guid.Empty);
+        retDiskImage.setVmSnapshotId(getVmSnapshotId());
         retDiskImage.setId(newImageGroupId);
-        retDiskImage.setlast_modified_date(new Date());
-        retDiskImage.setvolume_format(srcDiskImage.getvolume_format());
-        retDiskImage.setvolume_type(srcDiskImage.getvolume_type());
+        retDiskImage.setLastModifiedDate(new Date());
+        retDiskImage.setvolumeFormat(srcDiskImage.getVolumeFormat());
+        retDiskImage.setVolumeType(srcDiskImage.getVolumeType());
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
         storageIds.add(storageDomainId);
-        retDiskImage.setstorage_ids(storageIds);
+        retDiskImage.setStorageIds(storageIds);
         return retDiskImage;
     }
 
@@ -203,7 +203,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             }
             for (Disk disk : getDiskImagesToBeCloned()) {
                 DiskImage image = (DiskImage) disk;
-                for (Guid storageId : image.getstorage_ids()) {
+                for (Guid storageId : image.getStorageIds()) {
                     if (storageDomainsMap.containsKey(storageId)) {
                         diskInfoDestinationMap.put(image.getId(), image);
                         break;
@@ -216,7 +216,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             }
            List<Guid> storageDomainDest = new ArrayList<Guid>();
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-                Guid storageDomainId = diskImage.getstorage_ids().get(0);
+                Guid storageDomainId = diskImage.getStorageIds().get(0);
                 if (storageDomainDest.contains(storageDomainId)) {
                     destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
                 }

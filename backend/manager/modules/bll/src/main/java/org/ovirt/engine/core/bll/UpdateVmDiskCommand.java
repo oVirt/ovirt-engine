@@ -169,7 +169,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
             // If disk image list is more then one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
-            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) oldDisk).getit_guid())) {
+            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) oldDisk).getImageTemplateId())) {
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
                 return false;
             }
@@ -181,13 +181,13 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             DiskImage diskImage = (DiskImage) newDisk;
-            if (!isVolumeFormatSupportedForShareable(diskImage.getvolume_format())) {
+            if (!isVolumeFormatSupportedForShareable(diskImage.getVolumeFormat())) {
                 addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
                 return false;
             }
 
             // If user want to update the disk to be shareable then update the vm snapshot id to be null.
-            ((DiskImage) oldDisk).setvm_snapshot_id(null);
+            ((DiskImage) oldDisk).setVmSnapshotId(null);
         } else if (isOldDiskShareable && !isDiskUpdatedToShareable) {
             if (getVmDAO().getVmsListForDisk(oldDisk.getId()).size() > 1) {
                 addCanDoActionMessage(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
@@ -195,7 +195,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
-            ((DiskImage) oldDisk).setvm_snapshot_id(DbFacade.getInstance()
+            ((DiskImage) oldDisk).setVmSnapshotId(DbFacade.getInstance()
                     .getSnapshotDao()
                     .getId(getVmId(), SnapshotType.ACTIVE)
                     .getValue());
@@ -313,7 +313,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     null,
                     QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
                     //TODO: Shared Disk?
-                    newDiskImage.getstorage_ids().get(0),
+                    newDiskImage.getStorageIds().get(0),
                     (double)newDiskImage.getSizeInGigabytes()));
             }
 
@@ -323,7 +323,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     null,
                     QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
                     //TODO: Shared Disk?
-                    oldDiskImage.getstorage_ids().get(0),
+                    oldDiskImage.getStorageIds().get(0),
                     (double)oldDiskImage.getSizeInGigabytes()));
             }
         }

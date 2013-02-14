@@ -120,12 +120,12 @@ public final class Linq
         @Override
         public int compare(DiskImage x, DiskImage y)
         {
-            if (x.getlastModified().before(y.getlastModified()))
+            if (x.getLastModified().before(y.getLastModified()))
             {
                 return -1;
             }
 
-            if (x.getlastModified().after(y.getlastModified()))
+            if (x.getLastModified().after(y.getLastModified()))
             {
                 return 1;
             }
@@ -141,8 +141,8 @@ public final class Linq
         @Override
         public int compare(DiskImage x, DiskImage y)
         {
-            return DateTimeUtils.getTimeOfDay(x.getlastModified())
-                    .compareTo(DateTimeUtils.getTimeOfDay(y.getlastModified()));
+            return DateTimeUtils.getTimeOfDay(x.getLastModified())
+                    .compareTo(DateTimeUtils.getTimeOfDay(y.getLastModified()));
         }
 
     }
@@ -261,12 +261,12 @@ public final class Linq
         @Override
         public int compare(DiskImage x, DiskImage y)
         {
-            if (x.getcreation_date().before(y.getcreation_date()))
+            if (x.getCreationDate().before(y.getCreationDate()))
             {
                 return -1;
             }
 
-            if (x.getcreation_date().after(y.getcreation_date()))
+            if (x.getCreationDate().after(y.getCreationDate()))
             {
                 return 1;
             }
@@ -959,7 +959,7 @@ public final class Linq
         ArrayList<ArrayList<StorageDomain>> storageDomainslists = new ArrayList<ArrayList<StorageDomain>>();
         for (DiskModel diskModel : disks) {
             ArrayList<StorageDomain> list =
-                    getStorageDomainsByIds(((DiskImage) diskModel.getDisk()).getstorage_ids(), storageDomains);
+                    getStorageDomainsByIds(((DiskImage) diskModel.getDisk()).getStorageIds(), storageDomains);
 
             storageDomainslists.add(list);
         }
@@ -1010,10 +1010,10 @@ public final class Linq
             sizeEntity.setEntity(diskImage.getSizeInGigabytes());
             diskModel.setSize(sizeEntity);
             ListModel volumeList = new ListModel();
-            volumeList.setItems((diskImage.getvolume_type() == VolumeType.Preallocated ?
+            volumeList.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ?
                     new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                     : AsyncDataProvider.GetVolumeTypeList()));
-            volumeList.setSelectedItem(diskImage.getvolume_type());
+            volumeList.setSelectedItem(diskImage.getVolumeType());
             diskModel.setVolumeType(volumeList);
         }
 

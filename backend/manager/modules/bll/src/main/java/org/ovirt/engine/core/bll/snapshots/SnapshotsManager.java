@@ -181,7 +181,7 @@ public class SnapshotsManager {
                 new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
                         false, true));
         for (DiskImage image : images) {
-            image.setstorage_ids(null);
+            image.setStorageIds(null);
         }
         return new OvfManager().ExportVm(vm, images);
     }
@@ -289,7 +289,7 @@ public class SnapshotsManager {
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
                 if (dbImage != null) {
-                    diskImage.setstorage_ids(dbImage.getstorage_ids());
+                    diskImage.setStorageIds(dbImage.getStorageIds());
                 }
             }
             new VMStaticOvfLogHandler(tempVM.getStaticData()).resetDefaults(oldVmStatic);
@@ -379,10 +379,10 @@ public class SnapshotsManager {
                 // If can't find the image, insert it as illegal so that it can't be used and make the device unplugged.
                 if (getDiskImageDao().getSnapshotById(diskImage.getImageId()) == null) {
                     diskImage.setImageStatus(ImageStatus.ILLEGAL);
-                    diskImage.setvm_snapshot_id(activeSnapshotId);
+                    diskImage.setVmSnapshotId(activeSnapshotId);
 
-                    ImagesHandler.addImage(diskImage, true, (diskImage.getstorage_ids() == null) ? null :
-                            new image_storage_domain_map(diskImage.getImageId(), diskImage.getstorage_ids().get(0)));
+                    ImagesHandler.addImage(diskImage, true, (diskImage.getStorageIds() == null) ? null :
+                            new image_storage_domain_map(diskImage.getImageId(), diskImage.getStorageIds().get(0)));
                 }
                 ImagesHandler.addDiskToVm(diskImage, vmId);
             }

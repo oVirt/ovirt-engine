@@ -133,8 +133,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     if (!retVal) {
                         break;
                     } else {
-                        image.setstorage_pool_id(getParameters().getStoragePoolId());
-                        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
+                        image.setStoragePoolId(getParameters().getStoragePoolId());
+                        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
                         imageMap.put(image.getImageId(), image);
                     }
                 }
@@ -168,7 +168,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 int sz = 0;
                 if (getVmTemplate().getDiskImageMap() != null) {
                     for (DiskImage image : getVmTemplate().getDiskImageMap().values()) {
-                        sz += image.getsize();
+                        sz += image.getSize();
                     }
                 }
                 domainMap.put(getStorageDomain(), sz);
@@ -228,9 +228,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     private void changeRawToCowIfSparseOnBlockDevice(StorageType storageType, DiskImage image) {
         if ((storageType == StorageType.FCP
                 || storageType == StorageType.ISCSI)
-                && image.getvolume_format() == VolumeFormat.RAW
-                && image.getvolume_type() == VolumeType.Sparse) {
-            image.setvolume_format(VolumeFormat.COW);
+                && image.getVolumeFormat() == VolumeFormat.RAW
+                && image.getVolumeType() == VolumeType.Sparse) {
+            image.setvolumeFormat(VolumeFormat.COW);
         }
     }
 
@@ -283,8 +283,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
                     tempVar.setParentCommand(getActionType());
                     tempVar.setUseCopyCollapse(true);
-                    tempVar.setVolumeType(disk.getvolume_type());
-                    tempVar.setVolumeFormat(disk.getvolume_format());
+                    tempVar.setVolumeType(disk.getVolumeType());
+                    tempVar.setVolumeFormat(disk.getVolumeFormat());
                     tempVar.setCopyVolumeType(CopyVolumeType.SharedVol);
                     tempVar.setSourceDomainId(getParameters().getSourceDomainId());
                     tempVar.setForceOverride(getParameters().getForceOverride());
@@ -327,7 +327,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         int count = 1;
         for (DiskImage image : getParameters().getImages()) {
-            image.setactive(true);
+            image.setActive(true);
             image_storage_domain_map map = BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
@@ -340,7 +340,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
             DiskImageDynamic diskDynamic = new DiskImageDynamic();
             diskDynamic.setId(image.getImageId());
-            diskDynamic.setactual_size(image.getactual_size());
+            diskDynamic.setactual_size(image.getActualSizeFromDiskImage());
             DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
             getCompensationContext().snapshotNewEntity(diskDynamic);
         }

@@ -55,10 +55,10 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setEntityId(getParameters().getEntityId());
                     p.setUseCopyCollapse(true);
                     p.setCopyVolumeType(CopyVolumeType.SharedVol);
-                    p.setVolumeFormat(disk.getvolume_format());
-                    p.setVolumeType(disk.getvolume_type());
+                    p.setVolumeFormat(disk.getVolumeFormat());
+                    p.setVolumeType(disk.getVolumeType());
                     p.setForceOverride(getParameters().getForceOverride());
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getstorage_ids().get(0));
+                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
                     VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,

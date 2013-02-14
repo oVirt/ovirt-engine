@@ -133,7 +133,7 @@ public class TemplateStorageListModel extends SearchableListModel
 
                                 ArrayList<DiskImage> disks = new ArrayList<DiskImage>();
                                 for (DiskImage diskImage : diskImages) {
-                                    if (diskImage.getstorage_ids().contains(storageDomain.getId())) {
+                                    if (diskImage.getStorageIds().contains(storageDomain.getId())) {
                                         disks.add(diskImage);
                                     }
                                 }
@@ -262,7 +262,7 @@ public class TemplateStorageListModel extends SearchableListModel
         for (DiskModel disk : disks)
         {
             if (((DiskImage) disk.getDisk()).getImageStatus() == ImageStatus.LOCKED
-                    || ((DiskImage) disk.getDisk()).getstorage_ids().size() == 1)
+                    || ((DiskImage) disk.getDisk()).getStorageIds().size() == 1)
             {
                 return false;
             }

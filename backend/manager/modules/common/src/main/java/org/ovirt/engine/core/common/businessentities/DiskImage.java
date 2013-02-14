@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
@@ -10,14 +11,10 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     private static final long serialVersionUID = 1533416252250153306L;
 
-    private ArrayList<String> storagesNames;
-    // TODO why do we have two fields like this?
-    private Date last_modified_dateField;
-    // TODO comes from DiskImageDynamic
+    private Date lastModifiedDate;
+    private List<String> storagesNames;
     private long actualSizeFromDiskImageDynamic;
-    // TODO comes from DiskImageDynamic
     private int readRateFromDiskImageDynamic;
-    // TODO comes from DiskImageDynamic
     private int writeRateFromDiskImageDynamic;
 
     // Latency fields from DiskImageDynamic which are measured in seconds.
@@ -27,25 +24,25 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     private String appList;
     // TODO from storage_domain_static
-    private NGuid storage_pool_idField;
+    private NGuid storagePoolId;
     // TODO from storage_domain_static
-    private ArrayList<String> mstorage_path;
-    private int mReadRateKbPerSec;
-    private int mWriteRateKbPerSec;
-    private ArrayList<DiskImage> _snapshots = new ArrayList<DiskImage>();
-    private double _actualDiskWithSnapthotsSize;
+    private ArrayList<String> storagePath;
+    private int readRateKbPerSec;
+    private int writeRateKbPerSec;
+    private ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
+    private double actualDiskWithSnapthotsSize;
 
     public DiskImage() {
         setParentId(Guid.Empty);
-        setcreation_date(new Date());
-        setlast_modified_date(getcreation_date());
+        setCreationDate(new Date());
+        setLastModifiedDate(getCreationDate());
     }
 
     public DiskImage(DiskImageBase diskImageBase) {
         setParentId(Guid.Empty);
-        setvolume_type(diskImageBase.getvolume_type());
-        setvolume_format(diskImageBase.getvolume_format());
-        setsize(diskImageBase.getsize());
+        setVolumeType(diskImageBase.getVolumeType());
+        setvolumeFormat(diskImageBase.getVolumeFormat());
+        setSize(diskImageBase.getSize());
         setDiskInterface(diskImageBase.getDiskInterface());
         setBoot(diskImageBase.isBoot());
         setWipeAfterDelete(diskImageBase.isWipeAfterDelete());
@@ -75,22 +72,22 @@ public class DiskImage extends DiskImageBase implements IImage {
             String quotaName,
             QuotaEnforcementTypeEnum quotaEnforcementType,
             boolean isQuotaDefault) {
-        setactive(active);
-        setcreation_date(creation_date);
-        this.setlast_modified_date(last_modified_date);
-        this.actualSizeFromDiskImageDynamic = actual_size;
-        this.description = description;
+        setActive(active);
+        setCreationDate(creation_date);
+        setLastModifiedDate(last_modified_date);
+        actualSizeFromDiskImageDynamic = actual_size;
+        setDescription(description);
         setImageId(image_guid);
-        setit_guid(it_guid);
-        this.setsize(size);
-        this.setParentId(parentId);
-        this.setImageStatus(imageStatus);
-        this.setlastModified(lastModified);
-        this.setappList(appList);
-        this.setVmEntityType(vmEntityType);
-        this.setNumberOfVms(numberOfVms);
-        this.setQuotaId(quotaId);
-        this.setQuotaName(quotaName);
+        setImageTemplateId(it_guid);
+        setSize(size);
+        setParentId(parentId);
+        setImageStatus(imageStatus);
+        setLastModified(lastModified);
+        setAppList(appList);
+        setVmEntityType(vmEntityType);
+        setNumberOfVms(numberOfVms);
+        setQuotaId(quotaId);
+        setQuotaName(quotaName);
         setQuotaEnforcementType(quotaEnforcementType);
         setIsQuotaDefault(isQuotaDefault);
     }
@@ -115,55 +112,55 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.vmEntityType = vmEntityType;
     }
 
-    public Boolean getactive() {
+    public Boolean getActive() {
         return getImage().isActive();
     }
 
-    public void setactive(Boolean value) {
-        getImage().setActive(Boolean.TRUE.equals(value));
+    public void setActive(boolean active) {
+        getImage().setActive(active);
     }
 
     @Override
-    public Date getcreation_date() {
+    public Date getCreationDate() {
         return getImage().getCreationDate();
     }
 
     @Override
-    public void setcreation_date(Date value) {
-        getImage().setCreationDate(value);
+    public void setCreationDate(Date creationDate) {
+        getImage().setCreationDate(creationDate);
     }
 
-    public Date getlast_modified_date() {
-        return this.last_modified_dateField;
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
     }
 
-    public void setlast_modified_date(Date value) {
-        this.last_modified_dateField = value;
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public long getactual_size() {
-        return this.actualSizeFromDiskImageDynamic;
+    public long getActualSizeFromDiskImage() {
+        return actualSizeFromDiskImageDynamic;
     }
 
-    public void setactual_size(long value) {
-        this.actualSizeFromDiskImageDynamic = value;
-        setActualSize(getactual_size() * 1.0 / (1024 * 1024 * 1024));
+    public void setActualSizeFromDiskImage(long size) {
+        actualSizeFromDiskImageDynamic = size;
+        setActualSize(getActualSizeFromDiskImage() * 1.0 / (1024 * 1024 * 1024));
     }
 
-    public int getread_rate() {
-        return this.readRateFromDiskImageDynamic;
+    public int getReadRate() {
+        return readRateFromDiskImageDynamic;
     }
 
-    public void setread_rate(int value) {
-        this.readRateFromDiskImageDynamic = value;
+    public void setReadRate(int readRateFromDiskImageDynamic) {
+        this.readRateFromDiskImageDynamic = readRateFromDiskImageDynamic;
     }
 
-    public int getwrite_rate() {
-        return this.writeRateFromDiskImageDynamic;
+    public int getWriteRate() {
+        return writeRateFromDiskImageDynamic;
     }
 
-    public void setwrite_rate(int value) {
-        this.writeRateFromDiskImageDynamic = value;
+    public void setWriteRate(int writeRateFromDiskImageDynamic) {
+        this.writeRateFromDiskImageDynamic = writeRateFromDiskImageDynamic;
     }
 
     public Double getReadLatency() {
@@ -193,89 +190,89 @@ public class DiskImage extends DiskImageBase implements IImage {
     private String description;
 
     @Override
-    public String getdescription() {
-        return this.description;
+    public String getDescription() {
+        return description;
     }
 
     @Override
-    public void setdescription(String value) {
-        this.description = value;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getappList() {
-        return this.appList;
+    public String getAppList() {
+        return appList;
     }
 
-    public void setappList(String value) {
-        this.appList = value;
+    public void setAppList(String appList) {
+        this.appList = appList;
     }
 
     @Override
-    public Guid getit_guid() {
+    public Guid getImageTemplateId() {
         return getImage().getTemplateImageId();
     }
 
     @Override
-    public void setit_guid(Guid value) {
-        getImage().setTemplateImageId(value);
+    public void setImageTemplateId(Guid guid) {
+        getImage().setTemplateImageId(guid);
     }
 
     public Guid getParentId() {
         return getImage().getParentId();
     }
 
-    public void setParentId(Guid value) {
-        getImage().setParentId(value);
+    public void setParentId(Guid parentId) {
+        getImage().setParentId(parentId);
     }
 
     public ImageStatus getImageStatus() {
         return getImage().getStatus();
     }
 
-    public void setImageStatus(ImageStatus value) {
-        getImage().setStatus(value);
+    public void setImageStatus(ImageStatus imageStatus) {
+        getImage().setStatus(imageStatus);
     }
 
-    public Date getlastModified() {
+    public Date getLastModified() {
         return getImage().getLastModified();
     }
 
-    public void setlastModified(Date value) {
-        getImage().setLastModified(value);
+    public void setLastModified(Date lastModified) {
+        getImage().setLastModified(lastModified);
     }
 
     private ArrayList<Guid> storageIds;
 
-    public ArrayList<Guid> getstorage_ids() {
+    public ArrayList<Guid> getStorageIds() {
         return storageIds;
     }
 
-    public void setstorage_ids(ArrayList<Guid> value) {
-        storageIds = value;
+    public void setStorageIds(ArrayList<Guid> storageIds) {
+        this.storageIds = storageIds;
     }
 
-    public NGuid getvm_snapshot_id() {
+    public NGuid getVmSnapshotId() {
         return getImage().getSnapshotId();
     }
 
-    public void setvm_snapshot_id(NGuid value) {
-        getImage().setSnapshotId(value == null ? null : value.getValue());
+    public void setVmSnapshotId(NGuid snapshotId) {
+        getImage().setSnapshotId(snapshotId == null ? null : snapshotId.getValue());
     }
 
-    public ArrayList<String> getstorage_path() {
-        return mstorage_path;
+    public ArrayList<String> getStoragePath() {
+        return storagePath;
     }
 
-    public void setstorage_path(ArrayList<String> value) {
-        mstorage_path = value;
+    public void setStoragePath(ArrayList<String> storagePath) {
+        this.storagePath = storagePath;
     }
 
-    public ArrayList<String> getStoragesNames() {
+    public List<String> getStoragesNames() {
         return storagesNames;
     }
 
-    public void setStoragesNames(ArrayList<String> value) {
-        storagesNames = value;
+    public void setStoragesNames(ArrayList<String> storagesNames) {
+        this.storagesNames = storagesNames;
     }
 
     @Deprecated
@@ -288,12 +285,12 @@ public class DiskImage extends DiskImageBase implements IImage {
         setId(value);
     }
 
-    public NGuid getstorage_pool_id() {
-        return storage_pool_idField;
+    public NGuid getStoragePoolId() {
+        return storagePoolId;
     }
 
-    public void setstorage_pool_id(NGuid value) {
-        storage_pool_idField = value;
+    public void setStoragePoolId(NGuid storagePoolId) {
+        this.storagePoolId = storagePoolId;
     }
 
     private double actualSize;
@@ -307,17 +304,17 @@ public class DiskImage extends DiskImageBase implements IImage {
         return actualSize;
     }
 
-    public void setActualSize(double value) {
-        actualSize = value;
+    public void setActualSize(double size) {
+        actualSize = size;
     }
 
     public double getActualDiskWithSnapshotsSize() {
-        if (_actualDiskWithSnapthotsSize == 0 && _snapshots != null) {
-            for (DiskImage disk : _snapshots) {
-                _actualDiskWithSnapthotsSize += disk.getActualSize();
+        if (actualDiskWithSnapthotsSize == 0 && snapshots != null) {
+            for (DiskImage disk : snapshots) {
+                actualDiskWithSnapthotsSize += disk.getActualSize();
             }
         }
-        return _actualDiskWithSnapthotsSize;
+        return actualDiskWithSnapthotsSize;
     }
 
     /**
@@ -331,23 +328,23 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     @Override
-    public int getread_rate_kb_per_sec() {
-        return mReadRateKbPerSec;
+    public int getReadRateKbPerSec() {
+        return readRateKbPerSec;
     }
 
     @Override
-    public void setread_rate_kb_per_sec(int value) {
-        mReadRateKbPerSec = value;
+    public void setReadRateKbPerSec(int readRate) {
+        readRateKbPerSec = readRate;
     }
 
     @Override
-    public int getwrite_rate_kb_per_sec() {
-        return mWriteRateKbPerSec;
+    public int getWriteRateKbPerSec() {
+        return writeRateKbPerSec;
     }
 
     @Override
-    public void setwrite_rate_kb_per_sec(int value) {
-        mWriteRateKbPerSec = value;
+    public void setWriteRateKbPerSec(int writeRate) {
+        writeRateKbPerSec = writeRate;
     }
 
     @Override
@@ -356,7 +353,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     public ArrayList<DiskImage> getSnapshots() {
-        return _snapshots;
+        return snapshots;
     }
 
     public static DiskImage copyOf(DiskImage diskImage) {
@@ -364,9 +361,9 @@ public class DiskImage extends DiskImageBase implements IImage {
         DiskImage di = new DiskImage(diskImage);
 
         // set all private fields (imitate clone - deep copy)
-        di.setactive(diskImage.getactive());
-        di.setcreation_date(new Date(diskImage.getcreation_date().getTime()));
-        di.setlast_modified_date(new Date(diskImage.getlast_modified_date().getTime()));
+        di.setActive(diskImage.getActive());
+        di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
+        di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
         di.actualSizeFromDiskImageDynamic = diskImage.actualSizeFromDiskImageDynamic;
         di.readRateFromDiskImageDynamic = diskImage.readRateFromDiskImageDynamic;
         di.writeRateFromDiskImageDynamic = diskImage.writeRateFromDiskImageDynamic;
@@ -377,13 +374,13 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.description = diskImage.description;
         di.setImageId(new Guid(diskImage.getImageId().getUuid()));
         di.appList = diskImage.appList;
-        di.setit_guid(new Guid(diskImage.getit_guid().getUuid()));
+        di.setImageTemplateId(new Guid(diskImage.getImageTemplateId().getUuid()));
         di.setParentId(new Guid(diskImage.getParentId().getUuid()));
         di.setImageStatus(diskImage.getImageStatus());
-        di.setlastModified(new Date(diskImage.getlastModified().getTime()));
+        di.setLastModified(new Date(diskImage.getLastModified().getTime()));
         di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
-        di.setvm_snapshot_id(diskImage.getvm_snapshot_id());
-        di.mstorage_path = diskImage.mstorage_path;
+        di.setVmSnapshotId(diskImage.getVmSnapshotId());
+        di.storagePath = diskImage.storagePath;
         di.setId(diskImage.getId());
         di.setNumberOfVms(diskImage.getNumberOfVms());
         di.setDiskInterface(diskImage.getDiskInterface());
@@ -392,17 +389,17 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setDiskAlias(diskImage.getDiskAlias());
         di.setDiskDescription(diskImage.getDiskDescription());
         di.setShareable(diskImage.isShareable());
-        di.storage_pool_idField = new NGuid(diskImage.storage_pool_idField.getUuid());
+        di.storagePoolId = new NGuid(diskImage.storagePoolId.getUuid());
         di.actualSize = diskImage.actualSize;
-        di.mReadRateKbPerSec = diskImage.mReadRateKbPerSec;
-        di.mWriteRateKbPerSec = diskImage.mWriteRateKbPerSec;
+        di.readRateKbPerSec = diskImage.readRateKbPerSec;
+        di.writeRateKbPerSec = diskImage.writeRateKbPerSec;
 
         // TODO: is it ok to use shallow copy here?!
-        di._snapshots = new ArrayList<DiskImage>(diskImage._snapshots);
-        di._actualDiskWithSnapthotsSize = diskImage._actualDiskWithSnapthotsSize;
-        di.setcreation_date(new Date());
-        di.setlastModified(new Date());
-        di.setactive(true);
+        di.snapshots = new ArrayList<DiskImage>(diskImage.snapshots);
+        di.actualDiskWithSnapthotsSize = diskImage.actualDiskWithSnapthotsSize;
+        di.setCreationDate(new Date());
+        di.setLastModified(new Date());
+        di.setActive(true);
         di.setImageStatus(ImageStatus.LOCKED);
 
         return di;
@@ -413,16 +410,16 @@ public class DiskImage extends DiskImageBase implements IImage {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((getImage() == null) ? 0 : getImage().hashCode());
-        result = prime * result + ((_snapshots == null) ? 0 : _snapshots.hashCode());
+        result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
         result = prime * result + (int) (actualSizeFromDiskImageDynamic ^ (actualSizeFromDiskImageDynamic >>> 32));
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + mReadRateKbPerSec;
-        result = prime * result + mWriteRateKbPerSec;
-        result = prime * result + ((mstorage_path == null) ? 0 : mstorage_path.hashCode());
+        result = prime * result + readRateKbPerSec;
+        result = prime * result + writeRateKbPerSec;
+        result = prime * result + ((storagePath == null) ? 0 : storagePath.hashCode());
         result = prime * result + readRateFromDiskImageDynamic;
         result = prime * result + ((storageIds == null) ? 0 : storageIds.hashCode());
-        result = prime * result + ((storage_pool_idField == null) ? 0 : storage_pool_idField.hashCode());
+        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagesNames == null) ? 0 : storagesNames.hashCode());
         result = prime * result + writeRateFromDiskImageDynamic;
         result = prime * result
@@ -448,10 +445,10 @@ public class DiskImage extends DiskImageBase implements IImage {
                 return false;
         } else if (!getImage().equals(other.getImage()))
             return false;
-        if (_snapshots == null) {
-            if (other._snapshots != null)
+        if (snapshots == null) {
+            if (other.snapshots != null)
                 return false;
-        } else if (!_snapshots.equals(other._snapshots))
+        } else if (!snapshots.equals(other.snapshots))
             return false;
         if (actualSizeFromDiskImageDynamic != other.actualSizeFromDiskImageDynamic)
             return false;
@@ -465,14 +462,14 @@ public class DiskImage extends DiskImageBase implements IImage {
                 return false;
         } else if (!description.equals(other.description))
             return false;
-        if (mReadRateKbPerSec != other.mReadRateKbPerSec)
+        if (readRateKbPerSec != other.readRateKbPerSec)
             return false;
-        if (mWriteRateKbPerSec != other.mWriteRateKbPerSec)
+        if (writeRateKbPerSec != other.writeRateKbPerSec)
             return false;
-        if (mstorage_path == null) {
-            if (other.mstorage_path != null)
+        if (storagePath == null) {
+            if (other.storagePath != null)
                 return false;
-        } else if (!mstorage_path.equals(other.mstorage_path))
+        } else if (!storagePath.equals(other.storagePath))
             return false;
         if (readRateFromDiskImageDynamic != other.readRateFromDiskImageDynamic)
             return false;
@@ -481,10 +478,10 @@ public class DiskImage extends DiskImageBase implements IImage {
                 return false;
         } else if (!storageIds.equals(other.storageIds))
             return false;
-        if (storage_pool_idField == null) {
-            if (other.storage_pool_idField != null)
+        if (storagePoolId == null) {
+            if (other.storagePoolId != null)
                 return false;
-        } else if (!storage_pool_idField.equals(other.storage_pool_idField))
+        } else if (!storagePoolId.equals(other.storagePoolId))
             return false;
         if (storagesNames == null) {
             if (other.storagesNames != null)

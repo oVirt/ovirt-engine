@@ -201,7 +201,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             if (image.getQuotaId() != null) {
                 list.add(new QuotaStorageConsumptionParameter(image.getQuotaId(), null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
-                        image.getstorage_ids().get(0), image.getActualSize()));
+                        image.getStorageIds().get(0), image.getActualSize()));
             }
         }
         return list;

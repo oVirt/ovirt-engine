@@ -83,11 +83,11 @@ public final class ImagesHandler {
             }
         }
         for (DiskImage image : template.getDiskMap().values()) {
-            for (Guid storageId : image.getstorage_ids()) {
+            for (Guid storageId : image.getStorageIds()) {
                 if (storageDomainsMap.containsKey(storageId)) {
                     ArrayList<Guid> storageIds = new ArrayList<Guid>();
                     storageIds.add(storageId);
-                    image.setstorage_ids(storageIds);
+                    image.setStorageIds(storageIds);
                     diskInfoDestinationMap.put(image.getId(), image);
                     break;
                 }
@@ -96,7 +96,7 @@ public final class ImagesHandler {
 
         if (destStorages != null) {
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-                Guid storageDomainId = diskImage.getstorage_ids().get(0);
+                Guid storageDomainId = diskImage.getStorageIds().get(0);
                 destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
             }
         }
@@ -164,7 +164,7 @@ public final class ImagesHandler {
         Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         for (DiskImage disk : images) {
             DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
-            Guid storageDomainId = diskImage.getstorage_ids().get(0);
+            Guid storageDomainId = diskImage.getStorageIds().get(0);
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
             if (diskList == null) {
                 diskList = new ArrayList<DiskImage>();
@@ -246,8 +246,8 @@ public final class ImagesHandler {
      */
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
-                image.getactive(),
-                new image_storage_domain_map(image.getImageId(), image.getstorage_ids().get(0)));
+                image.getActive(),
+                new image_storage_domain_map(image.getImageId(), image.getStorageIds().get(0)));
     }
 
     /**
@@ -270,7 +270,7 @@ public final class ImagesHandler {
      *            DiskImage to add
      */
     public static void addDiskImage(DiskImage image, Guid vmId) {
-        addDiskImage(image, image.getactive(), new image_storage_domain_map(image.getImageId(), image.getstorage_ids()
+        addDiskImage(image, image.getActive(), new image_storage_domain_map(image.getImageId(), image.getStorageIds()
                 .get(0)), vmId);
     }
 
@@ -285,11 +285,11 @@ public final class ImagesHandler {
      *            entry of mapping between the storage domain and the image
      */
     public static void addImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
-        image.setactive(active);
+        image.setActive(active);
         DbFacade.getInstance().getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(image.getImageId());
-        diskDynamic.setactual_size(image.getactual_size());
+        diskDynamic.setactual_size(image.getActualSizeFromDiskImage());
         DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
         if (imageStorageDomainMap != null) {
             DbFacade.getInstance().getImageStorageDomainMapDao().save(imageStorageDomainMap);
@@ -373,7 +373,7 @@ public final class ImagesHandler {
         boolean returnValue = true;
 
         for (DiskImage image : images) {
-            Guid storageDomainId = !Guid.Empty.equals(domainId) ? domainId : image.getstorage_ids().get(0);
+            Guid storageDomainId = !Guid.Empty.equals(domainId) ? domainId : image.getStorageIds().get(0);
             DiskImage fromIrs = isImageExist(storagePoolId, storageDomainId, image);
             if (fromIrs == null) {
                 returnValue = false;
@@ -391,7 +391,7 @@ public final class ImagesHandler {
         DiskImage fromIrs = null;
         try {
             Guid storageDomainId =
-                    image.getstorage_ids() != null && !image.getstorage_ids().isEmpty() ? image.getstorage_ids()
+                    image.getStorageIds() != null && !image.getStorageIds().isEmpty() ? image.getStorageIds()
                             .get(0) : domainId;
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
             fromIrs = (DiskImage) Backend
@@ -410,10 +410,10 @@ public final class ImagesHandler {
     public static boolean CheckImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
         boolean result = true;
-        if ((diskInfo.getvolume_type() == VolumeType.Preallocated && diskInfo.getvolume_format() == VolumeFormat.COW)
+        if ((diskInfo.getVolumeType() == VolumeType.Preallocated && diskInfo.getVolumeFormat() == VolumeFormat.COW)
                 || ((storageDomain.getStorageType() == StorageType.FCP || storageDomain.getStorageType() == StorageType.ISCSI) && (diskInfo
-                        .getvolume_type() == VolumeType.Sparse && diskInfo.getvolume_format() == VolumeFormat.RAW))
-                || (diskInfo.getvolume_format() == VolumeFormat.Unassigned || diskInfo.getvolume_type() == VolumeType.Unassigned)) {
+                        .getVolumeType() == VolumeType.Sparse && diskInfo.getVolumeFormat() == VolumeFormat.RAW))
+                || (diskInfo.getVolumeFormat() == VolumeFormat.Unassigned || diskInfo.getVolumeType() == VolumeType.Unassigned)) {
             // not supported
             result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
@@ -521,7 +521,7 @@ public final class ImagesHandler {
                 domainsIds.add(storageDomainId);
             } else {
                 for (DiskImage image : images) {
-                    domainsIds.addAll(image.getstorage_ids());
+                    domainsIds.addAll(image.getStorageIds());
                 }
             }
             for (Guid domainId : domainsIds) {
@@ -614,7 +614,7 @@ public final class ImagesHandler {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(
                         ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                                diskImage.getit_guid()));
+                                diskImage.getImageTemplateId()));
             }
         }
     }

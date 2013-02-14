@@ -190,9 +190,9 @@ public class ImportVmTemplateCommandTest {
         Map<VmTemplate, DiskImageList> resultMap = new HashMap<VmTemplate, DiskImageList>();
 
         DiskImage image = new DiskImage();
-        image.setactual_size(2);
-        image.setvolume_format(volumeFormat);
-        image.setvolume_type(volumeType);
+        image.setActualSizeFromDiskImage(2);
+        image.setvolumeFormat(volumeFormat);
+        image.setVolumeType(volumeType);
 
         resultMap.put(new VmTemplate(), new DiskImageList(Arrays.asList(image)));
         result.setReturnValue(resultMap);

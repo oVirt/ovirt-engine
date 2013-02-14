@@ -243,11 +243,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     private boolean isTemplateInDestStorageDomain(Guid imageId, Guid sourceDomainId) {
-        Guid templateId = getDiskImageById(imageId).getit_guid();
+        Guid templateId = getDiskImageById(imageId).getImageTemplateId();
 
         if (!Guid.Empty.equals(templateId)) {
             DiskImage templateImage = getDiskImageDao().get(templateId);
-            if (!templateImage.getstorage_ids().contains(sourceDomainId)) {
+            if (!templateImage.getStorageIds().contains(sourceDomainId)) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
@@ -272,7 +272,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         DiskImage diskImage = getDiskImageById(imageId);
 
         return new StorageDomainValidator(
-                getStorageDomainById(domainId, diskImage.getstorage_pool_id().getValue()));
+                getStorageDomainById(domainId, diskImage.getStoragePoolId().getValue()));
     }
 
     protected boolean isValidSpaceRequirements() {
@@ -287,7 +287,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsImagesMap.entrySet()) {
             Guid destDomainId = entry.getKey();
             List<DiskImage> disksList = entry.getValue();
-            Guid storagePoolId = disksList.get(0).getstorage_pool_id().getValue();
+            Guid storagePoolId = disksList.get(0).getStoragePoolId().getValue();
             StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
             if (!isStorageDomainWithinThresholds(destDomain)) {
@@ -296,7 +296,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
             long totalImagesSize = 0;
             for (DiskImage diskImage : disksList) {
-                Guid templateId = diskImage.getit_guid();
+                Guid templateId = diskImage.getImageTemplateId();
                 List<DiskImage> allImageSnapshots =
                         ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), templateId);
 

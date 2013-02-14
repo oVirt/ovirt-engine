@@ -1434,8 +1434,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 }
 
                                 if (disk != null) {
-                                    templateDisk.setvolume_type((VolumeType) disk.getVolumeType().getSelectedItem());
-                                    templateDisk.setvolume_format(AsyncDataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
+                                    templateDisk.setVolumeType((VolumeType) disk.getVolumeType().getSelectedItem());
+                                    templateDisk.setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat((VolumeType) disk.getVolumeType()
                                             .getSelectedItem(),
                                             getstorageDomain().getStorageType()));
                                 }

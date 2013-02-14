@@ -90,7 +90,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
         if (retValue && isImageDisk && getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-                ((DiskImage) disk).getstorage_ids().get(0), getVm().getStoragePoolId())) == null) {
+                ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }

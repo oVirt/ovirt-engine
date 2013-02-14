@@ -111,7 +111,7 @@ public class ImportTemplateModel extends ImportVmModel
             for (Disk disk : template.getDiskList()) {
                 DiskImage diskImage = (DiskImage) disk;
                 addDiskImportData(diskImage.getId(),
-                        filteredStorageDomains, diskImage.getvolume_type(), new EntityModel(true));
+                        filteredStorageDomains, diskImage.getVolumeType(), new EntityModel(true));
             }
         }
         postInitDisks();

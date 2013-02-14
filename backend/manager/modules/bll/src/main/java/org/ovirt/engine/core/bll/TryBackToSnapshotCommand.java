@@ -47,7 +47,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
         }
 
         DiskImage oldImage = getDiskImageDao().getSnapshotById(oldImageId);
-        oldImage.setactive(active);
+        oldImage.setActive(active);
         getImageDao().update(oldImage.getImage());
     }
 

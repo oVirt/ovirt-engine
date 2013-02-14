@@ -2542,15 +2542,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 StorageDomain storageDomain =
                                         Linq.getStorageById(
                                                 imageToDestinationDomainMap.get(templateDisk.getId())
-                                                        .getstorage_ids()
+                                                        .getStorageIds()
                                                         .get(0), activeStorageDomains);
 
                                 if (disk != null) {
                                     dict.get(templateDisk.getId())
-                                            .setvolume_type((VolumeType) disk.getVolumeType()
+                                            .setVolumeType((VolumeType) disk.getVolumeType()
                                                     .getSelectedItem());
                                     dict.get(templateDisk.getId())
-                                            .setvolume_format(AsyncDataProvider.GetDiskVolumeFormat(
+                                            .setvolumeFormat(AsyncDataProvider.GetDiskVolumeFormat(
                                                     (VolumeType) disk.getVolumeType().getSelectedItem(),
                                                     storageDomain.getStorageType()));
                                     if (disk.getQuota().getSelectedItem() != null) {

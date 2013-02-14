@@ -85,18 +85,18 @@ public class BackendExportDomainDisksResourceTest
     protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
-        entity.setvolume_format(VolumeFormat.RAW);
+        entity.setvolumeFormat(VolumeFormat.RAW);
         entity.setDiskInterface(DiskInterface.VirtIO);
         entity.setImageStatus(ImageStatus.OK);
-        entity.setvolume_type(VolumeType.Sparse);
+        entity.setVolumeType(VolumeType.Sparse);
         entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
         return setUpStatisticalEntityExpectations(entity);    }
 
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
-        entity.setread_rate(1);
-        entity.setwrite_rate(2);
+        entity.setReadRate(1);
+        entity.setWriteRate(2);
         entity.setReadLatency(3.0);
         entity.setWriteLatency(4.0);
         entity.setFlushLatency(5.0);

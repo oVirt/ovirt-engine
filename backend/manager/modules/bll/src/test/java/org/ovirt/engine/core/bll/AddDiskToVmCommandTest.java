@@ -145,8 +145,8 @@ public class AddDiskToVmCommandTest {
     public void canDoActionFailsOnNullDiskInterface() throws Exception {
         Guid storageId = Guid.NewGuid();
         DiskImage image = new DiskImage();
-        image.setvolume_format(VolumeFormat.COW);
-        image.setvolume_type(VolumeType.Preallocated);
+        image.setvolumeFormat(VolumeFormat.COW);
+        image.setVolumeType(VolumeType.Preallocated);
         AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
@@ -257,7 +257,7 @@ public class AddDiskToVmCommandTest {
     @Test
     public void canDoActionShareableDiskVolumeFormatSucceeds() {
         DiskImage image = createShareableDiskImage();
-        image.setvolume_format(VolumeFormat.RAW);
+        image.setvolumeFormat(VolumeFormat.RAW);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
@@ -277,7 +277,7 @@ public class AddDiskToVmCommandTest {
     @Test
     public void canDoActionShareableDiskVolumeFormatFails() {
         DiskImage image = createShareableDiskImage();
-        image.setvolume_format(VolumeFormat.COW);
+        image.setvolumeFormat(VolumeFormat.COW);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
@@ -340,7 +340,7 @@ public class AddDiskToVmCommandTest {
      */
     private void mockVmWithDisk(Guid storageId) {
         DiskImage image = new DiskImage();
-        image.setstorage_ids(new ArrayList<Guid>(Arrays.asList(storageId)));
+        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageId)));
         mockVm().getDiskMap().put(image.getId(), image);
     }
 
@@ -449,14 +449,14 @@ public class AddDiskToVmCommandTest {
 
     private static DiskImage createSparseDiskImage() {
         DiskImage image = new DiskImage();
-        image.setvolume_type(VolumeType.Sparse);
+        image.setVolumeType(VolumeType.Sparse);
         image.setDiskInterface(DiskInterface.IDE);
         return image;
     }
 
     private static DiskImage createPreallocDiskImage() {
         DiskImage image = new DiskImage();
-        image.setvolume_type(VolumeType.Preallocated);
+        image.setVolumeType(VolumeType.Preallocated);
         image.setDiskInterface(DiskInterface.IDE);
         image.setSizeInGigabytes(5);
         return image;

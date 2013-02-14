@@ -180,8 +180,8 @@ public class BackendVmDiskResourceTest
     protected DiskImage setUpStatisticalExpectations() throws Exception {
         DiskImage entity = control.createMock(DiskImage.class);
         expect(entity.getId()).andReturn(DISK_ID).anyTimes();
-        expect(entity.getread_rate()).andReturn(10);
-        expect(entity.getwrite_rate()).andReturn(20);
+        expect(entity.getReadRate()).andReturn(10);
+        expect(entity.getWriteRate()).andReturn(20);
         expect(entity.getReadLatency()).andReturn(30.0).times(2);
         expect(entity.getWriteLatency()).andReturn(40.0).times(2);
         expect(entity.getFlushLatency()).andReturn(50.0).times(2);

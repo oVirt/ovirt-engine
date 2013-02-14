@@ -127,37 +127,37 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         }
 
         protected void mapEntity(ResultSet rs, DiskImage entity) throws SQLException {
-            entity.setcreation_date(DbFacadeUtils.fromDate(rs
+            entity.setCreationDate(DbFacadeUtils.fromDate(rs
                     .getTimestamp("creation_date")));
-            entity.setactual_size(rs.getLong("actual_size"));
-            entity.setdescription(rs.getString("description"));
+            entity.setActualSizeFromDiskImage(rs.getLong("actual_size"));
+            entity.setDescription(rs.getString("description"));
             entity.setImageId(Guid.createGuidFromString(rs
                     .getString("image_guid")));
-            entity.setit_guid(Guid.createGuidFromString(rs
+            entity.setImageTemplateId(Guid.createGuidFromString(rs
                     .getString("it_guid")));
-            entity.setsize(rs.getLong("size"));
+            entity.setSize(rs.getLong("size"));
             entity.setParentId(Guid.createGuidFromString(rs
                     .getString("ParentId")));
             entity.setImageStatus(ImageStatus.forValue(rs
                     .getInt("imageStatus")));
-            entity.setlastModified(DbFacadeUtils.fromDate(rs
+            entity.setLastModified(DbFacadeUtils.fromDate(rs
                     .getTimestamp("lastModified")));
-            entity.setappList(rs.getString("app_list"));
-            entity.setstorage_ids(GuidUtils.getGuidListFromString(rs.getString("storage_id")));
+            entity.setAppList(rs.getString("app_list"));
+            entity.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_id")));
             entity.setStoragesNames(split(rs.getString("storage_name")));
-            entity.setvm_snapshot_id(NGuid.createGuidFromString(rs
+            entity.setVmSnapshotId(NGuid.createGuidFromString(rs
                     .getString("vm_snapshot_id")));
-            entity.setvolume_type(VolumeType.forValue(rs
+            entity.setVolumeType(VolumeType.forValue(rs
                     .getInt("volume_type")));
-            entity.setvolume_format(VolumeFormat.forValue(rs
+            entity.setvolumeFormat(VolumeFormat.forValue(rs
                     .getInt("volume_format")));
             entity.setId(Guid.createGuidFromString(rs.getString("image_group_id")));
-            entity.setstorage_path(split(rs.getString("storage_path")));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs
+            entity.setStoragePath(split(rs.getString("storage_path")));
+            entity.setStoragePoolId(NGuid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setBoot(rs.getBoolean("boot"));
-            entity.setread_rate(rs.getInt("read_rate"));
-            entity.setwrite_rate(rs.getInt("write_rate"));
+            entity.setReadRate(rs.getInt("read_rate"));
+            entity.setWriteRate(rs.getInt("write_rate"));
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
             entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")
@@ -165,7 +165,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setFlushLatency(rs.getObject("flush_latency_seconds") != null ? rs.getDouble("flush_latency_seconds")
                     : null);
             entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-            entity.setactive((Boolean) rs.getObject("active"));
+            entity.setActive(Boolean.TRUE.equals(rs.getObject("active")));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
         }

@@ -30,14 +30,14 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected DiskImage cloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.cloneDiskImage(newImageGuid);
-        returnValue.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        returnValue.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         returnValue.setQuotaId(getParameters().getQuotaId());
         // override to have no template
         returnValue.setParentId(VmTemplateHandler.BlankVmTemplateId);
-        returnValue.setit_guid(VmTemplateHandler.BlankVmTemplateId);
+        returnValue.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
         if (getParameters().getDiskImageBase() != null) {
-            returnValue.setvolume_type(getParameters().getDiskImageBase().getvolume_type());
-            returnValue.setvolume_format(getParameters().getDiskImageBase().getvolume_format());
+            returnValue.setVolumeType(getParameters().getDiskImageBase().getVolumeType());
+            returnValue.setvolumeFormat(getParameters().getDiskImageBase().getVolumeFormat());
         }
         return returnValue;
     }
@@ -54,8 +54,8 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         setDestinationImageId(Guid.NewGuid());
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setimage_group_id(Guid.NewGuid());
-        Guid storagePoolID = mNewCreatedDiskImage.getstorage_pool_id() != null ? mNewCreatedDiskImage
-                .getstorage_pool_id().getValue() : Guid.Empty;
+        Guid storagePoolID = mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage
+                .getStoragePoolId().getValue() : Guid.Empty;
 
         VDSReturnValue vdsReturnValue = null;
         try {
@@ -64,12 +64,12 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.CopyImage,
-                            new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getstorage_ids().get(0),
+                            new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
                                     getVmTemplateId(), getDiskImage().getimage_group_id().getValue(), getImage()
                                             .getImageId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
                                     "", getDestinationStorageDomainId(),
-                                    CopyVolumeType.LeafVol, mNewCreatedDiskImage.getvolume_format(),
-                                    mNewCreatedDiskImage.getvolume_type(), getDiskImage().isWipeAfterDelete(),
+                                    CopyVolumeType.LeafVol, mNewCreatedDiskImage.getVolumeFormat(),
+                                    mNewCreatedDiskImage.getVolumeType(), getDiskImage().isWipeAfterDelete(),
                                     false, getStoragePool().getcompatibility_version().toString()));
 
             if (vdsReturnValue.getSucceeded()) {

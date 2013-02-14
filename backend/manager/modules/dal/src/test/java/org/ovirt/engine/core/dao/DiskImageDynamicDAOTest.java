@@ -108,11 +108,11 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
         DiskImage newImage = new DiskImage();
         newImage = new DiskImage();
         newImage.setImageId(Guid.NewGuid());
-        newImage.setvolume_format(VolumeFormat.COW);
-        newImage.setvolume_type(VolumeType.Sparse);
+        newImage.setvolumeFormat(VolumeFormat.COW);
+        newImage.setVolumeType(VolumeType.Sparse);
         newImage.setDiskInterface(DiskInterface.IDE);
-        newImage.setactive(true);
-        newImage.setit_guid(EXISTING_IMAGE_DISK_TEMPLATE);
+        newImage.setActive(true);
+        newImage.setImageTemplateId(EXISTING_IMAGE_DISK_TEMPLATE);
         newImage.setId(Guid.NewGuid());
         imageDao.save(newImage.getImage());
         diskDao.save(newImage);

@@ -127,9 +127,9 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                 templateImagesMap.put(image.getImageId(), image);
             }
             for (DiskImage image : diskImages) {
-                if (templateImagesMap.containsKey(image.getit_guid())) {
-                    if (!templateImagesMap.get(image.getit_guid())
-                            .getstorage_ids()
+                if (templateImagesMap.containsKey(image.getImageTemplateId())) {
+                    if (!templateImagesMap.get(image.getImageTemplateId())
+                            .getStorageIds()
                             .contains(getParameters().getStorageDomainId())) {
                         retValue = false;
                         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);

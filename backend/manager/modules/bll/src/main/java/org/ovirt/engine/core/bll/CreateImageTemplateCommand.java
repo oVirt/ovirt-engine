@@ -33,7 +33,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     @Override
     protected void executeCommand() {
         super.executeCommand();
-        Guid storagePoolId = getDiskImage().getstorage_pool_id() != null ? getDiskImage().getstorage_pool_id()
+        Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
                 .getValue() : Guid.Empty;
         Guid imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
                 : Guid.Empty;
@@ -42,7 +42,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         Guid destinationImageGroupID = Guid.NewGuid();
         setDestinationImageId(Guid.NewGuid());
         getDiskImage().getSnapshots().addAll(
-                ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getit_guid()));
+                ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getImageTemplateId()));
 
         setDiskImage(getDiskImage().getSnapshots().get(getDiskImage().getSnapshots().size() - 1));
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
@@ -55,9 +55,9 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                         VDSCommandType.CopyImage,
                         new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
-                                getDestinationImageId(), StringUtils.defaultString(newImage.getdescription()), getParameters()
+                                getDestinationImageId(), StringUtils.defaultString(newImage.getDescription()), getParameters()
                                         .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, newImage
-                                        .getvolume_format(), newImage.getvolume_type(), getDiskImage()
+                                        .getVolumeFormat(), newImage.getVolumeType(), getDiskImage()
                                         .isWipeAfterDelete(), false, getStoragePool().getcompatibility_version()
                                         .toString()));
 
@@ -69,18 +69,18 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setId(destinationImageGroupID);
         newImage.setDiskAlias(getParameters().getDiskAlias() != null ?
                 getParameters().getDiskAlias() : getDiskImage().getDiskAlias());
-        newImage.setvm_snapshot_id(getParameters().getVmSnapshotId());
+        newImage.setVmSnapshotId(getParameters().getVmSnapshotId());
         newImage.setQuotaId(getParameters().getQuotaId());
         newImage.setParentId(Guid.Empty);
-        newImage.setit_guid(Guid.Empty);
-        newImage.setstorage_ids(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
-        newImage.setactive(true);
+        newImage.setImageTemplateId(Guid.Empty);
+        newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
+        newImage.setActive(true);
         saveImage(newImage);
         getBaseDiskDao().save(newImage);
 
         DiskImageDynamic diskDynamic = new DiskImageDynamic();
         diskDynamic.setId(newImage.getImageId());
-        diskDynamic.setactual_size(getDiskImage().getactual_size());
+        diskDynamic.setactual_size(getDiskImage().getActualSizeFromDiskImage());
         DbFacade.getInstance().getDiskImageDynamicDao().save(diskDynamic);
 
         setActionReturnValue(newImage);
@@ -103,8 +103,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                     getDiskImage().getImageId());
             ancestor = getDiskImage();
         }
-        disk.setvolume_format(ancestor.getvolume_format());
-        disk.setvolume_type(ancestor.getvolume_type());
+        disk.setvolumeFormat(ancestor.getVolumeFormat());
+        disk.setVolumeType(ancestor.getVolumeType());
     }
 
     @Override
