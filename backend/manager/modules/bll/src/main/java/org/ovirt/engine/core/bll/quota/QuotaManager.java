@@ -149,10 +149,14 @@ public class QuotaManager {
                     }
                 }
             }
-            if (!hasStorageId) {
-                parameters.getCanDoActionMessages()
-                        .add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
-                return false;
+            if (!hasStorageId){
+                if(quota.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT){
+                    parameters.getCanDoActionMessages()
+                    .add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
+                    return false;
+                } else {
+                    auditLogPair.setFirst(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE);
+                }
             }
         }
         return true;
