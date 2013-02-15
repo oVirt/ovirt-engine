@@ -102,7 +102,10 @@ caution() {
 
 # Install taskcleaner procedures
 psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -f ./taskcleaner_sp.sql ${DATABASE} > /dev/null
-
+status=$?
+if [ ${status} -ne 0 ]; then
+    exit ${status}
+fi
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o  "${CLEAR_ALL}" = "true" -o "${CLEAR_COMPENSATION}" = "true" -o "${CLEAR_JOB_STEPS}" = "true" ]; then #delete operations block
     if [ "${TASK_ID}" != "" ]; then
@@ -230,6 +233,6 @@ else
 fi
 
 psql -U ${USERNAME} -h ${SERVERNAME} -p ${PORT} -c "${CMD1}${CMD2}" -x ${DATABASE}
-
+status=$?
 popd>/dev/null
-exit $?
+exit ${status}
