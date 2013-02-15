@@ -15,7 +15,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         P parameters = getParameters();
         Guid vdsId = parameters.getVdsId();
         if (ResourceManager

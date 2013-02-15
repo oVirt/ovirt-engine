@@ -10,7 +10,7 @@ public class ResetISOPathVDSCommand<P extends IrsBaseVDSCommandParameters> exten
     // overriding executeVdsCommand and not IrsBroker command because no need in
     // spm for this action
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         getCurrentIrsProxyData().setIsoPrefix("");
     }
 }

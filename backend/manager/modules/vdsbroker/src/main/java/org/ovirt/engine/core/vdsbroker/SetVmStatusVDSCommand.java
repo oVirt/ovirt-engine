@@ -21,7 +21,7 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         SetVmStatusVDSCommandParameters parameters = getParameters();
         final VMStatus status = parameters.getStatus();
 

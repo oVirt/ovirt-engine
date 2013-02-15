@@ -58,7 +58,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
             // and we want returnValue clean from last run.
             _returnValue = new VDSReturnValue();
             getVDSReturnValue().setSucceeded(true);
-            ExecuteVDSCommand();
+            executeVDSCommand();
         } catch (VDSNetworkException ex) {
             setVdsNetworkError(ex);
         } catch (IRSErrorException ex) {
@@ -117,5 +117,5 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
         return StringUtils.EMPTY;
     }
 
-    protected abstract void ExecuteVDSCommand();
+    protected abstract void executeVDSCommand();
 }

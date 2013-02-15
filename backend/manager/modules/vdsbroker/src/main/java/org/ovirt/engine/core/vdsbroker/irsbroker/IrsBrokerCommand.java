@@ -1504,7 +1504,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         boolean isStartReconstruct = false;
         synchronized (getCurrentIrsProxyData().syncObj) {
             try {

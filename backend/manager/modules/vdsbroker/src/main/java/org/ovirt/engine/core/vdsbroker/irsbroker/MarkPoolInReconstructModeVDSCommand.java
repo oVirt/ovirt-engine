@@ -12,7 +12,7 @@ public class MarkPoolInReconstructModeVDSCommand<P extends MarkPoolInReconstruct
     }
 
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         try {
             IrsProxyData proxyData = getCurrentIrsProxyData();
             switch (getParameters().getReconstructMarkAction()) {

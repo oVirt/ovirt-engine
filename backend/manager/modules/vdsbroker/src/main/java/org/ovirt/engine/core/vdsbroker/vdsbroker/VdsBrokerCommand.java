@@ -85,7 +85,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     @Override
-    protected void ExecuteVDSCommand() {
+    protected void executeVDSCommand() {
         try {
             ExecuteVdsBrokerCommand();
         } catch (VDSExceptionBase ex) {
