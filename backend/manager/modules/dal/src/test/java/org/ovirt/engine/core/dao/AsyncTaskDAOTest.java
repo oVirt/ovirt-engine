@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
+import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -33,6 +34,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     private AsyncTasks existingAsyncTask;
 
     private VdcActionParametersBase params;
+    private VdcActionParametersBase taskParams;
 
     @Override
     @Before
@@ -44,6 +46,11 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
 
+        taskParams = new VdcActionParametersBase();
+        taskParams.setSessionId("ASESSIONID");
+        taskParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+        taskParams.setParentParameters(params);
+
         // create some test data
         newAsyncTask = new AsyncTasks();
         newAsyncTask.settask_id(Guid.NewGuid());
@@ -51,7 +58,8 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setaction_type(VdcActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
-        newAsyncTask.setaction_parameters(params);
+        newAsyncTask.setActionParameters(params);
+        newAsyncTask.setTaskParameters(taskParams);
         newAsyncTask.setCommandId(Guid.NewGuid());
         newAsyncTask.setTaskType(AsyncTaskType.copyImage);
         newAsyncTask.setStoragePoolId(Guid.NewGuid());
@@ -160,7 +168,11 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         existingAsyncTask.setaction_type(VdcActionType.AddDisk);
         AddDiskParameters addDiskToVmParams = new AddDiskParameters();
         addDiskToVmParams.setSessionId("SESSION_ID");
-        existingAsyncTask.setaction_parameters(addDiskToVmParams);
+        AddImageFromScratchParameters taskParameters = new AddImageFromScratchParameters();
+        taskParameters.setParentParameters(addDiskToVmParams);
+        taskParameters.setParentCommand(VdcActionType.AddDisk);
+        existingAsyncTask.setActionParameters(addDiskToVmParams);
+        existingAsyncTask.setTaskParameters(taskParameters);
         dao.update(existingAsyncTask);
 
         AsyncTasks result = dao.get(existingAsyncTask.gettask_id());
@@ -196,7 +208,11 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         existingAsyncTask.setaction_type(VdcActionType.AddDisk);
         AddDiskParameters addDiskToVmParams = new AddDiskParameters();
         addDiskToVmParams.setSessionId("SESSION_ID");
-        existingAsyncTask.setaction_parameters(addDiskToVmParams);
+        AddImageFromScratchParameters taskParameters = new AddImageFromScratchParameters();
+        taskParameters.setParentParameters(addDiskToVmParams);
+        taskParameters.setParentCommand(VdcActionType.AddDisk);
+        existingAsyncTask.setActionParameters(addDiskToVmParams);
+        existingAsyncTask.setTaskParameters(taskParameters);
         List<AsyncTasks> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();

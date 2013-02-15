@@ -54,7 +54,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
             entity.settask_id(Guid.createGuidFromString(rs.getString("task_id")));
-            entity.setaction_parameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
+            entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
+            entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"),rs.getString("task_params_class")));
             entity.setStepId(NGuid.createGuidFromString(rs.getString("step_id")));
             entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
             entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
@@ -81,8 +82,10 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("result", task.getresult());
             addValue("status", task.getstatus());
             addValue("task_id", task.gettask_id());
-            addValue("action_parameters", serializeParameters(task.getaction_parameters()));
-            addValue("action_params_class",task.getaction_parameters().getClass().getName());
+            addValue("action_parameters", serializeParameters(task.getActionParameters()));
+            addValue("action_params_class",task.getActionParameters().getClass().getName());
+            addValue("task_parameters", serializeParameters(task.getTaskParameters()));
+            addValue("task_params_class",task.getTaskParameters().getClass().getName());
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
         }
@@ -153,7 +156,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     private static void logNullParameters(AsyncTasks task) {
-        if (task.getaction_parameters() == null) {
+        if (task.getActionParameters() == null) {
             StringBuilder sb = new StringBuilder("Null action_parameters:\n");
             StackTraceElement[] st = Thread.currentThread().getStackTrace();
 
