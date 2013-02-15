@@ -38,7 +38,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         existingDomain = dao.get(EXISTING_DOMAIN_ID);
 
         newStaticDomain = new StorageDomainStatic();
-        newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
+        newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
     }
 
     /**

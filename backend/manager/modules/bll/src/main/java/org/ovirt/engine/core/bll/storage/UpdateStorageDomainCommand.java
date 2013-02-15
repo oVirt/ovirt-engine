@@ -46,7 +46,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                 .getStorageStaticData());
 
         // Allow change only to name & description field
-        props.remove("storage_name");
+        props.remove("storageName");
         props.remove("description");
         if (returnValue && props.size() > 0) {
             log.warnFormat("There was an attempt to update the following fields although they are not allowed to be updated: {0}",
@@ -55,7 +55,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             returnValue = false;
         }
         _storageDomainNameChanged =
-                !StringUtils.equals(oldDomain.getstorage_name(), getStorageDomain().getStorageName());
+                !StringUtils.equals(oldDomain.getStorageName(), getStorageDomain().getStorageName());
         // if domain is part of pool, and name changed, check that pool is up in
         // order to change description in spm
         if (returnValue
@@ -105,7 +105,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Override
     public String getEntityOldName() {
-        return oldDomain.getstorage_name();
+        return oldDomain.getStorageName();
     }
 
     @Override

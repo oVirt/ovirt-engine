@@ -29,9 +29,9 @@ public class StorageDomainMapperTest extends
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getInverse(StorageDomainStatic to) {
         org.ovirt.engine.core.common.businessentities.StorageDomain inverse = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         inverse.setId(to.getId());
-        inverse.setStorageName(to.getstorage_name());
-        inverse.setStorageDomainType(to.getstorage_domain_type());
-        inverse.setStorageType(to.getstorage_type());
+        inverse.setStorageName(to.getStorageName());
+        inverse.setStorageDomainType(to.getStorageDomainType());
+        inverse.setStorageType(to.getStorageType());
         inverse.setStorageFormat(to.getStorageFormat());
         return inverse;
     }

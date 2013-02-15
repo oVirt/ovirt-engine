@@ -106,7 +106,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                     if (domain == null) {
                         problematicDomains.add(domainId.toString());
                     } else {
-                        problematicDomains.add(domain.getstorage_name());
+                        problematicDomains.add(domain.getStorageName());
                     }
                 }
             }

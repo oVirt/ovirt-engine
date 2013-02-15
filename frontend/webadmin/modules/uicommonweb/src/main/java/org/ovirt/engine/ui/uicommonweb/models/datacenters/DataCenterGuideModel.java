@@ -763,9 +763,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         path = (String) localModel.getPath().getEntity();
 
         storageDomain = new StorageDomainStatic();
-        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
-        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName((String) model.getName().getEntity());
 
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -828,7 +828,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 dataCenterGuideModel.removeConnection = true;
 
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                dataCenterGuideModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+                dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -909,9 +909,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         path = (String) nfsModel.getPath().getEntity();
 
         storageDomain = new StorageDomainStatic();
-        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
-        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
@@ -975,7 +975,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                dataCenterGuideModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+                dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1046,10 +1046,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         VDS host = (VDS) model.getHost().getSelectedItem();
 
         storageDomain = new StorageDomainStatic();
-        storageDomain.setstorage_type(sanModel.getType());
-        storageDomain.setstorage_domain_type(sanModel.getRole());
+        storageDomain.setStorageType(sanModel.getType());
+        storageDomain.setStorageDomainType(sanModel.getRole());
         storageDomain.setStorageFormat((StorageFormatType) sanModel.getContainer().getFormat().getSelectedItem());
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageName((String) model.getName().getEntity());
 
         AsyncDataProvider.GetStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {

@@ -10,11 +10,11 @@ public class CreateStorageDomainVDSCommand<P extends CreateStorageDomainVDSComma
 
     @Override
     protected void ExecuteVdsBrokerCommand() {
-        status = getBroker().createStorageDomain(getParameters().getStorageDomain().getstorage_type().getValue(),
+        status = getBroker().createStorageDomain(getParameters().getStorageDomain().getStorageType().getValue(),
                         getParameters().getStorageDomain().getId().toString(),
-                        getParameters().getStorageDomain().getstorage_name(),
+                        getParameters().getStorageDomain().getStorageName(),
                         getParameters().getArgs(),
-                        getParameters().getStorageDomain().getstorage_domain_type().getValue(),
+                        getParameters().getStorageDomain().getStorageDomainType().getValue(),
                         getParameters().getStorageDomain().getStorageFormat().getValue());
         ProceedProxyReturnValue();
     }

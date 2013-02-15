@@ -78,13 +78,13 @@ public class BackendStorageDomainsResource
     private Response addNfsOrLocalOrPosix(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
         StorageServerConnections cnx = mapToCnx(model);
 
-        entity.setstorage(addStorageServerConnection(cnx, hostId));
+        entity.setStorage(addStorageServerConnection(cnx, hostId));
 
         if (action == VdcActionType.AddNFSStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
                 getExistingStorageDomain(hostId,
-                                         entity.getstorage_type(),
-                                         entity.getstorage_domain_type(),
+                                         entity.getStorageType(),
+                                         entity.getStorageDomainType(),
                                          cnx);
             if (existing != null) {
                 entity = existing.getStorageStaticData();
@@ -169,10 +169,10 @@ public class BackendStorageDomainsResource
         Guid hostId = getHostId(storageDomain);
 
         Response resp = null;
-        switch (entity.getstorage_type()) {
+        switch (entity.getStorageType()) {
         case ISCSI:
         case FCP:
-            resp = addSAN(storageDomain, entity.getstorage_type(), entity, hostId);
+            resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
             break;
         case NFS:
             validateParameters(storageDomain.getStorage(), "address", "path");

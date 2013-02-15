@@ -1141,9 +1141,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         path = (String) posixModel.getPath().getEntity();
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
-        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
-        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
@@ -1213,7 +1213,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
             }
         };
 
@@ -1269,11 +1269,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 isNew ? new StorageDomainStatic()
                         : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
-        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
 
-        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
 
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
@@ -1351,7 +1351,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1458,11 +1458,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 isNew ? new StorageDomainStatic()
                         : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
 
-        storageDomain.setstorage_type(isNew ? storageModel.getType() : storageDomain.getstorage_type());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
 
-        storageDomain.setstorage_domain_type(isNew ? storageModel.getRole() : storageDomain.getstorage_domain_type());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
 
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
 
         if (isNew)
@@ -1533,7 +1533,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 storageListModel.removeConnection = true;
 
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageDomain.setstorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
 
             }
         };
@@ -1599,15 +1599,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 isNew ? new StorageDomainStatic()
                         : (StorageDomainStatic) Cloner.clone(storage.getStorageStaticData());
 
-        storageDomain.setstorage_type(isNew ? sanModel.getType() : storageDomain.getstorage_type());
+        storageDomain.setStorageType(isNew ? sanModel.getType() : storageDomain.getStorageType());
 
-        storageDomain.setstorage_domain_type(isNew ? sanModel.getRole() : storageDomain.getstorage_domain_type());
+        storageDomain.setStorageDomainType(isNew ? sanModel.getRole() : storageDomain.getStorageDomainType());
 
         storageDomain.setStorageFormat(isNew ? (StorageFormatType) sanModel.getContainer()
                 .getFormat()
                 .getSelectedItem() : storageDomain.getStorageFormat());
 
-        storageDomain.setstorage_name((String) model.getName().getEntity());
+        storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
 
         if (isNew)

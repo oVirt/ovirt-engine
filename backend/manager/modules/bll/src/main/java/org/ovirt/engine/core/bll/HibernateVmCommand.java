@@ -66,8 +66,8 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         .getStorageDomainStaticDao().getAllForStoragePool(getVm().getStoragePoolId());
             if (domainsInPool.size() > 0) {
                 for (StorageDomainStatic currDomain : domainsInPool) {
-                    if (currDomain.getstorage_domain_type().equals(StorageDomainType.Master)
-                                || currDomain.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                    if (currDomain.getStorageDomainType().equals(StorageDomainType.Master)
+                                || currDomain.getStorageDomainType().equals(StorageDomainType.Data)) {
                         _storageDomainId = currDomain.getId();
                         break;
                     }

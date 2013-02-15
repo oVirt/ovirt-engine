@@ -172,8 +172,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         int numOfRemovedLuns = removeStorageDomainLuns(storageDomain);
         if (numOfRemovedLuns > 0) {
             List<StorageServerConnections> list = DbFacade.getInstance()
-                    .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
-            for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getstorage())) {
+                    .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
+            for (StorageServerConnections connection : FilterConnectionsUsedByOthers(list, storageDomain.getStorage())) {
                 DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());
             }
         }
@@ -208,6 +208,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     @Override
     public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
-        return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage());
+        return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
     }
 }

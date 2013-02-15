@@ -208,7 +208,7 @@ public class ImportVmTemplateCommandTest {
         final StorageDomainStaticDAO dao = mock(StorageDomainStaticDAO.class);
 
         final StorageDomainStatic domain = new StorageDomainStatic();
-        domain.setstorage_type(storageType);
+        domain.setStorageType(storageType);
         when(dao.get(any(Guid.class))).thenReturn(domain);
 
         doReturn(dao).when(command).getStorageDomainStaticDAO();

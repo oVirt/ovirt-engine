@@ -193,7 +193,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected boolean CheckExistingStorageDomain() {
         boolean returnValue = true;
         // prevent importing DATA domain
-        if (getParameters().getStorageDomain().getstorage_domain_type() == StorageDomainType.Data) {
+        if (getParameters().getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED);
             return false;
         }
@@ -223,7 +223,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                                 getStorageDomain().getId()))
                                 .getReturnValue();
                 if (domainFromIrs != null
-                        && domainFromIrs.getFirst().getstorage_domain_type() != getStorageDomain().getStorageDomainType()) {
+                        && domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
                     returnValue = false;
                 }

@@ -84,12 +84,12 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
     protected MapSqlParameterSource createFullParametersMapper(StorageDomainStatic domain) {
         return getCustomMapSqlParameterSource()
                 .addValue("id", domain.getId())
-                .addValue("storage", domain.getstorage())
-                .addValue("storage_name", domain.getstorage_name())
+                .addValue("storage", domain.getStorage())
+                .addValue("storage_name", domain.getStorageName())
                 .addValue("storage_description", domain.getDescription())
-                .addValue("storage_type", domain.getstorage_type())
+                .addValue("storage_type", domain.getStorageType())
                 .addValue("storage_domain_type",
-                        domain.getstorage_domain_type())
+                        domain.getStorageDomainType())
                 .addValue("storage_domain_format_type", domain.getStorageFormat())
                 .addValue("last_time_used_as_master", domain.getLastTimeUsedAsMaster());
     }
@@ -107,12 +107,12 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                 throws SQLException {
             StorageDomainStatic entity = new StorageDomainStatic();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
-            entity.setstorage(rs.getString("storage"));
-            entity.setstorage_name(rs.getString("storage_name"));
+            entity.setStorage(rs.getString("storage"));
+            entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));
-            entity.setstorage_type(StorageType.forValue(rs
+            entity.setStorageType(StorageType.forValue(rs
                     .getInt("storage_type")));
-            entity.setstorage_domain_type(StorageDomainType.forValue(rs
+            entity.setStorageDomainType(StorageDomainType.forValue(rs
                     .getInt("storage_domain_type")));
             entity.setStorageFormat(StorageFormatType.forValue(rs
                     .getString("storage_domain_format_type")));

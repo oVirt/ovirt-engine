@@ -113,7 +113,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     protected int removeStorageDomainLuns(StorageDomainStatic storageDomain) {
-        final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getstorage());
+        final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getStorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
             if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUN_id()) == null) {

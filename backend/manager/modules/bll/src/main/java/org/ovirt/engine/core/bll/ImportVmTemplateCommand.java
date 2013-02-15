@@ -127,7 +127,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                         break;
                     }
                     StorageDomainStatic targetDomain = storageDomain.getStorageStaticData();
-                    changeRawToCowIfSparseOnBlockDevice(targetDomain.getstorage_type(), image);
+                    changeRawToCowIfSparseOnBlockDevice(targetDomain.getStorageType(), image);
                     retVal = ImagesHandler.CheckImageConfiguration(targetDomain, image,
                             getReturnValue().getCanDoActionMessages());
                     if (!retVal) {

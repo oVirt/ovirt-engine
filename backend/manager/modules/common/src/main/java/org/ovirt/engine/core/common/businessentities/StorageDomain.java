@@ -104,19 +104,19 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public String getStorage() {
-        return getStorageStaticData().getstorage();
+        return getStorageStaticData().getStorage();
     }
 
     public void setStorage(String storage) {
-        getStorageStaticData().setstorage(storage);
+        getStorageStaticData().setStorage(storage);
     }
 
     public String getStorageName() {
-        return getStorageStaticData().getstorage_name();
+        return getStorageStaticData().getStorageName();
     }
 
     public void setStorageName(String storageName) {
-        getStorageStaticData().setstorage_name(storageName);
+        getStorageStaticData().setStorageName(storageName);
     }
 
     public String getDescription() {
@@ -236,11 +236,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public StorageType getStorageType() {
-        return getStorageStaticData().getstorage_type();
+        return getStorageStaticData().getStorageType();
     }
 
     public void setStorageType(StorageType storageType) {
-        getStorageStaticData().setstorage_type(storageType);
+        getStorageStaticData().setStorageType(storageType);
     }
 
     private StorageDomainSharedStatus storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
@@ -254,11 +254,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public StorageDomainType getStorageDomainType() {
-        return getStorageStaticData().getstorage_domain_type();
+        return getStorageStaticData().getStorageDomainType();
     }
 
     public void setStorageDomainType(StorageDomainType storageDomainType) {
-        getStorageStaticData().setstorage_domain_type(storageDomainType);
+        getStorageStaticData().setStorageDomainType(storageDomainType);
     }
 
     public StorageFormatType getStorageFormat() {

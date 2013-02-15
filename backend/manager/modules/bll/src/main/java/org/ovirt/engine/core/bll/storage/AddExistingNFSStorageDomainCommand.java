@@ -53,15 +53,15 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
     protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
         boolean returnValue = false;
         StorageDomainStatic domainFromIrs = domain.getFirst();
-        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getstorage())
-                && StringUtils.isEmpty(domainFromIrs.getstorage()) && domainFromIrs.getConnection() != null
+        if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
+                && StringUtils.isEmpty(domainFromIrs.getStorage()) && domainFromIrs.getConnection() != null
                 && getStorageDomain().getStorageStaticData().getConnection() != null) {
             returnValue = (StringUtils.equals(domainFromIrs.getConnection().getconnection(), getStorageDomain()
                     .getStorageStaticData().getConnection().getconnection()));
-        } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getstorage())
-                && !StringUtils.isEmpty(domainFromIrs.getstorage())) {
-            returnValue = (StringUtils.equals(domainFromIrs.getstorage(), getStorageDomain().getStorageStaticData()
-                    .getstorage()));
+        } else if (!StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
+                && !StringUtils.isEmpty(domainFromIrs.getStorage())) {
+            returnValue = (StringUtils.equals(domainFromIrs.getStorage(), getStorageDomain().getStorageStaticData()
+                    .getStorage()));
         }
         if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);

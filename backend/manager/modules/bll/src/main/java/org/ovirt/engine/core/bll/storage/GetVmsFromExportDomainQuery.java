@@ -35,7 +35,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     protected void executeQueryCommand() {
         StorageDomainStatic storage = DbFacade.getInstance().getStorageDomainStaticDao().get(
                 getParameters().getStorageDomainId());
-        if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (storage.getStorageDomainType() == StorageDomainType.ImportExport) {
             VDSReturnValue retVal = null;
             retVal = executeVerb(storage);
             buildOvfReturnValue(retVal.getReturnValue());
@@ -55,7 +55,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
             return retVal;
         } catch (RuntimeException e) {
             AuditLogableBase logable = new AuditLogableBase();
-            logable.addCustomValue("StorageDomainName", storage.getstorage_name());
+            logable.addCustomValue("StorageDomainName", storage.getStorageName());
             AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
             throw e;
         }

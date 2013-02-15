@@ -35,26 +35,26 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
         Pair<StorageDomainStatic, SANState> returnValue = new Pair<StorageDomainStatic, SANState>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (xmlRpcStruct.contains("name")) {
-            sdStatic.setstorage_name(xmlRpcStruct.getItem("name").toString());
+            sdStatic.setStorageName(xmlRpcStruct.getItem("name").toString());
         }
         if (xmlRpcStruct.contains("type")) {
-            sdStatic.setstorage_type(EnumUtils.valueOf(StorageType.class, xmlRpcStruct.getItem("type").toString(),
+            sdStatic.setStorageType(EnumUtils.valueOf(StorageType.class, xmlRpcStruct.getItem("type").toString(),
                     true));
         }
         if (xmlRpcStruct.contains("class")) {
             String domainType = xmlRpcStruct.getItem("class").toString();
             if ("backup".equalsIgnoreCase(domainType)) {
-                sdStatic.setstorage_domain_type(StorageDomainType.ImportExport);
+                sdStatic.setStorageDomainType(StorageDomainType.ImportExport);
             } else {
-                sdStatic.setstorage_domain_type(EnumUtils.valueOf(StorageDomainType.class, domainType, true));
+                sdStatic.setStorageDomainType(EnumUtils.valueOf(StorageDomainType.class, domainType, true));
             }
         }
         if (xmlRpcStruct.contains("version")) {
             sdStatic.setStorageFormat(
                     StorageFormatType.forValue(xmlRpcStruct.getItem("version").toString()));
         }
-        if (sdStatic.getstorage_type() != StorageType.UNKNOWN) {
-            if (sdStatic.getstorage_type() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
+        if (sdStatic.getStorageType() != StorageType.UNKNOWN) {
+            if (sdStatic.getStorageType() == StorageType.NFS && xmlRpcStruct.contains("remotePath")) {
                 String path = xmlRpcStruct.getItem("remotePath").toString();
                 List<StorageServerConnections> connections = DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForStorage(path);
@@ -63,11 +63,11 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
                     sdStatic.getConnection().setconnection(path);
                     sdStatic.getConnection().setstorage_type(StorageType.NFS);
                 } else {
-                    sdStatic.setstorage(connections.get(0).getid());
+                    sdStatic.setStorage(connections.get(0).getid());
                     sdStatic.setConnection(connections.get(0));
                 }
-            } else if (sdStatic.getstorage_type() != StorageType.NFS && (xmlRpcStruct.contains("vguuid"))) {
-                sdStatic.setstorage(xmlRpcStruct.getItem("vguuid").toString());
+            } else if (sdStatic.getStorageType() != StorageType.NFS && (xmlRpcStruct.contains("vguuid"))) {
+                sdStatic.setStorage(xmlRpcStruct.getItem("vguuid").toString());
             }
         }
         if (xmlRpcStruct.contains("state")) {

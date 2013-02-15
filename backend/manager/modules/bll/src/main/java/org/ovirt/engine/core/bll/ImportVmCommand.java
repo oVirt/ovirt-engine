@@ -336,7 +336,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         if (getParameters().getCopyCollapse() && !templateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
             addCanDoActionMessage(String.format("$DomainName %1$s",
-                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getstorage_name()));
+                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
             return false;
         }
 

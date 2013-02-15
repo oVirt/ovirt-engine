@@ -170,10 +170,10 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         } else {
 
             StorageDomainStatic storage = new StorageDomainStatic();
-            storage.setstorage_type(StorageType.LOCALFS);
-            storage.setstorage_domain_type(StorageDomainType.Data);
-            storage.setstorage_name((String) configureModel.getFormattedStorageName().getEntity());
-            storage.setstorage((String) returnValue.getActionReturnValue());
+            storage.setStorageType(StorageType.LOCALFS);
+            storage.setStorageDomainType(StorageDomainType.Data);
+            storage.setStorageName((String) configureModel.getFormattedStorageName().getEntity());
+            storage.setStorage((String) returnValue.getActionReturnValue());
 
             StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(storage);
             parameters.setVdsId(context.host.getId());

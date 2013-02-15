@@ -139,7 +139,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         StorageDomainStaticDAO sdStatDao = DbFacade.getInstance().getStorageDomainStaticDao();
         List<StorageDomainStatic> domains = sdStatDao.getAllForStoragePool(spId);
         for (StorageDomainStatic domain : domains) {
-            StorageDomainType sdType = domain.getstorage_domain_type();
+            StorageDomainType sdType = domain.getStorageDomainType();
 
             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
                 log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",

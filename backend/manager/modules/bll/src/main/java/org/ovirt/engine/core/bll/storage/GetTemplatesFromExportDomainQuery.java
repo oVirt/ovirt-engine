@@ -27,7 +27,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     protected void executeQueryCommand() {
         StorageDomainStatic storage = DbFacade.getInstance().getStorageDomainStaticDao().get(
                 getParameters().getStorageDomainId());
-        if (storage.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (storage.getStorageDomainType() == StorageDomainType.ImportExport) {
             VDSReturnValue retVal = executeVerb(storage);
             buildOvfReturnValue(retVal.getReturnValue());
         } else {

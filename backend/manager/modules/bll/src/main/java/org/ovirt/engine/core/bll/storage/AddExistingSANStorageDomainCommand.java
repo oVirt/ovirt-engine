@@ -46,11 +46,11 @@ public class AddExistingSANStorageDomainCommand<T extends AddSANStorageDomainPar
     @Override
     protected boolean ConcreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domainFromIrs) {
         boolean returnValue = false;
-        if (StringUtils.isNotEmpty(getStorageDomain().getStorageStaticData().getstorage())
-                && StringUtils.isNotEmpty(domainFromIrs.getFirst().getstorage())) {
+        if (StringUtils.isNotEmpty(getStorageDomain().getStorageStaticData().getStorage())
+                && StringUtils.isNotEmpty(domainFromIrs.getFirst().getStorage())) {
             returnValue =
-                    (StringUtils.equals(domainFromIrs.getFirst().getstorage(), getStorageDomain().getStorageStaticData()
-                            .getstorage()));
+                    (StringUtils.equals(domainFromIrs.getFirst().getStorage(), getStorageDomain().getStorageStaticData()
+                            .getStorage()));
         }
         if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);

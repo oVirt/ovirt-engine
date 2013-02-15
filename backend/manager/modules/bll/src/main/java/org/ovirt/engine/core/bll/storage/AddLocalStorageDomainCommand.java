@@ -59,7 +59,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
 
                 StorageServerConnections conn =
                         DbFacade.getInstance().getStorageServerConnectionDao().get(getParameters().getStorageDomain()
-                                .getstorage());
+                                .getStorage());
 
                 String rhevhLocalFSPath = Config.<String> GetValue(ConfigValues.RhevhLocalFSPath);
                 if (!conn.getconnection().equals(rhevhLocalFSPath)) {

@@ -45,11 +45,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     public StorageDomainStatic() {
     }
 
-    public StorageDomainStatic(Guid id, String storage, int storage_domain_type, String storage_name, String description) {
+    public StorageDomainStatic(Guid id, String storage, int storageDomainType, String storageName, String description) {
         this.id = id;
         this.storage = storage;
-        this.storageType = StorageDomainType.forValue(storage_domain_type);
-        this.name = storage_name;
+        this.storageType = StorageDomainType.forValue(storageDomainType);
+        this.name = storageName;
         this.description = description;
     }
 
@@ -63,60 +63,60 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    public String getstorage() {
-        return this.storage;
+    public String getStorage() {
+        return storage;
     }
 
-    public void setstorage(String value) {
-        this.storage = value;
+    public void setStorage(String storage) {
+        this.storage = storage;
     }
 
-    public StorageDomainType getstorage_domain_type() {
+    public StorageDomainType getStorageDomainType() {
         return storageType;
     }
 
-    public void setstorage_domain_type(StorageDomainType value) {
-        this.storageType = value;
+    public void setStorageDomainType(StorageDomainType storageType) {
+        this.storageType = storageType;
     }
 
-    public String getstorage_pool_name() {
-        return this.storagePoolName;
+    public String getStoragePoolName() {
+        return storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
-        this.storagePoolName = value;
+    public void setStoragePoolName(String storagePoolName) {
+        this.storagePoolName = storagePoolName;
     }
 
-    public StorageType getstorage_type() {
-        return this.storagePoolType;
+    public StorageType getStorageType() {
+        return storagePoolType;
     }
 
-    public void setstorage_type(StorageType value) {
-        this.storagePoolType = value;
+    public void setStorageType(StorageType storagePoolType) {
+        this.storagePoolType = storagePoolType;
     }
 
-    public String getstorage_name() {
+    public String getStorageName() {
         return name;
     }
 
-    public void setstorage_name(String value) {
-        name = value;
+    public void setStorageName(String name) {
+        this.name = name;
     }
 
     public StorageServerConnections getConnection() {
         return connection;
     }
 
-    public void setConnection(StorageServerConnections value) {
-        connection = value;
+    public void setConnection(StorageServerConnections connection) {
+        this.connection = connection;
     }
 
     public StorageFormatType getStorageFormat() {
         return storageFormat;
     }
 
-    public void setStorageFormat(StorageFormatType storage_format) {
-        this.storageFormat = storage_format;
+    public void setStorageFormat(StorageFormatType storageFormat) {
+        this.storageFormat = storageFormat;
     }
 
     public boolean isAutoRecoverable() {

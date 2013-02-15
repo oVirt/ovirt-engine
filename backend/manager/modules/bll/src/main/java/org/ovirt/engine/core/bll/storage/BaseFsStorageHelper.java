@@ -54,13 +54,13 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
             StorageDomainStatic storageDomain) {
         return new ArrayList<StorageServerConnections>(
                 Arrays.asList(new StorageServerConnections[] { DbFacade.getInstance()
-                        .getStorageServerConnectionDao().get(storageDomain.getstorage()) }));
+                        .getStorageServerConnectionDao().get(storageDomain.getStorage()) }));
     }
 
     @Override
     public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
         StorageServerConnections connection =
-                DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getstorage());
+                DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getStorage());
 
         if (connection != null) {
             DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getid());

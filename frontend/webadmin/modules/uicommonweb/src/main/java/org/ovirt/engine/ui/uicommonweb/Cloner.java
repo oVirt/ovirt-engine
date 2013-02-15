@@ -336,10 +336,10 @@ public final class Cloner
         StorageDomainStatic obj = new StorageDomainStatic();
         obj.setConnection(instance.getConnection());
         obj.setId(instance.getId());
-        obj.setstorage(instance.getstorage());
-        obj.setstorage_domain_type(instance.getstorage_domain_type());
-        obj.setstorage_type(instance.getstorage_type());
-        obj.setstorage_name(instance.getstorage_name());
+        obj.setStorage(instance.getStorage());
+        obj.setStorageDomainType(instance.getStorageDomainType());
+        obj.setStorageType(instance.getStorageType());
+        obj.setStorageName(instance.getStorageName());
         obj.setStorageFormat(instance.getStorageFormat());
 
         return obj;

@@ -411,7 +411,7 @@ public final class ImagesHandler {
             DiskImageBase diskInfo, List<String> messages) {
         boolean result = true;
         if ((diskInfo.getvolume_type() == VolumeType.Preallocated && diskInfo.getvolume_format() == VolumeFormat.COW)
-                || ((storageDomain.getstorage_type() == StorageType.FCP || storageDomain.getstorage_type() == StorageType.ISCSI) && (diskInfo
+                || ((storageDomain.getStorageType() == StorageType.FCP || storageDomain.getStorageType() == StorageType.ISCSI) && (diskInfo
                         .getvolume_type() == VolumeType.Sparse && diskInfo.getvolume_format() == VolumeFormat.RAW))
                 || (diskInfo.getvolume_format() == VolumeFormat.Unassigned || diskInfo.getvolume_type() == VolumeType.Unassigned)) {
             // not supported

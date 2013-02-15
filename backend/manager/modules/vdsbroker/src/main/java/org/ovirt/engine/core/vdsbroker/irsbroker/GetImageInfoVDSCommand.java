@@ -61,7 +61,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                     getParameters().getImageId().toString(),
                     DbFacade.getInstance().getStorageDomainStaticDao()
                             .get(getParameters().getStorageDomainId())
-                            .getstorage_name(),
+                            .getStorageName(),
                     getParameters()
                             .getStorageDomainId().toString(),
                     returnStatus

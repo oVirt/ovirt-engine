@@ -38,8 +38,8 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         existingDomain = dao.get(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
 
         newStaticDomain = new StorageDomainStatic();
-        newStaticDomain.setstorage_name("NewStorageDomain");
-        newStaticDomain.setstorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
+        newStaticDomain.setStorageName("NewStorageDomain");
+        newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
     }
 
     /**
@@ -90,7 +90,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetByName() {
         StorageDomainStatic result = dao.getByName(existingDomain
-                .getstorage_name());
+                .getStorageName());
 
         assertNotNull(result);
         assertEquals(existingDomain.getId(), result.getId());
@@ -129,7 +129,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StorageDomainStatic domain : result) {
-            assertEquals(StorageType.ISCSI, domain.getstorage_type());
+            assertEquals(StorageType.ISCSI, domain.getStorageType());
         }
     }
 
@@ -155,7 +155,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StorageDomainStatic domain : result) {
-            assertEquals(StorageType.ISCSI, domain.getstorage_type());
+            assertEquals(StorageType.ISCSI, domain.getStorageType());
         }
     }
 
@@ -204,7 +204,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        existingDomain.setstorage_name("UpdatedName");
+        existingDomain.setStorageName("UpdatedName");
         dao.update(existingDomain);
 
         StorageDomainStatic after = dao.get(existingDomain.getId());

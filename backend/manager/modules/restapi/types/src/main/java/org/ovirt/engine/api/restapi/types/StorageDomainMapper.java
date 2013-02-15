@@ -23,7 +23,7 @@ public class StorageDomainMapper {
             entity.setId(new Guid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setstorage_name(model.getName());
+            entity.setStorageName(model.getName());
         }
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
@@ -31,13 +31,13 @@ public class StorageDomainMapper {
         if (model.isSetType()) {
             StorageDomainType storageDomainType = StorageDomainType.fromValue(model.getType());
             if (storageDomainType != null) {
-                entity.setstorage_domain_type(map(storageDomainType, null));
+                entity.setStorageDomainType(map(storageDomainType, null));
             }
         }
         if (model.isSetStorage() && model.getStorage().isSetType()) {
             StorageType storageType = StorageType.fromValue(model.getStorage().getType());
             if (storageType != null) {
-                entity.setstorage_type(map(storageType, null));
+                entity.setStorageType(map(storageType, null));
             }
         }
         if (model.isSetStorageFormat()) {
