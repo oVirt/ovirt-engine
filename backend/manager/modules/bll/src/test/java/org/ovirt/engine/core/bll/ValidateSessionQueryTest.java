@@ -16,7 +16,7 @@ public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryPara
         when(params.getSessionId()).thenReturn("good_session_id");
 
         when(getQuery().getSessionUser("good_session_id")).thenReturn(new VdcUser(Guid.NewGuid(), "myUser", "myDomain"));
-        getQuery().Execute();
+        getQuery().execute();
         assertTrue(getQuery().getQueryReturnValue().getSucceeded());
         assertTrue(getQuery().getQueryReturnValue().getReturnValue() instanceof VdcUser);
         VdcUser user = (VdcUser) getQuery().getQueryReturnValue().getReturnValue();
@@ -28,7 +28,7 @@ public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryPara
     public void testUnsuccessfulSessionId() {
         when(params.getSessionId()).thenReturn("bad_session_id");
 
-        getQuery().Execute();
+        getQuery().execute();
         assertFalse(getQuery().getQueryReturnValue().getSucceeded());
     }
 

@@ -26,7 +26,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
             VMStatus retval;
             MigrateBrokerVDSCommand<MigrateVDSCommandParameters> command =
                     new MigrateBrokerVDSCommand<MigrateVDSCommandParameters>(parameters);
-            command.Execute();
+            command.execute();
             VDSReturnValue vdsReturnValue = command.getVDSReturnValue();
 
             final VM vm = DbFacade.getInstance().getVmDao().get(parameters.getVmId());

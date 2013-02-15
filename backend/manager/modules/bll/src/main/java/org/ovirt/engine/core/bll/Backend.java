@@ -400,7 +400,7 @@ public class Backend implements BackendInternal {
         }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters);
         command.setInternalExecution(!isPerformUserCheck);
-        command.Execute();
+        command.execute();
         return command.getQueryReturnValue();
 
     }

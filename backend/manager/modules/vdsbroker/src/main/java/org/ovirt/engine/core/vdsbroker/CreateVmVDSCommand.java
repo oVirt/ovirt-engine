@@ -48,7 +48,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             createVmFromSysPrepParam.setSysPrepParams(getParameters().getSysPrepParams());
                             command =
                                     new CreateVmFromSysPrepVDSCommand<CreateVmFromSysPrepVDSCommandParameters>(createVmFromSysPrepParam);
-                            command.Execute();
+                            command.execute();
                             if (command.getVDSReturnValue().getSucceeded()) {
                                 vm.setInitialized(true);
                                 saveSetInitializedToDb(vm.getId());
@@ -58,7 +58,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                         } else {
                             // normal run.
                             command = new CreateVDSCommand<CreateVmVDSCommandParameters>(getParameters());
-                            command.Execute();
+                            command.execute();
                             HandleCommandResult(command);
                             vm.setInitialized(true);
                             saveSetInitializedToDb(vm.getId());

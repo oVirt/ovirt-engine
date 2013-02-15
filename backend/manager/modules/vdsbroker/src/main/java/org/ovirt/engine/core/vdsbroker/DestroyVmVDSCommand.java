@@ -32,7 +32,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
             DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                     new DestroyVDSCommand<DestroyVmVDSCommandParameters>(parameters);
-            vdsBrokerCommand.Execute();
+            vdsBrokerCommand.execute();
             if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
                 if (curVm.getStatus() == VMStatus.Down) {
                     getVDSReturnValue().setReturnValue(VMStatus.Down);

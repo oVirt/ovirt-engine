@@ -551,7 +551,7 @@ public class VdsUpdateRunTimeInfo {
         // get statistics data, images checks and vm_count data (dynamic)
         GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(_vds));
-        vdsBrokerCommand.Execute();
+        vdsBrokerCommand.execute();
         if (!vdsBrokerCommand.getVDSReturnValue().getSucceeded()
                 && vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
             VDSNetworkException ex =
@@ -919,7 +919,7 @@ public class VdsUpdateRunTimeInfo {
             command = new GetAllVmStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(
                     new VdsIdAndVdsVDSCommandParametersBase(_vds));
         }
-        _runningVms = (Map<Guid, VmInternalData>) command.ExecuteWithReturnValue();
+        _runningVms = (Map<Guid, VmInternalData>) command.executeWithReturnValue();
 
         if (command.getVDSReturnValue().getSucceeded()) {
             List<VM> running = checkVmsStatusChanged();
@@ -1066,7 +1066,7 @@ public class VdsUpdateRunTimeInfo {
      */
     protected XmlRpcStruct[] getVmInfo(List<String> vmsToUpdate) {
         return (XmlRpcStruct[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
-                new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).ExecuteWithReturnValue());
+                new FullListVDSCommandParameters(_vds.getId(), vmsToUpdate)).executeWithReturnValue());
     }
 
     private boolean shouldLogDeviceDetails(String deviceType) {
@@ -1225,7 +1225,7 @@ public class VdsUpdateRunTimeInfo {
                     GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters> command =
                             new GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters>(new GetVmStatsVDSCommandParameters(
                                     _vds, runningVm.getId()));
-                    command.Execute();
+                    command.execute();
                     if (command.getVDSReturnValue().getSucceeded()) {
                         _runningVms.put(runningVm.getId(),
                                 (VmInternalData) command.getReturnValue());
@@ -1271,7 +1271,7 @@ public class VdsUpdateRunTimeInfo {
                 DestroyVDSCommand<DestroyVmVDSCommandParameters> vdsBrokerCommand =
                         new DestroyVDSCommand<DestroyVmVDSCommandParameters>(new DestroyVmVDSCommandParameters(
                                 _vds.getId(), vm.getId(), false, false, 0));
-                vdsBrokerCommand.Execute();
+                vdsBrokerCommand.execute();
 
                 if (vmTo != null && status == VMStatus.SavingState) {
                     afterSuspendTreatment(vm);
@@ -1353,7 +1353,7 @@ public class VdsUpdateRunTimeInfo {
                                     true,
                                     false,
                                     0));
-                    destroyCmd.Execute();
+                    destroyCmd.execute();
                     if (destroyCmd.getVDSReturnValue().getSucceeded()) {
                         log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getVmName(),
                                 curVm.getmigrating_to_vds());

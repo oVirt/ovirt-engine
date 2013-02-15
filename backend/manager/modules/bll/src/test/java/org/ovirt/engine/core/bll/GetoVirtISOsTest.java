@@ -65,7 +65,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         when(getQueryParameters().getVdsId()).thenReturn(vdsId);
 
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());
@@ -84,7 +84,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
         when(getQueryParameters().getVdsId()).thenReturn(vdsId);
 
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());
@@ -94,7 +94,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     public void testQueryWithNonExistingHostId() {
         when(getQueryParameters().getVdsId()).thenReturn(Guid.NewGuid());
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());
@@ -103,7 +103,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     @Test
     public void testQueryWithoutHostId() {
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());
@@ -114,7 +114,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
     public void testPrefixChange() {
         mcr.mockConfigValue(ConfigValues.OvirtIsoPrefix, "a different prefix");
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         assertTrue("Prefix was changed, no ISOs should be returned",

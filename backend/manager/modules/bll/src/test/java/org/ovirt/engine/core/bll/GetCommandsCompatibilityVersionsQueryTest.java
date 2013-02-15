@@ -43,7 +43,7 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
                                 ADD_VM_FROM_SNAPSHOT_VERSION,
                                 ADD_VM_FROM_SNAPSHOT_VERSION));
         doReturn(entriesFromDb).when(actionGroupDaoMock).getAllActionVersionMap();
-        queryToRun.Execute();
+        queryToRun.execute();
         VdcQueryReturnValue returnValue = queryToRun.getQueryReturnValue();
         assertNotNull(returnValue);
         assertNotNull(returnValue.getReturnValue());

@@ -100,7 +100,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
                 setupQueryBySnapshotId(existingSnapshotId);
         VM vm = new VM();
         doReturn(vm).when(query).getVmFromConfiguration(any(String.class));
-        query.Execute();
+        query.execute();
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
         VM returnedVm = (VM) returnValue.getReturnValue();
@@ -124,7 +124,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         existingVm.getDiskMap().put(existingDiskImage.getId(), existingDiskImage);
         existingVm.getImages().add(existingDiskImage);
         doReturn(existingVm).when(query).getVmFromConfiguration(anyString());
-        query.Execute();
+        query.execute();
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
         VM vm = (VM) returnValue.getReturnValue();

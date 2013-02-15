@@ -20,12 +20,12 @@ public abstract class VdcCommandBase {
     public void setReturnValue(Object value) {
     }
 
-    public void Execute() {
+    public void execute() {
         String logId = LoggedUtils.getObjectId(this);
         LoggedUtils.logEntry(log, logId, this);
 
         try {
-            ExecuteCommand();
+            executeCommand();
             LoggedUtils.logReturn(log, logId, this, getReturnValue());
         } catch (Exception e) {
             LoggedUtils.logError(log, logId, this, e);
@@ -41,10 +41,10 @@ public abstract class VdcCommandBase {
         return getClass().getSimpleName();
     }
 
-    protected abstract void ExecuteCommand();
+    protected abstract void executeCommand();
 
-    public Object ExecuteWithReturnValue() {
-        Execute();
+    public Object executeWithReturnValue() {
+        execute();
         return getReturnValue();
     }
 

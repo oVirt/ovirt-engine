@@ -371,7 +371,7 @@ public class ResourceManager {
         VDSCommandBase<P> command = CreateCommand(commandType, parameters);
 
         if (command != null) {
-            command.Execute();
+            command.execute();
             return command.getVDSReturnValue();
         }
 
@@ -383,7 +383,7 @@ public class ResourceManager {
         FutureVDSCommand<P> command = createFutureCommand(commandType, parameters);
 
         if (command != null) {
-            command.Execute();
+            command.execute();
             return command;
         }
 

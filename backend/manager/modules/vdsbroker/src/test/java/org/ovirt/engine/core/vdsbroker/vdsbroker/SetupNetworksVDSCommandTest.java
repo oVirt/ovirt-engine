@@ -57,7 +57,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<String> emptySet(),
                         Arrays.asList(nic, vlan));
 
-        createCommand(parameters).Execute();
+        createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
         Map<String, String> networkStruct = assertNeworkWasSent(net);
@@ -83,7 +83,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<String> emptySet(),
                         ifaces);
 
-        createCommand(parameters).Execute();
+        createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
         assertBondWasSent(bond, slaves);
@@ -104,7 +104,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<String> emptySet(),
                         Arrays.asList(nic));
 
-        createCommand(parameters).Execute();
+        createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
         Map<String, String> networkStruct = assertNeworkWasSent(net);
@@ -128,7 +128,7 @@ public class SetupNetworksVDSCommandTest {
                         Collections.<String> emptySet(),
                         ifaces);
 
-        createCommand(parameters).Execute();
+        createCommand(parameters).execute();
         verifyMethodPassedToHost();
 
         Map<String, Object> bondMap = assertBondWasSent(bond, slaves);

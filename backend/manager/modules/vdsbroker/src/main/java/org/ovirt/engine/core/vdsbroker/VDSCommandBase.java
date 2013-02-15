@@ -52,7 +52,7 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     @Override
-    protected void ExecuteCommand() {
+    protected void executeCommand() {
         try {
             // creating ReturnValue object since execute can be called more than once (failover)
             // and we want returnValue clean from last run.

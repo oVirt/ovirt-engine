@@ -1488,7 +1488,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 .<Integer> GetValue(ConfigValues.SpmCommandFailOverRetries) - 1)
                 && getCurrentIrsProxyData().getHasVdssForSpmSelection() && getCurrentIrsProxyData().failover()) {
             _failoverCounter++;
-            ExecuteCommand();
+            executeCommand();
         } else {
             getVDSReturnValue().setSucceeded(false);
         }

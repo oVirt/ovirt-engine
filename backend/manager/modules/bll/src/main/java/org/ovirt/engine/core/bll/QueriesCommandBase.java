@@ -63,7 +63,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     }
 
     @Override
-    protected void ExecuteCommand() {
+    protected void executeCommand() {
         if (validatePermissions()) {
             if (validateInputs()) {
                 try {

@@ -96,7 +96,7 @@ public class QueriesCommandBaseTest {
                         TestHelperQueriesCommandType.setQueryTypeFieldValue(query, queryType);
 
                         query.setInternalExecution(isInternalExecution);
-                        query.ExecuteCommand();
+                        query.executeCommand();
                         assertEquals("Running with type=" + queryType + " isUserAdmin=" + isUserAdmin + " isFiltered="
                                 + isFiltered + " isInternalExecution=" + isInternalExecution + "\n " +
                                 "Query should succeed is: ",

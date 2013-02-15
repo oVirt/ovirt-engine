@@ -518,7 +518,7 @@ public class VdsManager {
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand vdsBrokerCommand = new GetCapabilitiesVDSCommand(
                 new VdsIdAndVdsVDSCommandParametersBase(vds));
-        vdsBrokerCommand.Execute();
+        vdsBrokerCommand.execute();
         if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
             // Verify version capabilities
             HashSet<Version> hostVersions = null;

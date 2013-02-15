@@ -69,7 +69,7 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         expectGetConnections(cnxDAO);
 
         getQuery().setInternalExecution(true);
-        getQuery().ExecuteCommand();
+        getQuery().executeCommand();
 
         checkSucceeded(getQuery(), true);
         checkReturnValue(getQuery());

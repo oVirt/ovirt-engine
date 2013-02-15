@@ -19,7 +19,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
             VMStatus retval = VMStatus.Unknown;
             ResumeBrokerVDSCommand<VdsAndVmIDVDSParametersBase> command =
                     new ResumeBrokerVDSCommand<VdsAndVmIDVDSParametersBase>(parameters);
-            command.Execute();
+            command.execute();
             if (command.getVDSReturnValue().getSucceeded()) {
                 retval = VMStatus.PoweringUp;
                 ResourceManager.getInstance().AddAsyncRunningVm(parameters.getVmId());
