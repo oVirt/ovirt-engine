@@ -346,7 +346,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             setSucceeded(vdcReturnValue.getSucceeded());
 
             if (vdcReturnValue.getSucceeded()) {
-                getParameters().getImagesParameters().add(createAllSnapshotsFromVmParameters);
 
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 // save RunVmParams so we'll know how to run

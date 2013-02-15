@@ -63,7 +63,6 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                                     VdcActionType.MoveOrCopyImageGroup,
                                     p,
                                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                    getParameters().getImagesParameters().add(p);
 
                     if (!vdcRetValue.getSucceeded()) {
                         throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()

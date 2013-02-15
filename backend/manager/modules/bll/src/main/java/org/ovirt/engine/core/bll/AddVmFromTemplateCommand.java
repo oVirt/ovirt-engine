@@ -86,7 +86,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                                 VdcActionType.CreateCloneOfTemplate,
                                 p,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                getParameters().getImagesParameters().add(p);
 
                 /**
                  * if couldnt create snapshot then stop the transaction and the command

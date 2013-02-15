@@ -182,7 +182,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             VdcActionType.MoveOrCopyImageGroup,
                             p,
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                    getParameters().getImagesParameters().add(p);
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
                 }

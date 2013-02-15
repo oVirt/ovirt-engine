@@ -305,7 +305,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-            getParameters().getImagesParameters().add(p);
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
         }

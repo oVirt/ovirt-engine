@@ -293,7 +293,6 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             // Setting lock to null because the lock is released in the child command (RemoveImage)
             setLock(null);
             if (vdcReturnValue.getSucceeded()) {
-                getParameters().getImagesParameters().add(p);
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());
                 setSucceeded(vdcReturnValue.getSucceeded());
             }

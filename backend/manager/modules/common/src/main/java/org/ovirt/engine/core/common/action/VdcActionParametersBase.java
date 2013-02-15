@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
-import org.ovirt.engine.core.common.asynctasks.IEndedTaskVisitor;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -185,20 +183,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
     public void setTaskGroupSuccess(boolean value) {
         taskGroupSuccess = value;
     }
-
-    public boolean Accept(EndedTaskInfo taskInfo, IEndedTaskVisitor visitor) {
-        boolean retVal = visitor.Visit(taskInfo, this);
-        if (!retVal) {
-            for (VdcActionParametersBase parameters : getImagesParameters()) {
-                retVal = parameters.Accept(taskInfo, visitor);
-                if (retVal) {
-                    break;
-                }
-            }
-        }
-        return retVal;
-    }
-
 
     public Object getEntityId() {
         return entityId;

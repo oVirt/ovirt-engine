@@ -648,7 +648,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         getBackend().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-                getParameters().getImagesParameters().add(tempVar);
 
                 /**
                  * if couldn't create snapshot then stop the transaction and the command

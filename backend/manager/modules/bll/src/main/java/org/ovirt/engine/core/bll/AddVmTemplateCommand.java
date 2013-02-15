@@ -357,7 +357,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             createParams.setQuotaId(getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() != null
                     ? getParameters().getDiskInfoDestinationMap().get(diskImage.getId()).getQuotaId() : null);
             }
-            getParameters().getImagesParameters().add(createParams);
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CreateImageTemplate,

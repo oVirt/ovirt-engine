@@ -173,7 +173,6 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 taskType,
                 params,
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        getParameters().getImagesParameters().add(params);
         getTaskIdList().addAll(returnValue.getInternalTaskIdList());
         return returnValue;
     }

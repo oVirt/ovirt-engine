@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils.serialization.json;
 
+import java.util.ArrayList;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
@@ -15,5 +17,9 @@ public abstract class JsonVdcActionParametersBaseMixIn extends VdcActionParamete
     @JsonIgnore
     @Override
     public abstract VdcActionParametersBase getParentParameters();
+
+    @JsonIgnore
+    @Override
+    public abstract ArrayList<VdcActionParametersBase> getImagesParameters();
 
 }

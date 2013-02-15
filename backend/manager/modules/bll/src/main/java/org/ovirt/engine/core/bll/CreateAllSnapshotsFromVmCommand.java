@@ -135,7 +135,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
                 VdcActionParametersBase parrentParamsForTask = getParametersForTask(parentCommand, getParameters());
                 p.setParentParameters(parrentParamsForTask);
-                getParameters().getImagesParameters().add(p);
 
                 VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateSnapshot,

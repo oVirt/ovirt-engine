@@ -619,7 +619,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 throw new VdcBLLException(vdcRetValue.getFault().getError(),
                         "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
             }
-            getParameters().getImagesParameters().add(p);
 
             getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
             i++;

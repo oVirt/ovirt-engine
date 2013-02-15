@@ -129,7 +129,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     VdcActionType.RemoveSnapshotSingleDisk,
                     p,
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-            getParameters().getImagesParameters().add(p);
 
             if (vdcReturnValue != null && vdcReturnValue.getInternalTaskIdList() != null) {
                 getReturnValue().getTaskIdList().addAll(vdcReturnValue.getInternalTaskIdList());

@@ -162,7 +162,6 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     protected void handleCopyResult(DiskImage copiedDiskImage,
             VdcActionParametersBase parameters,
             VdcReturnValueBase result) {
-        getParameters().getImagesParameters().add(parameters);
         // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
