@@ -142,7 +142,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return true;
     }
 
-    protected void ProceedOnFail() {
+    protected void proceedOnFail() {
         // Empty default implementation, method is here to allow inheriting classes to override.
     }
 

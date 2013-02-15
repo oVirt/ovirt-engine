@@ -65,7 +65,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     @Override
-    protected void ProceedOnFail() {
+    protected void proceedOnFail() {
         getQueryReturnValue().setIsSearchValid(false);
     }
 
