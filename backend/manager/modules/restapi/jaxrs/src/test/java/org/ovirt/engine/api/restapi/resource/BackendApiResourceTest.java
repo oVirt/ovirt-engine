@@ -275,8 +275,8 @@ public class BackendApiResourceTest extends Assert {
         stats.put("active_vds", ACTIVE_HOSTS);
         stats.put("total_users", TOTAL_USERS);
         stats.put("active_users", ACTIVE_USERS);
-        stats.put("total_org.ovirt.engine.core.common.businessentities.StorageDomain", TOTAL_STORAGE_DOMAINS);
-        stats.put("active_org.ovirt.engine.core.common.businessentities.StorageDomain", ACTIVE_STORAGE_DOMAINS);
+        stats.put("total_storage_domains", TOTAL_STORAGE_DOMAINS);
+        stats.put("active_storage_domains", ACTIVE_STORAGE_DOMAINS);
 
         return stats;
     }
