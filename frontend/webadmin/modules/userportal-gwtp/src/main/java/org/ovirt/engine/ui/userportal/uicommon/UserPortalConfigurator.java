@@ -18,11 +18,10 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
+import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class UserPortalConfigurator extends Configurator implements IEventListener, UiCommonInitHandler {
 
@@ -40,14 +39,14 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             new EventDefinition("usbFilterFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
     public Event usbFilterFileFetchedEvent = new Event(usbFilterFileFetchedEvent_Definition);
 
-    private final Provider<MainTabBasicPresenter> basicPresenter;
+    private final UserPortalPlaceManager placeManager;
 
     private static final ClientAgentType clientAgentType = new ClientAgentType();
 
     @Inject
-    public UserPortalConfigurator(Provider<MainTabBasicPresenter> basicPresenter, EventBus eventBus) {
+    public UserPortalConfigurator(UserPortalPlaceManager placeManager, EventBus eventBus) {
         super();
-        this.basicPresenter = basicPresenter;
+        this.placeManager = placeManager;
         eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
         // This means that it is UserPortal application.
@@ -116,7 +115,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
      */
     @Override
     public boolean getSpiceFullScreen() {
-        return basicPresenter.get().isVisible();
+        return placeManager.isMainSectionBasicPlaceVisible();
     }
 
     @Override

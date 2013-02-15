@@ -36,4 +36,9 @@ public class UserPortalPlaceManager extends ApplicationPlaceManager {
         return userRole.isBasicUser() ? defaultMainSectionRequest : defaultMainSectionExtendedRequest;
     }
 
+    public boolean isMainSectionBasicPlaceVisible() {
+        return defaultMainSectionRequest.getNameToken().equals(
+                getCurrentPlaceRequest().getNameToken());
+    }
+
 }

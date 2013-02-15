@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.userportal.section.main.presenter.SearchableModelActivationEvent.SearchableModelActivationHandler;
 
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 
 /**
@@ -32,22 +32,20 @@ public abstract class AbstractModelActivationPresenter<T, M extends SearchableLi
             final SearchableModelProvider<T, M> modelProvider) {
         super(eventBus, view, proxy);
         this.modelProvider = modelProvider;
+    }
 
-        // Add handler for list model activation requests
-        eventBus.addHandler(SearchableModelActivationEvent.getType(), new SearchableModelActivationHandler() {
-            @Override
-            public void onSearchableModelActivation(SearchableModelActivationEvent event) {
-                SearchableListModel currentModel = modelProvider.getModel();
+    @ProxyEvent
+    public void onSearchableModelActivation(SearchableModelActivationEvent event) {
+        SearchableListModel currentModel = modelProvider.getModel();
 
-                if (event.getListModel() == currentModel) {
-                    // Activate model
-                    currentModel.getSearchCommand().Execute();
-                } else {
-                    // Stop model
-                    currentModel.EnsureAsyncSearchStopped();
-                }
-            }
-        });
+        if (event.getListModel() == currentModel) {
+            // Activate model
+            currentModel.getSearchCommand().Execute();
+        } else {
+            // Stop model
+            currentModel.setItems(null);
+            currentModel.EnsureAsyncSearchStopped();
+        }
     }
 
     @Override
