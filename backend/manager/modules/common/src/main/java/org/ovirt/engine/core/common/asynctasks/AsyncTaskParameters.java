@@ -40,7 +40,7 @@ public class AsyncTaskParameters {
     private Object _entityId;
 
     public Object getEntityId() {
-        return (_entityId == null) ? getDbAsyncTask().getaction_parameters().getEntityId() : _entityId;
+        return (_entityId == null) ? getDbAsyncTask().getActionParameters().getEntityId() : _entityId;
     }
 
     public void setEntityId(Object value) {

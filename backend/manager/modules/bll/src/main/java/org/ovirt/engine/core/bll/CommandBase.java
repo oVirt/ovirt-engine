@@ -1329,16 +1329,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected SPMAsyncTask concreteCreateTask
             (AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
 
-        VdcActionParametersBase parametersForTask = getParametersForTask(parentCommand, getParameters());
-        if (parametersForTask.getParametersCurrentUser() == null && getCurrentUser() != null) {
-            parametersForTask.setParametersCurrentUser(getCurrentUser());
+        VdcActionParametersBase parentParameters = getParametersForTask(parentCommand, getParameters());
+        if (parentParameters.getParametersCurrentUser() == null && getCurrentUser() != null) {
+            parentParameters.setParametersCurrentUser(getCurrentUser());
         }
         AsyncTaskParameters p =
                 new AsyncTaskParameters(asyncTaskCreationInfo, new AsyncTasks(parentCommand,
                         AsyncTaskResultEnum.success,
                         AsyncTaskStatusEnum.running,
                         asyncTaskCreationInfo.getTaskID(),
-                        parametersForTask,
+                        parentParameters,
+                        getParameters(),
                         asyncTaskCreationInfo.getStepId(),
                         getCommandId(),asyncTaskCreationInfo.getStoragePoolID(),
                         asyncTaskCreationInfo.getTaskType()));

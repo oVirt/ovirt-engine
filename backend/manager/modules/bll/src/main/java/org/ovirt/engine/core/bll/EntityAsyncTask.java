@@ -7,10 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
-import org.ovirt.engine.core.common.asynctasks.SetTaskGroupStatusVisitor;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -116,14 +116,18 @@ public class EntityAsyncTask extends SPMAsyncTask {
 
         AsyncTasks dbAsyncTask = getParameters().getDbAsyncTask();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
-            dbAsyncTask.getaction_parameters()
-                    .Accept(taskInfo, new SetTaskGroupStatusVisitor());
+            VdcActionParametersBase childTaskParameters =
+                    taskInfo.getTaskParameters().getDbAsyncTask().getTaskParameters();
+            dbAsyncTask.getActionParameters().getImagesParameters()
+                    .add(childTaskParameters);
+            childTaskParameters
+                    .setTaskGroupSuccess(taskInfo.getTaskStatus().getTaskEndedSuccessfully());
         }
 
         try {
             log.infoFormat("EntityAsyncTask::EndCommandAction [within thread] context: Attempting to EndAction '{0}', executionIndex: '{1}'",
                     entityInfo.getActionType(),
-                    dbAsyncTask.getaction_parameters().getExecutionIndex());
+                    dbAsyncTask.getActionParameters().getExecutionIndex());
 
             try {
                 /**
@@ -136,7 +140,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
 
                 vdcReturnValue =
                         Backend.getInstance().endAction(entityInfo.getActionType(),
-                                dbAsyncTask.getaction_parameters(),
+                                dbAsyncTask.getActionParameters(),
                                 new CommandContext(context));
             } catch (RuntimeException Ex) {
                 String errorMessage =
@@ -155,7 +159,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
 
         finally {
-            boolean isTaskGroupSuccess = dbAsyncTask.getaction_parameters().getTaskGroupSuccess();
+            boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
             handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
             _endActionsInProgress.decrementAndGet();
         }

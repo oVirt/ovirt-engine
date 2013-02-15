@@ -458,7 +458,7 @@ public final class AsyncTaskManager {
     public synchronized void UpdateTaskWithActionParameters(Guid taskID, VdcActionParametersBase actionParameters) {
         if (_tasks.containsKey(taskID)) {
             AsyncTasks currentDbAsyncTask = _tasks.get(taskID).getParameters().getDbAsyncTask();
-            currentDbAsyncTask.setaction_parameters(actionParameters);
+            currentDbAsyncTask.setActionParameters(actionParameters);
             AsyncTaskUtils.updateAsyncTaskInDB(_tasks.get(taskID));
         }
     }

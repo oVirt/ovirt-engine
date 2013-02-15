@@ -18,12 +18,13 @@ public class AsyncTasks implements Serializable {
     }
 
     public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase action_parameters, NGuid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
+            VdcActionParametersBase parentParameters, VdcActionParametersBase taskParameters, NGuid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
         this.taskId = task_id;
-        this.setaction_parameters(action_parameters);
+        this.actionParameters = parentParameters;
+        this.taskParameters = taskParameters;
         this.stepId = stepId;
         this.startTime = new Date();
         this.commandId = commandId;
@@ -85,12 +86,22 @@ public class AsyncTasks implements Serializable {
 
     private VdcActionParametersBase actionParameters;
 
-    public VdcActionParametersBase getaction_parameters() {
+    public VdcActionParametersBase getActionParameters() {
         return this.actionParameters;
     }
 
-    public void setaction_parameters(VdcActionParametersBase value) {
+    public void setActionParameters(VdcActionParametersBase value) {
         this.actionParameters = value;
+    }
+
+    private VdcActionParametersBase taskParameters;
+
+    public VdcActionParametersBase getTaskParameters() {
+        return taskParameters;
+    }
+
+    public void setTaskParameters(VdcActionParametersBase taskParameters) {
+        this.taskParameters = taskParameters;
     }
 
     private NGuid stepId;
