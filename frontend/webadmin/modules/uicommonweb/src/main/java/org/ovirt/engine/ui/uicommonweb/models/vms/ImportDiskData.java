@@ -81,7 +81,7 @@ public class ImportDiskData {
 
     public void setSelectedStorageDomainString(String value) {
         for (StorageDomain storageDomain : getStorageDomains()) {
-            if (storageDomain.getstorage_name().equals(value)) {
+            if (storageDomain.getStorageName().equals(value)) {
                 setSelectedStorageDomain(storageDomain);
                 break;
             }

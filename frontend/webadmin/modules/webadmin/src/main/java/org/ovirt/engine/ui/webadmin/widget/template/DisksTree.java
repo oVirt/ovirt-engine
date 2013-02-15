@@ -68,11 +68,11 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         panel.setWidth("100%"); //$NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
-        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getstorage_name(), ""); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getstorage_domain_type(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new EnumLabel<StorageDomainSharedStatus>(), storage.getstorage_domain_shared_status(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getavailable_disk_size(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getused_disk_size(), "120px"); //$NON-NLS-1$
+        addTextBoxToPanel(panel, new TextBoxLabel(), storage.getStorageName(), ""); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainType>(), storage.getStorageDomainType(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<StorageDomainSharedStatus>(), storage.getStorageDomainSharedStatus(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getAvailableDiskSize(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getUsedDiskSize(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), storage.getTotalDiskSize(), "120px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);

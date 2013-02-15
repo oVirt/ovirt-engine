@@ -56,9 +56,9 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
             if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 return false;
-            } else if (getStorageDomain() != null && getStorageDomain().getstatus() != null
-                    && getStorageDomain().getstatus() == StorageDomainStatus.Active) {
-                addInvalidSDStatusMessage(getStorageDomain().getstatus());
+            } else if (getStorageDomain() != null && getStorageDomain().getStatus() != null
+                    && getStorageDomain().getStatus() == StorageDomainStatus.Active) {
+                addInvalidSDStatusMessage(getStorageDomain().getStatus());
                 returnValue = false;
             } else if (electNewMaster(false) != null) {
                 getReturnValue().getCanDoActionMessages().add(
@@ -67,10 +67,10 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
             } else {
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(
                         _newMasterStorageDomainId);
-                if (domain.getstorage_domain_shared_status() != StorageDomainSharedStatus.Unattached) {
+                if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
-                } else if (domain.getstorage_type() != getStoragePool().getstorage_pool_type()) {
+                } else if (domain.getStorageType() != getStoragePool().getstorage_pool_type()) {
                     addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_RECOVERY_STORAGE_POOL_STORAGE_TYPE_MISSMATCH);
                     returnValue = false;
                 }
@@ -87,7 +87,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
 
     @Override
     protected void executeCommand() {
-        if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
+        if (StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .connectStorageToDomainByVdsId(getNewMaster(false), getVds().getId())) {
             getParameters().setStorageDomainId(getStorageDomainId().getValue());
 

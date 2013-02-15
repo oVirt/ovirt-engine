@@ -176,7 +176,7 @@ public class BackendFilesResourceTest
     private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(Guid id, StorageDomainType type) {
         org.ovirt.engine.core.common.businessentities.StorageDomain sd =  new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setId(id);
-        sd.setstorage_domain_type(type);
+        sd.setStorageDomainType(type);
         return sd;
     }
 

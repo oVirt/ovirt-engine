@@ -66,7 +66,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 return null;
             }
         });
-        if (returnValue.getSucceeded() && getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
+        if (returnValue.getSucceeded() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             // reset iso for this pool in vdsBroker cache
             runVdsCommand(VDSCommandType.ResetISOPath,
                     new IrsBaseVDSCommandParameters(getParameters().getStoragePoolId()));

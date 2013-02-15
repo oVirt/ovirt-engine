@@ -22,7 +22,7 @@ public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSComma
     @Override
     protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
         StorageDomain domainFromDb = DbFacade.getInstance().getStorageDomainDao().get(getParameters().getStorageDomainId());
-        if (domainFromDb == null || domainFromDb.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (domainFromDb == null || domainFromDb.getStorageDomainType() == StorageDomainType.ImportExport) {
             return new IrsOperationFailedNoFailoverException(errorMessage);
         }
         return super.createDefaultConcreteException(errorMessage);

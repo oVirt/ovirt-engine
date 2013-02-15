@@ -558,8 +558,8 @@ public class CommonModel extends ListModel
         {
             StorageDomain storage = (StorageDomain) model.getEntity();
             isDataStorage =
-                    storage.getstorage_domain_type() == StorageDomainType.Data
-                            || storage.getstorage_domain_type() == StorageDomainType.Master;
+                    storage.getStorageDomainType() == StorageDomainType.Data
+                            || storage.getStorageDomainType() == StorageDomainType.Master;
         }
 
         diskList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter

@@ -236,13 +236,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 }
                 return false;
             }
-            if (storage.getstatus() == null || storage.getstatus() != StorageDomainStatus.Active) {
+            if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL.toString());
                 return false;
             }
 
-            if (storage.getstorage_domain_type() == StorageDomainType.ImportExport
-                    || storage.getstorage_domain_type() == StorageDomainType.ISO) {
+            if (storage.getStorageDomainType() == StorageDomainType.ImportExport
+                    || storage.getStorageDomainType() == StorageDomainType.ISO) {
 
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 return false;

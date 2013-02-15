@@ -56,7 +56,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
                                 new ArrayList<StorageDomain>();
                         for (StorageDomain a : storageDomains)
                         {
-                            if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
+                            if (a.getStorageDomainType() == StorageDomainType.ImportExport)
                             {
                                 filteredStorageDomains.add(a);
                             }
@@ -78,7 +78,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
         boolean noActiveStorage = true;
         for (StorageDomain a : storageDomains) {
-            if (a.getstatus() == StorageDomainStatus.Active) {
+            if (a.getStatus() == StorageDomainStatus.Active) {
                 noActiveStorage = false;
                 break;
             }

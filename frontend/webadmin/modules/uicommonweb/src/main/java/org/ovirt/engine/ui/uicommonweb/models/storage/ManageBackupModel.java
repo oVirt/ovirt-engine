@@ -114,12 +114,12 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
         if (getEntity() != null)
         {
-            if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.InActive
-                    || getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed)
+            if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.InActive
+                    || getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed)
             {
                 setMessage(ConstantsManager.getInstance().getConstants().theExportDomainIsInactiveMsg());
             }
-            else if (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+            else if (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
             {
                 setMessage(ConstantsManager.getInstance().getConstants().ExportDomainIsNotAttachedToAnyDcMsg());
             }
@@ -152,11 +152,11 @@ public abstract class ManageBackupModel extends SearchableListModel
     {
         getRestoreCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
                 && getSelectedItems().size() > 0
-                && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
+                && getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active);
 
         getRemoveCommand().setIsExecutionAllowed(getEntity() != null && getSelectedItems() != null
                 && getSelectedItems().size() > 0
-                && getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active);
+                && getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active);
     }
 
     @Override

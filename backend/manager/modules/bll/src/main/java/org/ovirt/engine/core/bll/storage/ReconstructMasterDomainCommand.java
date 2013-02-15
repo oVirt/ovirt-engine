@@ -198,7 +198,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     private boolean connectVdsToNewMaster(VDS vds) {
         StorageDomain masterDomain = getNewMaster(false);
         if (vds.getId().equals(getVds().getId())
-                || StorageHelperDirector.getInstance().getItem(masterDomain.getstorage_type())
+                || StorageHelperDirector.getInstance().getItem(masterDomain.getStorageType())
                         .connectStorageToDomainByVdsId(masterDomain, vds.getId())) {
             return true;
         }
@@ -251,7 +251,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                             // only if we deactivate the storage domain we want to disconnect from it.
                             if (isPerformDisconnect) {
                                 StorageHelperDirector.getInstance()
-                                        .getItem(getStorageDomain().getstorage_type())
+                                        .getItem(getStorageDomain().getStorageType())
                                         .disconnectStorageFromDomainByVdsId(getStorageDomain(), vds.getId());
                             }
 

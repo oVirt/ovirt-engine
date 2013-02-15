@@ -35,8 +35,8 @@ public class AddExistingNFSStorageDomainCommand<T extends StorageDomainManagemen
 
     @Override
     protected void executeCommand() {
-        if (StringUtils.isEmpty(getStorageDomain().getstorage())) {
-            getStorageDomain().setstorage(
+        if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
+            getStorageDomain().setStorage(
                     (String) Backend
                             .getInstance()
                             .runInternalAction(

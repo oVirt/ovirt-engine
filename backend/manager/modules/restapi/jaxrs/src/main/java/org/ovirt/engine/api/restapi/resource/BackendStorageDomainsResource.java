@@ -217,7 +217,7 @@ public class BackendStorageDomainsResource
 
         // Mapping the connection properties only in case it is a non-filtered session
         if (!isFiltered()) {
-            switch (entity.getstorage_type()) {
+            switch (entity.getStorageType()) {
                 case ISCSI:
                     mapVolumeGroupIscsi(model, entity);
                     break;
@@ -237,7 +237,7 @@ public class BackendStorageDomainsResource
 
     protected void mapNfsOrLocalOrPosix(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         final Storage storage = model.getStorage();
-        StorageServerConnections cnx = getStorageServerConnection(entity.getstorage());
+        StorageServerConnections cnx = getStorageServerConnection(entity.getStorage());
         if (cnx.getconnection().contains(":")) {
             String[] parts = cnx.getconnection().split(":");
             model.getStorage().setAddress(parts[0]);
@@ -301,7 +301,7 @@ public class BackendStorageDomainsResource
         for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : entities) {
             StorageDomain storageDomain = map(entity);
             //status is only relevant in the context of a data-center, so it can either be 'Unattached' or null.
-            if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
+            if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
                 storageDomain.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
             } else {
                 storageDomain.setStatus(null);

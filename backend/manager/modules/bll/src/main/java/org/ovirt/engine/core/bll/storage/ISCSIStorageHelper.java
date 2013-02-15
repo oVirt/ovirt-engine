@@ -38,17 +38,17 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         boolean isSuccess = true;
         List<StorageServerConnections> list =
                 (lun == null) ? DbFacade.getInstance()
-                        .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getstorage())
+                        .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage())
                         : lun.getLunConnections();
 
         if (list.size() != 0) {
             if (VDSCommandType.forValue(type) == VDSCommandType.DisconnectStorageServer) {
-                list = filterConnectionsUsedByOthers(list, storageDomain.getstorage(), lun != null ? lun.getLUN_id()
+                list = filterConnectionsUsedByOthers(list, storageDomain.getStorage(), lun != null ? lun.getLUN_id()
                         : "");
             }
             Guid poolId = storagePoolId;
-            if (storageDomain != null && storageDomain.getstorage_pool_id() != null) {
-                poolId = storageDomain.getstorage_pool_id().getValue();
+            if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
+                poolId = storageDomain.getStoragePoolId().getValue();
             }
             VDSReturnValue returnValue = Backend
                     .getInstance()

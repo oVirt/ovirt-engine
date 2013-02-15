@@ -285,8 +285,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         .getAllForStoragePool(_storagePoolId);
 
                 for (final StorageDomain domainInDb : domainsInDb) {
-                    if (domainInDb.getstorage_domain_type() != StorageDomainType.Master
-                            && domainInDb.getstatus() != StorageDomainStatus.Locked
+                    if (domainInDb.getStorageDomainType() != StorageDomainType.Master
+                            && domainInDb.getStatus() != StorageDomainStatus.Locked
                             && !domainsInVds.contains(domainInDb.getId())) {
                         // domain not attached to pool anymore
                         DbFacade.getInstance()
@@ -310,8 +310,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (domainFromDb.getstorage_domain_type() == StorageDomainType.Master && domainPoolMap != null
                         && domainPoolMap.getstatus() != StorageDomainStatus.Locked) {
                     // and the domain is not master in the VDSM
-                    if (!((data.getstorage_domain_type() == StorageDomainType.Master) || (data.getstorage_domain_type() == StorageDomainType.Unknown))) {
-                        reconstructMasterDomainNotInSync(data.getstorage_pool_id().getValue(),
+                    if (!((data.getStorageDomainType() == StorageDomainType.Master) || (data.getStorageDomainType() == StorageDomainType.Unknown))) {
+                        reconstructMasterDomainNotInSync(data.getStoragePoolId().getValue(),
                                 domainFromDb.getId(),
                                 "Mismatch between master in DB and VDSM",
                                 MessageFormat.format("Master domain is not in sync between DB and VDSM. "
@@ -320,7 +320,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     } // or master in DB and VDSM but there is a version
                       // mismatch
                     else if (dataMasterVersion != storagePool.getmaster_domain_version()) {
-                        reconstructMasterDomainNotInSync(data.getstorage_pool_id().getValue(),
+                        reconstructMasterDomainNotInSync(data.getStoragePoolId().getValue(),
                                 domainFromDb.getId(),
                                 "Mismatch between master version in DB and VDSM",
                                 MessageFormat.format("Master domain version is not in sync between DB and VDSM. "
@@ -332,17 +332,17 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
                 boolean statusChanged = false;
                 if (domainPoolMap == null) {
-                    data.setstorage_pool_id(_storagePoolId);
+                    data.setStoragePoolId(_storagePoolId);
                     DbFacade.getInstance().getStoragePoolIsoMapDao().save(data.getStoragePoolIsoMapData());
                     statusChanged = true;
                 } else if (domainPoolMap.getstatus() != StorageDomainStatus.Locked
-                        && domainPoolMap.getstatus() != data.getstatus()) {
+                        && domainPoolMap.getstatus() != data.getStatus()) {
                     if (domainPoolMap.getstatus() != StorageDomainStatus.InActive
-                            && data.getstatus() != StorageDomainStatus.InActive) {
+                            && data.getStatus() != StorageDomainStatus.InActive) {
                         DbFacade.getInstance().getStoragePoolIsoMapDao().update(data.getStoragePoolIsoMapData());
                         statusChanged = true;
                     }
-                    if (data.getstatus() != null && data.getstatus() == StorageDomainStatus.InActive
+                    if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.InActive
                             && domainFromDb.getstorage_domain_type() == StorageDomainType.Master) {
                         storage_pool pool = DbFacade.getInstance().getStoragePoolDao()
                                 .get(domainPoolMap.getstorage_pool_id().getValue());
@@ -357,9 +357,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // if status didn't change and still not active no need to
                 // update dynamic data
                 if (statusChanged
-                        || (domainPoolMap.getstatus() != StorageDomainStatus.InActive && data.getstatus() == StorageDomainStatus.Active)) {
+                        || (domainPoolMap.getstatus() != StorageDomainStatus.InActive && data.getStatus() == StorageDomainStatus.Active)) {
                     DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
-                    if (data.getavailable_disk_size() != null && data.getused_disk_size() != null) {
+                    if (data.getAvailableDiskSize() != null && data.getUsedDiskSize() != null) {
                         double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
                         int freeDiskInGB = data.getStorageDynamicData().getfreeDiskInGB();
                         AuditLogType type = AuditLogType.UNASSIGNED;
@@ -378,8 +378,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                             AuditLogableBase logable = new AuditLogableBase();
                             logable.setStorageDomain(data);
                             logable.setStoragePoolId(_storagePoolId);
-                            logable.addCustomValue("DiskSpace", (data.getavailable_disk_size()).toString());
-                            data.setstorage_name(domainFromDb.getstorage_name());
+                            logable.addCustomValue("DiskSpace", (data.getAvailableDiskSize()).toString());
+                            data.setStorageName(domainFromDb.getstorage_name());
                             AuditLogDirector.log(logable, type);
 
                         }
@@ -390,7 +390,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setStorageDomain(data);
-                        data.setstorage_name(domainFromDb.getstorage_name());
+                        data.setStorageName(domainFromDb.getstorage_name());
                         logable.setStoragePoolId(_storagePoolId);
 
                         for (VdcBllErrors alert : alerts) {
@@ -403,7 +403,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 break;
                             default:
                                 log.errorFormat("Unrecognized alert for domain {0}(id = {1}): {2}",
-                                        data.getstorage_name(),
+                                        data.getStorageName(),
                                         data.getId(),
                                         alert);
                                 break;

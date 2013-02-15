@@ -159,7 +159,7 @@ public class ReportsListModel extends SearchableListModel {
             }
             case Storage: {
                 StorageDomain storage = (StorageDomain) treeItemModel.getEntity();
-                setDataCenterID(storage.getstorage_pool_id().toString());
+                setDataCenterID(storage.getStoragePoolId().toString());
                 setResourceId("P_StorageDomain_ID", storage.getQueryableId().toString()); //$NON-NLS-1$
                 break;
             }

@@ -704,7 +704,7 @@ public class VmGeneralModel extends EntityModel
                             VmGeneralModel vmGeneralModel1 = (VmGeneralModel) model1;
                             StorageDomain storage =
                                     (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                            vmGeneralModel1.setStorageDomain(storage.getstorage_name());
+                            vmGeneralModel1.setStorageDomain(storage.getStorageName());
 
                             vmGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
                         }

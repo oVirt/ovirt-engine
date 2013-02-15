@@ -83,7 +83,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            final StorageDomainType sdType = getStorageDomain().getstorage_domain_type();
+                            final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
                             map.setstatus(StorageDomainStatus.Maintenance);
                             getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
 
@@ -136,7 +136,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                         && InitializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
 
         if (returnValue && getStoragePool().getstatus() == StoragePoolStatus.Uninitialized
-                && getStorageDomain().getstorage_domain_type() != StorageDomainType.Data) {
+                && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }

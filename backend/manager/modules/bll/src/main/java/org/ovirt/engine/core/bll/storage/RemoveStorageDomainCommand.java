@@ -143,36 +143,36 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
     }
 
     protected boolean isFCP(StorageDomain dom) {
-        return dom.getstorage_type() == StorageType.FCP;
+        return dom.getStorageType() == StorageType.FCP;
     }
 
     protected boolean isISCSI(StorageDomain dom) {
-        return dom.getstorage_type() == StorageType.ISCSI;
+        return dom.getStorageType() == StorageType.ISCSI;
     }
 
     protected boolean isLocalFs(StorageDomain dom) {
-        return dom.getstorage_type() == StorageType.LOCALFS;
+        return dom.getStorageType() == StorageType.LOCALFS;
     }
 
     protected boolean isDataDomain(StorageDomain dom) {
-        return dom.getstorage_domain_type() == StorageDomainType.Data;
+        return dom.getStorageDomainType() == StorageDomainType.Data;
     }
 
     protected boolean isISO(StorageDomain dom) {
-        return dom.getstorage_domain_type() == StorageDomainType.ISO;
+        return dom.getStorageDomainType() == StorageDomainType.ISO;
     }
 
     protected boolean isExport(StorageDomain dom) {
-        return dom.getstorage_domain_type() == StorageDomainType.ImportExport;
+        return dom.getStorageDomainType() == StorageDomainType.ImportExport;
     }
 
     protected boolean isDomainAttached(StorageDomain storageDomain) {
-        if (storageDomain.getstorage_pool_id() == null) {
+        if (storageDomain.getStoragePoolId() == null) {
             return false;
         }
 
         Guid storageDomainId = storageDomain.getId();
-        Guid storagePoolId = storageDomain.getstorage_pool_id().getValue();
+        Guid storagePoolId = storageDomain.getStoragePoolId().getValue();
 
         return getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
@@ -180,7 +180,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean detachStorage(StorageDomain dom) {
         Guid domId = dom.getId();
-        Guid poolId = dom.getstorage_pool_id().getValue();
+        Guid poolId = dom.getStoragePoolId().getValue();
         DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(domId, poolId);
         params.setDestroyingPool(getParameters().getDestroyingPool());
 

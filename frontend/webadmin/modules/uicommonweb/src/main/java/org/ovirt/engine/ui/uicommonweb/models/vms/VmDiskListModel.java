@@ -477,7 +477,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
                 if (diskModel.getStorageDomain() != null && diskModel.getStorageDomain().getSelectedItem() != null)
                 {
-                    StorageType storageType = storage.getstorage_type();
+                    StorageType storageType = storage.getStorageType();
                     boolean isFileDomain =
                             storageType == StorageType.NFS || storageType == StorageType.LOCALFS
                                     || storageType == StorageType.POSIXFS;

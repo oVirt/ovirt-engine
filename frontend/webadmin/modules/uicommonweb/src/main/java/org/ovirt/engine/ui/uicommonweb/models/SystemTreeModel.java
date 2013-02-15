@@ -426,7 +426,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     SystemTreeItemModel storageItem = new SystemTreeItemModel();
                     storageItem.setType(SystemTreeItemType.Storage);
                     storageItem.setApplicationMode(ApplicationMode.VirtOnly);
-                    storageItem.setTitle(storage.getstorage_name());
+                    storageItem.setTitle(storage.getStorageName());
                     storageItem.setParent(dataCenterItem);
                     storageItem.setEntity(storage);
                     storagesItem.getChildren().add(storageItem);

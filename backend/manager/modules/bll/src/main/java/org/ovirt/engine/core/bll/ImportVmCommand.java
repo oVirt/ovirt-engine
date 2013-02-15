@@ -197,7 +197,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setSourceDomainId(getParameters().getSourceDomainId());
         StorageDomainValidator validator = new StorageDomainValidator(getSourceDomain());
         if (validator.isDomainExistAndActive().isValid() &&
-                getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+                getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 

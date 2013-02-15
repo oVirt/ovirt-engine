@@ -309,7 +309,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
             }
             if (numOfDisksOnDomain > 0) {
-                if (domain.getstorage_domain_type() == StorageDomainType.ImportExport) {
+                if (domain.getStorageDomainType() == StorageDomainType.ImportExport) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                     retValue = false;
                     break;

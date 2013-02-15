@@ -211,19 +211,19 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
 
     private StorageDomain mockFirstStorageDomain(int availabeDiskSize) {
         StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setavailable_disk_size(availabeDiskSize);
-        storageDomain.setstatus(StorageDomainStatus.Active);
+        storageDomain.setAvailableDiskSize(availabeDiskSize);
+        storageDomain.setStatus(StorageDomainStatus.Active);
         storageDomain.setId(firstStorageDomainId);
-        storageDomain.setstorage_domain_type(StorageDomainType.Data);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
         return storageDomain;
     }
 
     private StorageDomain mockSecondStorageDomain(int availabeDiskSize) {
         StorageDomain storageDomain = new StorageDomain();
-        storageDomain.setavailable_disk_size(availabeDiskSize);
-        storageDomain.setstatus(StorageDomainStatus.Active);
+        storageDomain.setAvailableDiskSize(availabeDiskSize);
+        storageDomain.setStatus(StorageDomainStatus.Active);
         storageDomain.setId(secondStorageDomainId);
-        storageDomain.setstorage_domain_type(StorageDomainType.Data);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
         return storageDomain;
     }
 

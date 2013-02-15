@@ -44,8 +44,8 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     @Override
     public StorageDomainDAO getStorageDomainDAO() {
         final StorageDomain destination = new StorageDomain();
-        destination.setstorage_domain_type(StorageDomainType.Data);
-        destination.setstatus(StorageDomainStatus.Active);
+        destination.setStorageDomainType(StorageDomainType.Data);
+        destination.setStatus(StorageDomainStatus.Active);
 
         final StorageDomainDAO d = mock(StorageDomainDAO.class);
         when(d.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(destination);
@@ -84,8 +84,8 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
     @Override
     protected StorageDomain getSourceDomain() {
         StorageDomain source = new StorageDomain();
-        source.setstorage_domain_type(StorageDomainType.ImportExport);
-        source.setstatus(StorageDomainStatus.Active);
+        source.setStorageDomainType(StorageDomainType.ImportExport);
+        source.setStatus(StorageDomainStatus.Active);
         return source;
     }
 

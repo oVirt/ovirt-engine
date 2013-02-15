@@ -132,7 +132,7 @@ public class BackendVmDisksResource
                         VdcQueryType.GetAllStorageDomains,
                         new VdcQueryParametersBase());
         for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
-            if (storageDomain.getstorage_name().equals(storageDomainName)) {
+            if (storageDomain.getStorageName().equals(storageDomainName)) {
                 return storageDomain.getId();
             }
         }

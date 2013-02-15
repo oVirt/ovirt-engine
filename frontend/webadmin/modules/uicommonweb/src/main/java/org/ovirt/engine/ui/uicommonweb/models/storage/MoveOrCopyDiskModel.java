@@ -131,7 +131,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }
-            }), getActiveStorageDomains().get(0).getstorage_pool_id().getValue());
+            }), getActiveStorageDomains().get(0).getStoragePoolId().getValue());
         }
         else {
             postInitStorageDomains();
@@ -191,7 +191,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     private void addSourceStorageDomainName(DiskModel disk, ArrayList<StorageDomain> sourceStorageDomains) {
         String sourceStorageName = sourceStorageDomains.isEmpty() ?
-                constants.notAvailableLabel() : sourceStorageDomains.get(0).getstorage_name();
+                constants.notAvailableLabel() : sourceStorageDomains.get(0).getStorageName();
         disk.getSourceStorageDomainName().setEntity(sourceStorageName);
     }
 
@@ -231,7 +231,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
         for (StorageDomain storage : storageDomains) {
-            if (storage.getstorage_pool_id().equals(diskDatacenterId)) {
+            if (storage.getStoragePoolId().equals(diskDatacenterId)) {
                 storages.add(storage);
             }
         }

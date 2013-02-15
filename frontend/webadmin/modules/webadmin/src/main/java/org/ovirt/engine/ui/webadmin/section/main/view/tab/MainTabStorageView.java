@@ -52,7 +52,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
-                return object.getstorage_name();
+                return object.getStorageName();
             }
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         TextColumnWithTooltip<StorageDomain> domainTypeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(StorageDomain object) {
-                return object.getstorage_domain_type();
+                return object.getStorageDomainType();
             }
         };
         getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "130px"); //$NON-NLS-1$
@@ -78,7 +78,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         TextColumnWithTooltip<StorageDomain> storageTypeColumn = new EnumColumn<StorageDomain, StorageType>() {
             @Override
             protected StorageType getRawValue(StorageDomain object) {
-                return object.getstorage_type();
+                return object.getStorageType();
             }
         };
         getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
@@ -95,10 +95,10 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 new TextColumnWithTooltip<StorageDomain>() {
                     @Override
                     public String getValue(StorageDomain object) {
-                        if (object.getstorage_domain_type() == StorageDomainType.ISO) {
-                            return EnumTranslator.createAndTranslate(object.getstorage_domain_shared_status());
+                        if (object.getStorageDomainType() == StorageDomainType.ISO) {
+                            return EnumTranslator.createAndTranslate(object.getStorageDomainSharedStatus());
                         } else {
-                            return EnumTranslator.createAndTranslate(object.getstatus());
+                            return EnumTranslator.createAndTranslate(object.getStatus());
                         }
                     }
                 };
@@ -107,7 +107,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
+                long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
                 return (long) availableDiskSize;
             }
         };

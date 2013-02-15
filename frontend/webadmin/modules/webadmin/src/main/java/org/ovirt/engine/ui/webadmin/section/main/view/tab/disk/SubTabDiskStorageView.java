@@ -43,7 +43,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
-                return object.getstorage_name();
+                return object.getStorageName();
             }
         };
         getTable().addColumn(nameColumn, constants.domainNameStorage());
@@ -59,7 +59,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         TextColumnWithTooltip<StorageDomain> typeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             public StorageDomainType getRawValue(StorageDomain object) {
-                return object.getstorage_domain_type();
+                return object.getStorageDomainType();
             }
         };
         getTable().addColumn(typeColumn, constants.domainTypeStorage());
@@ -67,7 +67,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         TextColumnWithTooltip<StorageDomain> statusColumn = new EnumColumn<StorageDomain, StorageDomainStatus>() {
             @Override
             public StorageDomainStatus getRawValue(StorageDomain object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusStorage());
@@ -75,7 +75,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long availableDiskSize = object.getavailable_disk_size() != null ? object.getavailable_disk_size() : 0;
+                long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
                 return (long) availableDiskSize;
             }
         };
@@ -84,7 +84,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long usedDiskSize = object.getused_disk_size() != null ? object.getused_disk_size() : 0;
+                long usedDiskSize = object.getUsedDiskSize() != null ? object.getUsedDiskSize() : 0;
                 return (long) usedDiskSize;
             }
         };

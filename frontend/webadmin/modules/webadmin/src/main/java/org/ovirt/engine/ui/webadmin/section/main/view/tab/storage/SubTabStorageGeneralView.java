@@ -82,7 +82,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             @Override
             public boolean isVisible() {
                 StorageDomainType storageDomainType =
-                        ((StorageDomain) getDetailModel().getEntity()).getstorage_domain_type();
+                        ((StorageDomain) getDetailModel().getEntity()).getStorageDomainType();
                 return !storageDomainType.equals(StorageDomainType.ISO)
                         && !storageDomainType.equals(StorageDomainType.ImportExport);
             }
@@ -114,9 +114,9 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
             return;
 
         totalSize.setValue(entity.getTotalDiskSize());
-        availableSize.setValue(entity.getavailable_disk_size());
-        usedSize.setValue(entity.getused_disk_size());
-        overAllocationRatio.setValue(entity.getstorage_domain_over_commit_percent());
+        availableSize.setValue(entity.getAvailableDiskSize());
+        usedSize.setValue(entity.getUsedDiskSize());
+        overAllocationRatio.setValue(entity.getStorageDomainOverCommitPercent());
 
         formBuilder.showForm(getDetailModel());
     }

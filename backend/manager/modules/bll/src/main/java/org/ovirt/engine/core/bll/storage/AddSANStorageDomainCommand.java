@@ -36,16 +36,16 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
         InitializeStorageDomain();
         // save storage if got from parameters in order to save first empty
         // storage in db and use it later
-        String storage = ((getStorageDomain().getstorage()) != null) ? getStorageDomain().getstorage() : "";
+        String storage = ((getStorageDomain().getStorage()) != null) ? getStorageDomain().getStorage() : "";
         // set domain storage to empty because not nullable in db and for shared
         // status to be locked
-        getStorageDomain().setstorage("");
+        getStorageDomain().setStorage("");
         AddStorageDomainInDb();
-        getStorageDomain().setstorage(storage);
-        if (StringUtils.isEmpty(getStorageDomain().getstorage())) {
-            getStorageDomain().setstorage(CreateVG());
+        getStorageDomain().setStorage(storage);
+        if (StringUtils.isEmpty(getStorageDomain().getStorage())) {
+            getStorageDomain().setStorage(CreateVG());
         }
-        if (StringUtils.isNotEmpty(getStorageDomain().getstorage()) && (AddStorageDomainInIrs())) {
+        if (StringUtils.isNotEmpty(getStorageDomain().getStorage()) && (AddStorageDomainInIrs())) {
             DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
             UpdateStorageDomainDynamicFromIrs();
             ProceedVGLunsInDb();
@@ -58,14 +58,14 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
                 .getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.GetVGInfo,
-                        new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getstorage()))
+                        new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage()))
                 .getReturnValue();
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
                 for (LUNs lun : luns) {
-                    proceedLUNInDb(lun, getStorageDomain().getstorage_type(), getStorageDomain().getstorage());
+                    proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
                 }
                 return null;
             }
@@ -90,7 +90,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     protected boolean CanAddDomain() {
         // !AddSANStorageDomainParametersValue.IsExistingStorageDomain &&
         if (((getParameters().getLunIds() == null || getParameters().getLunIds().isEmpty()) && StringUtils
-                .isEmpty(getStorageDomain().getstorage()))) {
+                .isEmpty(getStorageDomain().getStorage()))) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CREATE_STORAGE_DOMAIN_WITHOUT_VG_LV);
         }
         return true;

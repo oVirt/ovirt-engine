@@ -204,7 +204,7 @@ public class IsoDomainListSyncronizer {
 
                 // If refresh succeeded print an audit log Indicating that.
                 StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
-                addToAuditLogSuccessMessage(storageDomain.getstorage_name(), fileTypeExtension.name());
+                addToAuditLogSuccessMessage(storageDomain.getStorageName(), fileTypeExtension.name());
             } else {
                 // Print log Indicating the problematic pools.
                 handleErrorLog(tempProblematicRepoFileList);
@@ -502,7 +502,7 @@ public class IsoDomainListSyncronizer {
             if (storageDomain != null) {
                 storageDomainName =
                         String.format("%s (%s file type)",
-                                storageDomain.getstorage_name(),
+                                storageDomain.getStorageName(),
                                 repoFileMetaData.getFileType().name());
             }
         } else {

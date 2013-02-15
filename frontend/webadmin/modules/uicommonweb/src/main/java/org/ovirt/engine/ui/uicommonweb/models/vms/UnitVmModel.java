@@ -1850,7 +1850,7 @@ public class UnitVmModel extends Model {
                 StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 for (storage_pool dc : list)
                 {
-                    if (dc.getId().equals(storage.getstorage_pool_id()))
+                    if (dc.getId().equals(storage.getStoragePoolId()))
                     {
                         model.getDataCenter()
                                 .setItems(new ArrayList<storage_pool>(Arrays.asList(new storage_pool[] { dc })));

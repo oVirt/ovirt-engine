@@ -618,9 +618,9 @@ public class DiskModel extends Model
                 ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<StorageDomain>();
                 for (StorageDomain a : storageDomains)
                 {
-                    if (a.getstorage_domain_type() != StorageDomainType.ISO
-                            && a.getstorage_domain_type() != StorageDomainType.ImportExport
-                            && a.getstatus() == StorageDomainStatus.Active)
+                    if (a.getStorageDomainType() != StorageDomainType.ISO
+                            && a.getStorageDomainType() != StorageDomainType.ImportExport
+                            && a.getStatus() == StorageDomainStatus.Active)
                     {
                         filteredStorageDomains.add(a);
                     }
@@ -628,14 +628,14 @@ public class DiskModel extends Model
 
                 Linq.Sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
                 StorageDomain storage = Linq.FirstOrDefault(filteredStorageDomains);
-                StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getstorage_type();
+                StorageType storageType = storage == null ? StorageType.UNKNOWN : storage.getStorageType();
                 boolean isInternal = (Boolean) getIsInternal().getEntity();
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
                 diskModel.getStorageDomain().setSelectedItem(storage);
 
                 if (storage != null) {
-                    updateWipeAfterDelete(storage.getstorage_type(), diskModel.getWipeAfterDelete());
+                    updateWipeAfterDelete(storage.getStorageType(), diskModel.getWipeAfterDelete());
                     diskModel.setMessage(""); //$NON-NLS-1$
                 }
                 else if (isInternal) {
@@ -866,7 +866,7 @@ public class DiskModel extends Model
 
         StorageType storageType =
                 getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                        : ((StorageDomain) getStorageDomain().getSelectedItem()).getstorage_type();
+                        : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -983,7 +983,7 @@ public class DiskModel extends Model
         }
 
         StorageType storageType = getStorageDomain().getSelectedItem() == null ? StorageType.UNKNOWN
-                : ((StorageDomain) getStorageDomain().getSelectedItem()).getstorage_type();
+                : ((StorageDomain) getStorageDomain().getSelectedItem()).getStorageType();
 
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);

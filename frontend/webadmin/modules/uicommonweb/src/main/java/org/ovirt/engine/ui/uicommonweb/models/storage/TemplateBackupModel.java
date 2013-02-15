@@ -292,8 +292,8 @@ public class TemplateBackupModel extends VmBackupModel
     @Override
     protected void SyncSearch()
     {
-        if (getEntity() == null || getEntity().getstorage_domain_type() != StorageDomainType.ImportExport
-                || getEntity().getstorage_domain_shared_status() != StorageDomainSharedStatus.Active)
+        if (getEntity() == null || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
+                || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active)
         {
             setItems(Collections.emptyList());
         }

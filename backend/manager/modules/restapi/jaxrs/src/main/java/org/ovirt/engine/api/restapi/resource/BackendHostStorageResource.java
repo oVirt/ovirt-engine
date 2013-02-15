@@ -61,7 +61,7 @@ public class BackendHostStorageResource
             }
         }
         for (org.ovirt.engine.core.common.businessentities.StorageDomain vg : getVolumeGroups()) {
-            if (vg.getstorage().equals(id)) {
+            if (vg.getStorage().equals(id)) {
                 return addLinks(map(vg));
             }
         }

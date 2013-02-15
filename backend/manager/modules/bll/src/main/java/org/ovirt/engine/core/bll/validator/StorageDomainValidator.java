@@ -28,15 +28,15 @@ public class StorageDomainValidator {
         if (storageDomain == null) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
-        if (storageDomain.getstatus() == null || storageDomain.getstatus() != StorageDomainStatus.Active) {
+        if (storageDomain.getStatus() == null || storageDomain.getStatus() != StorageDomainStatus.Active) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
         return ValidationResult.VALID;
     }
 
     public ValidationResult domainIsValidDestination() {
-        if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO
-                || storageDomain.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
+                || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
         return ValidationResult.VALID;
@@ -52,12 +52,12 @@ public class StorageDomainValidator {
     }
 
     private String storageName() {
-        return String.format("$%1$s %2$s", "storageName", storageDomain.getstorage_name());
+        return String.format("$%1$s %2$s", "storageName", storageDomain.getStorageName());
     }
 
     public ValidationResult isDomainHasSpaceForRequest(final long requestedSize) {
-        if (storageDomain.getavailable_disk_size() != null &&
-                storageDomain.getavailable_disk_size() - requestedSize < getLowDiskSpaceThreshold()) {
+        if (storageDomain.getAvailableDiskSize() != null &&
+                storageDomain.getAvailableDiskSize() - requestedSize < getLowDiskSpaceThreshold()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
                     storageName());
         }

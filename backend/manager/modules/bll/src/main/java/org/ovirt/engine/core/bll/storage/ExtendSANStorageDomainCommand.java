@@ -51,7 +51,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         executeInNewTransaction(new TransactionMethod<Void>() {
             public Void runInTransaction() {
                 for (LUNs lun : getParameters().getLunsList()) {
-                    proceedLUNInDb(lun, getStorageDomain().getstorage_type(), getStorageDomain().getstorage());
+                    proceedLUNInDb(lun, getStorageDomain().getStorageType(), getStorageDomain().getStorage());
                 }
 
                 setStorageDomainStatus(StorageDomainStatus.Active, null);
@@ -69,7 +69,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EXTEND);
         boolean returnValue = checkStorageDomain() && checkStorageDomainStatus(StorageDomainStatus.Active);
         if (returnValue
-                && (getStorageDomain().getstorage_type() == StorageType.NFS || getStorageDomain().getstorage_type() == StorageType.UNKNOWN)) {
+                && (getStorageDomain().getStorageType() == StorageType.NFS || getStorageDomain().getStorageType() == StorageType.UNKNOWN)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         } else {

@@ -291,10 +291,10 @@ public class VmRunHandler {
         List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
                 storagePoolId);
         for (StorageDomain domain : domains) {
-            if (domain.getstorage_domain_type() == StorageDomainType.ISO) {
+            if (domain.getStorageDomainType() == StorageDomainType.ISO) {
                 StorageDomain sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
                         storagePoolId);
-                if (sd != null && sd.getstatus() == StorageDomainStatus.Active) {
+                if (sd != null && sd.getStatus() == StorageDomainStatus.Active) {
                     isoGuid = sd.getId();
                     break;
                 }

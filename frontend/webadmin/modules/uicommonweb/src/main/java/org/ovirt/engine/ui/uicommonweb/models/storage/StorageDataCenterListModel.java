@@ -214,7 +214,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                         (ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 for (StorageDomain domain : domains) {
                     String guid =
-                            domain.getstorage_pool_id() != null ? domain.getstorage_pool_id().getValue().toString()
+                            domain.getStoragePoolId() != null ? domain.getStoragePoolId().getValue().toString()
                                     : Guid.Empty.toString();
                     domain.setQueryableId(domain.getId() + "_" + guid); //$NON-NLS-1$
                 }
@@ -246,7 +246,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         }
 
         setattachCandidateDatacenters(new ArrayList<EntityModel>());
-        setAttachMultiple(getEntity().getstorage_domain_type() == StorageDomainType.ISO);
+        setAttachMultiple(getEntity().getStorageDomainType() == StorageDomainType.ISO);
 
         AsyncDataProvider.GetDataCenterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -257,7 +257,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                         listModel.setavailableDatacenters((ArrayList<storage_pool>) returnValue);
                         for (storage_pool dataCenter : listModel.getavailableDatacenters())
                         {
-                            switch (getEntity().getstorage_domain_type())
+                            switch (getEntity().getStorageDomainType())
                             {
                             case Master:
                             case Data:
@@ -265,7 +265,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                         (dataCenter.getstatus() == StoragePoolStatus.Uninitialized || dataCenter.getstatus() == StoragePoolStatus.Up)
                                                 && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
                                                         .getStorageFormat())
-                                                && dataCenter.getstorage_pool_type() == getEntity().getstorage_type();
+                                                && dataCenter.getstorage_pool_type() == getEntity().getStorageType();
                                 AddToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                 break;
                             case ISO:
@@ -446,7 +446,7 @@ public class StorageDataCenterListModel extends SearchableListModel
         for (Object item : getSelectedItems())
         {
             StorageDomain a = (StorageDomain) item;
-            items.add(a.getstorage_pool_name());
+            items.add(a.getStoragePoolName());
         }
         model.setItems(items);
 
@@ -473,9 +473,9 @@ public class StorageDataCenterListModel extends SearchableListModel
         String localStorages = ""; //$NON-NLS-1$
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
-            if (a.getstorage_type() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS)
             {
-                localStorages += a.getstorage_name() + ", "; //$NON-NLS-1$
+                localStorages += a.getStorageName() + ", "; //$NON-NLS-1$
             }
         }
         return localStorages.substring(0, localStorages.length() - 2);
@@ -485,7 +485,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     {
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
-            if (a.getstorage_type() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS)
             {
                 return true;
             }
@@ -508,13 +508,13 @@ public class StorageDataCenterListModel extends SearchableListModel
         for (Object item : getSelectedItems())
         {
             StorageDomain storageDomain = (StorageDomain) item;
-            if (storageDomain.getstorage_type() != StorageType.LOCALFS)
+            if (storageDomain.getStorageType() != StorageType.LOCALFS)
             {
                 DetachStorageDomainFromPoolParameters param = new DetachStorageDomainFromPoolParameters();
                 param.setStorageDomainId(getEntity().getId());
-                if (storageDomain.getstorage_pool_id() != null)
+                if (storageDomain.getStoragePoolId() != null)
                 {
-                    param.setStoragePoolId(storageDomain.getstorage_pool_id().getValue());
+                    param.setStoragePoolId(storageDomain.getStoragePoolId().getValue());
                 }
 
                 getdetachPrms().add(param);
@@ -545,7 +545,7 @@ public class StorageDataCenterListModel extends SearchableListModel
 
                             }
                         }),
-                        storageDomain.getstorage_pool_name());
+                        storageDomain.getStoragePoolName());
             }
 
             if (getdetachPrms().size() > 0)
@@ -566,9 +566,9 @@ public class StorageDataCenterListModel extends SearchableListModel
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
-            if (a.getstorage_pool_id() != null)
+            if (a.getStoragePoolId() != null)
             {
-                parameters.setStoragePoolId(a.getstorage_pool_id().getValue());
+                parameters.setStoragePoolId(a.getStoragePoolId().getValue());
             }
 
             list.add(parameters);
@@ -592,9 +592,9 @@ public class StorageDataCenterListModel extends SearchableListModel
 
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
-            if (a.getstorage_pool_id() != null)
+            if (a.getStoragePoolId() != null)
             {
-                parameters.setStoragePoolId(a.getstorage_pool_id().getValue());
+                parameters.setStoragePoolId(a.getStoragePoolId().getValue());
             }
 
             list.add(parameters);
@@ -652,7 +652,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomain));
 
         getAttachCommand().setIsExecutionAllowed(getEntity() != null
-                && (getEntity().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached || getEntity().getstorage_domain_type() == StorageDomainType.ISO));
+                && (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || getEntity().getStorageDomainType() == StorageDomainType.ISO));
 
         getDetachCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DetachStorageDomainFromPool));

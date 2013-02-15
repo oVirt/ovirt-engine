@@ -543,7 +543,7 @@ public class AuditLogableBaseTest {
     public void storageDomainName() {
         final AuditLogableBase b = new AuditLogableBase();
         final StorageDomain s = new StorageDomain();
-        s.setstorage_name(NAME);
+        s.setStorageName(NAME);
         b.setStorageDomain(s);
         final String n = b.getStorageDomainName();
         assertEquals(NAME, n);
@@ -613,7 +613,7 @@ public class AuditLogableBaseTest {
         b.setStoragePoolId(null);
         b.setStoragePool(null);
         final StorageDomain s = new StorageDomain();
-        s.setstorage_pool_id(GUID);
+        s.setStoragePoolId(GUID);
         b.setStorageDomain(s);
         final NGuid n = b.getStoragePoolId();
         assertEquals(GUID, n);
@@ -1117,12 +1117,12 @@ public class AuditLogableBaseTest {
         private List<StorageDomain> getStorageDomainList() {
             final List<StorageDomain> l = new ArrayList<StorageDomain>();
             final StorageDomain s = new StorageDomain();
-            s.setstatus(StorageDomainStatus.InActive);
+            s.setStatus(StorageDomainStatus.InActive);
             l.add(s);
             final StorageDomain s2 = new StorageDomain();
-            s2.setstatus(null);
+            s2.setStatus(null);
             l.add(s2);
-            STORAGE_DOMAIN.setstatus(StorageDomainStatus.Active);
+            STORAGE_DOMAIN.setStatus(StorageDomainStatus.Active);
             l.add(STORAGE_DOMAIN);
             return l;
         }

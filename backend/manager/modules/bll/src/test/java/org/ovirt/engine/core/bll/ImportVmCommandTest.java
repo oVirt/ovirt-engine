@@ -119,16 +119,16 @@ public class ImportVmCommandTest {
 
     protected StorageDomain createSourceDomain() {
         StorageDomain sd = new StorageDomain();
-        sd.setstorage_domain_type(StorageDomainType.ImportExport);
-        sd.setstatus(StorageDomainStatus.Active);
+        sd.setStorageDomainType(StorageDomainType.ImportExport);
+        sd.setStatus(StorageDomainStatus.Active);
         return sd;
     }
 
     protected StorageDomain createStorageDomain() {
         StorageDomain sd = new StorageDomain();
-        sd.setstorage_domain_type(StorageDomainType.Data);
-        sd.setstatus(StorageDomainStatus.Active);
-        sd.setavailable_disk_size(2);
+        sd.setStorageDomainType(StorageDomainType.Data);
+        sd.setStatus(StorageDomainStatus.Active);
+        sd.setAvailableDiskSize(2);
         return sd;
     }
 

@@ -326,9 +326,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         for (StorageDomain item : allStorageDomains)
         {
             addToList = false;
-            if (item.getstorage_domain_type() == StorageDomainType.Data
-                    && item.getstorage_type() == getEntity().getstorage_pool_type()
-                    && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+            if (item.getStorageDomainType() == StorageDomainType.Data
+                    && item.getStorageType() == getEntity().getstorage_pool_type()
+                    && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
             {
                 if (getEntity().getStoragePoolFormatType() == null)
                 {
@@ -355,8 +355,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
         for (StorageDomain a : attachedStorageDomains)
         {
-            if (a.getstorage_domain_type() == StorageDomainType.Data
-                    || a.getstorage_domain_type() == StorageDomainType.Master)
+            if (a.getStorageDomainType() == StorageDomainType.Data
+                    || a.getStorageDomainType() == StorageDomainType.Master)
             {
                 attachedDataStorages.add(a);
             }
@@ -413,7 +413,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         ArrayList<StorageDomain> attachedIsoStorages = new ArrayList<StorageDomain>();
         for (StorageDomain sd : attachedStorageDomains)
         {
-            if (sd.getstorage_domain_type() == StorageDomainType.ISO)
+            if (sd.getStorageDomainType() == StorageDomainType.ISO)
             {
                 attachedIsoStorages.add(sd);
             }
@@ -777,7 +777,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
-                            String storageName = storages.get(0).getstorage_name();
+                            String storageName = storages.get(0).getStorageName();
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
@@ -924,7 +924,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
-                            String storageName = storages.get(0).getstorage_name();
+                            String storageName = storages.get(0).getStorageName();
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
@@ -1061,7 +1061,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                 (ArrayList<StorageDomain>) returnValue;
                         if (storages != null && storages.size() > 0)
                         {
-                            String storageName = storages.get(0).getstorage_name();
+                            String storageName = storages.get(0).getStorageName();
                             OnFinish(dataCenterGuideModel.context,
                                     false,
                                     dataCenterGuideModel.storageModel,
@@ -1297,10 +1297,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         for (StorageDomain item : storageDomains)
                         {
                             addToList = false;
-                            if (item.getstorage_domain_type() == StorageDomainType.Data
-                                    && item.getstorage_type() == dataCenterGuideModel.getEntity()
+                            if (item.getStorageDomainType() == StorageDomainType.Data
+                                    && item.getStorageType() == dataCenterGuideModel.getEntity()
                                             .getstorage_pool_type()
-                                    && item.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+                                    && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (getEntity().getStoragePoolFormatType() == null)
                                 {

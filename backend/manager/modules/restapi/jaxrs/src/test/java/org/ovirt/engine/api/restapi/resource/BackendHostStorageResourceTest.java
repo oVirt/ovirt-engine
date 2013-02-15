@@ -118,8 +118,8 @@ public class BackendHostStorageResourceTest
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getVgEntity(int index) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        entity.setstorage(VG_ID_PREFIX + GUIDS[index].toString());
-        entity.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        entity.setStorage(VG_ID_PREFIX + GUIDS[index].toString());
+        entity.setStorageType(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
         return entity;
     }
 

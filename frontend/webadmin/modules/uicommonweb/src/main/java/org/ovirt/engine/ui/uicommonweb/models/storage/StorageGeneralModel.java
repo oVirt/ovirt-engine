@@ -94,8 +94,8 @@ public class StorageGeneralModel extends EntityModel
         {
             StorageDomain storageDomain = (StorageDomain) getEntity();
 
-            setIsNfs(storageDomain.getstorage_type() == StorageType.NFS);
-            setIsLocalS(storageDomain.getstorage_type() == StorageType.LOCALFS);
+            setIsNfs(storageDomain.getStorageType() == StorageType.NFS);
+            setIsLocalS(storageDomain.getStorageType() == StorageType.LOCALFS);
             if (getIsNfs() || getIsLocalS())
             {
                 AsyncQuery _asyncQuery = new AsyncQuery();
@@ -126,7 +126,7 @@ public class StorageGeneralModel extends EntityModel
                         }
                     }
                 };
-                AsyncDataProvider.GetStorageConnectionById(_asyncQuery, storageDomain.getstorage(), true);
+                AsyncDataProvider.GetStorageConnectionById(_asyncQuery, storageDomain.getStorage(), true);
             }
             else
             {

@@ -451,7 +451,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForStorageDomain() {
         StorageDomain storageDomain = dbFacade.getStorageDomainDao().get(STORAGE_DOMAIN_ID);
         assertNotNull(storageDomain);
-        String name = storageDomain.getstorage_name();
+        String name = storageDomain.getStorageName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_DOMAIN_ID, VdcObjectType.Storage)));
     }
 

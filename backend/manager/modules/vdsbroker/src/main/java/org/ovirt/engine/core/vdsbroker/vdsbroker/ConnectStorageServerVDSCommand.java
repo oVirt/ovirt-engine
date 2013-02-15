@@ -90,7 +90,7 @@ public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCom
                         if (failedDomainNames.length() > 0) {
                             failedDomainNames.append(namesSeparator);
                         }
-                        failedDomainNames.append(domain.getstorage_name());
+                        failedDomainNames.append(domain.getStorageName());
                     }
                 }
             }

@@ -69,7 +69,7 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
     }
 
     public StorageDomainType getStorageDomainType() {
-        return getStorageDomain().getstorage_domain_type();
+        return getStorageDomain().getStorageDomainType();
     }
 
     public StorageDomain getStorageDomainModel() {

@@ -82,16 +82,16 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
 
         if (!getParameters().getIsInternal()
-                && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+                && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             List<StorageDomain> domains =
-                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getstorage_pool_id().getValue());
+                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getStoragePoolId().getValue());
 
             List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
             List<StorageDomain> dataDomains = LinqUtils.filter(activeDomains, new Predicate<StorageDomain>() {
                 @Override
                 public boolean eval(StorageDomain a) {
-                    return a.getstorage_domain_type() == StorageDomainType.Data;
+                    return a.getStorageDomainType() == StorageDomainType.Data;
                 }
             });
 
@@ -114,12 +114,12 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
         if (getStoragePool().getspm_vds_id() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master &&
-            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getstorage_pool_id().getValue()).size() > 0) {
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
+            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId().getValue()).size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
                 return false;
-            } else if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ISO
-                    && (getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport && !getParameters().getIsInternal())
+            } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO
+                    && (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport && !getParameters().getIsInternal())
             && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
                return false;
@@ -143,7 +143,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         List<StorageDomain> activeDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain a) {
-                return a.getstatus() == domainStatus && !a.getId().equals(getStorageDomain().getId());
+                return a.getStatus() == domainStatus && !a.getId().equals(getStorageDomain().getId());
             }
         });
         return activeDomains;
@@ -258,7 +258,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      * will not be locked
      */
     protected void ProceedStorageDomainTreatmentByDomainType(final boolean duringReconstruct) {
-        if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             final StorageDomain newMaster = getNewMaster(duringReconstruct);
             if (newMaster != null) {
                 // increase master domain version
@@ -269,18 +269,18 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         StoragePoolIsoMap newMasterMap = newMaster.getStoragePoolIsoMapData();
                         newMaster.getStorageStaticData().setLastTimeUsedAsMaster(System.currentTimeMillis());
                         getCompensationContext().snapshotEntity(newMaster.getStorageStaticData());
-                        newMaster.setstorage_domain_type(StorageDomainType.Master);
+                        newMaster.setStorageDomainType(StorageDomainType.Master);
                         _newMasterStorageDomainId = newMaster.getId();
                         if (!duringReconstruct) {
                             getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
-                            newMaster.setstatus(StorageDomainStatus.Locked);
+                            newMaster.setStatus(StorageDomainStatus.Locked);
                             getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
                         }
                         DbFacade.getInstance()
                                 .getStorageDomainStaticDao()
                                 .update(newMaster.getStorageStaticData());
                         getCompensationContext().snapshotEntity(getStorageDomain().getStorageStaticData());
-                        getStorageDomain().setstorage_domain_type(StorageDomainType.Data);
+                        getStorageDomain().setStorageDomainType(StorageDomainType.Data);
                         DbFacade.getInstance()
                                 .getStorageDomainStaticDao()
                                 .update(getStorageDomain().getStorageStaticData());
@@ -313,8 +313,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (storageDomain != null) {
             Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
             locks.put(storageDomain.getId().toString(), LockMessagesMatchUtil.STORAGE);
-            if (storageDomain.getstorage_domain_type() == StorageDomainType.Master) {
-                locks.put(storageDomain.getstorage_pool_id().toString(), LockMessagesMatchUtil.POOL);
+            if (storageDomain.getStorageDomainType() == StorageDomainType.Master) {
+                locks.put(storageDomain.getStoragePoolId().toString(), LockMessagesMatchUtil.POOL);
             }
             return locks;
         }
@@ -324,10 +324,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         StorageDomain storageDomain = getStorageDomain();
-        if (storageDomain != null && storageDomain.getstorage_domain_type() == StorageDomainType.Data
-                && storageDomain.getstorage_domain_type() != StorageDomainType.Master
-                && storageDomain.getstorage_pool_id() != null) {
-            return Collections.singletonMap(storageDomain.getstorage_pool_id().toString(), LockMessagesMatchUtil.POOL);
+        if (storageDomain != null && storageDomain.getStorageDomainType() == StorageDomainType.Data
+                && storageDomain.getStorageDomainType() != StorageDomainType.Master
+                && storageDomain.getStoragePoolId() != null) {
+            return Collections.singletonMap(storageDomain.getStoragePoolId().toString(), LockMessagesMatchUtil.POOL);
         }
         return null;
     }

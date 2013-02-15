@@ -35,23 +35,23 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
                 try {
                     sDomain.setId(new Guid(vg.getItem("name").toString()));
                 } catch (java.lang.Exception e) {
-                    sDomain.setstorage_name(vg.getItem("name").toString());
+                    sDomain.setStorageName(vg.getItem("name").toString());
                 }
             }
-            sDomain.setstorage(vg.getItem("vgUUID").toString());
+            sDomain.setStorage(vg.getItem("vgUUID").toString());
             Long size = IrsBrokerCommand.AssignLongValue(vg, "vgfree");
             if (size != null) {
-                sDomain.setavailable_disk_size((int) (size / IrsBrokerCommand.BYTES_TO_GB));
+                sDomain.setAvailableDiskSize((int) (size / IrsBrokerCommand.BYTES_TO_GB));
             }
             size = IrsBrokerCommand.AssignLongValue(vg, "vgsize");
-            if (size != null && sDomain.getavailable_disk_size() != null) {
-                sDomain.setused_disk_size((int) (size / IrsBrokerCommand.BYTES_TO_GB)
-                        - sDomain.getavailable_disk_size());
+            if (size != null && sDomain.getAvailableDiskSize() != null) {
+                sDomain.setUsedDiskSize((int) (size / IrsBrokerCommand.BYTES_TO_GB)
+                        - sDomain.getAvailableDiskSize());
             }
             if (vg.containsKey("vgtype")) {
-                sDomain.setstorage_type(EnumUtils.valueOf(StorageType.class, vg.getItem("vgtype").toString(), true));
+                sDomain.setStorageType(EnumUtils.valueOf(StorageType.class, vg.getItem("vgtype").toString(), true));
             } else {
-                sDomain.setstorage_type(StorageType.ALL);
+                sDomain.setStorageType(StorageType.ALL);
             }
             result.add(sDomain);
         }

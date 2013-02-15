@@ -416,11 +416,11 @@ public class AddDiskToVmCommandTest {
         Guid storagePoolId = storagePool.getId();
 
         StorageDomain sd = new StorageDomain();
-        sd.setavailable_disk_size(availableSize);
-        sd.setused_disk_size(usedSize);
-        sd.setstorage_pool_id(storagePoolId);
-        sd.setstatus(StorageDomainStatus.Active);
-        sd.setstorage_type(storageType);
+        sd.setAvailableDiskSize(availableSize);
+        sd.setUsedDiskSize(usedSize);
+        sd.setStoragePoolId(storagePoolId);
+        sd.setStatus(StorageDomainStatus.Active);
+        sd.setStorageType(storageType);
         when(storageDomainDAO.get(storageId)).thenReturn(sd);
         when(storageDomainDAO.getAllForStorageDomain(storageId)).thenReturn(Collections.singletonList(sd));
         when(storageDomainDAO.getForStoragePool(storageId, storagePoolId)).thenReturn(sd);

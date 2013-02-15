@@ -32,7 +32,7 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                             .getStorageDomainDao()
                             .getMasterStorageDomainIdForPool(getStoragePool().getId());
 
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                 try {
                     Backend.getInstance()
                             .getResourceManager()

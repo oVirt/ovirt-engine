@@ -87,7 +87,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                 return;
             }
 
-            lun.setvolume_group_id(getStorageDomain().getstorage());
+            lun.setvolume_group_id(getStorageDomain().getStorage());
             processedLunsList.add(lun);
         }
         // connect all vds in pool (except spm) to lun and getDeviceList
@@ -149,7 +149,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
     private boolean connectStorageToLunByVdsId(VDS vds, LUNs lun) {
         try {
             return StorageHelperDirector.getInstance()
-                    .getItem(getStorageDomain().getstorage_type())
+                    .getItem(getStorageDomain().getStorageType())
                     .connectStorageToLunByVdsId(getStorageDomain(), vds.getId(), lun, Guid.Empty);
         } catch (VdcBLLException e) {
             final ConnectAllHostsToLunCommandReturnValue result = getResult();
@@ -165,7 +165,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             return (List<LUNs>) runVdsCommand(
                     VDSCommandType.GetDeviceList,
                     new GetDeviceListVDSCommandParameters(vds.getId(),
-                            getStorageDomain().getstorage_type())).getReturnValue();
+                            getStorageDomain().getStorageType())).getReturnValue();
         } catch (VdcBLLException e) {
             getResult().setFailedVds(vds);
             throw e;

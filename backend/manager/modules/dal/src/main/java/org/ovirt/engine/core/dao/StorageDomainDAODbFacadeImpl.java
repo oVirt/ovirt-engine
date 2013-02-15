@@ -135,19 +135,19 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                 throws SQLException {
             final StorageDomain entity = new StorageDomain();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
-            entity.setstorage(rs.getString("storage"));
-            entity.setstorage_name(rs.getString("storage_name"));
+            entity.setStorage(rs.getString("storage"));
+            entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
-            entity.setstorage_type(StorageType.forValue(rs.getInt("storage_type")));
-            entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setstorage_domain_type(StorageDomainType.forValue(rs.getInt("storage_domain_type")));
+            entity.setStoragePoolId(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
+            entity.setStoragePoolName(rs.getString("storage_pool_name"));
+            entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));
             entity.setStorageFormat(StorageFormatType.forValue(rs.getString("storage_domain_format_type")));
-            entity.setavailable_disk_size((Integer) rs.getObject("available_disk_size"));
-            entity.setused_disk_size((Integer) rs.getObject("used_disk_size"));
-            entity.setcommitted_disk_size(rs.getInt("commited_disk_size"));
-            entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
-            entity.setstorage_domain_shared_status(
+            entity.setAvailableDiskSize((Integer) rs.getObject("available_disk_size"));
+            entity.setUsedDiskSize((Integer) rs.getObject("used_disk_size"));
+            entity.setCommittedDiskSize(rs.getInt("commited_disk_size"));
+            entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
+            entity.setStorageDomainSharedStatus(
                     StorageDomainSharedStatus.forValue(rs.getInt("storage_domain_shared_status")));
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
@@ -200,7 +200,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         Guid returnValue = Guid.Empty;
         List<StorageDomain> domains = getAllForStoragePool(pool);
         for (StorageDomain domain : domains) {
-            if (domain.getstorage_domain_type() == type) {
+            if (domain.getStorageDomainType() == type) {
                 returnValue = domain.getId();
                 break;
             }

@@ -566,7 +566,7 @@ public class PoolGeneralModel extends EntityModel
                             PoolGeneralModel poolGeneralModel1 = (PoolGeneralModel) model1;
                             StorageDomain storage =
                                     (StorageDomain) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                            poolGeneralModel1.setStorageDomain(storage.getstorage_name());
+                            poolGeneralModel1.setStorageDomain(storage.getStorageName());
 
                             poolGeneralModel1.getUpdateCompleteEvent().raise(this, EventArgs.Empty);
                         }

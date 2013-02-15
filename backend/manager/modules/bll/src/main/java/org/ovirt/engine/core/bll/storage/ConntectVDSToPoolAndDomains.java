@@ -24,7 +24,7 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
         VDS vds = getVdss().get(iterationId);
         try {
             boolean isConnectSuccessed =
-                    StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
+                    StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                             .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
             if (isConnectSuccessed) {
                 ResourceManager.getInstance().runVdsCommand(
@@ -35,7 +35,7 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
             } else {
                 log.errorFormat("Failed to connect host {0} to domain {1}",
                         vds.getVdsName(),
-                        getStorageDomain().getstorage_name());
+                        getStorageDomain().getStorageName());
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}",

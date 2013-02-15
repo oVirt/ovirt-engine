@@ -294,7 +294,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                             && disk.getvolume_format() == VolumeFormat.RAW
                             && getDiskImportData(disk.getId()) != null
                             && (getDiskImportData(disk.getId()).getSelectedStorageDomain()
-                                    .getstorage_type().isBlockDomain())) {
+                                    .getStorageType().isBlockDomain())) {
                         getDisksToConvert().add(vm);
                         ((ImportVmData) item).getCollapseSnapshots().setEntity(true);
                         ((ImportVmData) item).getCollapseSnapshots()

@@ -46,8 +46,8 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {
-                                    return (a.getstorage_domain_type() != StorageDomainType.ISO && a.getstorage_domain_type() != StorageDomainType.ImportExport)
-                                            && (a.getstatus() != null) && (a.getstatus() == StorageDomainStatus.Active);
+                                    return (a.getStorageDomainType() != StorageDomainType.ISO && a.getStorageDomainType() != StorageDomainType.ImportExport)
+                                            && (a.getStatus() != null) && (a.getStatus() == StorageDomainStatus.Active);
                                 }
                             });
             storageDomainId = (storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty;

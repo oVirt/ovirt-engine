@@ -432,10 +432,10 @@ public class AddVmCommandTest {
 
     protected StorageDomain createStorageDomain(int availableSpace) {
         StorageDomain sd = new StorageDomain();
-        sd.setstorage_domain_type(StorageDomainType.Master);
-        sd.setstatus(StorageDomainStatus.Active);
-        sd.setavailable_disk_size(availableSpace);
-        sd.setused_disk_size(USED_SPACE_GB);
+        sd.setStorageDomainType(StorageDomainType.Master);
+        sd.setStatus(StorageDomainStatus.Active);
+        sd.setAvailableDiskSize(availableSpace);
+        sd.setUsedDiskSize(USED_SPACE_GB);
         sd.setId(STORAGE_DOMAIN_ID);
         return sd;
     }

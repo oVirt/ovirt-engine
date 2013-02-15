@@ -62,7 +62,7 @@ public class MoveOrCopyImageGroupCommand<T extends MoveOrCopyImageGroupParameter
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
-                    new CopyImageVDSCommandParameters(getStorageDomain().getstorage_pool_id()
+                    new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId()
                             .getValue(),
                             sourceDomainId,
                             getParameters()

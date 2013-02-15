@@ -268,8 +268,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                         for (StorageDomain storageDomain : (ArrayList<StorageDomain>) returnValue)
                         {
-                            if (storageDomain.getstatus() == StorageDomainStatus.Active
-                                    && (storageDomain.getstorage_domain_type() == StorageDomainType.Data || storageDomain.getstorage_domain_type() == StorageDomainType.Master))
+                            if (storageDomain.getStatus() == StorageDomainStatus.Active
+                                    && (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master))
                             {
                                 activeStorageDomainList.add(storageDomain);
                             }

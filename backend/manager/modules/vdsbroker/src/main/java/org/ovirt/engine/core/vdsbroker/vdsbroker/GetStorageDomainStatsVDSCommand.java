@@ -42,17 +42,17 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             StorageDomain domain = new StorageDomain();
             if (xmlRpcStruct.contains("status")) {
                 if ("Attached".equals(xmlRpcStruct.getItem("status").toString())) {
-                    domain.setstatus(StorageDomainStatus.InActive);
+                    domain.setStatus(StorageDomainStatus.InActive);
                 } else {
-                    domain.setstatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.getItem("status")
+                    domain.setStatus(EnumUtils.valueOf(StorageDomainStatus.class, xmlRpcStruct.getItem("status")
                             .toString(), true));
                 }
             }
             Long size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "diskfree");
-            domain.setavailable_disk_size((size == null) ? null : (int) (size / IrsBrokerCommand.BYTES_TO_GB));
+            domain.setAvailableDiskSize((size == null) ? null : (int) (size / IrsBrokerCommand.BYTES_TO_GB));
             size = IrsBrokerCommand.AssignLongValue(xmlRpcStruct, "disktotal");
-            domain.setused_disk_size((size == null || domain.getavailable_disk_size() == null) ? null :
-                    (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getavailable_disk_size());
+            domain.setUsedDiskSize((size == null || domain.getAvailableDiskSize() == null) ? null :
+                    (int) (size / IrsBrokerCommand.BYTES_TO_GB) - domain.getAvailableDiskSize());
             if (xmlRpcStruct.contains("alerts")) {
                 Object[] rawAlerts = (Object[]) xmlRpcStruct.getItem("alerts");
                 Set<VdcBllErrors> alerts = new HashSet<VdcBllErrors>(rawAlerts.length);

@@ -41,7 +41,7 @@ public class StorageDomainValidatorTest {
 
     @Test
     public void testIsDomainExistAndActiveDomainNotUp() {
-        domain.setstatus(StorageDomainStatus.InActive);
+        domain.setStatus(StorageDomainStatus.InActive);
         assertEquals("Wrong failure for inactive domain",
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL,
                 validator.isDomainExistAndActive().getMessage());
@@ -49,7 +49,7 @@ public class StorageDomainValidatorTest {
 
     @Test
     public void testIsDomainExistAndActiveDomainUp() {
-        domain.setstatus(StorageDomainStatus.Active);
+        domain.setStatus(StorageDomainStatus.Active);
         assertTrue("domain should be up", validator.isDomainExistAndActive().isValid());
     }
 
@@ -83,10 +83,10 @@ public class StorageDomainValidatorTest {
 
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {
         StorageDomain sd = new StorageDomain();
-        sd.setavailable_disk_size(availableSize);
-        sd.setused_disk_size(usedSize);
-        sd.setstatus(StorageDomainStatus.Active);
-        sd.setstorage_type(storageType);
+        sd.setAvailableDiskSize(availableSize);
+        sd.setUsedDiskSize(usedSize);
+        sd.setStatus(StorageDomainStatus.Active);
+        sd.setStorageType(storageType);
         return sd;
     }
 }

@@ -311,7 +311,7 @@ public final class VdcActionUtils {
                     null);
 
         } else if (entity instanceof StorageDomain) {
-            StorageDomainStatus status = ((StorageDomain) entity).getstatus();
+            StorageDomainStatus status = ((StorageDomain) entity).getStatus();
             return status != null ? status : StorageDomainStatus.Uninitialized;
         }
 

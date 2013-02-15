@@ -153,7 +153,7 @@ public final class Linq
         @Override
         public int compare(StorageDomain x, StorageDomain y)
         {
-            return x.getstorage_name().compareTo(y.getstorage_name());
+            return x.getStorageName().compareTo(y.getStorageName());
         }
 
     }
@@ -164,7 +164,7 @@ public final class Linq
         @Override
         public int compare(StorageDomainModel x, StorageDomainModel y)
         {
-            return x.getStorageDomain().getstorage_name().compareTo(y.getStorageDomain().getstorage_name());
+            return x.getStorageDomain().getStorageName().compareTo(y.getStorageDomain().getStorageName());
         }
 
     }
@@ -318,8 +318,8 @@ public final class Linq
     {
         for (StorageDomain a : sdl)
         {
-            if (a.getstorage_domain_type() == StorageDomainType.Master && a.getstatus() != null
-                    && a.getstatus() == StorageDomainStatus.Active)
+            if (a.getStorageDomainType() == StorageDomainType.Master && a.getStatus() != null
+                    && a.getStatus() == StorageDomainStatus.Active)
             {
                 return true;
             }
@@ -329,8 +329,8 @@ public final class Linq
 
     public static boolean IsDataActiveStorageDomain(StorageDomain storageDomain)
     {
-        boolean isData = storageDomain.getstorage_domain_type() == StorageDomainType.Data ||
-                storageDomain.getstorage_domain_type() == StorageDomainType.Master;
+        boolean isData = storageDomain.getStorageDomainType() == StorageDomainType.Data ||
+                storageDomain.getStorageDomainType() == StorageDomainType.Master;
 
         boolean isActive = IsActiveStorageDomain(storageDomain);
 
@@ -339,8 +339,8 @@ public final class Linq
 
     public static boolean IsActiveStorageDomain(StorageDomain storageDomain)
     {
-        boolean isActive = storageDomain.getstatus() != null &&
-                storageDomain.getstatus() == StorageDomainStatus.Active;
+        boolean isActive = storageDomain.getStatus() != null &&
+                storageDomain.getStatus() == StorageDomainStatus.Active;
 
         return isActive;
     }
@@ -559,7 +559,7 @@ public final class Linq
         ArrayList<StorageDomain> ret = new ArrayList<StorageDomain>();
         for (StorageDomain i : items)
         {
-            if (i.getstorage_domain_shared_status() == status)
+            if (i.getStorageDomainSharedStatus() == status)
             {
                 ret.add(i);
             }
@@ -1229,7 +1229,7 @@ public final class Linq
 
         @Override
         public boolean Match(StorageDomain source) {
-            return name.equals(source.getstorage_name());
+            return name.equals(source.getStorageName());
         }
     }
 

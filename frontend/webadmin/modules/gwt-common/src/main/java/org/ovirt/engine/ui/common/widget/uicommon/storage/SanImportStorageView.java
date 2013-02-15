@@ -35,7 +35,7 @@ public class SanImportStorageView extends AbstractSanStorageView {
         table.addColumn(new EntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
-                return storage.getstorage_name();
+                return storage.getStorageName();
             }
         }, constants.nameSanImStorage());
 

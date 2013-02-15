@@ -65,7 +65,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
-        if (domain != null && domain.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (domain != null && domain.getStorageDomainType() == StorageDomainType.ImportExport) {
             return true;
         }
         return false;

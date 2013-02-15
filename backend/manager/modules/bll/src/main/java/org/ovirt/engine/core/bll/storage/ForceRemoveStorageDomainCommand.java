@@ -33,7 +33,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         if (getStoragePool() != null) {
             try {
                 // if master try to reconstruct
-                if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
                             getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
@@ -46,18 +46,18 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
             } catch (RuntimeException ex) {
                 log.errorFormat("Could not force detach storage domain {0}. error: {1}", getStorageDomain()
-                        .getstorage_name(), ex.toString());
+                        .getStorageName(), ex.toString());
             }
         }
 
-        StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
+        StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                 .storageDomainRemoved(getStorageDomain().getStorageStaticData());
 
         DbFacade.getInstance().getStorageDomainDao().remove(getStorageDomain().getId());
 
         if (getStoragePool() != null) {
             // if iso reset path for pool
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
                 // todo: when iso in multiple pools will be implemented, we
                 // should reset iso path for all related pools
                 Backend.getInstance()
@@ -65,7 +65,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                         .RunVdsCommand(VDSCommandType.ResetISOPath,
                                 new IrsBaseVDSCommandParameters(getStoragePool().getId()));
             }
-            if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+            if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                 calcStoragePoolStatusByDomainsStatus();
             }
         }
@@ -84,9 +84,9 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
         boolean returnValue =
                 super.canDoAction()
                         && checkStorageDomain()
-                        && (getStorageDomain().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
+                        && (getStorageDomain().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
 
-        if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master
+        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master
                 && getStoragePool() != null) {
             if (electNewMaster(false) == null) {
                 returnValue = false;

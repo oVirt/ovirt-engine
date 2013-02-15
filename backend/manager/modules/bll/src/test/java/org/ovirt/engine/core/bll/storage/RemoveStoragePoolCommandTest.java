@@ -34,7 +34,7 @@ public class RemoveStoragePoolCommandTest {
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setstatus(StorageDomainStatus.Active);
+        tempStorageDomains.setStatus(StorageDomainStatus.Active);
         domainsList.add(tempStorageDomains);
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(!listReturned.isEmpty());
@@ -49,7 +49,7 @@ public class RemoveStoragePoolCommandTest {
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<StorageDomain>();
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setstatus(StorageDomainStatus.Locked);
+        tempStorageDomains.setStatus(StorageDomainStatus.Locked);
         domainsList.add(tempStorageDomains);
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
         assertTrue(!listReturned.isEmpty());
@@ -66,11 +66,11 @@ public class RemoveStoragePoolCommandTest {
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setstatus(StorageDomainStatus.Locked);
+        tempStorageDomains.setStatus(StorageDomainStatus.Locked);
         domainsList.add(tempStorageDomains);
 
         // Add second active storage
-        tempStorageDomains.setstatus(StorageDomainStatus.Active);
+        tempStorageDomains.setStatus(StorageDomainStatus.Active);
         domainsList.add(tempStorageDomains);
 
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);
@@ -88,7 +88,7 @@ public class RemoveStoragePoolCommandTest {
 
         // Add first locked storage
         StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setstatus(StorageDomainStatus.InActive);
+        tempStorageDomains.setStatus(StorageDomainStatus.InActive);
         domainsList.add(tempStorageDomains);
 
         List<StorageDomain> listReturned = cmd.getActiveOrLockedDomainList(domainsList);

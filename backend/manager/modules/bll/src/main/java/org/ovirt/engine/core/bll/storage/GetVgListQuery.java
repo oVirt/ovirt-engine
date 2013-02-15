@@ -30,21 +30,21 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                 new Predicate<StorageDomain>() {
                     @Override
                     public boolean eval(StorageDomain storageDomain) {
-                        return storageDomain.getstorage_type() == StorageType.ISCSI
-                                || storageDomain.getstorage_type() == StorageType.FCP;
+                        return storageDomain.getStorageType() == StorageType.ISCSI
+                                || storageDomain.getStorageType() == StorageType.FCP;
                     }
                 });
 
         java.util.HashSet<String> vgIdsFromDb = new java.util.HashSet<String>();
 
         for (StorageDomain domain : vgsFromDb) {
-            vgIdsFromDb.add(domain.getstorage());
+            vgIdsFromDb.add(domain.getStorage());
         }
 
         java.util.ArrayList<StorageDomain> returnValue = new java.util.ArrayList<StorageDomain>();
 
         for (StorageDomain domain : vgsFromVds) {
-            if (domain.getId().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getstorage())) {
+            if (domain.getId().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getStorage())) {
                 returnValue.add(domain);
             }
         }

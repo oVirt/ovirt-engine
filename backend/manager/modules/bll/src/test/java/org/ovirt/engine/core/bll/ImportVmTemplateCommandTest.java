@@ -157,16 +157,16 @@ public class ImportVmTemplateCommandTest {
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
 
         final StorageDomain srcDomain = new StorageDomain();
-        srcDomain.setstorage_domain_type(StorageDomainType.ImportExport);
-        srcDomain.setstatus(StorageDomainStatus.Active);
+        srcDomain.setStorageDomainType(StorageDomainType.ImportExport);
+        srcDomain.setStatus(StorageDomainStatus.Active);
         when(dao.getForStoragePool(parameters.getSourceDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(srcDomain);
 
         final StorageDomain destDomain = new StorageDomain();
-        destDomain.setstorage_domain_type(StorageDomainType.Data);
-        destDomain.setused_disk_size(0);
-        destDomain.setavailable_disk_size(1000);
-        destDomain.setstatus(StorageDomainStatus.Active);
+        destDomain.setStorageDomainType(StorageDomainType.Data);
+        destDomain.setUsedDiskSize(0);
+        destDomain.setAvailableDiskSize(1000);
+        destDomain.setStatus(StorageDomainStatus.Active);
         when(dao.getForStoragePool(parameters.getDestDomainId(), parameters.getStoragePoolId()))
                 .thenReturn(destDomain);
 

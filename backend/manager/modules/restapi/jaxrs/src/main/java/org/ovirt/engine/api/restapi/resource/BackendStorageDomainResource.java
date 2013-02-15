@@ -66,7 +66,7 @@ public class BackendStorageDomainResource extends
         QueryIdResolver<Guid> storageDomainResolver = new QueryIdResolver<Guid>(VdcQueryType.GetStorageDomainById, StorageDomainQueryParametersBase.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
-        StorageType storageType = entity.getstorage_type();
+        StorageType storageType = entity.getStorageType();
         if (storageType != null) {
             switch (storageType) {
             case ISCSI:
@@ -98,7 +98,7 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized boolean isIsoDomain(org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain) {
-        org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getstorage_domain_type() ;
+        org.ovirt.engine.core.common.businessentities.StorageDomainType type =  storageDomain.getStorageDomainType() ;
         return type != null && type == org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO ? true : false;
     }
 
@@ -179,7 +179,7 @@ public class BackendStorageDomainResource extends
 
     @Override
     protected StorageDomain deprecatedPopulate(StorageDomain model, org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
-        if (StorageDomainSharedStatus.Unattached.equals(entity.getstorage_domain_shared_status())) {
+        if (StorageDomainSharedStatus.Unattached.equals(entity.getStorageDomainSharedStatus())) {
             model.setStatus(StatusUtils.create(StorageDomainStatus.UNATTACHED));
         } else {
             model.setStatus(null);

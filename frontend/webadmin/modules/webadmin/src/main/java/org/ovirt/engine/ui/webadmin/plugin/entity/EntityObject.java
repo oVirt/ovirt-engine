@@ -66,7 +66,7 @@ public final class EntityObject extends JavaScriptObject {
 
         // Storage
         else if (businessEntity instanceof StorageDomain) {
-            obj.setProperty("name", ((StorageDomain) businessEntity).getstorage_name()); //$NON-NLS-1$
+            obj.setProperty("name", ((StorageDomain) businessEntity).getStorageName()); //$NON-NLS-1$
         }
 
         // Template

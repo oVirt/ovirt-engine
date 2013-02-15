@@ -39,7 +39,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
-                return object.getstorage_pool_name();
+                return object.getStoragePoolName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameDc());
@@ -48,7 +48,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
                 new EnumColumn<StorageDomain, StorageDomainStatus>() {
                     @Override
                     protected StorageDomainStatus getRawValue(StorageDomain object) {
-                        return object.getstatus();
+                        return object.getStatus();
                     }
                 };
         getTable().addColumn(domainStatusColumn, constants.domainStatusInDcStorageDc(), "300px"); //$NON-NLS-1$

@@ -104,10 +104,10 @@ public class BackendStorageDomainResourceTest
     private org.ovirt.engine.core.common.businessentities.StorageDomain getFcpEntity() {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
-        expect(entity.getstorage_domain_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
-        expect(entity.getstorage_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.FCP).anyTimes();
-        expect(entity.getstorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.FCP).anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
         return entity;
     }
 

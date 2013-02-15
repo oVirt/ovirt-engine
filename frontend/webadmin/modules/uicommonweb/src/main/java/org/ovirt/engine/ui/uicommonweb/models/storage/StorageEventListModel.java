@@ -39,7 +39,7 @@ public class StorageEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("events: event_storage=" + getEntity().getstorage_name()); //$NON-NLS-1$
+            setSearchString("events: event_storage=" + getEntity().getStorageName()); //$NON-NLS-1$
             super.Search();
         }
     }

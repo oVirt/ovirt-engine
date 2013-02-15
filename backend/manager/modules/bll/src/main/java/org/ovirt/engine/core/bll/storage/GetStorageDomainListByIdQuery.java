@@ -19,7 +19,7 @@ public class GetStorageDomainListByIdQuery<P extends StorageDomainQueryParameter
                 getParameters().getStorageDomainId());
         java.util.ArrayList<StorageDomain> temp = new java.util.ArrayList<StorageDomain>(result);
         for (StorageDomain domain : temp) {
-            if (domain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached) {
+            if (domain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
                 result.remove(domain);
             }
         }

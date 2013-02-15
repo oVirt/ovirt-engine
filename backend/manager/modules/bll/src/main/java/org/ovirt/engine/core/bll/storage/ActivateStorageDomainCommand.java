@@ -57,7 +57,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
-                && (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master || checkMasterDomainIsUp());
+                && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp());
         return returnValue;
     }
 
@@ -83,7 +83,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
             public Void runInTransaction() {
                 map.setstatus(StorageDomainStatus.Active);
                 DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getstatus());
-                if (getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+                if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                     calcStoragePoolStatusByDomainsStatus();
                 }
                 return null;
@@ -92,7 +92,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
         log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
                 new Date());
-        if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO) {
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
                     getStoragePool().getId());
         }

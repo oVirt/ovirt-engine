@@ -21,14 +21,14 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
 
     @Override
     protected boolean CanAddDomain() {
-        return checkStorageConnection(getStorageDomain().getstorage());
+        return checkStorageConnection(getStorageDomain().getStorage());
     }
 
     @Override
     protected String getStorageArgs() {
         return DbFacade.getInstance()
                 .getStorageServerConnectionDao()
-                .get(getStorageDomain().getstorage())
+                .get(getStorageDomain().getStorage())
                 .getconnection();
     }
 

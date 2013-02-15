@@ -645,12 +645,12 @@ public class BackendStorageDomainsResourceTest
 
     static org.ovirt.engine.core.common.businessentities.StorageDomain setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.StorageDomain entity, int index) {
         expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
-        expect(entity.getstorage_name()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
+        expect(entity.getStorageName()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
         // REVIST No descriptions for storage domains
         // expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getstorage_domain_type()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
-        expect(entity.getstorage_type()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
-        expect(entity.getstorage()).andReturn(getSafeEntry(index,GUIDS).toString()).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
+        expect(entity.getStorageType()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
+        expect(entity.getStorage()).andReturn(getSafeEntry(index,GUIDS).toString()).anyTimes();
         return entity;
     }
 
@@ -677,10 +677,10 @@ public class BackendStorageDomainsResourceTest
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
-        expect(entity.getstorage_name()).andReturn(NAMES[0]).anyTimes();
-        expect(entity.getstorage_domain_type()).andReturn(TYPES_MAPPED[0]).anyTimes();
-        expect(entity.getstorage_type()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI).anyTimes();
-        expect(entity.getstorage()).andReturn(GUIDS[GUIDS.length-1].toString()).anyTimes();
+        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(TYPES_MAPPED[0]).anyTimes();
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI).anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[GUIDS.length-1].toString()).anyTimes();
         return entity;
     }
 

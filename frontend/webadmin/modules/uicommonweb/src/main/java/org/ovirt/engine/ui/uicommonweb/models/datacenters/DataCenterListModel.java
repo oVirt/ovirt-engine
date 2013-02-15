@@ -422,9 +422,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 List<EntityModel> models = new ArrayList<EntityModel>();
                 for (StorageDomain a : storageDomainList) {
-                    if (a.getstorage_domain_type() == StorageDomainType.Data
-                            && a.getstorage_type() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
-                            && (a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)) {
+                    if (a.getStorageDomainType() == StorageDomainType.Data
+                            && a.getStorageType() == ((storage_pool) getSelectedItem()).getstorage_pool_type()
+                            && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(a);
                         models.add(tempVar);
@@ -480,7 +480,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 for (StorageDomain a : storageDomainList)
                 {
-                    if (a.getstorage_domain_type() == StorageDomainType.Master)
+                    if (a.getStorageDomainType() == StorageDomainType.Master)
                     {
                         master = a;
                         break;

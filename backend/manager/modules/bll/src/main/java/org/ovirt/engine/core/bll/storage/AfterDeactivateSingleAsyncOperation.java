@@ -44,7 +44,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
             }
 
             if (getVdss().get(iterationId).getSpmStatus() == VdsSpmStatus.None) {
-                StorageHelperDirector.getInstance().getItem(getStorageDomain().getstorage_type())
+                StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                         .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
             }
         } catch (RuntimeException e) {

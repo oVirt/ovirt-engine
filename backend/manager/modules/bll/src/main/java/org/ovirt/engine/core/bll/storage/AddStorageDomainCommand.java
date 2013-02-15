@@ -123,17 +123,17 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
             returnValue = false;
         }
-        if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.ISO
-                && getStorageDomain().getstorage_type() != StorageType.NFS) {
+        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
+                && getStorageDomain().getStorageType() != StorageType.NFS) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         }
-        if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport
-                && getStorageDomain().getstorage_type() == StorageType.LOCALFS) {
+        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
+                && getStorageDomain().getStorageType() == StorageType.LOCALFS) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         }
-        if (returnValue && getStorageDomain().getstorage_domain_type() == StorageDomainType.Master) {
+        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             returnValue = false;
         }
@@ -171,8 +171,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     private boolean isStorageFormatCompatibleWithDomain() {
         StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
-        StorageType storageType = getStorageDomain().getstorage_type();
-        StorageDomainType storageDomainFunction = getStorageDomain().getstorage_domain_type();
+        StorageType storageType = getStorageDomain().getStorageType();
+        StorageDomainType storageDomainFunction = getStorageDomain().getStorageDomainType();
 
         boolean isBlockStorage = storageType == StorageType.ISCSI || storageType == StorageType.FCP;
         boolean isDataStorageDomain = storageDomainFunction == StorageDomainType.Data;
@@ -208,7 +208,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                     .RunVdsCommand(
                             VDSCommandType.HSMGetStorageDomainsList,
                             new HSMGetStorageDomainsListVDSCommandParameters(getVdsId(), Guid.Empty, getStorageDomain()
-                                    .getstorage_type(), getStorageDomain().getstorage_domain_type(), ""))
+                                    .getStorageType(), getStorageDomain().getStorageDomainType(), ""))
                     .getReturnValue();
             if (!storageIds.contains(getStorageDomain().getId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
@@ -223,7 +223,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                                                 getStorageDomain().getId()))
                                 .getReturnValue();
                 if (domainFromIrs != null
-                        && domainFromIrs.getFirst().getstorage_domain_type() != getStorageDomain().getstorage_domain_type()) {
+                        && domainFromIrs.getFirst().getstorage_domain_type() != getStorageDomain().getStorageDomainType()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
                     returnValue = false;
                 }
@@ -238,7 +238,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected String getStorageArgs() {
-        return getStorageDomain().getstorage();
+        return getStorageDomain().getStorage();
     }
 
     protected abstract boolean CanAddDomain();

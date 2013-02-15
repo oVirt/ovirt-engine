@@ -360,7 +360,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StorageDomain domain : result) {
-            assertEquals(EXISTING_STORAGE_POOL_ID, domain.getstorage_pool_id());
+            assertEquals(EXISTING_STORAGE_POOL_ID, domain.getStoragePoolId());
         }
     }
 

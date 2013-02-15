@@ -406,7 +406,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         else
         {
             if (getStorage() == null
-                    || getStorage().getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+                    || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
             // We are either adding a new storage or editing an unattached storage
             // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
             // [TODO: In case of an Unattached SD, choose only DCs of the same type]
@@ -740,7 +740,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     public boolean isStorageActive() {
         return getStorage() == null
-                || getStorage().getstorage_domain_shared_status() == StorageDomainSharedStatus.Active
-                || getStorage().getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed;
+                || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
+                || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
     }
 }

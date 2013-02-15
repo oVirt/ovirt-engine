@@ -221,13 +221,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                         QuotaStorage quotaStorage;
                         for (StorageDomain storage : storageList) {
-                            if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
-                                    && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                            if (!storage.getStorageDomainType().equals(StorageDomainType.Master)
+                                    && !storage.getStorageDomainType().equals(StorageDomainType.Data)) {
                                 continue;
                             }
                             quotaStorage = new QuotaStorage();
                             quotaStorage.setStorageId(storage.getId());
-                            quotaStorage.setStorageName(storage.getstorage_name());
+                            quotaStorage.setStorageName(storage.getStorageName());
                             quotaStorage.setStorageSizeGB(null);
                             quotaStorage.setStorageSizeGBUsage((double) 0);
                             quotaStorageList.add(quotaStorage);
@@ -458,13 +458,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
                                 QuotaStorage quotaStorage;
                                 for (StorageDomain storage : storageList) {
-                                    if (!storage.getstorage_domain_type().equals(StorageDomainType.Master)
-                                            && !storage.getstorage_domain_type().equals(StorageDomainType.Data)) {
+                                    if (!storage.getStorageDomainType().equals(StorageDomainType.Master)
+                                            && !storage.getStorageDomainType().equals(StorageDomainType.Data)) {
                                         continue;
                                     }
                                     quotaStorage = new QuotaStorage();
                                     quotaStorage.setStorageId(storage.getId());
-                                    quotaStorage.setStorageName(storage.getstorage_name());
+                                    quotaStorage.setStorageName(storage.getStorageName());
                                     quotaStorage.setQuotaId(quota.getId());
                                     boolean containStorage = false;
                                     for (QuotaStorage iter : quota.getQuotaStorages()) {

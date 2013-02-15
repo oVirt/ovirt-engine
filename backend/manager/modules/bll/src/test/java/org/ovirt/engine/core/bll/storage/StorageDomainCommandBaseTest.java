@@ -115,7 +115,7 @@ public class StorageDomainCommandBaseTest {
 
     private void setStorageDomainStatus(StorageDomainStatus status) {
         StorageDomain domain = new StorageDomain();
-        domain.setstatus(status);
+        domain.setStatus(status);
         when(cmd.getStorageDomain()).thenReturn(domain);
     }
 

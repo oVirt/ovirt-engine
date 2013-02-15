@@ -140,7 +140,7 @@ public class LiveMigrateVmDisksCommandTest {
         createParameters();
 
         StorageDomain storageDomain = initStorageDomain(srcStorageId);
-        storageDomain.setstatus(StorageDomainStatus.Locked);
+        storageDomain.setStatus(StorageDomainStatus.Locked);
 
         initDiskImage(diskImageId);
         initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
@@ -156,11 +156,11 @@ public class LiveMigrateVmDisksCommandTest {
         createParameters();
 
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setstatus(StorageDomainStatus.Active);
+        srcStorageDomain.setStatus(StorageDomainStatus.Active);
 
         StorageDomain dstStorageDomain = initStorageDomain(dstStorageId);
-        dstStorageDomain.setstatus(StorageDomainStatus.Active);
-        dstStorageDomain.setstorage_domain_type(StorageDomainType.ISO);
+        dstStorageDomain.setStatus(StorageDomainStatus.Active);
+        dstStorageDomain.setStorageDomainType(StorageDomainType.ISO);
 
         initDiskImage(diskImageId);
         initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
@@ -197,7 +197,7 @@ public class LiveMigrateVmDisksCommandTest {
     private StorageDomain initStorageDomain(Guid storageDomainId) {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(storageDomainId);
-        storageDomain.setstorage_pool_id(storagePoolId);
+        storageDomain.setStoragePoolId(storagePoolId);
 
         when(storageDomainDao.get(any(Guid.class))).thenReturn(storageDomain);
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);

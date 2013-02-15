@@ -29,9 +29,9 @@ public class StorageDomainMapperTest extends
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getInverse(StorageDomainStatic to) {
         org.ovirt.engine.core.common.businessentities.StorageDomain inverse = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         inverse.setId(to.getId());
-        inverse.setstorage_name(to.getstorage_name());
-        inverse.setstorage_domain_type(to.getstorage_domain_type());
-        inverse.setstorage_type(to.getstorage_type());
+        inverse.setStorageName(to.getstorage_name());
+        inverse.setStorageDomainType(to.getstorage_domain_type());
+        inverse.setStorageType(to.getstorage_type());
         inverse.setStorageFormat(to.getStorageFormat());
         return inverse;
     }
@@ -52,9 +52,9 @@ public class StorageDomainMapperTest extends
     @Test
     public void testMemory() {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-        entity.setavailable_disk_size(3);
-        entity.setused_disk_size(4);
-        entity.setcommitted_disk_size(5);
+        entity.setAvailableDiskSize(3);
+        entity.setUsedDiskSize(4);
+        entity.setCommittedDiskSize(5);
         StorageDomain model = StorageDomainMapper.map(entity, (StorageDomain) null);
         assertEquals(model.getAvailable(), Long.valueOf(3221225472L));
         assertEquals(model.getUsed(), Long.valueOf(4294967296L));

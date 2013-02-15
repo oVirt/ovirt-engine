@@ -35,7 +35,7 @@ public class AddExistingSANStorageDomainCommand<T extends AddSANStorageDomainPar
 
     @Override
     protected boolean CanAddDomain() {
-        if (getStorageDomain().getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_EXISTING_STORAGE_DOMAIN_CONNECTION_DATA_ILLEGAL);
             return false;
         }

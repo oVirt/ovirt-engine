@@ -242,7 +242,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     private boolean isExceedMaxBlockDiskSize() {
-        StorageType storageType = getStorageDomain().getstorage_type();
+        StorageType storageType = getStorageDomain().getStorageType();
         boolean isBlockStorageDomain = storageType == StorageType.ISCSI || storageType == StorageType.FCP;
         boolean isRequestedLargerThanMaxSize = getRequestDiskSpace() > Config.<Integer> GetValue(ConfigValues.MaxBlockDiskSize);
 
@@ -372,7 +372,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void createDiskBasedOnImage() {
         if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
-            StorageType storageType = getStorageDomain().getstorage_type();
+            StorageType storageType = getStorageDomain().getStorageType();
             getParameters().getDiskInfo().setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
         }
         // create from blank template, create new vm snapshot id
@@ -385,7 +385,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setStorageDomainId(getStorageDomainId().getValue());
         parameters.setParentCommand(VdcActionType.AddDisk);
         parameters.setEntityId(getParameters().getEntityId());
-        parameters.setStoragePoolId(getStorageDomain().getstorage_pool_id().getValue());
+        parameters.setStoragePoolId(getStorageDomain().getStoragePoolId().getValue());
         getParameters().getImagesParameters().add(parameters);
         parameters.setParentParameters(getParameters());
         if (getVm() != null) {

@@ -395,7 +395,7 @@ public class ConfigureLocalStorageModel extends Model {
         names = new ArrayList<String>();
 
         for (StorageDomain storageDomain : storages) {
-            names.add(storageDomain.getstorage_name());
+            names.add(storageDomain.getStorageName());
         }
         getFormattedStorageName().setEntity(AvailableName(names));
     }

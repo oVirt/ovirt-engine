@@ -128,7 +128,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         EntityModelTextColumn<StorageDomain> nameColumn = new EntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
-                return storage.getstorage_name();
+                return storage.getStorageName();
             }
         };
 
@@ -138,10 +138,10 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         EntityModelTextColumn<StorageDomain> freeSpaceColumn = new EntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
-                if (storage.getavailable_disk_size() == null || storage.getavailable_disk_size() < 1) {
+                if (storage.getAvailableDiskSize() == null || storage.getAvailableDiskSize() < 1) {
                     return "< 1 GB"; //$NON-NLS-1$
                 }
-                return storage.getavailable_disk_size() + " GB"; //$NON-NLS-1$
+                return storage.getAvailableDiskSize() + " GB"; //$NON-NLS-1$
             }
         };
 

@@ -141,7 +141,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         // check destination storage is Export domain
-        if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+        if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(String.format("$storageDomainName %1$s", getStorageDomainName()));
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
         }

@@ -577,10 +577,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                 new Predicate<StorageDomain>() {
                                     @Override
                                     public boolean eval(StorageDomain domain) {
-                                        return domain.getstorage_domain_type() == StorageDomainType.ISO;
+                                        return domain.getStorageDomainType() == StorageDomainType.ISO;
                                     }
                                 }))
-                        && isoDomain.getstatus() == StorageDomainStatus.Active && StringUtils.isEmpty(_cdImagePath))) {
+                        && isoDomain.getStatus() == StorageDomainStatus.Active && StringUtils.isEmpty(_cdImagePath))) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;

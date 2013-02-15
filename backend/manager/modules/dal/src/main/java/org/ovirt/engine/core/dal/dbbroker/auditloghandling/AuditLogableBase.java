@@ -245,7 +245,7 @@ public class AuditLogableBase extends TimeoutBase {
                 if (storageDomainList.size() != 0) {
                     _storageDomain = storageDomainList.get(0);
                     for (final StorageDomain storageDomainFromList : storageDomainList) {
-                        if (storageDomainFromList.getstatus() == StorageDomainStatus.Active) {
+                        if (storageDomainFromList.getStatus() == StorageDomainStatus.Active) {
                             _storageDomain = storageDomainFromList;
                             break;
                         }
@@ -273,7 +273,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getStorageDomainName() {
         if (getStorageDomain() != null) {
-            return getStorageDomain().getstorage_name();
+            return getStorageDomain().getStorageName();
         }
         return "";
     }
@@ -296,7 +296,7 @@ public class AuditLogableBase extends TimeoutBase {
             if (_storagePool != null) {
                 _storagePoolId = _storagePool.getId();
             } else if (getStorageDomain() != null) {
-                _storagePoolId = getStorageDomain().getstorage_pool_id();
+                _storagePoolId = getStorageDomain().getStoragePoolId();
             }
         }
         return _storagePoolId;

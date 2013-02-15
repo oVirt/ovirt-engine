@@ -109,28 +109,28 @@ public class StorageDomainMapper {
     public static StorageDomain map(org.ovirt.engine.core.common.businessentities.StorageDomain entity, StorageDomain template) {
         StorageDomain model = template != null ? template : new StorageDomain();
         model.setId(entity.getId().toString());
-        model.setName(entity.getstorage_name());
+        model.setName(entity.getStorageName());
         model.setDescription(entity.getDescription());
-        model.setType(map(entity.getstorage_domain_type(), null));
-        model.setMaster(entity.getstorage_domain_type() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
-        if (entity.getstatus() != null) {
-            StorageDomainStatus status = map(entity.getstatus(), null);
+        model.setType(map(entity.getStorageDomainType(), null));
+        model.setMaster(entity.getStorageDomainType() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
+        if (entity.getStatus() != null) {
+            StorageDomainStatus status = map(entity.getStatus(), null);
             model.setStatus(status==null ? null : StatusUtils.create(status));
         }
         model.setStorage(new Storage());
-        model.getStorage().setType(map(entity.getstorage_type(), null));
-        if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI ||
-            entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.StorageType.FCP) {
+        model.getStorage().setType(map(entity.getStorageType(), null));
+        if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI ||
+            entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.FCP) {
             model.getStorage().setVolumeGroup(new VolumeGroup());
-            model.getStorage().getVolumeGroup().setId(entity.getstorage());
+            model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }
-        if (entity.getavailable_disk_size()!=null) {
-            model.setAvailable(SizeConverter.gigasToBytes(entity.getavailable_disk_size().longValue()));
+        if (entity.getAvailableDiskSize()!=null) {
+            model.setAvailable(SizeConverter.gigasToBytes(entity.getAvailableDiskSize().longValue()));
         }
-        if (entity.getused_disk_size()!=null) {
-            model.setUsed(SizeConverter.gigasToBytes(entity.getused_disk_size().longValue()));
+        if (entity.getUsedDiskSize()!=null) {
+            model.setUsed(SizeConverter.gigasToBytes(entity.getUsedDiskSize().longValue()));
         }
-        model.setCommitted(SizeConverter.gigasToBytes(entity.getcommitted_disk_size()));
+        model.setCommitted(SizeConverter.gigasToBytes(entity.getCommittedDiskSize()));
         if (entity.getStorageFormat()!=null) {
             String storageForamt = StorageFormatMapper.map(entity.getStorageFormat(), null).value();
             if (storageForamt!=null) {

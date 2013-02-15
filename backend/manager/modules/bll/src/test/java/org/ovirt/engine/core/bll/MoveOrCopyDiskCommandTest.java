@@ -190,15 +190,15 @@ public class MoveOrCopyDiskCommandTest {
 
     private void initSrcStorageDomain() {
         StorageDomain stDomain = new StorageDomain();
-        stDomain.setstatus(StorageDomainStatus.Active);
+        stDomain.setStatus(StorageDomainStatus.Active);
         doReturn(storageDomainDao).when(command).getStorageDomainDAO();
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(stDomain);
     }
 
     private void initDestStorageDomain() {
         StorageDomain destDomain = new StorageDomain();
-        destDomain.setstatus(StorageDomainStatus.Active);
-        destDomain.setstorage_type(StorageType.NFS);
+        destDomain.setStatus(StorageDomainStatus.Active);
+        destDomain.setStorageType(StorageType.NFS);
         doReturn(destDomain).when(command).getStorageDomain();
     }
 

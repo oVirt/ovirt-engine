@@ -253,7 +253,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                             VdcQueryType.GetAllStorageDomains,
                             new VdcQueryParametersBase());
             for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
-                if (storageDomain.getstorage_name().equals(name)) {
+                if (storageDomain.getStorageName().equals(name)) {
                     return storageDomain.getId();
                 }
             }

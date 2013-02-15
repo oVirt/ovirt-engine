@@ -80,7 +80,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                                         && dataCenter.getstatus() != StoragePoolStatus.Uninitialized && isNoStorageAttached) || item.getRole() == StorageDomainType.ISO
                                 && item.getType() == StorageType.NFS
                                 && dataCenter.getstatus() != StoragePoolStatus.Uninitialized && isNoStorageAttached)) || (getModel().getStorage() != null && item.getType() == getModel().getStorage()
-                        .getstorage_type())));
+                        .getStorageType())));
 
         behavior.OnStorageModelUpdated(item);
     }

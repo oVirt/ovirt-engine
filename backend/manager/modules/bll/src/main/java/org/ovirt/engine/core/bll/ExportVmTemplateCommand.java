@@ -92,7 +92,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
         if (retVal) {
             // export must be to export domain
-            if (getStorageDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+            if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
                 retVal = false;
             }

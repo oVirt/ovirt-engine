@@ -356,7 +356,7 @@ public class VmBackupModel extends ManageBackupModel {
                         AsyncDataProvider.GetDiskVolumeFormat(
                                 importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 importModel.getDiskImportData(
-                                        disk.getId()).getSelectedStorageDomain().getstorage_type()));
+                                        disk.getId()).getSelectedStorageDomain().getStorageType()));
                 disk.setvolume_type(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
 
                 if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
@@ -451,8 +451,8 @@ public class VmBackupModel extends ManageBackupModel {
         super.SyncSearch();
 
         if (getEntity() == null
-                || getEntity().getstorage_domain_type() != StorageDomainType.ImportExport
-                || getEntity().getstorage_domain_shared_status() != StorageDomainSharedStatus.Active) {
+                || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
+                || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
             setItems(Collections.emptyList());
         } else {
             AsyncQuery _asyncQuery = new AsyncQuery();

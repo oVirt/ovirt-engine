@@ -173,7 +173,7 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             items.add(ConstantsManager.getInstance().getMessages().templateDiskDescription(
                     diskModel.getDisk().getDiskAlias(),
-                    ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getstorage_name()));
+                    ((StorageDomain) diskModel.getStorageDomain().getSelectedItem()).getStorageName()));
         }
         model.setItems(items);
 

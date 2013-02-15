@@ -48,12 +48,12 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             return false;
         }
 
-        if (storage.getstatus() == null || storage.getstatus() != StorageDomainStatus.Active) {
+        if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
             return false;
         }
 
-        if (storage.getstorage_domain_type() != StorageDomainType.ImportExport) {
+        if (storage.getStorageDomainType() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             return false;
         }

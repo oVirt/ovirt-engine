@@ -343,11 +343,11 @@ public class DataCenterStorageListModel extends SearchableListModel
                         addToList = false;
 
                         if (!Linq.IsSDItemExistInList(items, a.getId())
-                                && a.getstorage_domain_type() == dcStorageModel.getStorageDomainType())
+                                && a.getStorageDomainType() == dcStorageModel.getStorageDomainType())
                         {
                             if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data
-                                    && a.getstorage_type() == dcStorageModel.getEntity().getstorage_pool_type()
-                                    && a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+                                    && a.getStorageType() == dcStorageModel.getEntity().getstorage_pool_type()
+                                    && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null)
                                 {
@@ -384,7 +384,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                 }
                             }
                             else if (dcStorageModel.getStorageDomainType() == StorageDomainType.ImportExport
-                                    && a.getstorage_domain_shared_status() == StorageDomainSharedStatus.Unattached)
+                                    && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 addToList = true;
                             }
@@ -494,7 +494,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         ArrayList<String> list = new ArrayList<String>();
         for (StorageDomain item : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
-            list.add(item.getstorage_name());
+            list.add(item.getStorageName());
         }
         model.setItems(list);
 
@@ -521,9 +521,9 @@ public class DataCenterStorageListModel extends SearchableListModel
         String localStorages = ""; //$NON-NLS-1$
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
-            if (a.getstorage_type() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS)
             {
-                localStorages += a.getstorage_name() + ", "; //$NON-NLS-1$
+                localStorages += a.getStorageName() + ", "; //$NON-NLS-1$
             }
         }
         return localStorages.substring(0, localStorages.length() - 2);
@@ -533,7 +533,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     {
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
-            if (a.getstorage_type() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS)
             {
                 return true;
             }
@@ -563,10 +563,10 @@ public class DataCenterStorageListModel extends SearchableListModel
         for (StorageDomain a : Linq.<StorageDomain> Cast(getSelectedItems()))
         {
             // For local storage - remove; otherwise - detach
-            if (a.getstorage_type() == StorageType.LOCALFS)
+            if (a.getStorageType() == StorageType.LOCALFS)
             {
                 getpb_remove().add(new RemoveStorageDomainParameters(a.getId()));
-                localStorgaeDC = a.getstorage_pool_name();
+                localStorgaeDC = a.getStoragePoolName();
             }
             else
             {
@@ -708,8 +708,8 @@ public class DataCenterStorageListModel extends SearchableListModel
         boolean isMasterPresents = false;
         for (StorageDomain a : items)
         {
-            if (a.getstorage_domain_type() == StorageDomainType.Master && a.getstatus() != null
-                    && a.getstatus() == StorageDomainStatus.Active)
+            if (a.getStorageDomainType() == StorageDomainType.Master && a.getStatus() != null
+                    && a.getStatus() == StorageDomainStatus.Active)
             {
                 isMasterPresents = true;
                 break;
@@ -719,7 +719,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         boolean isISOPresents = false;
         for (StorageDomain a : items)
         {
-            if (a.getstorage_domain_type() == StorageDomainType.ISO)
+            if (a.getStorageDomainType() == StorageDomainType.ISO)
             {
                 isISOPresents = true;
                 break;
@@ -731,7 +731,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         boolean isBackupPresents = false;
         for (StorageDomain a : items)
         {
-            if (a.getstorage_domain_type() == StorageDomainType.ImportExport)
+            if (a.getStorageDomainType() == StorageDomainType.ImportExport)
             {
                 isBackupPresents = true;
                 break;

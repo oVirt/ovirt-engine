@@ -153,16 +153,16 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 new Predicate<StorageDomain>() {
                     @Override
                     public boolean eval(StorageDomain a) {
-                        return a.getstorage_domain_type() == StorageDomainType.Master;
+                        return a.getStorageDomainType() == StorageDomainType.Master;
                     }
                 });
         calcStoragePoolStatusByDomainsStatus();
 
         // fence spm if moving from not operational and master domain is active
         if (masterDomain != null
-                && masterDomain.getstatus() != null
-                && (masterDomain.getstatus() == StorageDomainStatus.Active
-                        || masterDomain.getstatus() == StorageDomainStatus.Unknown || masterDomain.getstatus() == StorageDomainStatus.InActive)) {
+                && masterDomain.getStatus() != null
+                && (masterDomain.getStatus() == StorageDomainStatus.Active
+                        || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.InActive)) {
             if (getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
                 for (VDS vds : getAllRunningVdssInPool()) {
                     try {

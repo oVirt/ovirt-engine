@@ -199,7 +199,7 @@ public final class AsyncDataProvider {
                     ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                     for (StorageDomain domain : storageDomains)
                     {
-                        if (domain.getstorage_domain_type() == StorageDomainType.ISO)
+                        if (domain.getStorageDomainType() == StorageDomainType.ISO)
                         {
                             return domain;
                         }
@@ -222,7 +222,7 @@ public final class AsyncDataProvider {
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) source;
                 for (StorageDomain domain : storageDomains)
                 {
-                    if (domain.getstorage_domain_type() == StorageDomainType.ImportExport)
+                    if (domain.getStorageDomainType() == StorageDomainType.ImportExport)
                     {
                         return domain;
                     }
@@ -1509,7 +1509,7 @@ public final class AsyncDataProvider {
                     ArrayList<StorageDomain> isoStorageDomains = new ArrayList<StorageDomain>();
                     for (StorageDomain storageDomain : allStorageDomains)
                     {
-                        if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO)
+                        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO)
                         {
                             isoStorageDomains.add(storageDomain);
                         }

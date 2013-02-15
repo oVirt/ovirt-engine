@@ -140,9 +140,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected boolean isStorageDomainTypeCorrect(StorageDomain storageDomain) {
-        if (storageDomain.getstorage_domain_type() != StorageDomainType.ISO
-                && storageDomain.getstorage_domain_type() != StorageDomainType.ImportExport
-                && getStoragePool().getstorage_pool_type() != storageDomain.getstorage_type()) {
+        if (storageDomain.getStorageDomainType() != StorageDomainType.ISO
+                && storageDomain.getStorageDomainType() != StorageDomainType.ImportExport
+                && getStoragePool().getstorage_pool_type() != storageDomain.getStorageType()) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
             return false;
         }
@@ -165,7 +165,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return checkStorageDomainType(storageDomain)
                 && isStorageDomainFormatCorrectForPool(storageDomain, getStoragePool())
                 && checkStorageDomainSharedStatusNotLocked(storageDomain)
-                && ((storageDomain.getstorage_domain_type() == StorageDomainType.ISO || storageDomain.getstorage_domain_type() ==
+                && ((storageDomain.getStorageDomainType() == StorageDomainType.ISO || storageDomain.getStorageDomainType() ==
                 StorageDomainType.ImportExport) || isStorageDomainNotInPool(storageDomain))
                 && isStorageDomainTypeCorrect(storageDomain);
     }
@@ -176,7 +176,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      */
     protected boolean checkStorageDomainType(final StorageDomain storageDomain) {
         // Nothing to check if the storage domain is not an ISO or export:
-        final StorageDomainType type = storageDomain.getstorage_domain_type();
+        final StorageDomainType type = storageDomain.getStorageDomainType();
         if (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport) {
             return true;
         }
@@ -188,7 +188,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 new Predicate<StorageDomain>() {
                     @Override
                     public boolean eval(StorageDomain a) {
-                        return a.getstorage_domain_type() == type;
+                        return a.getStorageDomainType() == type;
                     }
                 }
                 ).size();
@@ -211,7 +211,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean checkStorageDomainSharedStatusNotLocked(StorageDomain storageDomain) {
         boolean returnValue = storageDomain != null
-                && storageDomain.getstorage_domain_shared_status() != StorageDomainSharedStatus.Locked;
+                && storageDomain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Locked;
         if (!returnValue) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
@@ -234,7 +234,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         StorageDomain masterDomain = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain a) {
-                return a.getstorage_domain_type() == StorageDomainType.Master;
+                return a.getStorageDomainType() == StorageDomainType.Master;
             }
         });
 
@@ -242,8 +242,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         // if master not active maintenance
         StoragePoolStatus newStatus =
                 (masterDomain == null) ? StoragePoolStatus.Uninitialized
-                        : (masterDomain.getstatus() != null && masterDomain.getstatus() == StorageDomainStatus.Maintenance) ? StoragePoolStatus.Maintanance
-                                : (masterDomain.getstatus() != null && masterDomain.getstatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
+                        : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Maintenance) ? StoragePoolStatus.Maintanance
+                                : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
                                         : StoragePoolStatus.Problematic;
         if (newStatus != getStoragePool().getstatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
@@ -289,8 +289,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      * @return
      */
     protected boolean isStorageDomainFormatCorrectForPool(StorageDomain storageDomain, storage_pool storagePool) {
-        if (storageDomain.getstorage_domain_type() == StorageDomainType.ISO
-                || storageDomain.getstorage_domain_type() == StorageDomainType.ImportExport) {
+        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO
+                || storageDomain.getStorageDomainType() == StorageDomainType.ImportExport) {
             return true;
         }
         Set<StorageFormatType> supportedFormatsSet =

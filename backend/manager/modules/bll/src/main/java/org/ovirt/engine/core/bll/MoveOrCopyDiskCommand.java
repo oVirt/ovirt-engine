@@ -420,7 +420,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         String sourceSDName = StringUtils.EMPTY;
 
         if (storageDomains.size() > 0) {
-            sourceSDName = storageDomains.get(0).getstorage_name();
+            sourceSDName = storageDomains.get(0).getStorageName();
         }
         if (jobProperties == null) {
             jobProperties = super.getJobMessageProperties();

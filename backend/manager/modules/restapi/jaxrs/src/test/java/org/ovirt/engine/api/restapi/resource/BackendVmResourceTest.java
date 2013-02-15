@@ -815,7 +815,7 @@ public class BackendVmResourceTest
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
-        dom.setstorage_name(NAMES[idx]);
+        dom.setStorageName(NAMES[idx]);
         return dom;
     }
 

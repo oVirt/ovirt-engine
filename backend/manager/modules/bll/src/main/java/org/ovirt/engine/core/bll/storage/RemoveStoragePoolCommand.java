@@ -67,7 +67,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         Collections.sort(storageDomains, new Comparator<StorageDomain>() {
             @Override
             public int compare(StorageDomain o1, StorageDomain o2) {
-                return o1.getstorage_domain_type().compareTo(o2.getstorage_domain_type());
+                return o1.getStorageDomainType().compareTo(o2.getStorageDomainType());
             }
         });
         if (storageDomains.size() > 0) {
@@ -108,8 +108,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     private void forceRemoveStorageDomains(List<StorageDomain> storageDomains) {
         StorageDomain masterDomain = null;
         for (StorageDomain storageDomain : storageDomains) {
-            if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
-                if (storageDomain.getstorage_domain_type() != StorageDomainType.ISO) {
+            if (storageDomain.getStorageDomainType() != StorageDomainType.Master) {
+                if (storageDomain.getStorageDomainType() != StorageDomainType.ISO) {
                     removeDomainFromDb(storageDomain);
                 }
             } else {
@@ -126,7 +126,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         List<StorageDomain> temp = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain storage_domain) {
-                return storage_domain.getstorage_domain_type() == StorageDomainType.Master;
+                return storage_domain.getStorageDomainType() == StorageDomainType.Master;
             }
         });
         final StorageDomain masterDomain = LinqUtils.first(temp);
@@ -136,7 +136,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
-                masterDomain.setstatus(StorageDomainStatus.Locked);
+                masterDomain.setStatus(StorageDomainStatus.Locked);
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
                         .update(masterDomain.getStoragePoolIsoMapData());
@@ -153,10 +153,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
         List<VDS> vdss = getAllRunningVdssInPool();
         for (StorageDomain storageDomain : storageDomains) {
-            if (storageDomain.getstorage_domain_type() != StorageDomainType.Master) {
+            if (storageDomain.getStorageDomainType() != StorageDomainType.Master) {
                 if (!removeDomainFromPool(storageDomain, vdss.get(0))) {
                     log.errorFormat("Unable to detach storage domain {0} {1}",
-                            storageDomain.getstorage_name(),
+                            storageDomain.getStorageName(),
                             storageDomain.getId());
                     retVal = false;
                 }
@@ -168,7 +168,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             @Override
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
-                masterDomain.setstorage_domain_type(StorageDomainType.Data);
+                masterDomain.setStorageDomainType(StorageDomainType.Data);
                 DbFacade.getInstance().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
                 getCompensationContext().stateChanged();
                 return null;
@@ -247,7 +247,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // to rollback a deleted domain - it will only cause more
                 // problems if a domain got deleted in VDSM and not in backend
                 // as it will be impossible to remove it.
-                StorageHelperDirector.getInstance().getItem(domain.getstorage_type())
+                StorageHelperDirector.getInstance().getItem(domain.getStorageType())
                         .storageDomainRemoved(domain.getStorageStaticData());
                 DbFacade.getInstance().getStorageDomainDao().remove(domain.getId());
                 return null;
@@ -257,7 +257,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     }
 
     protected boolean removeDomainFromPool(StorageDomain storageDomain, VDS vds) {
-        if (storageDomain.getstorage_type() != StorageType.LOCALFS) {
+        if (storageDomain.getStorageType() != StorageType.LOCALFS) {
             DetachStorageDomainFromPoolParameters tempVar = new DetachStorageDomainFromPoolParameters(
                     storageDomain.getId(), getStoragePool().getId());
             tempVar.setRemoveLast(true);
@@ -312,7 +312,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
             for (StorageDomain domain : poolDomains) {
                 // check that there are no images on data domains
-                if ((domain.getstorage_domain_type() == StorageDomainType.Data || domain.getstorage_domain_type() == StorageDomainType.Master)
+                if ((domain.getStorageDomainType() == StorageDomainType.Data || domain.getStorageDomainType() == StorageDomainType.Master)
                         && DbFacade.getInstance()
                                 .getDiskImageDao()
                                 .getAllSnapshotsForStorageDomain(domain.getId())
@@ -354,7 +354,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         domainsList = LinqUtils.filter(domainsList, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain dom) {
-                return (dom.getstatus() == StorageDomainStatus.Active || dom.getstatus() == StorageDomainStatus.Locked);
+                return (dom.getStatus() == StorageDomainStatus.Active || dom.getStatus() == StorageDomainStatus.Locked);
             }
         });
         return domainsList;

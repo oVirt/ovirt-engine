@@ -89,7 +89,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                     .getForStoragePool(storageDomainId,
                                             getStoragePool().getId());
                     StorageHelperDirector.getInstance()
-                            .getItem(storageDomain.getstorage_type())
+                            .getItem(storageDomain.getStorageType())
                             .connectStorageToDomainByVdsId(storageDomain,
                                     getVds().getId());
                 }
@@ -164,13 +164,13 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                             staticDomain.setStorageFormat(StorageFormatType.V3);
                             staticDomainChanged = true;
                         }
-                        storageDomain.setstorage_pool_id(getStoragePool().getId());
+                        storageDomain.setStoragePoolId(getStoragePool().getId());
                         if (masterStorageDomain == null
-                                && storageDomain.getstorage_domain_type() == StorageDomainType.Data) {
+                                && storageDomain.getStorageDomainType() == StorageDomainType.Data) {
                             if (!staticDomainChanged) {
                                 getCompensationContext().snapshotEntity(staticDomain);
                             }
-                            storageDomain.setstorage_domain_type(StorageDomainType.Master);
+                            storageDomain.setStorageDomainType(StorageDomainType.Master);
                             staticDomainChanged = true;
                             masterStorageDomain = storageDomain;
                             // The update of storage pool should be without compensation,
@@ -180,7 +180,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         if (staticDomainChanged) {
                             getStorageDomainStaticDAO().update(staticDomain);
                         }
-                        storageDomain.setstatus(StorageDomainStatus.Locked);
+                        storageDomain.setStatus(StorageDomainStatus.Locked);
                         if (existingInDb) {
                             DbFacade.getInstance()
                                         .getStoragePoolIsoMapDao()
@@ -250,7 +250,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
                 if (isStorageDomainNotNull(domain) && checkDomainCanBeAttached(domain)) {
-                    if (domain.getstorage_domain_type() == StorageDomainType.Data) {
+                    if (domain.getStorageDomainType() == StorageDomainType.Data) {
                         _hasData = true;
                         if (storageFormat == null) {
                             storageFormat = domain.getStorageFormat();

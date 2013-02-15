@@ -280,11 +280,11 @@ public class DbFacade {
         StorageDomain master = LinqUtils.firstOrNull(domains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain storage_domains) {
-                return storage_domains.getstorage_domain_type() == StorageDomainType.Master;
+                return storage_domains.getStorageDomainType() == StorageDomainType.Master;
             }
         });
         return master != null
-                && (master.getstatus() == StorageDomainStatus.Active || master.getstatus() == StorageDomainStatus.Unknown);
+                && (master.getStatus() == StorageDomainStatus.Active || master.getStatus() == StorageDomainStatus.Unknown);
     }
 
     public Integer getSystemStatisticsValue(String entity, String status) {

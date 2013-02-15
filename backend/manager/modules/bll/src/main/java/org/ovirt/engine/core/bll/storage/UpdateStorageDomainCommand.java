@@ -55,7 +55,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             returnValue = false;
         }
         _storageDomainNameChanged =
-                !StringUtils.equals(oldDomain.getstorage_name(), getStorageDomain().getstorage_name());
+                !StringUtils.equals(oldDomain.getstorage_name(), getStorageDomain().getStorageName());
         // if domain is part of pool, and name changed, check that pool is up in
         // order to change description in spm
         if (returnValue
@@ -87,7 +87,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                     .RunVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,
                             new SetStorageDomainDescriptionVDSCommandParameters(getStoragePool().getId(),
-                                    getStorageDomain().getId(), getStorageDomain().getstorage_name()));
+                                    getStorageDomain().getId(), getStorageDomain().getStorageName()));
         }
         setSucceeded(true);
     }
@@ -110,7 +110,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Override
     public String getEntityNewName() {
-        return getStorageDomain().getstorage_name();
+        return getStorageDomain().getStorageName();
     }
 
     @Override

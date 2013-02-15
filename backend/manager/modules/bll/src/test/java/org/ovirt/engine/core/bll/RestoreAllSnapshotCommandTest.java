@@ -181,11 +181,11 @@ public class RestoreAllSnapshotCommandTest {
 
     private void mockStorageDomainDao() {
         StorageDomain storageDomains = new StorageDomain();
-        storageDomains.setstatus(StorageDomainStatus.Active);
+        storageDomains.setStatus(StorageDomainStatus.Active);
 
         // Variables only for passing the available size check.
-        storageDomains.setavailable_disk_size(10000000);
-        storageDomains.setused_disk_size(10);
+        storageDomains.setAvailableDiskSize(10000000);
+        storageDomains.setUsedDiskSize(10);
         doReturn(storageDomainDAO).when(spyCommand).getStorageDomainDAO();
         when(storageDomainDAO.getForStoragePool(storageDomainId, Guid.Empty)).thenReturn(storageDomains);
         when(storageDomainDAO.get(storageDomainId)).thenReturn(storageDomains);

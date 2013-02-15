@@ -149,7 +149,7 @@ public class BackendStorageDomainVmsResourceTest
     public static org.ovirt.engine.core.common.businessentities.StorageDomain setUpStorageDomain(StorageDomainType domainType) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setId(STORAGE_DOMAIN_ID);
-        entity.setstorage_domain_type(domainType);
+        entity.setStorageDomainType(domainType);
         return entity;
     }
 

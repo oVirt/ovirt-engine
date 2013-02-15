@@ -316,7 +316,7 @@ public class BackendVmDiskResourceTest
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(int idx) {
         org.ovirt.engine.core.common.businessentities.StorageDomain dom = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         dom.setId(GUIDS[idx]);
-        dom.setstorage_name(NAMES[idx]);
+        dom.setStorageName(NAMES[idx]);
         return dom;
     }
 
@@ -345,11 +345,11 @@ public class BackendVmDiskResourceTest
             int index,
             StorageType storageType) {
         expect(entity.getId()).andReturn(GUIDS[3]).anyTimes();
-        expect(entity.getstorage_name()).andReturn(NAMES[2]).anyTimes();
-        expect(entity.getstatus()).andReturn(StorageDomainStatus.Active).anyTimes();
-        expect(entity.getstorage_domain_type()).andReturn(StorageDomainType.Master).anyTimes();
-        expect(entity.getstorage_type()).andReturn(storageType).anyTimes();
-        expect(entity.getstorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        expect(entity.getStorageName()).andReturn(NAMES[2]).anyTimes();
+        expect(entity.getStatus()).andReturn(StorageDomainStatus.Active).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(StorageDomainType.Master).anyTimes();
+        expect(entity.getStorageType()).andReturn(storageType).anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
         return entity;
     }
 

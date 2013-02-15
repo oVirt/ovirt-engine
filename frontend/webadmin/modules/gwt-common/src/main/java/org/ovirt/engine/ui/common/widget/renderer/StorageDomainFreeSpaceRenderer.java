@@ -15,8 +15,8 @@ public class StorageDomainFreeSpaceRenderer<T extends StorageDomain> extends Abs
             return ""; //$NON-NLS-1$
         }
 
-        return MESSAGES.storageDomainFreeSpace(storageDomain.getstorage_name(),
-                storageDomain.getavailable_disk_size(),
+        return MESSAGES.storageDomainFreeSpace(storageDomain.getStorageName(),
+                storageDomain.getAvailableDiskSize(),
                 storageDomain.getTotalDiskSize());
     }
 }

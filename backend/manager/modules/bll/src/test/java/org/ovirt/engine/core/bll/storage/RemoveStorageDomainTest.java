@@ -268,10 +268,10 @@ public class RemoveStorageDomainTest {
             StorageType storageType) {
         StorageDomain dom = new StorageDomain();
         dom.setId(id);
-        dom.setstorage_pool_id(poolId);
-        dom.setstorage_domain_type(type);
-        dom.setstorage_type(storageType);
-        dom.setstorage_domain_shared_status(StorageDomainSharedStatus.Unattached);
+        dom.setStoragePoolId(poolId);
+        dom.setStorageDomainType(type);
+        dom.setStorageType(storageType);
+        dom.setStorageDomainSharedStatus(StorageDomainSharedStatus.Unattached);
         return dom;
     }
 

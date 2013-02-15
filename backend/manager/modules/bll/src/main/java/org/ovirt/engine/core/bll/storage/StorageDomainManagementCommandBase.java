@@ -31,6 +31,6 @@ public abstract class StorageDomainManagementCommandBase<T extends StorageDomain
     }
 
     protected boolean IsStorageWithSameNameExists() {
-        return DbFacade.getInstance().getStorageDomainStaticDao().getByName(getStorageDomain().getstorage_name()) != null;
+        return DbFacade.getInstance().getStorageDomainStaticDao().getByName(getStorageDomain().getStorageName()) != null;
     }
 }

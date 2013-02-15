@@ -90,7 +90,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             retVal = validate(sourceDomainValidator.isDomainExistAndActive());
         }
 
-        if (retVal && getSourceDomain().getstorage_domain_type() != StorageDomainType.ImportExport) {
+        if (retVal && getSourceDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
             retVal = false;
         }

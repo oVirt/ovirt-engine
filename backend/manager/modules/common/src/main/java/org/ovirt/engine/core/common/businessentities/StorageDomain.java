@@ -10,27 +10,35 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     private static final long serialVersionUID = -6162192446628804305L;
 
     public StorageDomain() {
-        _staticData = new StorageDomainStatic();
-        _dynamicData = new StorageDomainDynamic();
+        staticData = new StorageDomainStatic();
+        dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
     }
 
-    public StorageDomain(Guid id, String storage, String storage_name, Guid storage_pool_id,
-            Integer available_disk_size, Integer used_disk_size, StorageDomainStatus status, String storage_pool_name,
-            int storage_pool_type, int storage_type, String description) {
-        _staticData = new StorageDomainStatic();
-        _dynamicData = new StorageDomainDynamic();
+    public StorageDomain(Guid id,
+            String storage,
+            String storageName,
+            Guid storagePoolId,
+            Integer availableDiskSize,
+            Integer usedDiskSize,
+            StorageDomainStatus status,
+            String storagePoolName,
+            int storagePoolType,
+            int storageType,
+            String description) {
+        staticData = new StorageDomainStatic();
+        dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
         this.setId(id);
-        this.setstorage(storage);
-        this.setstorage_name(storage_name);
-        this.setstorage_pool_id(storage_pool_id);
-        this.setavailable_disk_size(available_disk_size);
-        this.setused_disk_size(used_disk_size);
-        this.setstatus(status);
-        this.setstorage_pool_name(storage_pool_name);
-        this.setstorage_type(StorageType.forValue(storage_pool_type));
-        this.setstorage_domain_type(StorageDomainType.forValue(storage_type));
+        this.setStorage(storage);
+        this.setStorageName(storageName);
+        this.setStoragePoolId(storagePoolId);
+        this.setAvailableDiskSize(availableDiskSize);
+        this.setUsedDiskSize(usedDiskSize);
+        this.setStatus(status);
+        this.setStoragePoolName(storagePoolName);
+        this.setStorageType(StorageType.forValue(storagePoolType));
+        this.setStorageDomainType(StorageDomainType.forValue(storageType));
         setDescription(description);
     }
 
@@ -53,34 +61,34 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         this.alerts = alerts;
     }
 
-    private StoragePoolIsoMap privateStoragePoolIsoMapData;
+    private StoragePoolIsoMap storagePoolIsoMapData;
 
     public StoragePoolIsoMap getStoragePoolIsoMapData() {
-        return privateStoragePoolIsoMapData;
+        return storagePoolIsoMapData;
     }
 
-    public void setStoragePoolIsoMapData(StoragePoolIsoMap value) {
-        privateStoragePoolIsoMapData = value;
+    public void setStoragePoolIsoMapData(StoragePoolIsoMap storagePoolIsoMap) {
+        storagePoolIsoMapData = storagePoolIsoMap;
     }
 
-    private StorageDomainStatic _staticData;
+    private StorageDomainStatic staticData;
 
     public StorageDomainStatic getStorageStaticData() {
-        return _staticData;
+        return staticData;
     }
 
-    public void setStorageStaticData(StorageDomainStatic value) {
-        _staticData = value;
+    public void setStorageStaticData(StorageDomainStatic staticData) {
+        this.staticData = staticData;
     }
 
-    private StorageDomainDynamic _dynamicData;
+    private StorageDomainDynamic dynamicData;
 
     public StorageDomainDynamic getStorageDynamicData() {
-        return _dynamicData;
+        return dynamicData;
     }
 
-    public void setStorageDynamicData(StorageDomainDynamic value) {
-        _dynamicData = value;
+    public void setStorageDynamicData(StorageDomainDynamic dynamicData) {
+        this.dynamicData = dynamicData;
     }
 
     @Override
@@ -89,26 +97,26 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     @Override
-    public void setId(Guid value) {
-        getStorageStaticData().setId(value);
-        getStorageDynamicData().setId(value);
-        getStoragePoolIsoMapData().setstorage_id(value);
+    public void setId(Guid id) {
+        getStorageStaticData().setId(id);
+        getStorageDynamicData().setId(id);
+        getStoragePoolIsoMapData().setstorage_id(id);
     }
 
-    public String getstorage() {
+    public String getStorage() {
         return getStorageStaticData().getstorage();
     }
 
-    public void setstorage(String value) {
-        getStorageStaticData().setstorage(value);
+    public void setStorage(String storage) {
+        getStorageStaticData().setstorage(storage);
     }
 
-    public String getstorage_name() {
+    public String getStorageName() {
         return getStorageStaticData().getstorage_name();
     }
 
-    public void setstorage_name(String value) {
-        getStorageStaticData().setstorage_name(value);
+    public void setStorageName(String storageName) {
+        getStorageStaticData().setstorage_name(storageName);
     }
 
     public String getDescription() {
@@ -119,57 +127,57 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         getStorageStaticData().setDescription(description);
     }
 
-    public NGuid getstorage_pool_id() {
+    public NGuid getStoragePoolId() {
         return getStoragePoolIsoMapData().getstorage_pool_id();
     }
 
-    public void setstorage_pool_id(NGuid value) {
-        getStoragePoolIsoMapData().setstorage_pool_id(value);
+    public void setStoragePoolId(NGuid storagePoolId) {
+        getStoragePoolIsoMapData().setstorage_pool_id(storagePoolId);
     }
 
-    public Integer getavailable_disk_size() {
+    public Integer getAvailableDiskSize() {
         return getStorageDynamicData().getavailable_disk_size();
     }
 
-    public void setavailable_disk_size(Integer value) {
-        getStorageDynamicData().setavailable_disk_size(value);
+    public void setAvailableDiskSize(Integer availableDiskSize) {
+        getStorageDynamicData().setavailable_disk_size(availableDiskSize);
         UpdateTotalDiskSize();
-        UpdateOverCommitPercent();
+        updateOverCommitPercent();
     }
 
-    private void UpdateOverCommitPercent() {
-        setstorage_domain_over_commit_percent(getavailable_disk_size() != null && getavailable_disk_size() > 0 ? getcommitted_disk_size()
-                * 100 / getavailable_disk_size()
+    private void updateOverCommitPercent() {
+        setStorageDomainOverCommitPercent(getAvailableDiskSize() != null && getAvailableDiskSize() > 0 ? getCommittedDiskSize()
+                * 100 / getAvailableDiskSize()
                 : 0);
     }
 
-    private int _storage_domain_over_commit_percent;
+    private int storageDomainOverCommitPercent;
 
-    public int getstorage_domain_over_commit_percent() {
-        return _storage_domain_over_commit_percent;
+    public int getStorageDomainOverCommitPercent() {
+        return storageDomainOverCommitPercent;
     }
 
-    public void setstorage_domain_over_commit_percent(int value) {
-        _storage_domain_over_commit_percent = value;
+    public void setStorageDomainOverCommitPercent(int storageDomainOverCommitPercent) {
+        this.storageDomainOverCommitPercent = storageDomainOverCommitPercent;
     }
 
-    private int _committedDiskSize;
+    private int committedDiskSize;
 
-    public int getcommitted_disk_size() {
-        return _committedDiskSize;
+    public int getCommittedDiskSize() {
+        return committedDiskSize;
     }
 
-    public void setcommitted_disk_size(int value) {
-        _committedDiskSize = value;
-        UpdateOverCommitPercent();
+    public void setCommittedDiskSize(int committedDiskSize) {
+        this.committedDiskSize = committedDiskSize;
+        updateOverCommitPercent();
     }
 
-    public Integer getused_disk_size() {
+    public Integer getUsedDiskSize() {
         return getStorageDynamicData().getused_disk_size();
     }
 
-    public void setused_disk_size(Integer value) {
-        getStorageDynamicData().setused_disk_size(value);
+    public void setUsedDiskSize(Integer usedDiskSize) {
+        getStorageDynamicData().setused_disk_size(usedDiskSize);
         UpdateTotalDiskSize();
     }
 
@@ -198,67 +206,67 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         }
     }
 
-    public StorageDomainStatus getstatus() {
+    public StorageDomainStatus getStatus() {
         return getStoragePoolIsoMapData().getstatus();
     }
 
-    public void setstatus(StorageDomainStatus value) {
+    public void setStatus(StorageDomainStatus status) {
         StorageDomainStatus curStatus = getStoragePoolIsoMapData().getstatus();
-        if (curStatus == null || curStatus != value) {
-            getStoragePoolIsoMapData().setstatus(value);
+        if (curStatus == null || curStatus != status) {
+            getStoragePoolIsoMapData().setstatus(status);
         }
     }
 
-    public StorageDomainOwnerType getowner() {
+    public StorageDomainOwnerType getOwner() {
         return getStoragePoolIsoMapData().getowner();
     }
 
-    public void setowner(StorageDomainOwnerType value) {
-        getStoragePoolIsoMapData().setowner(value);
+    public void setOwner(StorageDomainOwnerType owner) {
+        getStoragePoolIsoMapData().setowner(owner);
     }
 
-    private String storage_pool_nameField;
+    private String storagePoolName;
 
-    public String getstorage_pool_name() {
-        return storage_pool_nameField;
+    public String getStoragePoolName() {
+        return storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
-        storage_pool_nameField = value;
+    public void setStoragePoolName(String storagePoolName) {
+        this.storagePoolName = storagePoolName;
     }
 
-    public StorageType getstorage_type() {
+    public StorageType getStorageType() {
         return getStorageStaticData().getstorage_type();
     }
 
-    public void setstorage_type(StorageType value) {
-        getStorageStaticData().setstorage_type(value);
+    public void setStorageType(StorageType storageType) {
+        getStorageStaticData().setstorage_type(storageType);
     }
 
-    private StorageDomainSharedStatus _storageDomainSharedStatus = StorageDomainSharedStatus.forValue(0);
+    private StorageDomainSharedStatus storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
 
-    public StorageDomainSharedStatus getstorage_domain_shared_status() {
-        return _storageDomainSharedStatus;
+    public StorageDomainSharedStatus getStorageDomainSharedStatus() {
+        return storageDomainSharedStatus;
     }
 
-    public void setstorage_domain_shared_status(StorageDomainSharedStatus value) {
-        _storageDomainSharedStatus = value;
+    public void setStorageDomainSharedStatus(StorageDomainSharedStatus storageDomainSharedStatus) {
+        this.storageDomainSharedStatus = storageDomainSharedStatus;
     }
 
-    public StorageDomainType getstorage_domain_type() {
+    public StorageDomainType getStorageDomainType() {
         return getStorageStaticData().getstorage_domain_type();
     }
 
-    public void setstorage_domain_type(StorageDomainType value) {
-        getStorageStaticData().setstorage_domain_type(value);
+    public void setStorageDomainType(StorageDomainType storageDomainType) {
+        getStorageStaticData().setstorage_domain_type(storageDomainType);
     }
 
     public StorageFormatType getStorageFormat() {
         return getStorageStaticData().getStorageFormat();
     }
 
-    public void setStorageFormat(StorageFormatType value) {
-        getStorageStaticData().setStorageFormat(value);
+    public void setStorageFormat(StorageFormatType storageFormatType) {
+        getStorageStaticData().setStorageFormat(storageFormatType);
     }
 
     @Override
@@ -276,39 +284,39 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public boolean isAutoRecoverable() {
-        return _staticData.isAutoRecoverable();
+        return staticData.isAutoRecoverable();
     }
 
     public void setAutoRecoverable(boolean autoRecoverable) {
-        _staticData.setAutoRecoverable(autoRecoverable);
+        staticData.setAutoRecoverable(autoRecoverable);
     }
 
     public long getLastTimeUsedAsMaster() {
-        return _staticData.getLastTimeUsedAsMaster();
+        return staticData.getLastTimeUsedAsMaster();
     }
 
     public void setLastTimeUsedAsMaster(long lastTimeUsedAsMaster) {
-        _staticData.setLastTimeUsedAsMaster(lastTimeUsedAsMaster);
+        staticData.setLastTimeUsedAsMaster(lastTimeUsedAsMaster);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + _committedDiskSize;
+        result = prime * result + committedDiskSize;
         result = prime * result
-                + ((_dynamicData == null) ? 0 : _dynamicData.hashCode());
+                + ((dynamicData == null) ? 0 : dynamicData.hashCode());
         result = prime * result
-                + ((_staticData == null) ? 0 : _staticData.hashCode());
+                + ((staticData == null) ? 0 : staticData.hashCode());
         result = prime
                 * result
-                + ((_storageDomainSharedStatus == null) ? 0
-                        : _storageDomainSharedStatus.hashCode());
-        result = prime * result + _storage_domain_over_commit_percent;
+                + ((storageDomainSharedStatus == null) ? 0
+                        : storageDomainSharedStatus.hashCode());
+        result = prime * result + storageDomainOverCommitPercent;
         result = prime
                 * result
-                + ((privateStoragePoolIsoMapData == null) ? 0
-                        : privateStoragePoolIsoMapData.hashCode());
+                + ((storagePoolIsoMapData == null) ? 0
+                        : storagePoolIsoMapData.hashCode());
         result = prime * result
                 + ((totalDiskSize == null) ? 0 : totalDiskSize.hashCode());
         result = prime * result
@@ -325,11 +333,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         if (getClass() != obj.getClass())
             return false;
         StorageDomain other = (StorageDomain) obj;
-        if (_committedDiskSize != other._committedDiskSize)
+        if (committedDiskSize != other.committedDiskSize)
             return false;
-        if (_storageDomainSharedStatus != other._storageDomainSharedStatus)
+        if (storageDomainSharedStatus != other.storageDomainSharedStatus)
             return false;
-        if (_storage_domain_over_commit_percent != other._storage_domain_over_commit_percent)
+        if (storageDomainOverCommitPercent != other.storageDomainOverCommitPercent)
             return false;
         if (totalDiskSize == null) {
             if (other.totalDiskSize != null)

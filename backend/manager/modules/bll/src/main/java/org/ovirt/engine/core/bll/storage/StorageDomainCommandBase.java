@@ -89,12 +89,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
             StorageDomain storage_domains =
                     LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool
-                            (getStorageDomain().getstorage_pool_id().getValue()),
+                            (getStorageDomain().getStoragePoolId().getValue()),
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {
                                     return a.getId().equals(getStorageDomain().getId())
-                                            && a.getstatus() == StorageDomainStatus.Active;
+                                            && a.getStatus() == StorageDomainStatus.Active;
                                 }
                             });
             if (storage_domains == null) {
@@ -112,7 +112,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean isNotLocalData(final boolean isInternal) {
         boolean returnValue = true;
         if (this.getStoragePool().getstorage_pool_type() == StorageType.LOCALFS
-                && getStorageDomain().getstorage_domain_type() == StorageDomainType.Data
+                && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
                 && !isInternal) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DETACH_DATA_DOMAIN_FROM_LOCAL_STORAGE);
@@ -134,7 +134,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     private boolean isMaster() {
-        return getStorageDomain().getstorage_domain_type() == StorageDomainType.Master;
+        return getStorageDomain().getStorageDomainType() == StorageDomainType.Master;
     }
 
     @Override
@@ -154,7 +154,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainNameLengthValid() {
         boolean result = true;
-        if (getStorageDomain().getstorage_name().length() > Config
+        if (getStorageDomain().getStorageName().length() > Config
                 .<Integer> GetValue(ConfigValues.StorageDomainNameSizeLimit)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
             result = false;
@@ -187,11 +187,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomainStatusNotEqual(StorageDomainStatus status) {
         boolean returnValue = false;
-        if (getStorageDomain() != null && getStorageDomain().getstatus() != null) {
-            returnValue = (getStorageDomain().getstatus() != status);
+        if (getStorageDomain() != null && getStorageDomain().getStatus() != null) {
+            returnValue = (getStorageDomain().getStatus() != status);
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2.toString());
-                addCanDoActionMessage(String.format("$status %1$s", getStorageDomain().getstatus()));
+                addCanDoActionMessage(String.format("$status %1$s", getStorageDomain().getStatus()));
             }
         }
         return returnValue;
@@ -214,8 +214,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         storageDomains = LinqUtils.filter(storageDomains, new Predicate<StorageDomain>() {
             @Override
             public boolean eval(StorageDomain a) {
-                return a.getstorage_domain_type() == StorageDomainType.Master
-                        && a.getstatus() == StorageDomainStatus.Active;
+                return a.getStorageDomainType() == StorageDomainType.Master
+                        && a.getStatus() == StorageDomainStatus.Active;
             }
         });
         if (storageDomains.isEmpty()) {
@@ -226,12 +226,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected void setStorageDomainStatus(StorageDomainStatus status, CompensationContext context) {
-        if (getStorageDomain() != null && getStorageDomain().getstorage_pool_id() != null) {
+        if (getStorageDomain() != null && getStorageDomain().getStoragePoolId() != null) {
             StoragePoolIsoMap map = getStorageDomain().getStoragePoolIsoMapData();
             if(context != null) {
                 context.snapshotEntityStatus(map, map.getstatus());
             }
-            getStorageDomain().setstatus(status);
+            getStorageDomain().setStatus(status);
             getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
         }
     }
@@ -297,8 +297,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 for (StorageDomain dbStorageDomain : storageDomains) {
                     if ((storageDomain == null || (duringReconstruct || !dbStorageDomain.getId()
                             .equals(storageDomain.getId())))
-                            && (dbStorageDomain.getstatus() == StorageDomainStatus.Active || dbStorageDomain.getstatus() == StorageDomainStatus.Unknown)
-                            && dbStorageDomain.getstorage_domain_type() == StorageDomainType.Data) {
+                            && (dbStorageDomain.getStatus() == StorageDomainStatus.Active || dbStorageDomain.getStatus() == StorageDomainStatus.Unknown)
+                            && dbStorageDomain.getStorageDomainType() == StorageDomainType.Data) {
                         newMaster = dbStorageDomain;
                         break;
                     }
@@ -334,7 +334,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private StorageDomainStatus getStorageDomainStatus() {
         StorageDomainStatus status = null;
         if (getStorageDomain() != null) {
-            status = getStorageDomain().getstatus();
+            status = getStorageDomain().getStatus();
         }
         return status;
     }
@@ -380,7 +380,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected IStorageHelper getStorageHelper(StorageDomain storageDomain) {
-        return StorageHelperDirector.getInstance().getItem(storageDomain.getstorage_type());
+        return StorageHelperDirector.getInstance().getItem(storageDomain.getStorageType());
     }
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {

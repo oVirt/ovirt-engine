@@ -349,9 +349,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setHashName("edit_domain"); //$NON-NLS-1$
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.setStorage(storage);
-        model.getName().setEntity(storage.getstorage_name());
+        model.getName().setEntity(storage.getStorageName());
         model.getDescription().setEntity(storage.getDescription());
-        model.setOriginalName(storage.getstorage_name());
+        model.setOriginalName(storage.getStorageName());
 
         model.getDataCenter().setIsChangable(false);
         model.getFormat().setIsChangable(false);
@@ -364,7 +364,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setIsChangable(isStorageActive);
 
         IStorageModel item = null;
-        switch (storage.getstorage_type()) {
+        switch (storage.getStorageType()) {
             case NFS:
                 item = PrepareNfsStorageForEdit(storage);
                 break;
@@ -426,7 +426,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private IStorageModel PrepareNfsStorageForEdit(StorageDomain storage)
     {
         final NfsStorageModel model = new NfsStorageModel();
-        model.setRole(storage.getstorage_domain_type());
+        model.setRole(storage.getStorageDomainType());
         model.setIsEditMode(true);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
@@ -458,7 +458,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         connection.getNfsTimeo() != null);
 
             }
-        }), storage.getstorage(), true);
+        }), storage.getStorage(), true);
 
         return model;
     }
@@ -466,7 +466,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private IStorageModel PrepareLocalStorageForEdit(StorageDomain storage)
     {
         LocalStorageModel model = new LocalStorageModel();
-        model.setRole(storage.getstorage_domain_type());
+        model.setRole(storage.getStorageDomainType());
         model.getPath().setIsAvailable(false);
 
         AsyncDataProvider.GetStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
@@ -478,7 +478,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 localStorageModel.getPath().setEntity(connection.getconnection());
 
             }
-        }), storage.getstorage(), true);
+        }), storage.getStorage(), true);
 
         return model;
     }
@@ -486,7 +486,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private IStorageModel PreparePosixStorageForEdit(StorageDomain storage) {
 
         final PosixStorageModel model = new PosixStorageModel();
-        model.setRole(storage.getstorage_domain_type());
+        model.setRole(storage.getStorageDomainType());
         model.getPath().setIsChangable(false);
         model.getVfsType().setIsChangable(false);
         model.getMountOptions().setIsChangable(false);
@@ -501,7 +501,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 model.getMountOptions().setEntity(connection.getMountOptions());
 
             }
-        }), storage.getstorage(), true);
+        }), storage.getStorage(), true);
 
         return model;
     }
@@ -509,7 +509,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private IStorageModel PrepareIscsiStorageForEdit(StorageDomain storage)
     {
         IscsiStorageModel model = new IscsiStorageModel();
-        model.setRole(storage.getstorage_domain_type());
+        model.setRole(storage.getStorageDomainType());
 
         PrepareSanStorageForEdit(model);
 
@@ -519,7 +519,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private IStorageModel PrepareFcpStorageForEdit(StorageDomain storage)
     {
         FcpStorageModel model = new FcpStorageModel();
-        model.setRole(storage.getstorage_domain_type());
+        model.setRole(storage.getStorageDomainType());
 
         PrepareSanStorageForEdit(model);
 
@@ -561,7 +561,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
                 sanStorageModel.ApplyData(lunList, true);
             }
-        }, storageModel.getHash()), storage.getstorage(), hostId);
+        }, storageModel.getHash()), storage.getStorage(), hostId);
     }
 
     private void ImportDomain()
@@ -731,8 +731,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.FirstOrDefault(hosts));
                 removeStorageModel.getFormat()
-                    .setIsAvailable(storage.getstorage_domain_type() == StorageDomainType.ISO
-                        || storage.getstorage_domain_type() == StorageDomainType.ImportExport);
+                    .setIsAvailable(storage.getStorageDomainType() == StorageDomainType.ISO
+                        || storage.getStorageDomainType() == StorageDomainType.ImportExport);
 
                 if (hosts.isEmpty()) {
 
@@ -775,7 +775,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
-            tempVar.setDoFormat((storage.getstorage_domain_type() == StorageDomainType.Data || storage.getstorage_domain_type() == StorageDomainType.Master) ? true
+            tempVar.setDoFormat((storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) ? true
                 : (Boolean) model.getFormat().getEntity());
 
             Frontend.RunAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
@@ -791,7 +791,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setTitle(ConstantsManager.getInstance().getConstants().destroyStorageDomainTitle());
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
-        items.add(((StorageDomain) getSelectedItem()).getstorage_name());
+        items.add(((StorageDomain) getSelectedItem()).getStorageName());
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
@@ -1002,11 +1002,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         if (getSelectedItem() != null)
         {
             StorageDomain storage = (StorageDomain) getSelectedItem();
-            boolean isBackupStorage = storage.getstorage_domain_type() == StorageDomainType.ImportExport;
+            boolean isBackupStorage = storage.getStorageDomainType() == StorageDomainType.ImportExport;
             boolean isDataStorage =
-                    storage.getstorage_domain_type() == StorageDomainType.Data
-                            || storage.getstorage_domain_type() == StorageDomainType.Master;
-            boolean isIsoStorage = storage.getstorage_domain_type() == StorageDomainType.ISO;
+                    storage.getStorageDomainType() == StorageDomainType.Data
+                            || storage.getStorageDomainType() == StorageDomainType.Master;
+            boolean isIsoStorage = storage.getStorageDomainType() == StorageDomainType.ISO;
 
             vmBackupModel.setIsAvailable(isBackupStorage);
             templateBackupModel.setIsAvailable(isBackupStorage);
@@ -1067,9 +1067,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             return false;
         }
 
-        boolean isActive = storageDomain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Active
-                || storageDomain.getstorage_domain_shared_status() == StorageDomainSharedStatus.Mixed;
-        boolean isBlockStorage = storageDomain.getstorage_type().isBlockDomain();
+        boolean isActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active
+                || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
+        boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
         return isBlockStorage ? true : isActive;
     }
@@ -1156,7 +1156,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getstorage_name();
+                        String storageName = storages.get(0).getStorageName();
 
                         OnFinish(storageListModel.context,
                             false,
@@ -1287,7 +1287,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getstorage_name();
+                        String storageName = storages.get(0).getStorageName();
 
                         OnFinish(storageListModel.context,
                             false,
@@ -1474,7 +1474,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getstorage_name();
+                        String storageName = storages.get(0).getStorageName();
 
                         OnFinish(storageListModel.context,
                             false,
@@ -1704,7 +1704,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 if (storages != null && storages.size() > 0) {
 
-                    String storageName = storages.get(0).getstorage_name();
+                    String storageName = storages.get(0).getStorageName();
                     OnFinish(storageListModel.context,
                         false,
                         storageListModel.storageModel,

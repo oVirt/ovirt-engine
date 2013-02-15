@@ -21,15 +21,15 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
     protected boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         boolean returnValue = false;
         StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
-                storageDomain.getstorage());
+                storageDomain.getStorage());
         if (connection != null) {
             returnValue = Backend
                     .getInstance()
                     .runInternalAction(VdcActionType.forValue(type),
                             new StorageServerConnectionParametersBase(connection, vdsId)).getSucceeded();
         } else {
-            log.warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getstorage_name()
-                    + " because connection for connectionId:" + storageDomain.getstorage() + " is null.");
+            log.warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getStorageName()
+                    + " because connection for connectionId:" + storageDomain.getStorage() + " is null.");
         }
         return returnValue;
     }
