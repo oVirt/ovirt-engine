@@ -545,26 +545,26 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         setSucceeded(true);
     }
 
-    private void logRenamedEntity() {
-        try {
-            if (this instanceof RenamedEntityInfoProvider) {
-                RenamedEntityInfoProvider renameable = (RenamedEntityInfoProvider) this;
+    void logRenamedEntity() {
+        if (this instanceof RenamedEntityInfoProvider) {
+            RenamedEntityInfoProvider renameable = (RenamedEntityInfoProvider) this;
+            String oldEntityName = renameable.getEntityOldName();
+            String newEntityName = renameable.getEntityNewName();
+            if (!StringUtils.equals(oldEntityName, newEntityName)) {
+                // log entity rename details
+                AuditLogableBase logable = new AuditLogableBase();
                 String entityType = renameable.getEntityType();
-                String oldEntityName = renameable.getEntityOldName();
-                String newEntityName = renameable.getEntityNewName();
-                if (!StringUtils.equals(oldEntityName,newEntityName)) {
-                    // log entity rename details
-                    AuditLogableBase logable = new AuditLogableBase();
-                    logable.addCustomValue("EntityType", entityType);
-                    logable.addCustomValue("OldEntityName", oldEntityName);
-                    logable.addCustomValue("NewEntityName", newEntityName);
-                    renameable.setEntityId(logable);
-                    AuditLogDirector.log(logable, AuditLogType.ENTITY_RENAMED);
-                }
+                logable.addCustomValue("EntityType", entityType);
+                logable.addCustomValue("OldEntityName", oldEntityName);
+                logable.addCustomValue("NewEntityName", newEntityName);
+                renameable.setEntityId(logable);
+                auditLog(logable, AuditLogType.ENTITY_RENAMED);
             }
-        } catch (Exception e) {
-            log.error("Failed to log entity rename operation.", e);
         }
+    }
+
+    void auditLog(AuditLogableBase logable, AuditLogType logType) {
+        AuditLogDirector.log(logable, logType);
     }
 
     private void internalEndWithFailure() {

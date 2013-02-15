@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -170,5 +171,39 @@ public class CommandBaseTest {
         doReturn(false).when(command).isEndSuccessfully();
         command.endActionInTransactionScope();
         verify(command).endWithFailure();
+    }
+
+    @Test
+    public void logRenamedEntityNotRename() {
+        CommandBase<?> command = mock(CommandBase.class);
+        doCallRealMethod().when(command).logRenamedEntity();
+        command.logRenamedEntity();
+    }
+
+    @Test
+    public void logRenamedEntity() {
+        abstract class RenameCommand extends CommandBaseDummy implements RenamedEntityInfoProvider {
+
+            private static final long serialVersionUID = 1L;
+
+            protected RenameCommand(VdcActionParametersBase params) {
+                super(params);
+            }
+
+        }
+        RenameCommand command = mock(RenameCommand.class);
+        when(command.getEntityOldName()).thenReturn(null);
+        when(command.getEntityNewName()).thenReturn(null);
+        doCallRealMethod().when(command).logRenamedEntity();
+        command.logRenamedEntity();
+        when(command.getEntityOldName()).thenReturn("foo");
+        when(command.getEntityNewName()).thenReturn("bar");
+        command.logRenamedEntity();
+        when(command.getEntityOldName()).thenReturn(null);
+        when(command.getEntityNewName()).thenReturn("bar");
+        command.logRenamedEntity();
+        when(command.getEntityOldName()).thenReturn("foo");
+        when(command.getEntityNewName()).thenReturn(null);
+        command.logRenamedEntity();
     }
 }
