@@ -136,11 +136,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public Integer getAvailableDiskSize() {
-        return getStorageDynamicData().getavailable_disk_size();
+        return getStorageDynamicData().getAvailableDiskSize();
     }
 
     public void setAvailableDiskSize(Integer availableDiskSize) {
-        getStorageDynamicData().setavailable_disk_size(availableDiskSize);
+        getStorageDynamicData().setAvailableDiskSize(availableDiskSize);
         UpdateTotalDiskSize();
         updateOverCommitPercent();
     }
@@ -173,17 +173,17 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
     }
 
     public Integer getUsedDiskSize() {
-        return getStorageDynamicData().getused_disk_size();
+        return getStorageDynamicData().getUsedDiskSize();
     }
 
     public void setUsedDiskSize(Integer usedDiskSize) {
-        getStorageDynamicData().setused_disk_size(usedDiskSize);
+        getStorageDynamicData().setUsedDiskSize(usedDiskSize);
         UpdateTotalDiskSize();
     }
 
     private void UpdateTotalDiskSize() {
-        Integer available = getStorageDynamicData().getavailable_disk_size();
-        Integer used = getStorageDynamicData().getused_disk_size();
+        Integer available = getStorageDynamicData().getAvailableDiskSize();
+        Integer used = getStorageDynamicData().getUsedDiskSize();
 
         if (available != null && used != null) {
             setTotalDiskSize(available + used);

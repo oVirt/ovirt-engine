@@ -21,10 +21,10 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
             public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 StorageDomainDynamic entity = new StorageDomainDynamic();
-                entity.setavailable_disk_size((Integer) rs
+                entity.setAvailableDiskSize((Integer) rs
                         .getObject("available_disk_size"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setused_disk_size((Integer) rs
+                entity.setUsedDiskSize((Integer) rs
                         .getObject("used_disk_size"));
                 return entity;
             }
@@ -38,9 +38,9 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
     public void save(StorageDomainDynamic domain) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("available_disk_size",
-                        domain.getavailable_disk_size())
+                        domain.getAvailableDiskSize())
                 .addValue("id", domain.getId())
-                .addValue("used_disk_size", domain.getused_disk_size());
+                .addValue("used_disk_size", domain.getUsedDiskSize());
 
         getCallsHandler().executeModification("Insertstorage_domain_dynamic", parameterSource);
     }
@@ -49,9 +49,9 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
     public void update(StorageDomainDynamic domain) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("available_disk_size",
-                        domain.getavailable_disk_size())
+                        domain.getAvailableDiskSize())
                 .addValue("id", domain.getId())
-                .addValue("used_disk_size", domain.getused_disk_size());
+                .addValue("used_disk_size", domain.getUsedDiskSize());
 
         getCallsHandler().executeModification("Updatestorage_domain_dynamic", parameterSource);
     }
@@ -74,10 +74,10 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
             public StorageDomainDynamic mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 StorageDomainDynamic entity = new StorageDomainDynamic();
-                entity.setavailable_disk_size((Integer) rs
+                entity.setAvailableDiskSize((Integer) rs
                         .getObject("available_disk_size"));
                 entity.setId(Guid.createGuidFromString(rs.getString("id")));
-                entity.setused_disk_size((Integer) rs
+                entity.setUsedDiskSize((Integer) rs
                         .getObject("used_disk_size"));
                 return entity;
             }

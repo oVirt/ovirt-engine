@@ -8,27 +8,27 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
     public StorageDomainDynamic() {
     }
 
-    public StorageDomainDynamic(Integer available_disk_size, Guid id, Integer used_disk_size) {
-        this.availableDiskSize = available_disk_size;
+    public StorageDomainDynamic(Integer availableDiskSize, Guid id, Integer usedDiskSize) {
+        this.availableDiskSize = availableDiskSize;
         this.id = id;
-        this.usedDiskSize = used_disk_size;
+        this.usedDiskSize = usedDiskSize;
     }
 
     private Integer availableDiskSize = 0;
 
-    public Integer getavailable_disk_size() {
-        return this.availableDiskSize;
+    public Integer getAvailableDiskSize() {
+        return availableDiskSize;
     }
 
-    public void setavailable_disk_size(Integer value) {
-        this.availableDiskSize = value;
+    public void setAvailableDiskSize(Integer availableDiskSize) {
+        this.availableDiskSize = availableDiskSize;
     }
 
     private Guid id = new Guid();
 
     @Override
     public Guid getId() {
-        return this.id;
+        return id;
     }
 
     @Override
@@ -38,23 +38,23 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
 
     private Integer usedDiskSize = 0;
 
-    public Integer getused_disk_size() {
-        return this.usedDiskSize;
+    public Integer getUsedDiskSize() {
+        return usedDiskSize;
     }
 
-    public void setused_disk_size(Integer value) {
-        this.usedDiskSize = value;
+    public void setUsedDiskSize(Integer usedDiskSize) {
+        this.usedDiskSize = usedDiskSize;
     }
 
     public double getfreeDiskPercent() {
-        int usedDiskSize = getused_disk_size() == null ? 0 : getused_disk_size();
-        int availableDiskSize = getavailable_disk_size() == null ? 0 : getavailable_disk_size();
+        int usedDiskSize = getUsedDiskSize() == null ? 0 : getUsedDiskSize();
+        int availableDiskSize = getAvailableDiskSize() == null ? 0 : getAvailableDiskSize();
         double totalSize = usedDiskSize + availableDiskSize;
         return totalSize != 0 ? (availableDiskSize / totalSize) * 100 : 0.0;
     }
 
     public int getfreeDiskInGB() {
-            int availableDiskSize = getavailable_disk_size() == null ? 0 : getavailable_disk_size();
+        int availableDiskSize = getAvailableDiskSize() == null ? 0 : getAvailableDiskSize();
             return availableDiskSize;
     }
 
@@ -102,5 +102,4 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
             return false;
         return true;
     }
-
 }

@@ -50,8 +50,8 @@ public class TestHelperImportVmTemplateCommand extends ImportVmTemplateCommand {
         final StorageDomainDAO d = mock(StorageDomainDAO.class);
         when(d.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(destination);
         StorageDomainDynamic dy = new StorageDomainDynamic();
-        dy.setavailable_disk_size(10);
-        dy.setused_disk_size(0);
+        dy.setAvailableDiskSize(10);
+        dy.setUsedDiskSize(0);
         destination.setStorageDynamicData(dy);
         return d;
     }

@@ -176,8 +176,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
             StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
             runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
-            getStorageDomain().getStorageDynamicData().setavailable_disk_size(null);
-            getStorageDomain().getStorageDynamicData().setused_disk_size(null);
+            getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
+            getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);
         }
         if (!getParameters().isInactive()) {
             runVdsCommand(VDSCommandType.DeactivateStorageDomain,

@@ -31,7 +31,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
         newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newDynamicDomain = new StorageDomainDynamic();
-        newDynamicDomain.setavailable_disk_size(USED_DISK_SIZE);
+        newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
     }
 
     /**
@@ -75,7 +75,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        existingDynamic.setused_disk_size(USED_DISK_SIZE);
+        existingDynamic.setUsedDiskSize(USED_DISK_SIZE);
         dao.update(existingDynamic);
 
         StorageDomainDynamic result = dao.get(existingDynamic.getId());
