@@ -15,11 +15,11 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
@@ -152,94 +152,85 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     /**
-     * Check if specific vm free. Vm considered free if it not attached to user and not during trieng
+     * Check if a specific VM is free. A VM is considered free if it isn't attached to a user and not during preview
      * @param vmId
      *            The vm id.
      * @param messages
      *            The messages.
-     * @return <c>true</c> if [is vm free] [the specified vm id]; otherwise, <c>false</c>.
+     * @return <code>true</code> if [is vm free] [the specified vm id]; otherwise, <code>false</code>.
      */
     protected static boolean isVmFree(Guid vmId, ArrayList<String> messages) {
-        boolean returnValue = true;
-
         // check that there isn't another user already attached to this VM:
         if (vmAssignedToUser(vmId, messages)) {
-            returnValue = false;
+            return failVmFree(messages);
         }
 
         // check that vm can be run:
-        else if (!canRunPoolVm(vmId, messages)) {
-            returnValue = false;
+        if (!canRunPoolVm(vmId, messages)) {
+            return failVmFree(messages);
         }
 
         // check vm images:
-        else {
-            SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
-            ValidationResult vmDuringSnapshotResult = snapshotsValidator.vmNotDuringSnapshot(vmId);
-            ValidationResult vmInPreviewResult = snapshotsValidator.vmNotInPreview(vmId);
-            if (!vmDuringSnapshotResult.isValid()) {
-                messages.add(vmDuringSnapshotResult.getMessage().name());
-                returnValue = false;
-            } else if (!vmInPreviewResult.isValid()) {
-                messages.add(vmInPreviewResult.getMessage().name());
-                returnValue = false;
-            } else {
-                List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
-                List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
-                Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
-                VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-                storage_pool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
-
-                ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
-                if (!spUpResult.isValid()) {
-                    messages.add(spUpResult.getMessage().name());
-                    returnValue = false;
-                }
-
-                if (returnValue) {
-                    returnValue =
-                        ImagesHandler.PerformImagesChecks(
-                                messages,
-                                vm.getStoragePoolId(),
-                                storageDomainId,
-                                false,
-                                true,
-                                false,
-                                false,
-                                !Guid.Empty.equals(storageDomainId),
-                                true,
-                                disks);
-                }
-
-                if (returnValue) {
-                    ValidationResult vmNotLockResult = new VmValidator(vm).vmNotLocked();
-                    if (!vmNotLockResult.isValid()) {
-                        messages.add(vmNotLockResult.getMessage().name());
-                        returnValue = false;
-                    }
-                }
-            }
-
-            if (!returnValue) {
-                if (messages != null) {
-                    messages.add(VdcBllMessages.VAR__TYPE__DESKTOP_POOL.toString());
-                    messages.add(VdcBllMessages.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
-                }
-            }
+        SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
+        ValidationResult vmDuringSnapshotResult = snapshotsValidator.vmNotDuringSnapshot(vmId);
+        if (!vmDuringSnapshotResult.isValid()) {
+            return failVmFree(messages, vmDuringSnapshotResult.getMessage().name());
         }
 
-        return returnValue;
+        ValidationResult vmInPreviewResult = snapshotsValidator.vmNotInPreview(vmId);
+        if (!vmInPreviewResult.isValid()) {
+            return failVmFree(messages, vmInPreviewResult.getMessage().name());
+        }
+
+        List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
+        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
+        Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
+        VM vm = DbFacade.getInstance().getVmDao().get(vmId);
+        storage_pool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
+
+        ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
+        if (!spUpResult.isValid()) {
+            return failVmFree(messages, spUpResult.getMessage().name());
+        }
+
+        if (!ImagesHandler.PerformImagesChecks(
+                            messages,
+                            vm.getStoragePoolId(),
+                            storageDomainId,
+                            false,
+                            true,
+                            false,
+                            false,
+                            !Guid.Empty.equals(storageDomainId),
+                            true,
+                            disks)) {
+            return failVmFree(messages);
+        }
+
+        ValidationResult vmNotLockResult = new VmValidator(vm).vmNotLocked();
+        if (!vmNotLockResult.isValid()) {
+            return failVmFree(messages, vmNotLockResult.getMessage().name());
+        }
+
+        return true;
+    }
+
+    private static boolean failVmFree(List<String> messages, String... messagesToAdd) {
+        for (String messageToAdd : messagesToAdd) {
+            messages.add(messageToAdd);
+        }
+
+        messages.add(VdcBllMessages.VAR__TYPE__DESKTOP_POOL.toString());
+        messages.add(VdcBllMessages.VAR__ACTION__ATTACH_DESKTOP_TO.toString());
+        return false;
     }
 
     private static boolean vmAssignedToUser(Guid vmId, ArrayList<String> messages) {
-        boolean vmAssignedToUser = false;
         if (DbFacade.getInstance().getDbUserDao().getAllForVm(vmId).size() > 0) {
-            vmAssignedToUser = true;
-            if (messages != null) {
-                messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
-            }
+            messages.add(VdcBllMessages.VM_POOL_CANNOT_ADD_VM_WITH_USERS_ATTACHED_TO_POOL.toString());
+            return true;
         }
-        return vmAssignedToUser;
+        return false;
     }
 
     protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
