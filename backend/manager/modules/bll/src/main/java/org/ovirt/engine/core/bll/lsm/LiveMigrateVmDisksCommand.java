@@ -198,7 +198,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
-                    && validateSourceStorageDomain(parameters.getImageId(), parameters.getSourceStorageDomainId())
+                    && validateSourceStorageDomain(parameters.getImageId())
                     && validateDestStorage(parameters.getImageId(), parameters.getStorageDomainId()));
 
             if (!getReturnValue().getCanDoAction()) {
@@ -255,24 +255,22 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return true;
     }
 
-    private boolean validateSourceStorageDomain(Guid imageId, Guid sourceDomainId) {
-        StorageDomainValidator validator = getValidator(imageId, sourceDomainId);
+    private boolean validateSourceStorageDomain(Guid imageId) {
+        DiskImage diskImage = getDiskImageById(imageId);
+        Guid domainId = diskImage.getStorageIds().get(0);
+        StorageDomainValidator validator = getValidator(domainId, getStoragePoolId().getValue());
 
         return validate(validator.isDomainExistAndActive());
     }
 
     private boolean validateDestStorage(Guid imageId, Guid destDomainId) {
-        StorageDomainValidator validator = getValidator(imageId, destDomainId);
+        StorageDomainValidator validator = getValidator(destDomainId, getStoragePoolId().getValue());
 
-        return validateSourceStorageDomain(imageId, destDomainId)
-                && validate(validator.domainIsValidDestination());
+        return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
     }
 
-    private StorageDomainValidator getValidator(Guid imageId, Guid domainId) {
-        DiskImage diskImage = getDiskImageById(imageId);
-
-        return new StorageDomainValidator(
-                getStorageDomainById(domainId, diskImage.getStoragePoolId().getValue()));
+    private StorageDomainValidator getValidator(Guid domainId, Guid storagePoolId) {
+        return new StorageDomainValidator(getStorageDomainById(domainId, storagePoolId));
     }
 
     protected boolean isValidSpaceRequirements() {
