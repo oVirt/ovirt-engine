@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -184,13 +185,24 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
-        Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
+
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         storage_pool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());
-
         ValidationResult spUpResult = new StoragePoolValidator(sp).isUp();
         if (!spUpResult.isValid()) {
             return failVmFree(messages, spUpResult.getMessage().name());
+        }
+
+        Guid storageDomainId = vmImages.size() > 0 ? vmImages.get(0).getstorage_ids().get(0) : Guid.Empty;
+        if (!Guid.Empty.equals(storageDomainId)) {
+            StorageDomainValidator storageDomainValidator =
+                    new StorageDomainValidator(DbFacade.getInstance()
+                            .getStorageDomainDao()
+                            .getForStoragePool(storageDomainId, sp.getId()));
+            ValidationResult domainActiveResult = storageDomainValidator.isDomainExistAndActive();
+            if (!domainActiveResult.isValid()) {
+                return failVmFree(messages, domainActiveResult.getMessage().name());
+            }
         }
 
         if (!ImagesHandler.PerformImagesChecks(
@@ -201,7 +213,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                             true,
                             false,
                             false,
-                            !Guid.Empty.equals(storageDomainId),
+                            false,
                             true,
                             disks)) {
             return failVmFree(messages);
