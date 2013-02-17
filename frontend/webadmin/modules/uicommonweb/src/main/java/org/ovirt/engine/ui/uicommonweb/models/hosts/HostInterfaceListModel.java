@@ -1266,7 +1266,7 @@ public class HostInterfaceListModel extends SearchableListModel
         CancelConfirm();
     }
 
-    public void Bond()
+    public void bond()
     {
         if (getWindow() != null)
         {
@@ -2285,7 +2285,7 @@ public class HostInterfaceListModel extends SearchableListModel
         }
         else if (command == getBondCommand())
         {
-            Bond();
+            bond();
         }
         else if (command == getDetachCommand())
         {
