@@ -59,6 +59,7 @@ import org.ovirt.engine.api.restapi.types.DateMapper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
@@ -404,20 +405,20 @@ public class BackendApiResource
             ApiSummary summary = new ApiSummary();
 
             summary.setVMs(new VMs());
-            summary.getVMs().setTotal(get(stats, "total_vms"));
-            summary.getVMs().setActive(get(stats, "active_vms"));
+            summary.getVMs().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD));
+            summary.getVMs().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD));
 
             summary.setHosts(new Hosts());
-            summary.getHosts().setTotal(get(stats, "total_vds"));
-            summary.getHosts().setActive(get(stats, "active_vds"));
+            summary.getHosts().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD));
+            summary.getHosts().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD));
 
             summary.setUsers(new Users());
-            summary.getUsers().setTotal(get(stats, "total_users"));
-            summary.getUsers().setActive(get(stats, "active_users"));
+            summary.getUsers().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD));
+            summary.getUsers().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD));
 
             summary.setStorageDomains(new StorageDomains());
-            summary.getStorageDomains().setTotal(get(stats, "total_storage_domains"));
-            summary.getStorageDomains().setActive(get(stats, "active_storage_domains"));
+            summary.getStorageDomains().setTotal(get(stats, QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD));
+            summary.getStorageDomains().setActive(get(stats, QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD));
 
             api.setSummary(summary);
         }

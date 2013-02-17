@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -93,17 +94,17 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
         int active_storage_domains = DbFacade.getInstance().getSystemStatisticsValue("ASD",
                 (Integer.toString(StorageDomainStatus.Active.getValue())));
 
-        res.put("total_vms", total_vms);
-        res.put("active_vms", active_vms);
-        res.put("down_vms", down_vms);
-        res.put("total_vds", total_vds);
-        res.put("active_vds", active_vds);
-        res.put("maintenance_vds", maintenance_vds);
-        res.put("down_vds", down_vds);
-        res.put("total_users", total_users);
-        res.put("active_users", active_users);
-        res.put("total_storage_domains", total_storage_domains);
-        res.put("active_storage_domains", active_storage_domains);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_VMS_FIELD, total_vms);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_VMS_FIELD, active_vms);
+        res.put(QueryConstants.SYSTEM_STATS_DOWN_VMS_FIELD, down_vms);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_HOSTS_FIELD, total_vds);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_HOSTS_FIELD, active_vds);
+        res.put(QueryConstants.SYSTEM_STATS_MAINTENANCE_HOSTS_FIELD, maintenance_vds);
+        res.put(QueryConstants.SYSTEM_STATS_DOWN_HOSTS_FIELD, down_vds);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_USERS_FIELD, total_users);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_USERS_FIELD, active_users);
+        res.put(QueryConstants.SYSTEM_STATS_TOTAL_STORAGE_DOMAINS_FIELD, total_storage_domains);
+        res.put(QueryConstants.SYSTEM_STATS_ACTIVE_STORAGE_DOMAINS_FIELD, active_storage_domains);
 
         return res;
     }
