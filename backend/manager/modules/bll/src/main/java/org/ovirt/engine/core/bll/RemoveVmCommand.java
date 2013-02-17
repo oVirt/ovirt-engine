@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +153,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return false;
         }
 
-        if (!ImagesHandler.PerformImagesChecks(
+        Collection<Disk> vmDisks = getVm().getDiskMap().values();
+        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
+        if (!vmImages.isEmpty() && !ImagesHandler.PerformImagesChecks(
                 getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(),
                 Guid.Empty,
@@ -160,9 +163,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 !getParameters().getForce(),
                 false,
                 false,
-                !getVm().getDiskMap().values().isEmpty(),
                 true,
-                getVm().getDiskMap().values())) {
+                true,
+                vmImages)) {
             return false;
         }
 
