@@ -113,7 +113,11 @@ public class ClusterGuideModel extends GuideModel
         if (hosts == null || allHosts == null) {
             return;
         }
-
+        if (getEntity() == null) {
+            StopProgress();
+            setWindow(null);
+            return;
+        }
         // Add host action.
         UICommand addHostAction = new UICommand("AddHost", this); //$NON-NLS-1$
 
@@ -145,8 +149,8 @@ public class ClusterGuideModel extends GuideModel
         for (VDS vds : allHosts)
         {
             if (!getEntity().getId().equals(vds.getVdsGroupId())
-                && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
-                && vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
+                    && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
+                    && vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
             {
                 availableHosts.add(vds);
             }

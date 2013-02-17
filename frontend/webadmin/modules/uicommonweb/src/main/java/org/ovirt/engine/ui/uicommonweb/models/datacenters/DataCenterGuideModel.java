@@ -454,7 +454,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     private void UpdateOptionsLocalFS() {
-        if (clusters == null || allHosts == null) {
+        if (clusters == null || allHosts == null || localStorageHost == null) {
             return;
         }
 
