@@ -77,7 +77,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
         List<Network> networks = (List<Network>) getNetwork().getItems();
         networks = networks == null ? new ArrayList<Network>() : networks;
         for (Network network : networks) {
-            if (ENGINE_NETWORK_NAME != null && ENGINE_NETWORK_NAME.equals(network.getName())) {
+            if (ENGINE_NETWORK_NAME != null && network != null && ENGINE_NETWORK_NAME.equals(network.getName())) {
                 getNetwork().setSelectedItem(network);
                 return;
             }
