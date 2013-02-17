@@ -56,6 +56,7 @@
 		<include name="common/businessentities/network/NetworkBootProtocol.java" />
 		<include name="common/businessentities/network/NetworkStatistics.java" />
 		<include name="common/businessentities/network/NetworkStatus.java" />
+		<include name="common/businessentities/network/ProviderNetwork.java" />
 		<include name="common/businessentities/network/VmInterfaceType.java" />
 		<include name="common/businessentities/network/VdsInterfaceType.java" />
 		<include name="common/businessentities/network/VmNetworkInterface.java" />
