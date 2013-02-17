@@ -243,7 +243,8 @@ public enum VdcActionType {
     // Providers
     AddProvider(1600, false, QuotaDependency.NONE),
     UpdateProvider(1601, false, QuotaDependency.NONE),
-    RemoveProvider(1602, false, QuotaDependency.NONE);
+    RemoveProvider(1602, false, QuotaDependency.NONE),
+    TestProviderConnectivity(1603, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
