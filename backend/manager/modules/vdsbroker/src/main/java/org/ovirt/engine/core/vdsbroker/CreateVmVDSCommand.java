@@ -165,14 +165,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     private void saveSetInitializedToDb(final Guid vmId) {
-        TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
-                new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
-                        return null;
-                    }
-                });
+        DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
     }
 
     private static Log log = LogFactory.getLog(CreateVmVDSCommand.class);
