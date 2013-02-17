@@ -167,12 +167,16 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
-                !validate(new VmValidator(getVm()).vmDown()) ||
-                !validateImagesAndVMStates()) {
+                !validate(new VmValidator(getVm()).vmDown())) {
             return false;
         }
 
         if (hasImages()) {
+            // Check the VM's images
+            if (!validateImages()) {
+                return false;
+            }
+
             // check that we are not deleting the template
             if (!validateImageNotInTemplate()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
@@ -205,12 +209,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
 
-    // TODO: this is a temporary method used until ImagesHandler.PerformImagesChecks will get decoupeld to several tests
-    // Until then, this method is called and passes hasImages() onwards so the VM validations are done even for diskless VMs
-    protected boolean validateImagesAndVMStates() {
+    protected boolean validateImages() {
         return ImagesHandler.PerformImagesChecks(getReturnValue().getCanDoActionMessages(),
                 getVm().getStoragePoolId(), Guid.Empty,
-                hasImages(), hasImages(), hasImages(), hasImages(), true, true, getDiskDao().getAllForVm(getVmId()));
+                true, true, true, true, true, true, getDiskDao().getAllForVm(getVmId()));
     }
 
     protected boolean validateImageNotInTemplate() {
