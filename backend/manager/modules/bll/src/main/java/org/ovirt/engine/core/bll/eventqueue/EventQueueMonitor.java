@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.eventqueue;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -37,8 +36,8 @@ public class EventQueueMonitor implements EventQueue {
 
     private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<Guid, ReentrantLock>();
     private static final Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =
-            new HashMap<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>>();
-    private static final Map<Guid, Event> poolCurrentEventMap = new HashMap<Guid, Event>();
+            new ConcurrentHashMap<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>>();
+    private static final Map<Guid, Event> poolCurrentEventMap = new ConcurrentHashMap<Guid, Event>();
 
     @Override
     public void submitEventAsync(Event event, Callable<EventResult> callable) {
