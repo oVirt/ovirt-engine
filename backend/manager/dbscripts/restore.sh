@@ -63,8 +63,7 @@ if [ "${res}" =  "${DATABASE}" ]; then
         echo "Database ${DATABASE} exists, please use -r to force removing it."
         exit 1
     else
-        cmd="drop database ${DATABASE};"
-        echo ${cmd} | psql  -h ${SERVERNAME} -p ${PORT} -U ${USERNAME}
+        dropdb  -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} ${DATABASE}
     fi
 fi
 
