@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -516,14 +517,13 @@ public final class ImagesHandler {
         ArrayList<DiskImage> irsImages = new ArrayList<DiskImage>();
 
         if (diskSpaceCheck || checkStorageDomain) {
-            Set<Guid> domainsIds = new HashSet<Guid>();
+            Set<Guid> domainsIds;
             if (!Guid.Empty.equals(storageDomainId)) {
-                domainsIds.add(storageDomainId);
+                domainsIds = Collections.singleton(storageDomainId);
             } else {
-                for (DiskImage image : images) {
-                    domainsIds.addAll(image.getStorageIds());
-                }
+                domainsIds = getAllStorageIdsForImageIds(images);
             }
+
             for (Guid domainId : domainsIds) {
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                         domainId, storagePoolId);
@@ -553,6 +553,18 @@ public final class ImagesHandler {
             returnValue = CheckImagesLegality(messages, images, irsImages);
         }
         return returnValue;
+    }
+
+    /**
+     * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
+     * @param images The images to get the storage domain IDs for
+     */
+    public static Set<Guid> getAllStorageIdsForImageIds(Collection<DiskImage> images) {
+        Set<Guid> domainsIds = new HashSet<Guid>();
+        for (DiskImage image : images) {
+            domainsIds.addAll(image.getStorageIds());
+        }
+        return domainsIds;
     }
 
     /**
