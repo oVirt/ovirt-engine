@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -88,7 +87,6 @@ public class VmGuideModel extends GuideModel
                         vmGuideModel.UpdateOptionsPostData();
                     }
                 }), getEntity().getId());
-
         AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -130,20 +128,8 @@ public class VmGuideModel extends GuideModel
         }
         else
         {
-            int ideDiskCount = 0;
-            for (Disk a : disks)
-            {
-                if (a.getDiskInterface() == DiskInterface.IDE)
-                {
-                    ideDiskCount++;
-                }
-
-            }
-            if (!(getEntity().getVmOs() == VmOsType.WindowsXP && ideDiskCount > 2))
-            {
-                addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
-                getOptionalActions().add(addDiskAction);
-            }
+            addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
+            getOptionalActions().add(addDiskAction);
         }
 
         StopProgress();
@@ -210,81 +196,24 @@ public class VmGuideModel extends GuideModel
     }
 
     private void AddDiskUpdateData() {
-        AsyncDataProvider.GetVmDiskList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object target, Object returnValue) {
-                        VmGuideModel vmGuideModel = (VmGuideModel) target;
-                        ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                        vmGuideModel.disks = disks;
-
-                        vmGuideModel.AddDiskPostData();
-                    }
-                }), getEntity().getId());
-    }
-
-    private void AddDiskPostData() {
-        if (disks == null) {
-            return;
-        }
-
-        final DiskModel model = new DiskModel();
-        setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
+        DiskModel model = new DiskModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
-        model.setIsNew(true);
-        model.setDatacenterId(getEntity().getStoragePoolId());
-        model.getIsInVm().setEntity(true);
-        model.getIsInternal().setEntity(true);
-        model.setVmId(getEntity().getId());
+        model.setVm(getEntity());
+        setWindow(model);
 
-        boolean hasBootableDisk = false;
-        for (Disk a : disks)
-        {
-            if (a.isBoot())
-            {
-                hasBootableDisk = true;
-                break;
-            }
-        }
-        model.getIsBootable().setEntity(!hasBootableDisk);
-        if (hasBootableDisk)
-        {
-            model.getIsBootable().setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
-            model.getIsBootable().setIsChangable(false);
-        }
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.setCancelCommand(cancelCommand);
 
-        AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void OnSuccess(Object model, Object returnValue) {
-                        String suggestedDiskName = (String) returnValue;
-                        VmGuideModel vmGuideModel = (VmGuideModel) model;
-                        vmGuideModel.StopProgress();
-
-                        DiskModel diskModel = (DiskModel) vmGuideModel.getWindow();
-                        diskModel.getAlias().setEntity(suggestedDiskName);
-
-                        UICommand tempVar2 = new UICommand("OnAddDisk", vmGuideModel); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar2.setIsDefault(true);
-                        diskModel.getCommands().add(tempVar2);
-
-                        UICommand tempVar3 = new UICommand("Cancel", vmGuideModel); //$NON-NLS-1$
-                        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar3.setIsCancel(true);
-                        diskModel.getCommands().add(tempVar3);
-                    }
-                }), getEntity().getId());
+        model.Initialize();
     }
 
     public void AddDisk()
     {
         if (getEntity() != null)
         {
-            StartProgress(null);
-            disks = null;
-
             AddDiskUpdateData();
         }
     }
@@ -414,6 +343,7 @@ public class VmGuideModel extends GuideModel
     {
         ResetData();
         setWindow(null);
+        Frontend.Unsubscribe();
     }
 
     @Override

@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.frontend;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -825,6 +828,21 @@ public class Frontend {
     public static void Subscribe(VdcQueryType[] queryTypes)
     {
         subscribedQueryTypes = queryTypes;
+    }
+
+    public static void subscribeAdditionalQueries(VdcQueryType[] queryTypes)
+    {
+        if (subscribedQueryTypes == null) {
+            Subscribe(queryTypes);
+        }
+        else {
+            Set<VdcQueryType> queryTypesSet = new HashSet<VdcQueryType>();
+            Collections.addAll(queryTypesSet, subscribedQueryTypes);
+            Collections.addAll(queryTypesSet, queryTypes);
+
+            VdcQueryType[] queryTypesArray = new VdcQueryType[queryTypesSet.size()];
+            subscribedQueryTypes = queryTypesSet.toArray(queryTypesArray);
+        }
     }
 
     public static void Unsubscribe()

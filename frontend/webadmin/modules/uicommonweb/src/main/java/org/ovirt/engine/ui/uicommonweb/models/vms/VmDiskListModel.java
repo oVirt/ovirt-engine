@@ -2,35 +2,24 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage_pool;
 import org.ovirt.engine.core.common.queries.GetAllDisksByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -40,17 +29,12 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -189,10 +173,6 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
-    private ArrayList<DiskImageBase> presets;
-    private String nextAlias;
-    private storage_pool datacenter;
-
     public VmDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
@@ -282,73 +262,17 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         DiskModel model = new DiskModel();
-        setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
-        model.setIsNew(true);
-        model.setDatacenterId(vm.getStoragePoolId());
-        model.getIsInVm().setEntity(true);
-        model.getIsInternal().setEntity(true);
-        model.setVmId(getEntity().getId());
-        model.StartProgress(null);
+        model.setVm(vm);
+        setWindow(model);
 
-        AddDiskUpdateData();
-    }
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.setCancelCommand(cancelCommand);
 
-    private void AddDiskUpdateData() {
-        AsyncDataProvider.GetNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object returnValue) {
-                String suggestedDiskName = (String) returnValue;
-                VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
-                DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
-                diskModel.getAlias().setEntity(suggestedDiskName);
-
-                vmDiskListModel.nextAlias = suggestedDiskName;
-                vmDiskListModel.AddDiskPostData();
-            }
-        }), getEntity().getId());
-    }
-
-    private void AddDiskPostData() {
-        if (nextAlias == null) {
-            return;
-        }
-
-        DiskModel diskModel = (DiskModel) getWindow();
-        StorageDomain storage = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
-        ArrayList<Disk> disks =
-                getItems() != null ? Linq.<Disk> Cast(getItems()) : new ArrayList<Disk>();
-        boolean hasDisks = disks.size() > 0;
-
-        boolean hasBootableDisk = false;
-        for (Disk a : disks)
-        {
-            if (a.isBoot())
-            {
-                hasBootableDisk = true;
-                break;
-            }
-        }
-
-        diskModel.getIsBootable().setEntity(!hasBootableDisk);
-        if (hasBootableDisk)
-        {
-            diskModel.getIsBootable().setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
-            diskModel.getIsBootable().setIsChangable(false);
-        }
-
-        ArrayList<UICommand> commands = new ArrayList<UICommand>();
-        UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar2.setIsDefault(true);
-        diskModel.getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
-        diskModel.getCommands().add(tempVar3);
-
-        diskModel.StopProgress();
+        model.Initialize();
     }
 
     private void changeQuota() {
@@ -414,138 +338,19 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         DiskModel model = new DiskModel();
+        model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
+        model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
+        model.setVm(getEntity());
         model.setDisk(disk);
         model.setIsNew(false);
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().editVirtualDiskTitle());
-        model.setHashName("edit_virtual_disk"); //$NON-NLS-1$
-        model.getAttachDisk().setIsAvailable(false);
-        model.getIsInVm().setEntity(true);
-        model.getIsInternal().setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE);
-        model.getStorageDomain().setIsChangable(false);
-        model.getHost().setIsChangable(false);
-        model.getStorageType().setIsChangable(false);
-        model.getDataCenter().setIsChangable(false);
-        model.getSize().setIsChangable(false);
-        model.getSize()
-                .setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) disk).getSizeInGigabytes() :
-                        ((LunDisk) disk).getLun().getDeviceSize());
 
-        Guid storageDomainId = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
-                ((DiskImage) disk).getStorageIds().get(0) : Guid.Empty;
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.setCancelCommand(cancelCommand);
 
-        model.StartProgress(null);
-
-        AsyncQuery _asyncQuery1 = new AsyncQuery();
-        _asyncQuery1.setModel(this);
-        _asyncQuery1.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void OnSuccess(Object model, Object result)
-            {
-                VmDiskListModel vmDiskListModel = (VmDiskListModel) model;
-                DiskModel diskModel = (DiskModel) vmDiskListModel.getWindow();
-                VM vm = vmDiskListModel.getEntity();
-                StorageDomain storageDomain = (StorageDomain) result;
-                Disk disk = (Disk) vmDiskListModel.getSelectedItem();
-
-                diskModel.getStorageDomain().setSelectedItem(storageDomain);
-
-                DiskImageBase preset = new DiskImage();
-                diskModel.getPreset().setSelectedItem(preset);
-                diskModel.getPreset().setIsChangable(false);
-
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    diskModel.getVolumeType().setSelectedItem(((DiskImage) disk).getVolumeType());
-                    diskModel.getVolumeType().setIsChangable(false);
-
-                    diskModel.setVolumeFormat(((DiskImage) disk).getVolumeFormat());
-                }
-
-                ArrayList<DiskInterface> interfaces =
-                        AsyncDataProvider.GetDiskInterfaceList(vm.getVmOs(), vm.getVdsGroupCompatibilityVersion());
-                if (!interfaces.contains(disk.getDiskInterface()))
-                {
-                    interfaces.add(disk.getDiskInterface());
-                }
-                diskModel.getInterface().setItems(interfaces);
-                diskModel.getInterface().setSelectedItem(disk.getDiskInterface());
-                // Allow interface type to be edited only if the disk is not sharable
-                diskModel.getInterface().setIsChangable(!disk.isShareable());
-
-                StorageDomain storage = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
-
-                if (diskModel.getStorageDomain() != null && diskModel.getStorageDomain().getSelectedItem() != null)
-                {
-                    StorageType storageType = storage.getStorageType();
-                    boolean isFileDomain =
-                            storageType == StorageType.NFS || storageType == StorageType.LOCALFS
-                                    || storageType == StorageType.POSIXFS;
-                    diskModel.getWipeAfterDelete().setIsChangable(!isFileDomain);
-                }
-
-                diskModel.getWipeAfterDelete().setEntity(disk.isWipeAfterDelete());
-
-                ArrayList<Disk> disks =
-                        vmDiskListModel.getItems() != null ? Linq.<Disk> Cast(vmDiskListModel.getItems())
-                                : new ArrayList<Disk>();
-
-                Disk bootableDisk = null;
-                for (Disk a : disks)
-                {
-                    if (a.isBoot())
-                    {
-                        bootableDisk = a;
-                        break;
-                    }
-                }
-                if (bootableDisk != null && !bootableDisk.getId().equals(disk.getId()))
-                {
-                    diskModel.getIsBootable()
-                            .setChangeProhibitionReason("There can be only one bootable disk defined."); //$NON-NLS-1$
-                    diskModel.getIsBootable().setIsChangable(false);
-                }
-                diskModel.getIsBootable().setEntity(disk.isBoot());
-                diskModel.getIsShareable().setEntity(disk.isShareable());
-
-                diskModel.getAlias().setEntity(disk.getDiskAlias());
-                diskModel.getDescription().setEntity(disk.getDiskDescription());
-
-                diskModel.StopProgress();
-
-                UICommand tempVar = new UICommand("OnSave", vmDiskListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
-                diskModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", vmDiskListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
-                diskModel.getCommands().add(tempVar2);
-            }
-        };
-
-        AsyncDataProvider.GetStorageDomainById(_asyncQuery1, storageDomainId);
-
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            AsyncDataProvider.GetDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-
-                @Override
-                public void OnSuccess(Object model, Object returnValue) {
-                    storage_pool dataCenter = (storage_pool) returnValue;
-                    VmDiskListModel vmDiskListModel1 = (VmDiskListModel) model;
-                    DiskModel dModel = (DiskModel) vmDiskListModel1.getWindow();
-                    if (dataCenter.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED)) {
-                        dModel.getQuota().setIsAvailable(false);
-                    } else {
-                        dModel.getQuota().setIsAvailable(true);
-                        dModel.quota_storageSelectedItemChanged(((DiskImage) disk).getQuotaId());
-                    }
-                }
-            }), getEntity().getStoragePoolId());
-        }
-        else {
-            ((DiskModel) getWindow()).getQuota().setIsAvailable(false);
-        }
+        model.Initialize();
     }
 
     private void remove()
@@ -571,7 +376,6 @@ public class VmDiskListModel extends VmDiskListModelBase
 
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
-            diskModel.getIsInVm().setEntity(true);
 
             items.add(diskModel);
 
@@ -620,179 +424,6 @@ public class VmDiskListModel extends VmDiskListModelBase
                     }
                 },
                 this);
-    }
-
-    private void OnSave()
-    {
-        VM vm = getEntity();
-        DiskModel model = (DiskModel) getWindow();
-
-        if (model.getProgress() != null || !model.Validate())
-        {
-            return;
-        }
-
-        if ((Boolean) model.getAttachDisk().getEntity())
-        {
-            OnAttachDisks();
-            return;
-        }
-
-        StorageDomain storageDomain = (StorageDomain) model.getStorageDomain().getSelectedItem();
-        Disk disk = (Disk) getSelectedItem();
-        boolean isInternal = (Boolean) model.getIsInternal().getEntity();
-
-        if (!model.getIsNew()) {
-            model.getIsInternal().setEntity(disk.getDiskStorageType() == DiskStorageType.IMAGE);
-        }
-
-        if (isInternal) {
-            DiskImage diskImage = model.getIsNew() ? new DiskImage() : (DiskImage) getSelectedItem();
-            diskImage.setSizeInGigabytes(Integer.parseInt(model.getSize().getEntity().toString()));
-            diskImage.setVolumeType((VolumeType) model.getVolumeType().getSelectedItem());
-            diskImage.setvolumeFormat(model.getVolumeFormat());
-            if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
-                diskImage.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
-            }
-
-            disk = diskImage;
-        }
-        else {
-            LunDisk lunDisk;
-
-            if (model.getIsNew()) {
-                SanStorageModel sanStorageModel = model.getSanStorageModel();
-                ArrayList<String> partOfSdLunsMessages = sanStorageModel.getPartOfSdLunsMessages();
-
-                if (partOfSdLunsMessages.isEmpty() || sanStorageModel.isForce()) {
-                    LUNs luns = (LUNs) sanStorageModel.getAddedLuns().get(0).getEntity();
-                    luns.setLunType((StorageType) model.getStorageType().getSelectedItem());
-
-                    lunDisk = new LunDisk();
-                    lunDisk.setLun(luns);
-                }
-                else {
-                    ForceCreationWarning(partOfSdLunsMessages);
-                    return;
-                }
-
-            }
-            else {
-                lunDisk = (LunDisk) getSelectedItem();
-            }
-            disk = lunDisk;
-        }
-
-        disk.setDiskAlias((String) model.getAlias().getEntity());
-        disk.setDiskDescription((String) model.getDescription().getEntity());
-        disk.setDiskInterface((DiskInterface) model.getInterface().getSelectedItem());
-        disk.setWipeAfterDelete((Boolean) model.getWipeAfterDelete().getEntity());
-        disk.setBoot((Boolean) model.getIsBootable().getEntity());
-        disk.setShareable((Boolean) model.getIsShareable().getEntity());
-        disk.setPlugged((Boolean) model.getIsPlugged().getEntity());
-        disk.setPropagateErrors(PropagateErrors.Off);
-
-        model.StartProgress(null);
-
-        VdcActionType actionType;
-        VmDiskOperationParameterBase parameters;
-
-        if (model.getIsNew())
-        {
-            actionType = VdcActionType.AddDisk;
-            parameters = new AddDiskParameters(vm.getId(), disk);
-            if (isInternal) {
-                ((AddDiskParameters) parameters).setStorageDomainId(storageDomain.getId());
-            }
-        }
-        else
-        {
-            actionType = VdcActionType.UpdateVmDisk;
-            parameters = new UpdateVmDiskParameters(vm.getId(), disk.getId(), disk);
-        }
-
-        Frontend.RunAction(actionType, parameters, new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-                VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                localModel.getWindow().StopProgress();
-                Cancel();
-            }
-        }, this);
-    }
-
-    private void ForceCreationWarning(ArrayList<String> usedLunsMessages) {
-        ConfirmationModel confirmationModel = new ConfirmationModel();
-        setConfirmWindow(confirmationModel);
-
-        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().forceStorageDomainCreation());
-        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().lunsAlreadyPartOfSD());
-        confirmationModel.setHashName("force_lun_disk_creation"); //$NON-NLS-1$
-        confirmationModel.setItems(usedLunsMessages);
-
-        UICommand command;
-        command = new UICommand("OnForceSave", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        confirmationModel.getCommands().add(command);
-
-        command = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        confirmationModel.getCommands().add(command);
-    }
-
-    private void OnForceSave()
-    {
-        ConfirmationModel confirmationModel = (ConfirmationModel) getConfirmWindow();
-        if (confirmationModel != null && !confirmationModel.Validate())
-        {
-            return;
-        }
-
-        CancelConfirm();
-
-        DiskModel model = (DiskModel) getWindow();
-        SanStorageModel sanStorageModel = model.getSanStorageModel();
-        sanStorageModel.setForce(true);
-
-        OnSave();
-    }
-
-    private void OnAttachDisks()
-    {
-        VM vm = getEntity();
-        DiskModel model = (DiskModel) getWindow();
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
-
-        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void Executed(FrontendActionAsyncResult result) {
-                VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                localModel.getWindow().StopProgress();
-                Cancel();
-            }
-        };
-
-        ArrayList<EntityModel> disksToAttach = (Boolean) model.getIsInternal().getEntity() ?
-                (ArrayList<EntityModel>) model.getInternalAttachableDisks().getSelectedItems() :
-                (ArrayList<EntityModel>) model.getExternalAttachableDisks().getSelectedItems();
-
-        for (int i = 0; i < disksToAttach.size(); i++) {
-            DiskModel disk = (DiskModel) disksToAttach.get(i).getEntity();
-            AttachDettachVmDiskParameters parameters = new AttachDettachVmDiskParameters(
-                    vm.getId(), disk.getDisk().getId(), (Boolean) model.getIsPlugged().getEntity());
-
-            actionTypes.add(VdcActionType.AttachDiskToVm);
-            paramerterList.add(parameters);
-            callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
-        }
-
-        model.StartProgress(null);
-
-        Frontend.RunMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }
 
     private void Plug(boolean plug) {
@@ -851,24 +482,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.StartProgress(null);
     }
 
-    private void ResetData() {
-        presets = null;
-        nextAlias = null;
-        datacenter = null;
-    }
-
-    private void CancelConfirm()
-    {
-        DiskModel model = (DiskModel) getWindow();
-        SanStorageModel sanStorageModel = model.getSanStorageModel();
-        sanStorageModel.setForce(false);
-        setConfirmWindow(null);
-    }
-
     private void Cancel()
     {
         setWindow(null);
-        ResetData();
+        Frontend.Unsubscribe();
     }
 
     @Override
@@ -1052,21 +669,9 @@ public class VmDiskListModel extends VmDiskListModelBase
         {
             Move();
         }
-        else if (StringHelper.stringsEqual(command.getName(), "OnSave")) //$NON-NLS-1$
-        {
-            OnSave();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "OnForceSave")) //$NON-NLS-1$
-        {
-            OnForceSave();
-        }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
             Cancel();
-        }
-        else if (StringHelper.stringsEqual(command.getName(), "CancelConfirm")) //$NON-NLS-1$
-        {
-            CancelConfirm();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnRemove")) //$NON-NLS-1$
         {

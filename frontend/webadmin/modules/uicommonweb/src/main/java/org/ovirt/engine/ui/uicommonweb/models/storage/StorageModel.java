@@ -176,7 +176,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         Frontend.getQueryStartedEvent().addListener(this);
         Frontend.getQueryCompleteEvent().addListener(this);
-        Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue,
+        Frontend.subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue,
                 VdcQueryType.GetStoragePoolsByStorageDomainId, VdcQueryType.GetStorageDomainsByStoragePoolId,
                 VdcQueryType.GetLunsByVgId, VdcQueryType.GetAllVdsByStoragePool,
                 VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList, VdcQueryType.GetExistingStorageDomainList });

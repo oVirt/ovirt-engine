@@ -1170,20 +1170,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void GetSANWipeAfterDelete(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : false;
-            }
-        };
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SANWipeAfterDelete,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void GetCustomPropertiesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1911,21 +1897,6 @@ public final class AsyncDataProvider {
                 }), storageDomainId);
     }
 
-    public static void GetDiskMaxSize(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Integer) source).intValue() : 0;
-            }
-        };
-
-        GetConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxBlockDiskSize,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void GetVmNicList(AsyncQuery aQuery, Guid id) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -2084,34 +2055,6 @@ public final class AsyncDataProvider {
                 new GetConfigurationValueParameters(ConfigurationValues.HotPlugEnabled);
         tempVar.setVersion(version);
         GetConfigFromCache(tempVar, aQuery);
-    }
-
-    public static void IsDirectLunDiskEnabled(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters params =
-                new GetConfigurationValueParameters(ConfigurationValues.DirectLUNDiskEnabled);
-        params.setVersion(version);
-        GetConfigFromCache(params, aQuery);
-    }
-
-    public static void IsShareableDiskEnabled(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters params =
-                new GetConfigurationValueParameters(ConfigurationValues.ShareableDiskEnabled);
-        params.setVersion(version);
-        GetConfigFromCache(params, aQuery);
     }
 
     public static void GetAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {

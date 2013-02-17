@@ -531,15 +531,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
             }
         });
 
-        disk.getIsInVm().getEntityChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isInVm = (Boolean) ((EntityModel) sender).getEntity();
-                topPanel.setVisible(isInVm && disk.getAttachDisk().getIsAvailable());
-                aliasEditor.setFocus(!isInVm);
-            }
-        });
-
         disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -588,7 +579,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         fcpStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         fcpStorageModel.setIsGrouppedByTarget(false);
         fcpStorageModel.setIgnoreGrayedOut(true);
-        fcpStorageView = new FcpStorageView(false, 266, 242);
+        fcpStorageView = new FcpStorageView(false, 266, 240);
         fcpStorageView.edit(fcpStorageModel);
 
         // Set 'StorageModel' items
@@ -634,6 +625,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
     private void revealDiskPanel(final DiskModel disk) {
         boolean isAttachDisk = (Boolean) disk.getAttachDisk().getEntity();
         boolean isInternal = internalDiskRadioButton.getValue();
+        boolean isInVm = disk.getVm() != null;
 
         // Hide tables
         internalDiskTable.setVisible(false);
@@ -658,9 +650,16 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
         else {
             externalDiskPanel.setVisible(isNewLunDiskEnabled && !isInternal);
         }
+
+        topPanel.setVisible(isInVm && disk.getIsNew());
+        aliasEditor.setFocus(!isInVm);
     }
 
     private void revealStorageView(final DiskModel diskModel) {
+        if (!diskModel.getIsNew()) {
+            return;
+        }
+
         StorageType storageType = (StorageType) diskModel.getStorageType().getSelectedItem();
 
         // Set view and model by storage type
@@ -678,11 +677,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<DiskModel> 
 
         // Execute 'UpdateCommand' to call 'GetDeviceList'
         sanStorageModel.getUpdateCommand().Execute();
-
-        //externalDiskPanel.clear();
-        if (storageView != null) {
-            //externalDiskPanel.add(storageView);
-        }
     }
 
     public boolean handleEnterKeyDisabled() {

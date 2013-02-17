@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
@@ -45,7 +44,6 @@ public class DiskModule extends AbstractGinModule {
     public MainModelProvider<Disk, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
         return new MainTabModelProvider<Disk, DiskListModel>(ginjector, DiskListModel.class) {
@@ -71,8 +69,6 @@ public class DiskModule extends AbstractGinModule {
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
-                } else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
-                    return forceCreateConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

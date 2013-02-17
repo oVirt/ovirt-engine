@@ -539,7 +539,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         for (Disk disk : disks)
                         {
                             DiskModel diskModel = new DiskModel();
-                            diskModel.setIsNew(true);
                             diskModel.getAlias().setEntity(disk.getDiskAlias());
 
                             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {

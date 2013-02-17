@@ -161,7 +161,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         for (Disk disk : disks)
         {
             DiskModel diskModel = new DiskModel();
-            diskModel.setIsNew(true);
 
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;

@@ -29,7 +29,7 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
 
         DiskModel diskModel = (DiskModel) item;
         Disk disk = (Disk) diskModel.getDisk();
-        boolean isInVm = (Boolean) diskModel.getIsInVm().getEntity();
+        boolean isInVm = diskModel.getVm() != null;
         notes.clear();
 
         addItemLabel(getItemTextFormatted(disk.getDiskAlias()));

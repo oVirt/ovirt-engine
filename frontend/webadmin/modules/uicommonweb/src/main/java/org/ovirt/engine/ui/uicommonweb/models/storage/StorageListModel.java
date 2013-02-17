@@ -970,6 +970,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void Cancel()
     {
         setWindow(null);
+        Frontend.Unsubscribe();
     }
 
     @Override

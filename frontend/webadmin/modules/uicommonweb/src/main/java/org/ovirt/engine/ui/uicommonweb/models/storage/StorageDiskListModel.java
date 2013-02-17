@@ -149,7 +149,6 @@ public class StorageDiskListModel extends SearchableListModel
 
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
-            diskModel.getIsInVm().setEntity(false);
 
             items.add(diskModel);
         }

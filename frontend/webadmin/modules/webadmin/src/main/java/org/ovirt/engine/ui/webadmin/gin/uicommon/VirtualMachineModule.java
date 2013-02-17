@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
@@ -202,7 +201,6 @@ public class VirtualMachineModule extends AbstractGinModule {
     public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
         return new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(ginjector,
@@ -231,9 +229,7 @@ public class VirtualMachineModule extends AbstractGinModule {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 }
-                else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
-                    return forceCreateConfirmPopupProvider.get();
-                } else {
+                else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }
             }
