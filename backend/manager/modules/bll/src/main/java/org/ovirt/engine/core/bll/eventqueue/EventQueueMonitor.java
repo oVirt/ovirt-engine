@@ -68,6 +68,14 @@ public class EventQueueMonitor implements EventQueue {
             Event currentEvent = poolCurrentEventMap.get(storagePoolId);
             if (currentEvent != null) {
                 switch (currentEvent.getEventType()) {
+                case RECOVERY:
+                    if (event.getEventType() == EventType.VDSCONNECTTOPOOL) {
+                        task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
+                    } else {
+                        log.debugFormat("Current event was skiped because of recovery is running now for pool {0}, event {1}",
+                                storagePoolId, event);
+                    }
+                    break;
                 case RECONSTRUCT:
                     if (event.getEventType() == EventType.VDSCONNECTTOPOOL || event.getEventType() == EventType.RECOVERY) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
