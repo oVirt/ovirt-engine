@@ -958,8 +958,7 @@ public class VdsBrokerObjectsBuilder {
      */
     private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, Network network, VDS vds) {
         if (interfaces.size() != 1) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.setVdsId(vds.getId());
+            AuditLogableBase logable = new AuditLogableBase(vds.getId());
             logable.addCustomValue("NetworkName", network.getName());
             logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
             AuditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
