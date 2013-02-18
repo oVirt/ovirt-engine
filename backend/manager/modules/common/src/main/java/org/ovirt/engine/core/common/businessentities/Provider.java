@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
  * The provider will be responsible for managing the provided services, and the interaction with it would be done
  * through an API which will be accessible via the URL.
  */
-public class Provider extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = 8279455368568715758L;
 
@@ -27,6 +27,7 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private String password;
 
+    @Override
     public String getName() {
         return name;
     }

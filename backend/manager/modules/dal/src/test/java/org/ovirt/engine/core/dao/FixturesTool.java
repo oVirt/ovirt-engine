@@ -366,4 +366,9 @@ public class FixturesTool {
     public static final Guid GLUSTER_SERVER_UUID2 = new Guid("da9e2f09-2835-4530-9bf5-576c52b11942");
 
     public static final Guid GLUSTER_SERVER_UUID_NEW = new Guid("da9e2f09-2835-4530-9bf5-576c52b11943");
+
+    /**
+     * A test provider that exists.
+     */
+    public static final String PROVIDER_NAME = "provider";
 }

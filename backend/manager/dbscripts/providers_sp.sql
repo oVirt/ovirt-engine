@@ -110,3 +110,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+
+
+Create or replace FUNCTION GetProviderByName(v_name VARCHAR)
+RETURNS SETOF providers
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   providers
+    WHERE  name = v_name;
+END; $procedure$
+LANGUAGE plpgsql;
+

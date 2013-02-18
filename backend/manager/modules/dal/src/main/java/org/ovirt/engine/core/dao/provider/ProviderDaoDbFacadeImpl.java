@@ -40,6 +40,13 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
         return ProviderRowMapper.INSTANCE;
     }
 
+    @Override
+    public Provider getByName(String name) {
+        return getCallsHandler().executeRead("GetProviderByName",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("name", name));
+    }
+
     private static class ProviderRowMapper implements ParameterizedRowMapper<Provider> {
 
         public final static ProviderRowMapper INSTANCE = new ProviderRowMapper();

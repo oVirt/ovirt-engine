@@ -1,9 +1,14 @@
 package org.ovirt.engine.core.dao.provider;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider, ProviderDao> {
 
@@ -40,5 +45,20 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider, Prov
     @Override
     protected int getEneitiesTotalCount() {
         return 1;
+    }
+
+    @Test
+    public void getByName() throws Exception {
+        assertEquals(FixturesTool.PROVIDER_NAME, dao.getByName(FixturesTool.PROVIDER_NAME).getName());
+    }
+
+    @Test
+    public void getByNameCaseSensitive() throws Exception {
+        assertNull(dao.getByName(FixturesTool.PROVIDER_NAME.toUpperCase()));
+    }
+
+    @Test
+    public void getByNameNonExistant() throws Exception {
+        assertNull(dao.getByName(FixturesTool.PROVIDER_NAME + FixturesTool.PROVIDER_NAME));
     }
 }
