@@ -14,12 +14,16 @@ import org.dbunit.dataset.xml.XmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -47,17 +51,20 @@ public abstract class BaseDAOTestCase {
     protected static String initSql;
     protected static DataSource dataSource;
     private static IDataSet dataset;
+    private static EJBUtilsStrategy oldStrategy;
+
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @BeforeClass
     public static void initTestCase() throws Exception {
         if(dataSource == null) {
             dataSource = createDataSource();
+            ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
 
             dataset = initDataSet();
-            dbFacade = new DbFacade();
+            dbFacade = DbFacadeLocator.getDbFacade();
             dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
-            dbFacade.setTemplate(dbFacade.getDbEngineDialect().createJdbcTemplate(dataSource));
-
             // load data from fixtures to DB
             DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
         }
